@@ -9,13 +9,28 @@
       "type": "mcq_single",
       "stem": "Lequel de ces extraits est un document JSON valide ?",
       "options": [
-        { "id": "a", "text": "{\"hostname\": \"R1\", \"interfaces\": [\"g0/0\", \"g0/1\"]}" },
-        { "id": "b", "text": "{'hostname': 'R1', 'interfaces': ['g0/0', 'g0/1']}" },
-        { "id": "c", "text": "{hostname: \"R1\", interfaces: [\"g0/0\", \"g0/1\"]}" },
-        { "id": "d", "text": "{\"hostname\": \"R1\", \"interfaces\": [\"g0/0\", \"g0/1\"],}" }
+        {
+          "id": "a",
+          "text": "{\"hostname\": \"R1\", \"interfaces\": [\"g0/0\", \"g0/1\"]}"
+        },
+        {
+          "id": "b",
+          "text": "{'hostname': 'R1', 'interfaces': ['g0/0', 'g0/1']}"
+        },
+        {
+          "id": "c",
+          "text": "{hostname: \"R1\", interfaces: [\"g0/0\", \"g0/1\"]}"
+        },
+        {
+          "id": "d",
+          "text": "{\"hostname\": \"R1\", \"interfaces\": [\"g0/0\", \"g0/1\"],}"
+        }
       ]
     },
-    "key": { "type": "mcq_single", "correct": "a" },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
     "explanation": "En JSON, les clés et les chaînes sont entre guillemets doubles, les éléments sont séparés par des virgules et aucune virgule ne suit le dernier élément.",
     "distractorNotes": {
       "b": "Les guillemets simples ne sont pas autorisés en JSON.",
@@ -34,18 +49,129 @@
       "type": "mcq_single",
       "stem": "Dans une architecture SDN, à quoi sert l'interface sud (southbound interface) ?",
       "options": [
-        { "id": "a", "text": "Elle relie le contrôleur aux applications et aux scripts d'automatisation." },
-        { "id": "b", "text": "Elle relie le contrôleur aux équipements du réseau, par exemple avec OpenFlow ou NETCONF." },
-        { "id": "c", "text": "Elle relie deux contrôleurs d'un même cluster." },
-        { "id": "d", "text": "Elle transporte le trafic des utilisateurs entre les commutateurs." }
+        {
+          "id": "a",
+          "text": "Elle relie le contrôleur aux applications et aux scripts d'automatisation."
+        },
+        {
+          "id": "b",
+          "text": "Elle relie le contrôleur aux équipements du réseau, par exemple avec OpenFlow ou NETCONF."
+        },
+        {
+          "id": "c",
+          "text": "Elle relie deux contrôleurs d'un même cluster."
+        },
+        {
+          "id": "d",
+          "text": "Elle transporte le trafic des utilisateurs entre les commutateurs."
+        }
       ]
     },
-    "key": { "type": "mcq_single", "correct": "b" },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
     "explanation": "L'interface sud est utilisée par le contrôleur pour programmer les équipements du plan de données (OpenFlow, NETCONF, OpFlex…). L'interface nord, souvent une API REST, expose le contrôleur aux applications.",
     "distractorNotes": {
       "a": "C'est le rôle de l'interface nord (northbound).",
       "c": "Les échanges entre contrôleurs passent par des interfaces est-ouest.",
       "d": "Le trafic des utilisateurs relève du plan de données, pas d'une interface du contrôleur."
+    }
+  },
+  {
+    "slug": "ccna-6.5-http-crud-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Dans une API REST, associez chaque méthode HTTP à l'opération CRUD qu'elle réalise habituellement.",
+      "left": [
+        {
+          "id": "post",
+          "text": "POST"
+        },
+        {
+          "id": "get",
+          "text": "GET"
+        },
+        {
+          "id": "put",
+          "text": "PUT"
+        },
+        {
+          "id": "delete",
+          "text": "DELETE"
+        }
+      ],
+      "right": [
+        {
+          "id": "create",
+          "text": "Create"
+        },
+        {
+          "id": "read",
+          "text": "Read"
+        },
+        {
+          "id": "update",
+          "text": "Update"
+        },
+        {
+          "id": "del",
+          "text": "Delete"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "post": "create",
+        "get": "read",
+        "put": "update",
+        "delete": "del"
+      }
+    },
+    "explanation": "POST crée une ressource, GET la lit, PUT la remplace (mise à jour) et DELETE la supprime. PATCH, non listé ici, sert aux mises à jour partielles."
+  },
+  {
+    "slug": "ccna-6.6-ansible-agentless-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel outil de gestion de configuration fonctionne sans agent sur les équipements et pousse ses changements par SSH à l'aide de playbooks YAML ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ansible"
+        },
+        {
+          "id": "b",
+          "text": "Puppet"
+        },
+        {
+          "id": "c",
+          "text": "Chef"
+        },
+        {
+          "id": "d",
+          "text": "Terraform"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Ansible est sans agent : le nœud de contrôle se connecte en SSH (ou via une API) et applique des playbooks écrits en YAML, selon un modèle « push ».",
+    "distractorNotes": {
+      "b": "Puppet repose classiquement sur un agent qui récupère sa configuration (modèle « pull »).",
+      "c": "Chef utilise aussi un agent et des recettes en Ruby.",
+      "d": "Terraform décrit l'infrastructure en HCL et passe par les API des fournisseurs ; il ne s'appuie pas sur des playbooks YAML."
     }
   }
 ]

@@ -15,11 +15,22 @@
       "type": "cli",
       "ordered": true,
       "commands": [
-        ["ip access-list extended BLOCK-WEB"],
-        ["deny tcp 192.168.10.0 0.0.0.255 host 10.1.1.80 eq 80", "deny tcp 192.168.10.0 0.0.0.255 10.1.1.80 0.0.0.0 eq 80"],
-        ["permit ip any any"],
-        ["interface gigabitethernet0/0/0"],
-        ["ip access-group BLOCK-WEB in"]
+        [
+          "ip access-list extended BLOCK-WEB"
+        ],
+        [
+          "deny tcp 192.168.10.0 0.0.0.255 host 10.1.1.80 eq 80",
+          "deny tcp 192.168.10.0 0.0.0.255 10.1.1.80 0.0.0.0 eq 80"
+        ],
+        [
+          "permit ip any any"
+        ],
+        [
+          "interface gigabitethernet0/0/0"
+        ],
+        [
+          "ip access-group BLOCK-WEB in"
+        ]
       ]
     },
     "explanation": "Une ACL étendue filtre sur la source, la destination, le protocole et le port : on la place au plus près de la source pour éliminer le trafic au plus tôt. Le LAN entre dans R1 par G0/0/0, d'où « ip access-group BLOCK-WEB in » sur cette interface. Sans le « permit ip any any », le deny implicite en fin d'ACL bloquerait tout le reste du trafic.",
@@ -34,11 +45,23 @@
     "body": {
       "type": "fill_blank",
       "stem": "Quel masque générique (wildcard) faut-il utiliser dans une ACL pour désigner tout le réseau 172.16.32.0/20 ?",
-      "fields": [{ "id": "wildcard", "label": "Masque générique" }]
+      "fields": [
+        {
+          "id": "wildcard",
+          "label": "Masque générique"
+        }
+      ]
     },
     "key": {
       "type": "fill_blank",
-      "fields": { "wildcard": { "accepted": ["0.0.15.255"], "normalize": "ipv4" } }
+      "fields": {
+        "wildcard": {
+          "accepted": [
+            "0.0.15.255"
+          ],
+          "normalize": "ipv4"
+        }
+      }
     },
     "explanation": "Un /20 correspond au masque 255.255.240.0. Le masque générique en est l'inverse : 255.255.255.255 − 255.255.240.0 = 0.0.15.255."
   },
@@ -52,18 +75,120 @@
       "type": "mcq_single",
       "stem": "Avec port-security, quel mode de violation supprime les trames des adresses MAC non autorisées, incrémente le compteur de violations et envoie un message syslog, sans désactiver le port ?",
       "options": [
-        { "id": "a", "text": "protect" },
-        { "id": "b", "text": "restrict" },
-        { "id": "c", "text": "shutdown" },
-        { "id": "d", "text": "shutdown vlan" }
+        {
+          "id": "a",
+          "text": "protect"
+        },
+        {
+          "id": "b",
+          "text": "restrict"
+        },
+        {
+          "id": "c",
+          "text": "shutdown"
+        },
+        {
+          "id": "d",
+          "text": "shutdown vlan"
+        }
       ]
     },
-    "key": { "type": "mcq_single", "correct": "b" },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
     "explanation": "Le mode restrict supprime le trafic fautif, incrémente le compteur et journalise, tout en laissant le port actif pour les adresses autorisées.",
     "distractorNotes": {
       "a": "protect supprime le trafic en silence : pas de compteur, pas de syslog.",
       "c": "shutdown, le mode par défaut, place le port en err-disabled.",
       "d": "shutdown vlan désactive le VLAN concerné sur le port : le trafic légitime de ce VLAN est donc coupé lui aussi."
+    }
+  },
+  {
+    "slug": "ccna-5.8-tacacs-radius-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur TACACS+ sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Il utilise TCP sur le port 49."
+        },
+        {
+          "id": "b",
+          "text": "Il chiffre tout le corps du paquet."
+        },
+        {
+          "id": "c",
+          "text": "Il utilise UDP sur les ports 1812 et 1813."
+        },
+        {
+          "id": "d",
+          "text": "Il combine authentification et autorisation dans un seul échange."
+        },
+        {
+          "id": "e",
+          "text": "C'est un standard ouvert de l'IETF."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b"
+      ]
+    },
+    "explanation": "TACACS+ fonctionne sur TCP 49, chiffre l'intégralité du corps des paquets et sépare authentification, autorisation et comptabilité, ce qui permet un contrôle fin des commandes.",
+    "distractorNotes": {
+      "c": "UDP 1812 et 1813 sont les ports de RADIUS.",
+      "d": "C'est RADIUS qui combine authentification et autorisation ; TACACS+ les sépare.",
+      "e": "TACACS+ vient de Cisco ; il est documenté dans la RFC 8907, qui est informationnelle et non un standard."
+    },
+    "reference": "RFC 8907"
+  },
+  {
+    "slug": "ccna-5.9-wpa3-sae-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle méthode d'authentification WPA3-Personal utilise-t-il à la place de la clé pré-partagée (PSK) de WPA2 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "SAE (Simultaneous Authentication of Equals)"
+        },
+        {
+          "id": "b",
+          "text": "TKIP"
+        },
+        {
+          "id": "c",
+          "text": "EAP-TLS"
+        },
+        {
+          "id": "d",
+          "text": "WEP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "WPA3-Personal remplace l'échange PSK par SAE, qui résiste aux attaques par dictionnaire hors ligne et assure la confidentialité persistante.",
+    "distractorNotes": {
+      "b": "TKIP est un ancien mécanisme de chiffrement de WPA, abandonné.",
+      "c": "EAP-TLS est une méthode d'authentification d'entreprise (802.1X), pas le mode Personal.",
+      "d": "WEP est le protocole d'origine, cassé depuis longtemps."
     }
   }
 ]

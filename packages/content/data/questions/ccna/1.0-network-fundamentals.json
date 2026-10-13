@@ -9,17 +9,41 @@
       "type": "fill_blank",
       "stem": "Un hôte est configuré avec l'adresse 172.16.45.130/26. Complétez les informations de son sous-réseau.",
       "fields": [
-        { "id": "network", "label": "Adresse réseau" },
-        { "id": "broadcast", "label": "Adresse de broadcast" },
-        { "id": "hosts", "label": "Nombre d'hôtes utilisables" }
+        {
+          "id": "network",
+          "label": "Adresse réseau"
+        },
+        {
+          "id": "broadcast",
+          "label": "Adresse de broadcast"
+        },
+        {
+          "id": "hosts",
+          "label": "Nombre d'hôtes utilisables"
+        }
       ]
     },
     "key": {
       "type": "fill_blank",
       "fields": {
-        "network": { "accepted": ["172.16.45.128"], "normalize": "ipv4" },
-        "broadcast": { "accepted": ["172.16.45.191"], "normalize": "ipv4" },
-        "hosts": { "accepted": ["62"], "normalize": "int" }
+        "network": {
+          "accepted": [
+            "172.16.45.128"
+          ],
+          "normalize": "ipv4"
+        },
+        "broadcast": {
+          "accepted": [
+            "172.16.45.191"
+          ],
+          "normalize": "ipv4"
+        },
+        "hosts": {
+          "accepted": [
+            "62"
+          ],
+          "normalize": "int"
+        }
       }
     },
     "explanation": "Un /26 donne un masque 255.255.255.192, soit un pas de 256 − 192 = 64 dans le 4ᵉ octet. Les sous-réseaux commencent à .0, .64, .128 et .192 : 130 tombe dans le bloc .128. Le broadcast est l'adresse juste avant le bloc suivant (.191) et il reste 2⁶ − 2 = 62 adresses utilisables.",
@@ -35,13 +59,28 @@
       "type": "mcq_single",
       "stem": "Quelle affirmation décrit correctement UDP ?",
       "options": [
-        { "id": "a", "text": "Il établit une connexion par une poignée de main en trois temps avant d'envoyer des données." },
-        { "id": "b", "text": "Il est sans connexion et n'accuse pas réception des segments." },
-        { "id": "c", "text": "Il retransmet les segments perdus grâce aux numéros de séquence." },
-        { "id": "d", "text": "Il ajuste le débit d'envoi avec une fenêtre glissante." }
+        {
+          "id": "a",
+          "text": "Il établit une connexion par une poignée de main en trois temps avant d'envoyer des données."
+        },
+        {
+          "id": "b",
+          "text": "Il est sans connexion et n'accuse pas réception des segments."
+        },
+        {
+          "id": "c",
+          "text": "Il retransmet les segments perdus grâce aux numéros de séquence."
+        },
+        {
+          "id": "d",
+          "text": "Il ajuste le débit d'envoi avec une fenêtre glissante."
+        }
       ]
     },
-    "key": { "type": "mcq_single", "correct": "b" },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
     "explanation": "UDP est un protocole de transport sans connexion et sans accusé de réception : il laisse la fiabilité à l'application, ce qui le rend adapté à la voix, la vidéo, DNS ou DHCP.",
     "distractorNotes": {
       "a": "La poignée de main SYN, SYN-ACK, ACK est propre à TCP.",
@@ -60,21 +99,50 @@
       "type": "matching",
       "stem": "Associez chaque type d'adresse IPv6 à son préfixe.",
       "left": [
-        { "id": "gua", "text": "Unicast globale" },
-        { "id": "lla", "text": "Lien local" },
-        { "id": "ula", "text": "Unique locale" },
-        { "id": "mc", "text": "Multicast" }
+        {
+          "id": "gua",
+          "text": "Unicast globale"
+        },
+        {
+          "id": "lla",
+          "text": "Lien local"
+        },
+        {
+          "id": "ula",
+          "text": "Unique locale"
+        },
+        {
+          "id": "mc",
+          "text": "Multicast"
+        }
       ],
       "right": [
-        { "id": "p2000", "text": "2000::/3" },
-        { "id": "pfe80", "text": "FE80::/10" },
-        { "id": "pfc00", "text": "FC00::/7" },
-        { "id": "pff00", "text": "FF00::/8" }
+        {
+          "id": "p2000",
+          "text": "2000::/3"
+        },
+        {
+          "id": "pfe80",
+          "text": "FE80::/10"
+        },
+        {
+          "id": "pfc00",
+          "text": "FC00::/7"
+        },
+        {
+          "id": "pff00",
+          "text": "FF00::/8"
+        }
       ]
     },
     "key": {
       "type": "matching",
-      "pairs": { "gua": "p2000", "lla": "pfe80", "ula": "pfc00", "mc": "pff00" }
+      "pairs": {
+        "gua": "p2000",
+        "lla": "pfe80",
+        "ula": "pfc00",
+        "mc": "pff00"
+      }
     },
     "explanation": "Les adresses globales routables sur Internet sont dans 2000::/3. Les adresses de lien local, créées automatiquement sur chaque interface, sont dans FE80::/10. Les adresses uniques locales (l'équivalent des adresses privées) sont dans FC00::/7. Tout le multicast IPv6 est dans FF00::/8.",
     "reference": "RFC 4291, RFC 4193"
@@ -89,18 +157,142 @@
       "type": "mcq_single",
       "stem": "Un commutateur reçoit sur Fa0/3 (VLAN 10) une trame dont l'adresse MAC de destination n'est pas dans sa table. Que fait-il ?",
       "options": [
-        { "id": "a", "text": "Il supprime la trame." },
-        { "id": "b", "text": "Il la diffuse sur tous les ports du VLAN 10 sauf Fa0/3." },
-        { "id": "c", "text": "Il la renvoie sur Fa0/3." },
-        { "id": "d", "text": "Il la diffuse sur tous les ports du commutateur, tous VLAN confondus." }
+        {
+          "id": "a",
+          "text": "Il supprime la trame."
+        },
+        {
+          "id": "b",
+          "text": "Il la diffuse sur tous les ports du VLAN 10 sauf Fa0/3."
+        },
+        {
+          "id": "c",
+          "text": "Il la renvoie sur Fa0/3."
+        },
+        {
+          "id": "d",
+          "text": "Il la diffuse sur tous les ports du commutateur, tous VLAN confondus."
+        }
       ]
     },
-    "key": { "type": "mcq_single", "correct": "b" },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
     "explanation": "Pour une destination inconnue (unknown unicast), le commutateur inonde la trame sur tous les ports du même VLAN, sauf celui d'arrivée. Il apprend au passage l'adresse MAC source sur Fa0/3.",
     "distractorNotes": {
       "a": "Un commutateur ne supprime pas une trame simplement parce que la destination est inconnue.",
       "c": "Un commutateur ne renvoie jamais une trame sur son port d'arrivée.",
       "d": "L'inondation reste limitée au domaine de broadcast, donc au VLAN."
     }
+  },
+  {
+    "slug": "ccna-1.7-private-range-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Laquelle de ces adresses appartient à une plage privée définie par la RFC 1918 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "172.32.0.1"
+        },
+        {
+          "id": "b",
+          "text": "192.169.10.1"
+        },
+        {
+          "id": "c",
+          "text": "172.31.254.10"
+        },
+        {
+          "id": "d",
+          "text": "100.64.0.1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La RFC 1918 réserve 10.0.0.0/8, 172.16.0.0/12 (172.16.0.0 à 172.31.255.255) et 192.168.0.0/16. 172.31.254.10 est dans 172.16.0.0/12.",
+    "distractorNotes": {
+      "a": "172.32.0.1 est juste après la fin de 172.16.0.0/12 : c'est une adresse publique.",
+      "b": "192.169.x.x n'est pas dans 192.168.0.0/16.",
+      "d": "100.64.0.0/10 est l'espace partagé du CGNAT (RFC 6598), pas une plage RFC 1918."
+    },
+    "reference": "RFC 1918"
+  },
+  {
+    "slug": "ccna-1.6-subnet-29-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un hôte a l'adresse 10.44.7.203/29. Donnez l'adresse réseau et la dernière adresse d'hôte utilisable de son sous-réseau.",
+      "fields": [
+        {
+          "id": "network",
+          "label": "Adresse réseau"
+        },
+        {
+          "id": "last",
+          "label": "Dernier hôte utilisable"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "network": {
+          "accepted": [
+            "10.44.7.200"
+          ],
+          "normalize": "ipv4"
+        },
+        "last": {
+          "accepted": [
+            "10.44.7.206"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Un /29 a un pas de 8 dans le 4ᵉ octet : les blocs commencent à .192, .200, .208… 203 est dans le bloc .200, dont le broadcast est .207. Le dernier hôte utilisable est donc .206."
+  },
+  {
+    "slug": "ccna-1.8-ipv6-compression-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Écrivez la forme compressée la plus courte, conforme à la RFC 5952, de l'adresse 2001:0db8:0000:0000:0a00:0000:0000:0001.",
+      "fields": [
+        {
+          "id": "ipv6",
+          "label": "Adresse compressée"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "ipv6": {
+          "accepted": [
+            "2001:db8::a00:0:0:1"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "On supprime les zéros de tête de chaque groupe, puis on remplace une seule suite de groupes nuls par « :: ». Les deux suites font ici deux groupes : la RFC 5952 impose de compresser la première. On obtient 2001:db8::a00:0:0:1.",
+    "reference": "RFC 5952"
   }
 ]
