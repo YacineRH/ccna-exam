@@ -23,4 +23,4 @@ PostgreSQL local dans un conteneur de session : `pg_ctlcluster 16 main start`, p
 
 ## Déploiement
 
-VPS OVH, à côté d'Hydre mais isolé (`docker-compose.yml`, port 127.0.0.1:8080 derrière le reverse proxy existant). Voir `docs/DEPLOIEMENT.md`.
+VPS OVH (domaine yratech.fr), à côté d'Hydre mais isolé : ExamForge sur ccna.yratech.fr derrière le Caddy d'Hydre via le réseau Docker `edge`. Voir `docs/DEPLOIEMENT.md` et `infra/hydre/README.md`.

@@ -1,6 +1,7 @@
-# ExamForge en production sur le VPS, à côté d'Hydre mais isolé :
-# réseau, base et volumes propres. Seul le port HTTP interne est publié,
-# et uniquement sur 127.0.0.1 : le reverse proxy existant du VPS s'occupe du HTTPS.
+# ExamForge en production sur le VPS OVH, à côté d'Hydre mais isolé : base, volumes
+# et réseau interne propres. Le Caddy d'Hydre (seul à écouter sur 80/443) fait le HTTPS
+# de ccna.yratech.fr et relaie vers le service web par le réseau partagé « edge ».
+# Ce réseau est créé par le docker-compose d'Hydre : démarrer Hydre en premier.
 name: examforge
 
 services:
@@ -45,13 +46,20 @@ services:
       dockerfile: infra/web.Dockerfile
     restart: unless-stopped
     depends_on: [api]
+    # Accès local pour les vérifications (curl sur le VPS) ; le trafic public passe par « edge ».
     ports:
       - "127.0.0.1:${HTTP_PORT:-8080}:80"
-    networks: [internal]
+    networks:
+      internal: {}
+      edge:
+        aliases: [examforge-web]
     mem_limit: 128m
 
 networks:
   internal: {}
+  edge:
+    name: edge
+    external: true
 
 volumes:
   db-data: {}

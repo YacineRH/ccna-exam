@@ -33,7 +33,7 @@ pnpm install && pnpm build
 
 ```sh
 claude mcp add exam-forge \
-  --env EXAMFORGE_API_URL=https://ccna.ton-domaine.fr \
+  --env EXAMFORGE_API_URL=https://ccna.yratech.fr \
   --env EXAMFORGE_SERVICE_TOKEN=<valeur de SERVICE_TOKEN dans le .env du VPS> \
   -- node /chemin/vers/ccna-exam/apps/mcp/dist/server.js
 ```
@@ -47,7 +47,7 @@ claude mcp add exam-forge \
       "command": "node",
       "args": ["/chemin/vers/ccna-exam/apps/mcp/dist/server.js"],
       "env": {
-        "EXAMFORGE_API_URL": "https://ccna.ton-domaine.fr",
+        "EXAMFORGE_API_URL": "https://ccna.yratech.fr",
         "EXAMFORGE_SERVICE_TOKEN": "<SERVICE_TOKEN>"
       }
     }
