@@ -1,0 +1,58 @@
+name: Déploiement
+
+# Déploie sur le VPS OVH après une CI verte sur main. Inactif tant que la variable
+# de dépôt DEPLOY_ENABLED ne vaut pas "true" (Settings > Secrets and variables > Actions).
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: >-
+      vars.DEPLOY_ENABLED == 'true' &&
+      (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Clé SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - name: Mise à jour et redémarrage sur le VPS
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          DIR: ${{ vars.DEPLOY_PATH || '/srv/examforge' }}
+          SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          ssh -i ~/.ssh/id_deploy "$USER@$HOST" "set -e
+            cd '$DIR'
+            git fetch --quiet origin main
+            git checkout --quiet --detach '$SHA'
+            docker compose up -d --build --remove-orphans
+            docker image prune -f >/dev/null"
+      - name: Vérification
+        env:
+          URL: ${{ vars.PUBLIC_URL }}
+        if: ${{ vars.PUBLIC_URL != '' }}
+        run: |
+          for i in $(seq 1 20); do
+            curl -fsS "$URL/api/v1/health" && exit 0
+            sleep 6
+          done
+          echo "L'API ne répond pas après le déploiement" >&2
+          exit 1

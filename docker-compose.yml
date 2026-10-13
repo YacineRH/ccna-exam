@@ -1,0 +1,57 @@
+# ExamForge en production sur le VPS, à côté d'Hydre mais isolé :
+# réseau, base et volumes propres. Seul le port HTTP interne est publié,
+# et uniquement sur 127.0.0.1 : le reverse proxy existant du VPS s'occupe du HTTPS.
+name: examforge
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: examforge
+      POSTGRES_USER: examforge
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?définir POSTGRES_PASSWORD dans .env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U examforge -d examforge"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [internal]
+    mem_limit: 512m
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://examforge:${POSTGRES_PASSWORD}@db:5432/examforge
+      JWT_SECRET: ${JWT_SECRET:?définir JWT_SECRET dans .env}
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-}
+      ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-false}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    networks: [internal]
+    mem_limit: 384m
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/web.Dockerfile
+    restart: unless-stopped
+    depends_on: [api]
+    ports:
+      - "127.0.0.1:${HTTP_PORT:-8080}:80"
+    networks: [internal]
+    mem_limit: 128m
+
+networks:
+  internal: {}
+
+volumes:
+  db-data: {}
