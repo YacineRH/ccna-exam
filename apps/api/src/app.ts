@@ -9,9 +9,11 @@ import { users } from './db/schema.js';
 import type { Env } from './env.js';
 import { HttpError } from './errors.js';
 import authPlugin, { SESSION_COOKIE } from './plugins/auth.js';
+import { adminRoutes } from './routes/admin.js';
 import { attemptRoutes } from './routes/attempts.js';
 import { authRoutes } from './routes/auth.js';
 import { certificationRoutes } from './routes/certifications.js';
+import { statsRoutes } from './routes/stats.js';
 
 export async function buildApp(env: Env, db: Db): Promise<FastifyInstance> {
   const app = Fastify({
@@ -56,6 +58,8 @@ export async function buildApp(env: Env, db: Db): Promise<FastifyInstance> {
       await v1.register(authRoutes(db, { allowRegistration: env.ALLOW_REGISTRATION }), { prefix: '/auth' });
       await v1.register(certificationRoutes(db), { prefix: '/certifications' });
       await v1.register(attemptRoutes(db), { prefix: '/attempts' });
+      await v1.register(statsRoutes(db), { prefix: '/stats' });
+      await v1.register(adminRoutes(db), { prefix: '/admin' });
     },
     { prefix: '/api/v1' },
   );

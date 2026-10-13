@@ -183,6 +183,125 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
     expect(res.json().error.code).toBe('insufficient_questions');
   });
 
+  it('calcule les statistiques du tableau de bord', async () => {
+    const stats = (await call('GET', '/api/v1/stats?certification=ccna')).json();
+    expect(stats.passingScore).toBe(825);
+    expect(stats.exams.taken).toBe(1);
+    expect(stats.recentScores).toHaveLength(1);
+    expect(stats.readiness.estimate).toBe(stats.recentScores[0].scaledScore);
+    expect(stats.readiness.level).toBe('not_ready');
+    expect(stats.domains).toHaveLength(6);
+    // 10 questions d'examen notées + 1 réponse d'entraînement.
+    expect(stats.questions.answered).toBe(11);
+    expect(stats.questions.correct).toBe(3);
+    expect(stats.toReview.length).toBeGreaterThan(0);
+    expect(stats.toReview[0].errors).toBeGreaterThan(0);
+    expect((await call('GET', '/api/v1/stats')).statusCode).toBe(400);
+  });
+
+  describe('administration (serveur MCP)', () => {
+    const service = { authorization: `Bearer ${'s'.repeat(40)}` };
+    const admin = (method: 'GET' | 'POST', url: string, payload?: unknown) =>
+      app.inject({ method, url: `/api/v1/admin${url}`, payload: payload as object, headers: service });
+    const generated = {
+      slug: 'ccna-4.2-ntp-stratum-ai-001',
+      certification: 'ccna',
+      domain: '4.0',
+      subtopic: '4.2',
+      difficulty: 'easy',
+      body: {
+        type: 'mcq_single',
+        stem: 'Que signifie un stratum NTP plus élevé pour une source de temps ?',
+        options: [
+          { id: 'a', text: 'Elle est plus éloignée de l\'horloge de référence.' },
+          { id: 'b', text: 'Elle est plus précise.' },
+          { id: 'c', text: 'Elle utilise un port différent.' },
+        ],
+      },
+      key: { type: 'mcq_single', correct: 'a' },
+      explanation: 'Le stratum compte le nombre de sauts depuis l\'horloge de référence (stratum 0).',
+      distractorNotes: { b: 'Plus loin de la référence signifie en général moins précis.', c: 'NTP utilise toujours UDP 123.' },
+    };
+
+    it('refuse les non-administrateurs', async () => {
+      const user = await app.jwt.sign({ sub: '00000000-0000-0000-0000-000000000000', role: 'user' });
+      const res = await app.inject({ method: 'GET', url: '/api/v1/admin/questions?certification=ccna', headers: { cookie: `ef_session=${user}` } });
+      expect(res.statusCode).toBe(403);
+    });
+
+    it('rejette une question incohérente avec le détail des erreurs', async () => {
+      const res = await admin('POST', '/questions', { question: { ...generated, key: { type: 'mcq_single', correct: 'z' } } });
+      expect(res.statusCode).toBe(400);
+      expect(JSON.stringify(res.json().error.details)).toContain('réponse z absente des options');
+      const misplaced = await admin('POST', '/questions', { question: { ...generated, subtopic: '5.6' } });
+      expect(misplaced.statusCode).toBe(400);
+    });
+
+    it('double passe : validée automatiquement, puis publiée après relecture', async () => {
+      const submitted = await admin('POST', '/questions', { question: generated });
+      expect(submitted.statusCode).toBe(201);
+      expect(submitted.json().status).toBe('validated');
+
+      // Pas encore utilisable dans un examen.
+      const before = (await call('GET', '/api/v1/certifications/ccna')).json().bank.byDomain['4.0'];
+
+      const full = (await admin('GET', `/questions/${generated.slug}`)).json();
+      expect(full.key).toEqual({ type: 'mcq_single', correct: 'a' });
+
+      const reviewed = await admin('POST', `/questions/${generated.slug}/review`, { approved: true });
+      expect(reviewed.json().status).toBe('published');
+      const after = (await call('GET', '/api/v1/certifications/ccna')).json().bank.byDomain['4.0'];
+      expect(after).toBe(before + 1);
+
+      const again = await admin('POST', '/questions', { question: generated });
+      expect(again.json().error.code).toBe('already_published');
+      const twin = await admin('POST', '/questions', { question: { ...generated, slug: 'ccna-4.2-ntp-stratum-ai-002' } });
+      expect(twin.json().error.code).toBe('duplicate_question');
+    });
+
+    it('assemble des examens figés numérotés et signale les manques', async () => {
+      const first = await admin('POST', '/exams', { certification: 'ccna', questionCount: 6 });
+      expect(first.statusCode).toBe(201);
+      expect(first.json()).toMatchObject({ number: 1, questionCount: 6, freshQuestions: 6 });
+      const second = (await admin('POST', '/exams', { certification: 'ccna', questionCount: 6 })).json();
+      expect(second.number).toBe(2);
+      expect(second.freshQuestions).toBe(6);
+      const list = (await admin('GET', '/exams?certification=ccna')).json().exams;
+      expect(list.map((e: { number: number }) => e.number)).toEqual([1, 2]);
+
+      const short = await admin('POST', '/exams', { certification: 'ccna' });
+      expect(short.json().error.code).toBe('insufficient_questions');
+
+      const attempt = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'exam', examNumber: 1 });
+      expect(attempt.statusCode).toBe(201);
+      expect(attempt.json().totalCount).toBe(6);
+    });
+
+    it('déclare une nouvelle certification par simple configuration', async () => {
+      const config = {
+        code: 'secplus',
+        name: 'CompTIA Security+',
+        vendor: 'CompTIA',
+        examCode: 'SY0-701',
+        domains: [
+          { code: '1.0', name: 'General Security Concepts', weight: 0.12 },
+          { code: '2.0', name: 'Threats, Vulnerabilities, and Mitigations', weight: 0.22 },
+          { code: '3.0', name: 'Security Architecture', weight: 0.18 },
+          { code: '4.0', name: 'Security Operations', weight: 0.28 },
+          { code: '5.0', name: 'Security Program Management and Oversight', weight: 0.2 },
+        ],
+        scoring: { min: 100, max: 900, passing: 750 },
+        examFormat: { questionCount: 90, durationMinutes: 90, allowBackNavigation: true },
+        allowedQuestionTypes: ['mcq_single', 'mcq_multi', 'ordering', 'matching'],
+      };
+      expect((await admin('POST', '/certifications', { config })).statusCode).toBe(201);
+      const bad = await admin('POST', '/certifications', { config: { ...config, domains: config.domains.slice(1) } });
+      expect(bad.statusCode).toBe(400);
+      const list = (await call('GET', '/api/v1/certifications')).json().certifications.map((c: { code: string }) => c.code);
+      expect(list).toEqual(['ccna', 'secplus']);
+    });
+  });
+
   it('isole les tentatives entre utilisateurs', async () => {
     const mine = (await call('GET', '/api/v1/attempts')).json().attempts;
     expect(mine.length).toBeGreaterThanOrEqual(2);
