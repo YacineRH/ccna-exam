@@ -1,4 +1,4 @@
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, sql } from 'drizzle-orm';
 import {
   assembleExam,
   createRng,
@@ -220,7 +220,10 @@ export async function answerQuestion(db: Db, attemptId: string, userId: string, 
       .set({
         ...(input.response !== undefined ? { response: input.response, answeredAt: new Date() } : {}),
         ...(input.flagged !== undefined ? { flagged: input.flagged } : {}),
-        ...(input.secondsSpent !== undefined ? { secondsSpent: Math.min(input.secondsSpent, 24 * 3600) } : {}),
+        // Le navigateur envoie un cumul qui repart de zéro après un rechargement : on garde le plus grand.
+        ...(input.secondsSpent !== undefined
+          ? { secondsSpent: sql`greatest(${attemptAnswers.secondsSpent}, ${Math.min(input.secondsSpent, 24 * 3600)})` }
+          : {}),
         ...(result ? { isCorrect: result.correct, partial: result.partial } : {}),
       })
       .where(and(eq(attemptAnswers.attemptId, attemptId), eq(attemptAnswers.questionId, questionId)));
