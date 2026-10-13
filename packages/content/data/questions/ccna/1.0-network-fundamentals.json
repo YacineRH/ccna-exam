@@ -1,0 +1,106 @@
+[
+  {
+    "slug": "ccna-1.6-subnet-26-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un hôte est configuré avec l'adresse 172.16.45.130/26. Complétez les informations de son sous-réseau.",
+      "fields": [
+        { "id": "network", "label": "Adresse réseau" },
+        { "id": "broadcast", "label": "Adresse de broadcast" },
+        { "id": "hosts", "label": "Nombre d'hôtes utilisables" }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "network": { "accepted": ["172.16.45.128"], "normalize": "ipv4" },
+        "broadcast": { "accepted": ["172.16.45.191"], "normalize": "ipv4" },
+        "hosts": { "accepted": ["62"], "normalize": "int" }
+      }
+    },
+    "explanation": "Un /26 donne un masque 255.255.255.192, soit un pas de 256 − 192 = 64 dans le 4ᵉ octet. Les sous-réseaux commencent à .0, .64, .128 et .192 : 130 tombe dans le bloc .128. Le broadcast est l'adresse juste avant le bloc suivant (.191) et il reste 2⁶ − 2 = 62 adresses utilisables.",
+    "reference": "RFC 950"
+  },
+  {
+    "slug": "ccna-1.5-udp-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle affirmation décrit correctement UDP ?",
+      "options": [
+        { "id": "a", "text": "Il établit une connexion par une poignée de main en trois temps avant d'envoyer des données." },
+        { "id": "b", "text": "Il est sans connexion et n'accuse pas réception des segments." },
+        { "id": "c", "text": "Il retransmet les segments perdus grâce aux numéros de séquence." },
+        { "id": "d", "text": "Il ajuste le débit d'envoi avec une fenêtre glissante." }
+      ]
+    },
+    "key": { "type": "mcq_single", "correct": "b" },
+    "explanation": "UDP est un protocole de transport sans connexion et sans accusé de réception : il laisse la fiabilité à l'application, ce qui le rend adapté à la voix, la vidéo, DNS ou DHCP.",
+    "distractorNotes": {
+      "a": "La poignée de main SYN, SYN-ACK, ACK est propre à TCP.",
+      "c": "Les numéros de séquence et la retransmission sont des mécanismes TCP.",
+      "d": "Le fenêtrage (contrôle de flux) est un mécanisme TCP."
+    },
+    "reference": "RFC 768"
+  },
+  {
+    "slug": "ccna-1.9-ipv6-types-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque type d'adresse IPv6 à son préfixe.",
+      "left": [
+        { "id": "gua", "text": "Unicast globale" },
+        { "id": "lla", "text": "Lien local" },
+        { "id": "ula", "text": "Unique locale" },
+        { "id": "mc", "text": "Multicast" }
+      ],
+      "right": [
+        { "id": "p2000", "text": "2000::/3" },
+        { "id": "pfe80", "text": "FE80::/10" },
+        { "id": "pfc00", "text": "FC00::/7" },
+        { "id": "pff00", "text": "FF00::/8" }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": { "gua": "p2000", "lla": "pfe80", "ula": "pfc00", "mc": "pff00" }
+    },
+    "explanation": "Les adresses globales routables sur Internet sont dans 2000::/3. Les adresses de lien local, créées automatiquement sur chaque interface, sont dans FE80::/10. Les adresses uniques locales (l'équivalent des adresses privées) sont dans FC00::/7. Tout le multicast IPv6 est dans FF00::/8.",
+    "reference": "RFC 4291, RFC 4193"
+  },
+  {
+    "slug": "ccna-1.13-unknown-unicast-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un commutateur reçoit sur Fa0/3 (VLAN 10) une trame dont l'adresse MAC de destination n'est pas dans sa table. Que fait-il ?",
+      "options": [
+        { "id": "a", "text": "Il supprime la trame." },
+        { "id": "b", "text": "Il la diffuse sur tous les ports du VLAN 10 sauf Fa0/3." },
+        { "id": "c", "text": "Il la renvoie sur Fa0/3." },
+        { "id": "d", "text": "Il la diffuse sur tous les ports du commutateur, tous VLAN confondus." }
+      ]
+    },
+    "key": { "type": "mcq_single", "correct": "b" },
+    "explanation": "Pour une destination inconnue (unknown unicast), le commutateur inonde la trame sur tous les ports du même VLAN, sauf celui d'arrivée. Il apprend au passage l'adresse MAC source sur Fa0/3.",
+    "distractorNotes": {
+      "a": "Un commutateur ne supprime pas une trame simplement parce que la destination est inconnue.",
+      "c": "Un commutateur ne renvoie jamais une trame sur son port d'arrivée.",
+      "d": "L'inondation reste limitée au domaine de broadcast, donc au VLAN."
+    }
+  }
+]

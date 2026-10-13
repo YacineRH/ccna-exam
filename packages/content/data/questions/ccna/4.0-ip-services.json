@@ -1,0 +1,46 @@
+[
+  {
+    "slug": "ccna-4.1-nat-terms-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le PC 192.168.1.10 accède à un serveur web Internet via R1, qui le traduit en 203.0.113.5. Comment s'appelle l'adresse 203.0.113.5 dans la terminologie NAT de Cisco ?",
+      "options": [
+        { "id": "a", "text": "Inside local" },
+        { "id": "b", "text": "Inside global" },
+        { "id": "c", "text": "Outside local" },
+        { "id": "d", "text": "Outside global" }
+      ]
+    },
+    "key": { "type": "mcq_single", "correct": "b" },
+    "explanation": "« Inside » désigne l'hôte du réseau interne, « global » l'adresse telle qu'on la voit depuis l'extérieur. 203.0.113.5 représente donc le PC interne vu d'Internet : c'est l'adresse inside global.",
+    "distractorNotes": {
+      "a": "L'adresse inside local est 192.168.1.10, l'adresse réelle du PC.",
+      "c": "Outside local est l'adresse du serveur externe telle qu'elle est vue depuis l'intérieur.",
+      "d": "Outside global est l'adresse réelle du serveur web externe."
+    }
+  },
+  {
+    "slug": "ccna-4.3-dhcp-dora-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "body": {
+      "type": "ordering",
+      "stem": "Remettez dans l'ordre les messages échangés lorsqu'un client obtient sa première adresse par DHCPv4.",
+      "items": [
+        { "id": "discover", "text": "DHCPDISCOVER" },
+        { "id": "offer", "text": "DHCPOFFER" },
+        { "id": "request", "text": "DHCPREQUEST" },
+        { "id": "ack", "text": "DHCPACK" }
+      ]
+    },
+    "key": { "type": "ordering", "order": ["discover", "offer", "request", "ack"] },
+    "explanation": "Le client cherche un serveur (Discover), un serveur propose une adresse (Offer), le client la demande formellement (Request) et le serveur confirme le bail (Ack). C'est l'échange DORA.",
+    "reference": "RFC 2131"
+  }
+]

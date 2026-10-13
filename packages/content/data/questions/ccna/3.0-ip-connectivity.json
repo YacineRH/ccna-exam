@@ -1,0 +1,79 @@
+[
+  {
+    "slug": "ccna-3.4-ospf-adjacency-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. R1 et R2 ne forment pas d'adjacence OSPF. Quelles deux actions la rétablissent ?",
+      "exhibit": "R1# show ip ospf interface g0/0\nGigabitEthernet0/0 is up, line protocol is up\n  Internet Address 10.0.12.1/30, Area 0\n  Process ID 1, Router ID 1.1.1.1, Network Type BROADCAST, Cost: 1\n  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5\n\nR2# show ip ospf interface g0/0\nGigabitEthernet0/0 is up, line protocol is up\n  Internet Address 10.0.12.2/30, Area 1\n  Process ID 10, Router ID 2.2.2.2, Network Type BROADCAST, Cost: 1\n  Timer intervals configured, Hello 5, Dead 20, Wait 20, Retransmit 5",
+      "selectCount": 2,
+      "options": [
+        { "id": "a", "text": "Placer l'interface G0/0 de R2 dans l'area 0." },
+        { "id": "b", "text": "Aligner les timers Hello/Dead de R2 sur 10/40." },
+        { "id": "c", "text": "Configurer le même Process ID (1) sur R2." },
+        { "id": "d", "text": "Changer le router-id de R2 en 1.1.1.2." },
+        { "id": "e", "text": "Augmenter le coût OSPF de G0/0 sur R1." }
+      ]
+    },
+    "key": { "type": "mcq_multi", "correct": ["a", "b"] },
+    "explanation": "Deux voisins OSPF doivent avoir le même area ID, les mêmes timers Hello et Dead, le même sous-réseau et la même authentification. Ici l'area (0 contre 1) et les timers (10/40 contre 5/20) diffèrent : il faut corriger les deux.",
+    "distractorNotes": {
+      "c": "Le Process ID est local au routeur et n'est jamais échangé dans les Hello.",
+      "d": "Les router-id sont déjà différents, ce qui est la seule exigence.",
+      "e": "Le coût influence le choix des routes, pas la formation des adjacences."
+    },
+    "reference": "RFC 2328 §10.5"
+  },
+  {
+    "slug": "ccna-3.2-longest-match-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un routeur doit transférer un paquet à destination de 10.1.1.70. Quelle route de l'exhibit utilise-t-il ?",
+      "exhibit": "S*    0.0.0.0/0 [1/0] via 203.0.113.1\nO     10.1.1.0/24 [110/2] via 192.168.1.2\nO     10.1.1.64/26 [110/3] via 192.168.1.6\nS     10.1.1.64/27 [1/0] via 192.168.1.10",
+      "options": [
+        { "id": "a", "text": "0.0.0.0/0 via 203.0.113.1" },
+        { "id": "b", "text": "10.1.1.0/24 via 192.168.1.2" },
+        { "id": "c", "text": "10.1.1.64/26 via 192.168.1.6" },
+        { "id": "d", "text": "10.1.1.64/27 via 192.168.1.10" }
+      ]
+    },
+    "key": { "type": "mcq_single", "correct": "d" },
+    "explanation": "Le routeur retient toujours la correspondance la plus longue (longest prefix match). 10.1.1.64/27 couvre 10.1.1.64 à 10.1.1.95, donc 10.1.1.70, et c'est le préfixe le plus spécifique de la table.",
+    "distractorNotes": {
+      "a": "La route par défaut ne sert que s'il n'existe aucune route plus précise.",
+      "b": "Le /24 correspond aussi, mais il est moins spécifique que le /26 et le /27.",
+      "c": "Le /26 correspond aussi, mais le /27 est plus spécifique. La distance administrative ne compare que des routes de même préfixe."
+    }
+  },
+  {
+    "slug": "ccna-3.2-admin-distance-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un routeur apprend le préfixe 172.16.8.0/22 par OSPF et par EIGRP (route interne), sans route statique. Quelle route est installée dans la table de routage, avec les distances administratives par défaut ?",
+      "options": [
+        { "id": "a", "text": "La route OSPF, car sa distance administrative est de 110." },
+        { "id": "b", "text": "La route EIGRP, car sa distance administrative est de 90." },
+        { "id": "c", "text": "Les deux, en partage de charge." },
+        { "id": "d", "text": "Celle qui a la plus petite métrique, quel que soit le protocole." }
+      ]
+    },
+    "key": { "type": "mcq_single", "correct": "b" },
+    "explanation": "Pour un même préfixe appris par deux protocoles, le routeur garde la source la plus fiable, c'est-à-dire la distance administrative la plus faible : EIGRP interne (90) l'emporte sur OSPF (110).",
+    "distractorNotes": {
+      "a": "Une distance administrative plus élevée signifie une source moins fiable.",
+      "c": "Le partage de charge ne se fait qu'entre routes d'un même protocole avec la même métrique.",
+      "d": "Les métriques de deux protocoles différents ne sont pas comparables entre elles."
+    }
+  }
+]
