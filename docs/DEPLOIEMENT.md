@@ -13,10 +13,10 @@ Dans l'espace client OVH > Domaines > yratech.fr > Zone DNS, ajouter :
 
 ## 2. Brancher le Caddy d'Hydre
 
-Appliquer la modification décrite dans [`infra/hydre/README.md`](../infra/hydre/README.md) (réseau `edge`, import de `caddy-sites/*.caddy`, fichier `ccna.caddy`), puis :
+Merger la pull request [YacineRH/hydre#14](https://github.com/YacineRH/hydre/pull/14) (réseau `edge`, import de `caddy-sites/*.caddy`, fichier `ccna.caddy` ; détails dans [`infra/hydre/README.md`](../infra/hydre/README.md)), puis sur OVH, en gardant la modification locale « tls internal » :
 
 ```sh
-cd ~/hydre && ./scripts/deploy.sh
+cd ~/hydre && cp Caddyfile ~/Caddyfile.ovh.bak && git stash && git pull origin main && git stash pop && ./scripts/deploy.sh
 ```
 
 ## 3. Première installation d'ExamForge

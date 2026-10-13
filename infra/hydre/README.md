@@ -13,7 +13,7 @@ Les deux projets gardent leur base, leurs volumes et leur réseau interne propre
 
 ## Modification à apporter au dépôt Hydre
 
-Trois changements, sans effet sur Hydre tant que `caddy-sites/` ne contient aucun fichier `.caddy`.
+Préparée, validée (`caddy validate`, `docker compose config`, simulation du `git stash` d'OVH) et documentée dans la pull request [YacineRH/hydre#14](https://github.com/YacineRH/hydre/pull/14), branche `feat/examforge-edge`. Pour mémoire, elle contient trois changements, sans effet sur Hydre tant que `caddy-sites/` ne contient aucun fichier `.caddy` :
 
 **1. `Caddyfile`** : ajouter à la fin
 
@@ -49,7 +49,8 @@ networks:
 ```sh
 # DNS OVH : enregistrement A  ccna.yratech.fr → IP du VPS (même IP qu'Hydre)
 
-cd ~/hydre && ./scripts/deploy.sh          # crée le réseau edge et recharge Caddy
+# Hydre (après merge de la PR) : garder la modification locale « tls internal » d'OVH
+cd ~/hydre && cp Caddyfile ~/Caddyfile.ovh.bak && git stash && git pull origin main && git stash pop && ./scripts/deploy.sh
 cd ~/examforge && docker compose up -d --build
 curl -s http://127.0.0.1:8080/api/v1/health # {"status":"ok"}
 ```
