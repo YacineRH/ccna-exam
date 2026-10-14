@@ -1,0 +1,67 @@
+# ExamForge en production sur le VPS OVH, à côté d'Hydre mais isolé : base, volumes
+# et réseau interne propres. Le Caddy d'Hydre (seul à écouter sur 80/443) fait le HTTPS
+# de ccna.yratech.fr et relaie vers le service web par le réseau partagé « edge ».
+# Ce réseau est créé par le docker-compose d'Hydre : démarrer Hydre en premier.
+name: examforge
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: examforge
+      POSTGRES_USER: examforge
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?définir POSTGRES_PASSWORD dans .env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U examforge -d examforge"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [internal]
+    mem_limit: 512m
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://examforge:${POSTGRES_PASSWORD}@db:5432/examforge
+      JWT_SECRET: ${JWT_SECRET:?définir JWT_SECRET dans .env}
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-}
+      ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-false}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    networks: [internal]
+    mem_limit: 384m
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/web.Dockerfile
+    restart: unless-stopped
+    depends_on: [api]
+    # Sur le VPS : 127.0.0.1 uniquement (vérifications locales), le trafic public passe par « edge ».
+    # Sur un serveur du réseau local : BIND_IP=<IP LAN du serveur> dans .env.
+    ports:
+      - "${BIND_IP:-127.0.0.1}:${HTTP_PORT:-8080}:80"
+    networks:
+      internal: {}
+      edge:
+        aliases: [examforge-web]
+    mem_limit: 128m
+
+networks:
+  internal: {}
+  edge:
+    name: edge
+    external: true
+
+volumes:
+  db-data: {}
