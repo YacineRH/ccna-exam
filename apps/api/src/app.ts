@@ -28,7 +28,7 @@ export async function buildApp(env: Env, db: Db): Promise<FastifyInstance> {
   await app.register(jwt, { secret: env.JWT_SECRET, cookie: { cookieName: SESSION_COOKIE, signed: false } });
   await app.register(authPlugin, {
     sessionTtlHours: env.SESSION_TTL_HOURS,
-    secureCookies: env.NODE_ENV === 'production',
+    secureCookies: env.NODE_ENV === 'production' && env.COOKIE_SECURE,
     serviceToken: env.SERVICE_TOKEN,
     resolveServiceUser: async () => {
       const [admin] = await db.select({ id: users.id }).from(users).where(eq(users.role, 'admin')).orderBy(asc(users.createdAt)).limit(1);

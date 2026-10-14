@@ -2,6 +2,37 @@
 
 ExamForge tourne sur le même VPS qu'Hydre, **à côté** et non dedans : conteneurs, base, volumes et réseau interne propres. Le Caddy d'Hydre, seul à écouter sur 80/443, fait le HTTPS de `ccna.yratech.fr` et relaie vers ExamForge par le réseau Docker partagé `edge`. Le détail et la modification à apporter à Hydre sont dans [`infra/hydre/README.md`](../infra/hydre/README.md).
 
+## 0. Sur un serveur du réseau local (test avant OVH)
+
+Pour essayer ExamForge sur une VM du réseau local, sans le Caddy d'Hydre devant ni HTTPS :
+
+```sh
+git clone https://github.com/YacineRH/ccna-exam.git ~/examforge
+cd ~/examforge
+git switch claude/youthful-noether-h8ry6b    # tant que la PR n'est pas fusionnée dans main
+cp .env.example .env
+nano .env
+```
+
+Dans `.env` :
+
+- `POSTGRES_PASSWORD`, `JWT_SECRET` et `SERVICE_TOKEN` : une valeur différente pour chacun, générée avec `openssl rand -base64 48` ;
+- `BIND_IP=192.168.1.125` (IP du serveur) et `HTTP_PORT=8090` : Hydre garde 80/443 sur la même IP, ExamForge écoute sur 8090 ;
+- `COOKIE_SECURE=false` : sans HTTPS, le navigateur refuserait sinon le cookie de session et la connexion échouerait.
+
+Puis :
+
+```sh
+docker network inspect edge >/dev/null 2>&1 || docker network create edge   # réseau attendu par le compose
+docker compose up -d --build
+docker compose ps                                  # db, api et web « running »
+curl -s http://192.168.1.125:8090/api/v1/health    # {"status":"ok"}
+```
+
+Ouvrir `http://192.168.1.125:8090` depuis un poste du réseau et créer le compte (le premier devient administrateur).
+
+`COOKIE_SECURE=false` est réservé au réseau local : ne jamais l'utiliser sur un serveur joignable depuis Internet. Si la VM fait aussi tourner Hydre avec la branche `feat/examforge-edge`, on peut à la place passer par son Caddy en HTTPS (`tls internal`) avec un fichier `caddy-sites/ccna.caddy` adapté au nom local, et garder `COOKIE_SECURE=true`.
+
 ## 1. DNS chez OVH
 
 Dans l'espace client OVH > Domaines > yratech.fr > Zone DNS, ajouter :

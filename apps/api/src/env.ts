@@ -13,6 +13,14 @@ const envSchema = z.object({
     .enum(['true', 'false'])
     .default('false')
     .transform((v) => v === 'true'),
+  /**
+   * Cookie de session « Secure » (HTTPS uniquement). À désactiver seulement pour un test en HTTP simple
+   * sur le réseau local : sans HTTPS, le navigateur refuserait sinon le cookie et la connexion échouerait.
+   */
+  COOKIE_SECURE: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
   /** Clé de service pour le serveur MCP (outils d'administration et de génération). */
   SERVICE_TOKEN: z.string().min(32).optional(),
   CORS_ORIGIN: z.string().optional(),

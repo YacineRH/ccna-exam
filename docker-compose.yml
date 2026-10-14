@@ -36,6 +36,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:?définir JWT_SECRET dans .env}
       SERVICE_TOKEN: ${SERVICE_TOKEN:-}
       ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-false}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
       LOG_LEVEL: ${LOG_LEVEL:-info}
     networks: [internal]
     mem_limit: 384m
@@ -46,9 +47,10 @@ services:
       dockerfile: infra/web.Dockerfile
     restart: unless-stopped
     depends_on: [api]
-    # Accès local pour les vérifications (curl sur le VPS) ; le trafic public passe par « edge ».
+    # Sur le VPS : 127.0.0.1 uniquement (vérifications locales), le trafic public passe par « edge ».
+    # Sur un serveur du réseau local : BIND_IP=<IP LAN du serveur> dans .env.
     ports:
-      - "127.0.0.1:${HTTP_PORT:-8080}:80"
+      - "${BIND_IP:-127.0.0.1}:${HTTP_PORT:-8080}:80"
     networks:
       internal: {}
       edge:
