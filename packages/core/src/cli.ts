@@ -1,27 +1,33 @@
+import { compressIpv6 } from './ipv6.js';
+
 /**
  * Normalisation des commandes Cisco IOS, pour accepter les variantes équivalentes :
  * abréviations non ambiguës ("conf t", "int g0/0", "sh ip int br"), casse, espaces,
- * noms d'interface ("Gi0/0" = "GigabitEthernet0/0") et noms de ports ("www" = 80).
+ * noms d'interface ("Gi0/0" = "GigabitEthernet0/0"), noms de ports ("www" = 80),
+ * plages ("g1/0/1-2" = "g1/0/1 - 2") et adresses IPv6 (forme canonique RFC 5952).
  *
  * Comme IOS, un mot abrégé n'est développé que s'il ne correspond qu'à un seul mot-clé.
  * Un préfixe ambigu reste tel quel, et ne correspondra donc pas à la forme attendue.
  */
 
 const KEYWORDS = [
-  'access', 'access-class', 'access-group', 'access-list', 'active', 'address', 'any', 'area', 'auto',
-  'bandwidth', 'banner', 'boot', 'brief', 'cdp', 'channel-group', 'class', 'clock', 'configure',
-  'console', 'copy', 'crypto', 'default', 'default-gateway', 'default-information', 'default-router',
-  'delay', 'deny', 'description', 'desirable', 'disable', 'dns-server', 'domain-lookup', 'domain-name',
-  'dot1q', 'duplex', 'dynamic', 'enable', 'encapsulation', 'end', 'eq', 'established', 'excluded-address',
-  'exec-timeout', 'exit', 'extended', 'gateway', 'generate', 'gt', 'helper-address', 'host', 'hostname',
-  'icmp', 'inside', 'interface', 'interfaces', 'ip', 'ipv6', 'key', 'line', 'lldp', 'local', 'logging', 'login', 'lt',
+  'access', 'access-class', 'access-group', 'access-list', 'active', 'address', 'algorithm-type', 'allowed',
+  'any', 'area', 'arp', 'auto', 'auto-cost',
+  'bandwidth', 'banner', 'boot', 'bpduguard', 'brief', 'cdp', 'channel-group', 'class', 'clock', 'configure',
+  'console', 'copy', 'cost', 'crypto', 'default', 'default-gateway', 'default-information', 'default-router',
+  'delay', 'deny', 'description', 'desirable', 'dhcp', 'disable', 'dns-server', 'domain-lookup', 'domain-name',
+  'dot1q', 'duplex', 'dynamic', 'edge', 'enable', 'encapsulation', 'end', 'eq', 'established', 'excluded-address',
+  'exec-timeout', 'exit', 'extended', 'full', 'gateway', 'generate', 'gt', 'half', 'helper-address', 'host', 'hostname',
+  'icmp', 'input', 'inside', 'inspection', 'interface', 'interfaces', 'ip', 'ipv6', 'key', 'line', 'lldp', 'local',
+  'logging', 'login', 'lt',
   'mac-address', 'mask', 'maximum', 'mode', 'modulus', 'name', 'nat', 'native', 'neighbor', 'neq',
-  'network', 'no', 'ntp', 'ospf', 'outside', 'overload', 'passive-interface', 'password', 'permit',
-  'pool', 'port-security', 'portfast', 'priority', 'range', 'remark', 'restrict', 'rip', 'route',
-  'router', 'router-id', 'rsa', 'running-config', 'secret', 'server', 'service', 'show', 'shutdown',
-  'snmp-server', 'source', 'spanning-tree', 'speed', 'ssh', 'standard', 'standby', 'startup-config',
-  'static', 'sticky', 'switchport', 'tcp', 'terminal', 'transport', 'trunk', 'udp', 'unicast-routing',
-  'username', 'version', 'violation', 'vlan', 'vty', 'write',
+  'network', 'no', 'nonegotiate', 'ntp', 'originate', 'ospf', 'outside', 'overload', 'passive-interface', 'password',
+  'permit', 'point-to-point', 'pool', 'port-security', 'portfast', 'preempt', 'primary', 'priority', 'rapid-pvst',
+  'range', 'reference-bandwidth', 'remark', 'restrict', 'rip', 'route',
+  'router', 'router-id', 'rsa', 'running-config', 'scrypt', 'secondary', 'secret', 'server', 'service', 'show',
+  'shutdown', 'snmp-server', 'snooping', 'source', 'spanning-tree', 'speed', 'ssh', 'standard', 'standby',
+  'startup-config', 'static', 'sticky', 'switchport', 'tcp', 'terminal', 'transport', 'trunk', 'trust', 'udp',
+  'unicast-routing', 'username', 'version', 'violation', 'vlan', 'voice', 'vty', 'write',
 ];
 
 /** Raccourcis d'usage courant qui ne sont pas des préfixes uniques dans la liste ci-dessus. */
@@ -36,6 +42,29 @@ const ALIASES: Record<string, string> = {
   en: 'enable',
   shut: 'shutdown',
   wr: 'write',
+  // Abréviations ambiguës dans une liste à plat, mais sans ambiguïté là où IOS les attend.
+  con: 'console',
+  mo: 'mode',
+  tr: 'trunk',
+  stan: 'standby',
+  stand: 'standby',
+};
+
+/**
+ * Après certains mots, IOS ne propose que quelques mots-clés : une abréviation ambiguë dans la
+ * liste à plat se lit d'abord parmi eux ("transport in ssh", "int ra g1/0/1 - 2", "snooping tru").
+ */
+const NEXT_KEYWORDS: Record<string, string[]> = {
+  root: ['primary', 'secondary'],
+  interface: ['range'],
+  mode: ['access', 'trunk', 'active', 'passive', 'on', 'auto', 'desirable', 'dynamic', 'rapid-pvst', 'pvst', 'mst'],
+  switchport: ['access', 'mode', 'trunk', 'voice', 'port-security', 'nonegotiate', 'priority', 'host'],
+  transport: ['input', 'output', 'preferred'],
+  snooping: ['trust', 'vlan', 'limit', 'information', 'database'],
+  'access-list': ['standard', 'extended', 'resequence'],
+  nat: ['inside', 'outside', 'pool', 'translation'],
+  source: ['list', 'static', 'route-map'],
+  rsa: ['general-keys', 'modulus', 'usage-keys', 'label', 'exportable'],
 };
 
 /** Ports nommés que IOS affiche ou accepte à la place du numéro. */
@@ -71,7 +100,10 @@ const INTERFACE_TYPES: [RegExp, string][] = [
 
 const INTERFACE_CONTEXT = ['interface', 'interfaces', 'range', 'passive-interface', ',', '-'];
 
-function expandKeyword(token: string): string {
+function expandKeyword(token: string, prev: string | undefined): string {
+  const next = prev ? NEXT_KEYWORDS[prev] : undefined;
+  const scoped = next?.filter((k) => k.startsWith(token));
+  if (scoped?.length === 1) return scoped[0] as string;
   if (ALIASES[token]) return ALIASES[token];
   if (KEYWORDS.includes(token)) return token;
   const matches = KEYWORDS.filter((k) => k.startsWith(token));
@@ -91,7 +123,15 @@ function normalizeInterface(token: string): string | null {
 
 /** Forme canonique d'une ligne de commande IOS. */
 export function normalizeCommand(line: string): string {
-  const tokens = line.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const tokens = line
+    .trim()
+    .toLowerCase()
+    // Listes et plages : "g1/0/1,g1/0/3" et "g1/0/1-2" se lisent comme "g1/0/1 , g1/0/3" et "g1/0/1 - 2".
+    .replace(/,/g, ' , ')
+    .replace(/(\d)-(?=\d)/g, '$1 - ')
+    .replace(/(\s)-(?=\d)/g, '$1- ')
+    .split(/\s+/)
+    .filter(Boolean);
   const out: string[] = [];
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i] as string;
@@ -108,7 +148,8 @@ export function normalizeCommand(line: string): string {
       continue;
     }
     const next = tokens[i + 1];
-    if (expectsInterface && next && /^\d[\d/.:]*$/.test(next)) {
+    // "interface Gi 0/0", et "GigabitEthernet 0/1" ailleurs quand le numéro porte un « / ».
+    if (next && /^\d[\d/.:]*$/.test(next) && (expectsInterface || (/^[a-z-]+$/.test(token) && next.includes('/')))) {
       const joined = normalizeInterface(token + next);
       if (joined) {
         out.push(joined);
@@ -123,8 +164,16 @@ export function normalizeCommand(line: string): string {
       continue;
     }
 
+    // Adresses IPv6, avec ou sans longueur de préfixe : forme canonique.
+    const v6 = /^([0-9a-f:]+)(\/\d{1,3})?$/.exec(token);
+    const compressed = v6 && token.includes(':') ? compressIpv6(v6[1] as string) : null;
+    if (compressed) {
+      out.push(compressed + (v6?.[2] ?? ''));
+      continue;
+    }
+
     // Les valeurs (nombres, adresses, noms entre guillemets, mots de passe) restent telles quelles.
-    if (/^[a-z][a-z-]*$/.test(token)) out.push(expandKeyword(token));
+    if (/^[a-z][a-z-]*$/.test(token)) out.push(expandKeyword(token, prev));
     else out.push(token);
   }
   return out.join(' ');

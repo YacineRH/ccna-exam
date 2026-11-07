@@ -26,13 +26,31 @@ const WRONG: GradeResult = { correct: false, partial: 0 };
 function normalizeField(value: string, mode: 'text' | 'ipv4' | 'int'): string | null {
   const v = value.trim();
   if (mode === 'ipv4') return normalizeIpv4(v);
-  if (mode === 'int') return /^-?\d+$/.test(v) ? String(Number(v)) : null;
+  if (mode === 'int') {
+    // Séparateurs de milliers usuels en français : espace, espace insécable, espace fine.
+    const digits = v.replace(/[\s\u00a0\u202f\u2009]/g, '');
+    return /^-?\d+$/.test(digits) ? String(Number(digits)) : null;
+  }
   return v.toLowerCase().replace(/\s+/g, ' ');
 }
 
 function ratio(ok: number, total: number): GradeResult {
   const partial = total === 0 ? 0 : ok / total;
   return { correct: total > 0 && ok === total, partial };
+}
+
+/** Associe chaque commande attendue à une ligne saisie, sans tenir compte de l'ordre. */
+function matchUnordered(lines: readonly string[], expected: readonly (readonly string[])[]): { ok: number; extra: number } {
+  const remaining = [...lines];
+  let ok = 0;
+  for (const accepted of expected) {
+    const idx = remaining.findIndex((l) => commandMatches(l, accepted));
+    if (idx >= 0) {
+      ok++;
+      remaining.splice(idx, 1);
+    }
+  }
+  return { ok, extra: remaining.length };
 }
 
 /** Corrige une réponse. Une réponse d'un autre type que la question est fausse. */
@@ -72,24 +90,24 @@ export function grade(key: AnswerKey, response: Response | null | undefined): Gr
       const lines = response.lines.map((l) => l.trim()).filter(Boolean);
       if (key.ordered) {
         let ok = 0;
-        key.commands.forEach((accepted, i) => {
+        const free = new Map((key.freeOrder ?? []).map(([start, end]) => [start, end]));
+        for (let i = 0; i < key.commands.length; i++) {
+          const end = free.get(i);
+          if (end !== undefined) {
+            // Plage à ordre libre : mêmes lignes attendues, dans n'importe quel ordre.
+            ok += matchUnordered(lines.slice(i, end + 1), key.commands.slice(i, end + 1)).ok;
+            i = end;
+            continue;
+          }
           const line = lines[i];
-          if (line !== undefined && commandMatches(line, accepted)) ok++;
-        });
+          if (line !== undefined && commandMatches(line, key.commands[i] as string[])) ok++;
+        }
         const result = ratio(ok, key.commands.length);
         return lines.length === key.commands.length ? result : { correct: false, partial: result.partial };
       }
-      const remaining = [...lines];
-      let ok = 0;
-      for (const accepted of key.commands) {
-        const idx = remaining.findIndex((l) => commandMatches(l, accepted));
-        if (idx >= 0) {
-          ok++;
-          remaining.splice(idx, 1);
-        }
-      }
+      const { ok, extra } = matchUnordered(lines, key.commands);
       const result = ratio(ok, key.commands.length);
-      return remaining.length === 0 ? result : { correct: false, partial: result.partial };
+      return extra === 0 ? result : { correct: false, partial: result.partial };
     }
 
     case 'ordering': {
