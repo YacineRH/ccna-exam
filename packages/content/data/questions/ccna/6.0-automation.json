@@ -51,7 +51,7 @@
       "options": [
         {
           "id": "a",
-          "text": "Elle relie le contrôleur aux applications et aux scripts d'automatisation."
+          "text": "Elle relie le contrôleur aux applications et aux scripts, par exemple avec une API REST."
         },
         {
           "id": "b",
@@ -59,7 +59,7 @@
         },
         {
           "id": "c",
-          "text": "Elle relie deux contrôleurs d'un même cluster."
+          "text": "Elle relie entre eux les contrôleurs d'un même cluster pour synchroniser leur état."
         },
         {
           "id": "d",
@@ -76,7 +76,8 @@
       "a": "C'est le rôle de l'interface nord (northbound).",
       "c": "Les échanges entre contrôleurs passent par des interfaces est-ouest.",
       "d": "Le trafic des utilisateurs relève du plan de données, pas d'une interface du contrôleur."
-    }
+    },
+    "reference": "RFC 7426 (SDN : couches et terminologie ; interfaces sud CPSI et MPSI)"
   },
   {
     "slug": "ccna-6.5-http-crud-001",
@@ -103,6 +104,10 @@
         {
           "id": "delete",
           "text": "DELETE"
+        },
+        {
+          "id": "patch",
+          "text": "PATCH"
         }
       ],
       "right": [
@@ -130,10 +135,12 @@
         "post": "create",
         "get": "read",
         "put": "update",
-        "delete": "del"
+        "delete": "del",
+        "patch": "update"
       }
     },
-    "explanation": "POST crée une ressource, GET la lit, PUT la remplace (mise à jour) et DELETE la supprime. PATCH, non listé ici, sert aux mises à jour partielles."
+    "explanation": "POST crée une ressource, GET la lit, PUT la remplace (mise à jour) et DELETE la supprime. PUT et PATCH réalisent tous deux une mise à jour : PUT remplace la représentation entière de la ressource, PATCH n'en modifie qu'une partie.",
+    "reference": "RFC 9110, section 9.3 (définitions des méthodes) ; RFC 5789 (PATCH)"
   },
   {
     "slug": "ccna-6.6-ansible-agentless-001",
@@ -172,7 +179,8 @@
       "b": "Puppet repose classiquement sur un agent qui récupère sa configuration (modèle « pull »).",
       "c": "Chef utilise aussi un agent et des recettes en Ruby.",
       "d": "Terraform décrit l'infrastructure en HCL et passe par les API des fournisseurs ; il ne s'appuie pas sur des playbooks YAML."
-    }
+    },
+    "reference": "Documentation Ansible, « Ansible for Network Automation » (plugins de connexion network_cli, netconf et httpapi)"
   },
   {
     "slug": "ccna-6.1-automation-consistency-001",
@@ -227,7 +235,7 @@
       "options": [
         {
           "id": "a",
-          "text": "Un historique de chaque changement (auteur, date, contenu) et la possibilité de revenir à une version antérieure."
+          "text": "Un historique de chaque changement et la possibilité de revenir à une version antérieure."
         },
         {
           "id": "b",
@@ -239,7 +247,7 @@
         },
         {
           "id": "d",
-          "text": "La détection des écarts entre la configuration réelle d'un équipement et la configuration de référence."
+          "text": "La détection des écarts entre la configuration réelle et la configuration de référence."
         },
         {
           "id": "e",
@@ -267,7 +275,7 @@
     "certification": "ccna",
     "domain": "6.0",
     "subtopic": "6.1",
-    "difficulty": "hard",
+    "difficulty": "medium",
     "body": {
       "type": "mcq_single",
       "stem": "Un script non testé a poussé en quelques minutes une ACL erronée sur les lignes VTY de 400 routeurs, coupant tout accès SSH d'administration. Quelle pratique aurait le mieux limité l'impact de ce type d'erreur ?",
@@ -294,9 +302,9 @@
       "type": "mcq_single",
       "correct": "b"
     },
-    "explanation": "La vitesse et la portée de l'automatisation jouent dans les deux sens : une erreur est reproduite partout aussi vite qu'une bonne modification. On limite ce « rayon d'impact » en testant le changement en maquette, en le déployant par vagues (groupe pilote, puis le reste du parc) avec une vérification après chaque vague, et en prévoyant un retour arrière. Sur IOS, un « reload in » programmé avant le changement, ou « configure replace » vers une configuration sauvegardée, sert de filet de sécurité. Le problème n'est pas le script, mais l'absence de validation et de déploiement progressif.",
+    "explanation": "La vitesse et la portée de l'automatisation jouent dans les deux sens : une erreur est reproduite partout aussi vite qu'une bonne modification. On limite ce « rayon d'impact » en testant le changement en maquette, en le déployant par vagues (groupe pilote, puis le reste du parc) avec une vérification après chaque vague, et en prévoyant un retour arrière. Sur IOS, un « reload in » programmé avant le changement, ou « configure terminal revert timer 10 » (fonction Configuration Rollback Confirmed Change, qui suppose une archive configurée), qui restaure automatiquement la configuration précédente si le changement n'est pas confirmé par « configure confirm », sert de filet de sécurité. Le problème n'est pas le script, mais l'absence de validation et de déploiement progressif.",
     "distractorNotes": {
-      "a": "La saisie manuelle sur 400 routeurs est lente et ajoute des fautes de frappe ; une ACL fausse resterait fausse, appliquée simplement plus lentement.",
+      "a": "L'erreur serait sans doute repérée dès le premier routeur, mais au prix de jours de saisie et de nouvelles fautes de frappe ; un déploiement sur un groupe pilote détecte l'erreur aussi tôt, sans renoncer à l'automatisation.",
       "c": "Le parallélisme accélère encore la propagation de l'erreur : tous les routeurs sont touchés avant qu'on ait pu la détecter.",
       "d": "Le transport ne valide pas le contenu : une fois appliquée, l'ACL erronée bloquerait toujours les sessions SSH d'administration."
     },
@@ -347,7 +355,7 @@
     "certification": "ccna",
     "domain": "6.0",
     "subtopic": "6.2",
-    "difficulty": "medium",
+    "difficulty": "easy",
     "body": {
       "type": "mcq_single",
       "stem": "Une entreprise doit appliquer une nouvelle politique QoS sur 250 commutateurs d'accès gérés par Cisco Catalyst Center. Comment procède-t-on dans ce modèle piloté par contrôleur ?",
@@ -366,7 +374,7 @@
         },
         {
           "id": "d",
-          "text": "On définit la politique une fois dans le contrôleur, qui la traduit et la déploie sur les commutateurs."
+          "text": "On définit la politique une fois dans le contrôleur, qui la déploie sur chaque commutateur."
         }
       ]
     },
@@ -390,15 +398,15 @@
     "difficulty": "hard",
     "body": {
       "type": "mcq_single",
-      "stem": "Un campus est géré par Cisco Catalyst Center, qui configure les commutateurs et collecte leur télémétrie pour l'assurance. Le serveur Catalyst Center devient injoignable pendant deux heures. Quel est l'effet le plus probable sur le réseau ?",
+      "stem": "Un campus est géré par Cisco Catalyst Center, qui configure les commutateurs et collecte leur télémétrie pour sa fonction Assurance. Le serveur Catalyst Center devient injoignable pendant deux heures. Quel est l'effet le plus probable sur le réseau ?",
       "options": [
         {
           "id": "a",
-          "text": "Le trafic continue d'être transféré ; seuls les nouveaux déploiements et l'assurance sont indisponibles."
+          "text": "Le trafic est toujours transféré ; seuls le provisionnement et l'Assurance sont indisponibles."
         },
         {
           "id": "b",
-          "text": "Le trafic des utilisateurs s'arrête, car il est relayé par le contrôleur."
+          "text": "Le trafic des utilisateurs s'arrête, car les commutateurs le font passer par le contrôleur."
         },
         {
           "id": "c",
@@ -414,7 +422,7 @@
       "type": "mcq_single",
       "correct": "a"
     },
-    "explanation": "Catalyst Center calcule et pousse les configurations puis supervise le réseau, mais il n'est pas dans le chemin des données. Les commutateurs gardent leur configuration et continuent d'exécuter localement leurs plans de contrôle (OSPF, STP, LISP en SD-Access) et de données. Pendant la panne, on perd seulement les fonctions centrales : provisionnement, modification des politiques, assurance. Dans un SDN de type OpenFlow pur, l'impact pourrait être plus fort, car les nouveaux flux ne pourraient plus être programmés par le contrôleur.",
+    "explanation": "Catalyst Center calcule et pousse les configurations puis supervise le réseau, mais il n'est pas dans le chemin des données. Les commutateurs gardent leur configuration et continuent d'exécuter localement leurs plans de contrôle (OSPF, STP, LISP en SD-Access) et de données. Pendant la panne, on perd seulement les fonctions centrales : provisionnement, modification des politiques, Assurance. Dans un SDN de type OpenFlow pur, l'impact pourrait être plus fort, car les nouveaux flux ne pourraient plus être programmés par le contrôleur.",
     "distractorNotes": {
       "b": "Le trafic des utilisateurs ne transite pas par Catalyst Center ; il est transféré par les commutateurs eux-mêmes.",
       "c": "Les plans de contrôle (OSPF, STP, LISP…) s'exécutent sur les commutateurs, pas sur Catalyst Center : leurs tables restent en place.",
@@ -481,11 +489,11 @@
         "north": "rest"
       }
     },
-    "explanation": "Dans SD-Access, le trafic des terminaux est encapsulé dans VXLAN entre les nœuds de la fabric (plan de données). LISP sert de plan de contrôle : le control plane node enregistre l'emplacement de chaque terminal (EID) derrière l'adresse de son edge node (RLOC). La segmentation repose sur Cisco TrustSec : l'étiquette SGT, transportée dans l'en-tête VXLAN, permet d'appliquer la politique entre groupes. Catalyst Center expose enfin ses fonctions aux applications et aux scripts par une API REST nord, l'Intent API.",
+    "explanation": "Dans SD-Access, le trafic des terminaux est encapsulé dans VXLAN entre les nœuds de la fabric (plan de données). LISP sert de plan de contrôle : le control plane node enregistre l'emplacement de chaque terminal (EID) derrière l'adresse de son edge node (RLOC). La segmentation repose sur Cisco TrustSec : l'étiquette SGT, transportée dans le champ Group Policy ID de l'en-tête VXLAN (format VXLAN-GPO), permet d'appliquer la politique entre groupes. Catalyst Center expose enfin ses fonctions aux applications et aux scripts par une API REST nord, l'Intent API.",
     "distractorNotes": {
       "openflow": "OpenFlow est un protocole sud employé par certains contrôleurs SDN (OpenDaylight, par exemple) ; SD-Access ne l'utilise pas."
     },
-    "reference": "Cisco Software-Defined Access Solution Design Guide (CVD) ; RFC 7348 (VXLAN) ; RFC 9301 (plan de contrôle LISP)"
+    "reference": "Cisco Software-Defined Access Solution Design Guide (CVD) ; RFC 7348 (VXLAN) ; RFC 9301 (plan de contrôle LISP) ; draft-smith-vxlan-group-policy (VXLAN-GPO)"
   },
   {
     "slug": "ccna-6.3-underlay-overlay-001",
@@ -599,7 +607,7 @@
         },
         {
           "id": "d",
-          "text": "Rédiger, à partir d'une demande en langage naturel, un résumé d'incident ou un brouillon de configuration."
+          "text": "Rédiger un brouillon de configuration à partir d'une demande formulée en langage naturel."
         }
       ]
     },

@@ -126,7 +126,7 @@
     "difficulty": "medium",
     "body": {
       "type": "mcq_multi",
-      "stem": "Quelles deux affirmations sur les architectures sans-fil Cisco sont correctes ?",
+      "stem": "Quelles deux affirmations sur les architectures sans fil Cisco sont correctes ?",
       "selectCount": 2,
       "options": [
         {
@@ -161,7 +161,7 @@
     "explanation": "Un AP autonome porte toute sa configuration (SSID, VLAN, sécurité) et se gère un par un, en CLI ou en GUI. Avec Meraki, les AP sont gérés depuis le tableau de bord cloud, mais seul le trafic de gestion part vers le cloud : les données des clients restent sur le réseau local. Avec un contrôleur (WLC centralisé ou EWC), les AP lightweight fonctionnent en split-MAC et reçoivent leur configuration du contrôleur par CAPWAP.",
     "distractorNotes": {
       "b": "C'est l'inverse : en split-MAC, les fonctions temps réel (beacons, probe responses, ACK et retransmissions) restent sur l'AP ; le WLC gère l'authentification, l'association, l'itinérance et la RF.",
-      "c": "L'EWC s'exécute sur un AP Catalyst 9100 qui joue le rôle de contrôleur pour les autres AP ; la version machine virtuelle est le Catalyst 9800-CL.",
+      "c": "L'EWC est intégré à un équipement d'accès : un AP Catalyst 9100 qui sert de contrôleur aux autres AP ou, en SD-Access, un commutateur Catalyst 9000. La version machine virtuelle, pour un data center ou un cloud, est le Catalyst 9800-CL.",
       "e": "Dans un déploiement centralisé, les WLAN se définissent une seule fois sur le WLC, qui pousse la configuration aux AP par CAPWAP."
     },
     "reference": "RFC 5416 (CAPWAP binding IEEE 802.11), section 2.2.1 ; Cisco Embedded Wireless Controller on Catalyst Access Points Configuration Guide"

@@ -118,7 +118,7 @@
     "difficulty": "medium",
     "body": {
       "type": "mcq_single",
-      "stem": "Deux routeurs sont reliés par une liaison point à point et l'on veut consommer le moins d'adresses IPv4 possible. Lequel de ces plans d'adressage est valide et le plus économe ?",
+      "stem": "Deux routeurs sont reliés directement par leurs interfaces GigabitEthernet0/0 (liaison Ethernet point à point) et l'on veut consommer le moins d'adresses IPv4 possible. Lequel de ces plans d'adressage est valide et le plus économe ?",
       "options": [
         {
           "id": "a",
@@ -146,7 +146,7 @@
     "distractorNotes": {
       "a": "Plan valide, mais un /30 réserve quatre adresses (réseau, deux hôtes, broadcast) pour deux interfaces : il est deux fois moins économe que le /31.",
       "c": "10.99.0.1/31 appartient au bloc 10.99.0.0/31 et 10.99.0.2/31 au bloc 10.99.0.2/31 : les deux routeurs ne sont pas dans le même sous-réseau.",
-      "d": "Un /32 ne contient qu'une seule adresse : chaque routeur serait seul dans son sous-réseau et aucune route connectée ne mènerait à l'autre."
+      "d": "Un /32 ne contient qu'une seule adresse : chaque routeur serait seul dans son sous-réseau, sans réseau commun avec l'autre ni route connectée vers lui."
     },
     "reference": "RFC 3021"
   },
@@ -201,10 +201,10 @@
     "reference": "RFC 950"
   },
   {
-    "slug": "ccna-1.7-apipa-001",
+    "slug": "ccna-1.10-apipa-001",
     "certification": "ccna",
     "domain": "1.0",
-    "subtopic": "1.7",
+    "subtopic": "1.10",
     "difficulty": "easy",
     "body": {
       "type": "mcq_single",
@@ -248,13 +248,13 @@
     "difficulty": "medium",
     "body": {
       "type": "mcq_multi",
-      "stem": "Reportez-vous à l'exhibit. R1 est le routeur de bordure d'une PME ; son interface G0/2 est reliée au FAI. Quelles deux affirmations sont vraies ?",
+      "stem": "Reportez-vous à l'exhibit. R1 est le routeur de bordure d'une PME ; ses LAN (G0/0 et G0/1) sont en /24 et son interface G0/2 est reliée au FAI. Quelles deux affirmations sont vraies ?",
       "exhibit": "R1# show ip interface brief\nInterface              IP-Address      OK? Method Status                Protocol\nGigabitEthernet0/0     192.168.10.1    YES manual up                    up\nGigabitEthernet0/1     172.20.5.1      YES manual up                    up\nGigabitEthernet0/2     100.64.12.2     YES DHCP   up                    up\nLoopback0              10.255.0.1      YES manual up                    up",
       "selectCount": 2,
       "options": [
         {
           "id": "a",
-          "text": "172.20.5.1 est une adresse publique : en classe B, seul 172.16.0.0/16 est privé."
+          "text": "172.20.5.1 est une adresse publique : en classe B, seul le bloc 172.16.0.0/16 est réservé à l'usage privé."
         },
         {
           "id": "b",
@@ -262,7 +262,7 @@
         },
         {
           "id": "c",
-          "text": "L'adresse de G0/2 est une adresse privée RFC 1918, au même titre que celles des LAN."
+          "text": "L'adresse de G0/2 fait partie des plages privées de la RFC 1918, au même titre que les adresses des deux LAN."
         },
         {
           "id": "d",
@@ -290,10 +290,10 @@
     "reference": "RFC 1918, section 3 ; RFC 6598"
   },
   {
-    "slug": "ccna-1.8-eui64-slaac-001",
+    "slug": "ccna-1.9-eui64-slaac-001",
     "certification": "ccna",
     "domain": "1.0",
-    "subtopic": "1.8",
+    "subtopic": "1.9",
     "difficulty": "medium",
     "body": {
       "type": "fill_blank",
@@ -321,7 +321,8 @@
         },
         "address": {
           "accepted": [
-            "2001:db8:cafe:1:2e54:2dff:fe7a:19f"
+            "2001:db8:cafe:1:2e54:2dff:fe7a:19f",
+            "2001:db8:cafe:1:2e54:2dff:fe7a:19f/64"
           ],
           "normalize": "text"
         }
@@ -342,7 +343,7 @@
       "fields": [
         {
           "id": "count",
-          "label": "Nombre de sous-réseaux /64 disponibles"
+          "label": "Nombre de sous-réseaux /64 disponibles (en chiffres)"
         },
         {
           "id": "p300",
