@@ -14,8 +14,15 @@ Il permet à une IA (Claude ou tout client MCP) de produire du contenu sans reto
 | `generate_exam` | Assemble un examen blanc figé et numéroté (pondération officielle, aucun doublon, priorité aux questions jamais utilisées). S'il manque des questions, dit combien générer et dans quel domaine. |
 | `analyze_weakness` | Niveau de préparation, domaines triés par priorité (poids × lacune) et sous-thèmes à revoir. |
 | `add_certification` | Déclare ou met à jour une certification par simple configuration. |
+| `list_labs` | Labs CLI d'une certification (slug, titre, difficulté, sous-thème, statut) et nombre de labs publiés par sous-thème. |
+| `generate_lab` | Consigne de génération d'un lab : format exact, types d'objectifs, commandes que le simulateur connaît (par mode et type d'équipement), règles de qualité, labs existants du sous-thème, slug suggéré. |
+| `submit_lab` | Validation automatique : schéma, rangement, puis l'API joue le lab dans le simulateur (état de départ, solution, variantes, pièges). Le lab passe à l'état `validated`. |
+| `validate_lab` | Seconde passe : renvoie le lab complet, solution comprise, avec une grille de relecture (commandes, modes, valeurs par défaut, calculs, variantes acceptées). |
+| `record_lab_review` | Publie le lab, ou le renvoie en brouillon avec les problèmes relevés. |
 
-`generate_challenge` (mini-défis chronométrés) arrive avec les modules de la phase 4.
+Un lab suit donc le même cycle qu'une question : `generate_lab` → rédaction → `submit_lab` → `validate_lab` → `record_lab_review`. Seuls les labs publiés apparaissent dans `/labs/cli`.
+
+`generate_challenge` (mini-défis chronométrés) reste à faire.
 
 ## Pourquoi la génération se fait côté client
 
@@ -60,3 +67,5 @@ Le jeton de service agit au nom du premier compte administrateur. Il se change d
 ## Exemple de consigne pour remplir la banque
 
 > Pour le CCNA, appelle `get_certification` pour voir la banque. Pour chaque domaine sous-représenté, génère 10 questions variées (types et difficultés mélangés) avec `generate_question`, soumets-les, relis chacune avec `validate_question` de façon critique, puis publie-les ou rejette-les avec `record_review`. Termine par `generate_exam`.
+
+> Pour le CCNA, appelle `list_labs` : pour un sous-thème sans lab, appelle `generate_lab`, rédige un lab avec uniquement les commandes listées, soumets-le avec `submit_lab` et corrige-le jusqu'à ce qu'il passe le simulateur. Relis-le avec `validate_lab` de façon critique, puis publie-le ou rejette-le avec `record_lab_review`.

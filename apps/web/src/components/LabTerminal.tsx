@@ -34,7 +34,14 @@ export function LabTerminal({
   const inputId = useId();
   const device = devices.find((d) => d.id === active) ?? devices[0];
   const lines = useMemo(() => transcript.filter((t) => t.device === device?.id), [transcript, device?.id]);
-  const history = useMemo(() => (device ? inputHistory(transcript, device.id) : []), [transcript, device]);
+  // Historique ↑/↓ : celui de la session, plus ce qui vient d'être envoyé (avant même la réponse du serveur).
+  const [sent, setSent] = useState<Record<string, string[]>>({});
+  const history = useMemo(() => {
+    if (!device) return [];
+    const base = inputHistory(transcript, device.id);
+    const extra = (sent[device.id] ?? []).slice(base.length);
+    return [...base, ...extra];
+  }, [transcript, device, sent]);
 
   useEffect(() => {
     scroller.current?.scrollTo({ top: scroller.current.scrollHeight });
@@ -50,6 +57,15 @@ export function LabTerminal({
   const send = async (input: string) => {
     setCursor(null);
     setValue('');
+    const typed = input.endsWith('?') ? [] : input.split('\n').map((l) => l.trim()).filter((l) => l && l !== '\x1a');
+    if (typed.length) {
+      setSent((all) => {
+        const mine = all[device.id] ?? inputHistory(transcript, device.id);
+        const next = [...mine];
+        for (const t of typed) if (next[next.length - 1] !== t) next.push(t);
+        return { ...all, [device.id]: next };
+      });
+    }
     const restored = await onSubmit(device.id, input);
     if (restored !== undefined) setValue(restored);
     inputRef.current?.focus();

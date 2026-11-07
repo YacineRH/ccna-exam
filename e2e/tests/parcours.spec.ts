@@ -1,5 +1,5 @@
 import { expect, test, type Browser, type BrowserContext, type Locator, type Page } from '@playwright/test';
-import { bankOf, certificationOf, maxDrawableForTypes, questionByStem, shortExamPlan } from '../support/content';
+import { bankOf, certificationOf, labOf, maxDrawableForTypes, questionByStem, shortExamPlan } from '../support/content';
 
 /*
  * Parcours complet d'un candidat, dans l'ordre : chaque test s'appuie sur l'état laissé par
@@ -33,6 +33,8 @@ let page: Page;
 let cert: Cert;
 let examAttemptId = '';
 let practiceAttemptId = '';
+let labSessionId = '';
+const LAB_SLUG = 'ccna-lab-1.3-interfaces';
 
 const newContext = (browser: Browser, options: Parameters<Browser['newContext']>[0] = {}) =>
   browser.newContext({ baseURL: test.info().project.use.baseURL, locale: 'fr-FR', ...options });
@@ -371,6 +373,89 @@ test('examen blanc complet : toutes les questions et le chrono officiel, soumis 
   expect(result.review.filter((r) => r.response === null)).toHaveLength(unanswered);
 });
 
+test('lab CLI au clavier : abréviations, erreur IOS, aide, indice, Ctrl+Z, fin avec la solution', async () => {
+  const lab = labOf(cert.code, LAB_SLUG);
+  await page.goto('/labs/cli');
+  await expect(page.getByRole('heading', { name: 'CLI trainer' })).toBeVisible();
+  const row = page.getByRole('listitem').filter({ hasText: lab.title });
+  await expect(row).toContainText('À FAIRE');
+  // Filtre par sous-thème : seul ce sous-thème reste.
+  await page.getByLabel('Sous-thème').selectOption(lab.subtopic);
+  await expect(page.getByRole('listitem').filter({ hasText: lab.title })).toBeVisible();
+  await row.getByRole('link', { name: `Ouvrir le lab ${lab.title}` }).click();
+  await expect(page.getByRole('heading', { name: lab.title })).toBeVisible();
+  await page.getByRole('button', { name: 'Démarrer le lab →' }).click();
+  await expect(page).toHaveURL(/\/labs\/cli\/sessions\/[0-9a-f-]{36}$/);
+  labSessionId = page.url().split('/').pop()!;
+
+  const input = page.getByRole('textbox', { name: /Commande pour R1/ });
+  const log = page.getByRole('log', { name: 'Sortie de R1' });
+  const type = async (line: string) => {
+    await input.fill(line);
+    await input.press('Enter');
+    await expect(input).toHaveValue('');
+  };
+  await input.focus();
+  await type('en');
+  await expect(page.getByText('R1#', { exact: true })).toBeVisible();
+  await type('conf t');
+  await type('interfce g0/0/0');
+  await expect(log).toContainText("% Invalid input detected at '^' marker.");
+  await type('int g0/0/0');
+  // `?` affiche l'aide tout de suite, la ligne reste dans la saisie.
+  await input.fill('ip add');
+  await input.press('?');
+  await expect(log).toContainText('address');
+  await expect(input).toHaveValue('ip add');
+  await input.fill('ip add 192.168.10.1 255.255.255.192');
+  await input.press('Enter');
+  await type('desc LAN utilisateurs');
+  await type('no shut');
+  // ↑ rappelle la dernière commande.
+  await input.press('ArrowUp');
+  await expect(input).toHaveValue('no shut');
+  await input.fill('');
+
+  const objectives = page.getByRole('list', { name: 'Objectifs du lab' });
+  await expect(objectives.getByText('Atteint :')).toHaveCount(3);
+
+  await page.getByRole('button', { name: 'Indice 1 sur 3' }).click();
+  await expect(page.getByRole('region', { name: 'Indices' }).getByText(lab.hints[0]!)).toBeVisible();
+
+  // Collage multi-ligne, puis Ctrl+Z et sauvegarde.
+  await input.focus();
+  await page.evaluate((text) => {
+    const el = document.activeElement as HTMLInputElement;
+    const data = new DataTransfer();
+    data.setData('text/plain', text);
+    el.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+  }, 'int g0/0/1\ndesc Lien vers FAI\nip add 203.0.113.2 255.255.255.252\nno shut');
+  await expect(log).toContainText('R1(config-if)#no shut');
+  await input.press('Control+z');
+  await expect(log).toContainText('^Z');
+  await type('copy run start');
+  await expect(objectives.getByText('Atteint :')).toHaveCount(lab.objectives.length);
+  await expect(page.getByRole('status')).toContainText('Tous les objectifs sont atteints');
+
+  await page.getByRole('button', { name: 'Terminer le lab' }).click();
+  const end = page.getByRole('region', { name: 'Lab réussi' });
+  await expect(end).toBeVisible();
+  await expect(end).toContainText('✓ RÉUSSI');
+  await expect(end.getByRole('heading', { name: 'Solution' })).toBeVisible();
+  await expect(end).toContainText(lab.solution[0]!.commands[3]!);
+  await expect(end).toContainText('desc LAN utilisateurs');
+  await expect(end).not.toContainText('interfce g0/0/0');
+
+  // Le lab est marqué fait dans la liste, et la session figure dans l'historique.
+  await page.goto('/labs/cli');
+  await expect(page.getByRole('listitem').filter({ hasText: lab.title })).toContainText('✓ FAIT');
+  await page.goto('/historique');
+  await page.getByRole('button', { name: /^Labs CLI/ }).click();
+  const hist = page.getByRole('listitem').filter({ hasText: `Lab CLI · ${lab.title}` });
+  await expect(hist).toContainText('✓ RÉUSSI');
+  await expect(hist).toContainText('1 indice');
+});
+
 test('à 390 px de large : aucun débordement horizontal', async ({ browser }) => {
   const mobile = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true };
 
@@ -400,6 +485,8 @@ test('à 390 px de large : aucun débordement horizontal', async ({ browser }) =
     { path: `/tentatives/${practiceAttemptId}`, ready: () => p.locator('#enonce') },
     { path: '/labs/subnetting', ready: () => p.getByRole('heading', { level: 1 }) },
     { path: '/labs/cli', ready: () => p.getByRole('heading', { level: 1 }) },
+    { path: `/labs/cli/${LAB_SLUG}`, ready: () => p.getByText('Topologie') },
+    { path: `/labs/cli/sessions/${labSessionId}`, ready: () => p.getByRole('heading', { name: 'Solution' }) },
   ];
   for (const { path, ready } of pages) {
     await p.goto(path);

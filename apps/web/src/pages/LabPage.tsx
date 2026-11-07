@@ -50,9 +50,9 @@ function Statement({ lab }: { lab: PublicLab }) {
 
 function Eyebrow({ lab }: { lab: PublicLab }) {
   return (
-    <span className="flex flex-wrap items-center gap-2">
+    <>
       <span className="text-accent">●</span> LAB CLI · {lab.subtopic} {lab.subtopicName.toUpperCase()}
-    </span>
+    </>
   );
 }
 
