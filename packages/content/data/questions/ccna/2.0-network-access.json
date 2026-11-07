@@ -171,5 +171,1019 @@
       "d": "DTP négocie le mode trunk, il est propriétaire Cisco."
     },
     "reference": "IEEE 802.1AB"
+  },
+  {
+    "slug": "ccna-2.1-voice-vlan-access-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Un téléphone IP est raccordé au port Gi1/0/5 de SW1 et un PC est branché derrière le téléphone. Les VLAN 10 (données) et 150 (voix) existent déjà. Vous êtes en mode de configuration de l'interface Gi1/0/5. Configurez le port en accès statique, avec le VLAN 10 pour les données et le VLAN 150 pour la voix.",
+      "prompt": "SW1(config-if)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "switchport mode access"
+        ],
+        [
+          "switchport access vlan 10"
+        ],
+        [
+          "switchport voice vlan 150"
+        ]
+      ]
+    },
+    "explanation": "« switchport mode access » fixe le port en accès : il ne deviendra jamais trunk, quel que soit le voisin. « switchport access vlan 10 » place les trames non étiquetées du PC dans le VLAN 10. « switchport voice vlan 150 » annonce le VLAN voix au téléphone (par CDP, ou LLDP-MED pour un téléphone tiers) : le téléphone étiquette alors sa voix en 802.1Q avec le VLAN 150. Erreurs fréquentes : configurer un trunk vers le téléphone, ou utiliser « switchport access vlan 150 », qui remplacerait le VLAN de données au lieu d'ajouter un VLAN voix.",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring Voice VLAN"
+  },
+  {
+    "slug": "ccna-2.1-vlan-ranges-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un commutateur Cisco Catalyst, quelle plage de numéros correspond aux VLAN de la plage étendue ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "1 à 1005"
+        },
+        {
+          "id": "b",
+          "text": "1002 à 1005"
+        },
+        {
+          "id": "c",
+          "text": "1006 à 4094"
+        },
+        {
+          "id": "d",
+          "text": "1025 à 4096"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le VLAN ID 802.1Q est codé sur 12 bits (0 à 4095), et les valeurs 0 et 4095 sont réservées. Cisco découpe les VLAN utilisables en plage normale (1 à 1005) et plage étendue (1006 à 4094). Le VLAN 1 est le VLAN par défaut de tous les ports et ne peut pas être supprimé, pas plus que les VLAN 1002 à 1005.",
+    "distractorNotes": {
+      "a": "1 à 1005 est la plage normale, celle des VLAN que VTP v1/v2 sait propager.",
+      "b": "1002 à 1005 sont les VLAN réservés aux anciennes technologies FDDI et Token Ring ; ils font partie de la plage normale.",
+      "d": "Avec un VLAN ID de 12 bits, 4095 est réservé et 4096 n'existe pas ; la plage étendue commence à 1006."
+    },
+    "reference": "IEEE 802.1Q ; Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-svi-down-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur le commutateur multicouche DSW1, l'interface Vlan30 vient d'être créée avec l'adresse 10.30.0.1/24 pour servir de passerelle aux hôtes du VLAN 30. Elle n'est pas en shutdown, mais « show ip interface brief » indique que son protocole reste down. Quelles deux causes peuvent expliquer cet état ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La commande « ip routing » n'a pas été saisie sur DSW1."
+        },
+        {
+          "id": "b",
+          "text": "DSW1 n'a pas de route par défaut vers le cœur de réseau."
+        },
+        {
+          "id": "c",
+          "text": "Le VLAN 30 n'existe pas dans la base VLAN de DSW1."
+        },
+        {
+          "id": "d",
+          "text": "Le masque /24 de Vlan30 diffère de celui configuré sur les hôtes du VLAN 30."
+        },
+        {
+          "id": "e",
+          "text": "Aucun port de niveau 2 de DSW1 actif et en forwarding n'appartient au VLAN 30."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Avec le mécanisme autostate activé par défaut, une SVI ne passe up/up que si son VLAN existe dans la base VLAN et qu'au moins un port de niveau 2 de ce VLAN (port d'accès, ou trunk qui l'autorise) est up et en état forwarding STP. Il faut donc créer le VLAN 30 et y raccorder au moins un port actif. « ip routing », les routes et le masque n'agissent que sur le routage, jamais sur l'état de l'interface.",
+    "distractorNotes": {
+      "a": "« ip routing » active le routage entre les interfaces de niveau 3 ; sans lui la SVI peut être up/up, DSW1 se comporte seulement comme un hôte.",
+      "b": "Une route manquante empêche d'atteindre des réseaux distants, mais ne change pas l'état d'une interface.",
+      "d": "Un masque incohérent perturbe la communication avec certains hôtes, mais l'interface reste up/up."
+    },
+    "reference": "Cisco Catalyst 9300 Interface and Hardware Components Configuration Guide — Configuring Interface Characteristics (SVI autostate)"
+  },
+  {
+    "slug": "ccna-2.1-roas-frame-path-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "PC-A (VLAN 10) et PC-B (VLAN 20) sont sur des ports d'accès de SW1. SW1 est relié par un trunk 802.1Q au port G0/0/0 de R1, configuré en router-on-a-stick avec les sous-interfaces G0/0/0.10 et G0/0/0.20 ; aucun de ces deux VLAN n'est le VLAN natif. Les tables ARP et MAC sont à jour. Remettez dans l'ordre le trajet d'un paquet de PC-A vers PC-B.",
+      "items": [
+        {
+          "id": "tag20",
+          "text": "R1 renvoie la trame sur le trunk avec l'étiquette VLAN 20."
+        },
+        {
+          "id": "pca",
+          "text": "PC-A envoie une trame non étiquetée vers l'adresse MAC de sa passerelle."
+        },
+        {
+          "id": "pcb",
+          "text": "SW1 retire l'étiquette et remet la trame à PC-B sur son port d'accès."
+        },
+        {
+          "id": "route",
+          "text": "R1 reçoit la trame sur G0/0/0.10 et route le paquet vers G0/0/0.20."
+        },
+        {
+          "id": "tag10",
+          "text": "SW1 transmet la trame sur le trunk avec l'étiquette VLAN 10."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "pca",
+        "tag10",
+        "route",
+        "tag20",
+        "pcb"
+      ]
+    },
+    "explanation": "PC-B étant dans un autre sous-réseau, PC-A envoie sa trame, sans étiquette, à la MAC de sa passerelle G0/0/0.10. SW1 l'étiquette VLAN 10 en la transmettant sur le trunk. R1 l'associe à G0/0/0.10 grâce à « encapsulation dot1Q 10 », route le paquet vers le sous-réseau du VLAN 20, puis réémet la trame sur le même lien physique avec l'étiquette 20. SW1 retire l'étiquette avant de la délivrer sur le port d'accès de PC-B. Le paquet traverse donc deux fois le même lien, ce qui limite le débit de cette solution face aux SVI d'un commutateur multicouche.",
+    "reference": "IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.1-show-vlan-brief-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. SW1 possède dix ports, Gi1/0/1 à Gi1/0/10. Le port Gi1/0/9, qui relie SW1 à SW2, n'apparaît dans aucun VLAN. Quelle en est l'explication ?",
+      "exhibit": "SW1# show vlan brief\n\nVLAN Name                             Status    Ports\n---- -------------------------------- --------- -------------------------------\n1    default                          active    Gi1/0/7, Gi1/0/8, Gi1/0/10\n10   USERS                            active    Gi1/0/1, Gi1/0/2, Gi1/0/3\n20   SERVERS                          active    Gi1/0/4, Gi1/0/5, Gi1/0/6\n150  VOICE                            active    Gi1/0/1, Gi1/0/2\n1002 fddi-default                     act/unsup\n1003 token-ring-default               act/unsup\n1004 fddinet-default                  act/unsup\n1005 trnet-default                    act/unsup",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi1/0/9 a été désactivé par la commande « shutdown »."
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/9 fonctionne en trunk."
+        },
+        {
+          "id": "c",
+          "text": "Gi1/0/9 est configuré avec un voice VLAN."
+        },
+        {
+          "id": "d",
+          "text": "Gi1/0/9 est un port d'accès du VLAN natif 1."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« show vlan brief » ne liste que les ports d'accès, dans leur VLAN d'accès et, s'ils en ont un, dans leur voice VLAN. Un port en trunk opérationnel n'y figure pas : on le vérifie avec « show interfaces trunk ». L'exhibit montre aussi que Gi1/0/1 et Gi1/0/2, présents dans les VLAN 10 et 150, sont des ports d'accès avec un voice VLAN, et que les ports non configurés restent dans le VLAN 1, VLAN par défaut.",
+    "distractorNotes": {
+      "a": "Un port d'accès désactivé reste affiché dans son VLAN : « shutdown » ne change pas l'appartenance au VLAN.",
+      "c": "Un port avec voice VLAN apparaît dans deux VLAN (données et voix), comme Gi1/0/1 et Gi1/0/2, et non dans aucun.",
+      "d": "Un port d'accès du VLAN 1 serait listé sur la ligne du VLAN 1, comme Gi1/0/7 ; la notion de VLAN natif ne concerne que les trunks."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.2-trunk-allowed-add-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, l'interface Gi1/0/24 est un trunk 802.1Q qui n'autorise que les VLAN 10 et 20 (« switchport trunk allowed vlan 10,20 »). Depuis le mode de configuration globale, entrez dans l'interface et ajoutez le VLAN 30 à la liste des VLAN autorisés, sans retaper les VLAN déjà présents.",
+      "prompt": "SW1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet1/0/24"
+        ],
+        [
+          "switchport trunk allowed vlan add 30"
+        ]
+      ]
+    },
+    "explanation": "Le mot-clé add ajoute le VLAN 30 à la liste existante, qui devient 10,20,30. Erreur classique : taper « switchport trunk allowed vlan 30 », qui REMPLACE la liste et coupe les VLAN 10 et 20 sur ce trunk. Les autres options sont remove (retirer), except (tous sauf), all et none. On vérifie le résultat dans la section « Vlans allowed on trunk » de « show interfaces trunk ».",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-dtp-combinations-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Deux commutateurs Catalyst, dans le même domaine VTP, sont reliés par leurs ports Gi0/1. Chaque option donne le mode « switchport » configuré de chaque côté. Quelles deux combinaisons forment un trunk ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "trunk – dynamic auto"
+        },
+        {
+          "id": "b",
+          "text": "dynamic auto – dynamic auto"
+        },
+        {
+          "id": "c",
+          "text": "access – dynamic desirable"
+        },
+        {
+          "id": "d",
+          "text": "dynamic desirable – dynamic auto"
+        },
+        {
+          "id": "e",
+          "text": "trunk avec « switchport nonegotiate » – dynamic desirable"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "DTP forme un trunk dès qu'un côté le demande (mode trunk ou dynamic desirable) et que l'autre l'accepte (trunk, desirable ou auto). trunk–auto et desirable–auto donnent donc un trunk. Deux ports en dynamic auto, réglage par défaut des Catalyst récents, restent en accès. « switchport nonegotiate » supprime l'envoi des trames DTP : il ne doit être utilisé qu'en face d'un port lui aussi en trunk statique.",
+    "distractorNotes": {
+      "b": "Deux ports en dynamic auto attendent chacun que l'autre demande le trunk : aucun ne le fait et le lien reste en accès.",
+      "c": "Un port en mode access reste toujours non-trunk, quel que soit le mode du voisin.",
+      "e": "Avec nonegotiate, aucune trame DTP n'est envoyée : le côté dynamic desirable ne reçoit jamais de réponse et reste en accès, d'où un lien incohérent (trunk d'un côté, accès de l'autre)."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-show-interfaces-trunk-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Le VTP pruning n'est pas activé. Donnez le numéro du VLAN correspondant à chaque description.",
+      "exhibit": "SW1# show interfaces trunk\n\nPort        Mode             Encapsulation  Status        Native vlan\nGi1/0/24    on               802.1q         trunking      99\n\nPort        Vlans allowed on trunk\nGi1/0/24    10,20,30,99\n\nPort        Vlans allowed and active in management domain\nGi1/0/24    10,20,99\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi1/0/24    10,99",
+      "fields": [
+        {
+          "id": "native",
+          "label": "VLAN dont les trames traversent ce trunk sans étiquette 802.1Q"
+        },
+        {
+          "id": "missing",
+          "label": "VLAN autorisé sur le trunk mais absent ou inactif dans la base VLAN de SW1"
+        },
+        {
+          "id": "blocked",
+          "label": "VLAN autorisé et actif sur SW1, mais que STP bloque sur ce port"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "native": {
+          "accepted": [
+            "99"
+          ],
+          "normalize": "int"
+        },
+        "missing": {
+          "accepted": [
+            "30"
+          ],
+          "normalize": "int"
+        },
+        "blocked": {
+          "accepted": [
+            "20"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La première section donne le mode (on = « switchport mode trunk ») et le VLAN natif, 99, dont les trames passent sans étiquette. « Vlans allowed on trunk » reprend la liste configurée ; la section suivante n'en garde que les VLAN qui existent et sont actifs sur SW1, d'où l'absence du 30. La dernière ne garde que les VLAN en état forwarding STP et non élagués : sans VTP pruning, l'absence du 20 signifie que STP bloque ce port pour le VLAN 20 (port alternate dans cette instance, par exemple).",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-dot1q-tag-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Comment 802.1Q indique-t-il le VLAN d'une trame qui traverse un trunk ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il encapsule la trame entière dans un en-tête de 26 octets et un nouveau FCS."
+        },
+        {
+          "id": "b",
+          "text": "Il remplace l'adresse MAC de destination par le numéro du VLAN."
+        },
+        {
+          "id": "c",
+          "text": "Il inscrit le numéro du VLAN dans le champ DSCP de l'en-tête IP."
+        },
+        {
+          "id": "d",
+          "text": "Il insère une étiquette de 4 octets, dont un VLAN ID de 12 bits, après la MAC source."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "802.1Q insère une étiquette de 4 octets entre l'adresse MAC source et le champ EtherType : un TPID de valeur 0x8100, puis un TCI qui porte la priorité 802.1p (3 bits), le bit DEI et le VLAN ID (12 bits). Le FCS est recalculé puisque la trame a changé. Seules les trames du VLAN natif traversent le trunk sans étiquette.",
+    "distractorNotes": {
+      "a": "C'est le fonctionnement d'ISL, ancien protocole propriétaire Cisco : il encapsule la trame au lieu de l'étiqueter.",
+      "b": "Les adresses MAC ne sont pas modifiées ; l'étiquette s'ajoute à la trame sans toucher à l'adressage.",
+      "c": "DSCP est un champ de niveau 3 servant à la QoS ; le VLAN est une information de niveau 2, portée dans l'en-tête Ethernet."
+    },
+    "reference": "IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.2-native-vlan-mismatch-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. La politique de l'entreprise impose le VLAN natif 99 sur tous les trunks. Quelle action corrige le problème signalé ?",
+      "exhibit": "SW1#\n%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet1/0/24 (99), with SW2 GigabitEthernet1/0/24 (1).\n\nSW2# show running-config interface GigabitEthernet1/0/24\n!\ninterface GigabitEthernet1/0/24\n switchport trunk allowed vlan 10,20,99\n switchport mode trunk\nend",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur SW2, sous Gi1/0/24 : « switchport trunk native vlan 99 »"
+        },
+        {
+          "id": "b",
+          "text": "Sur SW1, sous Gi1/0/24 : « switchport trunk native vlan 1 »"
+        },
+        {
+          "id": "c",
+          "text": "Sur SW2, sous Gi1/0/24 : « switchport trunk allowed vlan add 99 »"
+        },
+        {
+          "id": "d",
+          "text": "Sur SW1 et SW2, sous Gi1/0/24 : « switchport nonegotiate »"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le message CDP indique que Gi1/0/24 de SW1 utilise le VLAN natif 99 et que le port d'en face, sur SW2, utilise le VLAN 1 : la configuration de SW2 ne contient en effet aucune commande « switchport trunk native vlan », il garde donc la valeur par défaut. Le VLAN natif n'est pas négocié, il doit être configuré à l'identique des deux côtés. Une incohérence peut faire passer le trafic non étiqueté d'un VLAN à l'autre ; PVST+ et Rapid PVST+ la détectent et bloquent le port pour les VLAN concernés.",
+    "distractorNotes": {
+      "b": "SW1 respecte déjà la politique ; revenir au VLAN natif 1 supprimerait l'incohérence, mais en violant la consigne.",
+      "c": "Le VLAN 99 figure déjà dans la liste des VLAN autorisés de SW2 : le problème porte sur le VLAN natif, pas sur cette liste.",
+      "d": "« switchport nonegotiate » désactive seulement DTP ; il ne change pas le VLAN natif utilisé par chaque côté."
+    },
+    "reference": "IEEE 802.1Q ; Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.3-cdp-lldp-timers-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque paramètre à sa valeur par défaut sous Cisco IOS.",
+      "left": [
+        {
+          "id": "cdpt",
+          "text": "Intervalle d'envoi des annonces CDP (cdp timer)"
+        },
+        {
+          "id": "cdph",
+          "text": "Durée de rétention d'un voisin CDP (cdp holdtime)"
+        },
+        {
+          "id": "lldpt",
+          "text": "Intervalle d'envoi des annonces LLDP (lldp timer)"
+        },
+        {
+          "id": "lldph",
+          "text": "Durée de rétention d'un voisin LLDP (lldp holdtime)"
+        }
+      ],
+      "right": [
+        {
+          "id": "s30",
+          "text": "30 secondes"
+        },
+        {
+          "id": "s60",
+          "text": "60 secondes"
+        },
+        {
+          "id": "s90",
+          "text": "90 secondes"
+        },
+        {
+          "id": "s120",
+          "text": "120 secondes"
+        },
+        {
+          "id": "s180",
+          "text": "180 secondes"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "cdpt": "s60",
+        "cdph": "s180",
+        "lldpt": "s30",
+        "lldph": "s120"
+      }
+    },
+    "explanation": "CDP envoie une annonce toutes les 60 s et oublie un voisin après 180 s sans nouvelle annonce (trois intervalles). LLDP est plus rapide : une annonce toutes les 30 s et une rétention de 120 s (quatre intervalles). Ces valeurs se modifient en configuration globale (« cdp timer », « cdp holdtime », « lldp timer », « lldp holdtime ») et se vérifient avec « show cdp » et « show lldp ».",
+    "distractorNotes": {
+      "s90": "Aucun timer CDP ou LLDP ne vaut 90 s par défaut : les durées de rétention valent trois fois (CDP) ou quatre fois (LLDP) l'intervalle d'envoi."
+    },
+    "reference": "IEEE 802.1AB ; Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol, Configuring LLDP, LLDP-MED, and Wired Location Service"
+  },
+  {
+    "slug": "ccna-2.3-lldp-cdp-config-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "SW1 a la configuration CDP et LLDP par défaut. Un téléphone IP d'un autre constructeur est branché sur Gi1/0/10. L'administrateur veut que SW1 échange des annonces LLDP sur tous ses ports et qu'il cesse d'envoyer des annonces CDP sur Gi1/0/10 uniquement. Quelles deux commandes doit-il saisir ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "« lldp run » en configuration globale"
+        },
+        {
+          "id": "b",
+          "text": "« no cdp run » en configuration globale"
+        },
+        {
+          "id": "c",
+          "text": "« lldp transmit » sous chaque interface, sans autre commande"
+        },
+        {
+          "id": "d",
+          "text": "« no lldp receive » sous l'interface Gi1/0/10"
+        },
+        {
+          "id": "e",
+          "text": "« no cdp enable » sous l'interface Gi1/0/10"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Sous IOS, LLDP est désactivé par défaut : « lldp run » l'active sur toutes les interfaces, en émission comme en réception. CDP est actif par défaut sur tout le commutateur : « no cdp enable » le coupe sur une seule interface, alors que « no cdp run » le couperait partout. On vérifie ensuite avec « show lldp neighbors » et « show cdp interface ».",
+    "distractorNotes": {
+      "b": "« no cdp run » désactive CDP sur tout le commutateur, pas seulement sur Gi1/0/10.",
+      "c": "Tant que LLDP n'est pas activé globalement par « lldp run », les commandes d'interface n'ont aucun effet ; une fois LLDP activé, l'émission et la réception sont déjà actives sur chaque port.",
+      "d": "« no lldp receive » empêche SW1 d'apprendre les annonces LLDP du téléphone, l'inverse de l'objectif, et CDP continuerait d'être envoyé."
+    },
+    "reference": "IEEE 802.1AB ; Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol, Configuring LLDP, LLDP-MED, and Wired Location Service"
+  },
+  {
+    "slug": "ccna-2.3-cdp-neighbors-detail-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'administrateur, connecté à SW1, veut connaître l'adresse IP de R1 pour s'y connecter en SSH. Quelle commande lui donne cette information ?",
+      "exhibit": "SW1# show cdp neighbors\nCapability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge\n                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone,\n                  D - Remote, C - CVTA, M - Two-port Mac Relay\n\nDevice ID        Local Intrfce     Holdtme    Capability  Platform  Port ID\nR1               Gig 1/0/1         152             R B S I ISR4331/K Gig 0/0/1\nSW2              Gig 1/0/24        171              S I    C9200L-24 Gig 1/0/24\n\nTotal cdp entries displayed : 2",
+      "options": [
+        {
+          "id": "a",
+          "text": "show cdp interface GigabitEthernet1/0/1"
+        },
+        {
+          "id": "b",
+          "text": "show cdp neighbors detail"
+        },
+        {
+          "id": "c",
+          "text": "show cdp traffic"
+        },
+        {
+          "id": "d",
+          "text": "show lldp neighbors"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« show cdp neighbors » donne le nom du voisin, les interfaces locale et distante, le holdtime restant, les capacités et la plateforme, mais aucune adresse. « show cdp neighbors detail » (ou « show cdp entry R1 ») ajoute pour chaque voisin ses adresses (Entry address(es)), la version logicielle et, pour un commutateur, le VLAN natif et le duplex. CDP étant actif par défaut, ces informations sont disponibles sans configuration supplémentaire.",
+    "distractorNotes": {
+      "a": "Elle affiche l'état de CDP sur l'interface locale (encapsulation, timers), pas les informations du voisin.",
+      "c": "Elle affiche les compteurs de paquets CDP envoyés et reçus, sans détail sur les voisins.",
+      "d": "LLDP est désactivé par défaut sous IOS, et la forme courte de la commande n'affiche pas non plus l'adresse de gestion du voisin."
+    },
+    "reference": "Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "slug": "ccna-2.4-lacp-portchannel-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "SW1, un Catalyst 9300 qui ne gère que 802.1Q, est relié à SW2 par Gi1/0/1 et Gi1/0/2 ; SW2 est déjà configuré. Depuis le mode de configuration globale, sélectionnez les deux ports en une seule commande (interface range) et placez-les dans le channel-group 1 en LACP, SW1 devant lancer lui-même la négociation. Configurez ensuite l'interface Port-channel1 en trunk statique.",
+      "prompt": "SW1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface range GigabitEthernet1/0/1 - 2",
+          "interface range GigabitEthernet1/0/1-2",
+          "interface range GigabitEthernet1/0/1 , GigabitEthernet1/0/2",
+          "interface range GigabitEthernet1/0/1, GigabitEthernet1/0/2",
+          "interface range GigabitEthernet1/0/1,GigabitEthernet1/0/2"
+        ],
+        [
+          "channel-group 1 mode active"
+        ],
+        [
+          "interface Port-channel1"
+        ],
+        [
+          "switchport mode trunk"
+        ]
+      ]
+    },
+    "explanation": "« interface range » applique les commandes suivantes aux deux ports. « channel-group 1 mode active » crée l'interface Port-channel1 et fait envoyer des LACPDU : c'est le mode qui lance la négociation, passive se contentant de répondre. La configuration de niveau 2 se fait ensuite sur Port-channel1, qui la propage aux ports membres. Erreurs fréquentes : « mode on » (agrégation forcée, sans LACP) ou « mode desirable » (PAgP, propriétaire Cisco).",
+    "reference": "IEEE 802.1AX ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-etherchannel-suspended-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Gi1/0/2 a exactement la même configuration que Gi1/0/1, les trois liens sont up à 1 Gbit/s en full duplex et la configuration de SW2 est correcte. Pourquoi Gi1/0/3 ne transporte-t-il pas de trafic dans Po1 ?",
+      "exhibit": "SW1# show etherchannel summary\nFlags:  D - down        P - bundled in port-channel\n        I - stand-alone s - suspended\n        H - Hot-standby (LACP only)\n        R - Layer3      S - Layer2\n        U - in use      f - failed to allocate aggregator\n\n        M - not in use, minimum links not met\n        u - unsuitable for bundling\n        w - waiting to be aggregated\n        d - default port\n\n        A - formed by Auto LAG\n\nNumber of channel-groups in use: 1\nNumber of aggregators:           1\n\nGroup  Port-channel  Protocol    Ports\n------+-------------+-----------+-----------------------------------------------\n1      Po1(SU)         LACP      Gi1/0/1(P)  Gi1/0/2(P)  Gi1/0/3(s)\n\nSW1# show running-config interface GigabitEthernet1/0/1\n!\ninterface GigabitEthernet1/0/1\n switchport mode trunk\n channel-group 1 mode active\nend\n\nSW1# show running-config interface GigabitEthernet1/0/3\n!\ninterface GigabitEthernet1/0/3\n switchport trunk allowed vlan 10,20\n switchport mode trunk\n channel-group 1 mode active\nend",
+      "options": [
+        {
+          "id": "a",
+          "text": "LACP n'agrège que deux liens actifs : Gi1/0/3 est un lien de secours."
+        },
+        {
+          "id": "b",
+          "text": "Po1 est un EtherChannel de niveau 3, incompatible avec un port en trunk."
+        },
+        {
+          "id": "c",
+          "text": "Gi1/0/3 devrait être en mode passive puisque les autres membres sont en active."
+        },
+        {
+          "id": "d",
+          "text": "Sa liste de VLAN autorisés diffère de celle des autres membres : il est suspendu."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le flag (s) signale un port suspendu : il appartient au channel-group mais n'est pas agrégé, contrairement aux ports marqués (P). Tous les membres d'un EtherChannel doivent avoir la même vitesse, le même duplex, le même mode switchport et les mêmes VLAN (VLAN d'accès, ou VLAN natif et liste des VLAN autorisés pour un trunk). Gi1/0/3 n'autorise que les VLAN 10 et 20 alors que les autres membres les autorisent tous : il faut aligner sa configuration, de préférence en configurant la liste sur Po1, qui la propage aux membres.",
+    "distractorNotes": {
+      "a": "LACP accepte jusqu'à 8 liens actifs (et 8 en hot-standby) ; un lien de secours porterait le flag (H), pas (s).",
+      "b": "Le S de Po1(SU) indique un EtherChannel de niveau 2 ; un EtherChannel de niveau 3 serait marqué R.",
+      "c": "active–active fonctionne avec LACP : il suffit qu'un des deux côtés soit en mode active, et les membres d'un même groupe utilisent normalement le même mode."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-l3-etherchannel-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Deux commutateurs multicouches, DSW1 et DSW2, doivent être reliés par un EtherChannel LACP de niveau 3, avec l'adresse 172.16.0.1/30 côté DSW1. Quelles deux affirmations sur cette configuration sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque port membre reçoit sa propre adresse IP dans le sous-réseau 172.16.0.0/30."
+        },
+        {
+          "id": "b",
+          "text": "L'adresse IP se configure sur l'interface Port-channel, pas sur les ports membres."
+        },
+        {
+          "id": "c",
+          "text": "« show etherchannel summary » marquera ce Port-channel avec le flag S."
+        },
+        {
+          "id": "d",
+          "text": "Les ports membres et l'interface Port-channel doivent être en « no switchport »."
+        },
+        {
+          "id": "e",
+          "text": "Le Port-channel doit être configuré en trunk pour faire passer les VLAN entre DSW1 et DSW2."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Dans un EtherChannel de niveau 3, le Port-channel est une seule interface routée : les ports membres et le Port-channel sont passés en « no switchport », et l'adresse (« ip address 172.16.0.1 255.255.255.252 ») est configurée sur l'interface Port-channel. Les membres n'ont pas d'adresse ; un port de niveau 2 ne peut d'ailleurs pas rejoindre un Port-channel de niveau 3. « show etherchannel summary » le marque alors RU (R = Layer3, U = in use).",
+    "distractorNotes": {
+      "a": "Les membres n'ont pas d'adresse : le bundle se comporte comme une seule interface routée. Un /30 n'offre d'ailleurs que deux adresses d'hôte, une par commutateur.",
+      "c": "S signale un EtherChannel de niveau 2 ; un EtherChannel de niveau 3 est marqué R, par exemple Po1(RU).",
+      "e": "Un port routé n'est pas un port de commutation et n'accepte pas « switchport mode trunk » : les paquets sont routés entre DSW1 et DSW2."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (Layer 3 EtherChannel)"
+  },
+  {
+    "slug": "ccna-2.4-etherchannel-stp-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux commutateurs sont reliés par quatre liens Gigabit Ethernet. Sans EtherChannel, STP en bloque trois. Pourquoi les quatre liens transportent-ils du trafic une fois agrégés dans un EtherChannel ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "EtherChannel désactive STP sur les ports membres du Port-channel."
+        },
+        {
+          "id": "b",
+          "text": "LACP remplace STP et décide lui-même des liens à bloquer."
+        },
+        {
+          "id": "c",
+          "text": "STP voit le Port-channel comme une seule interface logique et ne la bloque pas."
+        },
+        {
+          "id": "d",
+          "text": "Chaque lien membre est placé dans un VLAN différent, ce qui supprime la boucle."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "STP calcule sa topologie sur l'interface Port-channel : il n'y voit qu'un lien entre les deux commutateurs, donc aucune boucle à couper. Le trafic est réparti entre les membres par un hachage sur les adresses MAC ou IP, ou sur les ports, chaque flux restant sur un même lien. Si un membre tombe, le trafic passe sur les autres sans reconvergence STP.",
+    "distractorNotes": {
+      "a": "STP reste actif sur le Port-channel ; le désactiver exposerait le réseau aux boucles en cas d'erreur de câblage.",
+      "b": "LACP négocie seulement l'agrégation des liens ; il ne remplace pas STP, qui continue d'envoyer ses BPDU sur le Port-channel.",
+      "d": "Les membres d'un EtherChannel doivent au contraire avoir la même configuration de VLAN."
+    },
+    "reference": "IEEE 802.1AX ; IEEE 802.1D"
+  },
+  {
+    "slug": "ccna-2.4-etherchannel-summary-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Répondez par des nombres entiers.",
+      "exhibit": "DSW1# show etherchannel summary\nFlags:  D - down        P - bundled in port-channel\n        I - stand-alone s - suspended\n        H - Hot-standby (LACP only)\n        R - Layer3      S - Layer2\n        U - in use      f - failed to allocate aggregator\n\n        M - not in use, minimum links not met\n        u - unsuitable for bundling\n        w - waiting to be aggregated\n        d - default port\n\n        A - formed by Auto LAG\n\nNumber of channel-groups in use: 2\nNumber of aggregators:           2\n\nGroup  Port-channel  Protocol    Ports\n------+-------------+-----------+-----------------------------------------------\n1      Po1(SU)         LACP      Gi1/0/1(P)  Gi1/0/2(P)\n3      Po3(RU)         LACP      Gi1/0/5(P)  Gi1/0/6(D)  Gi1/0/7(P)",
+      "fields": [
+        {
+          "id": "l3",
+          "label": "Numéro du port-channel de niveau 3"
+        },
+        {
+          "id": "bundled",
+          "label": "Nombre de ports actuellement agrégés dans ce port-channel de niveau 3"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "l3": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        },
+        "bundled": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Pour un port-channel, R signale un EtherChannel de niveau 3 et S un EtherChannel de niveau 2 ; U indique qu'il est en service. Po3(RU) est donc le port-channel routé. Pour les ports, P signifie agrégé (bundled in port-channel) et D down : Gi1/0/5 et Gi1/0/7 transportent le trafic de Po3, Gi1/0/6 est down. Les autres flags à connaître sont s (suspendu, configuration incompatible), I (stand-alone, port non agrégé qui fonctionne seul) et H (hot-standby, LACP).",
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.5-rapid-pvst-root-primary-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, en mode de configuration globale, activez Rapid PVST+, puis faites de SW1 le root bridge du VLAN 10 à l'aide de la macro prévue à cet effet, sans fixer vous-même de valeur de priorité.",
+      "prompt": "SW1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "spanning-tree mode rapid-pvst"
+        ],
+        [
+          "spanning-tree vlan 10 root primary"
+        ]
+      ]
+    },
+    "explanation": "« spanning-tree mode rapid-pvst » fait tourner une instance 802.1w (RSTP) par VLAN. « spanning-tree vlan 10 root primary » est une macro : elle fixe la priorité du VLAN 10 à 24576, ou plus bas par pas de 4096 si c'est nécessaire pour passer devant la racine actuelle ; « root secondary » donnerait 28672, pour un pont racine de secours. La macro n'est évaluée qu'au moment où on la tape : si un autre commutateur abaisse ensuite sa priorité, SW1 peut perdre le rôle. L'autre méthode, exclue ici, est « spanning-tree vlan 10 priority 4096 ».",
+    "reference": "IEEE 802.1w ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-portfast-bpduguard-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Le port Gi1/0/12 de SW1 est un port d'accès qui dessert un seul poste de travail. Vous êtes dans la configuration de cette interface. Avec des commandes d'interface uniquement, faites passer ce port directement en forwarding quand le lien monte, et faites-le désactiver (err-disabled) s'il reçoit une BPDU.",
+      "prompt": "SW1(config-if)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "spanning-tree portfast",
+          "spanning-tree portfast edge"
+        ],
+        [
+          "spanning-tree bpduguard enable"
+        ]
+      ]
+    },
+    "explanation": "« spanning-tree portfast » (« spanning-tree portfast edge » sur les versions récentes) fait du port un port edge : il passe en forwarding sans attendre, ce qui évite par exemple l'échec du DHCP au démarrage du poste. « spanning-tree bpduguard enable » place le port en err-disabled dès qu'une BPDU arrive, signe qu'un commutateur a été branché à la place du poste. Il existe des équivalents globaux pour tous les ports PortFast (« spanning-tree portfast bpduguard default »), exclus ici par la consigne. Un port err-disabled se rétablit par shutdown puis no shutdown, ou par errdisable recovery.",
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Optional Spanning-Tree Features"
+  },
+  {
+    "slug": "ccna-2.5-root-port-tiebreak-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Un commutateur non racine reçoit des BPDU sur plusieurs ports. Remettez dans l'ordre les critères qu'il applique pour choisir son root port, du premier critère au dernier départage.",
+      "items": [
+        {
+          "id": "prio",
+          "text": "Priorité de port la plus basse annoncée par le voisin"
+        },
+        {
+          "id": "cost",
+          "text": "Coût du chemin vers la racine le plus bas"
+        },
+        {
+          "id": "num",
+          "text": "Numéro de port le plus bas annoncé par le voisin"
+        },
+        {
+          "id": "bid",
+          "text": "Bridge ID le plus bas du voisin qui envoie la BPDU"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "cost",
+        "bid",
+        "prio",
+        "num"
+      ]
+    },
+    "explanation": "Le root port est celui qui offre le meilleur chemin vers la racine : on compare d'abord le coût total du chemin (root path cost). En cas d'égalité, on préfère la BPDU venant du voisin au bridge ID le plus bas, puis celle dont le port émetteur a la priorité la plus basse (128 par défaut), puis le plus petit numéro de port émetteur. Les deux derniers critères ne servent qu'entre liens parallèles vers un même voisin, et ce sont les valeurs annoncées par le voisin, non celles des ports locaux, qui comptent.",
+    "reference": "IEEE 802.1D-2004 (vecteurs de priorité)"
+  },
+  {
+    "slug": "ccna-2.5-port-cost-short-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque débit de lien à son coût de port STP en méthode short (« spanning-tree pathcost method short »).",
+      "left": [
+        {
+          "id": "m10",
+          "text": "10 Mbit/s"
+        },
+        {
+          "id": "m100",
+          "text": "100 Mbit/s"
+        },
+        {
+          "id": "g1",
+          "text": "1 Gbit/s"
+        },
+        {
+          "id": "g10",
+          "text": "10 Gbit/s"
+        }
+      ],
+      "right": [
+        {
+          "id": "c100",
+          "text": "100"
+        },
+        {
+          "id": "c19",
+          "text": "19"
+        },
+        {
+          "id": "c4",
+          "text": "4"
+        },
+        {
+          "id": "c2",
+          "text": "2"
+        },
+        {
+          "id": "c20000",
+          "text": "20000"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "m10": "c100",
+        "m100": "c19",
+        "g1": "c4",
+        "g10": "c2"
+      }
+    },
+    "explanation": "En méthode short, les coûts sont codés sur 16 bits : 100 pour 10 Mbit/s, 19 pour 100 Mbit/s, 4 pour 1 Gbit/s et 2 pour 10 Gbit/s. Chaque commutateur ajoute au coût annoncé dans la BPDU le coût du port sur lequel il la reçoit, ce qui donne son coût vers la racine. La méthode long (« spanning-tree pathcost method long ») utilise les valeurs 802.1D-2004 sur 32 bits : 2 000 000, 200 000, 20 000 et 2 000.",
+    "distractorNotes": {
+      "c20000": "20000 est le coût d'un lien à 1 Gbit/s en méthode long (802.1D-2004), pas en méthode short."
+    },
+    "reference": "IEEE 802.1D-1998 (méthode short) ; IEEE 802.1D-2004 (méthode long)"
+  },
+  {
+    "slug": "ccna-2.5-bridge-priority-calc-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Les autres commutateurs ne changent pas de configuration. Répondez par des nombres entiers.",
+      "exhibit": "SW3# show spanning-tree vlan 30\n\nVLAN0030\n  Spanning tree enabled protocol rstp\n  Root ID    Priority    24606\n             Address     2c3e.4a10.0100\n             Cost        8\n             Port        2 (GigabitEthernet1/0/2)\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n\n  Bridge ID  Priority    32798  (priority 32768 sys-id-ext 30)\n             Address     2c3e.4a10.0300\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n             Aging Time  300 sec\n\nInterface           Role Sts Cost      Prio.Nbr Type\n------------------- ---- --- --------- -------- --------------------------------\nGi1/0/1             Altn BLK 4         128.1    P2p\nGi1/0/2             Root FWD 4         128.2    P2p\nGi1/0/10            Desg FWD 4         128.10   P2p Edge",
+      "fields": [
+        {
+          "id": "rootprio",
+          "label": "Priorité configurée sur le root bridge pour le VLAN 30 (valeur de « spanning-tree vlan 30 priority »)"
+        },
+        {
+          "id": "newprio",
+          "label": "Plus grande priorité à configurer sur SW3 pour qu'il devienne root bridge du VLAN 30 sans dépendre de la comparaison des adresses MAC"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "rootprio": {
+          "accepted": [
+            "24576"
+          ],
+          "normalize": "int"
+        },
+        "newprio": {
+          "accepted": [
+            "20480"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La priorité affichée dans un bridge ID additionne la priorité configurée et le sys-id-ext, égal au numéro de VLAN : 24606 − 30 = 24576 pour la racine, et 32768 + 30 = 32798 pour SW3, resté à la valeur par défaut. La priorité se règle par pas de 4096. Avec 24576, SW3 serait à égalité de priorité avec la racine et perdrait sur l'adresse MAC (2c3e.4a10.0300 est plus grande que 2c3e.4a10.0100). Il faut donc descendre au pas inférieur, 20480 (soit 20510 dans le bridge ID), pour l'emporter sur la seule priorité.",
+    "reference": "IEEE 802.1D-2004 (bridge identifier) ; IEEE 802.1t (extended system ID)"
+  },
+  {
+    "slug": "ccna-2.5-stp-alternate-port-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Une fois la topologie convergée, quel port a le rôle alternate (état discarding) dans le VLAN 10 ?",
+      "exhibit": "Rapid PVST+, VLAN 10, priorités de port par défaut\n\nSW1 : priorité 24576, MAC 0cd0.f8a1.0300\nSW2 : priorité 32768, MAC 0cd0.f8a1.0100\nSW3 : priorité 28672, MAC 0cd0.f8a1.0200\n\nLiens, tous à 1 Gbit/s :\nSW1 Gi1/0/1 <---> SW2 Gi1/0/1\nSW1 Gi1/0/2 <---> SW3 Gi1/0/1\nSW2 Gi1/0/2 <---> SW3 Gi1/0/2",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi1/0/2 de SW2"
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/2 de SW3"
+        },
+        {
+          "id": "c",
+          "text": "Gi1/0/1 de SW3"
+        },
+        {
+          "id": "d",
+          "text": "Gi1/0/2 de SW1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "SW1 a la priorité la plus basse (24576, plus le sys-id-ext 10) : il est root bridge même si son adresse MAC est la plus haute, car la priorité est comparée avant la MAC. SW2 et SW3 prennent leur lien direct vers SW1 comme root port (coût 4, contre 8 par l'autre commutateur). Sur le lien SW2–SW3, les deux annoncent le même coût vers la racine (4) : le port designated revient au bridge ID le plus bas, celui de SW3 (28672 contre 32768). Gi1/0/2 de SW2 devient alternate et reste en discarding.",
+    "distractorNotes": {
+      "b": "Ce serait le cas si l'égalité était départagée par l'adresse MAC seule ; or le bridge ID compare d'abord la priorité, et SW3 (28672) l'emporte sur SW2 (32768).",
+      "c": "Ce raisonnement fait de SW2, qui a la plus petite MAC, le root bridge. La priorité passant avant la MAC, la racine est SW1, et Gi1/0/1 est le root port de SW3.",
+      "d": "SW1 est le root bridge : tous ses ports sont designated et en forwarding."
+    },
+    "reference": "IEEE 802.1w"
   }
 ]
