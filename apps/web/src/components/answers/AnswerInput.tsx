@@ -1,5 +1,5 @@
 import type { QuestionBody, Response } from '@examforge/core';
-import { useId } from 'react';
+import { useId, useLayoutEffect, useRef } from 'react';
 import { optionLetter } from '../../lib/format';
 import { moveItem, toggleChoice } from '../../lib/responses';
 import { IconDown, IconUp } from '../Icons';
@@ -178,15 +178,20 @@ function Cli({ body, value, onChange, disabled }: Props<Of<'cli'>>) {
 function Ordering({ body, value, onChange, disabled }: Props<Of<'ordering'>>) {
   const order = value?.type === 'ordering' && value.order.length === body.items.length ? value.order : body.items.map((i) => i.id);
   const byId = new Map(body.items.map((i) => [i.id, i]));
+  // Le focus suit l'élément déplacé pour enchaîner au clavier. Il est rendu dans le même commit
+  // que le déplacement (pas de callback asynchrone qui pourrait voler le focus à une action suivante).
+  const pendingFocus = useRef<string | null>(null);
+  useLayoutEffect(() => {
+    const selector = pendingFocus.current;
+    if (!selector) return;
+    pendingFocus.current = null;
+    document.querySelector<HTMLButtonElement>(selector)?.focus();
+  });
   const move = (index: number, delta: number) => {
+    const id = order[index];
+    if (id === undefined) return;
+    pendingFocus.current = `[data-order-item="${CSS.escape(id)}"] [data-dir="${delta < 0 ? 'up' : 'down'}"]:not(:disabled)`;
     onChange({ type: 'ordering', order: moveItem(order, index, delta) });
-    // Le focus suit l'élément déplacé pour enchaîner au clavier.
-    requestAnimationFrame(() => {
-      const target = document.querySelector<HTMLButtonElement>(
-        `[data-order-item="${order[index]}"] [data-dir="${delta < 0 ? 'up' : 'down'}"]:not(:disabled)`,
-      );
-      target?.focus();
-    });
   };
   return (
     <div className="flex max-w-[900px] flex-col gap-2">
