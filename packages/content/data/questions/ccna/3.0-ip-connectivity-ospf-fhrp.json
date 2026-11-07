@@ -7,13 +7,19 @@
     "difficulty": "medium",
     "body": {
       "type": "cli",
-      "stem": "R1 est relié à R2 par G0/0 (10.1.12.1/30) et au LAN des utilisateurs par G0/1 (172.16.10.1/24). En partant du mode de configuration globale, configurez OSPFv2 dans cet ordre : démarrez le processus 1 ; fixez l'ID de routeur à 1.1.1.1 ; annoncez dans l'area 0 le sous-réseau de G0/0, puis celui de G0/1, avec des commandes network dont le wildcard correspond exactement à chaque sous-réseau ; enfin, empêchez l'envoi de Hello OSPF sur G0/1 sans retirer ce LAN d'OSPF.",
+      "stem": "R1 est relié à R2 par G0/0 (10.1.12.1/30) et au LAN des utilisateurs par G0/1 (172.16.10.1/24). En partant du mode de configuration globale, démarrez le processus OSPF 1 et fixez aussitôt l'ID de routeur à 1.1.1.1. Ensuite, dans l'ordre de votre choix : annoncez dans l'area 0 le sous-réseau de G0/0 et celui de G0/1, avec une commande network par sous-réseau dont le wildcard correspond exactement au sous-réseau, et empêchez l'envoi de Hello OSPF sur G0/1 sans retirer ce LAN d'OSPF.",
       "prompt": "R1(config)#",
       "lines": 5
     },
     "key": {
       "type": "cli",
       "ordered": true,
+      "freeOrder": [
+        [
+          2,
+          4
+        ]
+      ],
       "commands": [
         [
           "router ospf 1"
@@ -23,18 +29,22 @@
         ],
         [
           "network 10.1.12.0 0.0.0.3 area 0",
-          "network 10.1.12.0 0.0.0.3 area 0.0.0.0"
+          "network 10.1.12.0 0.0.0.3 area 0.0.0.0",
+          "network 10.1.12.1 0.0.0.3 area 0",
+          "network 10.1.12.1 0.0.0.3 area 0.0.0.0"
         ],
         [
           "network 172.16.10.0 0.0.0.255 area 0",
-          "network 172.16.10.0 0.0.0.255 area 0.0.0.0"
+          "network 172.16.10.0 0.0.0.255 area 0.0.0.0",
+          "network 172.16.10.1 0.0.0.255 area 0",
+          "network 172.16.10.1 0.0.0.255 area 0.0.0.0"
         ],
         [
           "passive-interface GigabitEthernet0/1"
         ]
       ]
     },
-    "explanation": "« router ospf 1 » crée le processus (son numéro reste local au routeur) et ouvre le mode R1(config-router)#. Le wildcard est l'inverse du masque : 0.0.0.3 pour un /30, 0.0.0.255 pour un /24 ; toute interface dont l'adresse correspond est activée dans l'area 0. « passive-interface GigabitEthernet0/1 » supprime les Hello sur le LAN, donc aucune adjacence ne peut s'y former, mais 172.16.10.0/24 reste annoncé aux autres routeurs. Erreurs fréquentes : taper passive-interface en mode interface (c'est une commande du mode router), ou oublier qu'un router-id saisi sur un processus déjà actif ne s'applique qu'après « clear ip ospf process ».",
+    "explanation": "« router ospf 1 » crée le processus (son numéro reste local au routeur) et ouvre le mode R1(config-router)#. Le wildcard est l'inverse du masque : 0.0.0.3 pour un /30, 0.0.0.255 pour un /24 ; toute interface dont l'adresse correspond est activée dans l'area 0. IOS accepte aussi l'adresse de l'interface avec le même wildcard (network 10.1.12.1 0.0.0.3 area 0), qui couvre les mêmes adresses. « passive-interface GigabitEthernet0/1 » supprime les Hello sur le LAN, donc aucune adjacence ne peut s'y former, mais 172.16.10.0/24 reste annoncé aux autres routeurs. Erreurs fréquentes : taper passive-interface en mode interface (c'est une commande du mode router), ou oublier qu'un router-id saisi sur un processus déjà actif ne s'applique qu'après « clear ip ospf process ».",
     "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
   },
   {
@@ -45,13 +55,19 @@
     "difficulty": "medium",
     "body": {
       "type": "cli",
-      "stem": "Le processus OSPF 1 existe déjà sur R2, relié directement à R1 par un lien Ethernet sur GigabitEthernet0/0. En partant du mode de configuration globale et sans utiliser de commande network : entrez dans l'interface, activez-y OSPF (processus 1, area 0), puis passez le type de réseau OSPF de cette interface en point-to-point pour supprimer l'élection DR/BDR.",
+      "stem": "Le processus OSPF 1 existe déjà sur R2, relié directement à R1 par un lien Ethernet sur GigabitEthernet0/0. En partant du mode de configuration globale et sans utiliser de commande network, entrez dans l'interface ; activez-y OSPF (processus 1, area 0) et passez le type de réseau OSPF de cette interface en point-to-point pour supprimer l'élection DR/BDR.",
       "prompt": "R2(config)#",
       "lines": 3
     },
     "key": {
       "type": "cli",
       "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
       "commands": [
         [
           "interface GigabitEthernet0/0"
@@ -258,8 +274,8 @@
           "text": "show ip route ospf"
         },
         {
-          "id": "brief",
-          "text": "show ip interface brief"
+          "id": "proto",
+          "text": "show ip protocols"
         }
       ]
     },
@@ -274,7 +290,7 @@
     },
     "explanation": "« show ip ospf neighbor » liste chaque voisin avec sa priorité, son état et son rôle (FULL/DR, 2WAY/DROTHER…), son Dead Time et l'interface. « show ip ospf interface » donne pour chaque interface l'area, le type de réseau, le coût, les timers et le DR/BDR du segment. « show ip ospf database » affiche la LSDB (Router Link States pour le type 1, Net Link States pour le type 2), et « show ip route ospf » ne montre que les routes OSPF retenues dans la table de routage.",
     "distractorNotes": {
-      "brief": "Elle affiche l'adresse IP et l'état (Status/Protocol) de chaque interface, mais aucune information OSPF."
+      "proto": "Elle résume le processus de routage (router ID, réseaux annoncés, interfaces passives, sources des routes, distance administrative), mais n'affiche ni l'état des voisins, ni le type de réseau des interfaces, ni les LSA, ni les routes installées."
     },
     "reference": "Cisco IOS IP Routing: OSPF Command Reference"
   },
@@ -372,7 +388,7 @@
         "e"
       ]
     },
-    "explanation": "Un segment broadcast n'a qu'un DR et qu'un BDR, ici 2.2.2.2 et 3.3.3.3 : R1 et 4.4.4.4 sont donc des DROTHER. Les DROTHER ne forment une adjacence complète (FULL) qu'avec le DR et le BDR et restent en 2WAY entre eux, ce qui est le fonctionnement attendu. Pour annoncer un changement, un DROTHER envoie ses LSU à AllDRouters (224.0.0.6), que seuls le DR et le BDR écoutent ; le DR les relaie ensuite à AllSPFRouters (224.0.0.5).",
+    "explanation": "Un segment broadcast n'a qu'un DR et qu'un BDR, ici 2.2.2.2 et 3.3.3.3 : R1 et 4.4.4.4 sont donc des DROTHER. Les DROTHER ne forment une adjacence complète (FULL) qu'avec le DR et le BDR et restent en 2WAY entre eux, ce qui est le fonctionnement attendu. Pour annoncer un changement, un DROTHER envoie ses LSU à AllDRouters (224.0.0.6), que seuls le DR et le BDR écoutent ; le DR les relaie ensuite à AllSPFRouters (224.0.0.5). 4.4.4.4 est DROTHER malgré le plus haut router ID à priorité égale : il a rejoint le segment après l'élection, qui n'est pas préemptive, ce qui ne change rien au fonctionnement observé.",
     "distractorNotes": {
       "a": "Le BDR est 3.3.3.3, et il n'y en a qu'un par segment ; un DROTHER est lui aussi FULL avec le DR et le BDR.",
       "d": "Avec des timers différents, les Hello seraient rejetés et 4.4.4.4 n'apparaîtrait pas dans la table ; l'état 2WAY prouve que ces paramètres concordent.",
@@ -527,7 +543,7 @@
         },
         {
           "id": "d",
-          "text": "R1 et R2 ont tous deux une priorité OSPF de 0 sur ce segment."
+          "text": "Une authentification OSPF n'est configurée que sur l'interface G0/1 de R1."
         }
       ]
     },
@@ -539,7 +555,7 @@
     "distractorNotes": {
       "a": "Des timers différents font rejeter les Hello : R2 n'apparaîtrait pas dans la table des voisins et n'atteindrait jamais ExStart.",
       "b": "Une interface passive n'envoie pas de Hello : R1 ne verrait pas du tout R2 comme voisin.",
-      "d": "Sans routeur éligible, il n'y aurait pas de DR et les deux routeurs resteraient en 2WAY ; l'exhibit montre d'ailleurs une priorité de 1 et le rôle DR pour R2."
+      "d": "L'authentification est vérifiée sur chaque paquet OSPF, Hello compris : R1 rejetterait les Hello de R2 (type d'authentification différent), et R2 n'apparaîtrait pas dans la table des voisins."
     },
     "reference": "RFC 2328, section 10.6"
   },
@@ -812,7 +828,7 @@
         },
         {
           "id": "e",
-          "text": "Les MAC virtuelles ont la forme 0007.b400.XXYY, où XX est le groupe et YY le numéro d'AVF."
+          "text": "Dans le groupe 1, les MAC virtuelles ont la forme 0007.b400.01YY, où YY est le numéro d'AVF."
         }
       ]
     },
@@ -823,7 +839,7 @@
         "e"
       ]
     },
-    "explanation": "Dans un groupe GLBP, l'AVG (Active Virtual Gateway) attribue une MAC virtuelle à chaque routeur, jusqu'à quatre AVF (Active Virtual Forwarders). Tous les hôtes utilisent la même passerelle, mais l'AVG répond à leurs requêtes ARP avec des MAC différentes (round-robin par défaut) : plusieurs routeurs transmettent ainsi le trafic en même temps. Les MAC suivent le format 0007.b400.XXYY, avec le numéro de groupe et celui de l'AVF en hexadécimal.",
+    "explanation": "Dans un groupe GLBP, l'AVG (Active Virtual Gateway) attribue une MAC virtuelle à chaque routeur, jusqu'à quatre AVF (Active Virtual Forwarders). Tous les hôtes utilisent la même passerelle, mais l'AVG répond à leurs requêtes ARP avec des MAC différentes (round-robin par défaut) : plusieurs routeurs transmettent ainsi le trafic en même temps. Les MAC virtuelles commencent par 0007.b4 et contiennent le numéro de groupe (0 à 1023) puis celui de l'AVF, en hexadécimal : 0007.b400.0101 à 0007.b400.0104 pour les quatre AVF du groupe 1.",
     "distractorNotes": {
       "a": "C'est le fonctionnement actif/en attente de HSRP et de VRRP ; avec GLBP, plusieurs routeurs transmettent en même temps.",
       "c": "La RFC 5798 définit VRRP ; GLBP est propriétaire Cisco.",

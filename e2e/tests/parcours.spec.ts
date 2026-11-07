@@ -338,7 +338,8 @@ test('examen blanc complet : toutes les questions et le chrono officiel, soumis 
 
   await expect(page.getByText(`Question 1 / ${examFormat.questionCount}`)).toBeVisible();
   const grid = page.getByRole('complementary', { name: 'Navigateur de questions' });
-  await expect(grid.getByRole('button')).toHaveCount(examFormat.questionCount);
+  // Sans retour arrière, les cases du navigateur sont des images étiquetées, pas des boutons.
+  await expect(grid.locator('[aria-label^="Question "]')).toHaveCount(examFormat.questionCount);
   const timer = page.getByRole('timer');
   const shown = clockSeconds((await timer.textContent()) ?? '');
   expect(shown).toBeLessThanOrEqual(examFormat.durationMinutes * 60);

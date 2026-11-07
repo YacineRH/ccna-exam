@@ -77,7 +77,9 @@ describe('normalizeCommand', () => {
     expect(commandMatches('ip dh snoop tru', ['ip dhcp snooping trust'])).toBe(true);
     expect(commandMatches('ip nat ins so li 1 int g0/1 ov', ['ip nat inside source list 1 interface GigabitEthernet0/1 overload'])).toBe(true);
     expect(commandMatches('cry key gen rsa mod 2048', ['crypto key generate rsa modulus 2048'])).toBe(true);
-    // Toujours ambigu : "pri" hors de "root" (priority, primary), comme "s" ou "pr".
-    expect(normalizeCommand('standby 10 pri 110')).toBe('standby 10 pri 110');
+    expect(commandMatches('standby 10 pri 110', ['standby 10 priority 110'])).toBe(true);
+    expect(commandMatches('net 10.1.12.0 0.0.0.3 ar 0', ['network 10.1.12.0 0.0.0.3 area 0'])).toBe(true);
+    // Toujours ambigu, comme dans IOS : "pr" (preempt, priority).
+    expect(normalizeCommand('standby 10 pr')).toBe('standby 10 pr');
   });
 });

@@ -12,7 +12,7 @@ import { compressIpv6 } from './ipv6.js';
 
 const KEYWORDS = [
   'access', 'access-class', 'access-group', 'access-list', 'active', 'address', 'algorithm-type', 'allowed',
-  'any', 'area', 'arp', 'auto', 'auto-cost',
+  'any', 'area', 'auto', 'auto-cost',
   'bandwidth', 'banner', 'boot', 'bpduguard', 'brief', 'cdp', 'channel-group', 'class', 'clock', 'configure',
   'console', 'copy', 'cost', 'crypto', 'default', 'default-gateway', 'default-information', 'default-router',
   'delay', 'deny', 'description', 'desirable', 'dhcp', 'disable', 'dns-server', 'domain-lookup', 'domain-name',
@@ -22,9 +22,9 @@ const KEYWORDS = [
   'logging', 'login', 'lt',
   'mac-address', 'mask', 'maximum', 'mode', 'modulus', 'name', 'nat', 'native', 'neighbor', 'neq',
   'network', 'no', 'nonegotiate', 'ntp', 'originate', 'ospf', 'outside', 'overload', 'passive-interface', 'password',
-  'permit', 'point-to-point', 'pool', 'port-security', 'portfast', 'preempt', 'primary', 'priority', 'rapid-pvst',
+  'permit', 'point-to-point', 'pool', 'port-security', 'portfast', 'preempt', 'priority', 'rapid-pvst',
   'range', 'reference-bandwidth', 'remark', 'restrict', 'rip', 'route',
-  'router', 'router-id', 'rsa', 'running-config', 'scrypt', 'secondary', 'secret', 'server', 'service', 'show',
+  'router', 'router-id', 'rsa', 'running-config', 'scrypt', 'secret', 'server', 'service', 'show',
   'shutdown', 'snmp-server', 'snooping', 'source', 'spanning-tree', 'speed', 'ssh', 'standard', 'standby',
   'startup-config', 'static', 'sticky', 'switchport', 'tcp', 'terminal', 'transport', 'trunk', 'trust', 'udp',
   'unicast-routing', 'username', 'version', 'violation', 'vlan', 'voice', 'vty', 'write',
@@ -51,7 +51,8 @@ const ALIASES: Record<string, string> = {
 };
 
 /**
- * Après certains mots, IOS ne propose que quelques mots-clés : une abréviation ambiguë dans la
+ * Après certains mots, IOS ne propose que quelques mots-clés (`primary` et `secondary` n'existent
+ * qu'après `root` : hors de la liste à plat, ils ne rendent pas `pri` ambigu pour `priority`) : une abréviation ambiguë dans la
  * liste à plat se lit d'abord parmi eux ("transport in ssh", "int ra g1/0/1 - 2", "snooping tru").
  */
 const NEXT_KEYWORDS: Record<string, string[]> = {
