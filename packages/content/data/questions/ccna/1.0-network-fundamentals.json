@@ -65,7 +65,7 @@
         },
         {
           "id": "b",
-          "text": "Il est sans connexion et n'accuse pas réception des segments."
+          "text": "Il fonctionne sans connexion et n'envoie aucun accusé de réception."
         },
         {
           "id": "c",
@@ -132,6 +132,10 @@
         {
           "id": "pff00",
           "text": "FF00::/8"
+        },
+        {
+          "id": "pfec0",
+          "text": "FEC0::/10"
         }
       ]
     },
@@ -145,7 +149,10 @@
       }
     },
     "explanation": "Les adresses globales routables sur Internet sont dans 2000::/3. Les adresses de lien local, créées automatiquement sur chaque interface, sont dans FE80::/10. Les adresses uniques locales (l'équivalent des adresses privées) sont dans FC00::/7. Tout le multicast IPv6 est dans FF00::/8.",
-    "reference": "RFC 4291, RFC 4193"
+    "reference": "RFC 4291, RFC 4193, RFC 3879",
+    "distractorNotes": {
+      "pfec0": "FEC0::/10 désignait les adresses site-local, dépréciées par la RFC 3879 et remplacées par les adresses uniques locales (FC00::/7)."
+    }
   },
   {
     "slug": "ccna-1.13-unknown-unicast-001",
@@ -163,7 +170,7 @@
         },
         {
           "id": "b",
-          "text": "Il la diffuse sur tous les ports du VLAN 10 sauf Fa0/3."
+          "text": "Il l'inonde sur tous les ports du VLAN 10 sauf Fa0/3."
         },
         {
           "id": "c",
@@ -171,7 +178,7 @@
         },
         {
           "id": "d",
-          "text": "Il la diffuse sur tous les ports du commutateur, tous VLAN confondus."
+          "text": "Il l'inonde sur tous les ports du commutateur, tous VLAN confondus."
         }
       ]
     },
@@ -184,7 +191,8 @@
       "a": "Un commutateur ne supprime pas une trame simplement parce que la destination est inconnue.",
       "c": "Un commutateur ne renvoie jamais une trame sur son port d'arrivée.",
       "d": "L'inondation reste limitée au domaine de broadcast, donc au VLAN."
-    }
+    },
+    "reference": "IEEE 802.1Q-2018 (processus de transfert et base de filtrage)"
   },
   {
     "slug": "ccna-1.7-private-range-001",
@@ -231,7 +239,7 @@
     "certification": "ccna",
     "domain": "1.0",
     "subtopic": "1.6",
-    "difficulty": "easy",
+    "difficulty": "medium",
     "body": {
       "type": "fill_blank",
       "stem": "Un hôte a l'adresse 10.44.7.203/29. Donnez l'adresse réseau et la dernière adresse d'hôte utilisable de son sous-réseau.",
@@ -263,7 +271,8 @@
         }
       }
     },
-    "explanation": "Un /29 a un pas de 8 dans le 4ᵉ octet : les blocs commencent à .192, .200, .208… 203 est dans le bloc .200, dont le broadcast est .207. Le dernier hôte utilisable est donc .206."
+    "explanation": "Un /29 a un pas de 8 dans le 4ᵉ octet : les blocs commencent à .192, .200, .208… 203 est dans le bloc .200, dont le broadcast est .207. Le dernier hôte utilisable est donc .206.",
+    "reference": "RFC 950"
   },
   {
     "slug": "ccna-1.8-ipv6-compression-001",
@@ -521,7 +530,7 @@
         },
         {
           "id": "d",
-          "text": "Entre deux serveurs raccordés à des leafs différents, le trafic traverse toujours le même nombre de commutateurs."
+          "text": "Entre deux serveurs de leafs différents, le nombre de sauts est toujours le même."
         },
         {
           "id": "e",
@@ -601,7 +610,7 @@
         },
         {
           "id": "b",
-          "text": "Une sensibilité aux interférences électromagnétiques plus forte que celle du cuivre"
+          "text": "Une dispersion modale plus forte, qui limite la portée à haut débit"
         },
         {
           "id": "c",
@@ -613,7 +622,7 @@
         },
         {
           "id": "e",
-          "text": "Une source laser à 1310 ou 1550 nm, pour des portées de 10 km et plus"
+          "text": "Une source laser à 1310 ou 1550 nm, pour des portées de plusieurs kilomètres"
         }
       ],
       "selectCount": 2
@@ -628,7 +637,7 @@
     "explanation": "La fibre monomode a un cœur très fin (8 à 10 µm, couramment 9/125 µm) où la lumière ne suit qu'un seul chemin : sans dispersion modale, le signal porte loin. Elle utilise des lasers à 1310 ou 1550 nm, par exemple en 10GBASE-LR (10 km) ou 10GBASE-ER (40 km). La fibre multimode, au cœur de 50 ou 62,5 µm, transporte plusieurs modes, ce qui limite la portée (300 à 400 m en 10GBASE-SR sur OM3 ou OM4) mais permet des optiques moins chères à 850 nm.",
     "distractorNotes": {
       "a": "Un cœur de 50 ou 62,5 µm caractérise la fibre multimode (OM1 à OM5).",
-      "b": "Toute fibre transporte de la lumière : monomode ou multimode, elle est insensible aux interférences électromagnétiques.",
+      "b": "La dispersion modale vient des multiples chemins que suit la lumière dans une fibre multimode ; la monomode, qui ne transporte qu'un seul mode, n'en subit pas.",
       "d": "Les sources LED ou VCSEL à 850 nm et les portées de quelques centaines de mètres sont celles de la fibre multimode."
     },
     "reference": "IEEE 802.3ae (10GBASE-SR, LR et ER)"
@@ -740,13 +749,19 @@
     "difficulty": "medium",
     "body": {
       "type": "cli",
-      "stem": "L'imprimante raccordée au port GigabitEthernet1/0/7 de SW1 a une carte réseau forcée en 100 Mbit/s full duplex, sans autonégociation. Pour éviter un duplex mismatch, configurez le port de la même façon. En partant du mode de configuration globale, entrez dans l'interface, puis fixez d'abord la vitesse, ensuite le duplex.",
+      "stem": "L'imprimante raccordée au port GigabitEthernet1/0/7 de SW1 a une carte réseau forcée en 100 Mbit/s full duplex, sans autonégociation. Pour éviter un duplex mismatch, configurez le port de la même façon. En partant du mode de configuration globale, entrez dans l'interface, puis fixez la vitesse et le duplex.",
       "prompt": "SW1(config)#",
       "lines": 3
     },
     "key": {
       "type": "cli",
       "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
       "commands": [
         [
           "interface GigabitEthernet1/0/7"
@@ -759,7 +774,7 @@
         ]
       ]
     },
-    "explanation": "« interface GigabitEthernet1/0/7 » fait passer en mode de configuration de l'interface, où « speed 100 » puis « duplex full » fixent les paramètres et désactivent l'autonégociation. Laissé en auto face à une carte qui ne négocie pas, le port détecterait la vitesse (parallel detection) mais pas le duplex, et se mettrait en half duplex : d'où des late collisions. Erreur fréquente : ne fixer que la vitesse, le duplex restant en auto. On vérifie avec « show interfaces GigabitEthernet1/0/7 status », qui doit afficher full et 100 sans le préfixe a- des valeurs négociées.",
+    "explanation": "« interface GigabitEthernet1/0/7 » fait passer en mode de configuration de l'interface, où « speed 100 » et « duplex full », dans n'importe quel ordre, fixent les paramètres et désactivent l'autonégociation. Laissé en auto face à une carte qui ne négocie pas, le port détecterait la vitesse (parallel detection) mais pas le duplex, et se mettrait en half duplex : d'où des late collisions. Erreur fréquente : ne fixer que la vitesse, le duplex restant en auto. On vérifie avec « show interfaces GigabitEthernet1/0/7 status », qui doit afficher full et 100 sans le préfixe a- des valeurs négociées.",
     "reference": "Catalyst 9300 Interface and Hardware Components Configuration Guide (vitesse et duplex)"
   },
   {
@@ -906,7 +921,7 @@
       "fields": [
         {
           "id": "ack",
-          "label": "Numéro d'acquittement (nombre entier)"
+          "label": "Numéro d'acquittement (en chiffres)"
         }
       ]
     },
@@ -932,7 +947,7 @@
     "difficulty": "medium",
     "body": {
       "type": "mcq_single",
-      "stem": "Reportez-vous à l'exhibit. Ce poste Windows communique avec les hôtes de son segment, mais avec aucun hôte d'un autre réseau, même par adresse IP. L'interface du routeur sur ce segment a l'adresse 10.20.30.129/26. Quelle correction faut-il apporter ?",
+      "stem": "Reportez-vous à l'exhibit. Ce poste Windows communique avec les hôtes de son segment, mais ne joint aucun hôte d'un autre réseau, même par adresse IP. L'interface du routeur sur ce segment a l'adresse 10.20.30.129/26. Quelle correction faut-il apporter ?",
       "exhibit": "C:\\>ipconfig /all\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Description . . . . . . . . . . . : Intel(R) Ethernet Connection I219-LM\n   Physical Address. . . . . . . . . : 54-E1-AD-3C-7F-21\n   DHCP Enabled. . . . . . . . . . . : No\n   Autoconfiguration Enabled . . . . : Yes\n   Link-local IPv6 Address . . . . . : fe80::8d4c:2f1a:9b3e:61d2%12(Preferred)\n   IPv4 Address. . . . . . . . . . . : 10.20.30.140(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.255.192\n   Default Gateway . . . . . . . . . : 10.20.30.62\n   DNS Servers . . . . . . . . . . . : 10.20.0.53\n   NetBIOS over Tcpip. . . . . . . . : Enabled",
       "options": [
         {
@@ -1018,7 +1033,7 @@
     "certification": "ccna",
     "domain": "1.0",
     "subtopic": "1.10",
-    "difficulty": "hard",
+    "difficulty": "medium",
     "body": {
       "type": "mcq_single",
       "stem": "Reportez-vous à l'exhibit, relevé sur un poste macOS. Quelle affirmation décrit correctement la configuration IPv4 de l'interface en0 ?",
@@ -1139,11 +1154,11 @@
       "type": "mcq_single",
       "correct": "b"
     },
-    "explanation": "Un BSS est l'ensemble formé par un AP et ses clients ; il est identifié par son BSSID, une adresse MAC de 48 bits liée à la radio de l'AP (un AP qui diffuse plusieurs SSID utilise un BSSID par WLAN). Plusieurs BSS qui partagent le même SSID et sont reliés par un système de distribution, en général le LAN filaire, forment un ESS dans lequel le client peut passer d'un AP à l'autre (roaming). Le BSSID figure dans l'en-tête de chaque trame 802.11, balises comprises.",
+    "explanation": "Un BSS est l'ensemble formé par un AP et ses clients ; il est identifié par son BSSID, une adresse MAC de 48 bits liée à la radio de l'AP (un AP qui diffuse plusieurs SSID utilise un BSSID par WLAN). Plusieurs BSS qui partagent le même SSID et sont reliés par un système de distribution, en général le LAN filaire, forment un ESS dans lequel le client peut passer d'un AP à l'autre (roaming). Le BSSID figure dans l'en-tête des trames de gestion, balises comprises, et des trames de données échangées dans le BSS.",
     "distractorNotes": {
       "a": "Le SSID est le nom du WLAN : il est identique (« CAMPUS ») sur tous les AP de l'ESS et ne distingue donc pas les BSS.",
       "c": "Le canal n'est pas un identifiant : deux AP éloignés peuvent utiliser le même canal, et un AP peut changer de canal.",
-      "d": "L'adresse IP de gestion sert à administrer l'AP ; elle n'apparaît pas dans les trames 802.11 que voit le client."
+      "d": "L'adresse IP de gestion sert à administrer l'AP ; elle ne figure pas dans l'en-tête des trames 802.11, que le client utilise pour distinguer les BSS."
     },
     "reference": "IEEE 802.11-2020 (architecture BSS et ESS)"
   },
