@@ -18,7 +18,17 @@ export interface CertificationSummary {
 
 export interface CertificationDetail {
   certification: CertificationConfig;
-  bank: { questions: number; byDomain: Record<string, number>; exams: number };
+  bank: {
+    questions: number;
+    byDomain: Record<string, number>;
+    /** Questions publiées par type. */
+    byType: Record<string, number>;
+    /** Questions publiées par sous-thème (tous les sous-thèmes de la configuration, même vides). */
+    bySubtopic: Record<string, number>;
+    /** Questions publiées par domaine puis par type. */
+    byDomainType: Record<string, Record<string, number>>;
+    exams: number;
+  };
 }
 
 export type AttemptMode = 'exam' | 'practice';
@@ -61,6 +71,8 @@ export interface PracticeFeedback {
 
 export interface SaveAnswerResult {
   saved: true;
+  /** Heure du serveur à l'enregistrement (ISO) : le chrono se recale à chaque réponse. */
+  serverNow: string;
   feedback?: PracticeFeedback;
 }
 

@@ -175,15 +175,20 @@ export function DistractorNotes({ body, notes }: { body: QuestionBody; notes: Re
   const label = (id: string) => {
     if (body.type === 'mcq_single' || body.type === 'mcq_multi') {
       const i = body.options.findIndex((o) => o.id === id);
-      return i >= 0 ? optionLetter(i) : id;
+      return `${i >= 0 ? optionLetter(i) : id} est faux :`;
     }
-    return id;
+    // Association : la note porte sur un élément de droite qui ne correspond à rien (leurre).
+    if (body.type === 'matching') {
+      const item = body.right.find((r) => r.id === id);
+      return `« ${item?.text ?? id} » ne correspond à aucun élément :`;
+    }
+    return `${id} :`;
   };
   return (
     <ul className="flex flex-col gap-1.5">
       {entries.map(([id, note]) => (
         <li key={id} className="text-text2">
-          <span className="text-crit">{label(id)} est faux :</span> {note}
+          <span className="text-crit">{label(id)}</span> {note}
         </li>
       ))}
     </ul>

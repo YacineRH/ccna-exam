@@ -4,7 +4,8 @@ import { WithCertification } from '../certification/CertificationContext';
 import { IconPlay, IconTimer, IconTrend } from '../components/Icons';
 import { ErrorBox, Spinner } from '../components/ui';
 import { api, ApiError } from '../lib/api';
-import { examMinutes, maxFeasibleCount, planShortfalls } from '../lib/planning';
+import { countsForTypes, domainsForTypes, examMinutes, maxFeasibleCount, planShortfalls } from '../lib/planning';
+import { QUESTION_TYPE_NAME } from '../lib/responses';
 import type { AttemptMode, AttemptState, CertificationDetail, InsufficientQuestionsDetails } from '../lib/types';
 import { useApi } from '../lib/useApi';
 
@@ -65,6 +66,8 @@ function NewAttemptForm({ code }: { code: string }) {
   const [mode, setMode] = useState<AttemptMode>(urlMode);
   const [count, setCount] = useState<number | null>(null);
   const [selected, setSelected] = useState<string[] | null>(null);
+  /** Types retenus en entraînement ; `null` = tous les types autorisés. */
+  const [selectedTypes, setSelectedTypes] = useState<string[] | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<unknown>(null);
 
@@ -79,14 +82,24 @@ function NewAttemptForm({ code }: { code: string }) {
   const allCodes = useMemo(() => cert?.domains.map((d) => d.code) ?? [], [cert]);
   const chosen = selected ?? allCodes;
   const chosenDomains = useMemo(() => (cert?.domains ?? []).filter((d) => chosen.includes(d.code)), [cert, chosen]);
+  const allTypes = useMemo<string[]>(() => cert?.allowedQuestionTypes ?? [], [cert]);
+  const chosenTypes = selectedTypes ?? allTypes;
+  // Le filtre de types ne vaut qu'en entraînement, et seulement s'il restreint vraiment.
+  const typeFilter = mode === 'practice' && chosenTypes.length < allTypes.length ? chosenTypes : null;
+  const perDomain = useMemo(() => (bank ? countsForTypes(bank, typeFilter) : {}), [bank, typeFilter]);
+  // Comme le serveur : avec un filtre de types, les domaines sans question de ces types sont écartés.
+  const drawnDomains = useMemo(() => domainsForTypes(chosenDomains, perDomain, typeFilter !== null), [chosenDomains, perDomain, typeFilter]);
   const maxPossible = useMemo(
-    () => (bank ? maxFeasibleCount(chosenDomains, bank.byDomain, Math.min(200, bank.questions)) : 0),
-    [chosenDomains, bank],
+    () => (bank ? maxFeasibleCount(drawnDomains, perDomain, Math.min(200, bank.questions)) : 0),
+    [drawnDomains, perDomain, bank],
   );
   const official = cert?.examFormat.questionCount ?? 0;
   const defaultCount = mode === 'exam' ? official : 10;
   const effectiveCount = count ?? (maxPossible ? Math.min(defaultCount, maxPossible) : defaultCount);
-  const shortfalls = bank ? planShortfalls(chosenDomains, bank.byDomain, effectiveCount) : [];
+  const shortfalls = bank ? planShortfalls(drawnDomains, perDomain, effectiveCount) : [];
+  const noTypeMatch = typeFilter !== null && chosenTypes.length > 0 && drawnDomains.length === 0 && chosenDomains.length > 0;
+  /** Questions en banque d'un type, dans les domaines cochés. */
+  const typeCount = (type: string) => chosen.reduce((s, d) => s + (bank?.byDomainType[d]?.[type] ?? 0), 0);
   const domainName = (code: string) => cert?.domains.find((d) => d.code === code)?.name ?? code;
 
   if (detail.loading && !detail.data) return <Spinner label="Chargement de la certification…" />;
@@ -106,9 +119,16 @@ function NewAttemptForm({ code }: { code: string }) {
     setSelected(chosen.includes(code) ? chosen.filter((c) => c !== code) : [...chosen, code]);
   };
 
+  const toggleType = (type: string) => {
+    setError(null);
+    setCount(null);
+    setSelectedTypes(chosenTypes.includes(type) ? chosenTypes.filter((t) => t !== type) : [...chosenTypes, type]);
+  };
+  const noType = mode === 'practice' && chosenTypes.length === 0;
+
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (submitting || chosen.length === 0) return;
+    if (submitting || chosen.length === 0 || noType) return;
     setSubmitting(true);
     setError(null);
     try {
@@ -120,6 +140,7 @@ function NewAttemptForm({ code }: { code: string }) {
           mode,
           questionCount: effectiveCount,
           ...(all ? {} : { domains: chosen }),
+          ...(typeFilter ? { types: typeFilter } : {}),
         },
       });
       navigate(`/tentatives/${attempt.id}`);
@@ -225,7 +246,8 @@ function NewAttemptForm({ code }: { code: string }) {
             </>
           ) : null}
           La banque permet au plus <span className="font-mono text-text">{maxPossible}</span> question{maxPossible > 1 ? 's' : ''} avec les domaines
-          retenus (répartition selon la pondération officielle).
+          {typeFilter ? ' et les types' : ''} retenus (répartition selon la pondération officielle
+          {typeFilter ? ', entre les domaines qui ont des questions de ces types' : ''}).
         </p>
       </fieldset>
 
@@ -270,6 +292,70 @@ function NewAttemptForm({ code }: { code: string }) {
         {chosen.length === 0 && <p className="m-0 font-mono text-[12px] text-warn">▲ Cochez au moins un domaine.</p>}
       </fieldset>
 
+      {mode === 'practice' && (
+        <fieldset className="panel m-0 flex flex-col gap-3 px-5 py-5 sm:px-6" aria-describedby="types-help">
+          <legend className="sr-only">Types de question</legend>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="label-mono" aria-hidden>
+              Types de question
+            </span>
+            <div className="flex gap-1.5">
+              <button
+                type="button"
+                className="btn-secondary btn-sm"
+                onClick={() => {
+                  setSelectedTypes(null);
+                  setCount(null);
+                }}
+                disabled={chosenTypes.length === allTypes.length}
+              >
+                Tous les types
+              </button>
+              <button
+                type="button"
+                className="btn-secondary btn-sm"
+                onClick={() => {
+                  setSelectedTypes([]);
+                  setCount(null);
+                }}
+                disabled={chosenTypes.length === 0}
+              >
+                Aucun type
+              </button>
+            </div>
+          </div>
+          <ul className="grid gap-2 [grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))]">
+            {allTypes.map((t) => {
+              const on = chosenTypes.includes(t);
+              const n = typeCount(t);
+              return (
+                <li key={t}>
+                  <label
+                    className="flex min-h-[52px] cursor-pointer items-center gap-3 rounded-[10px] border px-3.5 py-2.5"
+                    style={{ borderColor: on ? '#2B3B57' : '#1A2539', background: on ? '#0F1828' : 'transparent' }}
+                  >
+                    <input type="checkbox" checked={on} onChange={() => toggleType(t)} className="h-[18px] w-[18px] shrink-0 accent-accent" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block">{QUESTION_TYPE_NAME[t as keyof typeof QUESTION_TYPE_NAME] ?? t}</span>
+                      <span className="font-mono text-[11px] text-muted">
+                        {n} question{n > 1 ? 's' : ''} dans les domaines cochés
+                      </span>
+                    </span>
+                  </label>
+                </li>
+              );
+            })}
+          </ul>
+          <p id="types-help" className="m-0 text-[13px] text-text2">
+            Pour travailler un format précis : seules les questions des types cochés sont tirées.
+          </p>
+          {noType && <p className="m-0 font-mono text-[12px] text-warn">▲ Cochez au moins un type de question.</p>}
+          {noTypeMatch && (
+            <p className="m-0 font-mono text-[12px] text-warn">▲ Aucune question de ces types dans les domaines cochés.</p>
+          )}
+        </fieldset>
+      )}
+
       {shortfalls.length > 0 && !insufficient && (
         <div role="status" className="flex flex-col gap-2 rounded-[10px] border px-4 py-3 text-[13.5px]" style={{ borderColor: 'rgba(245,181,68,.4)', background: 'rgba(245,181,68,.06)' }}>
           <div className="font-mono text-[12px] font-semibold text-warn">▲ BANQUE INSUFFISANTE POUR {effectiveCount} QUESTIONS</div>
@@ -293,12 +379,19 @@ function NewAttemptForm({ code }: { code: string }) {
       {insufficient && (
         <div role="alert" className="flex flex-col gap-2 rounded-[10px] border px-4 py-3 text-[13.5px]" style={{ borderColor: 'rgba(255,107,94,.45)', background: 'rgba(255,107,94,.07)' }}>
           <div className="font-mono text-[12px] font-semibold text-crit">✕ PAS ASSEZ DE QUESTIONS DANS LA BANQUE</div>
-          <p className="m-0 text-text2">
-            Le domaine <strong className="text-text">{insufficient.domain} {domainName(insufficient.domain)}</strong> demande{' '}
-            <span className="font-mono text-text">{insufficient.needed}</span> question{insufficient.needed > 1 ? 's' : ''} mais seulement{' '}
-            <span className="font-mono text-text">{insufficient.available}</span> {insufficient.available > 1 ? 'sont disponibles' : 'est disponible'}{' '}
-            (banque publiée : {insufficient.poolSize} questions). Réduisez le nombre de questions ou retirez ce domaine.
-          </p>
+          {insufficient.domain === '*' ? (
+            <p className="m-0 text-text2">
+              Aucune question publiée ne correspond aux filtres retenus (banque publiée : {insufficient.poolSize} questions). Élargissez les
+              domaines ou les types de question.
+            </p>
+          ) : (
+            <p className="m-0 text-text2">
+              Le domaine <strong className="text-text">{insufficient.domain} {domainName(insufficient.domain)}</strong> demande{' '}
+              <span className="font-mono text-text">{insufficient.needed}</span> question{insufficient.needed > 1 ? 's' : ''} mais seulement{' '}
+              <span className="font-mono text-text">{insufficient.available}</span> {insufficient.available > 1 ? 'sont disponibles' : 'est disponible'}{' '}
+              (banque publiée : {insufficient.poolSize} questions). Réduisez le nombre de questions ou retirez ce domaine.
+            </p>
+          )}
           {maxPossible > 0 && (
             <div>
               <button
@@ -321,7 +414,7 @@ function NewAttemptForm({ code }: { code: string }) {
         <Link to="/" className="btn-secondary">
           Annuler
         </Link>
-        <button type="submit" className="btn-primary" disabled={submitting || chosen.length === 0}>
+        <button type="submit" className="btn-primary" disabled={submitting || chosen.length === 0 || noType || noTypeMatch}>
           <IconPlay />
           {submitting ? 'Préparation…' : mode === 'exam' ? "Démarrer l'examen blanc" : "Démarrer l'entraînement"}
         </button>

@@ -89,3 +89,13 @@ export const QUESTION_TYPE_LABEL: Record<QuestionBody['type'], string> = {
   ordering: 'CLASSEMENT',
   matching: 'ASSOCIATION',
 };
+
+/** Nom des types de question en toutes lettres (formulaires). */
+export const QUESTION_TYPE_NAME: Record<QuestionBody['type'], string> = {
+  mcq_single: 'QCM à réponse unique',
+  mcq_multi: 'QCM à réponses multiples',
+  fill_blank: 'Texte à compléter',
+  cli: 'Commandes CLI',
+  ordering: 'Classement',
+  matching: 'Association',
+};
