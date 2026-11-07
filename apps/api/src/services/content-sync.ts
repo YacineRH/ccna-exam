@@ -1,22 +1,16 @@
 import { createHash } from 'node:crypto';
 import { and, eq } from 'drizzle-orm';
-import type { CertificationConfig, Lab, Question } from '@examforge/core';
+import { contentKey, type CertificationConfig, type Lab, type Question } from '@examforge/core';
 import type { Db } from '../db/client.js';
 import { certifications, domains, labs, questions, subtopics } from '../db/schema.js';
 
 /**
- * Empreinte d'une question : énoncé, exhibit et textes des choix, normalisés.
- * Deux questions qui ne diffèrent que par la casse, les espaces ou l'ordre des options ont la même.
+ * Empreinte d'une question : SHA-256 de sa clé d'unicité (`contentKey` : énoncé, exhibit et textes
+ * des choix, normalisés). Deux questions qui ne diffèrent que par la casse, les espaces ou l'ordre
+ * des options ont la même.
  */
 export function contentHash(q: Pick<Question, 'body'>): string {
-  const norm = (s: string) => s.toLowerCase().replace(/\s+/g, ' ').trim();
-  const body = q.body;
-  const parts: string[] = [body.type, norm(body.stem), norm(body.exhibit ?? '')];
-  if (body.type === 'mcq_single' || body.type === 'mcq_multi') parts.push(...body.options.map((o) => norm(o.text)).sort());
-  if (body.type === 'ordering') parts.push(...body.items.map((o) => norm(o.text)).sort());
-  if (body.type === 'matching') parts.push(...[...body.left, ...body.right].map((o) => norm(o.text)).sort());
-  if (body.type === 'fill_blank') parts.push(...body.fields.map((f) => norm(f.label)).sort());
-  return createHash('sha256').update(parts.join('␟')).digest('hex');
+  return createHash('sha256').update(contentKey(q.body)).digest('hex');
 }
 
 /** Crée ou met à jour une certification et ses domaines à partir de sa configuration. */

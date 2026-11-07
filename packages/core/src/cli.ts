@@ -30,6 +30,9 @@ const KEYWORDS = [
   'unicast-routing', 'username', 'version', 'violation', 'vlan', 'voice', 'vty', 'write',
 ];
 
+/** Mots-clés dont l'abréviation est reconnue (les autres mots doivent être saisis en entier). */
+export const CLI_KEYWORDS: readonly string[] = KEYWORDS;
+
 /** Raccourcis d'usage courant qui ne sont pas des préfixes uniques dans la liste ci-dessus. */
 const ALIASES: Record<string, string> = {
   t: 'terminal',

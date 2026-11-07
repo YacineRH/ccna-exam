@@ -9,7 +9,7 @@ export async function seedContent(db: Db, log: (msg: string) => void = () => {})
     const certId = await upsertCertification(db, certification);
     let created = 0;
     for (const q of questions) {
-      const r = await upsertQuestion(db, certId, q, { source: 'import' });
+      const r = await upsertQuestion(db, certId, q, { source: q.source ?? 'import' });
       if (r.created) created++;
     }
     log(`${code} : ${questions.length} questions (${created} nouvelles)`);

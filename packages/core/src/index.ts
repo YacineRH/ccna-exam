@@ -15,3 +15,5 @@ export * from './terminal/params.js';
 export * from './terminal/device.js';
 export * from './terminal/lab.js';
 export * from './revision.js';
+export * from './similarity.js';
+export * from './series.js';
