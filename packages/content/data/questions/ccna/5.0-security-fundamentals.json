@@ -20,10 +20,13 @@
         ],
         [
           "deny tcp 192.168.10.0 0.0.0.255 host 10.1.1.80 eq 80",
-          "deny tcp 192.168.10.0 0.0.0.255 10.1.1.80 0.0.0.0 eq 80"
+          "deny tcp 192.168.10.0 0.0.0.255 10.1.1.80 0.0.0.0 eq 80",
+          "10 deny tcp 192.168.10.0 0.0.0.255 host 10.1.1.80 eq 80",
+          "10 deny tcp 192.168.10.0 0.0.0.255 10.1.1.80 0.0.0.0 eq 80"
         ],
         [
-          "permit ip any any"
+          "permit ip any any",
+          "20 permit ip any any"
         ],
         [
           "interface gigabitethernet0/0/0"
@@ -63,17 +66,18 @@
         }
       }
     },
-    "explanation": "Un /20 correspond au masque 255.255.240.0. Le masque générique en est l'inverse : 255.255.255.255 − 255.255.240.0 = 0.0.15.255."
+    "explanation": "Un /20 correspond au masque 255.255.240.0. Le masque générique en est l'inverse : 255.255.255.255 − 255.255.240.0 = 0.0.15.255.",
+    "reference": "Cisco IOS Security Configuration Guide — IP Access List Overview"
   },
   {
     "slug": "ccna-5.7-port-security-violation-001",
     "certification": "ccna",
     "domain": "5.0",
     "subtopic": "5.7",
-    "difficulty": "medium",
+    "difficulty": "easy",
     "body": {
       "type": "mcq_single",
-      "stem": "Avec port-security, quel mode de violation supprime les trames des adresses MAC non autorisées, incrémente le compteur de violations et envoie un message syslog, sans désactiver le port ?",
+      "stem": "Avec port-security, quel mode de violation supprime les trames des adresses MAC non autorisées, incrémente le compteur de violations et envoie un message syslog, tout en laissant passer le trafic des adresses autorisées ?",
       "options": [
         {
           "id": "a",
@@ -102,7 +106,8 @@
       "a": "protect supprime le trafic en silence : pas de compteur, pas de syslog.",
       "c": "shutdown, le mode par défaut, place le port en err-disabled.",
       "d": "shutdown vlan désactive le VLAN concerné sur le port : le trafic légitime de ce VLAN est donc coupé lui aussi."
-    }
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
   },
   {
     "slug": "ccna-5.8-tacacs-radius-001",
@@ -144,7 +149,7 @@
         "b"
       ]
     },
-    "explanation": "TACACS+ fonctionne sur TCP 49, chiffre l'intégralité du corps des paquets et sépare authentification, autorisation et comptabilité, ce qui permet un contrôle fin des commandes.",
+    "explanation": "TACACS+ fonctionne sur TCP 49, chiffre l'intégralité du corps des paquets et sépare authentification, autorisation et traçabilité (accounting), ce qui permet un contrôle fin des commandes.",
     "distractorNotes": {
       "c": "UDP 1812 et 1813 sont les ports de RADIUS.",
       "d": "C'est RADIUS qui combine authentification et autorisation ; TACACS+ les sépare.",
@@ -157,10 +162,10 @@
     "certification": "ccna",
     "domain": "5.0",
     "subtopic": "5.9",
-    "difficulty": "medium",
+    "difficulty": "easy",
     "body": {
       "type": "mcq_single",
-      "stem": "Quelle méthode d'authentification WPA3-Personal utilise-t-il à la place de la clé pré-partagée (PSK) de WPA2 ?",
+      "stem": "Quelle méthode d'authentification WPA3-Personal utilise-t-il à la place de l'authentification par clé pré-partagée (PSK) de WPA2 ?",
       "options": [
         {
           "id": "a",
@@ -168,15 +173,15 @@
         },
         {
           "id": "b",
-          "text": "TKIP"
+          "text": "TKIP (Temporal Key Integrity Protocol)"
         },
         {
           "id": "c",
-          "text": "EAP-TLS"
+          "text": "EAP-TLS (authentification 802.1X par certificat)"
         },
         {
           "id": "d",
-          "text": "WEP"
+          "text": "OWE (Opportunistic Wireless Encryption)"
         }
       ]
     },
@@ -184,12 +189,13 @@
       "type": "mcq_single",
       "correct": "a"
     },
-    "explanation": "WPA3-Personal remplace l'échange PSK par SAE, qui résiste aux attaques par dictionnaire hors ligne et assure la confidentialité persistante.",
+    "explanation": "WPA3-Personal remplace l'authentification PSK de WPA2 par SAE : l'échange repose toujours sur un mot de passe partagé, mais il résiste aux attaques par dictionnaire hors ligne et assure la confidentialité persistante.",
     "distractorNotes": {
-      "b": "TKIP est un ancien mécanisme de chiffrement de WPA, abandonné.",
+      "b": "TKIP est le mécanisme de chiffrement de WPA, pas une méthode d'authentification ; WPA3 l'interdit.",
       "c": "EAP-TLS est une méthode d'authentification d'entreprise (802.1X), pas le mode Personal.",
-      "d": "WEP est le protocole d'origine, cassé depuis longtemps."
-    }
+      "d": "OWE (Wi-Fi Enhanced Open) chiffre les réseaux ouverts sans aucune authentification : il remplace le mode Open, pas la PSK."
+    },
+    "reference": "Wi-Fi Alliance, WPA3 Specification ; IEEE 802.11-2020 (SAE) ; RFC 7664 (Dragonfly Key Exchange)"
   },
   {
     "slug": "ccna-5.1-attack-types-matching-001",
@@ -322,7 +328,7 @@
         },
         {
           "id": "b",
-          "text": "Envoyer des réponses ARP gratuites qui annoncent l'adresse IP de la passerelle."
+          "text": "Envoyer des réponses ARP gratuites qui associent l'IP de la passerelle à la MAC de l'attaquant."
         },
         {
           "id": "c",
@@ -373,7 +379,7 @@
         },
         {
           "id": "c",
-          "text": "Une attaque DDoS par réflexion et amplification, fondée sur l'usurpation de l'adresse IP de la victime."
+          "text": "Une DDoS par réflexion et amplification, avec usurpation de l'adresse IP de la victime."
         },
         {
           "id": "d",
@@ -459,7 +465,7 @@
       "options": [
         {
           "id": "a",
-          "text": "Une caméra de vidéosurveillance qui filme en permanence la porte de la salle."
+          "text": "Une caméra de vidéosurveillance qui filme en permanence la porte de la salle serveurs."
         },
         {
           "id": "b",
@@ -471,7 +477,7 @@
         },
         {
           "id": "d",
-          "text": "Un sas d'accès (mantrap) qui ne laisse passer qu'une personne authentifiée à la fois."
+          "text": "Un sas (mantrap) qui ne laisse passer qu'une personne authentifiée à la fois."
         }
       ]
     },
@@ -499,7 +505,7 @@
       "options": [
         {
           "id": "a",
-          "text": "Un intrus peut se brancher sur la console, redémarrer le routeur et lancer la récupération de mot de passe."
+          "text": "Un intrus branché sur la console peut redémarrer le routeur et réinitialiser ses mots de passe."
         },
         {
           "id": "b",
@@ -507,7 +513,7 @@
         },
         {
           "id": "c",
-          "text": "Un intrus branché sur le port console peut lire en clair les sessions SSH des administrateurs."
+          "text": "Un intrus branché sur le port console peut lire en clair les sessions SSH ouvertes par les administrateurs."
         },
         {
           "id": "d",
@@ -519,7 +525,7 @@
       "type": "mcq_single",
       "correct": "a"
     },
-    "explanation": "Quiconque a un accès physique à l'équipement peut interrompre son démarrage (séquence break), passer en ROMMON et modifier le registre de configuration (0x2142) pour ignorer la startup-config, puis redéfinir tous les mots de passe. Toutes les protections logiques sont alors contournées. C'est pourquoi le contrôle d'accès physique (placards verrouillés, badges) fait partie intégrante d'un programme de sécurité.",
+    "explanation": "Quiconque a un accès physique à l'équipement peut interrompre son démarrage (séquence break), passer en ROMMON et modifier le registre de configuration (0x2142) pour ignorer la startup-config, puis redéfinir tous les mots de passe. Toutes les protections logiques sont alors contournées. Même avec « no service password-recovery », l'intrus peut encore réinitialiser l'équipement en effaçant sa configuration : l'accès physique reste un risque. C'est pourquoi le contrôle d'accès physique (placards verrouillés, badges) fait partie intégrante d'un programme de sécurité.",
     "distractorNotes": {
       "b": "Sur la console aussi, la commande enable demande l'enable secret ; c'est le redémarrage avec récupération de mot de passe qui permet de le contourner.",
       "c": "Le port console donne accès au routeur lui-même, pas au contenu chiffré des sessions SSH des autres administrateurs.",
@@ -535,23 +541,29 @@
     "difficulty": "medium",
     "body": {
       "type": "cli",
-      "stem": "Sur R1, depuis le mode de configuration globale, créez d'abord l'utilisateur local admin dont le mot de passe N0c-Adm1n est stocké sous forme de hachage. Configurez ensuite la ligne console pour qu'elle exige un compte local, puis pour qu'elle ferme la session après 5 minutes d'inactivité.",
+      "stem": "Sur R1, depuis le mode de configuration globale, créez d'abord l'utilisateur local admin dont le mot de passe N0c-Adm1n est stocké sous forme de hachage. Configurez ensuite la ligne console pour qu'elle exige un compte local et ferme la session après 5 minutes d'inactivité.",
       "prompt": "R1(config)#",
       "lines": 4
     },
     "key": {
       "type": "cli",
       "ordered": true,
+      "freeOrder": [
+        [
+          2,
+          3
+        ]
+      ],
       "commands": [
         [
           "username admin secret N0c-Adm1n",
+          "username admin secret 0 N0c-Adm1n",
           "username admin algorithm-type scrypt secret N0c-Adm1n",
           "username admin algorithm-type sha256 secret N0c-Adm1n",
           "username admin algorithm-type md5 secret N0c-Adm1n"
         ],
         [
-          "line console 0",
-          "line con 0"
+          "line console 0"
         ],
         [
           "login local"
@@ -626,7 +638,7 @@
         },
         {
           "id": "c",
-          "text": "Un utilisateur branché sur le port console arrive en mode EXEC utilisateur sans mot de passe, et sa session n'expire jamais."
+          "text": "Sur la console, on arrive en mode EXEC utilisateur sans mot de passe, et la session n'expire jamais."
         },
         {
           "id": "d",
@@ -642,7 +654,7 @@
     "distractorNotes": {
       "a": "no service password-encryption ne déchiffre rien : les mots de passe déjà masqués restent en type 7 jusqu'à ce qu'on les ressaisisse ; seuls les nouveaux seront en clair.",
       "b": "« login » vérifie seulement le mot de passe de ligne ; une demande de nom d'utilisateur exigerait « login local » ou AAA.",
-      "d": "Le type 7 est un chiffrement réversible avec une clé connue de tous ; seul le type 9 (scrypt) d'enable secret est un hachage robuste."
+      "d": "Le type 7 est un chiffrement réversible avec une clé connue de tous ; dans cette configuration, seul l'enable secret, haché en type 9 (scrypt), est protégé de façon robuste."
     },
     "reference": "Cisco IOS Security Configuration Guide — Configuring Security with Passwords, Privilege Levels, and Login Usernames"
   },
@@ -659,11 +671,11 @@
       "options": [
         {
           "id": "a",
-          "text": "Un mot de passe, puis une question secrète sur la ville de naissance de l'utilisateur."
+          "text": "Un mot de passe, puis la réponse à une question secrète sur la ville de naissance de l'utilisateur."
         },
         {
           "id": "b",
-          "text": "Un mot de passe, puis un code à usage unique généré par une application sur le smartphone de l'utilisateur."
+          "text": "Un mot de passe, puis un code à usage unique généré par une application sur le smartphone."
         },
         {
           "id": "c",
@@ -706,7 +718,7 @@
       "options": [
         {
           "id": "a",
-          "text": "Sur la possession de la clé privée associée à un certificat signé par une autorité de certification de confiance."
+          "text": "Sur la possession de la clé privée liée à un certificat signé par une autorité de confiance."
         },
         {
           "id": "b",
@@ -730,7 +742,7 @@
     "distractorNotes": {
       "b": "Un secret identique des deux côtés correspond à une clé pré-partagée (PSK), pas à un certificat.",
       "c": "La biométrie est une autre alternative aux mots de passe, fondée sur ce que l'on est et non sur un certificat.",
-      "d": "Le filtrage par adresse MAC (MAB) n'utilise aucun certificat et se contourne facilement en usurpant l'adresse."
+      "d": "Une liste d'adresses MAC autorisées (port security sur le commutateur, ou MAB auprès d'un serveur RADIUS) n'utilise aucun certificat et se contourne facilement en usurpant l'adresse."
     },
     "reference": "RFC 5280 (certificats X.509) ; RFC 5216 (EAP-TLS)"
   },
@@ -788,7 +800,7 @@
       "options": [
         {
           "id": "a",
-          "text": "Le tunnel est établi entre deux passerelles, par exemple deux routeurs ou pare-feu, et protège le trafic de réseaux entiers."
+          "text": "Le tunnel relie deux passerelles, routeurs ou pare-feu, et protège le trafic de réseaux entiers."
         },
         {
           "id": "b",
@@ -800,11 +812,11 @@
         },
         {
           "id": "d",
-          "text": "Les hôtes des deux sites envoient du trafic IP ordinaire, sans logiciel VPN, et ignorent qu'il est chiffré."
+          "text": "Les hôtes envoient du trafic IP ordinaire, sans logiciel VPN, et ignorent qu'il est chiffré."
         },
         {
           "id": "e",
-          "text": "Il nécessite une liaison louée dédiée entre les deux sites, sans passer par Internet."
+          "text": "Il nécessite une liaison louée dédiée entre les deux sites, car le trafic ne doit jamais passer par Internet."
         }
       ]
     },
@@ -884,7 +896,7 @@
         },
         {
           "id": "b",
-          "text": "Créer un tunnel GRE entre les deux routeurs et protéger ce tunnel avec IPsec (GRE over IPsec)."
+          "text": "Monter un tunnel GRE entre les deux routeurs et le chiffrer avec IPsec."
         },
         {
           "id": "c",
@@ -913,7 +925,7 @@
     "certification": "ccna",
     "domain": "5.0",
     "subtopic": "5.6",
-    "difficulty": "easy",
+    "difficulty": "medium",
     "body": {
       "type": "cli",
       "stem": "Sur SW1, depuis le mode de configuration globale, créez en une seule commande l'ACL standard numérotée 15 qui autorise le réseau d'administration 10.99.0.0/24. Appliquez-la ensuite en entrée sur les lignes VTY 0 à 15, pour que seul ce réseau puisse ouvrir une session à distance sur le commutateur.",
@@ -1027,13 +1039,19 @@
     "difficulty": "medium",
     "body": {
       "type": "cli",
-      "stem": "Sur SW1, le port GigabitEthernet1/0/5 est déjà configuré en mode access. Depuis le mode de configuration globale, entrez dans cette interface puis, dans cet ordre : activez port security, autorisez au plus 2 adresses MAC, activez l'apprentissage sticky et choisissez le mode de violation restrict.",
+      "stem": "Sur SW1, le port GigabitEthernet1/0/5 est déjà configuré en mode access. Depuis le mode de configuration globale, entrez dans cette interface, puis activez port security, autorisez au plus 2 adresses MAC, activez l'apprentissage sticky et choisissez le mode de violation restrict.",
       "prompt": "SW1(config)#",
       "lines": 5
     },
     "key": {
       "type": "cli",
       "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          4
+        ]
+      ],
       "commands": [
         [
           "interface GigabitEthernet1/0/5"
@@ -1052,7 +1070,7 @@
         ]
       ]
     },
-    "explanation": "« switchport port-security » active la fonction : sans elle, les autres commandes enregistrent des paramètres mais aucun contrôle n'a lieu. Par défaut, port security n'autorise qu'une adresse MAC et applique le mode shutdown (err-disabled) ; « maximum 2 » et « violation restrict » modifient ces valeurs. « mac-address sticky » apprend dynamiquement les adresses et les inscrit dans la running-config : il faut l'enregistrer dans la startup-config pour qu'elles survivent à un redémarrage. La fonction n'est acceptée que sur un port configuré statiquement (access ou trunk), d'où la précision sur le mode access.",
+    "explanation": "« switchport port-security » active la fonction : sans elle, les autres commandes enregistrent des paramètres mais aucun contrôle n'a lieu. Dans l'interface, ces quatre commandes peuvent être saisies dans n'importe quel ordre. Par défaut, port security n'autorise qu'une adresse MAC et applique le mode shutdown (err-disabled) ; « maximum 2 » et « violation restrict » modifient ces valeurs. « mac-address sticky » apprend dynamiquement les adresses et les inscrit dans la running-config : il faut l'enregistrer dans la startup-config pour qu'elles survivent à un redémarrage. La fonction n'est acceptée que sur un port configuré statiquement (access ou trunk), d'où la précision sur le mode access.",
     "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
   },
   {
@@ -1063,7 +1081,7 @@
     "difficulty": "medium",
     "body": {
       "type": "mcq_multi",
-      "stem": "Sur SW1, les clients du VLAN 10 sont branchés sur les ports d'accès Gi1/0/1 à Gi1/0/20, et le serveur DHCP légitime est joignable par le trunk Gi1/0/24. Quelles trois commandes sont nécessaires pour que DHCP snooping bloque un serveur DHCP pirate branché sur un port d'accès ?",
+      "stem": "Sur SW1, les clients du VLAN 10 sont branchés sur les ports d'accès Gi1/0/1 à Gi1/0/20, et le serveur DHCP légitime est joignable par le trunk Gi1/0/24. Quelles trois commandes sont nécessaires pour que DHCP snooping bloque un serveur DHCP pirate branché sur un port d'accès, tout en laissant les clients obtenir leur adresse du serveur légitime ?",
       "selectCount": 3,
       "options": [
         {
@@ -1127,7 +1145,7 @@
         },
         {
           "id": "d",
-          "text": "L'imprimante n'a aucune entrée dans la table de binding DHCP snooping, donc DAI rejette ses messages ARP."
+          "text": "L'imprimante n'a aucune entrée dans la table de binding DHCP snooping : DAI rejette donc ses ARP."
         }
       ]
     },
@@ -1175,7 +1193,7 @@
       "type": "mcq_single",
       "correct": "d"
     },
-    "explanation": "Les trois fonctions AAA répondent à trois questions : l'authentification vérifie qui est l'utilisateur, l'autorisation détermine ce qu'il a le droit de faire, et la traçabilité (accounting) enregistre ce qu'il a fait. Les enregistrements d'accounting (début et fin de session, commandes exécutées) sont envoyés au serveur AAA, par exemple avec « aaa accounting exec » et « aaa accounting commands 15 ».",
+    "explanation": "Les trois fonctions AAA répondent à trois questions : l'authentification vérifie qui est l'utilisateur, l'autorisation détermine ce qu'il a le droit de faire, et la traçabilité (accounting) enregistre ce qu'il a fait. Les enregistrements d'accounting (début et fin de session, commandes exécutées) sont envoyés au serveur AAA, par exemple avec « aaa accounting exec default start-stop group tacacs+ » et « aaa accounting commands 15 default start-stop group tacacs+ » ; la traçabilité des commandes exige TACACS+.",
     "distractorNotes": {
       "a": "L'authentification vérifie l'identité de l'utilisateur (nom et mot de passe, certificat…) ; elle n'enregistre pas ses actions.",
       "b": "L'autorisation détermine les commandes et services permis ; elle ne garde pas de trace de leur utilisation.",
@@ -1262,7 +1280,7 @@
         },
         {
           "id": "e",
-          "text": "Le chiffrement AES-GCMP fait son apparition, avec GCMP-256 dans le mode Enterprise 192 bits."
+          "text": "Le mode WPA3-Enterprise 192 bits impose le chiffrement AES-GCMP-256."
         }
       ]
     },
@@ -1273,7 +1291,7 @@
         "e"
       ]
     },
-    "explanation": "WPA3 rend obligatoire PMF (802.11w), qui protège contre la falsification des trames de gestion comme la désauthentification, alors que PMF n'était qu'optionnel avec WPA2. Il introduit aussi le chiffrement AES-GCMP, avec GCMP-256 dans le mode Enterprise 192 bits, à côté de l'AES-CCMP hérité de WPA2. WPA3-Personal remplace en outre la PSK par SAE.",
+    "explanation": "WPA3 rend obligatoire PMF (802.11w), qui protège contre la falsification des trames de gestion comme la désauthentification, alors que PMF n'était qu'optionnel avec WPA2. Son mode Enterprise 192 bits impose en outre la suite CNSA, avec le chiffrement AES-GCMP-256, alors que WPA2 n'exigeait que l'AES-CCMP 128 bits. WPA3-Personal remplace aussi l'authentification PSK par SAE.",
     "distractorNotes": {
       "a": "Le passage obligatoire à AES-CCMP est l'apport de WPA2 par rapport à WPA.",
       "c": "Le mode Enterprise avec 802.1X/EAP existe déjà dans WPA2, et même dans WPA.",
@@ -1301,11 +1319,11 @@
         },
         {
           "id": "c",
-          "text": "WPA2-Enterprise filtre les clients selon leur adresse MAC enregistrée sur le WLC."
+          "text": "WPA2-Enterprise filtre les clients selon leur adresse MAC, enregistrée au préalable sur le WLC."
         },
         {
           "id": "d",
-          "text": "WPA2-Enterprise authentifie chaque utilisateur par 802.1X/EAP auprès d'un serveur, généralement RADIUS."
+          "text": "WPA2-Enterprise authentifie chaque utilisateur par 802.1X/EAP via un serveur RADIUS."
         }
       ]
     },
