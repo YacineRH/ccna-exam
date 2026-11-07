@@ -47,8 +47,8 @@ export type LabCheck =
       covers?: z.infer<typeof coversSchema>;
     }
   | { type: 'section'; device?: string; section?: string; sectionPattern?: string; absent: boolean }
-  | { type: 'sequence'; device?: string; section?: string; sectionPattern?: string; sections: 'any' | 'all'; patterns: string[] }
-  | { type: 'command'; device?: string; mode?: string; section?: string; command: string | string[]; afterLastChange?: boolean }
+  | { type: 'sequence'; device?: string; section?: string; sectionPattern?: string; sections: 'any' | 'all'; patterns: string[]; absent: boolean }
+  | { type: 'command'; device?: string; mode?: string; section?: string; command: string | string[]; afterLastChange?: boolean; after?: string[] }
   | { type: 'all'; checks: LabCheck[] }
   | { type: 'any'; checks: LabCheck[] };
 
@@ -75,7 +75,13 @@ export const labCheckSchema: z.ZodType<LabCheck, z.ZodTypeDef, unknown> = z.lazy
       absent: z.boolean().default(false),
     }),
     /** Des lignes dans cet ordre (pas forcément consécutives) : une expression par ligne, insensibles à la casse. */
-    z.object({ type: z.literal('sequence'), ...scope, patterns: z.array(z.string().min(1)).min(2) }),
+    z.object({
+      type: z.literal('sequence'),
+      ...scope,
+      patterns: z.array(z.string().min(1)).min(2),
+      /** Vrai si cet ordre ne se trouve pas (aucun refus avant l'autorisation, par exemple). */
+      absent: z.boolean().default(false),
+    }),
     /** Une commande saisie avec succès (n'importe quand), dans un mode et une section donnés. */
     z.object({
       type: z.literal('command'),
@@ -85,6 +91,11 @@ export const labCheckSchema: z.ZodType<LabCheck, z.ZodTypeDef, unknown> = z.lazy
       command: textOrList,
       /** La commande doit venir après la dernière modification de la configuration (sauvegarde). */
       afterLastChange: z.boolean().optional(),
+      /**
+       * La commande doit venir après la dernière saisie réussie de chacune de ces commandes (mêmes mode et
+       * section) : une réactivation après la correction, pas avant.
+       */
+      after: z.array(z.string().min(1)).optional(),
     }),
     z.object({ type: z.literal('all'), checks: z.array(labCheckSchema).min(1) }),
     z.object({ type: z.literal('any'), checks: z.array(labCheckSchema).min(1) }),
@@ -316,9 +327,19 @@ export class LabSession {
           accepted.includes(norm(h.canonical)) &&
           (c.mode === undefined || h.mode === c.mode) &&
           (c.section === undefined || h.targets.some((t) => norm(t) === norm(c.section as string)));
-        if (!c.afterLastChange) return dev.history.some(matches);
-        const lastChange = dev.history.map((h) => h.changed).lastIndexOf(true);
-        return dev.history.some((h, i) => i > lastChange && matches(h));
+        let from = -1;
+        if (c.afterLastChange) from = dev.history.map((h) => h.changed).lastIndexOf(true);
+        for (const prior of c.after ?? []) {
+          const want = norm(prior);
+          const sameScope = (h: (typeof dev.history)[number]) =>
+            norm(h.canonical) === want &&
+            (c.mode === undefined || h.mode === c.mode) &&
+            (c.section === undefined || h.targets.some((t) => norm(t) === norm(c.section as string)));
+          const last = dev.history.map(sameScope).lastIndexOf(true);
+          if (last === -1) return false;
+          from = Math.max(from, last);
+        }
+        return dev.history.some((h, i) => i > from && matches(h));
       }
       case 'section': {
         const dev = this.device(c.device);
@@ -329,7 +350,7 @@ export class LabSession {
       case 'sequence': {
         const dev = this.device(c.device);
         const scopes = this.sectionsFor(dev, c);
-        if (scopes === null) return false;
+        if (scopes === null) return c.absent;
         const res = c.patterns.map((p) => new RegExp(p, 'i'));
         const inOrder = (lines: string[]) => {
           let from = 0;
@@ -341,6 +362,7 @@ export class LabSession {
           return true;
         };
         const hits = scopes.map(inOrder);
+        if (c.absent) return !hits.some(Boolean);
         return c.sections === 'all' ? hits.every(Boolean) : hits.some(Boolean);
       }
       case 'line':

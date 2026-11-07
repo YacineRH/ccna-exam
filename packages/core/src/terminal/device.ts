@@ -500,6 +500,12 @@ export class TerminalDevice {
           }
         }
       }
+      if (req.notInSections !== undefined) {
+        const v = values[req.notInSections.param - 1];
+        const re = new RegExp(req.notInSections.pattern, 'i');
+        const taken = this.sections().some((sec) => sec.children?.some((e) => re.exec(e.text)?.[1]?.toLowerCase() === v?.toLowerCase()));
+        if (v !== undefined && taken) return msg();
+      }
       if (req.param !== undefined && req.notMatch !== undefined) {
         const v = values[req.param - 1];
         if (v !== undefined && new RegExp(req.notMatch, 'i').test(v)) return msg();

@@ -1253,7 +1253,16 @@
     4
    ],
    "keyGroup": "ip-route",
-   "rank": 116
+   "rank": 116,
+   "requires": [
+    {
+     "notInSections": {
+      "param": 3,
+      "pattern": "^ip address (\\S+) \\S+( secondary)?$"
+     },
+     "message": "%Invalid next hop address (it's this router)"
+    }
+   ]
   },
   {
    "syntax": "ip route <ipv4> <ipv4-mask> <interface> <ipv4> [<1-255>] [permanent]",
@@ -1275,7 +1284,16 @@
     5
    ],
    "keyGroup": "ip-route",
-   "rank": 116
+   "rank": 116,
+   "requires": [
+    {
+     "notInSections": {
+      "param": 4,
+      "pattern": "^ip address (\\S+) \\S+( secondary)?$"
+     },
+     "message": "%Invalid next hop address (it's this router)"
+    }
+   ]
   },
   {
    "syntax": "ipv6 route <ipv6-prefix> {<ipv6>|<interface>} [<1-254>]",

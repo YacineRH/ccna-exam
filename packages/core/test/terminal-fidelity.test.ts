@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { naturalCompare, parseTerminalProfile, TerminalDevice, type TerminalProfileInput } from '../src/index.js';
+import { LabSession, naturalCompare, parseLab, parseTerminalProfile, TerminalDevice, type TerminalProfileInput } from '../src/index.js';
 
 /*
  * Corrections de fidélité du bloc 4 : ordre d'affichage par rang, agrégats, blocs de lignes,
@@ -385,5 +385,28 @@ describe('réglage qui efface des lignes devenues inutiles (clears)', () => {
     const d = new TerminalDevice(p, { id: 'R1', type: 'router', interfaces: ['GigabitEthernet0/0-1'], startupConfig: 'hostname R1\nrouter ospf 1\n passive-interface g0/1' });
     run(d, ['configure terminal', 'router ospf 1', 'passive-interface default', 'no passive-interface g0/1']);
     expect(d.linesOf('router ospf 1')).toEqual(['passive-interface default', 'no passive-interface GigabitEthernet0/1']);
+  });
+});
+
+describe('objectifs : ordre absent, commande après une autre', () => {
+  it('sequence absent : vrai si l’ordre ne se trouve pas', () => {
+    const lab = parseLab({
+      slug: 'test-seq', certification: 'x', domain: '1', subtopic: '1.1', difficulty: 'easy', title: 'Test ordre absent',
+      statement: 'Énoncé de test suffisamment long pour le schéma du lab, sans plus.', topology: 'R1 seul, sans lien.', profile: profile.id,
+      devices: [{ id: 'R1', type: 'router', interfaces: ['GigabitEthernet0/0-1'], startupConfig: 'hostname R1' }],
+      objectives: [
+        { id: 'pas-de-refus-avant', description: 'Aucun refus avant le permit', check: { type: 'sequence', section: 'ip access-list standard 10', patterns: ['^deny ', '^permit host 10\\.0\\.0\\.5$'], absent: true } },
+        { id: 'reactive', description: 'Interface réactivée après la description', check: { type: 'command', section: 'interface GigabitEthernet0/0', command: 'no shutdown', after: ['description LAN'] } },
+      ],
+      hints: ['un', 'deux', 'trois'].map((h) => `Indice ${h} assez long`),
+      solution: [{ device: 'R1', commands: ['configure terminal', 'access-list 10 permit host 10.0.0.5', 'interface g0/0', 'description LAN', 'no shutdown'] }],
+      explanation: 'Explication de test suffisamment longue pour le schéma du lab.', reference: 'Test du moteur',
+    });
+    const s = new LabSession(profile, lab);
+    s.runAll([{ device: 'R1', commands: ['configure terminal', 'access-list 10 deny host 10.0.0.6', 'access-list 10 permit host 10.0.0.5', 'interface g0/0', 'no shutdown', 'description LAN'] }]);
+    expect(s.achieved()).toEqual([]);
+    const ok = new LabSession(profile, lab);
+    ok.runAll(lab.solution);
+    expect(ok.achieved()).toEqual(['pas-de-refus-avant', 'reactive']);
   });
 });

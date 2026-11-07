@@ -25,6 +25,11 @@ const requirementSchema = z
      * ni l'adresse du réseau ni celle de diffusion (sauf /31 et /32). Message : `{prefix}`, `{address}`.
      */
     ipv4Host: z.tuple([z.number().int().min(1), z.number().int().min(1)]).optional(),
+    /**
+     * Le paramètre n° `param` ne doit égaler aucune valeur capturée (groupe 1) par `pattern` dans les lignes
+     * des sections de l'équipement : un prochain saut qui est l'adresse d'une interface du routeur.
+     */
+    notInSections: z.object({ param: z.number().int().min(1), pattern: z.string().min(1) }).optional(),
     /** Le paramètre n° `param` (à partir de 1) ne doit pas correspondre à `notMatch` (insensible à la casse). */
     param: z.number().int().min(1).optional(),
     notMatch: z.string().optional(),
@@ -38,7 +43,7 @@ const requirementSchema = z
     /** Message affiché si la condition n'est pas remplie. `{target}` : section visée. */
     message: z.string().min(1).optional(),
   })
-  .refine((r) => r.var !== undefined || r.config !== undefined || r.section !== undefined || r.notConfig !== undefined || r.ipv4Host !== undefined || (r.param !== undefined && r.notMatch !== undefined), {
+  .refine((r) => r.var !== undefined || r.config !== undefined || r.section !== undefined || r.notConfig !== undefined || r.ipv4Host !== undefined || r.notInSections !== undefined || (r.param !== undefined && r.notMatch !== undefined), {
     message: 'une condition porte sur var, config, section ou param + notMatch',
   })
   .refine((r) => r.message !== undefined || r.invalidAt !== undefined, { message: 'message ou invalidAt attendu' });
