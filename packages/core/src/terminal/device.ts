@@ -14,6 +14,8 @@ export interface ConfigEntry {
   cmd: number;
   /** Mode de la section, pour une ligne qui ouvre un sous-mode. */
   mode?: string;
+  /** Numéro de séquence d'une entrée numérotée (ACL nommée). */
+  seq?: number;
   children?: ConfigEntry[];
 }
 
@@ -367,8 +369,9 @@ export class TerminalDevice {
     return this.config.filter((e) => e.children);
   }
 
+  /** Section par son en-tête exact (forme canonique : `interface GigabitEthernet0/1`, `ip dhcp pool LAN`). Les noms sont sensibles à la casse, comme dans IOS. */
   section(header: string): ConfigEntry | undefined {
-    return this.config.find((e) => e.children && same(e.text, header));
+    return this.config.find((e) => e.children && e.text === header);
   }
 
   private ensureSection(header: string, cmd: number, mode: string): ConfigEntry {
@@ -411,6 +414,10 @@ export class TerminalDevice {
         const re = new RegExp(req.config, 'i');
         if (!this.config.some((e) => !e.children && re.test(e.text))) return fill(req.message, this.vars, values);
       }
+      if (req.param !== undefined && req.notMatch !== undefined) {
+        const v = values[req.param - 1];
+        if (v !== undefined && new RegExp(req.notMatch, 'i').test(v)) return fill(req.message, this.vars, values);
+      }
       if (req.section !== undefined) {
         const re = new RegExp(req.section, 'i');
         for (const t of targets) {
@@ -425,9 +432,21 @@ export class TerminalDevice {
     return null;
   }
 
+  /** Deux commandes du profil règlent-elles la même chose (même commande ou même `keyGroup`) ? */
+  private sameSetting(a: number, b: number): boolean {
+    if (a === b) return true;
+    const ga = this.profile.commands[a]?.keyGroup;
+    return ga !== undefined && ga === this.profile.commands[b]?.keyGroup;
+  }
+
+  private entryKey(e: ConfigEntry): string | null {
+    const c = this.profile.commands[e.cmd];
+    return c ? this.keyOf(c, e.text.split(' ')) : null;
+  }
+
   private store(list: ConfigEntry[], entry: ConfigEntry, cmd: TerminalCommand, canon: string[]): void {
     const key = this.keyOf(cmd, canon);
-    const idx = key !== null ? list.findIndex((e) => e.cmd === entry.cmd && !e.text.startsWith('no ') && this.keyOf(cmd, e.text.split(' ')) === key) : -1;
+    const idx = key !== null ? list.findIndex((e) => this.sameSetting(e.cmd, entry.cmd) && !e.text.startsWith('no ') && this.entryKey(e) === key) : -1;
     if (idx >= 0) {
       list[idx] = entry;
       return;
@@ -513,7 +532,7 @@ export class TerminalDevice {
       });
     };
     for (const e of this.config) {
-      if (onlySection !== undefined && !(e.children && same(e.text, onlySection))) continue;
+      if (onlySection !== undefined && !(e.children && e.text === onlySection)) continue;
       if (e.children) {
         if (e.mode && this.grammar.mode(e.mode).hidden) continue;
         if (lines.length && lines[lines.length - 1] !== separator) lines.push(separator);
@@ -553,7 +572,7 @@ export class TerminalDevice {
 
     if (negated) {
       if (cmd.enter) {
-        this.config = this.config.filter((e) => !(e.children && same(e.text, canonText) && !this.isPhysical(e.text)));
+        this.config = this.config.filter((e) => !(e.children && e.text === canonText && !this.isPhysical(e.text)));
         this.history.push({ mode: r.mode, targets: [...this.targets], canonical: `no ${canonText}` });
         return out;
       }
@@ -566,11 +585,14 @@ export class TerminalDevice {
           if (idx >= 0) list.splice(idx, 1);
           continue;
         }
+        const seqNo = cmd.sequenced ? this.sequenceOf(cand) : null;
         const positive = (e: ConfigEntry) => {
           if (e.text.startsWith('no ')) return false;
+          // `no 20` ou `no 20 permit …` : l'entrée n° 20 d'une ACL nommée.
+          if (seqNo !== null) return e.seq === seqNo.seq;
           if (r.partial) return r.partialCmds.includes(e.cmd) && e.text.toLowerCase().startsWith(`${canonText.toLowerCase()} `);
-          if (e.cmd !== cmdIndex) return false;
-          return key !== null ? this.keyOf(cmd, e.text.split(' ')) === key : same(e.text, canonText);
+          if (!this.sameSetting(e.cmd, cmdIndex)) return false;
+          return key !== null ? this.entryKey(e) === key : same(e.text, canonText);
         };
         const had = list.some(positive);
         for (let i = list.length - 1; i >= 0; i--) if (positive(list[i] as ConfigEntry)) list.splice(i, 1);
@@ -601,6 +623,11 @@ export class TerminalDevice {
           this.applyList(list, cmdIndex, cmd, cand.values);
           continue;
         }
+        if (cmd.sequenced) {
+          const problem = this.storeSequenced(list, cmdIndex, cand);
+          if (problem) return [problem];
+          continue;
+        }
         const negIdx = list.findIndex((e) => e.cmd === cmdIndex && same(e.text, `no ${canonText}`));
         if (negIdx >= 0) list.splice(negIdx, 1);
         if (cmd.negate === 'store' || (cmd.negate === 'toggle' && negIdx >= 0)) continue;
@@ -629,6 +656,29 @@ export class TerminalDevice {
       if (cmd.exit) this.exitMode(out);
     }
     return out;
+  }
+
+  /** Numéro de séquence en tête d'une commande numérotée, et le reste de la commande. */
+  private sequenceOf(cand: Cand): { seq: number; text: string } | null {
+    const first = cand.seq.elems[0];
+    const n = cand.canon[0];
+    if (first?.kind !== 'param' || first.type !== 'number' || n === undefined || !/^\d+$/.test(n)) return null;
+    return { seq: Number(n), text: cand.canon.slice(1).join(' ') };
+  }
+
+  /** Range une entrée numérotée ; renvoie un message d'erreur si le numéro est déjà pris. */
+  private storeSequenced(list: ConfigEntry[], cmdIndex: number, cand: Cand): string | null {
+    const given = this.sequenceOf(cand);
+    const text = given ? given.text : cand.canon.join(' ');
+    if (!given && list.some((e) => same(e.text, text))) return null;
+    const last = Math.max(0, ...list.map((e) => e.seq ?? 0));
+    const seq = given ? given.seq : last + 10;
+    if (list.some((e) => e.seq === seq)) return this.profile.messages.duplicateSequence;
+    const entry: ConfigEntry = { text, cmd: cmdIndex, seq };
+    const at = list.findIndex((e) => (e.seq ?? Number.POSITIVE_INFINITY) > seq);
+    if (at === -1) list.push(entry);
+    else list.splice(at, 0, entry);
+    return null;
   }
 
   /** Une plage d'interfaces ouvre des sections d'interface ordinaires (le mode de la section est celui d'une interface). */

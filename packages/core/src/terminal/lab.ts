@@ -45,6 +45,8 @@ export type LabCheck =
       absent: boolean;
       covers?: z.infer<typeof coversSchema>;
     }
+  | { type: 'section'; device?: string; section?: string; sectionPattern?: string; absent: boolean }
+  | { type: 'sequence'; device?: string; section?: string; sectionPattern?: string; sections: 'any' | 'all'; patterns: string[] }
   | { type: 'command'; device?: string; mode?: string; section?: string; command: string | string[] }
   | { type: 'all'; checks: LabCheck[] }
   | { type: 'any'; checks: LabCheck[] };
@@ -61,6 +63,16 @@ export const labCheckSchema: z.ZodType<LabCheck, z.ZodTypeDef, unknown> = z.lazy
       absent: z.boolean().default(false),
       covers: coversSchema.optional(),
     }),
+    /** Une section existe (ou n'existe pas, avec `absent`), même vide : pool DHCP, ACL nommée, VLAN… */
+    z.object({
+      type: z.literal('section'),
+      device: z.string().optional(),
+      section: z.string().optional(),
+      sectionPattern: z.string().optional(),
+      absent: z.boolean().default(false),
+    }),
+    /** Des lignes dans cet ordre (pas forcément consécutives) : une expression par ligne, insensibles à la casse. */
+    z.object({ type: z.literal('sequence'), ...scope, patterns: z.array(z.string().min(1)).min(2) }),
     /** Une commande saisie avec succès (n'importe quand), dans un mode et une section donnés. */
     z.object({
       type: z.literal('command'),
@@ -128,6 +140,9 @@ export const labSchema = z
       }
       if (c.device === undefined && lab.devices.length > 1) ctx.addIssue({ code: 'custom', message: `${where} : équipement à préciser` });
       if (c.device !== undefined && !devices.has(c.device)) ctx.addIssue({ code: 'custom', message: `${where} : équipement inconnu ${c.device}` });
+      if (c.type === 'section' && c.section === undefined && c.sectionPattern === undefined) {
+        ctx.addIssue({ code: 'custom', message: `${where} : section ou sectionPattern attendu` });
+      }
       if (c.type !== 'command' && c.section !== undefined && c.sectionPattern !== undefined) {
         ctx.addIssue({ code: 'custom', message: `${where} : section ou sectionPattern, pas les deux` });
       }
@@ -229,7 +244,7 @@ export class LabSession {
 
   private sectionsFor(dev: TerminalDevice, c: { section?: string; sectionPattern?: string }): string[][] | null {
     if (c.section !== undefined) {
-      const header = dev.sectionHeaders().find((h) => norm(h) === norm(c.section as string));
+      const header = dev.sectionHeaders().find((h) => h === c.section);
       return header ? [dev.linesOf(header)] : null;
     }
     if (c.sectionPattern !== undefined) {
@@ -255,6 +270,29 @@ export class LabSession {
             (c.mode === undefined || h.mode === c.mode) &&
             (c.section === undefined || h.targets.some((t) => norm(t) === norm(c.section as string))),
         );
+      }
+      case 'section': {
+        const dev = this.device(c.device);
+        const re = c.sectionPattern !== undefined ? new RegExp(c.sectionPattern, 'i') : null;
+        const found = dev.sectionHeaders().some((h) => (re ? re.test(h) : h === c.section));
+        return c.absent ? !found : found;
+      }
+      case 'sequence': {
+        const dev = this.device(c.device);
+        const scopes = this.sectionsFor(dev, c);
+        if (scopes === null) return false;
+        const res = c.patterns.map((p) => new RegExp(p, 'i'));
+        const inOrder = (lines: string[]) => {
+          let from = 0;
+          for (const re of res) {
+            const i = lines.findIndex((l, idx) => idx >= from && re.test(l));
+            if (i === -1) return false;
+            from = i + 1;
+          }
+          return true;
+        };
+        const hits = scopes.map(inOrder);
+        return c.sections === 'all' ? hits.every(Boolean) : hits.some(Boolean);
       }
       case 'line':
       case 'regex': {

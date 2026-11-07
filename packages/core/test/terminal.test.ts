@@ -16,7 +16,7 @@ import {
  * Profil de test minimal, écrit pour ces tests : le moteur ne connaît aucun IOS « en dur ».
  * Le vrai profil CCNA vit dans packages/content et ses labs y sont joués.
  */
-const CFG = ['config', 'config-if', 'config-if-range', 'config-line', 'config-vlan'];
+const CFG = ['config', 'config-if', 'config-if-range', 'config-line', 'config-vlan', 'config-ext-nacl'];
 const IF = ['config-if', 'config-if-range'];
 const PROFILE: TerminalProfileInput = {
   id: 'test-ios',
@@ -33,6 +33,7 @@ const PROFILE: TerminalProfileInput = {
     { id: 'config-if-range', prompt: '{hostname}(config-if-range)#', parent: 'config', config: true },
     { id: 'config-line', prompt: '{hostname}(config-line)#', parent: 'config', config: true },
     { id: 'config-vlan', prompt: '{hostname}(config-vlan)#', parent: 'config', config: true, hidden: true },
+    { id: 'config-ext-nacl', prompt: '{hostname}(config-ext-nacl)#', parent: 'config', config: true },
   ],
   messages: {
     invalid: "% Invalid input detected at '^' marker.",
@@ -70,6 +71,11 @@ const PROFILE: TerminalProfileInput = {
     { syntax: 'vlan <1-4094>', modes: ['config'], devices: ['switch'], enter: { mode: 'config-vlan' } },
     { syntax: 'line vty <0-15> [<0-15>]', modes: ['config'], enter: { mode: 'config-line' } },
     { syntax: 'ip domain-lookup', modes: ['config'], negate: 'store' },
+    {
+      syntax: 'ipv6 route <ipv6-prefix> {<ipv6>|<interface> <ipv6>}',
+      modes: ['config'],
+      requires: [{ param: 2, notMatch: '^FE80:', message: '% Interface has to be specified for a link-local nexthop' }],
+    },
     { syntax: 'ip domain-name <word>', modes: ['config'], key: [0, 1], set: { domain: '{$1}' } },
     {
       syntax: 'crypto key generate rsa modulus <360-4096>',
@@ -82,7 +88,7 @@ const PROFILE: TerminalProfileInput = {
       ],
       output: 'The name for the keys will be: {hostname}.{domain}',
     },
-    { syntax: 'username <word> secret <line>', modes: ['config'], key: [0, 1], display: 'username {$1} secret 9 {mask:$3}' },
+    { syntax: 'username <word> secret <line>', modes: ['config'], key: [0, 1], keyGroup: 'username', display: 'username {$1} secret 9 {mask:$3}' },
     { syntax: 'access-list <1-99> {permit|deny} {any|host <ipv4>|<ipv4> <wildcard>}', modes: ['config'] },
     { syntax: 'description <line>', modes: IF, key: [0] },
     { syntax: 'ip address <ipv4> <ipv4-mask>', modes: IF, key: [0, 1] },
@@ -110,6 +116,9 @@ const PROFILE: TerminalProfileInput = {
     { syntax: 'ip access-group {<1-199>|<word>} {in|out}', modes: IF, key: [0, 1, -1] },
     { syntax: 'name <word>', modes: ['config-vlan'], key: [0] },
     { syntax: 'login [local]', modes: ['config-line'], key: [0] },
+    { syntax: 'ip access-list extended <word>', modes: ['config'], enter: { mode: 'config-ext-nacl' } },
+    { syntax: '[<1-2147483647>] {permit|deny} {ip|tcp} {any|host <ipv4>} {any|host <ipv4>} [eq <port>]', modes: ['config-ext-nacl'], sequenced: true },
+    { syntax: 'username <word> password <line>', modes: ['config'], key: [0, 1], keyGroup: 'username' },
     { syntax: 'transport input {ssh|telnet|all|none}', modes: ['config-line'], key: [0, 1] },
   ],
 };
@@ -223,6 +232,29 @@ describe('abréviations et formes canoniques', () => {
     expect(d.linesOf()).not.toContain('no ip domain-lookup');
   });
 
+  it('ACL nommée : entrées rangées par numéro de séquence, enregistrées sans lui', () => {
+    const d = router('hostname R1');
+    run(d, ['en', 'conf t', 'ip access-list extended WEB', '20 deny ip any any', '10 permit tcp any host 10.0.0.5 eq www']);
+    expect(d.linesOf('ip access-list extended WEB')).toEqual(['permit tcp any host 10.0.0.5 eq www', 'deny ip any any']);
+    run(d, ['permit tcp any host 10.0.0.6 eq 443']);
+    expect(d.section('ip access-list extended WEB')?.children?.map((e) => e.seq)).toEqual([10, 20, 30]);
+    expect(d.execute('20 permit ip any any').output).toBe('% Duplicate sequence number');
+    run(d, ['15 permit tcp any host 10.0.0.7 eq 22', 'no 20']);
+    expect(d.linesOf('ip access-list extended WEB')).toEqual([
+      'permit tcp any host 10.0.0.5 eq www',
+      'permit tcp any host 10.0.0.7 eq 22',
+      'permit tcp any host 10.0.0.6 eq 443',
+    ]);
+    run(d, ['no permit tcp any host 10.0.0.6 eq 443']);
+    expect(d.linesOf('ip access-list extended WEB')).toHaveLength(2);
+  });
+
+  it('deux formes d’un même réglage se remplacent (keyGroup)', () => {
+    const d = router('hostname R1');
+    run(d, ['en', 'conf t', 'username admin password cisco', 'username admin secret Fort!', 'username bob password x']);
+    expect(d.linesOf().filter((l) => l.startsWith('username'))).toEqual(['username admin secret Fort!', 'username bob password x']);
+  });
+
   it('les secrets sont masqués dans la configuration affichée, pas dans l’état', () => {
     const d = router('hostname R1');
     run(d, ['en', 'conf t', 'username admin secret S3cret!']);
@@ -295,6 +327,10 @@ describe('erreurs IOS', () => {
     expect(d.vars.rsa).toBe('2048');
     // La commande n'est pas enregistrée dans la configuration.
     expect(d.linesOf().some((l) => l.startsWith('crypto'))).toBe(false);
+
+    expect(d.execute('ipv6 route ::/0 fe80::1').output).toBe('% Interface has to be specified for a link-local nexthop');
+    expect(d.execute('ipv6 route ::/0 g0/0 fe80::1').status).toBe('ok');
+    expect(d.linesOf()).toContain('ipv6 route ::/0 GigabitEthernet0/0 FE80::1');
 
     const s = sw();
     run(s, ['en', 'conf t', 'int g1/0/1']);
@@ -455,6 +491,15 @@ describe('labs : objectifs', () => {
       d.check({ type: 'regex', sections: 'any', pattern: '^access-list 10 permit (\\S+) (\\S+)$', absent: false, covers: { address: '192.168.11.1', groups: [1, 2], mask: false } }),
     ).toBe(false);
     expect(d.check({ type: 'line', section: 'interface GigabitEthernet1/0/9', sections: 'any', line: 'shutdown', absent: true })).toBe(true);
+    // Ordre de lignes (pas forcément consécutives).
+    expect(d.check({ type: 'sequence', sections: 'any', patterns: ['^access-list 10 ', '^line'] })).toBe(false);
+    d.runAll([{ device: 'S1', commands: ['access-list 10 deny any'] }]);
+    expect(d.check({ type: 'sequence', sections: 'any', patterns: ['^access-list 10 permit', '^access-list 10 deny'] })).toBe(true);
+    expect(d.check({ type: 'sequence', sections: 'any', patterns: ['^access-list 10 deny', '^access-list 10 permit'] })).toBe(false);
+    // Existence d'une section, même vide ; en-tête exact (sensible à la casse comme IOS).
+    expect(d.check({ type: 'section', section: 'line vty 0 15', absent: false })).toBe(true);
+    expect(d.check({ type: 'section', section: 'line vty 0 4', absent: true })).toBe(true);
+    expect(d.check({ type: 'section', sectionPattern: '^LINE VTY', absent: false })).toBe(true);
   });
 
   it('checkLab : la solution réussit, un lab mal écrit est signalé', () => {

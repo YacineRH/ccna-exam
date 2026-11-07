@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto';
 import { and, eq } from 'drizzle-orm';
-import type { CertificationConfig, Question } from '@examforge/core';
+import type { CertificationConfig, Lab, Question } from '@examforge/core';
 import type { Db } from '../db/client.js';
-import { certifications, domains, questions, subtopics } from '../db/schema.js';
+import { certifications, domains, labs, questions, subtopics } from '../db/schema.js';
 
 /**
  * Empreinte d'une question : énoncé, exhibit et textes des choix, normalisés.
@@ -123,5 +123,56 @@ export async function upsertQuestion(
     return { id: existing.id, created: false };
   }
   const [row] = await db.insert(questions).values(values).returning({ id: questions.id });
+  return { id: (row as { id: string }).id, created: true };
+}
+
+export class DuplicateLabError extends Error {
+  constructor(public readonly slug: string, public readonly existingSlug: string) {
+    super(`Le lab ${slug} reprend le titre de ${existingSlug}`);
+    this.name = 'DuplicateLabError';
+  }
+}
+
+/** Enregistre un lab déjà validé par le moteur (schéma, rangement, solution jouée). */
+export async function upsertLab(
+  db: Db,
+  certId: string,
+  lab: Lab,
+  options: UpsertQuestionOptions = {},
+): Promise<{ id: string; created: boolean }> {
+  const [dom] = await db
+    .select({ id: domains.id })
+    .from(domains)
+    .where(and(eq(domains.certificationId, certId), eq(domains.code, lab.domain)));
+  if (!dom) throw new Error(`Domaine ${lab.domain} inconnu`);
+  const [sub] = await db
+    .select({ id: subtopics.id })
+    .from(subtopics)
+    .where(and(eq(subtopics.domainId, dom.id), eq(subtopics.code, lab.subtopic)));
+  if (!sub) throw new Error(`Sous-thème ${lab.subtopic} inconnu`);
+
+  const [twin] = await db
+    .select({ slug: labs.slug })
+    .from(labs)
+    .where(and(eq(labs.certificationId, certId), eq(labs.title, lab.title)));
+  if (twin && twin.slug !== lab.slug) throw new DuplicateLabError(lab.slug, twin.slug);
+
+  const values = {
+    certificationId: certId,
+    slug: lab.slug,
+    domainId: dom.id,
+    subtopicId: sub.id,
+    difficulty: lab.difficulty,
+    title: lab.title,
+    definition: lab,
+    status: options.status ?? 'published',
+    source: options.source ?? 'manual',
+  };
+  const [existing] = await db.select({ id: labs.id }).from(labs).where(eq(labs.slug, lab.slug));
+  if (existing) {
+    await db.update(labs).set({ ...values, updatedAt: new Date() }).where(eq(labs.id, existing.id));
+    return { id: existing.id, created: false };
+  }
+  const [row] = await db.insert(labs).values(values).returning({ id: labs.id });
   return { id: (row as { id: string }).id, created: true };
 }

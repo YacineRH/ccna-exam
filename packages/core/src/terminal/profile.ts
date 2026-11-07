@@ -18,11 +18,14 @@ const requirementSchema = z
     config: z.string().optional(),
     /** Chaque section visée (interface…) doit contenir une ligne qui correspond à cette expression. */
     section: z.string().optional(),
+    /** Le paramètre n° `param` (à partir de 1) ne doit pas correspondre à `notMatch` (insensible à la casse). */
+    param: z.number().int().min(1).optional(),
+    notMatch: z.string().optional(),
     /** Message affiché si la condition n'est pas remplie. `{target}` : section visée. */
     message: z.string().min(1),
   })
-  .refine((r) => r.var !== undefined || r.config !== undefined || r.section !== undefined, {
-    message: 'une condition porte sur var, config ou section',
+  .refine((r) => r.var !== undefined || r.config !== undefined || r.section !== undefined || (r.param !== undefined && r.notMatch !== undefined), {
+    message: 'une condition porte sur var, config, section ou param + notMatch',
   });
 
 export const terminalCommandSchema = z.object({
@@ -42,6 +45,14 @@ export const terminalCommandSchema = z.object({
    * une nouvelle valeur remplace l'ancienne (`hostname`, `ip address`…). Sans clé, les lignes s'ajoutent.
    */
   key: z.array(z.number().int()).optional(),
+  /** Commandes qui règlent la même chose sous des formes différentes (`username … secret` et `username … password`) : leurs clés se remplacent. */
+  keyGroup: z.string().optional(),
+  /**
+   * Entrées numérotées (ACL nommées) : un premier paramètre numérique est un numéro de séquence.
+   * Les entrées sont rangées par numéro, enregistrées sans lui (comme la configuration courante d'IOS),
+   * et une entrée sans numéro prend le dernier + 10.
+   */
+  sequenced: z.boolean().optional(),
   /**
    * Forme `no` : `remove` retire la ligne (défaut), `store` garde « no … » (la forme positive est le
    * défaut, comme `ip domain-lookup`), `toggle` retire la forme positive ou garde « no … », `none` l'interdit.
@@ -112,6 +123,8 @@ export const terminalProfileSchema = z
       unrecognized: z.string().min(1),
       /** Affiché en sortant de la configuration (`end`, Ctrl+Z, `exit`). */
       leaveConfig: z.string().optional(),
+      /** Numéro de séquence déjà pris. */
+      duplicateSequence: z.string().default('% Duplicate sequence number'),
       /** Écho de Ctrl+Z. */
       ctrlZ: z.string().default('^Z'),
     }),
