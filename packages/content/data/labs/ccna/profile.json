@@ -1,0 +1,2257 @@
+{
+ "id": "cisco-ios",
+ "name": "Cisco IOS 15 (routeur ISR, commutateur Catalyst 2960)",
+ "startMode": "user",
+ "configMode": "config",
+ "endMode": "privileged",
+ "doKeyword": "do",
+ "modes": [
+  {
+   "id": "user",
+   "prompt": "{hostname}>",
+   "helpTitle": "Exec commands:",
+   "unknownCommand": "% Unknown command or computer name, or unable to find computer address"
+  },
+  {
+   "id": "privileged",
+   "prompt": "{hostname}#",
+   "parent": "user",
+   "helpTitle": "Exec commands:",
+   "unknownCommand": "% Unknown command or computer name, or unable to find computer address"
+  },
+  {
+   "id": "config",
+   "prompt": "{hostname}(config)#",
+   "parent": "privileged",
+   "config": true,
+   "helpTitle": "Configure commands:"
+  },
+  {
+   "id": "config-if",
+   "prompt": "{hostname}(config-if)#",
+   "parent": "config",
+   "config": true,
+   "helpTitle": "Interface configuration commands:"
+  },
+  {
+   "id": "config-if-range",
+   "prompt": "{hostname}(config-if-range)#",
+   "parent": "config",
+   "config": true,
+   "helpTitle": "Interface configuration commands:"
+  },
+  {
+   "id": "config-line",
+   "prompt": "{hostname}(config-line)#",
+   "parent": "config",
+   "config": true,
+   "helpTitle": "Line configuration commands:"
+  },
+  {
+   "id": "config-router",
+   "prompt": "{hostname}(config-router)#",
+   "parent": "config",
+   "config": true,
+   "helpTitle": "Router configuration commands:"
+  },
+  {
+   "id": "config-vlan",
+   "prompt": "{hostname}(config-vlan)#",
+   "parent": "config",
+   "config": true,
+   "hidden": true,
+   "helpTitle": "VLAN configuration commands:"
+  },
+  {
+   "id": "dhcp-config",
+   "prompt": "{hostname}(dhcp-config)#",
+   "parent": "config",
+   "config": true,
+   "helpTitle": "DHCP pool configuration commands:"
+  },
+  {
+   "id": "config-std-nacl",
+   "prompt": "{hostname}(config-std-nacl)#",
+   "parent": "config",
+   "config": true,
+   "helpTitle": "Standard Access List configuration commands:"
+  },
+  {
+   "id": "config-ext-nacl",
+   "prompt": "{hostname}(config-ext-nacl)#",
+   "parent": "config",
+   "config": true,
+   "helpTitle": "Ext Access List configuration commands:"
+  }
+ ],
+ "messages": {
+  "invalid": "% Invalid input detected at '^' marker.",
+  "ambiguous": "% Ambiguous command:  \"{input}\"",
+  "incomplete": "% Incomplete command.",
+  "unrecognized": "% Unrecognized command",
+  "leaveConfig": "%SYS-5-CONFIG_I: Configured from console by console",
+  "ctrlZ": "^Z"
+ },
+ "runningConfig": {
+  "header": "Building configuration...\n\nCurrent configuration : {bytes} bytes\n!",
+  "footer": "!\nend",
+  "separator": "!",
+  "indent": " "
+ },
+ "deviceTypes": {
+  "router": {
+   "defaultHostname": "Router",
+   "baseConfig": "hostname Router",
+   "interfaceSection": "interface {name}",
+   "interfaceDefaults": [
+    "shutdown"
+   ]
+  },
+  "switch": {
+   "defaultHostname": "Switch",
+   "baseConfig": "hostname Switch",
+   "interfaceSection": "interface {name}",
+   "interfaceDefaults": []
+  }
+ },
+ "interfaceTypes": [
+  {
+   "name": "GigabitEthernet",
+   "help": "GigabitEthernet IEEE 802.3z"
+  },
+  {
+   "name": "FastEthernet",
+   "help": "FastEthernet IEEE 802.3"
+  },
+  {
+   "name": "Serial",
+   "help": "Serial"
+  },
+  {
+   "name": "Loopback",
+   "help": "Loopback interface",
+   "virtual": true,
+   "range": [
+    0,
+    2147483647
+   ]
+  },
+  {
+   "name": "Null",
+   "help": "Null interface",
+   "virtual": true,
+   "range": [
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Port-channel",
+   "help": "Ethernet Channel of interfaces",
+   "virtual": true,
+   "range": [
+    1,
+    48
+   ]
+  },
+  {
+   "name": "Vlan",
+   "help": "Catalyst Vlans",
+   "virtual": true,
+   "range": [
+    1,
+    4094
+   ],
+   "devices": [
+    "switch"
+   ]
+  }
+ ],
+ "portNames": {
+  "bgp": 179,
+  "chargen": 19,
+  "daytime": 13,
+  "domain": 53,
+  "finger": 79,
+  "ftp": 21,
+  "ftp-data": 20,
+  "gopher": 70,
+  "irc": 194,
+  "lpd": 515,
+  "nntp": 119,
+  "pop2": 109,
+  "pop3": 110,
+  "smtp": 25,
+  "sunrpc": 111,
+  "tacacs": 49,
+  "talk": 517,
+  "telnet": 23,
+  "time": 37,
+  "uucp": 540,
+  "whois": 43,
+  "www": 80,
+  "bootpc": 68,
+  "bootps": 67,
+  "ntp": 123,
+  "snmp": 161,
+  "snmptrap": 162,
+  "syslog": 514,
+  "tftp": 69,
+  "isakmp": 500
+ },
+ "keywordHelp": {
+  "enable": "Turn on privileged commands",
+  "disable": "Turn off privileged commands",
+  "exit": "Exit from the EXEC",
+  "logout": "Exit from the EXEC",
+  "configure": "Enter configuration mode",
+  "terminal": "Configure from the terminal",
+  "show": "Show running system information",
+  "copy": "Copy from one file to another",
+  "write": "Write running configuration to memory, network, or terminal",
+  "memory": "Write to NV memory",
+  "running-config": "Current operating configuration",
+  "startup-config": "Contents of startup configuration",
+  "ping": "Send echo messages",
+  "traceroute": "Trace route to destination",
+  "version": "System hardware and software status",
+  "clock": "Display the system clock",
+  "history": "Display the session command history",
+  "users": "Display information about terminal lines",
+  "vlan": "VLAN information",
+  "brief": "Brief summary",
+  "mac": "MAC configuration",
+  "address-table": "MAC forwarding table",
+  "etherchannel": "EtherChannel information",
+  "summary": "One-line summary per channel-group",
+  "spanning-tree": "Spanning tree topology",
+  "cdp": "CDP information",
+  "neighbors": "CDP neighbor entries",
+  "detail": "Show detailed information",
+  "lldp": "LLDP information",
+  "port-security": "Show secure port information",
+  "access-lists": "List access lists",
+  "ip": "Global IP configuration subcommands",
+  "ipv6": "IPv6 information",
+  "nat": "NAT configuration",
+  "translations": "Translation entries",
+  "statistics": "Translation statistics",
+  "dhcp": "Show items in the DHCP database",
+  "binding": "DHCP address bindings",
+  "pool": "DHCP pools information",
+  "ospf": "OSPF information",
+  "neighbor": "Neighbor list",
+  "protocols": "IP routing protocol process parameters and statistics",
+  "ssh": "Information on SSH",
+  "standby": "HSRP information",
+  "route": "IP routing table",
+  "interfaces": "Interface status and configuration",
+  "trunk": "Set trunking characteristics of the interface",
+  "status": "Show interface line status",
+  "switchport": "Show interface switchport information",
+  "interface": "Select an interface to configure",
+  "arp": "ARP table",
+  "flash:": "display information about flash: file system",
+  "length": "Set number of lines on a screen",
+  "clear": "Reset functions",
+  "translation": "Clear dynamic translation",
+  "end": "Exit from configure mode",
+  "no": "Negate a command or set its defaults",
+  "do": "To run exec commands in config mode",
+  "hostname": "Set system's network name",
+  "range": "interface range command",
+  "router": "Enable a routing process",
+  "line": "Configure a terminal line",
+  "console": "Primary terminal line",
+  "vty": "Virtual terminal",
+  "unicast-routing": "Enable unicast routing",
+  "routing": "Enable IP routing",
+  "default-gateway": "Specify default gateway (if not routing IP)",
+  "domain-name": "Define the default domain name",
+  "domain": "IP DNS Resolver",
+  "name": "Ascii name of the VLAN",
+  "domain-lookup": "Enable IP Domain Name System hostname translation",
+  "lookup": "Enable IP Domain Name System hostname translation",
+  "name-server": "Specify address of name server to use",
+  "time-out": "Specify SSH time-out interval",
+  "authentication-retries": "Specify number of SSH authentication retries",
+  "crypto": "Encryption module",
+  "key": "Long term key operations",
+  "generate": "Generate new keys",
+  "rsa": "Generate RSA keys",
+  "general-keys": "Generate a general purpose RSA key pair for signing and encryption",
+  "modulus": "Provide number of modulus bits on the command line",
+  "username": "Establish User Name Authentication",
+  "privilege": "Set user privilege level",
+  "secret": "Specify the secret for the user",
+  "password": "Specify the password for the user",
+  "service": "Modify use of network based services",
+  "password-encryption": "Encrypt system passwords",
+  "banner": "Define a login banner",
+  "motd": "Set Message of the Day banner",
+  "access-list": "Add an access list entry",
+  "permit": "Specify packets to forward",
+  "deny": "Specify packets to reject",
+  "remark": "Access list entry comment",
+  "any": "Any source host",
+  "host": "A single host address",
+  "log": "Log matches against this entry",
+  "tcp": "Transmission Control Protocol",
+  "udp": "User Datagram Protocol",
+  "icmp": "Internet Control Message Protocol",
+  "gre": "Cisco's GRE tunneling",
+  "esp": "Encapsulation Security Payload",
+  "ahp": "Authentication Header Protocol",
+  "eigrp": "Cisco's EIGRP routing protocol",
+  "pim": "Protocol Independent Multicast",
+  "eq": "Match only packets on a given port number",
+  "neq": "Match only packets not on a given port number",
+  "gt": "Match only packets with a greater port number",
+  "lt": "Match only packets with a lower port number",
+  "established": "Match established connections",
+  "echo": "Echo (ping)",
+  "echo-reply": "Echo reply",
+  "unreachable": "All unreachables",
+  "time-exceeded": "All time exceededs",
+  "standard": "Standard Access List",
+  "extended": "Extended Access List",
+  "inside": "Inside address translation",
+  "outside": "Outside address translation",
+  "source": "Source address translation",
+  "list": "Specify access list describing local addresses",
+  "overload": "Overload an address translation",
+  "static": "Specify static local->global mapping",
+  "netmask": "Specify the network mask",
+  "prefix-length": "Specify the prefix length",
+  "excluded-address": "Prevent DHCP from assigning certain addresses",
+  "mode": "Mode of the interface",
+  "pvst": "Per-Vlan spanning tree mode",
+  "rapid-pvst": "Per-Vlan rapid spanning tree mode",
+  "mst": "Multiple spanning tree mode",
+  "root": "Configure switch as root",
+  "primary": "Configure this switch as primary root for this spanning tree",
+  "secondary": "Make this IP address a secondary address",
+  "priority": "Priority level",
+  "run": "Enable CDP",
+  "ntp": "Configure NTP",
+  "server": "Configure NTP server",
+  "logging": "Modify message logging facilities",
+  "description": "Interface specific description",
+  "address": "Set the IP address of an interface",
+  "eui-64": "Use eui-64 interface identifier",
+  "link-local": "Use link-local address",
+  "shutdown": "Shutdown the selected interface",
+  "speed": "Configure speed operation.",
+  "duplex": "Configure duplex operation.",
+  "auto": "Enable AUTO duplex configuration",
+  "full": "Force full duplex operation",
+  "half": "Force half-duplex operation",
+  "access": "Set trunking mode to ACCESS unconditionally",
+  "dynamic": "Set trunking mode to dynamically negotiate access or trunk mode",
+  "desirable": "Set trunking mode dynamic negotiation parameter to DESIRABLE",
+  "voice": "Voice appliance attributes",
+  "native": "Set trunking native characteristics when interface is in trunking mode",
+  "allowed": "Set allowed VLAN characteristics when interface is in trunking mode",
+  "add": "add VLANs to the current list",
+  "remove": "remove VLANs from the current list",
+  "except": "all VLANs except the following",
+  "all": "all VLANs",
+  "none": "no VLANs",
+  "nonegotiate": "Device will not engage in negotiation protocol on this interface",
+  "maximum": "Max secure addresses",
+  "violation": "Security violation mode",
+  "protect": "Security violation protect mode",
+  "restrict": "Security violation restrict mode",
+  "mac-address": "Secure mac address",
+  "sticky": "Configure dynamic secure addresses as sticky",
+  "aging": "Port-security aging commands",
+  "time": "Port-security aging time",
+  "portfast": "Spanning tree portfast options",
+  "bpduguard": "Don't accept BPDUs on this interface",
+  "channel-group": "Etherchannel/port bundling configuration",
+  "active": "Enable LACP unconditionally",
+  "passive": "Enable LACP only if a LACP device is detected",
+  "on": "Enable Etherchannel only",
+  "helper-address": "Specify a destination address for UDP broadcasts",
+  "access-group": "Specify access control for packets",
+  "in": "inbound packets",
+  "out": "outbound packets",
+  "area": "Set the OSPF area ID",
+  "cost": "Interface cost",
+  "network": "Enable routing on an IP network",
+  "point-to-point": "Specify OSPF point-to-point network",
+  "broadcast": "Specify OSPF broadcast multi-access network",
+  "hello-interval": "Time between HELLO packets",
+  "dead-interval": "Interval after which a neighbor is declared dead",
+  "preempt": "Overthrow lower priority Active routers",
+  "delay": "Wait before preempting",
+  "minimum": "Delay at least this long",
+  "login": "Enable password checking",
+  "local": "Local password checking",
+  "transport": "Define transport protocols for line",
+  "input": "Define which protocols to use when connecting to the terminal server",
+  "telnet": "TCP/IP Telnet protocol",
+  "access-class": "Filter connections based on an IP access list",
+  "vrf-also": "Same access list is applied for all VRFs",
+  "exec-timeout": "Set the EXEC timeout",
+  "synchronous": "Synchronized message output",
+  "router-id": "router-id for this OSPF process",
+  "passive-interface": "Suppress routing updates on an interface",
+  "default": "Suppress routing updates on all interfaces",
+  "default-information": "Control distribution of default information",
+  "originate": "Distribute a default route",
+  "always": "Always advertise default route",
+  "auto-cost": "Calculate OSPF interface cost according to bandwidth",
+  "reference-bandwidth": "Use reference bandwidth method to assign OSPF cost",
+  "maximum-paths": "Forward packets over multiple paths",
+  "default-router": "Default routers",
+  "dns-server": "DNS servers",
+  "lease": "Address lease time",
+  "infinite": "Infinite lease",
+  "permanent": "permanent route"
+ },
+ "paramHelp": {
+  "ipv4": "IP address",
+  "ipv4-mask": "Mask",
+  "wildcard": "Wildcard bits",
+  "ipv6": "IPv6 address",
+  "ipv6-prefix": "IPv6 prefix",
+  "prefix-length": "Network prefix length",
+  "word": "Name",
+  "line": "Text",
+  "number": "Number",
+  "vlan-list": "VLAN IDs of the allowed VLANs",
+  "port": "Port number",
+  "mac": "48 bit mac address",
+  "area": "OSPF area ID as a decimal value"
+ },
+ "commands": [
+  {
+   "syntax": "enable",
+   "modes": [
+    "user"
+   ],
+   "goto": "privileged"
+  },
+  {
+   "syntax": "disable",
+   "modes": [
+    "privileged"
+   ],
+   "goto": "user"
+  },
+  {
+   "syntax": "{exit|logout}",
+   "modes": [
+    "user",
+    "privileged"
+   ],
+   "goto": "user",
+   "output": "\n{hostname} con0 is now available\n\nPress RETURN to get started.",
+   "help": {
+    "exit": "Exit from the EXEC",
+    "logout": "Exit from the EXEC"
+   }
+  },
+  {
+   "syntax": "configure terminal",
+   "modes": [
+    "privileged"
+   ],
+   "goto": "config",
+   "output": "Enter configuration commands, one per line.  End with CNTL/Z."
+  },
+  {
+   "syntax": "show running-config [interface <interface>]",
+   "modes": [
+    "privileged"
+   ],
+   "builtin": "running-config",
+   "help": {
+    "interface": "Interface status and configuration"
+   }
+  },
+  {
+   "syntax": "{copy running-config startup-config}",
+   "modes": [
+    "privileged"
+   ],
+   "output": "Destination filename [startup-config]? \nBuilding configuration...\n[OK]"
+  },
+  {
+   "syntax": "write [memory]",
+   "modes": [
+    "privileged"
+   ],
+   "output": "Building configuration...\n[OK]"
+  },
+  {
+   "syntax": "show {version|clock|history|users}",
+   "modes": [
+    "user",
+    "privileged"
+   ],
+   "output": "% Sortie non simulée dans ce lab : vérifiez la configuration avec show running-config.",
+   "help": {
+    "interface": "Interface status and configuration"
+   }
+  },
+  {
+   "syntax": "show {startup-config|vlan [brief]|mac address-table|etherchannel summary|spanning-tree|cdp neighbors [detail]|lldp neighbors|port-security [interface <interface>]|access-lists [<1-199>|<word>]|ip access-lists|ip nat translations|ip nat statistics|ip dhcp binding|ip dhcp pool|ip ospf neighbor|ip ospf interface [brief]|ip protocols|ip ssh|ssh|standby [brief]|ipv6 interface brief|ipv6 route|ip route [<ipv4>]|interfaces trunk|interfaces status|interfaces [<interface>] [switchport]|ip interface brief|ip interface [<interface>]|arp|flash:}",
+   "modes": [
+    "privileged"
+   ],
+   "output": "% Sortie non simulée dans ce lab : vérifiez la configuration avec show running-config.",
+   "help": {
+    "interface": "Interface status and configuration"
+   }
+  },
+  {
+   "syntax": "show {ip interface brief|interfaces [<interface>]|ip route|arp|cdp neighbors}",
+   "modes": [
+    "user"
+   ],
+   "output": "% Sortie non simulée dans ce lab : vérifiez la configuration avec show running-config.",
+   "help": {
+    "interface": "Interface status and configuration"
+   }
+  },
+  {
+   "syntax": "{ping|traceroute} <word>",
+   "modes": [
+    "user",
+    "privileged"
+   ],
+   "output": "% Sortie non simulée dans ce lab : vérifiez la configuration avec show running-config."
+  },
+  {
+   "syntax": "terminal length <0-512>",
+   "modes": [
+    "user",
+    "privileged"
+   ]
+  },
+  {
+   "syntax": "clear ip nat translation *",
+   "modes": [
+    "privileged"
+   ]
+  },
+  {
+   "syntax": "exit",
+   "modes": [
+    "config-if",
+    "config-if-range",
+    "config-line",
+    "config-router",
+    "config-vlan",
+    "dhcp-config",
+    "config-std-nacl",
+    "config-ext-nacl"
+   ],
+   "exit": true,
+   "help": {
+    "exit": "Exit from the current configuration mode"
+   }
+  },
+  {
+   "syntax": "exit",
+   "modes": [
+    "config"
+   ],
+   "exit": true,
+   "help": {
+    "exit": "Exit from configure mode"
+   }
+  },
+  {
+   "syntax": "end",
+   "modes": [
+    "config",
+    "config-if",
+    "config-if-range",
+    "config-line",
+    "config-router",
+    "config-vlan",
+    "dhcp-config",
+    "config-std-nacl",
+    "config-ext-nacl"
+   ],
+   "end": true
+  },
+  {
+   "syntax": "hostname <word>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0
+   ],
+   "set": {
+    "hostname": "{$1}"
+   },
+   "help": {
+    "<word>": "This system's network name"
+   }
+  },
+  {
+   "syntax": "interface <interface>",
+   "modes": [
+    "config"
+   ],
+   "enter": {
+    "mode": "config-if"
+   }
+  },
+  {
+   "syntax": "interface range <interface-range>",
+   "modes": [
+    "config"
+   ],
+   "enter": {
+    "mode": "config-if-range",
+    "range": true
+   }
+  },
+  {
+   "syntax": "vlan <1-4094>",
+   "modes": [
+    "config"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "enter": {
+    "mode": "config-vlan"
+   },
+   "help": {
+    "vlan": "Vlan commands",
+    "<1-4094>": "ISL VLAN IDs 1-1005"
+   }
+  },
+  {
+   "syntax": "router ospf <1-65535>",
+   "modes": [
+    "config"
+   ],
+   "enter": {
+    "mode": "config-router"
+   },
+   "help": {
+    "ospf": "Open Shortest Path First (OSPF)",
+    "<1-65535>": "Process ID"
+   }
+  },
+  {
+   "syntax": "line console <0-0>",
+   "modes": [
+    "config"
+   ],
+   "enter": {
+    "mode": "config-line"
+   }
+  },
+  {
+   "syntax": "line vty <0-15> [<0-15>]",
+   "modes": [
+    "config"
+   ],
+   "enter": {
+    "mode": "config-line"
+   },
+   "help": {
+    "<0-15>": "First Line number"
+   }
+  },
+  {
+   "syntax": "ip route <ipv4> <ipv4-mask> {<ipv4>|<interface>|<interface> <ipv4>} [<1-255>] [permanent]",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "route": "Establish static routes",
+    "<1-255>": "Distance metric for this route",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ipv6 route <ipv6-prefix> {<ipv6>|<interface>|<interface> <ipv6>} [<1-254>]",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "route": "Configure static routes",
+    "<1-254>": "Administrative distance"
+   }
+  },
+  {
+   "syntax": "ipv6 unicast-routing",
+   "modes": [
+    "config"
+   ]
+  },
+  {
+   "syntax": "ip routing",
+   "modes": [
+    "config"
+   ],
+   "devices": [
+    "router"
+   ],
+   "negate": "store",
+   "help": {
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip default-gateway <ipv4>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip domain-name <word>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "set": {
+    "domain": "{$1}"
+   },
+   "help": {
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip domain name <word>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "set": {
+    "domain": "{$1}"
+   },
+   "help": {
+    "domain": "IP DNS Resolver",
+    "name": "Define the default domain name",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip domain-lookup",
+   "modes": [
+    "config"
+   ],
+   "negate": "store",
+   "help": {
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip domain lookup",
+   "modes": [
+    "config"
+   ],
+   "negate": "store",
+   "help": {
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip name-server <ipv4>",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip ssh version {1|2}",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "requires": [
+    {
+     "var": "rsaModulus",
+     "min": 768,
+     "message": "Please create RSA keys to enable SSH (and of atleast 768 bits for SSH v2)."
+    }
+   ],
+   "help": {
+    "version": "Specify protocol version supported",
+    "1": "Protocol version 1",
+    "2": "Protocol version 2",
+    "ssh": "Configure ssh options",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip ssh time-out <1-120>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "ssh": "Configure ssh options",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip ssh authentication-retries <0-5>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "ssh": "Configure ssh options",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "crypto key generate rsa [general-keys] modulus <360-4096>",
+   "modes": [
+    "config"
+   ],
+   "store": false,
+   "requires": [
+    {
+     "var": "hostname",
+     "notEquals": "{defaultHostname}",
+     "message": "% Please define a hostname other than {defaultHostname}."
+    },
+    {
+     "config": "^ip domain[- ]name ",
+     "message": "% Please define a domain-name first."
+    }
+   ],
+   "set": {
+    "rsaModulus": "{$1}"
+   },
+   "output": "The name for the keys will be: {hostname}.{domain}\n\n% The key modulus size is {$1} bits\n% Generating {$1} bit RSA keys, keys will be non-exportable...\n[OK] (elapsed time was 1 seconds)\n\n%SSH-5-ENABLED: SSH 1.99 has been enabled",
+   "help": {
+    "<360-4096>": "size of the key modulus [360-4096]"
+   }
+  },
+  {
+   "syntax": "crypto key generate rsa [general-keys]",
+   "modes": [
+    "config"
+   ],
+   "store": false,
+   "output": "% Le simulateur ne pose pas de question interactive : précisez la taille, par exemple « crypto key generate rsa modulus 2048 ».",
+   "help": {
+    "<360-4096>": "size of the key modulus [360-4096]"
+   }
+  },
+  {
+   "syntax": "username <word> [privilege <0-15>] secret <line>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "display": "username {$1} secret 9 {mask:$3}",
+   "help": {
+    "<word>": "User name"
+   }
+  },
+  {
+   "syntax": "username <word> [privilege <0-15>] password <line>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "<word>": "User name"
+   }
+  },
+  {
+   "syntax": "enable secret <line>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "display": "enable secret 9 {mask:$2}",
+   "help": {
+    "enable": "Modify enable password parameters",
+    "secret": "Assign the privileged level secret (MAX of 256 characters)",
+    "password": "Assign the privileged level password (MAX of 25 characters)"
+   }
+  },
+  {
+   "syntax": "enable password <line>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "enable": "Modify enable password parameters",
+    "secret": "Assign the privileged level secret (MAX of 256 characters)",
+    "password": "Assign the privileged level password (MAX of 25 characters)"
+   }
+  },
+  {
+   "syntax": "service password-encryption",
+   "modes": [
+    "config"
+   ]
+  },
+  {
+   "syntax": "banner motd <line>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ]
+  },
+  {
+   "syntax": "access-list <1-99> {permit|deny} {any|host <ipv4>|<ipv4>|<ipv4> <wildcard>} [log]",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "<1-99>": "IP standard access list"
+   }
+  },
+  {
+   "syntax": "access-list <1-99> remark <line>",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "<1-99>": "IP standard access list"
+   }
+  },
+  {
+   "syntax": "access-list <100-199> {permit|deny} {ip|ospf|gre|esp|ahp|eigrp|pim|<0-255>} {any|host <ipv4>|<ipv4> <wildcard>} {any|host <ipv4>|<ipv4> <wildcard>} [log]",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "<100-199>": "IP extended access list"
+   }
+  },
+  {
+   "syntax": "access-list <100-199> {permit|deny} icmp {any|host <ipv4>|<ipv4> <wildcard>} {any|host <ipv4>|<ipv4> <wildcard>} [{echo|echo-reply|unreachable|time-exceeded|<0-255>}] [log]",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "<100-199>": "IP extended access list"
+   }
+  },
+  {
+   "syntax": "access-list <100-199> {permit|deny} tcp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [established] [log]",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "<100-199>": "IP extended access list"
+   }
+  },
+  {
+   "syntax": "access-list <100-199> {permit|deny} udp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [log]",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "<100-199>": "IP extended access list"
+   }
+  },
+  {
+   "syntax": "access-list <100-199> remark <line>",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "<100-199>": "IP extended access list"
+   }
+  },
+  {
+   "syntax": "ip access-list standard {<1-99>|<word>}",
+   "modes": [
+    "config"
+   ],
+   "enter": {
+    "mode": "config-std-nacl"
+   },
+   "help": {
+    "access-list": "Named access-list",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip access-list extended {<100-199>|<word>}",
+   "modes": [
+    "config"
+   ],
+   "enter": {
+    "mode": "config-ext-nacl"
+   },
+   "help": {
+    "access-list": "Named access-list",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip nat inside source list {<1-199>|<word>} interface <interface> overload",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "nat": "NAT configuration commands",
+    "pool": "Define pool of addresses",
+    "interface": "Specify interface for global address",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip nat inside source list {<1-199>|<word>} pool <word> [overload]",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "nat": "NAT configuration commands",
+    "pool": "Define pool of addresses",
+    "interface": "Specify interface for global address",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip nat inside source static <ipv4> <ipv4>",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "nat": "NAT configuration commands",
+    "pool": "Define pool of addresses",
+    "interface": "Specify interface for global address",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip nat inside source static {tcp|udp} <ipv4> <port> <ipv4> <port>",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "nat": "NAT configuration commands",
+    "pool": "Define pool of addresses",
+    "interface": "Specify interface for global address",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip nat pool <word> <ipv4> <ipv4> {netmask <ipv4-mask>|prefix-length <1-32>}",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "nat": "NAT configuration commands",
+    "pool": "Define pool of addresses",
+    "interface": "Specify interface for global address",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "ip dhcp excluded-address <ipv4> [<ipv4>]",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "dhcp": "Configure DHCP server and relay parameters",
+    "pool": "Configure DHCP address pools",
+    "ip": "Global IP configuration subcommands",
+    "<ipv4>": "Low IP address"
+   }
+  },
+  {
+   "syntax": "ip dhcp pool <word>",
+   "modes": [
+    "config"
+   ],
+   "enter": {
+    "mode": "dhcp-config"
+   },
+   "help": {
+    "dhcp": "Configure DHCP server and relay parameters",
+    "pool": "Configure DHCP address pools",
+    "ip": "Global IP configuration subcommands"
+   }
+  },
+  {
+   "syntax": "service dhcp",
+   "modes": [
+    "config"
+   ],
+   "negate": "store"
+  },
+  {
+   "syntax": "spanning-tree mode {pvst|rapid-pvst|mst}",
+   "modes": [
+    "config"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "mode": "Spanning tree operating mode"
+   }
+  },
+  {
+   "syntax": "spanning-tree vlan <vlan-list> root {primary|secondary}",
+   "modes": [
+    "config"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "vlan": "VLAN Switch Spanning Tree",
+    "priority": "Set the bridge priority for the spanning tree"
+   }
+  },
+  {
+   "syntax": "spanning-tree vlan <vlan-list> priority <0-61440>",
+   "modes": [
+    "config"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "vlan": "VLAN Switch Spanning Tree",
+    "priority": "Set the bridge priority for the spanning tree"
+   }
+  },
+  {
+   "syntax": "cdp run",
+   "modes": [
+    "config"
+   ],
+   "negate": "store"
+  },
+  {
+   "syntax": "lldp run",
+   "modes": [
+    "config"
+   ]
+  },
+  {
+   "syntax": "ntp server <ipv4>",
+   "modes": [
+    "config"
+   ]
+  },
+  {
+   "syntax": "logging host <ipv4>",
+   "modes": [
+    "config"
+   ]
+  },
+  {
+   "syntax": "description <line>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0
+   ],
+   "help": {
+    "<line>": "Up to 240 characters describing this interface"
+   }
+  },
+  {
+   "syntax": "ip address <ipv4> <ipv4-mask>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "dhcp": "IP Address negotiated via DHCP",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ip address <ipv4> <ipv4-mask> secondary",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "help": {
+    "dhcp": "IP Address negotiated via DHCP",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ip address dhcp",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "dhcp": "IP Address negotiated via DHCP",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ipv6 address <ipv6-prefix> [eui-64]",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "help": {
+    "address": "Configure IPv6 address on interface",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ipv6 address <ipv6> link-local",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1,
+    3
+   ],
+   "help": {
+    "address": "Configure IPv6 address on interface",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ipv6 enable",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "help": {
+    "enable": "Enable IPv6 on interface",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "shutdown",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ]
+  },
+  {
+   "syntax": "speed {10|100|1000|auto}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0
+   ]
+  },
+  {
+   "syntax": "duplex {auto|full|half}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0
+   ]
+  },
+  {
+   "syntax": "switchport mode {access|trunk}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "mode": "Set trunking mode of the interface",
+    "trunk": "Set trunking mode to TRUNK unconditionally",
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport mode dynamic {auto|desirable}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "mode": "Set trunking mode of the interface",
+    "trunk": "Set trunking mode to TRUNK unconditionally",
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport access vlan <1-4094>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "create": [
+    "vlan {$1}"
+   ],
+   "createOutput": "% Access VLAN does not exist. Creating vlan {$1}",
+   "help": {
+    "access": "Set access mode characteristics of the interface",
+    "vlan": "Set VLAN when interface is in access mode",
+    "<1-4094>": "VLAN ID of the VLAN when this port is in access mode",
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport voice vlan <1-4094>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "vlan": "Vlan for voice traffic",
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport trunk native vlan <1-4094>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "help": {
+    "trunk": "Set trunking characteristics of the interface",
+    "vlan": "Set native VLAN when interface is in trunking mode",
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport trunk allowed vlan <vlan-list>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "list": {
+    "op": "set",
+    "prefix": "switchport trunk allowed vlan",
+    "max": 4094
+   },
+   "help": {
+    "trunk": "Set trunking characteristics of the interface",
+    "vlan": "Set allowed VLANs when interface is in trunking mode",
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport trunk allowed vlan add <vlan-list>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "list": {
+    "op": "add",
+    "prefix": "switchport trunk allowed vlan",
+    "max": 4094
+   },
+   "help": {
+    "trunk": "Set trunking characteristics of the interface",
+    "vlan": "Set allowed VLANs when interface is in trunking mode",
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport trunk allowed vlan remove <vlan-list>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "list": {
+    "op": "remove",
+    "prefix": "switchport trunk allowed vlan",
+    "max": 4094
+   },
+   "help": {
+    "trunk": "Set trunking characteristics of the interface",
+    "vlan": "Set allowed VLANs when interface is in trunking mode",
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport trunk allowed vlan except <vlan-list>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "list": {
+    "op": "except",
+    "prefix": "switchport trunk allowed vlan",
+    "max": 4094
+   },
+   "help": {
+    "trunk": "Set trunking characteristics of the interface",
+    "vlan": "Set allowed VLANs when interface is in trunking mode",
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport trunk allowed vlan all",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "list": {
+    "op": "all",
+    "prefix": "switchport trunk allowed vlan",
+    "max": 4094
+   },
+   "help": {
+    "trunk": "Set trunking characteristics of the interface",
+    "vlan": "Set allowed VLANs when interface is in trunking mode",
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport trunk allowed vlan none",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "list": {
+    "op": "none",
+    "prefix": "switchport trunk allowed vlan",
+    "max": 4094
+   },
+   "help": {
+    "trunk": "Set trunking characteristics of the interface",
+    "vlan": "Set allowed VLANs when interface is in trunking mode",
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport nonegotiate",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "help": {
+    "switchport": "Set switching mode characteristics"
+   }
+  },
+  {
+   "syntax": "switchport port-security",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "requires": [
+    {
+     "section": "^switchport mode (access|trunk)$",
+     "message": "Command rejected: {target} is a dynamic port."
+    }
+   ],
+   "help": {
+    "switchport": "Set switching mode characteristics",
+    "<1-8192>": "Maximum addresses",
+    "mac-address": "Secure mac address"
+   }
+  },
+  {
+   "syntax": "switchport port-security maximum <1-8192>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "switchport": "Set switching mode characteristics",
+    "<1-8192>": "Maximum addresses",
+    "mac-address": "Secure mac address"
+   }
+  },
+  {
+   "syntax": "switchport port-security violation {protect|restrict|shutdown}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "switchport": "Set switching mode characteristics",
+    "<1-8192>": "Maximum addresses",
+    "mac-address": "Secure mac address"
+   }
+  },
+  {
+   "syntax": "switchport port-security mac-address sticky",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "help": {
+    "switchport": "Set switching mode characteristics",
+    "<1-8192>": "Maximum addresses",
+    "mac-address": "Secure mac address"
+   }
+  },
+  {
+   "syntax": "switchport port-security mac-address <mac>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "help": {
+    "switchport": "Set switching mode characteristics",
+    "<1-8192>": "Maximum addresses",
+    "mac-address": "Secure mac address"
+   }
+  },
+  {
+   "syntax": "switchport port-security aging time <1-1440>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "help": {
+    "switchport": "Set switching mode characteristics",
+    "<1-8192>": "Maximum addresses",
+    "mac-address": "Secure mac address"
+   }
+  },
+  {
+   "syntax": "spanning-tree portfast",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "output": "%Warning: portfast should only be enabled on ports connected to a single\n host. Connecting hubs, concentrators, switches, bridges, etc... to this\n interface  when portfast is enabled, can cause temporary bridging loops.\n Use with CAUTION\n\n%Portfast has been configured on {target} but will only\n have effect when the interface is in a non-trunking mode.",
+   "help": {
+    "trunk": "Enable portfast on the interface even in trunk mode",
+    "disable": "Disable portfast for this interface"
+   }
+  },
+  {
+   "syntax": "spanning-tree portfast {trunk|disable}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "help": {
+    "trunk": "Enable portfast on the interface even in trunk mode",
+    "disable": "Disable portfast for this interface"
+   }
+  },
+  {
+   "syntax": "spanning-tree bpduguard {enable|disable}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "enable": "Enable BPDU guard for this interface",
+    "disable": "Disable BPDU guard for this interface"
+   }
+  },
+  {
+   "syntax": "channel-group <1-48> mode {active|passive|on|auto|desirable}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0
+   ],
+   "create": [
+    "interface Port-channel{$1}"
+   ],
+   "createOutput": "Creating a port-channel interface Port-channel {$1}",
+   "help": {
+    "mode": "Etherchannel Mode of the interface",
+    "auto": "Enable PAgP only if a PAgP device is detected",
+    "desirable": "Enable PAgP unconditionally",
+    "<1-48>": "Channel group number"
+   }
+  },
+  {
+   "syntax": "ip helper-address <ipv4>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "help": {
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ip nat {inside|outside}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "nat": "NAT interface commands",
+    "inside": "Inside interface for address translation",
+    "outside": "Outside interface for address translation",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ip access-group {<1-199>|<word>} {in|out}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1,
+    -1
+   ],
+   "help": {
+    "<1-199>": "IP access list (standard or extended)",
+    "<word>": "Access-list name",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ip ospf <1-65535> area <area>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "ospf": "OSPF interface commands",
+    "priority": "Router priority",
+    "network": "Network type",
+    "area": "Set the OSPF area ID",
+    "<1-65535>": "Process ID",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ip ospf cost <1-65535>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "ospf": "OSPF interface commands",
+    "priority": "Router priority",
+    "network": "Network type",
+    "area": "Set the OSPF area ID",
+    "<1-65535>": "Process ID",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ip ospf priority <0-255>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "ospf": "OSPF interface commands",
+    "priority": "Router priority",
+    "network": "Network type",
+    "area": "Set the OSPF area ID",
+    "<1-65535>": "Process ID",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ip ospf network {point-to-point|broadcast}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "ospf": "OSPF interface commands",
+    "priority": "Router priority",
+    "network": "Network type",
+    "area": "Set the OSPF area ID",
+    "<1-65535>": "Process ID",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ip ospf hello-interval <1-65535>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "ospf": "OSPF interface commands",
+    "priority": "Router priority",
+    "network": "Network type",
+    "area": "Set the OSPF area ID",
+    "<1-65535>": "Process ID",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "ip ospf dead-interval <1-65535>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "ospf": "OSPF interface commands",
+    "priority": "Router priority",
+    "network": "Network type",
+    "area": "Set the OSPF area ID",
+    "<1-65535>": "Process ID",
+    "ip": "Interface Internet Protocol config commands"
+   }
+  },
+  {
+   "syntax": "standby version {1|2}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "standby": "HSRP interface configuration commands",
+    "ip": "Enable HSRP and set the virtual IP address",
+    "priority": "Priority level",
+    "version": "HSRP version",
+    "<0-255>": "group number",
+    "1": "Version 1",
+    "2": "Version 2"
+   }
+  },
+  {
+   "syntax": "standby [<0-255>] ip <ipv4>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "help": {
+    "standby": "HSRP interface configuration commands",
+    "ip": "Enable HSRP and set the virtual IP address",
+    "priority": "Priority level",
+    "version": "HSRP version",
+    "<0-255>": "group number",
+    "1": "Version 1",
+    "2": "Version 2"
+   }
+  },
+  {
+   "syntax": "standby <0-255> priority <0-255>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "standby": "HSRP interface configuration commands",
+    "ip": "Enable HSRP and set the virtual IP address",
+    "priority": "Priority level",
+    "version": "HSRP version",
+    "<0-255>": "Priority value",
+    "1": "Version 1",
+    "2": "Version 2"
+   }
+  },
+  {
+   "syntax": "standby <0-255> preempt [delay minimum <0-3600>]",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "standby": "HSRP interface configuration commands",
+    "ip": "Enable HSRP and set the virtual IP address",
+    "priority": "Priority level",
+    "version": "HSRP version",
+    "<0-255>": "group number",
+    "1": "Version 1",
+    "2": "Version 2"
+   }
+  },
+  {
+   "syntax": "cdp enable",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "negate": "store"
+  },
+  {
+   "syntax": "password <line>",
+   "modes": [
+    "config-line"
+   ],
+   "key": [
+    0
+   ]
+  },
+  {
+   "syntax": "login [local]",
+   "modes": [
+    "config-line"
+   ],
+   "key": [
+    0
+   ]
+  },
+  {
+   "syntax": "transport input {ssh|telnet|all|none|ssh telnet|telnet ssh}",
+   "modes": [
+    "config-line"
+   ],
+   "key": [
+    0,
+    1
+   ]
+  },
+  {
+   "syntax": "access-class {<1-199>|<word>} {in|out}",
+   "modes": [
+    "config-line"
+   ],
+   "key": [
+    0,
+    -1
+   ],
+   "help": {
+    "<1-199>": "IP access list",
+    "<word>": "IP access list name"
+   }
+  },
+  {
+   "syntax": "access-class {<1-199>|<word>} in vrf-also",
+   "modes": [
+    "config-line"
+   ],
+   "key": [
+    0,
+    2
+   ],
+   "help": {
+    "<1-199>": "IP access list",
+    "<word>": "IP access list name"
+   }
+  },
+  {
+   "syntax": "exec-timeout <0-35791> [<0-2147483>]",
+   "modes": [
+    "config-line"
+   ],
+   "key": [
+    0
+   ]
+  },
+  {
+   "syntax": "logging synchronous",
+   "modes": [
+    "config-line"
+   ]
+  },
+  {
+   "syntax": "network <ipv4> <wildcard> area <area>",
+   "modes": [
+    "config-router"
+   ],
+   "help": {
+    "network": "Enable routing on an IP network",
+    "area": "Set the OSPF area ID"
+   }
+  },
+  {
+   "syntax": "router-id <ipv4>",
+   "modes": [
+    "config-router"
+   ],
+   "key": [
+    0
+   ]
+  },
+  {
+   "syntax": "passive-interface <interface>",
+   "modes": [
+    "config-router"
+   ],
+   "negate": "toggle",
+   "help": {
+    "default": "Suppress routing updates on all interfaces"
+   }
+  },
+  {
+   "syntax": "passive-interface default",
+   "modes": [
+    "config-router"
+   ],
+   "help": {
+    "default": "Suppress routing updates on all interfaces"
+   }
+  },
+  {
+   "syntax": "default-information originate [always]",
+   "modes": [
+    "config-router"
+   ],
+   "key": [
+    0,
+    1
+   ]
+  },
+  {
+   "syntax": "auto-cost reference-bandwidth <1-4294967>",
+   "modes": [
+    "config-router"
+   ],
+   "key": [
+    0,
+    1
+   ]
+  },
+  {
+   "syntax": "maximum-paths <1-32>",
+   "modes": [
+    "config-router"
+   ],
+   "key": [
+    0
+   ]
+  },
+  {
+   "syntax": "name <word>",
+   "modes": [
+    "config-vlan"
+   ],
+   "key": [
+    0
+   ],
+   "help": {
+    "name": "Ascii name of the VLAN",
+    "<word>": "The ascii name for the VLAN"
+   }
+  },
+  {
+   "syntax": "network <ipv4> {<ipv4-mask>|<prefix-length>}",
+   "modes": [
+    "dhcp-config"
+   ],
+   "key": [
+    0
+   ],
+   "help": {
+    "network": "Network number and mask"
+   }
+  },
+  {
+   "syntax": "default-router <ipv4> [<ipv4>]",
+   "modes": [
+    "dhcp-config"
+   ],
+   "key": [
+    0
+   ],
+   "help": {
+    "<ipv4>": "Router's IP address"
+   }
+  },
+  {
+   "syntax": "dns-server <ipv4> [<ipv4>] [<ipv4>]",
+   "modes": [
+    "dhcp-config"
+   ],
+   "key": [
+    0
+   ],
+   "help": {
+    "<ipv4>": "Server's name or IP address"
+   }
+  },
+  {
+   "syntax": "domain-name <word>",
+   "modes": [
+    "dhcp-config"
+   ],
+   "key": [
+    0
+   ]
+  },
+  {
+   "syntax": "lease {<0-365> [<0-23> [<0-59>]]|infinite}",
+   "modes": [
+    "dhcp-config"
+   ],
+   "key": [
+    0
+   ]
+  },
+  {
+   "syntax": "[<1-2147483647>] {permit|deny} {any|host <ipv4>|<ipv4>|<ipv4> <wildcard>} [log]",
+   "modes": [
+    "config-std-nacl"
+   ]
+  },
+  {
+   "syntax": "remark <line>",
+   "modes": [
+    "config-std-nacl",
+    "config-ext-nacl"
+   ]
+  },
+  {
+   "syntax": "{permit|deny} {ip|ospf|gre|esp|ahp|eigrp|pim|<0-255>} {any|host <ipv4>|<ipv4> <wildcard>} {any|host <ipv4>|<ipv4> <wildcard>} [log]",
+   "modes": [
+    "config-ext-nacl"
+   ]
+  },
+  {
+   "syntax": "{permit|deny} icmp {any|host <ipv4>|<ipv4> <wildcard>} {any|host <ipv4>|<ipv4> <wildcard>} [{echo|echo-reply|unreachable|time-exceeded|<0-255>}] [log]",
+   "modes": [
+    "config-ext-nacl"
+   ]
+  },
+  {
+   "syntax": "{permit|deny} tcp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [established] [log]",
+   "modes": [
+    "config-ext-nacl"
+   ]
+  },
+  {
+   "syntax": "{permit|deny} udp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [log]",
+   "modes": [
+    "config-ext-nacl"
+   ]
+  },
+  {
+   "syntax": "<1-2147483647> {permit|deny} {ip|ospf|gre|esp|ahp|eigrp|pim|<0-255>} {any|host <ipv4>|<ipv4> <wildcard>} {any|host <ipv4>|<ipv4> <wildcard>} [log]",
+   "modes": [
+    "config-ext-nacl"
+   ]
+  },
+  {
+   "syntax": "<1-2147483647> {permit|deny} icmp {any|host <ipv4>|<ipv4> <wildcard>} {any|host <ipv4>|<ipv4> <wildcard>} [{echo|echo-reply|unreachable|time-exceeded|<0-255>}] [log]",
+   "modes": [
+    "config-ext-nacl"
+   ]
+  },
+  {
+   "syntax": "<1-2147483647> {permit|deny} tcp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [established] [log]",
+   "modes": [
+    "config-ext-nacl"
+   ]
+  },
+  {
+   "syntax": "<1-2147483647> {permit|deny} udp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [log]",
+   "modes": [
+    "config-ext-nacl"
+   ]
+  }
+ ]
+}

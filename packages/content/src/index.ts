@@ -1,11 +1,16 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  checkLab,
   parseCertification,
+  parseLab,
   parseQuestion,
+  parseTerminalProfile,
   type CertificationConfig,
+  type Lab,
   type Question,
+  type TerminalProfile,
 } from '@examforge/core';
 
 /** Dossier `data/` du paquet, que l'on tourne depuis `src/` (tests) ou `dist/` (build). */
@@ -94,4 +99,69 @@ export function loadCertification(code: string, dataDir = DATA_DIR): ContentBund
 
   if (issues.length) throw new ContentError(`Contenu invalide pour ${code}`, issues);
   return { certification, questions };
+}
+
+export interface LabBundle {
+  /** Profil de terminal de la certification (modes, prompts, messages, commandes). */
+  profile: TerminalProfile;
+  labs: Lab[];
+}
+
+const PROFILE_FILE = 'profile.json';
+
+/** Certifications qui ont des labs (un dossier `data/labs/<code>/` avec un `profile.json`). */
+export function listLabCertificationCodes(dataDir = DATA_DIR): string[] {
+  const dir = join(dataDir, 'labs');
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((code) => existsSync(join(dir, code, PROFILE_FILE)))
+    .sort();
+}
+
+/** Profil de terminal d'une certification, ou null si elle n'a pas de labs. */
+export function loadLabProfile(code: string, dataDir = DATA_DIR): TerminalProfile | null {
+  const path = join(dataDir, 'labs', code, PROFILE_FILE);
+  return existsSync(path) ? parseTerminalProfile(readJson(path)) : null;
+}
+
+/**
+ * Vérifie qu'un lab est rangé au bon endroit (certification, domaine, sous-thème, profil),
+ * puis le joue : état de départ, solution, variantes et pièges (voir `checkLab`).
+ */
+export function checkLabAgainstCertification(lab: Lab, cert: CertificationConfig, profile: TerminalProfile): string[] {
+  const at = `[${lab.slug}]`;
+  const issues: string[] = [];
+  if (lab.certification !== cert.code) issues.push(`${at} certification ${lab.certification} au lieu de ${cert.code}`);
+  const domain = cert.domains.find((d) => d.code === lab.domain);
+  if (!domain) issues.push(`${at} domaine inconnu : ${lab.domain}`);
+  else if (!domain.subtopics.some((s) => s.code === lab.subtopic)) issues.push(`${at} sous-thème ${lab.subtopic} absent du domaine ${lab.domain}`);
+  if (lab.profile !== profile.id) issues.push(`${at} profil ${lab.profile} au lieu de ${profile.id}`);
+  else issues.push(...checkLab(profile, lab).map((i) => `${at} ${i}`));
+  return issues;
+}
+
+/** Charge, valide et joue tous les labs d'une certification. Échoue au moindre problème. */
+export function loadLabs(code: string, dataDir = DATA_DIR): LabBundle {
+  const profile = loadLabProfile(code, dataDir);
+  if (!profile) throw new ContentError(`Pas de labs pour ${code}`, [`${PROFILE_FILE} manquant`]);
+  const certification = parseCertification(readJson(join(dataDir, 'certifications', `${code}.json`)));
+  const dir = join(dataDir, 'labs', code);
+  const labs: Lab[] = [];
+  const issues: string[] = [];
+  const slugs = new Set<string>();
+  for (const file of readdirSync(dir).filter((f) => f.endsWith('.json') && f !== PROFILE_FILE).sort()) {
+    let lab: Lab;
+    try {
+      lab = parseLab(readJson(join(dir, file)));
+    } catch (err) {
+      issues.push(`${file} : ${(err as Error).message}`);
+      continue;
+    }
+    if (slugs.has(lab.slug)) issues.push(`${file} : slug en double ${lab.slug}`);
+    slugs.add(lab.slug);
+    issues.push(...checkLabAgainstCertification(lab, certification, profile));
+    labs.push(lab);
+  }
+  if (issues.length) throw new ContentError(`Labs invalides pour ${code}`, issues);
+  return { profile, labs };
 }

@@ -1,0 +1,129 @@
+{
+  "slug": "ccna-lab-1.3-interfaces",
+  "certification": "ccna",
+  "domain": "1.0",
+  "subtopic": "1.3",
+  "difficulty": "easy",
+  "title": "Mettre en service les interfaces d'un routeur",
+  "statement": "Le routeur R1 sort de son carton : il porte déjà son nom, mais ses interfaces sont toutes administrativement désactivées, comme sur tout routeur Cisco neuf.\n\nConfigurez-le depuis la console :\n1. G0/0/0 dessert le LAN des utilisateurs : description « LAN utilisateurs », première adresse utilisable de 192.168.10.0/26, interface activée.\n2. G0/0/1 rejoint le routeur du FAI : description « Lien vers FAI », adresse 203.0.113.2/30, interface activée.\n3. S0/1/0 n'est pas câblée : elle doit rester désactivée.\n4. Enregistrez la configuration dans la NVRAM.",
+  "topology": "  [LAN utilisateurs]                         [FAI]\n  192.168.10.0/26                        203.0.113.1/30\n        |                                      |\n   G0/0/0                                   G0/0/1\n        +---------------- R1 ------------------+\n                           |\n                        S0/1/0 (non câblée)",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1", "Serial0/1/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "g000-description",
+      "description": "G0/0/0 porte la description « LAN utilisateurs ».",
+      "check": { "type": "line", "section": "interface GigabitEthernet0/0/0", "line": "description LAN utilisateurs" }
+    },
+    {
+      "id": "g000-address",
+      "description": "G0/0/0 a la première adresse utilisable de 192.168.10.0/26.",
+      "check": { "type": "line", "section": "interface GigabitEthernet0/0/0", "line": "ip address 192.168.10.1 255.255.255.192" }
+    },
+    {
+      "id": "g000-up",
+      "description": "G0/0/0 est activée (no shutdown).",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "section": "interface GigabitEthernet0/0/0", "pattern": "^ip address " },
+          { "type": "line", "section": "interface GigabitEthernet0/0/0", "line": "shutdown", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "g001-description",
+      "description": "G0/0/1 porte la description « Lien vers FAI ».",
+      "check": { "type": "line", "section": "interface GigabitEthernet0/0/1", "line": "description Lien vers FAI" }
+    },
+    {
+      "id": "g001-address",
+      "description": "G0/0/1 a l'adresse 203.0.113.2/30.",
+      "check": { "type": "line", "section": "interface GigabitEthernet0/0/1", "line": "ip address 203.0.113.2 255.255.255.252" }
+    },
+    {
+      "id": "g001-up",
+      "description": "G0/0/1 est activée (no shutdown).",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "section": "interface GigabitEthernet0/0/1", "pattern": "^ip address " },
+          { "type": "line", "section": "interface GigabitEthernet0/0/1", "line": "shutdown", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "s010-down",
+      "description": "S0/1/0 reste désactivée, et la configuration est enregistrée en NVRAM.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "section": "interface Serial0/1/0", "line": "shutdown" },
+          { "type": "command", "command": ["copy running-config startup-config", "write memory", "write"] }
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "On configure une interface depuis le mode de configuration globale : entrez-y, puis sélectionnez l'interface par son nom (l'abréviation g0/0/0 suffit).",
+    "Un /26 correspond au masque 255.255.255.192 ; la première adresse utilisable est l'adresse du réseau plus un. Une interface de routeur neuve est en « shutdown » : il faut l'annuler.",
+    "Sous interface GigabitEthernet0/0/0 : description LAN utilisateurs, ip address 192.168.10.1 255.255.255.192, no shutdown. Même logique pour G0/0/1 avec 203.0.113.2 255.255.255.252. Terminez par copy running-config startup-config depuis le mode privilégié."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface GigabitEthernet0/0/0",
+        "description LAN utilisateurs",
+        "ip address 192.168.10.1 255.255.255.192",
+        "no shutdown",
+        "interface GigabitEthernet0/0/1",
+        "description Lien vers FAI",
+        "ip address 203.0.113.2 255.255.255.252",
+        "no shutdown",
+        "end",
+        "copy running-config startup-config"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations, ordre libre dans l'interface, sauvegarde par write memory",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["en", "conf t", "int g0/0/1", "no shut", "ip add 203.0.113.2 255.255.255.252", "desc Lien vers FAI", "int g0/0/0", "ip add 192.168.10.1 255.255.255.192", "no sh", "desc LAN utilisateurs", "\u001a", "wr mem"]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Adresses posées mais interfaces laissées en shutdown",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["en", "conf t", "int g0/0/0", "ip address 192.168.10.1 255.255.255.192", "int g0/0/1", "ip address 203.0.113.2 255.255.255.252", "end"]
+        }
+      ],
+      "failing": ["g000-up", "g001-up"]
+    },
+    {
+      "description": "Masque /24 au lieu de /26 sur le LAN",
+      "solution": [{ "device": "R1", "commands": ["en", "conf t", "int g0/0/0", "ip address 192.168.10.1 255.255.255.0"] }],
+      "failing": ["g000-address"]
+    }
+  ],
+  "explanation": "Sur un routeur Cisco, chaque interface est en « shutdown » par défaut : il faut la configurer puis l'activer par no shutdown, sinon elle reste « administratively down » quelle que soit son adresse. Le préfixe /26 laisse 6 bits d'hôte, soit le masque 255.255.255.192 et les adresses 192.168.10.1 à 192.168.10.62 ; la première utilisable est 192.168.10.1. Un /30 (255.255.255.252) ne laisse que deux adresses utilisables, typique d'une liaison point à point : 203.0.113.1 pour le FAI, 203.0.113.2 pour R1. La description n'a aucun effet sur le trafic mais documente le lien dans show running-config et show interfaces description. Enfin, copy running-config startup-config (ou write memory) recopie la configuration courante en NVRAM pour qu'elle survive au redémarrage.",
+  "reference": "Cisco IOS XE — Interface and Hardware Component Configuration Guide, « Configuring the Interface » ; Cisco IOS Configuration Fundamentals Command Reference (copy running-config startup-config)",
+  "estimatedMinutes": 6
+}

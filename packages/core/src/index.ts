@@ -9,3 +9,8 @@ export * from './ipv6.js';
 export * from './cli.js';
 export * from './subnetting.js';
 export * from './public.js';
+export * from './terminal/profile.js';
+export * from './terminal/syntax.js';
+export * from './terminal/params.js';
+export * from './terminal/device.js';
+export * from './terminal/lab.js';
