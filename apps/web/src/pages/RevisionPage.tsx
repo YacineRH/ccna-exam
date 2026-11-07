@@ -7,6 +7,7 @@ import { DistractorNotes, ReviewAnswer } from '../components/answers/ReviewAnswe
 import { EmptyState, ErrorBox, PageTitle, Spinner } from '../components/ui';
 import { api, errorMessage } from '../lib/api';
 import { certificationLabel } from '../lib/certification';
+import { clockOffset } from '../lib/clock';
 import { formatDate } from '../lib/format';
 import { isComplete, QUESTION_TYPE_LABEL } from '../lib/responses';
 import { dueLabel, LEITNER_BOXES } from '../lib/revision';
@@ -36,7 +37,21 @@ export function useStartRevision(code: string) {
   return { start, busy, error };
 }
 
-function DeckRow({ deck, code, onChanged, onStart, busy }: { deck: RevisionDeck; code: string; onChanged: () => void; onStart: (s: string) => void; busy: boolean }) {
+function DeckRow({
+  deck,
+  code,
+  onChanged,
+  onStart,
+  busy,
+  now,
+}: {
+  deck: RevisionDeck;
+  code: string;
+  onChanged: () => void;
+  onStart: (s: string) => void;
+  busy: boolean;
+  now: Date;
+}) {
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState<unknown>(null);
   const add = async () => {
@@ -70,9 +85,9 @@ function DeckRow({ deck, code, onChanged, onStart, busy }: { deck: RevisionDeck;
           className="btn-secondary btn-sm"
           disabled={!deck.due || busy}
           onClick={() => onStart(deck.subtopic)}
-          aria-label={deck.due ? `Réviser les ${deck.due} cartes dues du paquet ${deck.subtopicName}` : `Paquet ${deck.subtopicName} à jour, prochaine carte ${dueLabel(deck.nextDueAt)}`}
+          aria-label={deck.due ? `Réviser les ${deck.due} cartes dues du paquet ${deck.subtopicName}` : `Paquet ${deck.subtopicName} à jour, prochaine carte ${dueLabel(deck.nextDueAt, now)}`}
         >
-          {deck.due ? 'Réviser →' : dueLabel(deck.nextDueAt)}
+          {deck.due ? 'Réviser →' : dueLabel(deck.nextDueAt, now)}
         </button>
       ) : (
         <button type="button" className="btn-secondary btn-sm" onClick={add} disabled={adding} aria-label={`Ajouter le paquet ${deck.subtopicName}`}>
@@ -87,6 +102,8 @@ function DeckRow({ deck, code, onChanged, onStart, busy }: { deck: RevisionDeck;
 function Revision({ cert }: { cert: CertificationSummary }) {
   const { data, error, loading, reload } = useApi<RevisionOverview>(`/revision?certification=${encodeURIComponent(cert.code)}`);
   const { start, busy, error: startError } = useStartRevision(cert.code);
+  // Les échéances se lisent à l'heure du serveur : une horloge de poste décalée ne change pas « demain ».
+  const now = data ? new Date(Date.parse(data.serverNow)) : new Date();
   const enrolled = data?.decks.filter((d) => d.enrolled) ?? [];
   const others = data?.decks.filter((d) => !d.enrolled) ?? [];
   return (
@@ -117,7 +134,7 @@ function Revision({ cert }: { cert: CertificationSummary }) {
                 {data.totalCards === 0
                   ? 'Ajoutez un paquet ci-dessous pour commencer.'
                   : data.dueToday === 0
-                    ? `Tout est à jour. Prochaine carte ${dueLabel(data.nextDueAt)}.`
+                    ? `Tout est à jour. Prochaine carte ${dueLabel(data.nextDueAt, now)}.`
                     : `Sur ${data.totalCards} cartes dans vos paquets.`}
               </p>
             </div>
@@ -136,7 +153,7 @@ function Revision({ cert }: { cert: CertificationSummary }) {
             ) : (
               <ul className="m-0 flex list-none flex-col gap-2 p-0">
                 {enrolled.map((d) => (
-                  <DeckRow key={d.subtopic} deck={d} code={cert.code} onChanged={reload} onStart={(s) => void start(s)} busy={busy !== null} />
+                  <DeckRow key={d.subtopic} deck={d} code={cert.code} onChanged={reload} onStart={(s) => void start(s)} busy={busy !== null} now={now} />
                 ))}
               </ul>
             )}
@@ -149,7 +166,7 @@ function Revision({ cert }: { cert: CertificationSummary }) {
               </h2>
               <ul className="m-0 flex list-none flex-col gap-2 p-0">
                 {others.map((d) => (
-                  <DeckRow key={d.subtopic} deck={d} code={cert.code} onChanged={reload} onStart={(s) => void start(s)} busy={busy !== null} />
+                  <DeckRow key={d.subtopic} deck={d} code={cert.code} onChanged={reload} onStart={(s) => void start(s)} busy={busy !== null} now={now} />
                 ))}
               </ul>
             </section>
@@ -178,6 +195,8 @@ function Session({ initial }: { initial: RevisionSession }) {
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const stemRef = useRef<HTMLParagraphElement>(null);
+  const offset = useRef(clockOffset(initial.serverNow, Date.now(), Date.now()));
+  const serverNow = () => new Date(Date.now() + offset.current);
   const nextRef = useRef<HTMLButtonElement>(null);
   const card = cards[index];
   const answered = cards.filter((c) => c.answer !== null);
@@ -194,10 +213,12 @@ function Session({ initial }: { initial: RevisionSession }) {
     setBusy(true);
     setFailure(null);
     try {
+      const sentAt = Date.now();
       const r = await api<RevisionAnswerResult>(`/revision/sessions/${initial.id}/answers`, {
         method: 'POST',
         body: { questionId: card.questionId, response: draft, tzOffsetMinutes: new Date().getTimezoneOffset() },
       });
+      offset.current = clockOffset(r.serverNow, sentAt, Date.now());
       setCards((all) =>
         all.map((c) => (c.questionId === card.questionId ? { ...c, answer: { response: draft, correct: r.correct, boxAfter: r.box, dueAfter: r.dueAt, feedback: r.feedback } } : c)),
       );
@@ -247,7 +268,7 @@ function Session({ initial }: { initial: RevisionSession }) {
                   <>
                     <span className={c.answer.correct ? 'pill-ok' : 'pill-crit'}>{c.answer.correct ? '✓ JUSTE' : '✕ FAUX'}</span>
                     <span className="font-mono text-[12px] text-text2">
-                      boîte {c.answer.boxAfter}/{LEITNER_BOXES} · {dueLabel(c.answer.dueAfter)}
+                      boîte {c.answer.boxAfter}/{LEITNER_BOXES} · {dueLabel(c.answer.dueAfter, serverNow())}
                     </span>
                   </>
                 ) : (
@@ -311,7 +332,7 @@ function Session({ initial }: { initial: RevisionSession }) {
                   </div>
                 )}
                 <p className="m-0 font-mono text-[12.5px] text-text2">
-                  Boîte {card.answer.boxAfter}/{LEITNER_BOXES} · prochaine révision {dueLabel(card.answer.dueAfter)} ({formatDate(card.answer.dueAfter)})
+                  Boîte {card.answer.boxAfter}/{LEITNER_BOXES} · prochaine révision {dueLabel(card.answer.dueAfter, serverNow())} ({formatDate(card.answer.dueAfter)})
                 </p>
                 <button ref={nextRef} type="button" className="btn-primary self-start" onClick={() => setIndex((i) => i + 1)}>
                   {index + 1 < cards.length ? 'Carte suivante →' : 'Voir le bilan →'}

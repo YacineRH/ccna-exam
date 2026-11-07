@@ -453,14 +453,6 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
       <PageTitle eyebrow={<Eyebrow lab={lab} />} title={lab.title}>
         <div className="flex flex-wrap items-center gap-2">
           <DifficultyPill difficulty={lab.difficulty} />
-          {!finished && challenge && countdown.remaining !== null && (
-            <>
-              <Countdown remaining={countdown.remaining} onAnnounce={onAnnounce} />
-              <button type="button" className="btn-secondary btn-sm" onClick={() => setConfirmFinish(true)} disabled={finishing || timeUp}>
-                {finishing ? 'Fin…' : 'Abandonner'}
-              </button>
-            </>
-          )}
           {!finished && !challenge && (
             <>
               <button type="button" className="btn-secondary btn-sm" aria-pressed={showChrono} onClick={toggleChrono}>
@@ -484,6 +476,19 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
           )}
         </div>
       </PageTitle>
+
+      {!finished && challenge && countdown.remaining !== null && (
+        // Collé sous l'en-tête : le temps restant reste visible pendant la saisie, même sur mobile.
+        <div className="chrome sticky top-16 z-10 -mx-4 -mt-2 flex flex-wrap items-center gap-2 border-b border-line px-4 py-2 sm:-mx-8 sm:px-8">
+          <Countdown remaining={countdown.remaining} onAnnounce={onAnnounce} />
+          <span className="font-mono text-[12.5px] text-text2">
+            {state.achieved.length}/{lab.objectives.length} objectifs
+          </span>
+          <button type="button" className="btn-secondary btn-sm ml-auto" onClick={() => setConfirmFinish(true)} disabled={finishing || timeUp}>
+            {finishing ? 'Fin…' : 'Abandonner'}
+          </button>
+        </div>
+      )}
 
       <div role="status" aria-live="polite" className="sr-only">
         {announce}
