@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { clockOffset, remainingSeconds, resyncOffset, serverTime } from './clock';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { clockOffset, remainingSeconds, resyncOffset, RESYNC_INTERVAL_MS, scheduleClockResync, serverTime, type VisibilitySource } from './clock';
 
 const T = Date.parse('2026-11-07T10:00:00.000Z');
 
@@ -72,5 +72,54 @@ describe('remainingSeconds', () => {
 
   it('serverTime applique le décalage', () => {
     expect(serverTime(T, 1500)).toBe(T + 1500);
+  });
+});
+
+describe('scheduleClockResync', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  /** Onglet simulé : on change sa visibilité et on prévient les écouteurs, comme le navigateur. */
+  function fakeTab() {
+    const listeners = new Set<() => void>();
+    const tab = {
+      visibilityState: 'visible' as string,
+      addEventListener: (_t: 'visibilitychange', l: () => void) => listeners.add(l),
+      removeEventListener: (_t: 'visibilitychange', l: () => void) => listeners.delete(l),
+      set(state: 'visible' | 'hidden') {
+        tab.visibilityState = state;
+        listeners.forEach((l) => l());
+      },
+      listeners,
+    };
+    return tab satisfies VisibilitySource & { set: (s: 'visible' | 'hidden') => void };
+  }
+
+  it('recale toutes les 5 minutes, sans attendre un enregistrement', () => {
+    const sync = vi.fn();
+    const stop = scheduleClockResync(sync);
+    vi.advanceTimersByTime(RESYNC_INTERVAL_MS - 1);
+    expect(sync).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    expect(sync).toHaveBeenCalledTimes(1);
+    vi.advanceTimersByTime(2 * RESYNC_INTERVAL_MS);
+    expect(sync).toHaveBeenCalledTimes(3);
+    stop();
+    vi.advanceTimersByTime(RESYNC_INTERVAL_MS);
+    expect(sync).toHaveBeenCalledTimes(3);
+  });
+
+  it('recale au retour sur l’onglet, pas quand il est caché', () => {
+    const sync = vi.fn();
+    const tab = fakeTab();
+    const stop = scheduleClockResync(sync, { visibility: tab });
+    tab.set('hidden');
+    expect(sync).not.toHaveBeenCalled();
+    tab.set('visible');
+    expect(sync).toHaveBeenCalledTimes(1);
+    stop();
+    expect(tab.listeners.size).toBe(0);
+    tab.set('visible');
+    expect(sync).toHaveBeenCalledTimes(1);
   });
 });

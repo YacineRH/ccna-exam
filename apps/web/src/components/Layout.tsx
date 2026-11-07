@@ -44,12 +44,7 @@ const PILOTAGE: NavItem[] = [
 
 const LABS: NavItem[] = [
   { to: '/labs/subnetting', label: 'Subnetting', icon: <IconGrid /> },
-  {
-    to: '/labs/cli',
-    label: 'CLI Cisco IOS',
-    icon: <IconTerminal />,
-    badge: <span className="ml-auto rounded border border-line2 px-1 py-px font-mono text-[9px] font-semibold text-muted">BIENTÔT</span>,
-  },
+  { to: '/labs/cli', label: 'CLI Cisco IOS', icon: <IconTerminal /> },
 ];
 
 function SideLink({ item }: { item: NavItem }) {

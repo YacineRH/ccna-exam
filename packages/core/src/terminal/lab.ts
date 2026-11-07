@@ -43,11 +43,12 @@ export type LabCheck =
       sections: 'any' | 'all';
       pattern: string;
       absent: boolean;
+      caseSensitive?: boolean;
       covers?: z.infer<typeof coversSchema>;
     }
   | { type: 'section'; device?: string; section?: string; sectionPattern?: string; absent: boolean }
   | { type: 'sequence'; device?: string; section?: string; sectionPattern?: string; sections: 'any' | 'all'; patterns: string[] }
-  | { type: 'command'; device?: string; mode?: string; section?: string; command: string | string[] }
+  | { type: 'command'; device?: string; mode?: string; section?: string; command: string | string[]; afterLastChange?: boolean }
   | { type: 'all'; checks: LabCheck[] }
   | { type: 'any'; checks: LabCheck[] };
 
@@ -61,6 +62,8 @@ export const labCheckSchema: z.ZodType<LabCheck, z.ZodTypeDef, unknown> = z.lazy
       ...scope,
       pattern: z.string().min(1),
       absent: z.boolean().default(false),
+      /** Respecter la casse (nom de VLAN imposé en majuscules…). */
+      caseSensitive: z.boolean().optional(),
       covers: coversSchema.optional(),
     }),
     /** Une section existe (ou n'existe pas, avec `absent`), même vide : pool DHCP, ACL nommée, VLAN… */
@@ -80,6 +83,8 @@ export const labCheckSchema: z.ZodType<LabCheck, z.ZodTypeDef, unknown> = z.lazy
       mode: z.string().optional(),
       section: z.string().optional(),
       command: textOrList,
+      /** La commande doit venir après la dernière modification de la configuration (sauvegarde). */
+      afterLastChange: z.boolean().optional(),
     }),
     z.object({ type: z.literal('all'), checks: z.array(labCheckSchema).min(1) }),
     z.object({ type: z.literal('any'), checks: z.array(labCheckSchema).min(1) }),
@@ -264,12 +269,13 @@ export class LabSession {
       case 'command': {
         const dev = this.device(c.device);
         const accepted = list(c.command).map(norm);
-        return dev.history.some(
-          (h) =>
-            accepted.includes(norm(h.canonical)) &&
-            (c.mode === undefined || h.mode === c.mode) &&
-            (c.section === undefined || h.targets.some((t) => norm(t) === norm(c.section as string))),
-        );
+        const matches = (h: (typeof dev.history)[number]) =>
+          accepted.includes(norm(h.canonical)) &&
+          (c.mode === undefined || h.mode === c.mode) &&
+          (c.section === undefined || h.targets.some((t) => norm(t) === norm(c.section as string)));
+        if (!c.afterLastChange) return dev.history.some(matches);
+        const lastChange = dev.history.map((h) => h.changed).lastIndexOf(true);
+        return dev.history.some((h, i) => i > lastChange && matches(h));
       }
       case 'section': {
         const dev = this.device(c.device);
@@ -303,7 +309,7 @@ export class LabSession {
           const accepted = list(c.line).map(norm);
           matches = (lines) => lines.some((l) => accepted.includes(norm(l)));
         } else {
-          const re = new RegExp(c.pattern, 'i');
+          const re = new RegExp(c.pattern, c.caseSensitive ? '' : 'i');
           const covers = c.covers;
           matches = (lines) =>
             lines.some((l) => {

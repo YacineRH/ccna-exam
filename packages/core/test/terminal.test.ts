@@ -91,7 +91,12 @@ const PROFILE: TerminalProfileInput = {
     { syntax: 'username <word> secret <line>', modes: ['config'], key: [0, 1], keyGroup: 'username', display: 'username {$1} secret 9 {mask:$3}' },
     { syntax: 'access-list <1-99> {permit|deny} {any|host <ipv4>|<ipv4> <wildcard>}', modes: ['config'] },
     { syntax: 'description <line>', modes: IF, key: [0] },
-    { syntax: 'ip address <ipv4> <ipv4-mask>', modes: IF, key: [0, 1] },
+    {
+      syntax: 'ip address <ipv4> <ipv4-mask>',
+      modes: IF,
+      key: [0, 1],
+      requires: [{ ipv4Host: [1, 2], message: 'Bad mask /{prefix} for address {address}' }],
+    },
     { syntax: 'shutdown', modes: IF },
     { syntax: 'speed {10|100|1000|auto}', modes: IF, key: [0] },
     { syntax: 'switchport mode {access|trunk}', modes: IF, devices: ['switch'], key: [0, 1] },
@@ -272,6 +277,14 @@ describe('erreurs IOS', () => {
     const r = d.execute('ip adress 10.0.0.1 255.255.255.0');
     expect(r.status).toBe('error');
     expect(r.output).toBe(`${' '.repeat('R1(config-if)#ip '.length)}^\n% Invalid input detected at '^' marker.`);
+  });
+
+  it('adresse de réseau ou de diffusion refusée sur une interface', () => {
+    const d = router('hostname R1');
+    run(d, ['en', 'conf t', 'int g0/0']);
+    expect(d.execute('ip address 192.168.10.0 255.255.255.192').output).toBe('Bad mask /26 for address 192.168.10.0');
+    expect(d.execute('ip address 192.168.10.63 255.255.255.192').status).toBe('error');
+    expect(d.execute('ip address 10.0.0.0 255.255.255.254').status).toBe('ok');
   });
 
   it('une interface absente de l’équipement est refusée', () => {
@@ -465,6 +478,22 @@ describe('labs : objectifs', () => {
       s.runAll([{ device: 'S1', commands }]);
       expect(s.achieved(), commands.join(' / ')).toEqual(['vlan', 'access', 'saved']);
     }
+  });
+
+  it('sauvegarde : elle doit suivre la dernière modification de la configuration', () => {
+    const saved = { type: 'command' as const, command: 'copy running-config startup-config', afterLastChange: true };
+    const s = new LabSession(profile, lab);
+    s.runAll([{ device: 'S1', commands: ['en', 'copy run start', 'conf t', 'vlan 10'] }]);
+    expect(s.check(saved)).toBe(false);
+    s.runAll([{ device: 'S1', commands: ['end', 'copy run start', 'conf t', 'do show run', 'end'] }]);
+    expect(s.check(saved)).toBe(true);
+  });
+
+  it('expression sensible à la casse sur demande', () => {
+    const s = new LabSession(profile, lab);
+    s.runAll([{ device: 'S1', commands: ['en', 'conf t', 'vlan 10', 'name users'] }]);
+    expect(s.check({ type: 'regex', section: 'vlan 10', sections: 'any', pattern: '^name USERS$', absent: false })).toBe(true);
+    expect(s.check({ type: 'regex', section: 'vlan 10', sections: 'any', pattern: '^name USERS$', absent: false, caseSensitive: true })).toBe(false);
   });
 
   it('l’état compte, pas l’historique : un réglage annulé n’est plus atteint', () => {

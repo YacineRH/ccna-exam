@@ -156,6 +156,12 @@ function isExpired(attempt: Attempt, now = Date.now()) {
 }
 
 /** État d'une tentative tel que le navigateur peut le voir : jamais de correction en mode examen. */
+/** Ce dont le chrono du navigateur a besoin pour se recaler, sans recharger la tentative. */
+export async function getAttemptClock(db: Db, attemptId: string, userId: string) {
+  const attempt = await ownedAttempt(db, attemptId, userId);
+  return { status: attempt.status, deadlineAt: attempt.deadlineAt, serverNow: new Date().toISOString() };
+}
+
 export async function getAttemptState(db: Db, attemptId: string, userId: string) {
   let attempt = await ownedAttempt(db, attemptId, userId);
   if (attempt.status === 'in_progress' && isExpired(attempt)) {

@@ -252,6 +252,13 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
     const again = (await call('GET', `/api/v1/attempts/${state.id}`)).json();
     expect(again.certification).toBe('ccna');
     expect(Date.parse(again.serverNow)).toBeGreaterThanOrEqual(serverNow);
+    // Recalage léger du chrono : heure du serveur, échéance et statut, sans les questions.
+    const clock = await call('GET', `/api/v1/attempts/${state.id}/clock`);
+    expect(clock.statusCode).toBe(200);
+    expect(Object.keys(clock.json()).sort()).toEqual(['deadlineAt', 'serverNow', 'status']);
+    expect(Date.parse(clock.json().serverNow)).toBeGreaterThanOrEqual(serverNow);
+    const forged = await app.jwt.sign({ sub: '00000000-0000-0000-0000-000000000000', role: 'user' });
+    expect((await call('GET', `/api/v1/attempts/${state.id}/clock`, undefined, `ef_session=${forged}`)).statusCode).toBe(403);
   });
 
   it('filtre les questions par type (entraînement ciblé)', async () => {

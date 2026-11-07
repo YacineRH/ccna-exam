@@ -1,3 +1,4 @@
+import { maskToPrefix, parseIpv4 } from '../ipv4.js';
 import { formatNumberList, interfaceTypeHelp, paramLabel, parseNumberList, readParam, type ParamContext } from './params.js';
 import type { TerminalCommand, TerminalMode, TerminalProfile } from './profile.js';
 import { expandSyntax, type SyntaxElem } from './syntax.js';
@@ -35,6 +36,8 @@ export interface HistoryEntry {
   targets: string[];
   /** Forme canonique, `no …` compris. */
   canonical: string;
+  /** La commande a modifié la configuration (une sauvegarde doit venir après la dernière). */
+  changed: boolean;
 }
 
 export type ExecStatus = 'ok' | 'error' | 'help' | 'empty';
@@ -414,6 +417,18 @@ export class TerminalDevice {
         const re = new RegExp(req.config, 'i');
         if (!this.config.some((e) => !e.children && re.test(e.text))) return fill(req.message, this.vars, values);
       }
+      if (req.ipv4Host !== undefined) {
+        const ip = parseIpv4(values[req.ipv4Host[0] - 1] ?? '');
+        const mask = parseIpv4(values[req.ipv4Host[1] - 1] ?? '');
+        const prefix = mask === null ? null : maskToPrefix(mask);
+        if (ip !== null && mask !== null && prefix !== null && prefix < 31) {
+          const host = (ip & ~mask) >>> 0;
+          const all = ~mask >>> 0;
+          if (host === 0 || host === all) {
+            return fill(req.message, { ...this.vars, prefix: String(prefix), address: values[req.ipv4Host[0] - 1] ?? '' }, values);
+          }
+        }
+      }
       if (req.param !== undefined && req.notMatch !== undefined) {
         const v = values[req.param - 1];
         if (v !== undefined && new RegExp(req.notMatch, 'i').test(v)) return fill(req.message, this.vars, values);
@@ -573,7 +588,7 @@ export class TerminalDevice {
     if (negated) {
       if (cmd.enter) {
         this.config = this.config.filter((e) => !(e.children && e.text === canonText && !this.isPhysical(e.text)));
-        this.history.push({ mode: r.mode, targets: [...this.targets], canonical: `no ${canonText}` });
+        this.history.push({ mode: r.mode, targets: [...this.targets], canonical: `no ${canonText}`, changed: false });
         return out;
       }
       const { lists } = this.scopes(this.targets);
@@ -601,7 +616,7 @@ export class TerminalDevice {
           if (!list.some((e) => same(e.text, `no ${canonText}`))) list.push({ text: `no ${canonText}`, cmd: cmdIndex });
         }
       }
-      this.history.push({ mode: r.mode, targets: [...this.targets], canonical: `no ${canonText}` });
+      this.history.push({ mode: r.mode, targets: [...this.targets], canonical: `no ${canonText}`, changed: false });
       return out;
     }
 
@@ -645,7 +660,7 @@ export class TerminalDevice {
     }
     for (const [name, value] of Object.entries(cmd.set ?? {})) this.vars[name] = fill(value, this.vars, cand.values);
 
-    this.history.push({ mode: r.mode, targets: historyTargets, canonical: canonText });
+    this.history.push({ mode: r.mode, targets: historyTargets, canonical: canonText, changed: false });
 
     if (cmd.builtin === 'running-config') out.push(this.runningConfig(cand.values));
     if (cmd.output !== undefined) out.push(fill(cmd.output, this.vars, cand.values, historyTargets[0]?.replace(/^\S+\s+/, '') ?? ''));
@@ -835,8 +850,11 @@ export class TerminalDevice {
       return { echo, output: this.error('invalid', tokens.length, tokens, line, before.length), prompt: before, status: 'error' };
     }
     const historyBefore = this.history.length;
+    const snapshot = JSON.stringify(this.config);
     const out = this.apply(r.r);
     const refused = this.history.length === historyBefore;
+    const last = this.history[this.history.length - 1];
+    if (!refused && last) last.changed = JSON.stringify(this.config) !== snapshot;
     return {
       echo,
       output: this.applyPipe(out.join('\n'), filter),

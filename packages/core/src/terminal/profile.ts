@@ -18,13 +18,18 @@ const requirementSchema = z
     config: z.string().optional(),
     /** Chaque section visée (interface…) doit contenir une ligne qui correspond à cette expression. */
     section: z.string().optional(),
+    /**
+     * Paramètres [adresse, masque] (numéros à partir de 1) : l'adresse doit être une adresse d'hôte du sous-réseau,
+     * ni l'adresse du réseau ni celle de diffusion (sauf /31 et /32). Message : `{prefix}`, `{address}`.
+     */
+    ipv4Host: z.tuple([z.number().int().min(1), z.number().int().min(1)]).optional(),
     /** Le paramètre n° `param` (à partir de 1) ne doit pas correspondre à `notMatch` (insensible à la casse). */
     param: z.number().int().min(1).optional(),
     notMatch: z.string().optional(),
     /** Message affiché si la condition n'est pas remplie. `{target}` : section visée. */
     message: z.string().min(1),
   })
-  .refine((r) => r.var !== undefined || r.config !== undefined || r.section !== undefined || (r.param !== undefined && r.notMatch !== undefined), {
+  .refine((r) => r.var !== undefined || r.config !== undefined || r.section !== undefined || r.ipv4Host !== undefined || (r.param !== undefined && r.notMatch !== undefined), {
     message: 'une condition porte sur var, config, section ou param + notMatch',
   });
 

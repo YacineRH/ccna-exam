@@ -15,7 +15,8 @@ import {
   greeting,
 } from '../lib/format';
 import { api } from '../lib/api';
-import type { AttemptState, AttemptSummary, CertificationDetail, Stats } from '../lib/types';
+import { labForSubtopic } from '../lib/labs';
+import type { AttemptState, AttemptSummary, CertificationDetail, LabSummary, Stats } from '../lib/types';
 import { useApi } from '../lib/useApi';
 
 /** Taille d'une révision rapide lancée depuis « À revoir ». */
@@ -272,7 +273,7 @@ function OfficialDomains({ stats }: { stats: Stats }) {
   );
 }
 
-function ToReview({ stats, bank }: { stats: Stats; bank: CertificationDetail['bank'] | null }) {
+function ToReview({ stats, bank, labs }: { stats: Stats; bank: CertificationDetail['bank'] | null; labs: LabSummary[] }) {
   const names = new Map(stats.domains.map((d) => [d.code, d.name]));
   return (
     <section aria-labelledby="todo-h" className="panel px-6 py-[22px]">
@@ -292,6 +293,8 @@ function ToReview({ stats, bank }: { stats: Stats; bank: CertificationDetail['ba
             const ratio = t.answered ? t.errors / t.answered : 0;
             const crit = ratio >= 0.5;
             const isSubnet = t.subtopic === '1.6';
+            // Un lab CLI couvre ce sous-thème : on le propose à côté de « Réviser ».
+            const lab = t.subtopic ? labForSubtopic(labs, t.subtopic) : null;
             return (
               <li key={`${t.domain}-${t.subtopic ?? i}`} className="flex flex-wrap items-center gap-3.5 rounded-[10px] border border-[#1A2539] bg-well px-3.5 py-3">
                 <span
@@ -314,6 +317,16 @@ function ToReview({ stats, bank }: { stats: Stats; bank: CertificationDetail['ba
                   {isSubnet && (
                     <Link to="/labs/subnetting" className="btn-secondary btn-sm">
                       Trainer →
+                    </Link>
+                  )}
+                  {lab && (
+                    <Link
+                      to={`/labs/cli/${lab.slug}`}
+                      className="btn-secondary btn-sm"
+                      aria-label={`Lab CLI : ${lab.title}`}
+                      title={`Lab CLI : ${lab.title}`}
+                    >
+                      Lab →
                     </Link>
                   )}
                   {t.subtopic && bank ? (
@@ -372,6 +385,7 @@ function Dashboard({ code }: { code: string }) {
   const stats = useApi<Stats>(`/stats?certification=${encodeURIComponent(code)}`);
   const attempts = useApi<{ attempts: AttemptSummary[] }>(`/attempts?certification=${encodeURIComponent(code)}`);
   const detail = useApi<CertificationDetail>(`/certifications/${encodeURIComponent(code)}`);
+  const labs = useApi<{ labs: LabSummary[] }>(`/labs?certification=${encodeURIComponent(code)}`);
   const now = new Date();
   const firstName = user?.displayName.split(/\s+/)[0] ?? '';
 
@@ -439,7 +453,7 @@ function Dashboard({ code }: { code: string }) {
           </div>
           <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))]">
             <OfficialDomains stats={stats.data} />
-            <ToReview stats={stats.data} bank={detail.data?.bank ?? null} />
+            <ToReview stats={stats.data} bank={detail.data?.bank ?? null} labs={labs.data?.labs ?? []} />
           </div>
         </>
       )}
