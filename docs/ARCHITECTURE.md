@@ -95,7 +95,11 @@ Les migrations SQL sont générées par Drizzle dans `apps/api/drizzle/` et appl
 
 ## Questions CLI
 
-`normalizeCommand` ramène une commande à une forme canonique : casse, espaces, abréviations non ambiguës (`conf t`, `sh ip int br`), noms d'interface (`Gi0/0` = `GigabitEthernet0/0`) et ports nommés (`eq www` = `eq 80`). Comme dans IOS, un préfixe ambigu n'est pas développé et ne correspond donc pas.
+`normalizeCommand` ramène une commande à une forme canonique : casse, espaces, abréviations non ambiguës (`conf t`, `sh ip int br`), noms d'interface (`Gi0/0` = `GigabitEthernet0/0`, reconnus partout dès qu'ils contiennent un « / », et `GigabitEthernet 0/1` avec espace), plages et listes (`g1/0/1-2` = `g1/0/1 - 2`), adresses IPv6 (forme canonique RFC 5952, `2001:0DB8::0:1` = `2001:db8::1`) et ports nommés (`eq www` = `eq 80`). Comme dans IOS, un préfixe ambigu n'est pas développé et ne correspond donc pas. La liste de mots-clés est à plat ; pour quelques mots, l'abréviation se lit d'abord parmi ce qu'IOS accepte à cet endroit (`transport in`, `int ra`, `root pri`, `sw tr nat`, `channel-group 1 mode ac`). La casse est ignorée partout, mots de passe compris.
+
+Une réponse CLI est ordonnée (`ordered: true`, par défaut) ou non. Dans une réponse ordonnée, `freeOrder` déclare des plages de lignes dont l'ordre est libre, typiquement les sous-commandes qui suivent `interface …`, `line vty …` ou `router ospf 1` : `[[1, 2]]` pour `interface Gi1/0/7`, `speed 100`, `duplex full`.
+
+Les champs `int` des questions à compléter acceptent les espaces de milliers (`65 536`).
 
 ## Sécurité
 
