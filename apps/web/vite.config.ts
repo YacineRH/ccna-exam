@@ -1,7 +1,8 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
-const apiProxy = { '/api': { target: 'http://localhost:3000', changeOrigin: false } };
+// Cible de l'API en développement ; la suite e2e la redirige vers son API de test.
+const apiProxy = { '/api': { target: process.env.API_PROXY_TARGET ?? 'http://localhost:3000', changeOrigin: false } };
 
 export default defineConfig({
   plugins: [react()],

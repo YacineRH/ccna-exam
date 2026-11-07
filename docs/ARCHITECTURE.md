@@ -31,14 +31,28 @@ ExamForge est un moteur générique de certification. Le CCNA 200-301 est sa pre
 | `apps/api` | API REST versionnée (`/api/v1`) : comptes, tentatives, statistiques, administration. Seul composant qui écrit en base. |
 | `apps/web` | Interface React (Vite, Tailwind) avec le design « NOC Console ». |
 | `apps/mcp` | Serveur MCP `exam-forge-mcp`, client de l'API. |
+| `e2e` | Tests de bout en bout Playwright : API buildée sur une base de test vidée, front buildé servi par `vite preview`. |
 
 ## Principes
 
 - **Une certification est une donnée.** `certificationSchema` (packages/core) décrit domaines, pondérations, sous-thèmes, barème, format d'examen et types de questions autorisés. Ajouter Security+ = un fichier JSON ou un appel à `add_certification`.
-- **La correction ne quitte jamais le serveur avant la soumission.** Une question est stockée en deux parties : `body` (public) et `answer_key` (privé). Pendant un examen, l'API n'envoie que `body`, avec l'ordre des options mélangé par tentative.
+- **La correction ne quitte jamais le serveur avant la soumission.** Une question est stockée en deux parties : `body` (public) et `answer_key` (privé). Pendant un examen, l'API n'envoie que `body`, avec l'ordre des options mélangé par tentative. Le post-mortem (`/result`) applique le même mélange, avec le même seed : les lettres A, B, C sont celles que le candidat a vues. La correction référence des identifiants d'options, elle ne dépend pas de l'ordre.
 - **Pas de doublon, garanti à deux niveaux.** Dans un examen, la clé primaire `(exam_id, question_id)` l'interdit. Dans la banque, chaque question a une empreinte d'énoncé normalisé, unique par certification.
 - **Le MCP passe par l'API.** Il s'authentifie avec un jeton de service et subit exactement les mêmes validations qu'un humain.
 - **Le temps est vérifié côté serveur.** L'échéance est stockée à la création de la tentative ; une réponse arrivée après l'échéance (plus 30 s de tolérance) déclenche la soumission.
+
+## Tentatives : contrat de l'API
+
+| Route | Points notables |
+| --- | --- |
+| `POST /attempts` | `certification`, `mode` (`exam` ou `practice`), et en option `examNumber` (examen figé), `questionCount`, `domains`, `types`. |
+| `GET /attempts` | Tentatives de l'utilisateur, 50 au plus ; filtre optionnel `?certification=<code>`. |
+| `GET /attempts/:id` | État visible par le navigateur, jamais de correction en examen. Contient `certification` (code de la certification de la tentative) et `serverNow` (heure du serveur, ISO 8601). |
+| `GET /attempts/:id/result` | Post-mortem une fois la tentative close, même ordre d'affichage que pendant la tentative. |
+
+- **Filtre `types`** : liste de types de questions (`mcq_single`, `mcq_multi`, `fill_blank`, `cli`, `ordering`, `matching`), combinée avec `allowedQuestionTypes` de la certification : il ne peut que restreindre. Les domaines qui n'ont aucune question des types demandés sont écartés et les pondérations des autres renormalisées, pour qu'un type rare reste utilisable en entraînement ciblé. Si aucun domaine ne convient, l'API répond `409 insufficient_questions` avec `domain: "*"`. Sans effet sur un examen figé (`examNumber`). Implémenté dans `assembleExam` (`packages/core/src/assembly.ts`).
+- **`serverNow` et le chrono** : le navigateur estime au chargement le décalage entre son horloge et celle du serveur, en comparant `serverNow` au milieu de l'aller-retour de la requête, puis décompte en heure serveur (`apps/web/src/lib/clock.ts`). Un poste qui avance ou retarde affiche donc le vrai temps restant. L'échéance reste contrôlée côté serveur.
+- **`certification`** : l'écran de passage et les résultats utilisent la certification de la tentative, pas celle choisie dans l'en-tête. Le tableau de bord, le lancement, les statistiques et l'historique suivent le sélecteur de l'en-tête (liste issue de `GET /certifications`, choix gardé dans `localStorage`, repli sur la première certification).
 
 ## Modèle de données
 
