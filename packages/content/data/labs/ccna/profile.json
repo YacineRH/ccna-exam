@@ -117,15 +117,18 @@
  "interfaceTypes": [
   {
    "name": "GigabitEthernet",
-   "help": "GigabitEthernet IEEE 802.3z"
+   "help": "GigabitEthernet IEEE 802.3z",
+   "rank": 0
   },
   {
    "name": "FastEthernet",
-   "help": "FastEthernet IEEE 802.3"
+   "help": "FastEthernet IEEE 802.3",
+   "rank": 0
   },
   {
    "name": "Serial",
-   "help": "Serial"
+   "help": "Serial",
+   "rank": 0
   },
   {
    "name": "Loopback",
@@ -134,7 +137,8 @@
    "range": [
     0,
     2147483647
-   ]
+   ],
+   "rank": -3
   },
   {
    "name": "Null",
@@ -143,7 +147,8 @@
    "range": [
     0,
     0
-   ]
+   ],
+   "rank": 1
   },
   {
    "name": "Port-channel",
@@ -155,7 +160,8 @@
    ],
    "devices": [
     "router"
-   ]
+   ],
+   "rank": -2
   },
   {
    "name": "Port-channel",
@@ -167,7 +173,8 @@
    ],
    "devices": [
     "switch"
-   ]
+   ],
+   "rank": -2
   },
   {
    "name": "Vlan",
@@ -179,40 +186,75 @@
    ],
    "devices": [
     "switch"
-   ]
+   ],
+   "rank": 2
   }
  ],
  "portNames": {
-  "bgp": 179,
-  "chargen": 19,
-  "daytime": 13,
-  "domain": 53,
-  "finger": 79,
-  "ftp": 21,
-  "ftp-data": 20,
-  "gopher": 70,
-  "irc": 194,
-  "lpd": 515,
-  "nntp": 119,
-  "pop2": 109,
-  "pop3": 110,
-  "smtp": 25,
-  "sunrpc": 111,
-  "tacacs": 49,
-  "talk": 517,
-  "telnet": 23,
-  "time": 37,
-  "uucp": 540,
-  "whois": 43,
-  "www": 80,
-  "bootpc": 68,
-  "bootps": 67,
-  "ntp": 123,
-  "snmp": 161,
-  "snmptrap": 162,
-  "syslog": 514,
-  "tftp": 69,
-  "isakmp": 500
+  "tcp": {
+   "bgp": 179,
+   "chargen": 19,
+   "cmd": 514,
+   "daytime": 13,
+   "discard": 9,
+   "domain": 53,
+   "echo": 7,
+   "exec": 512,
+   "finger": 79,
+   "ftp": 21,
+   "ftp-data": 20,
+   "gopher": 70,
+   "hostname": 101,
+   "ident": 113,
+   "irc": 194,
+   "klogin": 543,
+   "kshell": 544,
+   "login": 513,
+   "lpd": 515,
+   "msrpc": 135,
+   "nntp": 119,
+   "pim-auto-rp": 496,
+   "pop2": 109,
+   "pop3": 110,
+   "smtp": 25,
+   "sunrpc": 111,
+   "tacacs": 49,
+   "talk": 517,
+   "telnet": 23,
+   "time": 37,
+   "uucp": 540,
+   "whois": 43,
+   "www": 80
+  },
+  "udp": {
+   "biff": 512,
+   "bootpc": 68,
+   "bootps": 67,
+   "discard": 9,
+   "dnsix": 195,
+   "domain": 53,
+   "echo": 7,
+   "isakmp": 500,
+   "mobile-ip": 434,
+   "nameserver": 42,
+   "netbios-dgm": 138,
+   "netbios-ns": 137,
+   "netbios-ss": 139,
+   "non500-isakmp": 4500,
+   "ntp": 123,
+   "pim-auto-rp": 496,
+   "rip": 520,
+   "snmp": 161,
+   "snmptrap": 162,
+   "sunrpc": 111,
+   "syslog": 514,
+   "tacacs": 49,
+   "talk": 517,
+   "tftp": 69,
+   "time": 37,
+   "who": 513,
+   "xdmcp": 177
+  }
  },
  "keywordHelp": {
   "enable": "Turn on privileged commands",
@@ -1101,7 +1143,8 @@
    },
    "help": {
     "<word>": "This system's network name"
-   }
+   },
+   "rank": 20
   },
   {
    "syntax": "interface <interface>",
@@ -1110,7 +1153,8 @@
    ],
    "enter": {
     "mode": "config-if"
-   }
+   },
+   "rank": 90
   },
   {
    "syntax": "interface range <interface-range>",
@@ -1120,7 +1164,8 @@
    "enter": {
     "mode": "config-if-range",
     "range": true
-   }
+   },
+   "rank": 90
   },
   {
    "syntax": "vlan <1-4094>",
@@ -1136,7 +1181,8 @@
    "help": {
     "vlan": "Vlan commands",
     "<1-4094>": "ISL VLAN IDs 1-4094"
-   }
+   },
+   "rank": 85
   },
   {
    "syntax": "router ospf <1-65535>",
@@ -1152,7 +1198,8 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 100
   },
   {
    "syntax": "line console <0-0>",
@@ -1161,7 +1208,8 @@
    ],
    "enter": {
     "mode": "config-line"
-   }
+   },
+   "rank": 140
   },
   {
    "syntax": "line vty <0-15> [<0-15>]",
@@ -1173,7 +1221,18 @@
    },
    "help": {
     "<0-15>": "First Line number"
-   }
+   },
+   "blocks": [
+    [
+     0,
+     4
+    ],
+    [
+     5,
+     15
+    ]
+   ],
+   "rank": 140
   },
   {
    "syntax": "ip route <ipv4> <ipv4-mask> {<ipv4>|<interface>} [<1-255>] [permanent]",
@@ -1193,7 +1252,17 @@
     3,
     4
    ],
-   "keyGroup": "ip-route"
+   "keyGroup": "ip-route",
+   "rank": 116,
+   "requires": [
+    {
+     "notInSections": {
+      "param": 3,
+      "pattern": "^ip address (\\S+) \\S+( secondary)?$"
+     },
+     "message": "%Invalid next hop address (it's this router)"
+    }
+   ]
   },
   {
    "syntax": "ip route <ipv4> <ipv4-mask> <interface> <ipv4> [<1-255>] [permanent]",
@@ -1214,7 +1283,17 @@
     4,
     5
    ],
-   "keyGroup": "ip-route"
+   "keyGroup": "ip-route",
+   "rank": 116,
+   "requires": [
+    {
+     "notInSections": {
+      "param": 4,
+      "pattern": "^ip address (\\S+) \\S+( secondary)?$"
+     },
+     "message": "%Invalid next hop address (it's this router)"
+    }
+   ]
   },
   {
    "syntax": "ipv6 route <ipv6-prefix> {<ipv6>|<interface>} [<1-254>]",
@@ -1239,7 +1318,8 @@
     2,
     3
    ],
-   "keyGroup": "ipv6-route"
+   "keyGroup": "ipv6-route",
+   "rank": 122
   },
   {
    "syntax": "ipv6 route <ipv6-prefix> <interface> <ipv6> [<1-254>]",
@@ -1258,7 +1338,8 @@
     3,
     4
    ],
-   "keyGroup": "ipv6-route"
+   "keyGroup": "ipv6-route",
+   "rank": 122
   },
   {
    "syntax": "ipv6 unicast-routing",
@@ -1267,7 +1348,8 @@
    ],
    "help": {
     "ipv6": "Global IPv6 configuration commands"
-   }
+   },
+   "rank": 55
   },
   {
    "syntax": "ip routing",
@@ -1280,7 +1362,8 @@
    "negate": "store",
    "help": {
     "ip": "Global IP configuration subcommands"
-   }
+   },
+   "rank": 40
   },
   {
    "syntax": "ip default-gateway <ipv4>",
@@ -1293,7 +1376,8 @@
    ],
    "help": {
     "ip": "Global IP configuration subcommands"
-   }
+   },
+   "rank": 110
   },
   {
    "syntax": "ip domain-name <word>",
@@ -1309,7 +1393,8 @@
    "help": {
     "ip": "Global IP configuration subcommands"
    },
-   "keyGroup": "ip-domain-name"
+   "keyGroup": "ip-domain-name",
+   "rank": 51
   },
   {
    "syntax": "ip domain name <word>",
@@ -1327,7 +1412,8 @@
     "name": "Define the default domain name",
     "ip": "Global IP configuration subcommands"
    },
-   "keyGroup": "ip-domain-name"
+   "keyGroup": "ip-domain-name",
+   "rank": 51
   },
   {
    "syntax": "ip domain-lookup",
@@ -1337,7 +1423,12 @@
    "negate": "store",
    "help": {
     "ip": "Global IP configuration subcommands"
-   }
+   },
+   "key": [
+    0
+   ],
+   "keyGroup": "ip-domain-lookup",
+   "rank": 50
   },
   {
    "syntax": "ip domain lookup",
@@ -1347,7 +1438,12 @@
    "negate": "store",
    "help": {
     "ip": "Global IP configuration subcommands"
-   }
+   },
+   "key": [
+    0
+   ],
+   "keyGroup": "ip-domain-lookup",
+   "rank": 50
   },
   {
    "syntax": "ip name-server <ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4>]]]]]",
@@ -1356,7 +1452,8 @@
    ],
    "help": {
     "ip": "Global IP configuration subcommands"
-   }
+   },
+   "rank": 52
   },
   {
    "syntax": "ip ssh version {1|2}",
@@ -1381,7 +1478,8 @@
     "version": "Specify protocol version supported",
     "ssh": "Configure ssh options",
     "ip": "Global IP configuration subcommands"
-   }
+   },
+   "rank": 70
   },
   {
    "syntax": "ip ssh time-out <1-120>",
@@ -1396,7 +1494,8 @@
    "help": {
     "ssh": "Configure ssh options",
     "ip": "Global IP configuration subcommands"
-   }
+   },
+   "rank": 70
   },
   {
    "syntax": "ip ssh authentication-retries <0-5>",
@@ -1411,7 +1510,8 @@
    "help": {
     "ssh": "Configure ssh options",
     "ip": "Global IP configuration subcommands"
-   }
+   },
+   "rank": 70
   },
   {
    "syntax": "crypto key generate rsa [general-keys] modulus <360-4096>",
@@ -1468,7 +1568,8 @@
      "notConfig": "^username {$1} (privilege \\d+ )?password ",
      "message": "ERROR: Can not have both a user password and a user secret.\nPlease choose one or the other."
     }
-   ]
+   ],
+   "rank": 60
   },
   {
    "syntax": "username <word> privilege <0-15> secret <line>",
@@ -1489,7 +1590,8 @@
      "notConfig": "^username {$1} (privilege \\d+ )?password ",
      "message": "ERROR: Can not have both a user password and a user secret.\nPlease choose one or the other."
     }
-   ]
+   ],
+   "rank": 60
   },
   {
    "syntax": "username <word> [privilege <0-15>] password <line>",
@@ -1509,7 +1611,8 @@
      "notConfig": "^username {$1} (privilege \\d+ )?secret ",
      "message": "ERROR: Can not have both a user password and a user secret.\nPlease choose one or the other."
     }
-   ]
+   ],
+   "rank": 60
   },
   {
    "syntax": "enable secret <line>",
@@ -1525,7 +1628,8 @@
     "enable": "Modify enable password parameters",
     "secret": "Assign the privileged level secret (MAX of 256 characters)",
     "password": "Assign the privileged level password (MAX of 25 characters)"
-   }
+   },
+   "rank": 30
   },
   {
    "syntax": "enable password <line>",
@@ -1540,13 +1644,15 @@
     "enable": "Modify enable password parameters",
     "secret": "Assign the privileged level secret (MAX of 256 characters)",
     "password": "Assign the privileged level password (MAX of 25 characters)"
-   }
+   },
+   "rank": 31
   },
   {
    "syntax": "service password-encryption",
    "modes": [
     "config"
-   ]
+   ],
+   "rank": 10
   },
   {
    "syntax": "banner motd <line>",
@@ -1556,7 +1662,8 @@
    "key": [
     0,
     1
-   ]
+   ],
+   "rank": 130
   },
   {
    "syntax": "access-list {<1-99>|<1300-1999>} {permit|deny} {any|host <ipv4>|<ipv4>|<ipv4> <wildcard>} [log]",
@@ -1576,7 +1683,12 @@
     "traceroute": "Traceroute",
     "administratively-prohibited": "Administratively prohibited",
     "<1300-1999>": "IP standard access list (expanded range)"
-   }
+   },
+   "into": {
+    "section": "ip access-list standard {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
    "syntax": "access-list {<1-99>|<1300-1999>} remark <line>",
@@ -1586,7 +1698,12 @@
    "help": {
     "<1-99>": "IP standard access list",
     "<1300-1999>": "IP standard access list (expanded range)"
-   }
+   },
+   "into": {
+    "section": "ip access-list standard {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
    "syntax": "access-list <100-199> {permit|deny} {ip|ospf|gre|esp|ahp|eigrp|pim|<0-255>} {any|host <ipv4>|<ipv4> <wildcard>} {any|host <ipv4>|<ipv4> <wildcard>} [log]",
@@ -1606,7 +1723,12 @@
     "traceroute": "Traceroute",
     "administratively-prohibited": "Administratively prohibited",
     "<0-255>": "An IP protocol number"
-   }
+   },
+   "into": {
+    "section": "ip access-list extended {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
    "syntax": "access-list <2000-2699> {permit|deny} {ip|ospf|gre|esp|ahp|eigrp|pim|<0-255>} {any|host <ipv4>|<ipv4> <wildcard>} {any|host <ipv4>|<ipv4> <wildcard>} [log]",
@@ -1626,7 +1748,12 @@
     "administratively-prohibited": "Administratively prohibited",
     "<0-255>": "An IP protocol number",
     "<2000-2699>": "IP extended access list (expanded range)"
-   }
+   },
+   "into": {
+    "section": "ip access-list extended {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
    "syntax": "access-list <100-199> {permit|deny} icmp {any|host <ipv4>|<ipv4> <wildcard>} {any|host <ipv4>|<ipv4> <wildcard>} [{echo|echo-reply|unreachable|host-unreachable|net-unreachable|port-unreachable|administratively-prohibited|time-exceeded|ttl-exceeded|traceroute|<0-255> [<0-255>]}] [log]",
@@ -1646,7 +1773,12 @@
     "traceroute": "Traceroute",
     "administratively-prohibited": "Administratively prohibited",
     "<0-255>": "ICMP message type"
-   }
+   },
+   "into": {
+    "section": "ip access-list extended {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
    "syntax": "access-list <2000-2699> {permit|deny} icmp {any|host <ipv4>|<ipv4> <wildcard>} {any|host <ipv4>|<ipv4> <wildcard>} [{echo|echo-reply|unreachable|host-unreachable|net-unreachable|port-unreachable|administratively-prohibited|time-exceeded|ttl-exceeded|traceroute|<0-255> [<0-255>]}] [log]",
@@ -1666,10 +1798,15 @@
     "administratively-prohibited": "Administratively prohibited",
     "<0-255>": "ICMP message type",
     "<2000-2699>": "IP extended access list (expanded range)"
-   }
+   },
+   "into": {
+    "section": "ip access-list extended {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
-   "syntax": "access-list <100-199> {permit|deny} tcp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [established] [log]",
+   "syntax": "access-list <100-199> {permit|deny} tcp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:tcp>|range <port:tcp> <port:tcp>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:tcp>|range <port:tcp> <port:tcp>] [established] [log]",
    "modes": [
     "config"
    ],
@@ -1685,10 +1822,15 @@
     "ttl-exceeded": "TTL exceeded",
     "traceroute": "Traceroute",
     "administratively-prohibited": "Administratively prohibited"
-   }
+   },
+   "into": {
+    "section": "ip access-list extended {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
-   "syntax": "access-list <2000-2699> {permit|deny} tcp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [established] [log]",
+   "syntax": "access-list <2000-2699> {permit|deny} tcp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:tcp>|range <port:tcp> <port:tcp>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:tcp>|range <port:tcp> <port:tcp>] [established] [log]",
    "modes": [
     "config"
    ],
@@ -1704,10 +1846,15 @@
     "traceroute": "Traceroute",
     "administratively-prohibited": "Administratively prohibited",
     "<2000-2699>": "IP extended access list (expanded range)"
-   }
+   },
+   "into": {
+    "section": "ip access-list extended {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
-   "syntax": "access-list <100-199> {permit|deny} udp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [log]",
+   "syntax": "access-list <100-199> {permit|deny} udp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:udp>|range <port:udp> <port:udp>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:udp>|range <port:udp> <port:udp>] [log]",
    "modes": [
     "config"
    ],
@@ -1723,10 +1870,15 @@
     "ttl-exceeded": "TTL exceeded",
     "traceroute": "Traceroute",
     "administratively-prohibited": "Administratively prohibited"
-   }
+   },
+   "into": {
+    "section": "ip access-list extended {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
-   "syntax": "access-list <2000-2699> {permit|deny} udp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [log]",
+   "syntax": "access-list <2000-2699> {permit|deny} udp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:udp>|range <port:udp> <port:udp>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:udp>|range <port:udp> <port:udp>] [log]",
    "modes": [
     "config"
    ],
@@ -1742,7 +1894,12 @@
     "traceroute": "Traceroute",
     "administratively-prohibited": "Administratively prohibited",
     "<2000-2699>": "IP extended access list (expanded range)"
-   }
+   },
+   "into": {
+    "section": "ip access-list extended {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
    "syntax": "access-list <100-199> remark <line>",
@@ -1751,7 +1908,12 @@
    ],
    "help": {
     "<100-199>": "IP extended access list"
-   }
+   },
+   "into": {
+    "section": "ip access-list extended {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
    "syntax": "access-list <2000-2699> remark <line>",
@@ -1760,7 +1922,12 @@
    ],
    "help": {
     "<2000-2699>": "IP extended access list (expanded range)"
-   }
+   },
+   "into": {
+    "section": "ip access-list extended {$1}",
+    "skip": 2
+   },
+   "rank": 125
   },
   {
    "syntax": "ip access-list standard {<1-99>|<1300-1999>|<word>}",
@@ -1776,7 +1943,13 @@
     "<1-99>": "Standard IP access-list number",
     "<1300-1999>": "Standard IP access-list number (expanded range)",
     "<word>": "Access-list name"
-   }
+   },
+   "flatten": {
+    "match": "^ip access-list standard (\\d+)$",
+    "display": "access-list $1",
+    "rank": 125
+   },
+   "rank": 118
   },
   {
    "syntax": "ip access-list extended {<100-199>|<2000-2699>|<word>}",
@@ -1792,7 +1965,13 @@
     "<100-199>": "Extended IP access-list number",
     "<2000-2699>": "Extended IP access-list number (expanded range)",
     "<word>": "Access-list name"
-   }
+   },
+   "flatten": {
+    "match": "^ip access-list extended (\\d+)$",
+    "display": "access-list $1",
+    "rank": 125
+   },
+   "rank": 118
   },
   {
    "syntax": "ip nat inside source list {<1-2699>|<word>} interface <interface> [overload]",
@@ -1818,7 +1997,8 @@
    "keyGroup": "nat-inside-list",
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 115
   },
   {
    "syntax": "ip nat inside source list {<1-2699>|<word>} pool <word> [overload]",
@@ -1844,7 +2024,8 @@
    "keyGroup": "nat-inside-list",
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 115
   },
   {
    "syntax": "ip nat inside source static <ipv4> <ipv4>",
@@ -1859,10 +2040,11 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 115
   },
   {
-   "syntax": "ip nat inside source static {tcp|udp} <ipv4> <port> <ipv4> <port>",
+   "syntax": "ip nat inside source static tcp <ipv4> <port:tcp> <ipv4> <port:tcp>",
    "modes": [
     "config"
    ],
@@ -1874,7 +2056,24 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 115
+  },
+  {
+   "syntax": "ip nat inside source static udp <ipv4> <port:udp> <ipv4> <port:udp>",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "nat": "NAT configuration commands",
+    "pool": "Define pool of addresses",
+    "interface": "Specify interface for global address",
+    "ip": "Global IP configuration subcommands"
+   },
+   "devices": [
+    "router"
+   ],
+   "rank": 115
   },
   {
    "syntax": "ip nat pool <word> <ipv4> <ipv4> {netmask <ipv4-mask>|prefix-length <1-32>}",
@@ -1895,7 +2094,8 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 114
   },
   {
    "syntax": "ip dhcp excluded-address <ipv4> [<ipv4>]",
@@ -1907,7 +2107,8 @@
     "pool": "Configure DHCP address pools",
     "ip": "Global IP configuration subcommands",
     "<ipv4>": "Low IP address"
-   }
+   },
+   "rank": 45
   },
   {
    "syntax": "ip dhcp pool <word>",
@@ -1921,7 +2122,8 @@
     "dhcp": "Configure DHCP server and relay parameters",
     "pool": "Configure DHCP address pools",
     "ip": "Global IP configuration subcommands"
-   }
+   },
+   "rank": 46
   },
   {
    "syntax": "service dhcp",
@@ -1931,7 +2133,8 @@
    "negate": "store",
    "help": {
     "dhcp": "Enable DHCP server and relay agent"
-   }
+   },
+   "rank": 10
   },
   {
    "syntax": "spanning-tree mode {pvst|rapid-pvst|mst}",
@@ -1948,7 +2151,8 @@
    "help": {
     "mode": "Spanning tree operating mode",
     "spanning-tree": "Spanning Tree Subsystem"
-   }
+   },
+   "rank": 76
   },
   {
    "syntax": "spanning-tree vlan <vlan-list> root {primary|secondary}",
@@ -1970,7 +2174,8 @@
     "secondary": "Configure switch as secondary root",
     "<vlan-list>": "vlan range, example: 1,3-5,7,9-11"
    },
-   "keyGroup": "stp-vlan-priority"
+   "keyGroup": "stp-vlan-priority",
+   "rank": 78
   },
   {
    "syntax": "spanning-tree vlan <vlan-list> priority <0-61440>",
@@ -1999,7 +2204,8 @@
      "notMatch": "^(?!(0|4096|8192|12288|16384|20480|24576|28672|32768|36864|40960|45056|49152|53248|57344|61440)$)",
      "message": "% Bridge Priority must be in increments of 4096.\n% Allowed values are:\n  0     4096  8192  12288 16384 20480 24576 28672\n  32768 36864 40960 45056 49152 53248 57344 61440"
     }
-   ]
+   ],
+   "rank": 78
   },
   {
    "syntax": "spanning-tree portfast default",
@@ -2020,7 +2226,8 @@
     "default": "Enable portfast by default on all access ports",
     "bpduguard": "Enable bpdu guard by default",
     "edge": "Enable portfast edge by default"
-   }
+   },
+   "rank": 77
   },
   {
    "syntax": "spanning-tree portfast edge default",
@@ -2041,7 +2248,8 @@
     "default": "Enable portfast by default on all access ports",
     "bpduguard": "Enable bpdu guard by default",
     "edge": "Enable portfast edge by default"
-   }
+   },
+   "rank": 77
   },
   {
    "syntax": "spanning-tree portfast bpduguard default",
@@ -2061,7 +2269,8 @@
     "default": "Enable portfast by default on all access ports",
     "bpduguard": "Enable bpdu guard by default",
     "edge": "Enable portfast edge by default"
-   }
+   },
+   "rank": 77
   },
   {
    "syntax": "spanning-tree portfast edge bpduguard default",
@@ -2081,7 +2290,8 @@
     "default": "Enable portfast by default on all access ports",
     "bpduguard": "Enable bpdu guard by default",
     "edge": "Enable portfast edge by default"
-   }
+   },
+   "rank": 77
   },
   {
    "syntax": "vtp mode server",
@@ -2103,7 +2313,8 @@
     "server": "Set the device to server mode.",
     "client": "Set the device to client mode.",
     "transparent": "Set the device to transparent mode."
-   }
+   },
+   "rank": 65
   },
   {
    "syntax": "vtp mode client",
@@ -2125,7 +2336,8 @@
     "server": "Set the device to server mode.",
     "client": "Set the device to client mode.",
     "transparent": "Set the device to transparent mode."
-   }
+   },
+   "rank": 65
   },
   {
    "syntax": "vtp mode transparent",
@@ -2147,7 +2359,8 @@
     "server": "Set the device to server mode.",
     "client": "Set the device to client mode.",
     "transparent": "Set the device to transparent mode."
-   }
+   },
+   "rank": 65
   },
   {
    "syntax": "vtp domain <word>",
@@ -2164,7 +2377,8 @@
    "help": {
     "vtp": "Configure global VTP state",
     "domain": "Set the name of the VTP administrative domain."
-   }
+   },
+   "rank": 65
   },
   {
    "syntax": "port-channel load-balance {dst-ip|dst-mac|src-dst-ip|src-dst-mac|src-ip|src-mac}",
@@ -2187,7 +2401,8 @@
     "src-dst-mac": "Src XOR Dst Mac Addr",
     "src-ip": "Src IP Addr",
     "src-mac": "Src Mac Addr"
-   }
+   },
+   "rank": 79
   },
   {
    "syntax": "lacp system-priority <1-65535>",
@@ -2205,7 +2420,8 @@
     "lacp": "LACP configuration",
     "system-priority": "LACP System priority",
     "<1-65535>": "Priority value"
-   }
+   },
+   "rank": 80
   },
   {
    "syntax": "errdisable recovery cause {all|bpduguard|psecure-violation}",
@@ -2222,7 +2438,8 @@
     "all": "Enable timer to recover from all error causes",
     "bpduguard": "Enable timer to recover from BPDU Guard error",
     "psecure-violation": "Enable timer to recover from psecure violation error"
-   }
+   },
+   "rank": 75
   },
   {
    "syntax": "errdisable recovery interval <30-86400>",
@@ -2242,7 +2459,8 @@
     "recovery": "Error disable recovery",
     "interval": "Error disable recovery timer value",
     "<30-86400>": "timer-interval(sec)"
-   }
+   },
+   "rank": 75
   },
   {
    "syntax": "cdp run",
@@ -2252,7 +2470,8 @@
    "negate": "store",
    "help": {
     "cdp": "Global CDP configuration subcommands"
-   }
+   },
+   "rank": 57
   },
   {
    "syntax": "lldp run",
@@ -2262,19 +2481,22 @@
    "help": {
     "lldp": "Global LLDP configuration subcommands",
     "run": "Enable LLDP"
-   }
+   },
+   "rank": 58
   },
   {
    "syntax": "ntp server <ipv4>",
    "modes": [
     "config"
-   ]
+   ],
+   "rank": 150
   },
   {
    "syntax": "logging host <ipv4>",
    "modes": [
     "config"
-   ]
+   ],
+   "rank": 120
   },
   {
    "syntax": "security passwords min-length <0-16>",
@@ -2291,7 +2513,8 @@
     "passwords": "Security passwords",
     "min-length": "Minimum length of passwords",
     "<0-16>": "Minimum length of all user/enable passwords"
-   }
+   },
+   "rank": 25
   },
   {
    "syntax": "login block-for <1-65535> attempts <1-65535> within <1-65535>",
@@ -2307,7 +2530,8 @@
     "block-for": "Set quiet-mode active time period",
     "attempts": "Set max number of fail attempts",
     "within": "Watch period for repeated login failures"
-   }
+   },
+   "rank": 26
   },
   {
    "syntax": "ip http server",
@@ -2318,7 +2542,8 @@
     "ip": "Global IP configuration subcommands",
     "http": "HTTP server configuration",
     "server": "Enable HTTP server"
-   }
+   },
+   "rank": 112
   },
   {
    "syntax": "ip http secure-server",
@@ -2329,7 +2554,8 @@
     "ip": "Global IP configuration subcommands",
     "http": "HTTP server configuration",
     "secure-server": "Enable HTTP secure server"
-   }
+   },
+   "rank": 112
   },
   {
    "syntax": "description <line>",
@@ -2342,7 +2568,8 @@
    ],
    "help": {
     "<line>": "Up to 240 characters describing this interface"
-   }
+   },
+   "rank": 10
   },
   {
    "syntax": "ip address <ipv4> <ipv4-mask>",
@@ -2367,7 +2594,14 @@
      ],
      "message": "Bad mask /{prefix} for address {address}"
     }
-   ]
+   ],
+   "onInterfaces": {
+    "switch": [
+     "Vlan",
+     "Loopback"
+    ]
+   },
+   "rank": 30
   },
   {
    "syntax": "ip address <ipv4> <ipv4-mask> secondary",
@@ -2387,7 +2621,14 @@
      ],
      "message": "Bad mask /{prefix} for address {address}"
     }
-   ]
+   ],
+   "onInterfaces": {
+    "switch": [
+     "Vlan",
+     "Loopback"
+    ]
+   },
+   "rank": 30
   },
   {
    "syntax": "ip address dhcp",
@@ -2403,7 +2644,14 @@
     "dhcp": "IP Address negotiated via DHCP",
     "ip": "Interface Internet Protocol config commands"
    },
-   "keyGroup": "ip-address"
+   "keyGroup": "ip-address",
+   "onInterfaces": {
+    "switch": [
+     "Vlan",
+     "Loopback"
+    ]
+   },
+   "rank": 30
   },
   {
    "syntax": "ipv6 address <ipv6-prefix> [eui-64]",
@@ -2415,7 +2663,14 @@
     "address": "Configure IPv6 address on interface",
     "ip": "Interface Internet Protocol config commands",
     "ipv6": "IPv6 interface subcommands"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "Vlan",
+     "Loopback"
+    ]
+   },
+   "rank": 55
   },
   {
    "syntax": "ipv6 address <ipv6> link-local",
@@ -2432,7 +2687,14 @@
     "address": "Configure IPv6 address on interface",
     "ip": "Interface Internet Protocol config commands",
     "ipv6": "IPv6 interface subcommands"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "Vlan",
+     "Loopback"
+    ]
+   },
+   "rank": 55
   },
   {
    "syntax": "ipv6 address autoconfig [default]",
@@ -2445,7 +2707,14 @@
     "address": "Configure IPv6 address on interface",
     "autoconfig": "Obtain address using autoconfiguration",
     "default": "Insert default route"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "Vlan",
+     "Loopback"
+    ]
+   },
+   "rank": 55
   },
   {
    "syntax": "ipv6 address dhcp",
@@ -2457,7 +2726,14 @@
     "ipv6": "IPv6 interface subcommands",
     "address": "Configure IPv6 address on interface",
     "dhcp": "Obtain IPv6 address from DHCP server"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "Vlan",
+     "Loopback"
+    ]
+   },
+   "rank": 55
   },
   {
    "syntax": "ipv6 enable",
@@ -2469,14 +2745,22 @@
     "enable": "Enable IPv6 on interface",
     "ip": "Interface Internet Protocol config commands",
     "ipv6": "IPv6 interface subcommands"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "Vlan",
+     "Loopback"
+    ]
+   },
+   "rank": 55
   },
   {
    "syntax": "shutdown",
    "modes": [
     "config-if",
     "config-if-range"
-   ]
+   ],
+   "rank": 48
   },
   {
    "syntax": "speed {10|100|1000|auto}",
@@ -2492,7 +2776,8 @@
     "100": "Force 100 Mbps operation",
     "1000": "Force 1000 Mbps operation",
     "auto": "Enable AUTO speed configuration"
-   }
+   },
+   "rank": 53
   },
   {
    "syntax": "duplex {auto|full|half}",
@@ -2502,7 +2787,8 @@
    ],
    "key": [
     0
-   ]
+   ],
+   "rank": 52
   },
   {
    "syntax": "bandwidth <1-10000000>",
@@ -2516,7 +2802,8 @@
    "help": {
     "bandwidth": "Set bandwidth informational parameter",
     "<1-10000000>": "Bandwidth in kilobits"
-   }
+   },
+   "rank": 12
   },
   {
    "syntax": "clock rate <300-8000000>",
@@ -2534,7 +2821,13 @@
     "clock": "Configure serial interface clock",
     "rate": "Configure serial interface clock speed",
     "<300-8000000>": "Choose clockrate from list above"
-   }
+   },
+   "onInterfaces": {
+    "*": [
+     "Serial"
+    ]
+   },
+   "rank": 50
   },
   {
    "syntax": "encapsulation {hdlc|ppp}",
@@ -2551,7 +2844,13 @@
     "encapsulation": "Set encapsulation type for an interface",
     "hdlc": "Serial HDLC synchronous",
     "ppp": "Point-to-Point protocol"
-   }
+   },
+   "onInterfaces": {
+    "*": [
+     "Serial"
+    ]
+   },
+   "rank": 44
   },
   {
    "syntax": "switchport mode {access|trunk}",
@@ -2571,7 +2870,15 @@
     "trunk": "Set trunking mode to TRUNK unconditionally",
     "switchport": "Set switching mode characteristics"
    },
-   "keyGroup": "switchport-mode"
+   "keyGroup": "switchport-mode",
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 18
   },
   {
    "syntax": "switchport mode dynamic {auto|desirable}",
@@ -2592,7 +2899,15 @@
     "switchport": "Set switching mode characteristics",
     "auto": "Set trunking mode dynamic negotiation parameter to AUTO"
    },
-   "keyGroup": "switchport-mode"
+   "keyGroup": "switchport-mode",
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 18
   },
   {
    "syntax": "switchport access vlan <1-4094>",
@@ -2617,7 +2932,15 @@
     "vlan": "Set VLAN when interface is in access mode",
     "<1-4094>": "VLAN ID of the VLAN when this port is in access mode",
     "switchport": "Set switching mode characteristics"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 15
   },
   {
    "syntax": "switchport voice vlan <1-4094>",
@@ -2641,7 +2964,15 @@
    "create": [
     "vlan {$1}"
    ],
-   "createOutput": "% Voice VLAN does not exist. Creating vlan {$1}"
+   "createOutput": "% Voice VLAN does not exist. Creating vlan {$1}",
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 20
   },
   {
    "syntax": "switchport trunk native vlan <1-4094>",
@@ -2663,7 +2994,15 @@
     "vlan": "Set native VLAN when interface is in trunking mode",
     "switchport": "Set switching mode characteristics",
     "<1-4094>": "VLAN ID of the native VLAN when this port is in trunking mode"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 16
   },
   {
    "syntax": "switchport trunk allowed vlan <vlan-list>",
@@ -2683,7 +3022,15 @@
     "trunk": "Set trunking characteristics of the interface",
     "vlan": "Set allowed VLANs when interface is in trunking mode",
     "switchport": "Set switching mode characteristics"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 17
   },
   {
    "syntax": "switchport trunk allowed vlan add <vlan-list>",
@@ -2703,7 +3050,15 @@
     "trunk": "Set trunking characteristics of the interface",
     "vlan": "Set allowed VLANs when interface is in trunking mode",
     "switchport": "Set switching mode characteristics"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 17
   },
   {
    "syntax": "switchport trunk allowed vlan remove <vlan-list>",
@@ -2723,7 +3078,15 @@
     "trunk": "Set trunking characteristics of the interface",
     "vlan": "Set allowed VLANs when interface is in trunking mode",
     "switchport": "Set switching mode characteristics"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 17
   },
   {
    "syntax": "switchport trunk allowed vlan except <vlan-list>",
@@ -2743,7 +3106,15 @@
     "trunk": "Set trunking characteristics of the interface",
     "vlan": "Set allowed VLANs when interface is in trunking mode",
     "switchport": "Set switching mode characteristics"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 17
   },
   {
    "syntax": "switchport trunk allowed vlan all",
@@ -2763,7 +3134,15 @@
     "trunk": "Set trunking characteristics of the interface",
     "vlan": "Set allowed VLANs when interface is in trunking mode",
     "switchport": "Set switching mode characteristics"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 17
   },
   {
    "syntax": "switchport trunk allowed vlan none",
@@ -2783,7 +3162,15 @@
     "trunk": "Set trunking characteristics of the interface",
     "vlan": "Set allowed VLANs when interface is in trunking mode",
     "switchport": "Set switching mode characteristics"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 17
   },
   {
    "syntax": "switchport nonegotiate",
@@ -2802,7 +3189,15 @@
      "section": "^switchport mode (access|trunk)$",
      "message": "Command rejected: Conflict between 'nonegotiate' and 'dynamic' status."
     }
-   ]
+   ],
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 19
   },
   {
    "syntax": "switchport port-security",
@@ -2824,7 +3219,15 @@
     "<1-8192>": "Maximum addresses",
     "mac-address": "Secure mac address",
     "port-security": "Security related command"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 22
   },
   {
    "syntax": "switchport port-security maximum <1-8192>",
@@ -2845,7 +3248,15 @@
     "<1-8192>": "Maximum addresses",
     "mac-address": "Secure mac address",
     "port-security": "Security related command"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 21
   },
   {
    "syntax": "switchport port-security violation {protect|restrict|shutdown}",
@@ -2867,7 +3278,15 @@
     "mac-address": "Secure mac address",
     "port-security": "Security related command",
     "shutdown": "Security violation shutdown mode"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 24
   },
   {
    "syntax": "switchport port-security mac-address sticky",
@@ -2883,7 +3302,15 @@
     "<1-8192>": "Maximum addresses",
     "mac-address": "Secure mac address",
     "port-security": "Security related command"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 25
   },
   {
    "syntax": "switchport port-security mac-address <mac>",
@@ -2899,7 +3326,15 @@
     "<1-8192>": "Maximum addresses",
     "mac-address": "Secure mac address",
     "port-security": "Security related command"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 25
   },
   {
    "syntax": "switchport port-security mac-address sticky <mac>",
@@ -2916,7 +3351,15 @@
     "mac-address": "Secure mac address",
     "sticky": "Configure dynamic secure addresses as sticky",
     "<mac>": "48 bit mac address"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 25
   },
   {
    "syntax": "switchport port-security aging time <1-1440>",
@@ -2939,7 +3382,15 @@
     "mac-address": "Secure mac address",
     "port-security": "Security related command",
     "<1-1440>": "Aging time in minutes. Enter a value between 1 and 1440"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 23
   },
   {
    "syntax": "switchport port-security aging type {absolute|inactivity}",
@@ -2962,7 +3413,15 @@
     "type": "Port-security aging type",
     "absolute": "Absolute aging (default)",
     "inactivity": "Aging based on inactivity time period"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 23
   },
   {
    "syntax": "spanning-tree portfast",
@@ -2984,7 +3443,15 @@
     0,
     1
    ],
-   "keyGroup": "stp-portfast"
+   "keyGroup": "stp-portfast",
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 65
   },
   {
    "syntax": "spanning-tree portfast disable",
@@ -3005,7 +3472,15 @@
     0,
     1
    ],
-   "keyGroup": "stp-portfast"
+   "keyGroup": "stp-portfast",
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 65
   },
   {
    "syntax": "spanning-tree portfast trunk",
@@ -3027,7 +3502,15 @@
     "edge": "Enable portfast edge on the interface",
     "trunk": "Enable portfast on the interface even in trunk mode",
     "disable": "Disable portfast for this interface"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 65
   },
   {
    "syntax": "spanning-tree portfast edge",
@@ -3049,7 +3532,15 @@
     "edge": "Enable portfast edge on the interface",
     "trunk": "Enable portfast on the interface even in trunk mode",
     "disable": "Disable portfast for this interface"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 65
   },
   {
    "syntax": "spanning-tree portfast edge trunk",
@@ -3071,7 +3562,15 @@
     "edge": "Enable portfast edge on the interface",
     "trunk": "Enable portfast on the interface even in trunk mode",
     "disable": "Disable portfast for this interface"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 65
   },
   {
    "syntax": "spanning-tree bpduguard {enable|disable}",
@@ -3090,7 +3589,15 @@
     "enable": "Enable BPDU guard for this interface",
     "disable": "Disable BPDU guard for this interface",
     "spanning-tree": "Spanning Tree Subsystem"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 66
   },
   {
    "syntax": "channel-group <1-6> mode {active|passive|on|auto|desirable}",
@@ -3113,7 +3620,22 @@
    },
    "devices": [
     "switch"
-   ]
+   ],
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet"
+    ],
+    "router": [
+     "GigabitEthernet",
+     "FastEthernet"
+    ]
+   },
+   "aggregate": {
+    "section": "interface Port-channel{$1}",
+    "lines": "^switchport (mode|access vlan|trunk (native|allowed) vlan|nonegotiate)"
+   },
+   "rank": 60
   },
   {
    "syntax": "channel-group <1-48> mode {active|passive|on|auto|desirable}",
@@ -3136,7 +3658,18 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet"
+    ],
+    "router": [
+     "GigabitEthernet",
+     "FastEthernet"
+    ]
+   },
+   "rank": 60
   },
   {
    "syntax": "channel-protocol {lacp|pagp}",
@@ -3154,7 +3687,18 @@
     "channel-protocol": "Select the channel protocol (LACP, PAgP)",
     "lacp": "Prepare interface for LACP protocol",
     "pagp": "Prepare interface for PAgP protocol"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet"
+    ],
+    "router": [
+     "GigabitEthernet",
+     "FastEthernet"
+    ]
+   },
+   "rank": 59
   },
   {
    "syntax": "lacp port-priority <1-65535>",
@@ -3173,7 +3717,18 @@
     "lacp": "LACP interface subcommands",
     "port-priority": "LACP priority on this interface",
     "<1-65535>": "Priority value"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet"
+    ],
+    "router": [
+     "GigabitEthernet",
+     "FastEthernet"
+    ]
+   },
+   "rank": 61
   },
   {
    "syntax": "ip helper-address <ipv4>",
@@ -3183,7 +3738,14 @@
    ],
    "help": {
     "ip": "Interface Internet Protocol config commands"
-   }
+   },
+   "onInterfaces": {
+    "switch": [
+     "Vlan",
+     "Loopback"
+    ]
+   },
+   "rank": 32
   },
   {
    "syntax": "ip nat {inside|outside}",
@@ -3203,7 +3765,8 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 34
   },
   {
    "syntax": "ip access-group {<1-199>|<1300-2699>|<word>} {in|out}",
@@ -3221,7 +3784,8 @@
     "<word>": "Access-list name",
     "ip": "Interface Internet Protocol config commands",
     "<1300-2699>": "IP expanded access list (standard or extended)"
-   }
+   },
+   "rank": 33
   },
   {
    "syntax": "ip ospf <1-65535> area <area>",
@@ -3243,7 +3807,8 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 40
   },
   {
    "syntax": "ip ospf cost <1-65535>",
@@ -3265,7 +3830,8 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 40
   },
   {
    "syntax": "ip ospf priority <0-255>",
@@ -3288,7 +3854,8 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 40
   },
   {
    "syntax": "ip ospf network {point-to-point|broadcast}",
@@ -3310,7 +3877,8 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 40
   },
   {
    "syntax": "ip ospf hello-interval <1-65535>",
@@ -3332,7 +3900,8 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 40
   },
   {
    "syntax": "ip ospf dead-interval <1-65535>",
@@ -3354,7 +3923,8 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 40
   },
   {
    "syntax": "standby version {1|2}",
@@ -3377,10 +3947,11 @@
    },
    "devices": [
     "router"
-   ]
+   ],
+   "rank": 35
   },
   {
-   "syntax": "standby <0-255> ip [<ipv4>]",
+   "syntax": "standby <0-4095> ip [<ipv4>]",
    "modes": [
     "config-if",
     "config-if-range"
@@ -3392,8 +3963,8 @@
     "ip": "Enable HSRP and set the virtual IP address",
     "priority": "Priority level",
     "version": "HSRP version",
-    "<0-255>": "group number",
-    "<ipv4>": "Virtual IP address"
+    "<ipv4>": "Virtual IP address",
+    "<0-4095>": "group number"
    },
    "devices": [
     "router"
@@ -3402,7 +3973,22 @@
     0,
     1,
     2
-   ]
+   ],
+   "requires": [
+    {
+     "when": {
+      "param": 1,
+      "min": 256
+     },
+     "section": "^standby version 2$",
+     "invalidAt": 1
+    }
+   ],
+   "rewrite": {
+    "pattern": "^standby 0 ",
+    "replace": "standby "
+   },
+   "rank": 36
   },
   {
    "syntax": "standby ip [<ipv4>]",
@@ -3426,10 +4012,71 @@
    "key": [
     0,
     1
-   ]
+   ],
+   "rank": 36
   },
   {
-   "syntax": "standby <0-255> priority <0-255>",
+   "syntax": "standby priority <0-255>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "router"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "rank": 36
+  },
+  {
+   "syntax": "standby preempt [delay minimum <0-3600>]",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "router"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "rank": 36
+  },
+  {
+   "syntax": "standby timers <1-254> <1-255>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "router"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "rank": 36
+  },
+  {
+   "syntax": "standby authentication {md5 key-string <word>|<word>}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "router"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "rank": 36
+  },
+  {
+   "syntax": "standby <0-4095> priority <0-255>",
    "modes": [
     "config-if",
     "config-if-range"
@@ -3446,14 +4093,29 @@
     "ip": "Enable HSRP and set the virtual IP address",
     "priority": "Priority level",
     "version": "HSRP version",
-    "<0-255>": "Priority value"
+    "<0-4095>": "Priority value"
    },
    "devices": [
     "router"
-   ]
+   ],
+   "requires": [
+    {
+     "when": {
+      "param": 1,
+      "min": 256
+     },
+     "section": "^standby version 2$",
+     "invalidAt": 1
+    }
+   ],
+   "rewrite": {
+    "pattern": "^standby 0 ",
+    "replace": "standby "
+   },
+   "rank": 36
   },
   {
-   "syntax": "standby <0-255> preempt [delay minimum <0-3600>]",
+   "syntax": "standby <0-4095> preempt [delay minimum <0-3600>]",
    "modes": [
     "config-if",
     "config-if-range"
@@ -3470,14 +4132,29 @@
     "ip": "Enable HSRP and set the virtual IP address",
     "priority": "Priority level",
     "version": "HSRP version",
-    "<0-255>": "group number"
+    "<0-4095>": "group number"
    },
    "devices": [
     "router"
-   ]
+   ],
+   "requires": [
+    {
+     "when": {
+      "param": 1,
+      "min": 256
+     },
+     "section": "^standby version 2$",
+     "invalidAt": 1
+    }
+   ],
+   "rewrite": {
+    "pattern": "^standby 0 ",
+    "replace": "standby "
+   },
+   "rank": 36
   },
   {
-   "syntax": "standby <0-255> timers <1-254> <1-255>",
+   "syntax": "standby <0-4095> timers <1-254> <1-255>",
    "modes": [
     "config-if",
     "config-if-range"
@@ -3497,14 +4174,29 @@
     "ip": "Enable HSRP and set the virtual IP address",
     "priority": "Priority level",
     "version": "HSRP version",
-    "<0-255>": "group number",
     "timers": "Hello and hold timers",
     "<1-254>": "Hello interval in seconds",
-    "<1-255>": "Hold time in seconds"
-   }
+    "<1-255>": "Hold time in seconds",
+    "<0-4095>": "group number"
+   },
+   "requires": [
+    {
+     "when": {
+      "param": 1,
+      "min": 256
+     },
+     "section": "^standby version 2$",
+     "invalidAt": 1
+    }
+   ],
+   "rewrite": {
+    "pattern": "^standby 0 ",
+    "replace": "standby "
+   },
+   "rank": 36
   },
   {
-   "syntax": "standby <0-255> authentication {md5 key-string <word>|<word>}",
+   "syntax": "standby <0-4095> authentication {md5 key-string <word>|<word>}",
    "modes": [
     "config-if",
     "config-if-range"
@@ -3524,12 +4216,27 @@
     "ip": "Enable HSRP and set the virtual IP address",
     "priority": "Priority level",
     "version": "HSRP version",
-    "<0-255>": "group number",
     "authentication": "Authentication",
     "md5": "Use MD5 authentication",
     "key-string": "Set key string",
-    "<word>": "Plain text authentication string (8 chars max)"
-   }
+    "<word>": "Plain text authentication string (8 chars max)",
+    "<0-4095>": "group number"
+   },
+   "requires": [
+    {
+     "when": {
+      "param": 1,
+      "min": 256
+     },
+     "section": "^standby version 2$",
+     "invalidAt": 1
+    }
+   ],
+   "rewrite": {
+    "pattern": "^standby 0 ",
+    "replace": "standby "
+   },
+   "rank": 36
   },
   {
    "syntax": "cdp enable",
@@ -3541,7 +4248,8 @@
    "help": {
     "cdp": "CDP interface subcommands",
     "enable": "Enable CDP on interface"
-   }
+   },
+   "rank": 70
   },
   {
    "syntax": "password <line>",
@@ -3553,7 +4261,8 @@
    ],
    "help": {
     "password": "Set a password"
-   }
+   },
+   "rank": 30
   },
   {
    "syntax": "login [local]",
@@ -3562,7 +4271,8 @@
    ],
    "key": [
     0
-   ]
+   ],
+   "rank": 50
   },
   {
    "syntax": "transport input {ssh|telnet|all|none|ssh telnet|telnet ssh}",
@@ -3578,7 +4288,8 @@
     "telnet": "TCP/IP Telnet protocol",
     "all": "All protocols",
     "none": "No protocols"
-   }
+   },
+   "rank": 60
   },
   {
    "syntax": "access-class {<1-2699>|<word>} {in|out}",
@@ -3595,7 +4306,8 @@
     "out": "Filter outgoing connections",
     "<1-2699>": "IP access list"
    },
-   "keyGroup": "access-class"
+   "keyGroup": "access-class",
+   "rank": 10
   },
   {
    "syntax": "access-class {<1-2699>|<word>} in vrf-also",
@@ -3612,7 +4324,8 @@
     "out": "Filter outgoing connections",
     "<1-2699>": "IP access list"
    },
-   "keyGroup": "access-class"
+   "keyGroup": "access-class",
+   "rank": 10
   },
   {
    "syntax": "exec-timeout <0-35791> [<0-2147483>]",
@@ -3625,13 +4338,15 @@
    "help": {
     "<0-35791>": "Timeout in minutes",
     "<0-2147483>": "Timeout in seconds"
-   }
+   },
+   "rank": 20
   },
   {
    "syntax": "logging synchronous",
    "modes": [
     "config-line"
-   ]
+   ],
+   "rank": 40
   },
   {
    "syntax": "privilege level <0-15>",
@@ -3646,7 +4361,8 @@
     "privilege": "Change privilege level for line",
     "level": "Assign default privilege level for line",
     "<0-15>": "Default privilege level for line"
-   }
+   },
+   "rank": 25
   },
   {
    "syntax": "history size <0-256>",
@@ -3661,7 +4377,8 @@
     "history": "Enable and control the command history function",
     "size": "Set history buffer size",
     "<0-256>": "Size of history buffer"
-   }
+   },
+   "rank": 55
   },
   {
    "syntax": "network <ipv4> <wildcard> area <area>",
@@ -3671,7 +4388,8 @@
    "help": {
     "network": "Enable routing on an IP network",
     "area": "Set the OSPF area ID"
-   }
+   },
+   "rank": 30
   },
   {
    "syntax": "router-id <ipv4>",
@@ -3680,7 +4398,8 @@
    ],
    "key": [
     0
-   ]
+   ],
+   "rank": 10
   },
   {
    "syntax": "passive-interface <interface>",
@@ -3690,7 +4409,8 @@
    "negate": "toggle",
    "help": {
     "default": "Suppress routing updates on all interfaces"
-   }
+   },
+   "rank": 21
   },
   {
    "syntax": "passive-interface default",
@@ -3699,7 +4419,9 @@
    ],
    "help": {
     "default": "Suppress routing updates on all interfaces"
-   }
+   },
+   "rank": 20,
+   "clears": "^(no )?passive-interface (?!default$)\\S+$"
   },
   {
    "syntax": "default-information originate [always]",
@@ -3709,7 +4431,8 @@
    "key": [
     0,
     1
-   ]
+   ],
+   "rank": 40
   },
   {
    "syntax": "auto-cost reference-bandwidth <1-4294967>",
@@ -3720,7 +4443,8 @@
     0,
     1
    ],
-   "output": "% OSPF: Reference bandwidth is changed.\n        Please ensure reference bandwidth is consistent across all routers."
+   "output": "% OSPF: Reference bandwidth is changed.\n        Please ensure reference bandwidth is consistent across all routers.",
+   "rank": 15
   },
   {
    "syntax": "maximum-paths <1-32>",
@@ -3729,7 +4453,8 @@
    ],
    "key": [
     0
-   ]
+   ],
+   "rank": 35
   },
   {
    "syntax": "name <word>",
@@ -3742,7 +4467,8 @@
    "help": {
     "name": "Ascii name of the VLAN",
     "<word>": "The ascii name for the VLAN"
-   }
+   },
+   "rank": 10
   },
   {
    "syntax": "network <ipv4> {<ipv4-mask>|<prefix-length>}",
@@ -3754,7 +4480,8 @@
    ],
    "help": {
     "network": "Network number and mask"
-   }
+   },
+   "rank": 10
   },
   {
    "syntax": "default-router <ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4>]]]]]]]",
@@ -3766,7 +4493,8 @@
    ],
    "help": {
     "<ipv4>": "Router's IP address"
-   }
+   },
+   "rank": 20
   },
   {
    "syntax": "dns-server <ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4>]]]]]]]",
@@ -3778,7 +4506,8 @@
    ],
    "help": {
     "<ipv4>": "Server's name or IP address"
-   }
+   },
+   "rank": 30
   },
   {
    "syntax": "domain-name <word>",
@@ -3791,7 +4520,8 @@
    "help": {
     "domain-name": "Domain name",
     "<word>": "Domain name"
-   }
+   },
+   "rank": 40
   },
   {
    "syntax": "lease {<0-365> [<0-23> [<0-59>]]|infinite}",
@@ -3805,7 +4535,8 @@
     "<0-365>": "Days",
     "<0-23>": "Hours",
     "<0-59>": "Minutes"
-   }
+   },
+   "rank": 60
   },
   {
    "syntax": "netbios-name-server <ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4> [<ipv4>]]]]]]]",
@@ -3818,7 +4549,8 @@
    "help": {
     "netbios-name-server": "NetBIOS (WINS) name servers",
     "<ipv4>": "Server's name or IP address"
-   }
+   },
+   "rank": 45
   },
   {
    "syntax": "option <0-254> ip <ipv4> [<ipv4> [<ipv4> [<ipv4>]]]",
@@ -3833,7 +4565,8 @@
     "option": "Raw DHCP options",
     "<0-254>": "DHCP option code",
     "ip": "Data is one or more IP addresses"
-   }
+   },
+   "rank": 50
   },
   {
    "syntax": "[<1-2147483647>] {permit|deny} {any|host <ipv4>|<ipv4>|<ipv4> <wildcard>} [log]",
@@ -3906,7 +4639,7 @@
    }
   },
   {
-   "syntax": "{permit|deny} tcp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [established] [log]",
+   "syntax": "{permit|deny} tcp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:tcp>|range <port:tcp> <port:tcp>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:tcp>|range <port:tcp> <port:tcp>] [established] [log]",
    "modes": [
     "config-ext-nacl"
    ],
@@ -3926,7 +4659,7 @@
    }
   },
   {
-   "syntax": "{permit|deny} udp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [log]",
+   "syntax": "{permit|deny} udp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:udp>|range <port:udp> <port:udp>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:udp>|range <port:udp> <port:udp>] [log]",
    "modes": [
     "config-ext-nacl"
    ],
@@ -3988,7 +4721,7 @@
    }
   },
   {
-   "syntax": "<1-2147483647> {permit|deny} tcp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [established] [log]",
+   "syntax": "<1-2147483647> {permit|deny} tcp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:tcp>|range <port:tcp> <port:tcp>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:tcp>|range <port:tcp> <port:tcp>] [established] [log]",
    "modes": [
     "config-ext-nacl"
    ],
@@ -4008,7 +4741,7 @@
    }
   },
   {
-   "syntax": "<1-2147483647> {permit|deny} udp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port>|range <port> <port>] [log]",
+   "syntax": "<1-2147483647> {permit|deny} udp {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:udp>|range <port:udp> <port:udp>] {any|host <ipv4>|<ipv4> <wildcard>} [{eq|neq|gt|lt} <port:udp>|range <port:udp> <port:udp>] [log]",
    "modes": [
     "config-ext-nacl"
    ],

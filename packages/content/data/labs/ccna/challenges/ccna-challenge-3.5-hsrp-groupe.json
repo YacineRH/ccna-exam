@@ -1,0 +1,360 @@
+{
+  "slug": "ccna-challenge-3.5-hsrp-groupe",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "3.0",
+  "subtopic": "3.5",
+  "difficulty": "medium",
+  "title": "Dépannage : deux routeurs actifs pour la même passerelle",
+  "statement": "Les postes du LAN 192.168.1.0/24 utilisent la passerelle virtuelle 192.168.1.1, partagée par R1 et R2 avec HSRP. Depuis le remplacement de R2 :\n- les postes perdent leur passerelle par intermittence, et R1 comme R2 journalisent un conflit d'adresse pour 192.168.1.1 ;\n- show standby brief indique que R1 et R2 sont tous deux « Active », chacun sans voisin en attente ;\n- la semaine dernière déjà, après un redémarrage de maintenance de R1, R2 avait gardé le rôle actif jusqu'à l'intervention d'un technicien.\n\nLa conception, inchangée : HSRP version 2, groupe 10, adresse virtuelle 192.168.1.1 ; R1 est le routeur actif en temps normal (priorité 110) et reprend ce rôle dès qu'il revient ; R2 est le routeur de secours. Corrigez R1 et R2 (un onglet par routeur).",
+  "topology": "                 WAN / cœur de réseau\n                 |                 |\n             G0/0/1            G0/0/1\n               R1                R2\n             G0/0/0            G0/0/0\n          192.168.1.2       192.168.1.3\n                 |                 |\n  ===============+====== LAN =======+============\n             passerelle virtuelle 192.168.1.1\n                 |          |          |\n               PC1        PC2        PC3   (passerelle : 192.168.1.1)\n\n  HSRP : version 2, groupe 10, VIP 192.168.1.1\n  R1 actif (priorité 110, reprend la main à son retour), R2 en secours",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": [
+        "GigabitEthernet0/0/0-1"
+      ],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN\n ip address 192.168.1.2 255.255.255.0\n standby version 2\n standby 10 ip 192.168.1.1\n standby 10 priority 110\n no shutdown\ninterface GigabitEthernet0/0/1\n description Vers le coeur\n ip address 10.0.1.1 255.255.255.252\n no shutdown"
+    },
+    {
+      "id": "R2",
+      "type": "router",
+      "interfaces": [
+        "GigabitEthernet0/0/0-1"
+      ],
+      "startupConfig": "hostname R2\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN\n ip address 192.168.1.3 255.255.255.0\n standby version 2\n standby 1 ip 192.168.1.1\n standby 1 priority 120\n standby 1 preempt\n no shutdown\ninterface GigabitEthernet0/0/1\n description Vers le coeur\n ip address 10.0.2.1 255.255.255.252\n no shutdown"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "groupe-unique",
+      "description": "R1 et R2 forment un seul et même groupe HSRP pour la passerelle 192.168.1.1, conforme à la conception (version 2, groupe 10).",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "standby version 2"
+          },
+          {
+            "type": "line",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "standby 10 ip 192.168.1.1"
+          },
+          {
+            "type": "regex",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/0",
+            "pattern": "^standby (?!version )(?!10 )",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "standby version 2"
+          },
+          {
+            "type": "line",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "standby 10 ip 192.168.1.1"
+          },
+          {
+            "type": "regex",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/0",
+            "pattern": "^standby (?!version )(?!10 )",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "r1-actif-r2-secours",
+      "description": "En temps normal, R1 est le routeur actif (priorité 110) et R2 le routeur de secours.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "standby 10 priority 110"
+          },
+          {
+            "type": "line",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "standby 10 ip 192.168.1.1"
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "R2",
+                "section": "interface GigabitEthernet0/0/0",
+                "pattern": "^standby 10 priority ",
+                "absent": true
+              },
+              {
+                "type": "regex",
+                "device": "R2",
+                "section": "interface GigabitEthernet0/0/0",
+                "pattern": "^standby 10 priority ([0-9]|[1-9][0-9]|10[0-9])$"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "r1-reprise",
+      "description": "R1 retrouve le rôle actif dès qu'il revient après une panne.",
+      "check": {
+        "type": "regex",
+        "device": "R1",
+        "section": "interface GigabitEthernet0/0/0",
+        "pattern": "^standby 10 preempt( delay minimum \\d+)?$"
+      }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 5,
+    "timeLimitMinutes": 10,
+    "mode": "troubleshoot",
+    "faults": [
+      "R2 est configuré dans le groupe HSRP 1 au lieu du groupe 10 : les deux routeurs ne se voient pas et chacun se déclare actif pour 192.168.1.1.",
+      "R2 a la priorité 120 avec préemption, supérieure aux 110 de R1 : une fois dans le même groupe, il prendrait le rôle actif.",
+      "R1 n'a pas standby 10 preempt : après un redémarrage, il ne reprend pas le rôle actif tenu par R2."
+    ]
+  },
+  "solution": [
+    {
+      "device": "R2",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface GigabitEthernet0/0/0",
+        "no standby 1",
+        "standby 10 ip 192.168.1.1",
+        "end"
+      ]
+    },
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface GigabitEthernet0/0/0",
+        "standby 10 preempt",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Lignes du groupe 1 retirées une à une, priorité explicite de 90 et préemption sur R2",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "int g0/0/0",
+            "standby 10 preempt delay minimum 30",
+            "\u001a"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "en",
+            "conf t",
+            "int g0/0/0",
+            "no standby 1 preempt",
+            "no standby 1 priority 120",
+            "no standby 1 ip 192.168.1.1",
+            "standby 10 ip 192.168.1.1",
+            "standby 10 priority 90",
+            "standby 10 preempt",
+            "\u001a"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "R2 passé dans le groupe 10 en recopiant sa priorité 120 : il devient actif à la place de R1",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "no standby 1",
+            "standby 10 ip 192.168.1.1",
+            "standby 10 priority 120",
+            "standby 10 preempt",
+            "end"
+          ]
+        },
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "standby 10 preempt",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "r1-actif-r2-secours"
+      ]
+    },
+    {
+      "description": "Groupe 10 ajouté sur R2 sans retirer le groupe 1",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "standby 10 ip 192.168.1.1",
+            "end"
+          ]
+        },
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "standby 10 preempt",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "groupe-unique"
+      ]
+    },
+    {
+      "description": "R1 déplacé dans le groupe 1 de R2, contraire à la conception",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "no standby 10",
+            "standby 1 ip 192.168.1.1",
+            "standby 1 priority 130",
+            "standby 1 preempt",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "groupe-unique",
+        "r1-reprise"
+      ]
+    },
+    {
+      "description": "Préemption ajoutée sur R2 au lieu de R1",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "no standby 1",
+            "standby 10 ip 192.168.1.1",
+            "standby 10 preempt",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "r1-reprise"
+      ]
+    },
+    {
+      "description": "R2 repassé en HSRP version 1 : les deux routeurs n'utilisent plus la même version",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "no standby 1",
+            "standby version 1",
+            "standby 10 ip 192.168.1.1",
+            "end"
+          ]
+        },
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "standby 10 preempt",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "groupe-unique"
+      ]
+    },
+    {
+      "description": "Priorité de R1 supprimée : R1 et R2 sont à égalité (100), le rôle actif n'est plus garanti à R1",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "no standby 1",
+            "standby 10 ip 192.168.1.1",
+            "end"
+          ]
+        },
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "no standby 10 priority 110",
+            "standby 10 preempt",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "r1-actif-r2-secours"
+      ]
+    }
+  ],
+  "explanation": "Trois erreurs. 1) Numéro de groupe différent : le groupe HSRP identifie l'instance (et la MAC virtuelle 0000.0C9F.F00A pour le groupe 10 en version 2). R1 en groupe 10 et R2 en groupe 1 forment deux instances indépendantes qui revendiquent la même adresse 192.168.1.1 : chacune est seule, donc active, d'où le conflit d'adresse et la passerelle instable. R2 doit rejoindre le groupe 10 ; no standby 1 retire tout le groupe 1 (ou ses lignes une à une). 2) Priorité de R2 trop haute : avec 120 et la préemption, R2 deviendrait actif dès qu'il rejoint le groupe de R1. Le routeur de secours garde une priorité inférieure à 110 : la valeur par défaut, 100, convient. 3) Pas de préemption sur R1 : sans standby 10 preempt, un routeur qui revient ne reprend pas le rôle actif, même avec une priorité supérieure, et R2 le garde jusqu'à sa propre panne. Le délai facultatif (delay minimum) laisse au routage le temps de converger avant la reprise. La version 2 est déjà identique des deux côtés : des versions différentes (multicast 224.0.0.2 contre 224.0.0.102) empêcheraient aussi les routeurs de se voir. Vérifications : show standby brief (R1 Active, R2 Standby, même groupe), show standby g0/0/0 (adresse virtuelle, priorités, « Preemption enabled »).",
+  "reference": "Cisco IOS XE — First Hop Redundancy Protocols Configuration Guide, « Configuring HSRP » (HSRP groups, standby priority, standby preempt, HSRP version 2) ; RFC 2281",
+  "estimatedMinutes": 5
+}

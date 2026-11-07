@@ -198,7 +198,8 @@ export function readParam(ctx: ParamContext, elem: Param, tokens: readonly strin
     case 'port': {
       if (isInt(token)) return Number(token) <= 65535 ? { canon: String(Number(token)), consumed: 1 } : null;
       const lower = token.toLowerCase();
-      return ctx.profile.portNames[lower] !== undefined ? { canon: lower, consumed: 1 } : null;
+      const tables = elem.table !== undefined ? [ctx.profile.portNames[elem.table] ?? {}] : Object.values(ctx.profile.portNames);
+      return tables.some((t) => t[lower] !== undefined) ? { canon: lower, consumed: 1 } : null;
     }
     case 'mac':
       return /^[0-9a-f]{1,4}\.[0-9a-f]{1,4}\.[0-9a-f]{1,4}$/i.test(token)

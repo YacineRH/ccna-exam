@@ -1,0 +1,319 @@
+{
+  "slug": "ccna-challenge-4.1-nat-pat",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "4.0",
+  "subtopic": "4.1",
+  "difficulty": "medium",
+  "title": "Dépannage : plus d'accès Internet depuis le LAN",
+  "statement": "Le routeur R1 a été reconfiguré après un remplacement matériel, à partir de notes manuscrites. Depuis :\n- aucun poste du LAN 192.168.10.0/24 n'accède à Internet ;\n- R1 lui-même joint bien le routeur du FAI (ping 203.0.113.1 réussi) ;\n- show ip nat translations reste vide, quelle que soit l'activité des postes.\n\nCe qui est attendu : tous les postes du LAN sortent vers Internet en partageant l'adresse publique de l'interface G0/0/1 (PAT). La traduction s'appuie sur l'ACL standard 1, qui doit désigner exactement le LAN. Corrigez R1.",
+  "topology": "  LAN 192.168.10.0/24                          FAI\n  postes en DHCP                               203.0.113.1/30\n        |                                         |\n  G0/0/0 192.168.10.1/24                 G0/0/1 203.0.113.2/30\n        +------------------- R1 ------------------+\n\n  Route par défaut : 0.0.0.0/0 via 203.0.113.1 (en place)\n  Traduction voulue : 192.168.10.0/24 -> adresse de G0/0/1, en surcharge (PAT), via l'ACL 1",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": [
+        "GigabitEthernet0/0/0-1"
+      ],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN\n ip address 192.168.10.1 255.255.255.0\n ip nat outside\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien FAI\n ip address 203.0.113.2 255.255.255.252\n ip nat inside\n no shutdown\naccess-list 1 permit 192.168.1.0 0.0.0.255\nip nat inside source list 1 interface GigabitEthernet0/0/0 overload\nip route 0.0.0.0 0.0.0.0 203.0.113.1"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "cote-prive",
+      "description": "R1 traite le LAN 192.168.10.0/24 comme le réseau privé dont il traduit les adresses.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "ip nat inside"
+          },
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "ip nat outside",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "cote-public",
+      "description": "R1 traite le lien vers le FAI comme le côté public, vers lequel les adresses sont traduites.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/0/1",
+            "line": "ip nat outside"
+          },
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/0/1",
+            "line": "ip nat inside",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "acl-lan",
+      "description": "La traduction s'applique à tous les postes du LAN 192.168.10.0/24, et à eux seuls.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "section": "ip access-list standard 1",
+            "pattern": "^permit 192\\.168\\.10\\.0 0\\.0\\.0\\.255$"
+          },
+          {
+            "type": "regex",
+            "section": "ip access-list standard 1",
+            "pattern": "^permit (?!192\\.168\\.10\\.0 0\\.0\\.0\\.255$)",
+            "absent": true
+          },
+          {
+            "type": "regex",
+            "section": "ip access-list standard 1",
+            "pattern": "^deny (?!any( log)?$)",
+            "absent": true
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "section": "ip access-list standard 1",
+                "pattern": "^deny ",
+                "absent": true
+              },
+              {
+                "type": "sequence",
+                "section": "ip access-list standard 1",
+                "patterns": [
+                  "^permit 192\\.168\\.10\\.0 0\\.0\\.0\\.255$",
+                  "^deny any( log)?$"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "sortie-adresse-publique",
+      "description": "Tous les postes sortent vers Internet en partageant l'adresse publique de R1 sur le lien FAI.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "line": "ip nat inside source list 1 interface GigabitEthernet0/0/1 overload"
+          },
+          {
+            "type": "regex",
+            "pattern": "^ip nat inside source list 1 interface GigabitEthernet0/0/0",
+            "absent": true
+          }
+        ]
+      }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 6,
+    "timeLimitMinutes": 12,
+    "mode": "troubleshoot",
+    "faults": [
+      "Les rôles NAT sont inversés : ip nat outside sur l'interface du LAN (G0/0/0) et ip nat inside sur l'interface du FAI (G0/0/1).",
+      "L'ACL 1 autorise 192.168.1.0 0.0.0.255 au lieu du LAN 192.168.10.0/24 : aucune adresse des postes n'est sélectionnée pour la traduction.",
+      "La surcharge (PAT) utilise l'adresse de l'interface du LAN (GigabitEthernet0/0/0) au lieu de celle du FAI (GigabitEthernet0/0/1)."
+    ]
+  },
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface GigabitEthernet0/0/0",
+        "ip nat inside",
+        "interface GigabitEthernet0/0/1",
+        "ip nat outside",
+        "exit",
+        "no access-list 1",
+        "access-list 1 permit 192.168.10.0 0.0.0.255",
+        "no ip nat inside source list 1 interface GigabitEthernet0/0/0 overload",
+        "ip nat inside source list 1 interface GigabitEthernet0/0/1 overload",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Entrée de l'ACL remplacée par son numéro de séquence, abréviations",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "ip access-list standard 1",
+            "no 10",
+            "permit 192.168.10.0 0.0.0.255",
+            "exit",
+            "int g0/0/1",
+            "ip nat out",
+            "int g0/0/0",
+            "ip nat in",
+            "exit",
+            "ip nat inside source list 1 interface g0/0/1 overload",
+            "\u001a"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Anciennes déclarations retirées avant de poser les bonnes",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "no ip nat inside source list 1 interface g0/0/0 overload",
+            "interface g0/0/0",
+            "no ip nat outside",
+            "ip nat inside",
+            "interface g0/0/1",
+            "no ip nat inside",
+            "ip nat outside",
+            "exit",
+            "no access-list 1 permit 192.168.1.0 0.0.0.255",
+            "access-list 1 permit 192.168.10.0 0.0.0.255",
+            "ip nat inside source list 1 interface gigabitethernet 0/0/1 overload",
+            "end"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "ACL réécrite avec un refus final explicite (deny any), équivalent au refus implicite",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "ip nat inside",
+            "interface g0/0/1",
+            "ip nat outside",
+            "exit",
+            "no access-list 1",
+            "access-list 1 permit 192.168.10.0 0.0.0.255",
+            "access-list 1 deny any",
+            "ip nat inside source list 1 interface g0/0/1 overload",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Bonne entrée ajoutée à l'ACL 1 sans retirer l'ancienne",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 1 permit 192.168.10.0 0.0.0.255",
+            "interface g0/0/0",
+            "ip nat inside",
+            "interface g0/0/1",
+            "ip nat outside",
+            "exit",
+            "ip nat inside source list 1 interface g0/0/1 overload",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "acl-lan"
+      ]
+    },
+    {
+      "description": "Interface du LAN passée en inside, mais celle du FAI laissée en inside",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "ip nat inside",
+            "exit",
+            "no access-list 1",
+            "access-list 1 permit 192.168.10.0 0.0.0.255",
+            "ip nat inside source list 1 interface g0/0/1 overload",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "cote-public"
+      ]
+    },
+    {
+      "description": "Masque de sous-réseau saisi à la place du masque générique dans l'ACL",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "no access-list 1",
+            "access-list 1 permit 192.168.10.0 255.255.255.0",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "acl-lan"
+      ]
+    },
+    {
+      "description": "Rôles et ACL corrigés, mais PAT laissé sur l'adresse de l'interface du LAN",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "ip nat inside",
+            "interface g0/0/1",
+            "ip nat outside",
+            "exit",
+            "no access-list 1",
+            "access-list 1 permit 192.168.10.0 0.0.0.255",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "sortie-adresse-publique"
+      ]
+    }
+  ],
+  "explanation": "Trois erreurs empêchaient toute traduction. 1) Rôles inversés : ip nat inside se pose sur l'interface du réseau privé (G0/0/0) et ip nat outside sur celle d'Internet (G0/0/1). La règle ip nat inside source ne traduit que le trafic qui entre par une interface inside et sort par une interface outside ; avec les rôles inversés, le trafic des postes entre par une interface outside et n'est jamais pris en compte. Une interface n'a qu'un rôle : saisir le bon remplace l'ancien. 2) ACL erronée : l'ACL 1 sélectionne les adresses sources à traduire. permit 192.168.1.0 0.0.0.255 ne correspond à aucune adresse du LAN 192.168.10.0/24. Il faut permit 192.168.10.0 0.0.0.255 (masque générique, pas 255.255.255.0) et retirer l'entrée fausse : no access-list 1 supprime toute l'ACL numérotée, ou ip access-list standard 1 puis no 10 ne retire que l'entrée 10. Ajouter la bonne entrée sans retirer l'autre laisse une ACL qui ne désigne plus exactement le LAN. 3) Mauvaise interface de surcharge : ip nat inside source list 1 interface G0/0/0 overload utiliserait l'adresse privée 192.168.10.1, non routable sur Internet. La surcharge (PAT) doit utiliser l'adresse publique de G0/0/1 : tous les postes partagent 203.0.113.2, distingués par les numéros de port. Si des traductions existent déjà, IOS peut refuser de modifier la règle : clear ip nat translation * les efface. Vérifications : show ip nat translations et show ip nat statistics (interfaces inside/outside, correspondances), après un ping depuis un poste vers Internet.",
+  "reference": "Cisco IOS XE — IP Addressing: NAT Configuration Guide, « Configuring NAT for IP Address Conservation » (Configuring Inside Source Addresses, Configuring PAT / Overloading an Inside Global Address) ; Cisco IOS IP Addressing Services Command Reference (ip nat inside source, ip nat inside / outside)",
+  "estimatedMinutes": 6
+}

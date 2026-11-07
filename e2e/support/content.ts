@@ -70,3 +70,22 @@ export function labOf(code: string, slug: string): Lab {
   if (!lab) throw new Error(`Lab introuvable : ${slug}`);
   return lab;
 }
+
+/**
+ * Challenge de dépannage sur un seul équipement, à la solution la plus courte : celui que le test
+ * navigateur résout au clavier.
+ */
+export function troubleshootChallenge(code: string): Lab {
+  const list = loadLabs(code).labs.filter((l) => l.kind === 'challenge' && l.challenge?.mode === 'troubleshoot' && l.devices.length === 1);
+  const sorted = list.sort((a, b) => a.solution.flatMap((s) => s.commands).length - b.solution.flatMap((s) => s.commands).length);
+  const found = sorted[0];
+  if (!found) throw new Error(`Aucun challenge de dépannage mono-équipement pour ${code}`);
+  return found;
+}
+
+/** Un autre challenge que `except`, pour le test d'échéance. */
+export function anotherChallenge(code: string, except: string): Lab {
+  const found = loadLabs(code).labs.find((l) => l.kind === 'challenge' && l.slug !== except);
+  if (!found) throw new Error(`Pas de second challenge pour ${code}`);
+  return found;
+}

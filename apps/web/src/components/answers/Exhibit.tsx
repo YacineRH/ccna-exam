@@ -8,7 +8,7 @@ export function Exhibit({ text }: { text: string }) {
         <span className="led h-2 w-2 rounded-full bg-accent" aria-hidden />
         Exhibit
       </figcaption>
-      <pre className="m-0 overflow-x-auto bg-[#070B13] px-[18px] py-4 font-mono text-[13px] leading-[1.65] text-[#C9D4E5]">
+      <pre tabIndex={0} className="m-0 overflow-x-auto bg-[#070B13] px-[18px] py-4 font-mono text-[13px] leading-[1.65] text-[#C9D4E5]">
         {lines.map((line, i) => {
           const m = /^(\S+?[>#])(\s.*|$)/.exec(line);
           return (

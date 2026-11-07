@@ -160,6 +160,7 @@ export async function upsertLab(
   const values = {
     certificationId: certId,
     slug: lab.slug,
+    kind: lab.kind,
     domainId: dom.id,
     subtopicId: sub.id,
     difficulty: lab.difficulty,

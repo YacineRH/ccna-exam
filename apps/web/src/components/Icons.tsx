@@ -114,3 +114,14 @@ export const IconTarget = (p: IconProps) => (
     <circle cx="12" cy="12" r="3.5" />
   </svg>
 );
+export const IconBolt = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />
+  </svg>
+);
+export const IconCards = (p: IconProps) => (
+  <svg {...base(p)}>
+    <rect x="3" y="6" width="13" height="15" rx="2" />
+    <path d="M8 3h11a2 2 0 0 1 2 2v13" />
+  </svg>
+);

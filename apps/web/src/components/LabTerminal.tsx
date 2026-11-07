@@ -15,6 +15,7 @@ export function LabTerminal({
   onActiveChange,
   transcript,
   onSubmit,
+  onComplete,
   readOnly = false,
 }: {
   devices: { id: string; type: string; prompt: string }[];
@@ -23,6 +24,8 @@ export function LabTerminal({
   transcript: TerminalLine[];
   /** Envoie une ou plusieurs lignes ; renvoie le texte à remettre dans la saisie (après `?`). */
   onSubmit: (device: string, input: string) => Promise<string | undefined>;
+  /** Complétion d'un mot (Tab d'IOS), sans rien exécuter ; renvoie la ligne complétée. */
+  onComplete?: (device: string, input: string) => Promise<string>;
   readOnly?: boolean;
 }) {
   const [value, setValue] = useState('');
@@ -71,6 +74,22 @@ export function LabTerminal({
     inputRef.current?.focus();
   };
 
+  const browse = (direction: 'up' | 'down') => {
+    if (!history.length) return;
+    const from = cursor ?? history.length;
+    if (cursor === null) draft.current = value;
+    const next = historyStep(history, from, direction);
+    setCursor(next === history.length ? null : next);
+    setValue(next === history.length ? draft.current : (history[next] as string));
+  };
+
+  const complete = async () => {
+    if (!onComplete || !value.trim()) return;
+    const done = await onComplete(device.id, value);
+    setValue(done);
+    inputRef.current?.focus();
+  };
+
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -85,13 +104,20 @@ export function LabTerminal({
     } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
       if (!history.length) return;
       e.preventDefault();
-      const from = cursor ?? history.length;
-      if (cursor === null) draft.current = value;
-      const next = historyStep(history, from, e.key === 'ArrowUp' ? 'up' : 'down');
-      setCursor(next === history.length ? null : next);
-      setValue(next === history.length ? draft.current : (history[next] as string));
+      browse(e.key === 'ArrowUp' ? 'up' : 'down');
     }
+    // Tab garde son rôle de navigation au clavier (pas de piège) : la complétion passe par la barre tactile.
   };
+
+  /** Barre d'actions tactile : le bouton ne prend pas le focus, pour garder le clavier virtuel ouvert. */
+  const keep = (e: { preventDefault: () => void }) => e.preventDefault();
+  const actions: { label: string; text: string; run: () => void }[] = [
+    { label: 'Ctrl+Z : quitter la configuration', text: 'Ctrl+Z', run: () => void send('\x1a') },
+    { label: 'Aide de la commande (?)', text: '?', run: () => void send(`${value}?`) },
+    { label: 'Commande précédente', text: '↑', run: () => browse('up') },
+    { label: 'Commande suivante', text: '↓', run: () => browse('down') },
+    ...(onComplete ? [{ label: 'Compléter le mot (Tab)', text: 'Tab', run: () => void complete() }] : []),
+  ];
 
   const onPaste = (e: ClipboardEvent<HTMLInputElement>) => {
     const text = e.clipboardData.getData('text');
@@ -119,7 +145,7 @@ export function LabTerminal({
                 role="tab"
                 aria-selected={d.id === device.id}
                 onClick={() => onActiveChange(d.id)}
-                className={`min-h-[36px] rounded-md border px-3 font-mono text-[12px] font-semibold ${
+                className={`min-h-[44px] rounded-md border px-3 font-mono text-[12px] font-semibold ${
                   d.id === device.id ? 'border-accent text-text' : 'border-[#223049] text-muted hover:text-text'
                 }`}
               >
@@ -134,6 +160,10 @@ export function LabTerminal({
       </div>
       <div
         ref={scroller}
+        // Terminée, la transcription n'a plus de champ : on peut la faire défiler au clavier.
+        tabIndex={readOnly ? 0 : undefined}
+        role={readOnly ? 'region' : undefined}
+        aria-label={readOnly ? `Transcription de ${device.id}` : undefined}
         className="max-h-[62vh] min-h-[300px] overflow-auto bg-[#060A11] px-4 py-4 font-mono text-[13px] leading-[1.6] text-[#C9D4E5] sm:text-[13.5px]"
         onClick={() => {
           if (!window.getSelection()?.toString()) inputRef.current?.focus();
@@ -181,11 +211,34 @@ export function LabTerminal({
               autoCorrect="off"
               spellCheck={false}
               enterKeyHint="send"
-              className="min-w-0 flex-1 border-0 bg-transparent p-0 font-mono text-[#E7EDF6] caret-accent outline-none focus-visible:outline-none"
+              inputMode="text"
+              // 16 px sur mobile : en dessous, iOS zoome sur le champ à chaque saisie.
+              className="min-w-0 flex-1 border-0 bg-transparent p-0 font-mono text-[16px] text-[#E7EDF6] caret-accent outline-none focus-visible:outline-none sm:text-[13.5px]"
             />
           </form>
         )}
       </div>
+      {!readOnly && (
+        <div role="toolbar" aria-label="Touches du terminal" className="touch-bar gap-1.5 overflow-x-auto border-t border-line bg-chrome px-3 py-2">
+          {actions.map((a) => (
+            <button
+              key={a.text}
+              type="button"
+              aria-label={a.label}
+              title={a.label}
+              onPointerDown={keep}
+              onMouseDown={keep}
+              onClick={() => {
+                a.run();
+                inputRef.current?.focus();
+              }}
+              className="min-h-[44px] min-w-[52px] shrink-0 rounded-md border border-line2 px-3 font-mono text-[14px] font-semibold text-text active:bg-raised"
+            >
+              {a.text}
+            </button>
+          ))}
+        </div>
+      )}
       {!readOnly && (
         <p id={helpId} className="m-0 border-t border-line px-4 py-2 font-mono text-[11.5px] text-muted">
           Entrée : exécuter · ↑/↓ : historique · ? : aide · Ctrl+Z : quitter la configuration · collage multi-ligne accepté

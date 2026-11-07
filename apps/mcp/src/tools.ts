@@ -63,7 +63,7 @@ export function createExamForgeServer(api: ApiClient): McpServer {
         'rédiger la question -> submit_question (validation automatique) -> validate_question (seconde passe de relecture) -> ' +
         'record_review (publie ou renvoie en brouillon). Seules les questions publiées entrent dans les examens. ' +
         "generate_exam assemble un examen blanc figé à partir des questions publiées et indique quoi générer s'il en manque. " +
-        "Labs CLI, même cycle : list_labs -> generate_lab (consigne et commandes disponibles) -> submit_lab (l'API joue la solution, les variantes et les pièges dans le simulateur) -> validate_lab (relecture) -> record_lab_review.",
+        "Labs CLI, même cycle : list_labs -> generate_lab (consigne et commandes disponibles) -> submit_lab (l'API joue la solution, les variantes et les pièges dans le simulateur) -> validate_lab (relecture) -> record_lab_review. Challenges chronométrés : generate_challenge, puis le même cycle (submit_lab, validate_lab, record_lab_review).",
     },
   );
 
@@ -355,6 +355,94 @@ export function createExamForgeServer(api: ApiClient): McpServer {
           profileCommands: profile.commands,
           existingLabs: labs.map((l) => ({ slug: l.slug, title: l.title })),
           next: 'Envoyez le lab complet avec submit_lab.',
+        };
+      }),
+  );
+
+  server.registerTool(
+    'generate_challenge',
+    {
+      title: "Consigne de génération d'un challenge chronométré",
+      description:
+        "Prépare la génération d'un challenge : un lab chronométré, sans indice, terminé d'office à l'échéance, en mode construction ou dépannage (pannes semées dans la configuration de départ). Même format qu'un lab, avec kind « challenge » et le bloc challenge (temps cible, échéance, mode, pannes). Rédigez-le puis envoyez-le avec submit_lab : il suit le même cycle (simulateur, validate_lab, record_lab_review).",
+      inputSchema: {
+        certification: z.string(),
+        theme: z.string().min(3).describe('Thème, ex. « dépannage OSPF entre deux routeurs »'),
+        duree_cible: z.number().int().min(1).max(60).describe('Temps cible en minutes'),
+        mode: z.enum(['build', 'troubleshoot']).default('troubleshoot').describe('build : configuration à faire ; troubleshoot : pannes à trouver'),
+        subtopic: z.string().optional().describe('Code du sous-thème, ex. "3.4" ; à défaut, à choisir dans subtopics'),
+        difficulty: z.enum(DIFFICULTIES).optional(),
+      },
+    },
+    async ({ certification, theme, duree_cible, mode, subtopic, difficulty }) =>
+      run(async () => {
+        const detail = await api.get<CertificationDetail>(`/certifications/${encodeURIComponent(certification)}`);
+        const cert = detail.certification;
+        const dom = subtopic ? cert.domains.find((d) => d.subtopics.some((s) => s.code === subtopic)) : undefined;
+        if (subtopic && !dom) {
+          throw new ApiError(400, 'unknown_subtopic', `Sous-thème ${subtopic} inconnu`, cert.domains.flatMap((d) => d.subtopics.map((s) => s.code)));
+        }
+        const profile = await api.get<{ id: string; deviceTypes: string[]; interfaceTypes: string[]; modes: unknown[]; commands: unknown[] }>(
+          `/admin/lab-profile?certification=${encodeURIComponent(certification)}`,
+        );
+        const { labs } = await api.get<{ labs: { slug: string; title: string; subtopic: string }[] }>(
+          `/admin/labs?${new URLSearchParams({ certification, kind: 'challenge' })}`,
+        );
+        const timeLimit = Math.min(120, Math.max(duree_cible + 2, duree_cible * 2));
+        const sub = subtopic ?? '<code du sous-thème>';
+        const troubleshoot = mode === 'troubleshoot';
+        return {
+          target: { theme, targetMinutes: duree_cible, mode, ...(subtopic ? { subtopic, domain: dom?.code } : {}), ...(difficulty ? { difficulty } : {}) },
+          subtopics: subtopic ? undefined : cert.domains.map((d) => ({ domain: d.code, subtopics: d.subtopics.map((s) => `${s.code} ${s.name}`) })),
+          format: {
+            slug: `${certification}-challenge-${sub}-<sujet-court>-ia-${String(labs.length + 1).padStart(3, '0')}`,
+            kind: 'challenge',
+            certification,
+            domain: dom?.code ?? '<code du domaine>',
+            subtopic: sub,
+            difficulty: difficulty ?? '<easy|medium|hard>',
+            title: '5 à 120 caractères',
+            statement: troubleshoot
+              ? 'Contexte et symptômes observés (ce qui ne marche pas), sans nommer les pannes ni leur correction'
+              : 'Contexte et consignes numérotées, toutes les valeurs nécessaires',
+            topology: "Schéma texte et plan d'adressage",
+            profile: profile.id,
+            devices: [{ id: 'R1', type: profile.deviceTypes[0], interfaces: ['GigabitEthernet0/0/0-1'], startupConfig: troubleshoot ? 'hostname R1\n… configuration complète, avec les pannes' : 'hostname R1' }],
+            objectives: [{ id: 'objectif', description: 'Résultat attendu côté service, sans dicter la commande', check: { type: 'line', section: 'interface GigabitEthernet0/0/0', line: '…' } }],
+            hints: [],
+            challenge: {
+              targetMinutes: duree_cible,
+              timeLimitMinutes: timeLimit,
+              mode,
+              faults: troubleshoot ? ['Une phrase par panne semée, révélée à la fin seulement'] : [],
+            },
+            solution: [{ device: 'R1', commands: ['enable', 'configure terminal', '…'] }],
+            variants: [{ description: 'Autre façon valide', solution: [{ device: 'R1', commands: ['…'] }] }],
+            pitfalls: [{ description: 'Erreur classique', solution: [{ device: 'R1', commands: ['…'] }], failing: ['objectif'] }],
+            explanation: troubleshoot ? 'Chaque panne, son symptôme et sa correction' : 'Explication détaillée',
+            reference: 'Guide de configuration ou référence de commandes Cisco précise',
+            estimatedMinutes: duree_cible,
+          },
+          rules: [
+            'Exactitude technique non négociable : chaque commande, mode et valeur par défaut doit être juste sur la plateforme visée.',
+            'Aucun indice (hints: []) : le challenge se joue seul, contre la montre. timeLimitMinutes ≥ targetMinutes ; estimatedMinutes ≤ timeLimitMinutes.',
+            'Le challenge se termine dès que tous les objectifs sont atteints : ils doivent couvrir tout le travail demandé.',
+            ...(troubleshoot
+              ? [
+                  'Dépannage : la configuration de départ est complète et réaliste, avec 1 à 4 pannes CCNA classiques (VLAN natif incohérent, ACL mal placée, réseau OSPF manquant, interface en shutdown…).',
+                  'Une entrée de faults par panne ; au plus autant de pannes que d’objectifs. Les descriptions d’objectifs sont publiques : elles décrivent le service rétabli, pas la panne.',
+                ]
+              : ['Construction : un travail précis et rapide, toutes les valeurs données dans l’énoncé.']),
+            "Les objectifs vérifient l'état final et acceptent toutes les écritures équivalentes ; aucun n'est atteint au départ ; la solution et chaque variante les atteignent tous ; chaque piège échoue sur ses objectifs `failing`.",
+            'Seules les commandes listées dans profileCommands existent dans le simulateur.',
+            'Rédaction en français ; commandes et sorties IOS dans leur forme réelle.',
+            'Ne pas reprendre un challenge existant ci-dessous.',
+          ],
+          profileModes: profile.modes,
+          interfaceTypes: profile.interfaceTypes,
+          profileCommands: profile.commands,
+          existingChallenges: labs.map((l) => ({ slug: l.slug, title: l.title, subtopic: l.subtopic })),
+          next: 'Envoyez le challenge complet avec submit_lab, puis validate_lab et record_lab_review.',
         };
       }),
   );

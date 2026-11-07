@@ -40,6 +40,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Build
         run: pnpm build
+      - name: Budget du bundle initial du front
+        run: pnpm bundle:check
       - name: Typecheck
         run: pnpm typecheck
       - name: Tests (moteur, contenu, API sur PostgreSQL, MCP, web)
@@ -76,7 +78,7 @@ jobs:
       - name: Chromium pour Playwright
         working-directory: e2e
         run: npx playwright install --with-deps chromium
-      - name: Parcours e2e (inscription, ordre, association, examen, lab CLI, mobile)
+      - name: Parcours e2e (inscription, examen, labs, challenges, révision, mobile, audit axe)
         run: pnpm e2e
       - name: Rapport en cas d'échec
         if: failure()
@@ -131,6 +133,52 @@ jobs:
           name: playwright-report-sweep
           path: |
             e2e/playwright-report-sweep/
+            e2e/test-results/
+          retention-days: 7
+
+  browsers:
+    name: Fumée Chromium, Firefox et WebKit (non bloquant)
+    runs-on: ubuntu-latest
+    # Moteurs non préinstallés et plus lents : un échec est signalé sans bloquer la fusion.
+    continue-on-error: true
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: examforge
+          POSTGRES_PASSWORD: examforge
+          POSTGRES_DB: examforge_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U examforge"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      E2E_DATABASE_URL: postgres://examforge:examforge@localhost:5432/examforge_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build (API et front servis par le test)
+        run: pnpm build
+      - name: Navigateurs pour Playwright
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Connexion, examen court et lab dans les trois moteurs
+        run: pnpm e2e:browsers
+      - name: Rapport en cas d'échec
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-browsers
+          path: |
+            e2e/playwright-report-browsers/
             e2e/test-results/
           retention-days: 7
 

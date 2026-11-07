@@ -1,18 +1,11 @@
-import { z } from 'zod';
 import { commandMatches } from './cli.js';
 import { normalizeIpv4 } from './ipv4.js';
 import type { AnswerKey } from './question.js';
+import type { Response } from './response.js';
 
-/** Réponse envoyée par le candidat, du même type que la question. */
-export const responseSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('mcq_single'), choice: z.string().max(64) }),
-  z.object({ type: z.literal('mcq_multi'), choices: z.array(z.string().max(64)).max(20) }),
-  z.object({ type: z.literal('fill_blank'), fields: z.record(z.string().max(256)) }),
-  z.object({ type: z.literal('cli'), lines: z.array(z.string().max(512)).max(50) }),
-  z.object({ type: z.literal('ordering'), order: z.array(z.string().max(64)).max(50) }),
-  z.object({ type: z.literal('matching'), pairs: z.record(z.string().max(64)) }),
-]);
-export type Response = z.infer<typeof responseSchema>;
+export { responseSchema, type Response } from './response.js';
+
+
 
 export interface GradeResult {
   /** Bonne réponse au sens de l'examen : tout ou rien. */

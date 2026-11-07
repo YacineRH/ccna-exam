@@ -47,8 +47,8 @@ export type LabCheck =
       covers?: z.infer<typeof coversSchema>;
     }
   | { type: 'section'; device?: string; section?: string; sectionPattern?: string; absent: boolean }
-  | { type: 'sequence'; device?: string; section?: string; sectionPattern?: string; sections: 'any' | 'all'; patterns: string[] }
-  | { type: 'command'; device?: string; mode?: string; section?: string; command: string | string[]; afterLastChange?: boolean }
+  | { type: 'sequence'; device?: string; section?: string; sectionPattern?: string; sections: 'any' | 'all'; patterns: string[]; absent?: boolean }
+  | { type: 'command'; device?: string; mode?: string; section?: string; command: string | string[]; afterLastChange?: boolean; after?: string[] }
   | { type: 'all'; checks: LabCheck[] }
   | { type: 'any'; checks: LabCheck[] };
 
@@ -75,7 +75,13 @@ export const labCheckSchema: z.ZodType<LabCheck, z.ZodTypeDef, unknown> = z.lazy
       absent: z.boolean().default(false),
     }),
     /** Des lignes dans cet ordre (pas forcément consécutives) : une expression par ligne, insensibles à la casse. */
-    z.object({ type: z.literal('sequence'), ...scope, patterns: z.array(z.string().min(1)).min(2) }),
+    z.object({
+      type: z.literal('sequence'),
+      ...scope,
+      patterns: z.array(z.string().min(1)).min(2),
+      /** Vrai si cet ordre ne se trouve pas (aucun refus avant l'autorisation, par exemple). */
+      absent: z.boolean().default(false),
+    }),
     /** Une commande saisie avec succès (n'importe quand), dans un mode et une section donnés. */
     z.object({
       type: z.literal('command'),
@@ -85,6 +91,11 @@ export const labCheckSchema: z.ZodType<LabCheck, z.ZodTypeDef, unknown> = z.lazy
       command: textOrList,
       /** La commande doit venir après la dernière modification de la configuration (sauvegarde). */
       afterLastChange: z.boolean().optional(),
+      /**
+       * La commande doit venir après la dernière saisie réussie de chacune de ces commandes (mêmes mode et
+       * section) : une réactivation après la correction, pas avant.
+       */
+      after: z.array(z.string().min(1)).optional(),
     }),
     z.object({ type: z.literal('all'), checks: z.array(labCheckSchema).min(1) }),
     z.object({ type: z.literal('any'), checks: z.array(labCheckSchema).min(1) }),
@@ -100,9 +111,29 @@ const deviceSchema = z.object({
 
 const commandsByDevice = z.array(z.object({ device: z.string().min(1), commands: z.array(z.string()).min(1) })).min(1);
 
+/** Genre d'un lab : un lab guidé (avec indices), ou un challenge chronométré (sans indice, fin automatique). */
+export const LAB_KINDS = ['lab', 'challenge'] as const;
+export type LabKind = (typeof LAB_KINDS)[number];
+
+/**
+ * Réglages d'un challenge. `build` : configuration à faire ; `troubleshoot` : la configuration de départ
+ * contient des pannes (`faults`, révélées à la fin) que les objectifs demandent de corriger.
+ */
+const challengeSchema = z.object({
+  /** Temps cible, en minutes : le temps à battre. */
+  targetMinutes: z.number().int().min(1).max(60),
+  /** Échéance, en minutes : la session se termine d'elle-même, contrôlée côté serveur. */
+  timeLimitMinutes: z.number().int().min(1).max(120),
+  mode: z.enum(['build', 'troubleshoot']),
+  /** Pannes semées dans la configuration de départ (mode dépannage), une phrase chacune. */
+  faults: z.array(z.string().min(10)).default([]),
+});
+export type ChallengeSettings = z.infer<typeof challengeSchema>;
+
 export const labSchema = z
   .object({
     slug: z.string().regex(/^[a-z0-9.-]+$/),
+    kind: z.enum(LAB_KINDS).default('lab'),
     certification: z.string().min(1),
     domain: z.string().min(1),
     subtopic: z.string().min(1),
@@ -119,8 +150,10 @@ export const labSchema = z
       .array(z.object({ id: z.string().regex(/^[a-z0-9-]+$/), description: z.string().min(10), check: labCheckSchema }))
       .min(1)
       .max(15),
-    /** Trois indices, du plus vague au plus précis ; aucun ne donne toute la solution. */
-    hints: z.array(z.string().min(10)).length(3),
+    /** Trois indices, du plus vague au plus précis ; aucun ne donne toute la solution. Aucun pour un challenge. */
+    hints: z.array(z.string().min(10)).max(3).default([]),
+    /** Réglages d'un challenge (obligatoires avec `kind: challenge`, interdits sinon). */
+    challenge: challengeSchema.optional(),
     solution: commandsByDevice,
     /** Autres façons valides de réussir, chacune complète : elles doivent atteindre tous les objectifs. */
     variants: z.array(z.object({ description: z.string().min(5), solution: commandsByDevice })).default([]),
@@ -134,6 +167,22 @@ export const labSchema = z
     estimatedMinutes: z.number().int().min(1).max(120).default(10),
   })
   .superRefine((lab, ctx) => {
+    if (lab.kind === 'lab') {
+      if (lab.hints.length !== 3) ctx.addIssue({ code: 'custom', message: 'un lab a exactement 3 indices' });
+      if (lab.challenge) ctx.addIssue({ code: 'custom', message: 'challenge réservé à kind: challenge' });
+    } else {
+      if (lab.hints.length) ctx.addIssue({ code: 'custom', message: 'un challenge n’a pas d’indice' });
+      const c = lab.challenge;
+      if (!c) ctx.addIssue({ code: 'custom', message: 'challenge (temps cible, échéance, mode) attendu' });
+      else {
+        if (c.timeLimitMinutes < c.targetMinutes) ctx.addIssue({ code: 'custom', message: 'l’échéance précède le temps cible' });
+        if (c.mode === 'troubleshoot') {
+          if (!c.faults.length) ctx.addIssue({ code: 'custom', message: 'un challenge de dépannage décrit ses pannes (faults)' });
+          if (!lab.devices.some((d) => d.startupConfig.trim())) ctx.addIssue({ code: 'custom', message: 'un challenge de dépannage part d’une configuration' });
+          if (c.faults.length > lab.objectives.length) ctx.addIssue({ code: 'custom', message: 'plus de pannes que d’objectifs' });
+        } else if (c.faults.length) ctx.addIssue({ code: 'custom', message: 'faults réservé au mode troubleshoot' });
+      }
+    }
     const devices = new Set(lab.devices.map((d) => d.id));
     if (devices.size !== lab.devices.length) ctx.addIssue({ code: 'custom', message: 'équipement en double' });
     const ids = new Set(lab.objectives.map((o) => o.id));
@@ -168,6 +217,9 @@ export function parseLab(input: unknown): Lab {
 /** Ce que le navigateur reçoit d'un lab avant la fin : jamais la solution, ni le détail des objectifs. */
 export interface PublicLab {
   slug: string;
+  kind: LabKind;
+  /** Challenge : temps cible, échéance et mode ; les pannes restent secrètes jusqu'à la fin. */
+  challenge: { targetMinutes: number; timeLimitMinutes: number; mode: ChallengeSettings['mode'] } | null;
   title: string;
   difficulty: Lab['difficulty'];
   domain: string;
@@ -183,6 +235,8 @@ export interface PublicLab {
 export function toPublicLab(lab: Lab): PublicLab {
   return {
     slug: lab.slug,
+    kind: lab.kind,
+    challenge: lab.challenge ? { targetMinutes: lab.challenge.targetMinutes, timeLimitMinutes: lab.challenge.timeLimitMinutes, mode: lab.challenge.mode } : null,
     title: lab.title,
     difficulty: lab.difficulty,
     domain: lab.domain,
@@ -273,9 +327,19 @@ export class LabSession {
           accepted.includes(norm(h.canonical)) &&
           (c.mode === undefined || h.mode === c.mode) &&
           (c.section === undefined || h.targets.some((t) => norm(t) === norm(c.section as string)));
-        if (!c.afterLastChange) return dev.history.some(matches);
-        const lastChange = dev.history.map((h) => h.changed).lastIndexOf(true);
-        return dev.history.some((h, i) => i > lastChange && matches(h));
+        let from = -1;
+        if (c.afterLastChange) from = dev.history.map((h) => h.changed).lastIndexOf(true);
+        for (const prior of c.after ?? []) {
+          const want = norm(prior);
+          const sameScope = (h: (typeof dev.history)[number]) =>
+            norm(h.canonical) === want &&
+            (c.mode === undefined || h.mode === c.mode) &&
+            (c.section === undefined || h.targets.some((t) => norm(t) === norm(c.section as string)));
+          const last = dev.history.map(sameScope).lastIndexOf(true);
+          if (last === -1) return false;
+          from = Math.max(from, last);
+        }
+        return dev.history.some((h, i) => i > from && matches(h));
       }
       case 'section': {
         const dev = this.device(c.device);
@@ -286,7 +350,7 @@ export class LabSession {
       case 'sequence': {
         const dev = this.device(c.device);
         const scopes = this.sectionsFor(dev, c);
-        if (scopes === null) return false;
+        if (scopes === null) return c.absent === true;
         const res = c.patterns.map((p) => new RegExp(p, 'i'));
         const inOrder = (lines: string[]) => {
           let from = 0;
@@ -298,6 +362,7 @@ export class LabSession {
           return true;
         };
         const hits = scopes.map(inOrder);
+        if (c.absent) return !hits.some(Boolean);
         return c.sections === 'all' ? hits.every(Boolean) : hits.some(Boolean);
       }
       case 'line':

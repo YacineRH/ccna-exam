@@ -4,6 +4,8 @@ import type { LabSummary, TerminalLine } from './types';
 
 const lab = (over: Partial<LabSummary>): LabSummary => ({
   slug: 'x',
+  kind: 'lab',
+  challenge: null,
   title: 'X',
   difficulty: 'easy',
   domain: '2.0',

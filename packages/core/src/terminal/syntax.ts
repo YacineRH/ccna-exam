@@ -24,7 +24,7 @@ export type ParamType = (typeof PARAM_TYPES)[number];
 
 export type SyntaxElem =
   | { kind: 'kw'; word: string }
-  | { kind: 'param'; type: ParamType; label: string; min?: number; max?: number };
+  | { kind: 'param'; type: ParamType; label: string; min?: number; max?: number; table?: string };
 
 type Node = SyntaxElem | { kind: 'opt'; alts: Node[][] } | { kind: 'alt'; alts: Node[][] };
 
@@ -37,6 +37,8 @@ function parseParam(raw: string): SyntaxElem {
     if (min > max) throw new Error(`borne invalide : ${raw}`);
     return { kind: 'param', type: 'number', label: raw, min, max };
   }
+  const table = /^port:([a-z0-9-]+)$/.exec(inner);
+  if (table) return { kind: 'param', type: 'port', label: raw, table: table[1] as string };
   if (!(PARAM_TYPES as readonly string[]).includes(inner) || inner === 'number') throw new Error(`paramètre inconnu : ${raw}`);
   return { kind: 'param', type: inner as ParamType, label: raw };
 }

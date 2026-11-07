@@ -141,6 +141,8 @@ export function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  aria-invalid={error != null ? true : undefined}
+                  aria-describedby={error != null ? 'auth-error' : undefined}
                   className="input-bare font-mono"
                 />
               </span>
@@ -158,7 +160,8 @@ export function LoginPage() {
                   minLength={mode === 'register' ? 12 : undefined}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  aria-describedby={mode === 'register' ? 'pw-help' : undefined}
+                  aria-invalid={error != null || passwordTooShort ? true : undefined}
+                  aria-describedby={[mode === 'register' ? 'pw-help' : '', error != null ? 'auth-error' : ''].filter(Boolean).join(' ') || undefined}
                   className="input-bare font-mono"
                 />
               </span>
@@ -170,7 +173,7 @@ export function LoginPage() {
             </div>
 
             {error != null && (
-              <div role="alert" className="rounded-[10px] border px-4 py-3 text-[13.5px] text-text2" style={{ borderColor: 'rgba(255,107,94,.45)', background: 'rgba(255,107,94,.07)' }}>
+              <div id="auth-error" role="alert" className="rounded-[10px] border px-4 py-3 text-[13.5px] text-text2" style={{ borderColor: 'rgba(255,107,94,.45)', background: 'rgba(255,107,94,.07)' }}>
                 <span className="font-mono font-semibold text-crit">✕ </span>
                 {friendly ?? (error instanceof Error ? error.message : 'Erreur inattendue')}
               </div>

@@ -154,9 +154,20 @@ export interface InsufficientQuestionsDetails {
 }
 
 export type LabDifficulty = 'easy' | 'medium' | 'hard';
+export type LabKind = 'lab' | 'challenge';
+export type ChallengeMode = 'build' | 'troubleshoot';
+
+/** Réglages publics d'un challenge (les pannes restent secrètes jusqu'à la fin). */
+export interface ChallengeInfo {
+  targetMinutes: number;
+  timeLimitMinutes: number;
+  mode: ChallengeMode;
+}
 
 export interface LabSummary {
   slug: string;
+  kind: LabKind;
+  challenge: ChallengeInfo | null;
   title: string;
   difficulty: LabDifficulty;
   domain: string;
@@ -177,6 +188,8 @@ export interface LabSummary {
 
 export interface PublicLab {
   slug: string;
+  kind: LabKind;
+  challenge: ChallengeInfo | null;
   title: string;
   difficulty: LabDifficulty;
   domain: string;
@@ -217,9 +230,13 @@ export interface LabStep {
 
 export interface LabAttemptState {
   id: string;
+  kind: LabKind;
   status: 'in_progress' | 'finished';
   startedAt: string;
   finishedAt: string | null;
+  /** Challenge : échéance fixée par le serveur. */
+  deadlineAt: string | null;
+  expired: boolean;
   serverNow: string;
   lab: PublicLab;
   hintsUsed: number;
@@ -240,6 +257,10 @@ export interface LabAttemptState {
     hints: string[];
     typed: LabStep[];
     runningConfig: Record<string, string>;
+    expired: boolean;
+    targetMinutes: number | null;
+    /** Challenge de dépannage : les pannes semées dans la configuration de départ. */
+    faults: string[];
   };
 }
 
@@ -250,6 +271,8 @@ export interface LabCommandResult {
   prompts: Record<string, string>;
   achieved: string[];
   complete: boolean;
+  /** Challenge : terminé d'office à la réussite. */
+  finished: boolean;
   commandCount: number;
   serverNow: string;
 }
@@ -265,6 +288,8 @@ export interface LabHintResult {
 export interface LabAttemptSummary {
   id: string;
   slug: string;
+  kind: LabKind;
+  expired: boolean;
   title: string;
   difficulty: LabDifficulty;
   certification: string;
@@ -277,4 +302,91 @@ export interface LabAttemptSummary {
   hintsUsed: number;
   commandCount: number;
   durationSeconds: number | null;
+}
+
+/** Classement personnel d'un lab ou d'un challenge : chaque essai terminé, du plus ancien au plus récent. */
+export interface LabTimes {
+  slug: string;
+  kind: LabKind;
+  targetMinutes: number | null;
+  bestSeconds: number | null;
+  times: { id: string; startedAt: string; success: boolean; expired: boolean; durationSeconds: number | null; hintsUsed: number }[];
+}
+
+export interface RevisionDeck {
+  subtopic: string;
+  subtopicName: string;
+  domain: string;
+  /** Cartes que donnerait le paquet (10 à 20). */
+  available: number;
+  enrolled: boolean;
+  cards: number;
+  due: number;
+  fresh: number;
+  mastered: number;
+  nextDueAt: string | null;
+}
+
+export interface RevisionOverview {
+  certification: string;
+  serverNow: string;
+  dueToday: number;
+  totalCards: number;
+  nextDueAt: string | null;
+  deckSize: { min: number; max: number };
+  decks: RevisionDeck[];
+}
+
+export interface RevisionFeedback {
+  key: AnswerKey;
+  explanation: string;
+  distractorNotes: Record<string, string>;
+  reference: string | null;
+}
+
+export interface RevisionCard {
+  questionId: string;
+  position: number;
+  type: QuestionBody['type'];
+  difficulty: string;
+  subtopic: string | null;
+  subtopicName: string | null;
+  body: QuestionBody;
+  answer: null | { response: Response; correct: boolean; boxAfter: number; dueAfter: string; feedback: RevisionFeedback };
+}
+
+export interface RevisionSession {
+  id: string;
+  startedAt: string;
+  finishedAt: string | null;
+  answeredCount: number;
+  correctCount: number;
+  total: number;
+  cards: RevisionCard[];
+  serverNow: string;
+}
+
+export interface RevisionAnswerResult {
+  correct: boolean;
+  partial: number;
+  box: number;
+  intervalDays: number;
+  dueAt: string;
+  feedback: RevisionFeedback;
+  answeredCount: number;
+  correctCount: number;
+  finished: boolean;
+  serverNow: string;
+}
+
+export interface RevisionSessionSummary {
+  id: string;
+  certification: string;
+  subtopic: string | null;
+  subtopicName: string | null;
+  startedAt: string;
+  finishedAt: string | null;
+  total: number;
+  answeredCount: number;
+  correctCount: number;
 }

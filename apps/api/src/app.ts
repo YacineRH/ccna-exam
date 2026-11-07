@@ -14,6 +14,7 @@ import { attemptRoutes } from './routes/attempts.js';
 import { authRoutes } from './routes/auth.js';
 import { certificationRoutes } from './routes/certifications.js';
 import { labAttemptRoutes, labRoutes } from './routes/labs.js';
+import { revisionRoutes } from './routes/revision.js';
 import { statsRoutes } from './routes/stats.js';
 
 export async function buildApp(env: Env, db: Db): Promise<FastifyInstance> {
@@ -61,6 +62,7 @@ export async function buildApp(env: Env, db: Db): Promise<FastifyInstance> {
       await v1.register(attemptRoutes(db), { prefix: '/attempts' });
       await v1.register(labRoutes(db), { prefix: '/labs' });
       await v1.register(labAttemptRoutes(db), { prefix: '/lab-attempts' });
+      await v1.register(revisionRoutes(db), { prefix: '/revision' });
       await v1.register(statsRoutes(db), { prefix: '/stats' });
       await v1.register(adminRoutes(db), { prefix: '/admin' });
     },

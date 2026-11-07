@@ -8,12 +8,15 @@
     "e2e": "playwright test",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "e2e:sweep": "playwright test --config playwright.sweep.config.ts"
+    "e2e:sweep": "playwright test --config playwright.sweep.config.ts",
+    "e2e:browsers": "playwright test --config playwright.browsers.config.ts"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@examforge/content": "workspace:*",
     "@examforge/core": "workspace:*",
     "@playwright/test": "1.63.0",
+    "@types/pg": "^8.23.1",
     "pg": "^8.23.1"
   }
 }

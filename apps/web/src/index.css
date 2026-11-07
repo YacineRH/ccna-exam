@@ -83,8 +83,9 @@
   .btn-secondary:disabled {
     @apply border-[#1A2539] text-dim;
   }
+  /* Bouton compact : texte plus petit, mais une zone cliquable d'au moins 44 px (WCAG 2.5.5). */
   .btn-sm {
-    @apply min-h-[36px] px-3 text-[13px];
+    @apply min-h-[44px] px-3 text-[13px];
   }
   .chip {
     @apply rounded px-2 py-[3px] font-mono text-[11px] font-medium bg-raised text-text2;
@@ -119,9 +120,11 @@
     @apply border-accent;
     box-shadow: 0 0 0 1px #2dd4e8;
   }
+  /* Le champ occupe toute la hauteur de son cadre (.field, 46 px) : toute la zone est cliquable. */
   .input-bare {
-    @apply min-w-0 flex-1 border-0 bg-transparent text-text outline-none placeholder:text-dim;
+    @apply min-w-0 flex-1 self-stretch border-0 bg-transparent text-text outline-none placeholder:text-dim;
     font: inherit;
+    min-height: 44px;
   }
   .input-bare:focus-visible {
     outline: none;
@@ -151,6 +154,15 @@
 }
 
 @layer utilities {
+  /* Barre d'actions du terminal : écrans étroits et écrans tactiles. */
+  .touch-bar {
+    display: none;
+  }
+  @media (max-width: 767px), (pointer: coarse) {
+    .touch-bar {
+      display: flex;
+    }
+  }
   .led {
     animation: fxpulse 2.2s infinite;
   }
@@ -184,9 +196,22 @@
   }
 }
 
+/*
+ * Mouvement réduit : jauge, barres, LED et transitions s'affichent directement dans leur état final.
+ * (La jauge garde sa valeur : seule l'animation de départ disparaît.)
+ */
 @media (prefers-reduced-motion: reduce) {
   .led,
   .ring-anim {
     animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
   }
 }

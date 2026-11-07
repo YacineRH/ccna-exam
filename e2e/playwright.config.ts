@@ -32,7 +32,8 @@ export default defineConfig({
       command: 'node support/start-api.mjs',
       cwd: fileURLToPath(new URL('.', import.meta.url)),
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
-      env: { E2E_API_PORT: API_PORT },
+      // La suite enchaîne beaucoup de requêtes (audits, quatre largeurs d'écran) : plafond relevé pour l'API de test.
+      env: { E2E_API_PORT: API_PORT, E2E_RATE_LIMIT_MAX: process.env.E2E_RATE_LIMIT_MAX ?? '3000' },
       reuseExistingServer: false,
       timeout: 60_000,
       stdout: 'pipe',
