@@ -3,6 +3,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { RequireAuth } from './auth/RequireAuth';
 import { Layout } from './components/Layout';
 import { AttemptPage } from './pages/AttemptPage';
+import { ChallengesPage } from './pages/ChallengesPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { LabIntroPage, LabSessionPage } from './pages/LabPage';
@@ -11,6 +12,7 @@ import { LoginPage } from './pages/LoginPage';
 import { NewAttemptPage } from './pages/NewAttemptPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ResultPage } from './pages/ResultPage';
+import { RevisionPage, RevisionSessionPage } from './pages/RevisionPage';
 import { SubnetPage } from './pages/SubnetPage';
 
 const TITLES: [RegExp, string][] = [
@@ -23,6 +25,11 @@ const TITLES: [RegExp, string][] = [
   [/^\/labs\/cli\/sessions\//, 'Session de lab CLI'],
   [/^\/labs\/cli\/.+/, 'Lab CLI'],
   [/^\/labs\/cli/, 'CLI Cisco IOS'],
+  [/^\/challenges\/sessions\//, 'Challenge en cours'],
+  [/^\/challenges\/.+/, 'Challenge'],
+  [/^\/challenges/, 'Challenges'],
+  [/^\/revision\/sessions\//, 'Session de révision'],
+  [/^\/revision/, 'Révision espacée'],
   [/^\/$/, 'Tableau de bord'],
 ];
 
@@ -63,6 +70,11 @@ export function App() {
         <Route path="labs/cli/sessions/:id" element={<LabSessionPage />} />
         <Route path="labs/cli/:slug" element={<LabIntroPage />} />
         <Route path="labs" element={<Navigate to="/labs/subnetting" replace />} />
+        <Route path="challenges" element={<ChallengesPage />} />
+        <Route path="challenges/sessions/:id" element={<LabSessionPage />} />
+        <Route path="challenges/:slug" element={<LabIntroPage />} />
+        <Route path="revision" element={<RevisionPage />} />
+        <Route path="revision/sessions/:id" element={<RevisionSessionPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

@@ -82,15 +82,15 @@ async function ownedLabAttempt(db: Db, attemptId: string, userId: string) {
 
 const seconds = (from: Date, to: Date) => Math.max(0, Math.round((to.getTime() - from.getTime()) / 1000));
 
-const pastDeadline = (a: Pick<LabAttempt, 'deadlineAt'>, now = new Date()) =>
-  a.deadlineAt !== null && now.getTime() > a.deadlineAt.getTime() + CHALLENGE_GRACE_MS;
+const pastDeadline = (a: Pick<LabAttempt, 'deadlineAt'>, graceMs = CHALLENGE_GRACE_MS, now = new Date()) =>
+  a.deadlineAt !== null && now.getTime() > a.deadlineAt.getTime() + graceMs;
 
 /**
  * Termine un challenge dont l'échéance est passée. Les commandes arrivées après l'échéance ayant
  * été refusées, l'état rejoué est celui de l'échéance. Renvoie vrai si la session vient d'être close.
  */
-async function expireIfDue(db: Db, attempt: LabAttempt, lab: Lab, certification: string): Promise<boolean> {
-  if (attempt.status !== 'in_progress' || !pastDeadline(attempt)) return false;
+async function expireIfDue(db: Db, attempt: LabAttempt, lab: Lab, certification: string, graceMs = CHALLENGE_GRACE_MS): Promise<boolean> {
+  if (attempt.status !== 'in_progress' || !pastDeadline(attempt, graceMs)) return false;
   const commands = await loadCommands(db, attempt.id);
   const success = replay(requireProfile(certification), lab, commands).session.complete();
   const done = await db
@@ -376,7 +376,9 @@ export async function revealHint(db: Db, attemptId: string, userId: string) {
 
 export async function finishLabAttempt(db: Db, attemptId: string, userId: string): Promise<LabAttemptState> {
   const { attempt, lab, certification } = await ownedLabAttempt(db, attemptId, userId);
-  if (await expireIfDue(db, attempt, lab.definition, certification)) return getLabAttemptState(db, attempt.id, userId);
+  // Le navigateur demande la fin quand son compte à rebours (recalé sur le serveur) atteint zéro :
+  // à une seconde près de l'échéance, c'est une fin par l'échéance, pas un abandon.
+  if (await expireIfDue(db, attempt, lab.definition, certification, -1000)) return getLabAttemptState(db, attempt.id, userId);
   if (attempt.status === 'in_progress') {
     const commands = await loadCommands(db, attempt.id);
     const { session } = replay(requireProfile(certification), lab.definition, commands);

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { gaugeDash, gaugeMarker, lineChart, radarPoint, radarPolygon, yFor } from '../lib/charts';
-import { formatPercent, MASTERY_HEX, masteryOf, shortDomain } from '../lib/format';
+import { timeSeries } from '../lib/challenges';
+import { formatDateTime, formatDuration, formatPercent, MASTERY_HEX, masteryOf, shortDomain } from '../lib/format';
+import type { LabTimes } from '../lib/types';
 
 /** Jauge circulaire de préparation (maquette Main) : arc animé + repère du seuil. */
 export function ReadinessGauge({ estimate, passing, max }: { estimate: number | null; passing: number; max: number }) {
@@ -210,5 +212,50 @@ export function MasteryLegend() {
         </div>
       ))}
     </div>
+  );
+}
+
+/**
+ * Courbe des temps d'un challenge (essais réussis, du plus ancien au plus récent) et ligne du temps cible.
+ * Le graphique est décoratif ; la même information est donnée en texte (liste masquée visuellement).
+ */
+export function TimesChart({ times }: { times: LabTimes }) {
+  const { values, labels } = timeSeries(times);
+  const target = times.targetMinutes !== null ? times.targetMinutes * 60 : null;
+  if (!values.length) return <p className="m-0 text-[13px] text-muted">Aucun essai réussi pour l’instant : votre courbe des temps apparaîtra ici.</p>;
+  const width = 300;
+  const height = 110;
+  const max = Math.max(...values, target ?? 0) * 1.15;
+  const { line, points } = lineChart(values, { width, height, min: 0, max, padX: 16, padY: 12 });
+  const targetY = target !== null ? yFor(target, { height, min: 0, max, padY: 12 }) : null;
+  return (
+    <figure className="m-0 flex flex-col gap-2">
+      <svg viewBox={`0 0 ${width} ${height}`} className="h-auto w-full max-w-[360px]" aria-hidden>
+        <rect x="0" y="0" width={width} height={height} rx="8" fill="#0A101B" />
+        {targetY !== null && (
+          <>
+            <line x1="12" x2={width - 12} y1={targetY} y2={targetY} stroke="#3DDC97" strokeDasharray="4 4" strokeWidth="1.5" />
+            <text x={width - 14} y={targetY - 4} textAnchor="end" fill="#3DDC97" fontSize="10" fontFamily="IBM Plex Mono, monospace">
+              cible
+            </text>
+          </>
+        )}
+        {values.length > 1 && <path d={line} fill="none" stroke="#2DD4E8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />}
+        {points.map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="#2DD4E8" />
+        ))}
+      </svg>
+      <figcaption className="font-mono text-[11.5px] text-muted">
+        {values.length} essai{values.length > 1 ? 's' : ''} réussi{values.length > 1 ? 's' : ''} · dernier {formatDuration(values[values.length - 1] as number)}
+        {target !== null ? ` · cible ${formatDuration(target)}` : ''}
+      </figcaption>
+      <ol className="sr-only">
+        {values.map((v, i) => (
+          <li key={i}>
+            Essai du {formatDateTime(labels[i] as string)} : {formatDuration(v)}
+          </li>
+        ))}
+      </ol>
+    </figure>
   );
 }

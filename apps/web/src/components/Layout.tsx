@@ -4,6 +4,8 @@ import { useAuth } from '../auth/AuthContext';
 import { initials } from '../lib/format';
 import { CertificationSelect } from './CertificationSelect';
 import {
+  IconBolt,
+  IconCards,
   IconClose,
   IconDashboard,
   IconGrid,
@@ -39,12 +41,14 @@ const PILOTAGE: NavItem[] = [
     icon: <IconTrend />,
     match: (p, s) => p === '/examen/nouveau' && s.includes('mode=practice'),
   },
+  { to: '/revision', label: 'Révision', icon: <IconCards />, match: (p) => p.startsWith('/revision') },
   { to: '/historique', label: 'Historique', icon: <IconHistory />, match: (p) => p === '/historique' || p.endsWith('/resultat') },
 ];
 
 const LABS: NavItem[] = [
   { to: '/labs/subnetting', label: 'Subnetting', icon: <IconGrid /> },
   { to: '/labs/cli', label: 'CLI Cisco IOS', icon: <IconTerminal /> },
+  { to: '/challenges', label: 'Challenges', icon: <IconBolt /> },
 ];
 
 function SideLink({ item }: { item: NavItem }) {

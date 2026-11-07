@@ -1,14 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { TimesChart } from '../components/charts';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { LabTerminal } from '../components/LabTerminal';
 import { ErrorBox, PageTitle, Spinner } from '../components/ui';
-import { api, errorMessage } from '../lib/api';
+import { api, ApiError, errorMessage } from '../lib/api';
+import { beatsTarget, COUNTDOWN_WARNING, countdownAnnouncement, MODE_LABEL, remainingSeconds } from '../lib/challenges';
 import { clockOffset, resyncOffset, serverTime } from '../lib/clock';
 import { formatClock, formatDateTime, formatDuration } from '../lib/format';
-import type { LabAttemptState, LabCommandResult, LabDetail, LabHintResult, LabStep, PublicLab } from '../lib/types';
+import type { LabAttemptState, LabCommandResult, LabDetail, LabHintResult, LabStep, LabTimes, PublicLab } from '../lib/types';
 import { useApi } from '../lib/useApi';
+import { ModePill } from './ChallengesPage';
 import { DifficultyPill } from './LabsPage';
+
+/** Racine des écrans d'un lab ou d'un challenge. */
+const baseOf = (lab: Pick<PublicLab, 'kind'>) => (lab.kind === 'challenge' ? '/challenges' : '/labs/cli');
+const isChallenge = (lab: Pick<PublicLab, 'kind'>) => lab.kind === 'challenge';
 
 const CHRONO_KEY = 'examforge.labs.chrono';
 
@@ -51,8 +58,32 @@ function Statement({ lab }: { lab: PublicLab }) {
 function Eyebrow({ lab }: { lab: PublicLab }) {
   return (
     <>
-      <span className="text-accent">●</span> LAB CLI · {lab.subtopic} {lab.subtopicName.toUpperCase()}
+      <span className="text-accent">●</span> {isChallenge(lab) ? 'CHALLENGE' : 'LAB CLI'} · {lab.subtopic} {lab.subtopicName.toUpperCase()}
     </>
+  );
+}
+
+/** Classement personnel d'un challenge : meilleur temps et courbe des temps réussis. */
+function PersonalTimes({ slug, refreshKey = 0 }: { slug: string; refreshKey?: number }) {
+  const { data, error } = useApi<LabTimes>(`/labs/${encodeURIComponent(slug)}/times?r=${refreshKey}`);
+  if (error != null) return <ErrorBox error={error} title="Temps indisponibles" />;
+  if (!data) return <Spinner label="Chargement des temps…" />;
+  const wins = data.times.filter((t) => t.success);
+  return (
+    <div className="flex flex-col gap-3">
+      <dl className="m-0 grid grid-cols-2 gap-2 font-mono text-[12.5px]">
+        <dt className="text-muted">Essais</dt>
+        <dd className="m-0 text-text">{data.times.length}</dd>
+        <dt className="text-muted">Réussis</dt>
+        <dd className="m-0 text-text">{wins.length}</dd>
+        <dt className="text-muted">Meilleur temps</dt>
+        <dd className="m-0 text-text">
+          {data.bestSeconds !== null ? formatDuration(data.bestSeconds) : '—'}
+          {beatsTarget(data.bestSeconds, data.targetMinutes) && <span className="ml-1 text-ok">★ cible battue</span>}
+        </dd>
+      </dl>
+      <TimesChart times={data} />
+    </div>
   );
 }
 
@@ -69,17 +100,18 @@ export function LabIntroPage() {
     setStartError(null);
     try {
       const state = await api<LabAttemptState>(`/labs/${encodeURIComponent(slug)}/attempts`, { method: 'POST' });
-      navigate(`/labs/cli/sessions/${state.id}`);
+      navigate(`${baseOf(state.lab)}/sessions/${state.id}`);
     } catch (err) {
       setStartError(err);
       setBusy(false);
     }
   };
 
-  if (loading && !data) return <Spinner />;
+  if (loading && !data) return <Spinner label="Chargement du lab…" />;
   if (error != null) return <ErrorBox error={error} onRetry={reload} title="Lab indisponible" />;
   if (!data) return null;
   const { lab } = data;
+  if (isChallenge(lab)) return <ChallengeIntro data={data} busy={busy} start={start} startError={startError} />;
   return (
     <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-[22px]">
       <PageTitle eyebrow={<Eyebrow lab={lab} />} title={lab.title}>
@@ -125,7 +157,97 @@ export function LabIntroPage() {
   );
 }
 
-/** `/labs/cli/sessions/:id` : la session (terminal, objectifs, indices), puis l'écran de fin. */
+/** Présentation d'un challenge : le défi (temps cible, échéance, mode), le classement personnel, le départ. */
+function ChallengeIntro({ data, busy, start, startError }: { data: LabDetail; busy: boolean; start: () => void; startError: unknown }) {
+  const { lab } = data;
+  const info = lab.challenge!;
+  return (
+    <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-[22px]">
+      <PageTitle eyebrow={<Eyebrow lab={lab} />} title={lab.title}>
+        <div className="flex flex-wrap gap-2">
+          <ModePill mode={info.mode} />
+          <DifficultyPill difficulty={lab.difficulty} />
+        </div>
+      </PageTitle>
+      <div className="grid min-w-0 gap-[22px] lg:grid-cols-[minmax(0,1fr)_340px]">
+        <Statement lab={lab} />
+        <div className="flex min-w-0 flex-col gap-[22px]">
+          <Panel title="Le défi">
+            <dl className="m-0 grid grid-cols-2 gap-2 font-mono text-[12.5px]">
+              <dt className="text-muted">Temps cible</dt>
+              <dd className="m-0 text-text">{info.targetMinutes} min</dd>
+              <dt className="text-muted">Échéance</dt>
+              <dd className="m-0 text-text">{info.timeLimitMinutes} min</dd>
+              <dt className="text-muted">Mode</dt>
+              <dd className="m-0 text-text">{MODE_LABEL[info.mode]}</dd>
+              <dt className="text-muted">Objectifs</dt>
+              <dd className="m-0 text-text">{lab.objectives.length}</dd>
+            </dl>
+            <p className="m-0 text-[13.5px] text-text2">
+              {info.mode === 'troubleshoot'
+                ? 'La configuration de départ contient des pannes : trouvez-les et corrigez-les. '
+                : 'Configurez les équipements selon l’énoncé. '}
+              Aucun indice. Le chrono démarre au lancement et s’arrête dès que tous les objectifs sont atteints ; à l’échéance, le
+              challenge se termine de lui-même.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {data.inProgress && (
+                <Link to={`/challenges/sessions/${data.inProgress}`} className="btn-primary">
+                  Reprendre l’essai en cours →
+                </Link>
+              )}
+              <button type="button" className={data.inProgress ? 'btn-secondary' : 'btn-primary'} onClick={start} disabled={busy}>
+                {busy ? 'Démarrage…' : data.inProgress ? 'Nouveau départ' : 'Lancer le chrono →'}
+              </button>
+            </div>
+            {data.inProgress && <p className="m-0 text-[12.5px] text-muted">Un nouveau départ abandonne l’essai en cours.</p>}
+            {startError != null && <ErrorBox error={startError} />}
+          </Panel>
+          <Panel title="Objectifs" aside={<span className="font-mono text-[11px] text-muted">{lab.objectives.length}</span>}>
+            <ol className="m-0 flex list-decimal flex-col gap-1.5 pl-5 text-[14px] text-text2">
+              {lab.objectives.map((o) => (
+                <li key={o.id}>{o.description}</li>
+              ))}
+            </ol>
+          </Panel>
+          <Panel title="Vos temps">
+            <PersonalTimes slug={lab.slug} />
+          </Panel>
+          <Link to="/challenges" className="font-mono text-[12.5px]">
+            ← Tous les challenges
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Compte à rebours d'un challenge : affiché chaque seconde, annoncé seulement aux paliers (5 min, 1 min, 10 s). */
+function Countdown({ remaining, onAnnounce }: { remaining: number; onAnnounce: (text: string) => void }) {
+  const previous = useRef(remaining);
+  useEffect(() => {
+    const said = countdownAnnouncement(previous.current, remaining);
+    previous.current = remaining;
+    if (said) onAnnounce(said);
+  }, [remaining, onAnnounce]);
+  const warning = remaining <= COUNTDOWN_WARNING;
+  return (
+    <span
+      role="timer"
+      aria-live="off"
+      aria-label={`Temps restant : ${formatClock(remaining)}`}
+      className={`inline-flex min-h-[44px] items-center gap-2 rounded-lg border px-3 font-mono text-[15px] font-semibold tabular ${
+        warning ? 'border-crit text-crit' : 'border-line2 text-text'
+      }`}
+      style={warning ? { background: 'rgba(255,107,94,.08)' } : undefined}
+    >
+      <span aria-hidden>{warning ? '⚠' : '⏳'}</span>
+      {formatClock(remaining)}
+    </span>
+  );
+}
+
+/** `/labs/cli/sessions/:id` et `/challenges/sessions/:id` : la session (terminal, objectifs, indices), puis l'écran de fin. */
 export function LabSessionPage() {
   const { id = '' } = useParams();
   const { data, error, loading, reload } = useApi<LabAttemptState>(`/lab-attempts/${encodeURIComponent(id)}`);
@@ -150,9 +272,27 @@ function useChrono(startedAt: string, initialServerNow: string, running: boolean
   return { elapsed, resync };
 }
 
+function useCountdown(deadlineAt: string | null, initialServerNow: string, running: boolean) {
+  const offset = useRef(clockOffset(initialServerNow, Date.now(), Date.now()));
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!running || !deadlineAt) return;
+    const t = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(t);
+  }, [running, deadlineAt]);
+  const resync = useCallback((serverNow: string, sentAt: number, receivedAt: number) => {
+    offset.current = resyncOffset(offset.current, serverNow, sentAt, receivedAt);
+  }, []);
+  const remaining = deadlineAt ? remainingSeconds(deadlineAt, serverTime(now, offset.current)) : null;
+  return { remaining, resync };
+}
+
 function LabSession({ initial }: { initial: LabAttemptState }) {
   const navigate = useNavigate();
   const [state, setState] = useState(initial);
+  const challenge = isChallenge(initial.lab);
+  const base = baseOf(initial.lab);
+  const [timesKey, setTimesKey] = useState(0);
   const [active, setActive] = useState(initial.devices[0]?.id ?? '');
   const [announce, setAnnounce] = useState('');
   const [failure, setFailure] = useState<string | null>(null);
@@ -162,7 +302,17 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
   const [showChrono, setShowChrono] = useState(() => localStorage.getItem(CHRONO_KEY) !== 'off');
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   const finished = state.status === 'finished';
-  const { elapsed, resync } = useChrono(state.startedAt, initial.serverNow, !finished && showChrono);
+  const chrono = useChrono(state.startedAt, initial.serverNow, !finished && showChrono && !challenge);
+  const countdown = useCountdown(state.deadlineAt, initial.serverNow, !finished && challenge);
+  const elapsed = chrono.elapsed;
+  const resync = useCallback(
+    (serverNow: string, sentAt: number, receivedAt: number) => {
+      chrono.resync(serverNow, sentAt, receivedAt);
+      countdown.resync(serverNow, sentAt, receivedAt);
+    },
+    [chrono, countdown],
+  );
+  const timeUp = challenge && !finished && countdown.remaining === 0;
   const lab = state.lab;
   const achieved = useMemo(() => new Set(state.achieved), [state.achieved]);
 
@@ -195,9 +345,15 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
             commandCount: r.commandCount,
           };
         });
+        // Un challenge réussi s'arrête : l'écran de fin s'affiche avec la solution.
+        if (r.finished) await reloadFinished('Challenge réussi : tous les objectifs sont atteints.');
         // Après `?`, la ligne revient dans la saisie, comme dans IOS.
         return r.results[r.results.length - 1]?.keep;
       } catch (err) {
+        if (err instanceof ApiError && err.code === 'challenge_expired') {
+          await reloadFinished('Temps écoulé : le challenge est terminé.');
+          return undefined;
+        }
         setFailure(errorMessage(err));
         return undefined;
       }
@@ -205,6 +361,41 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
     queue.current = run;
     return run;
   };
+
+  /** Recharge l'état final (résultat, solution) et l'annonce. */
+  const reloadFinished = useCallback(
+    async (message: string) => {
+      try {
+        const r = await api<LabAttemptState>(`/lab-attempts/${initial.id}`);
+        setState(r);
+        setAnnounce(message);
+        setTimesKey((k) => k + 1);
+        window.scrollTo({ top: 0 });
+      } catch (err) {
+        setFailure(errorMessage(err));
+      }
+    },
+    [initial.id],
+  );
+
+  // À l'échéance (heure du serveur), la session est close par le serveur ; on affiche l'écran de fin.
+  useEffect(() => {
+    if (!timeUp) return;
+    const t = window.setTimeout(() => {
+      void queue.current.then(async () => {
+        try {
+          const r = await api<LabAttemptState>(`/lab-attempts/${initial.id}/finish`, { method: 'POST' });
+          setState(r);
+          setAnnounce(r.result?.success ? 'Challenge réussi.' : 'Temps écoulé : le challenge est terminé.');
+          setTimesKey((k) => k + 1);
+          window.scrollTo({ top: 0 });
+        } catch (err) {
+          setFailure(errorMessage(err));
+        }
+      });
+    }, 600);
+    return () => window.clearTimeout(t);
+  }, [timeUp, initial.id]);
 
   const hint = async () => {
     setHintBusy(true);
@@ -226,6 +417,7 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
       await queue.current;
       const r = await api<LabAttemptState>(`/lab-attempts/${state.id}/finish`, { method: 'POST' });
       setState(r);
+      setTimesKey((k) => k + 1);
       window.scrollTo({ top: 0 });
     } catch (err) {
       setFailure(errorMessage(err));
@@ -237,18 +429,28 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
   const restart = async () => {
     try {
       const r = await api<LabAttemptState>(`/labs/${encodeURIComponent(lab.slug)}/attempts`, { method: 'POST' });
-      navigate(`/labs/cli/sessions/${r.id}`);
+      navigate(`${base}/sessions/${r.id}`);
     } catch (err) {
       setFailure(errorMessage(err));
     }
   };
+
+  const onAnnounce = useCallback((text: string) => setAnnounce(text), []);
 
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-[22px]">
       <PageTitle eyebrow={<Eyebrow lab={lab} />} title={lab.title}>
         <div className="flex flex-wrap items-center gap-2">
           <DifficultyPill difficulty={lab.difficulty} />
-          {!finished && (
+          {!finished && challenge && countdown.remaining !== null && (
+            <>
+              <Countdown remaining={countdown.remaining} onAnnounce={onAnnounce} />
+              <button type="button" className="btn-secondary btn-sm" onClick={() => setConfirmFinish(true)} disabled={finishing || timeUp}>
+                {finishing ? 'Fin…' : 'Abandonner'}
+              </button>
+            </>
+          )}
+          {!finished && !challenge && (
             <>
               <button type="button" className="btn-secondary btn-sm" aria-pressed={showChrono} onClick={toggleChrono}>
                 {showChrono ? (
@@ -281,7 +483,7 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
         </div>
       )}
 
-      {finished && state.result && <LabResult state={state} onRestart={restart} />}
+      {finished && state.result && <LabResult state={state} onRestart={restart} timesKey={timesKey} />}
 
       <div className="grid min-w-0 gap-[22px] lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="flex min-w-0 flex-col gap-[22px]">
@@ -294,7 +496,7 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
               </div>
             </details>
           ) : (
-            <LabTerminal devices={state.devices} active={active} onActiveChange={setActive} transcript={state.transcript} onSubmit={submit} />
+            <LabTerminal devices={state.devices} active={active} onActiveChange={setActive} transcript={state.transcript} onSubmit={submit} readOnly={timeUp} />
           )}
         </div>
         <div className="flex min-w-0 flex-col gap-[22px]">
@@ -329,7 +531,7 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
               })}
             </ul>
           </Panel>
-          {!finished && (
+          {!finished && !challenge && (
             <Panel
               title="Indices"
               aside={
@@ -352,22 +554,22 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
               </button>
             </Panel>
           )}
-          <Link to="/labs/cli" className="font-mono text-[12.5px]">
-            ← Tous les labs
+          <Link to={base} className="font-mono text-[12.5px]">
+            {challenge ? '← Tous les challenges' : '← Tous les labs'}
           </Link>
         </div>
       </div>
 
       <ConfirmDialog
         open={confirmFinish}
-        title="Terminer le lab ?"
-        confirmLabel="Terminer et voir la solution"
+        title={challenge ? 'Abandonner le challenge ?' : 'Terminer le lab ?'}
+        confirmLabel={challenge ? 'Abandonner et voir la solution' : 'Terminer et voir la solution'}
         cancelLabel="Continuer"
         onConfirm={() => void finish()}
         onCancel={() => setConfirmFinish(false)}
       >
-        {state.achieved.length}/{lab.objectives.length} objectifs atteints. La session sera comptée comme non réussie et la solution
-        sera affichée.
+        {state.achieved.length}/{lab.objectives.length} objectifs atteints. {challenge ? 'L’essai' : 'La session'} sera compté
+        {challenge ? '' : 'e'} comme non réussi{challenge ? '' : 'e'} et la solution sera affichée.
       </ConfirmDialog>
     </div>
   );
@@ -390,16 +592,27 @@ function Steps({ steps, label }: { steps: LabStep[]; label: string }) {
   );
 }
 
-function LabResult({ state, onRestart }: { state: LabAttemptState; onRestart: () => void }) {
+function LabResult({ state, onRestart, timesKey }: { state: LabAttemptState; onRestart: () => void; timesKey: number }) {
   const r = state.result!;
   const lab = state.lab;
+  const challenge = isChallenge(lab);
+  const title = challenge
+    ? r.success
+      ? 'Challenge réussi'
+      : r.expired
+        ? 'Temps écoulé'
+        : 'Challenge abandonné'
+    : r.success
+      ? 'Lab réussi'
+      : 'Lab terminé sans tous les objectifs';
   return (
     <section aria-labelledby="fin-h" className="panel-deep flex flex-col gap-5 px-5 py-6 sm:px-7">
       <div className="flex flex-wrap items-center gap-3">
         <h2 id="fin-h" className="text-xl font-semibold">
-          {r.success ? 'Lab réussi' : 'Lab terminé sans tous les objectifs'}
+          {title}
         </h2>
         {r.success ? <span className="pill-ok">✓ RÉUSSI</span> : <span className="pill-crit">✕ NON RÉUSSI</span>}
+        {challenge && r.success && beatsTarget(r.durationSeconds, r.targetMinutes) && <span className="pill-ok">★ TEMPS CIBLE BATTU</span>}
       </div>
       <dl className="m-0 grid grid-cols-2 gap-x-6 gap-y-2 font-mono text-[13px] sm:grid-cols-4">
         <div>
@@ -412,12 +625,19 @@ function LabResult({ state, onRestart }: { state: LabAttemptState; onRestart: ()
             {state.achieved.length}/{lab.objectives.length}
           </dd>
         </div>
-        <div>
-          <dt className="text-muted">Indices</dt>
-          <dd className="m-0 text-text">
-            {state.hintsUsed}/{lab.hintCount}
-          </dd>
-        </div>
+        {challenge ? (
+          <div>
+            <dt className="text-muted">Temps cible</dt>
+            <dd className="m-0 text-text">{r.targetMinutes !== null ? `${r.targetMinutes} min` : '—'}</dd>
+          </div>
+        ) : (
+          <div>
+            <dt className="text-muted">Indices</dt>
+            <dd className="m-0 text-text">
+              {state.hintsUsed}/{lab.hintCount}
+            </dd>
+          </div>
+        )}
         <div>
           <dt className="text-muted">Terminé le</dt>
           <dd className="m-0 text-text">{state.finishedAt ? formatDateTime(state.finishedAt) : '—'}</dd>
@@ -425,12 +645,30 @@ function LabResult({ state, onRestart }: { state: LabAttemptState; onRestart: ()
       </dl>
       <div className="flex flex-wrap gap-2">
         <button type="button" className="btn-primary" onClick={onRestart}>
-          Refaire ce lab
+          {challenge ? 'Rejouer ce challenge' : 'Refaire ce lab'}
         </button>
-        <Link to="/labs/cli" className="btn-secondary">
-          Tous les labs
+        <Link to={baseOf(lab)} className="btn-secondary">
+          {challenge ? 'Tous les challenges' : 'Tous les labs'}
         </Link>
       </div>
+
+      {r.faults.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <h3 className="text-base font-semibold">Pannes semées dans la configuration de départ</h3>
+          <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-[14px] text-text2">
+            {r.faults.map((f, i) => (
+              <li key={i}>{f}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {challenge && (
+        <div className="flex flex-col gap-2">
+          <h3 className="text-base font-semibold">Vos temps</h3>
+          <PersonalTimes slug={lab.slug} refreshKey={timesKey} />
+        </div>
+      )}
 
       <div className="grid min-w-0 gap-5 lg:grid-cols-2">
         <div className="flex min-w-0 flex-col gap-2">
@@ -479,14 +717,16 @@ function LabResult({ state, onRestart }: { state: LabAttemptState; onRestart: ()
         </div>
       </details>
 
-      <div className="flex flex-col gap-2">
-        <h3 className="text-base font-semibold">Indices du lab</h3>
-        <ol className="m-0 flex list-decimal flex-col gap-1 pl-5 text-[13.5px] text-text2">
-          {r.hints.map((h, i) => (
-            <li key={i}>{h}</li>
-          ))}
-        </ol>
-      </div>
+      {r.hints.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <h3 className="text-base font-semibold">Indices du lab</h3>
+          <ol className="m-0 flex list-decimal flex-col gap-1 pl-5 text-[13.5px] text-text2">
+            {r.hints.map((h, i) => (
+              <li key={i}>{h}</li>
+            ))}
+          </ol>
+        </div>
+      )}
     </section>
   );
 }

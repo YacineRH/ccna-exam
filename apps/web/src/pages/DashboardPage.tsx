@@ -14,7 +14,7 @@ import {
   formatPercent,
   greeting,
 } from '../lib/format';
-import { api } from '../lib/api';
+import { api, ApiError } from '../lib/api';
 import { labForSubtopic } from '../lib/labs';
 import type { AttemptState, AttemptSummary, CertificationDetail, LabSummary, Stats } from '../lib/types';
 import { useApi } from '../lib/useApi';
@@ -61,6 +61,46 @@ function ReviseButton({ code, subtopic, label, available }: { code: string; subt
       {failed && (
         <span role="alert" className="font-mono text-[11px] text-crit">
           ✕ impossible de lancer la révision
+        </span>
+      )}
+    </span>
+  );
+}
+
+/** « Flashcards » : une session de révision espacée sur le sous-thème (le paquet est ajouté au besoin). */
+function FlashcardsButton({ code, subtopic, label }: { code: string; subtopic: string; label: string }) {
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
+  const start = async () => {
+    if (busy) return;
+    setBusy(true);
+    setFailed(null);
+    try {
+      const s = await api<{ id: string }>('/revision/sessions', { method: 'POST', body: { certification: code, subtopic } });
+      navigate(`/revision/sessions/${s.id}`);
+    } catch (err) {
+      // Toutes les cartes du sous-thème sont déjà à jour : on ouvre l'écran des paquets.
+      if (err instanceof ApiError && err.code === 'nothing_due') navigate('/revision');
+      else setFailed('✕ impossible de lancer les flashcards');
+      setBusy(false);
+    }
+  };
+  return (
+    <span className="flex flex-col items-end gap-1">
+      <button
+        type="button"
+        className="btn-secondary btn-sm"
+        onClick={start}
+        disabled={busy}
+        aria-label={`Flashcards : ${label}`}
+        title="Révision espacée des questions de ce sous-thème"
+      >
+        {busy ? 'Préparation…' : 'Flashcards →'}
+      </button>
+      {failed && (
+        <span role="alert" className="font-mono text-[11px] text-crit">
+          {failed}
         </span>
       )}
     </span>
@@ -328,6 +368,9 @@ function ToReview({ stats, bank, labs }: { stats: Stats; bank: CertificationDeta
                     >
                       Lab →
                     </Link>
+                  )}
+                  {t.subtopic && (bank?.bySubtopic[t.subtopic] ?? 0) >= 3 && (
+                    <FlashcardsButton code={stats.certification} subtopic={t.subtopic} label={t.subtopicName ?? t.subtopic} />
                   )}
                   {t.subtopic && bank ? (
                     <ReviseButton
