@@ -77,6 +77,56 @@ describe('assembleExam', () => {
     const p = pool(20).map((q) => (q.domain === 'C' ? { ...q, type: 'cli' as const } : q));
     expect(() => assembleExam(p, cert, { seed: 1 })).toThrow(InsufficientQuestionsError);
   });
+
+  describe('filtre types', () => {
+    // A : 6 QCM simples + 2 QCM multiples, B : 6 QCM simples + 1 multiple, C : QCM simples uniquement.
+    const mixed = pool(6).concat(
+      { id: 'A-m0', domain: 'A', type: 'mcq_multi', difficulty: 'medium' },
+      { id: 'A-m1', domain: 'A', type: 'mcq_multi', difficulty: 'medium' },
+      { id: 'B-m0', domain: 'B', type: 'mcq_multi', difficulty: 'medium' },
+      { id: 'C-cli', domain: 'C', type: 'cli', difficulty: 'medium' },
+    );
+
+    it('ne tire que les types demandés', () => {
+      // Sans écarter C (poids 0,2, aucun QCM multiple), la répartition lui demanderait une question.
+      const ids = assembleExam(mixed, cert, { seed: 5, questionCount: 3, types: ['mcq_multi'] });
+      expect(ids.sort()).toEqual(['A-m0', 'A-m1', 'B-m0']);
+    });
+
+    it('écarte les domaines sans question du type et renormalise les poids', () => {
+      // C n'a aucun QCM multiple : 2 questions réparties entre A (0,5) et B (0,3) seulement.
+      const ids = assembleExam(mixed, cert, { seed: 9, questionCount: 2, types: ['mcq_multi'] });
+      expect(ids).toHaveLength(2);
+      expect(ids).toContain('B-m0');
+      expect(ids.filter((id) => id.startsWith('A-m'))).toHaveLength(1);
+    });
+
+    it('reste combiné avec les types autorisés par la certification', () => {
+      // `cli` n'est pas autorisé par la certification : le filtre ne peut pas le réintroduire.
+      expect(() => assembleExam(mixed, cert, { seed: 1, questionCount: 1, types: ['cli'] })).toThrow(InsufficientQuestionsError);
+      const ids = assembleExam(mixed, cert, { seed: 1, questionCount: 2, types: ['cli', 'mcq_multi'] });
+      expect(ids.every((id) => id.includes('-m'))).toBe(true);
+    });
+
+    it('signale un manque global avec le domaine « * »', () => {
+      try {
+        assembleExam(mixed, cert, { seed: 1, questionCount: 1, types: ['ordering'] });
+        expect.unreachable();
+      } catch (err) {
+        expect(err).toBeInstanceOf(InsufficientQuestionsError);
+        expect((err as InsufficientQuestionsError).domain).toBe('*');
+        expect((err as InsufficientQuestionsError).needed).toBe(1);
+      }
+    });
+
+    it('signale toujours un domaine retenu mais trop pauvre', () => {
+      expect(() => assembleExam(mixed, cert, { seed: 1, questionCount: 6, types: ['mcq_multi'] })).toThrow(InsufficientQuestionsError);
+    });
+
+    it('sans filtre, le comportement est inchangé', () => {
+      expect(assembleExam(pool(20), cert, { seed: 1, types: [] })).toEqual(assembleExam(pool(20), cert, { seed: 1 }));
+    });
+  });
 });
 
 describe('scoreExam', () => {

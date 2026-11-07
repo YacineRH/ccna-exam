@@ -199,6 +199,57 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
     expect((await call('GET', '/api/v1/stats')).statusCode).toBe(400);
   });
 
+  it('expose la certification et l\'heure du serveur dans l\'état de la tentative', async () => {
+    const before = Date.now();
+    const state = (await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'practice', questionCount: 1 })).json();
+    expect(state.certification).toBe('ccna');
+    const serverNow = Date.parse(state.serverNow);
+    expect(state.serverNow).toBe(new Date(serverNow).toISOString());
+    expect(serverNow).toBeGreaterThanOrEqual(before - 1000);
+    expect(serverNow).toBeLessThanOrEqual(Date.now() + 1000);
+    const again = (await call('GET', `/api/v1/attempts/${state.id}`)).json();
+    expect(again.certification).toBe('ccna');
+    expect(Date.parse(again.serverNow)).toBeGreaterThanOrEqual(serverNow);
+  });
+
+  it('filtre les questions par type (entraînement ciblé)', async () => {
+    const { questions: bank } = loadCertification('ccna');
+    const countOf = (types: string[]) => bank.filter((q) => types.includes(q.body.type)).length;
+
+    const ordering = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'practice', questionCount: 1, types: ['ordering'] });
+    expect(ordering.statusCode).toBe(201);
+    expect(ordering.json().questions.map((q: { body: { type: string } }) => q.body.type)).toEqual(['ordering']);
+
+    const mixed = (await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'practice', questionCount: 2, types: ['matching', 'ordering'] })).json();
+    expect(mixed.questions).toHaveLength(2);
+    expect(mixed.questions.every((q: { body: { type: string } }) => ['matching', 'ordering'].includes(q.body.type))).toBe(true);
+
+    const tooMany = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'practice', questionCount: countOf(['ordering']) + 1, types: ['ordering'] });
+    expect(tooMany.statusCode).toBe(409);
+    expect(tooMany.json().error.code).toBe('insufficient_questions');
+
+    const unknown = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'practice', types: ['essay'] });
+    expect(unknown.statusCode).toBe(400);
+  });
+
+  it('garde dans les résultats l\'ordre d\'affichage vu pendant la tentative', async () => {
+    const state = (
+      await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'exam', questionCount: 6, types: ['mcq_single', 'mcq_multi', 'ordering', 'matching'] })
+    ).json();
+    type Body = { type: string; options?: { id: string }[]; items?: { id: string }[]; right?: { id: string }[]; left?: { id: string }[] };
+    const shown = (b: Body) => (b.options ?? b.items ?? [...(b.left ?? []), ...(b.right ?? [])]).map((x) => x.id);
+    const during = (await call('GET', `/api/v1/attempts/${state.id}`)).json().questions as { id: string; body: Body }[];
+
+    // Le mélange doit être effectif, sinon le test ne prouverait rien.
+    const original = new Map((await db.select({ id: questions.id, body: questions.body }).from(questions)).map((q) => [q.id, q.body as Body]));
+    expect(during.some((q) => shown(q.body).join() !== shown(original.get(q.id)!).join())).toBe(true);
+
+    await call('POST', `/api/v1/attempts/${state.id}/submit`);
+    const result = (await call('GET', `/api/v1/attempts/${state.id}/result`)).json();
+    const after = new Map((result.review as { questionId: string; body: Body }[]).map((r) => [r.questionId, r.body]));
+    for (const q of during) expect(shown(after.get(q.id)!)).toEqual(shown(q.body));
+  });
+
   describe('administration (serveur MCP)', () => {
     const service = { authorization: `Bearer ${'s'.repeat(40)}` };
     const admin = (method: 'GET' | 'POST', url: string, payload?: unknown) =>

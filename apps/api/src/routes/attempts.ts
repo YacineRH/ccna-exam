@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { responseSchema } from '@examforge/core';
+import { QUESTION_TYPES, responseSchema } from '@examforge/core';
 import type { Db } from '../db/client.js';
 import { parseInput } from '../errors.js';
 import {
@@ -18,6 +18,7 @@ const startSchema = z.object({
   examNumber: z.number().int().positive().optional(),
   questionCount: z.number().int().min(1).max(200).optional(),
   domains: z.array(z.string().max(16)).max(20).optional(),
+  types: z.array(z.enum(QUESTION_TYPES)).max(QUESTION_TYPES.length).optional(),
 });
 
 const answerSchema = z

@@ -6,6 +6,7 @@ import {
   InsufficientQuestionsError,
   scoreExam,
   toPublicBody,
+  type QuestionType,
   type Response,
 } from '@examforge/core';
 import type { Db } from '../db/client.js';
@@ -33,6 +34,8 @@ export interface StartAttemptInput {
   examNumber?: number;
   questionCount?: number;
   domains?: string[];
+  /** Types de questions à tirer (entraînement ciblé). Sans effet sur un examen blanc figé. */
+  types?: QuestionType[];
 }
 
 async function loadCertification(db: Db, code: string) {
@@ -48,7 +51,10 @@ async function ownedAttempt(db: Db, attemptId: string, userId: string): Promise<
   return attempt;
 }
 
-/** Seed d'affichage propre à chaque question d'une tentative. */
+/**
+ * Seed d'affichage propre à chaque question d'une tentative. Le même seed sert pendant la tentative
+ * et dans le post-mortem : les lettres des options restent celles que le candidat a vues.
+ */
 const displaySeed = (attempt: Attempt, position: number) => (attempt.seed ^ (position * 2654435761)) >>> 0;
 
 export async function startAttempt(db: Db, userId: string, input: StartAttemptInput) {
@@ -90,6 +96,7 @@ export async function startAttempt(db: Db, userId: string, input: StartAttemptIn
         seed,
         questionCount: count,
         ...(input.domains?.length ? { domains: input.domains } : {}),
+        ...(input.types?.length ? { types: input.types } : {}),
         avoidIds: seen.map((s) => s.id),
       });
     } catch (err) {
@@ -162,9 +169,15 @@ export async function getAttemptState(db: Db, attemptId: string, userId: string)
     .where(eq(attemptAnswers.attemptId, attemptId))
     .orderBy(asc(attemptAnswers.position));
 
+  const [cert] = await db
+    .select({ code: certifications.code })
+    .from(certifications)
+    .where(eq(certifications.id, attempt.certificationId));
+
   const reveal = attempt.status !== 'in_progress' || attempt.mode === 'practice';
   return {
     id: attempt.id,
+    certification: cert!.code,
     mode: attempt.mode,
     status: attempt.status,
     startedAt: attempt.startedAt,
@@ -172,6 +185,8 @@ export async function getAttemptState(db: Db, attemptId: string, userId: string)
     allowBackNavigation: attempt.allowBackNavigation,
     furthestPosition: attempt.furthestPosition,
     totalCount: attempt.totalCount,
+    /** Heure du serveur, pour que le navigateur corrige le décalage de son horloge avant de décompter. */
+    serverNow: new Date().toISOString(),
     questions: rows.map((r) => ({
       id: r.questionId,
       position: r.position,
@@ -341,7 +356,8 @@ export async function getAttemptResult(db: Db, attemptId: string, userId: string
       position: r.position,
       slug: r.slug,
       domain: r.domain,
-      body: r.body,
+      // Même ordre d'affichage que pendant la tentative ; la correction référence des ids, elle reste valable.
+      body: toPublicBody(r.body, displaySeed(attempt, r.position)),
       key: r.key,
       response: r.response,
       isCorrect: r.isCorrect,
