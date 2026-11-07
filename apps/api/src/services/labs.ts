@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
-import { LabSession, toPublicLab, type ExecResult, type Lab, type TerminalProfile } from '@examforge/core';
+import { LabSession, toPublicLab, type ExecResult, type Lab, type LabKind, type TerminalProfile } from '@examforge/core';
 import { loadLabProfile } from '@examforge/content';
 import type { Db } from '../db/client.js';
 import { certifications, domains, labAttemptCommands, labAttempts, labs, subtopics, type LabAttempt } from '../db/schema.js';
@@ -13,6 +13,12 @@ import { badRequest, conflict, forbidden, notFound } from '../errors.js';
 
 /** Plafonds d'une session : lignes par envoi, longueur d'une ligne, commandes au total. */
 export const LAB_LIMITS = { linesPerRequest: 60, lineLength: 300, commandsPerAttempt: 1500 };
+
+/**
+ * Challenge : tolérance après l'échéance (latence réseau). Au-delà, plus aucune commande n'est
+ * acceptée et la session se termine d'elle-même, à la prochaine requête qui la touche.
+ */
+export const CHALLENGE_GRACE_MS = 5_000;
 
 const profiles = new Map<string, TerminalProfile | null>();
 
@@ -76,6 +82,25 @@ async function ownedLabAttempt(db: Db, attemptId: string, userId: string) {
 
 const seconds = (from: Date, to: Date) => Math.max(0, Math.round((to.getTime() - from.getTime()) / 1000));
 
+const pastDeadline = (a: Pick<LabAttempt, 'deadlineAt'>, now = new Date()) =>
+  a.deadlineAt !== null && now.getTime() > a.deadlineAt.getTime() + CHALLENGE_GRACE_MS;
+
+/**
+ * Termine un challenge dont l'échéance est passée. Les commandes arrivées après l'échéance ayant
+ * été refusées, l'état rejoué est celui de l'échéance. Renvoie vrai si la session vient d'être close.
+ */
+async function expireIfDue(db: Db, attempt: LabAttempt, lab: Lab, certification: string): Promise<boolean> {
+  if (attempt.status !== 'in_progress' || !pastDeadline(attempt)) return false;
+  const commands = await loadCommands(db, attempt.id);
+  const success = replay(requireProfile(certification), lab, commands).session.complete();
+  const done = await db
+    .update(labAttempts)
+    .set({ status: 'finished', finishedAt: attempt.deadlineAt, success, expired: true })
+    .where(and(eq(labAttempts.id, attempt.id), eq(labAttempts.status, 'in_progress')))
+    .returning({ id: labAttempts.id });
+  return done.length > 0;
+}
+
 /** Durée retenue : jusqu'à la réussite si elle a eu lieu, sinon jusqu'à la fin. */
 export function labDuration(a: Pick<LabAttempt, 'startedAt' | 'solvedAt' | 'finishedAt' | 'success'>): number | null {
   if (a.success && a.solvedAt) return seconds(a.startedAt, a.solvedAt);
@@ -109,9 +134,13 @@ function attemptState(
   const finished = attempt.status === 'finished';
   return {
     id: attempt.id,
+    kind: lab.kind,
     status: attempt.status,
     startedAt: attempt.startedAt,
     finishedAt: attempt.finishedAt,
+    /** Challenge : échéance (le chrono du navigateur se recale sur `serverNow`). */
+    deadlineAt: attempt.deadlineAt,
+    expired: attempt.expired,
     serverNow: new Date().toISOString(),
     lab: publicLab(lab, subtopicName),
     hintsUsed: attempt.hintsUsed,
@@ -131,6 +160,9 @@ function attemptState(
           explanation: lab.explanation,
           reference: lab.reference,
           hints: lab.hints,
+          expired: attempt.expired,
+          targetMinutes: lab.challenge?.targetMinutes ?? null,
+          faults: lab.challenge?.faults ?? [],
           typed: typedCommands(lab, commands, transcript),
           runningConfig: Object.fromEntries(lab.devices.map((d) => [d.id, session.device(d.id).renderConfig().join('\n')])),
         }
@@ -168,14 +200,14 @@ async function userLabStats(db: Db, userId: string, labIds: string[]) {
   );
 }
 
-export async function listLabs(db: Db, userId: string, certCode: string) {
+export async function listLabs(db: Db, userId: string, certCode: string, kind: LabKind = 'lab') {
   const cert = await certificationByCode(db, certCode);
   const rows = await db
     .select({ id: labs.id, definition: labs.definition, domain: domains.code, subtopicName: subtopics.name })
     .from(labs)
     .innerJoin(domains, eq(domains.id, labs.domainId))
     .innerJoin(subtopics, eq(subtopics.id, labs.subtopicId))
-    .where(and(eq(labs.certificationId, cert.id), eq(labs.status, 'published')))
+    .where(and(eq(labs.certificationId, cert.id), eq(labs.status, 'published'), eq(labs.kind, kind)))
     .orderBy(asc(domains.position), asc(labs.slug));
   const stats = await userLabStats(db, userId, rows.map((r) => r.id));
   return {
@@ -185,6 +217,8 @@ export async function listLabs(db: Db, userId: string, certCode: string) {
       const s = stats.get(r.id);
       return {
         slug: lab.slug,
+        kind: lab.kind,
+        challenge: lab.challenge ? { targetMinutes: lab.challenge.targetMinutes, timeLimitMinutes: lab.challenge.timeLimitMinutes, mode: lab.challenge.mode } : null,
         title: lab.title,
         difficulty: lab.difficulty,
         domain: lab.domain,
@@ -220,12 +254,29 @@ export async function startLabAttempt(db: Db, userId: string, slug: string) {
   const row = await labRow(db, eq(labs.slug, slug));
   if (!row || row.lab.status !== 'published') throw notFound(`Lab inconnu : ${slug}`);
   requireProfile(row.certification);
-  const [attempt] = await db.insert(labAttempts).values({ userId, labId: row.lab.id }).returning();
+  const def = row.lab.definition;
+  const now = new Date();
+  if (def.kind === 'challenge') {
+    // Un seul essai en cours par challenge : un nouveau départ abandonne le précédent.
+    const open = await db
+      .select()
+      .from(labAttempts)
+      .where(and(eq(labAttempts.userId, userId), eq(labAttempts.labId, row.lab.id), eq(labAttempts.status, 'in_progress')));
+    for (const a of open) {
+      if (!(await expireIfDue(db, a, def, row.certification))) {
+        await db.update(labAttempts).set({ status: 'finished', finishedAt: now, success: false }).where(eq(labAttempts.id, a.id));
+      }
+    }
+  }
+  const deadlineAt = def.challenge ? new Date(now.getTime() + def.challenge.timeLimitMinutes * 60_000) : null;
+  const [attempt] = await db.insert(labAttempts).values({ userId, labId: row.lab.id, startedAt: now, deadlineAt }).returning();
   return getLabAttemptState(db, (attempt as LabAttempt).id, userId);
 }
 
 export async function getLabAttemptState(db: Db, attemptId: string, userId: string): Promise<LabAttemptState> {
-  const { attempt, lab, certification, subtopicName } = await ownedLabAttempt(db, attemptId, userId);
+  const owned = await ownedLabAttempt(db, attemptId, userId);
+  if (await expireIfDue(db, owned.attempt, owned.lab.definition, owned.certification)) return getLabAttemptState(db, attemptId, userId);
+  const { attempt, lab, certification, subtopicName } = owned;
   const commands = await loadCommands(db, attempt.id);
   return attemptState(attempt, lab.definition, subtopicName, commands, replay(requireProfile(certification), lab.definition, commands));
 }
@@ -242,6 +293,7 @@ export function splitInput(input: string): string[] {
 
 export async function runLabCommands(db: Db, attemptId: string, userId: string, input: { device?: string; input: string }) {
   const { attempt: owned, lab, certification } = await ownedLabAttempt(db, attemptId, userId);
+  if (await expireIfDue(db, owned, lab.definition, certification)) throw conflict('challenge_expired', 'Temps écoulé : le challenge est terminé');
   const profile = requireProfile(certification);
   const def = lab.definition;
   const device = input.device ?? def.devices[0]?.id;
@@ -250,11 +302,13 @@ export async function runLabCommands(db: Db, attemptId: string, userId: string, 
   if (lines.length > LAB_LIMITS.linesPerRequest) throw badRequest(`Au plus ${LAB_LIMITS.linesPerRequest} lignes par envoi`);
   if (lines.some((l) => l.length > LAB_LIMITS.lineLength)) throw badRequest(`Une ligne fait au plus ${LAB_LIMITS.lineLength} caractères`);
 
-  return db.transaction(async (tx) => {
+  const outcome = await db.transaction(async (tx) => {
     // Verrou sur la session : deux envois simultanés sont joués l'un après l'autre, dans l'ordre.
     const [attempt] = await tx.select().from(labAttempts).where(eq(labAttempts.id, owned.id)).for('update');
     if (!attempt) throw notFound('Session de lab introuvable');
     if (attempt.status !== 'in_progress') throw conflict('lab_finished', 'Cette session de lab est terminée');
+    // L'échéance a pu passer pendant l'attente du verrou : la session sera close hors de la transaction.
+    if (pastDeadline(attempt)) return { expired: true as const };
     if (attempt.commandCount + lines.length > LAB_LIMITS.commandsPerAttempt) {
       throw conflict('too_many_commands', `Au plus ${LAB_LIMITS.commandsPerAttempt} commandes par session`);
     }
@@ -273,14 +327,20 @@ export async function runLabCommands(db: Db, attemptId: string, userId: string, 
     await tx.insert(labAttemptCommands).values(lines.map((l, i) => ({ attemptId: attempt.id, seq: previous.length + i, device, input: l })));
     const achieved = session.achieved();
     const complete = achieved.length === def.objectives.length;
+    const now = new Date();
+    // Un challenge s'arrête à la réussite : le chrono est figé, l'écran de fin s'affiche.
+    const autoFinish = def.kind === 'challenge' && complete;
     await tx
       .update(labAttempts)
       .set({
         commandCount: previous.length + lines.length,
-        ...(complete && !wasComplete && !attempt.solvedAt ? { solvedAt: new Date() } : {}),
+        ...(complete && !wasComplete && !attempt.solvedAt ? { solvedAt: now } : {}),
+        ...(autoFinish ? { status: 'finished' as const, finishedAt: now, success: true } : {}),
       })
       .where(eq(labAttempts.id, attempt.id));
     return {
+      expired: false as const,
+      finished: autoFinish,
       results,
       device,
       prompt: session.device(device).prompt(),
@@ -288,14 +348,21 @@ export async function runLabCommands(db: Db, attemptId: string, userId: string, 
       achieved,
       complete,
       commandCount: previous.length + lines.length,
-      // Heure du serveur : le chrono optionnel du navigateur se recale à chaque commande.
-      serverNow: new Date().toISOString(),
+      // Heure du serveur : le chrono du navigateur se recale à chaque commande.
+      serverNow: now.toISOString(),
     };
   });
+  if (outcome.expired) {
+    await expireIfDue(db, (await ownedLabAttempt(db, attemptId, userId)).attempt, lab.definition, certification);
+    throw conflict('challenge_expired', 'Temps écoulé : le challenge est terminé');
+  }
+  const { expired: _expired, ...result } = outcome;
+  return result;
 }
 
 export async function revealHint(db: Db, attemptId: string, userId: string) {
   const { attempt, lab } = await ownedLabAttempt(db, attemptId, userId);
+  if (lab.definition.kind === 'challenge') throw conflict('no_hints', 'Un challenge se joue sans indice');
   if (attempt.status !== 'in_progress') throw conflict('lab_finished', 'Cette session de lab est terminée');
   const hints = lab.definition.hints;
   const [updated] = await db
@@ -309,6 +376,7 @@ export async function revealHint(db: Db, attemptId: string, userId: string) {
 
 export async function finishLabAttempt(db: Db, attemptId: string, userId: string): Promise<LabAttemptState> {
   const { attempt, lab, certification } = await ownedLabAttempt(db, attemptId, userId);
+  if (await expireIfDue(db, attempt, lab.definition, certification)) return getLabAttemptState(db, attempt.id, userId);
   if (attempt.status === 'in_progress') {
     const commands = await loadCommands(db, attempt.id);
     const { session } = replay(requireProfile(certification), lab.definition, commands);
@@ -322,12 +390,13 @@ export async function finishLabAttempt(db: Db, attemptId: string, userId: string
 }
 
 /** Historique des sessions de lab d'un utilisateur. */
-export async function listLabAttempts(db: Db, userId: string, opts: { certification?: string; limit?: number } = {}) {
+export async function listLabAttempts(db: Db, userId: string, opts: { certification?: string; kind?: LabKind; limit?: number } = {}) {
   const rows = await db
     .select({
       attempt: labAttempts,
       slug: labs.slug,
       title: labs.title,
+      kind: labs.kind,
       difficulty: labs.difficulty,
       certification: certifications.code,
       subtopic: subtopics.code,
@@ -337,12 +406,19 @@ export async function listLabAttempts(db: Db, userId: string, opts: { certificat
     .innerJoin(labs, eq(labs.id, labAttempts.labId))
     .innerJoin(certifications, eq(certifications.id, labs.certificationId))
     .innerJoin(subtopics, eq(subtopics.id, labs.subtopicId))
-    .where(and(eq(labAttempts.userId, userId), opts.certification ? eq(certifications.code, opts.certification) : undefined))
+    .where(
+      and(
+        eq(labAttempts.userId, userId),
+        opts.certification ? eq(certifications.code, opts.certification) : undefined,
+        opts.kind ? eq(labs.kind, opts.kind) : undefined,
+      ),
+    )
     .orderBy(desc(labAttempts.startedAt))
     .limit(opts.limit ?? 50);
   return rows.map((r) => ({
     id: r.attempt.id,
     slug: r.slug,
+    kind: r.kind,
     title: r.title,
     difficulty: r.difficulty,
     certification: r.certification,
@@ -354,6 +430,37 @@ export async function listLabAttempts(db: Db, userId: string, opts: { certificat
     success: r.attempt.success,
     hintsUsed: r.attempt.hintsUsed,
     commandCount: r.attempt.commandCount,
+    expired: r.attempt.expired,
     durationSeconds: labDuration(r.attempt),
   }));
+}
+
+/**
+ * Classement personnel d'un lab ou d'un challenge : tous les essais terminés, du plus ancien au plus
+ * récent (pour la courbe des temps), et le meilleur temps parmi les réussites.
+ */
+export async function labTimes(db: Db, userId: string, slug: string) {
+  const row = await labRow(db, eq(labs.slug, slug));
+  if (!row || row.lab.status !== 'published') throw notFound(`Lab inconnu : ${slug}`);
+  const rows = await db
+    .select()
+    .from(labAttempts)
+    .where(and(eq(labAttempts.userId, userId), eq(labAttempts.labId, row.lab.id), eq(labAttempts.status, 'finished')))
+    .orderBy(asc(labAttempts.startedAt));
+  const times = rows.map((a) => ({
+    id: a.id,
+    startedAt: a.startedAt,
+    success: a.success === true,
+    expired: a.expired,
+    durationSeconds: labDuration(a),
+    hintsUsed: a.hintsUsed,
+  }));
+  const wins = times.filter((t) => t.success && t.durationSeconds !== null).map((t) => t.durationSeconds as number);
+  return {
+    slug,
+    kind: row.lab.definition.kind,
+    targetMinutes: row.lab.definition.challenge?.targetMinutes ?? null,
+    bestSeconds: wins.length ? Math.min(...wins) : null,
+    times,
+  };
 }

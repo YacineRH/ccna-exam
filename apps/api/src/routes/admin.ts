@@ -50,6 +50,7 @@ const labListQuery = z.object({
   certification: z.string(),
   subtopic: z.string().optional(),
   status: z.enum(['draft', 'validated', 'published', 'retired']).optional(),
+  kind: z.enum(['lab', 'challenge']).optional(),
 });
 const examSchema = z.object({
   certification: z.string(),
@@ -190,10 +191,17 @@ export function adminRoutes(db: Db) {
       const q = parseInput(labListQuery, req.query);
       const cert = await certByCode(db, q.certification);
       const rows = await db
-        .select({ slug: labs.slug, title: labs.title, difficulty: labs.difficulty, status: labs.status, subtopic: subtopics.code, source: labs.source })
+        .select({ slug: labs.slug, kind: labs.kind, title: labs.title, difficulty: labs.difficulty, status: labs.status, subtopic: subtopics.code, source: labs.source })
         .from(labs)
         .innerJoin(subtopics, eq(subtopics.id, labs.subtopicId))
-        .where(and(eq(labs.certificationId, cert.id), q.subtopic ? eq(subtopics.code, q.subtopic) : undefined, q.status ? eq(labs.status, q.status) : undefined))
+        .where(
+          and(
+            eq(labs.certificationId, cert.id),
+            q.subtopic ? eq(subtopics.code, q.subtopic) : undefined,
+            q.status ? eq(labs.status, q.status) : undefined,
+            q.kind ? eq(labs.kind, q.kind) : undefined,
+          ),
+        )
         .orderBy(asc(labs.slug));
       return { labs: rows };
     });

@@ -12,6 +12,13 @@ describe.each(listLabCertificationCodes())('labs %s', (code) => {
   const { certification } = loadCertification(code);
   const subtopics = new Set(certification.domains.flatMap((d) => d.subtopics.map((s) => s.code)));
 
+  it('au moins 8 challenges, dont 4 de dépannage et 2 sur plusieurs équipements', () => {
+    const challenges = labs.filter((l) => l.kind === 'challenge');
+    expect(challenges.length).toBeGreaterThanOrEqual(8);
+    expect(challenges.filter((c) => c.challenge?.mode === 'troubleshoot').length).toBeGreaterThanOrEqual(4);
+    expect(challenges.filter((c) => c.devices.length > 1).length).toBeGreaterThanOrEqual(2);
+  });
+
   it('se chargent, avec des slugs uniques et des sous-thèmes existants', () => {
     expect(labs.length).toBeGreaterThan(0);
     expect(new Set(labs.map((l) => l.slug)).size).toBe(labs.length);
@@ -59,14 +66,27 @@ describe.each(listLabCertificationCodes())('labs %s', (code) => {
       throw new Error('aucune commande de la solution n’est indispensable');
     });
 
-    it('trois indices, et aucun ne recopie toute la solution', () => {
-      expect(lab.hints).toHaveLength(3);
+    it('trois indices pour un lab, aucun pour un challenge, et aucun ne recopie toute la solution', () => {
+      expect(lab.hints).toHaveLength(lab.kind === 'challenge' ? 0 : 3);
       const all = lab.solution.flatMap((s) => s.commands).filter((c) => c.length > 3);
       for (const h of lab.hints) expect(all.every((c) => h.includes(c)), h).toBe(false);
     });
 
-    it('la version publique ne contient ni solution, ni indices, ni explication', () => {
+    if (lab.kind === 'challenge') {
+      it('challenge : temps cible et échéance cohérents ; en dépannage, chaque panne est un objectif ouvert au départ', () => {
+        const c = lab.challenge!;
+        expect(c.timeLimitMinutes).toBeGreaterThanOrEqual(c.targetMinutes);
+        expect(lab.estimatedMinutes).toBeLessThanOrEqual(c.timeLimitMinutes);
+        if (c.mode === 'troubleshoot') {
+          expect(c.faults.length).toBeGreaterThan(0);
+          expect(c.faults.length).toBeLessThanOrEqual(lab.objectives.length);
+        }
+      });
+    }
+
+    it('la version publique ne contient ni solution, ni indices, ni explication, ni pannes', () => {
       const pub = JSON.stringify(toPublicLab(lab));
+      for (const f of lab.challenge?.faults ?? []) expect(pub).not.toContain(f);
       expect(pub).not.toContain(lab.explanation);
       for (const h of lab.hints) expect(pub).not.toContain(h);
       expect(pub).not.toContain('"solution"');

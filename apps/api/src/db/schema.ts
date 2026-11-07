@@ -210,6 +210,8 @@ export const attemptAnswers = pgTable(
 );
 
 export const labAttemptStatus = pgEnum('lab_attempt_status', ['in_progress', 'finished']);
+/** Lab guidé ou challenge chronométré : même format, même simulateur, même table de sessions. */
+export const labKind = pgEnum('lab_kind', ['lab', 'challenge']);
 
 /**
  * Labs CLI : la définition complète (état de départ, objectifs, indices, solution) est stockée d'un bloc.
@@ -229,6 +231,7 @@ export const labs = pgTable(
     subtopicId: uuid('subtopic_id')
       .notNull()
       .references(() => subtopics.id),
+    kind: labKind('kind').notNull().default('lab'),
     difficulty: text('difficulty').notNull(),
     title: text('title').notNull(),
     definition: jsonb('definition').$type<Lab>().notNull(),
@@ -236,7 +239,7 @@ export const labs = pgTable(
     source: questionSource('source').notNull().default('manual'),
     ...timestamps,
   },
-  (t) => [index('labs_cert_status_idx').on(t.certificationId, t.status)],
+  (t) => [index('labs_cert_status_idx').on(t.certificationId, t.status, t.kind)],
 );
 
 /** Une session de lab : les commandes sont rejouées dans l'ordre pour reconstituer l'état des équipements. */
@@ -259,6 +262,10 @@ export const labAttempts = pgTable(
     success: boolean('success'),
     hintsUsed: integer('hints_used').notNull().default(0),
     commandCount: integer('command_count').notNull().default(0),
+    /** Challenge : échéance, contrôlée côté serveur comme celle d'un examen. */
+    deadlineAt: timestamp('deadline_at', { withTimezone: true }),
+    /** Challenge terminé par l'échéance plutôt que par la réussite ou l'abandon. */
+    expired: boolean('expired').notNull().default(false),
   },
   (t) => [index('lab_attempts_user_idx').on(t.userId, t.startedAt), index('lab_attempts_lab_idx').on(t.labId, t.userId)],
 );
@@ -277,6 +284,78 @@ export const labAttemptCommands = pgTable(
   (t) => [primaryKey({ columns: [t.attemptId, t.seq] })],
 );
 
+/**
+ * Révision espacée : une carte par utilisateur et par question (boîte de Leitner, échéance).
+ * Le paquet d'un sous-thème est ajouté d'un coup ; les cartes sont ensuite dues une à une.
+ */
+export const reviewCards = pgTable(
+  'review_cards',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    questionId: uuid('question_id')
+      .notNull()
+      .references(() => questions.id, { onDelete: 'cascade' }),
+    certificationId: uuid('certification_id')
+      .notNull()
+      .references(() => certifications.id, { onDelete: 'cascade' }),
+    subtopicId: uuid('subtopic_id')
+      .notNull()
+      .references(() => subtopics.id),
+    box: integer('box').notNull().default(0),
+    intervalDays: integer('interval_days').notNull().default(0),
+    dueAt: timestamp('due_at', { withTimezone: true }).notNull().defaultNow(),
+    reviews: integer('reviews').notNull().default(0),
+    lapses: integer('lapses').notNull().default(0),
+    lastReviewedAt: timestamp('last_reviewed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.questionId] }), index('review_cards_due_idx').on(t.userId, t.certificationId, t.dueAt)],
+);
+
+/** Une session de révision : les cartes tirées, dans l'ordre, et le compte des réponses. */
+export const reviewSessions = pgTable(
+  'review_sessions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    certificationId: uuid('certification_id')
+      .notNull()
+      .references(() => certifications.id, { onDelete: 'cascade' }),
+    /** Session limitée à un sous-thème (bouton « Flashcards » de « À revoir »), sinon toutes les cartes dues. */
+    subtopicId: uuid('subtopic_id').references(() => subtopics.id),
+    seed: integer('seed').notNull(),
+    questionIds: jsonb('question_ids').$type<string[]>().notNull(),
+    startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+    finishedAt: timestamp('finished_at', { withTimezone: true }),
+    answeredCount: integer('answered_count').notNull().default(0),
+    correctCount: integer('correct_count').notNull().default(0),
+  },
+  (t) => [index('review_sessions_user_idx').on(t.userId, t.startedAt)],
+);
+
+export const reviewAnswers = pgTable(
+  'review_answers',
+  {
+    sessionId: uuid('session_id')
+      .notNull()
+      .references(() => reviewSessions.id, { onDelete: 'cascade' }),
+    questionId: uuid('question_id')
+      .notNull()
+      .references(() => questions.id, { onDelete: 'cascade' }),
+    response: jsonb('response').$type<Response>().notNull(),
+    isCorrect: boolean('is_correct').notNull(),
+    boxAfter: integer('box_after').notNull(),
+    dueAfter: timestamp('due_after', { withTimezone: true }).notNull(),
+    answeredAt: timestamp('answered_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.sessionId, t.questionId] })],
+);
+
 export type User = typeof users.$inferSelect;
 export type LabAttempt = typeof labAttempts.$inferSelect;
+export type ReviewSession = typeof reviewSessions.$inferSelect;
 export type Attempt = typeof attempts.$inferSelect;

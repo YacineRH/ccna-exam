@@ -56,6 +56,7 @@ describe('exam-forge-mcp', () => {
     expect(names).toEqual([
       'add_certification',
       'analyze_weakness',
+      'generate_challenge',
       'generate_exam',
       'generate_lab',
       'generate_question',
@@ -114,6 +115,24 @@ describe('exam-forge-mcp', () => {
     const res = await client.callTool({ name: 'generate_exam', arguments: { certification: 'ccna', question_count: 102 } });
     expect(payload(res).details.todo).toContain('au moins 22 question(s)');
     expect(calls.at(-1)?.body).toEqual({ certification: 'ccna', questionCount: 102 });
+  });
+
+  it('generate_challenge : format challenge (sans indice, temps cible, échéance, pannes), challenges existants', async () => {
+    const { api, calls } = fakeApi({
+      'GET /admin/labs': () => ({ labs: [{ slug: 'ccna-challenge-3.4-ospf', title: 'OSPF en panne', subtopic: '3.4' }] }),
+      'GET /admin/lab-profile': () => ({ id: 'cisco-ios', deviceTypes: ['router'], interfaceTypes: ['GigabitEthernet'], modes: [], commands: [] }),
+    });
+    const client = await connect(api);
+    const brief = payload(await client.callTool({ name: 'generate_challenge', arguments: { certification: 'ccna', theme: 'dépannage OSPF', duree_cible: 6, subtopic: '3.4' } }));
+    expect(brief.format).toMatchObject({ kind: 'challenge', hints: [], domain: '3.0', subtopic: '3.4', challenge: { targetMinutes: 6, timeLimitMinutes: 12, mode: 'troubleshoot' } });
+    expect(brief.format.slug).toMatch(/^ccna-challenge-3\.4-<sujet-court>-ia-002/);
+    expect(brief.existingChallenges).toHaveLength(1);
+    expect(calls.find((c) => c.path.startsWith('/admin/labs?'))?.path).toContain('kind=challenge');
+    const bad = await client.callTool({ name: 'generate_challenge', arguments: { certification: 'ccna', theme: 'x'.repeat(5), duree_cible: 5, subtopic: '9.9' } });
+    expect(bad.isError).toBe(true);
+    const build = payload(await client.callTool({ name: 'generate_challenge', arguments: { certification: 'ccna', theme: 'VLAN express', duree_cible: 3, mode: 'build' } }));
+    expect(build.format.challenge).toMatchObject({ mode: 'build', faults: [], timeLimitMinutes: 6 });
+    expect(build.subtopics.length).toBeGreaterThan(0);
   });
 
   it('list_labs et generate_lab passent par l’API : couverture, commandes du simulateur, labs existants', async () => {

@@ -71,7 +71,7 @@ describe.skipIf(!DATABASE_URL)('API v1 : labs CLI (PostgreSQL)', () => {
     const res = await track('GET', '/labs?certification=ccna');
     expect(res.statusCode).toBe(200);
     const body = res.json() as { labs: { slug: string; title: string; difficulty: string; subtopic: string; subtopicName: string; bestSeconds: number | null; done: boolean }[] };
-    expect(body.labs.map((l) => l.slug).sort()).toEqual(labs.map((l) => l.slug).sort());
+    expect(body.labs.map((l) => l.slug).sort()).toEqual(labs.filter((l) => l.kind === 'lab').map((l) => l.slug).sort());
     const first = body.labs.find((l) => l.slug === lab.slug)!;
     expect(first).toMatchObject({ title: lab.title, difficulty: lab.difficulty, subtopic: lab.subtopic, bestSeconds: null, done: false });
     expect(first.subtopicName.length).toBeGreaterThan(0);

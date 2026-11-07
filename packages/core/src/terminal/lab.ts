@@ -100,9 +100,29 @@ const deviceSchema = z.object({
 
 const commandsByDevice = z.array(z.object({ device: z.string().min(1), commands: z.array(z.string()).min(1) })).min(1);
 
+/** Genre d'un lab : un lab guidé (avec indices), ou un challenge chronométré (sans indice, fin automatique). */
+export const LAB_KINDS = ['lab', 'challenge'] as const;
+export type LabKind = (typeof LAB_KINDS)[number];
+
+/**
+ * Réglages d'un challenge. `build` : configuration à faire ; `troubleshoot` : la configuration de départ
+ * contient des pannes (`faults`, révélées à la fin) que les objectifs demandent de corriger.
+ */
+const challengeSchema = z.object({
+  /** Temps cible, en minutes : le temps à battre. */
+  targetMinutes: z.number().int().min(1).max(60),
+  /** Échéance, en minutes : la session se termine d'elle-même, contrôlée côté serveur. */
+  timeLimitMinutes: z.number().int().min(1).max(120),
+  mode: z.enum(['build', 'troubleshoot']),
+  /** Pannes semées dans la configuration de départ (mode dépannage), une phrase chacune. */
+  faults: z.array(z.string().min(10)).default([]),
+});
+export type ChallengeSettings = z.infer<typeof challengeSchema>;
+
 export const labSchema = z
   .object({
     slug: z.string().regex(/^[a-z0-9.-]+$/),
+    kind: z.enum(LAB_KINDS).default('lab'),
     certification: z.string().min(1),
     domain: z.string().min(1),
     subtopic: z.string().min(1),
@@ -119,8 +139,10 @@ export const labSchema = z
       .array(z.object({ id: z.string().regex(/^[a-z0-9-]+$/), description: z.string().min(10), check: labCheckSchema }))
       .min(1)
       .max(15),
-    /** Trois indices, du plus vague au plus précis ; aucun ne donne toute la solution. */
-    hints: z.array(z.string().min(10)).length(3),
+    /** Trois indices, du plus vague au plus précis ; aucun ne donne toute la solution. Aucun pour un challenge. */
+    hints: z.array(z.string().min(10)).max(3).default([]),
+    /** Réglages d'un challenge (obligatoires avec `kind: challenge`, interdits sinon). */
+    challenge: challengeSchema.optional(),
     solution: commandsByDevice,
     /** Autres façons valides de réussir, chacune complète : elles doivent atteindre tous les objectifs. */
     variants: z.array(z.object({ description: z.string().min(5), solution: commandsByDevice })).default([]),
@@ -134,6 +156,22 @@ export const labSchema = z
     estimatedMinutes: z.number().int().min(1).max(120).default(10),
   })
   .superRefine((lab, ctx) => {
+    if (lab.kind === 'lab') {
+      if (lab.hints.length !== 3) ctx.addIssue({ code: 'custom', message: 'un lab a exactement 3 indices' });
+      if (lab.challenge) ctx.addIssue({ code: 'custom', message: 'challenge réservé à kind: challenge' });
+    } else {
+      if (lab.hints.length) ctx.addIssue({ code: 'custom', message: 'un challenge n’a pas d’indice' });
+      const c = lab.challenge;
+      if (!c) ctx.addIssue({ code: 'custom', message: 'challenge (temps cible, échéance, mode) attendu' });
+      else {
+        if (c.timeLimitMinutes < c.targetMinutes) ctx.addIssue({ code: 'custom', message: 'l’échéance précède le temps cible' });
+        if (c.mode === 'troubleshoot') {
+          if (!c.faults.length) ctx.addIssue({ code: 'custom', message: 'un challenge de dépannage décrit ses pannes (faults)' });
+          if (!lab.devices.some((d) => d.startupConfig.trim())) ctx.addIssue({ code: 'custom', message: 'un challenge de dépannage part d’une configuration' });
+          if (c.faults.length > lab.objectives.length) ctx.addIssue({ code: 'custom', message: 'plus de pannes que d’objectifs' });
+        } else if (c.faults.length) ctx.addIssue({ code: 'custom', message: 'faults réservé au mode troubleshoot' });
+      }
+    }
     const devices = new Set(lab.devices.map((d) => d.id));
     if (devices.size !== lab.devices.length) ctx.addIssue({ code: 'custom', message: 'équipement en double' });
     const ids = new Set(lab.objectives.map((o) => o.id));
@@ -168,6 +206,9 @@ export function parseLab(input: unknown): Lab {
 /** Ce que le navigateur reçoit d'un lab avant la fin : jamais la solution, ni le détail des objectifs. */
 export interface PublicLab {
   slug: string;
+  kind: LabKind;
+  /** Challenge : temps cible, échéance et mode ; les pannes restent secrètes jusqu'à la fin. */
+  challenge: { targetMinutes: number; timeLimitMinutes: number; mode: ChallengeSettings['mode'] } | null;
   title: string;
   difficulty: Lab['difficulty'];
   domain: string;
@@ -183,6 +224,8 @@ export interface PublicLab {
 export function toPublicLab(lab: Lab): PublicLab {
   return {
     slug: lab.slug,
+    kind: lab.kind,
+    challenge: lab.challenge ? { targetMinutes: lab.challenge.targetMinutes, timeLimitMinutes: lab.challenge.timeLimitMinutes, mode: lab.challenge.mode } : null,
     title: lab.title,
     difficulty: lab.difficulty,
     domain: lab.domain,

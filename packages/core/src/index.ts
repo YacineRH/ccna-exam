@@ -14,3 +14,4 @@ export * from './terminal/syntax.js';
 export * from './terminal/params.js';
 export * from './terminal/device.js';
 export * from './terminal/lab.js';
+export * from './revision.js';

@@ -108,6 +108,8 @@ export interface LabBundle {
 }
 
 const PROFILE_FILE = 'profile.json';
+/** Sous-dossier des challenges chronométrés, à côté des labs. */
+const CHALLENGES_DIR = 'challenges';
 
 /** Certifications qui ont des labs (un dossier `data/labs/<code>/` avec un `profile.json`). */
 export function listLabCertificationCodes(dataDir = DATA_DIR): string[] {
@@ -149,7 +151,12 @@ export function loadLabs(code: string, dataDir = DATA_DIR): LabBundle {
   const labs: Lab[] = [];
   const issues: string[] = [];
   const slugs = new Set<string>();
-  for (const file of readdirSync(dir).filter((f) => f.endsWith('.json') && f !== PROFILE_FILE).sort()) {
+  // Les labs à la racine du dossier, les challenges dans `challenges/` : même format, `kind` les distingue.
+  const files = (sub: string) => {
+    const d = join(dir, sub);
+    return existsSync(d) ? readdirSync(d).filter((f) => f.endsWith('.json') && f !== PROFILE_FILE).sort().map((f) => join(sub, f)) : [];
+  };
+  for (const file of [...files(''), ...files(CHALLENGES_DIR)]) {
     let lab: Lab;
     try {
       lab = parseLab(readJson(join(dir, file)));
@@ -157,6 +164,8 @@ export function loadLabs(code: string, dataDir = DATA_DIR): LabBundle {
       issues.push(`${file} : ${(err as Error).message}`);
       continue;
     }
+    const expected = file.startsWith(`${CHALLENGES_DIR}/`) ? 'challenge' : 'lab';
+    if (lab.kind !== expected) issues.push(`${file} : kind ${lab.kind} attendu ${expected}`);
     if (slugs.has(lab.slug)) issues.push(`${file} : slug en double ${lab.slug}`);
     slugs.add(lab.slug);
     issues.push(...checkLabAgainstCertification(lab, certification, profile));
