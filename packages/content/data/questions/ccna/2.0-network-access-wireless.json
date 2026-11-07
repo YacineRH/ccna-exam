@@ -1,0 +1,632 @@
+[
+  {
+    "slug": "ccna-2.6-ap-modes-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque mode d'AP Cisco à son fonctionnement.",
+      "left": [
+        {
+          "id": "local",
+          "text": "Local"
+        },
+        {
+          "id": "flex",
+          "text": "FlexConnect"
+        },
+        {
+          "id": "monitor",
+          "text": "Monitor"
+        },
+        {
+          "id": "sniffer",
+          "text": "Sniffer"
+        },
+        {
+          "id": "seconnect",
+          "text": "SE-Connect"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Sert les clients et envoie tout leur trafic au WLC dans le tunnel CAPWAP ; quitte brièvement son canal pour écouter les autres."
+        },
+        {
+          "id": "r2",
+          "text": "Ne sert aucun client et parcourt en continu tous les canaux pour la détection d'intrusions (wIPS), la détection des rogues et la localisation."
+        },
+        {
+          "id": "r3",
+          "text": "Sert les clients d'une agence distante et peut commuter leur trafic directement sur le commutateur local, sans passer par le WLC."
+        },
+        {
+          "id": "r4",
+          "text": "Ne sert aucun client, coupe ses radios et écoute le réseau filaire (ARP) pour trouver où les rogues sont raccordés."
+        },
+        {
+          "id": "r5",
+          "text": "Ne sert aucun client et transmet les trames 802.11 capturées sur un canal à un poste distant équipé d'un analyseur comme Wireshark."
+        },
+        {
+          "id": "r6",
+          "text": "Ne sert aucun client et transmet les mesures brutes du spectre RF, interférences non Wi-Fi comprises, à une application d'analyse de spectre."
+        },
+        {
+          "id": "r7",
+          "text": "Relie des AP entre eux par une liaison radio (mesh) pour étendre le réseau là où aucun câble n'arrive."
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "local": "r1",
+        "flex": "r3",
+        "monitor": "r2",
+        "sniffer": "r5",
+        "seconnect": "r6"
+      }
+    },
+    "explanation": "Le mode local est le mode par défaut d'un AP lightweight : il sert les clients, tunnelise leur trafic vers le WLC en CAPWAP et fait de courts balayages hors canal pour la gestion RF. FlexConnect ajoute la commutation locale pour les sites distants. Monitor, Sniffer et SE-Connect transforment l'AP en capteur dédié qui ne sert plus de clients : balayage de tous les canaux pour wIPS, rogues et localisation (Monitor), capture de trames vers un analyseur (Sniffer), données de spectre brutes, y compris les sources non 802.11, pour un outil d'analyse de spectre (SE-Connect).",
+    "distractorNotes": {
+      "r4": "Décrit le mode Rogue Detector, qui n'est pas dans la colonne de gauche.",
+      "r7": "Décrit le mode Bridge (mesh), qui n'est pas dans la colonne de gauche."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — modes d'AP (Local, FlexConnect, Monitor, Sniffer, Rogue Detector, SE-Connect, Bridge)"
+  },
+  {
+    "slug": "ccna-2.6-capwap-ports-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un AP lightweight a rejoint son WLC. Sur quel port UDP du WLC circule le canal de contrôle CAPWAP, et comment ce canal est-il protégé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "UDP 5247, chiffré par DTLS"
+        },
+        {
+          "id": "b",
+          "text": "UDP 12223, sans chiffrement"
+        },
+        {
+          "id": "c",
+          "text": "UDP 5246, chiffré par DTLS"
+        },
+        {
+          "id": "d",
+          "text": "UDP 5246, sans chiffrement par défaut"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "CAPWAP sépare deux canaux entre l'AP et le WLC : le contrôle sur UDP 5246 et les données des clients sur UDP 5247. Le canal de contrôle, qui transporte la configuration et la gestion de l'AP, est obligatoirement protégé par DTLS, établi juste après la phase de découverte. Le chiffrement DTLS du canal de données est facultatif : sans lui, les trames des clients sont simplement encapsulées.",
+    "distractorNotes": {
+      "a": "5247 est le port du canal de données CAPWAP ; son chiffrement DTLS est facultatif et désactivé par défaut sur les WLC Cisco.",
+      "b": "UDP 12222 et 12223 sont les ports de LWAPP, le protocole propriétaire qui a précédé CAPWAP.",
+      "d": "Le port est le bon, mais le canal de contrôle est toujours protégé par DTLS une fois la session établie ; c'est le canal de données dont le chiffrement est facultatif."
+    },
+    "reference": "RFC 5415 (CAPWAP), sections 2.4 et 3.1"
+  },
+  {
+    "slug": "ccna-2.6-wireless-architectures-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les architectures sans-fil Cisco sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Un AP autonome se configure et se gère individuellement, sans WLC."
+        },
+        {
+          "id": "b",
+          "text": "En split-MAC, c'est le WLC qui émet les beacons et répond aux probe requests à la place des AP."
+        },
+        {
+          "id": "c",
+          "text": "L'Embedded Wireless Controller (EWC) s'exécute en machine virtuelle sur un serveur du data center."
+        },
+        {
+          "id": "d",
+          "text": "Avec Meraki, le tableau de bord cloud gère les AP, mais le trafic des clients ne transite pas par le cloud."
+        },
+        {
+          "id": "e",
+          "text": "Dans un déploiement centralisé, les WLAN se saisissent AP par AP, puis le WLC synchronise leur configuration."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Un AP autonome porte toute sa configuration (SSID, VLAN, sécurité) et se gère un par un, en CLI ou en GUI. Avec Meraki, les AP sont gérés depuis le tableau de bord cloud, mais seul le trafic de gestion part vers le cloud : les données des clients restent sur le réseau local. Avec un contrôleur (WLC centralisé ou EWC), les AP lightweight fonctionnent en split-MAC et reçoivent leur configuration du contrôleur par CAPWAP.",
+    "distractorNotes": {
+      "b": "C'est l'inverse : en split-MAC, les fonctions temps réel (beacons, probe responses, ACK et retransmissions) restent sur l'AP ; le WLC gère l'authentification, l'association, l'itinérance et la RF.",
+      "c": "L'EWC s'exécute sur un AP Catalyst 9100 qui joue le rôle de contrôleur pour les autres AP ; la version machine virtuelle est le Catalyst 9800-CL.",
+      "e": "Dans un déploiement centralisé, les WLAN se définissent une seule fois sur le WLC, qui pousse la configuration aux AP par CAPWAP."
+    },
+    "reference": "RFC 5416 (CAPWAP binding IEEE 802.11), section 2.2.1 ; Cisco Embedded Wireless Controller on Catalyst Access Points Configuration Guide"
+  },
+  {
+    "slug": "ccna-2.6-flexconnect-wan-failure-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise a installé ses WLC au siège. Chaque agence est reliée au siège par un lien WAN et dispose d'un commutateur, de trois AP et d'une imprimante. Deux exigences : le trafic des clients vers l'imprimante de l'agence ne doit pas faire l'aller-retour par le siège, et si le lien WAN tombe, les clients du WLAN WPA2-PSK de l'agence doivent continuer à fonctionner. Quelle configuration des AP de l'agence répond aux deux exigences ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mode Local, avec le WLAN mappé sur une interface dynamique du WLC"
+        },
+        {
+          "id": "b",
+          "text": "Mode Bridge, avec un AP racine raccordé au commutateur de l'agence"
+        },
+        {
+          "id": "c",
+          "text": "Mode FlexConnect, avec le WLAN en commutation centrale"
+        },
+        {
+          "id": "d",
+          "text": "Mode FlexConnect, avec le WLAN en commutation locale"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "En FlexConnect, l'AP peut commuter localement le trafic d'un WLAN sur un VLAN de l'agence : les clients joignent l'imprimante sans passer par le WAN. Si l'AP perd le contact avec le WLC, il passe en mode standalone : les WLAN commutés localement et authentifiés localement, comme un WLAN WPA2-PSK, continuent de fonctionner, alors que les WLAN commutés centralement sont coupés. Le mode local, lui, dépend entièrement du tunnel CAPWAP vers le WLC.",
+    "distractorNotes": {
+      "a": "En mode local, tout le trafic des clients part dans le tunnel CAPWAP vers le siège avant de revenir vers l'imprimante ; si le WAN tombe, l'AP perd son WLC et cesse de servir les clients.",
+      "b": "Le mode Bridge sert au maillage radio (mesh) entre AP quand il n'y a pas de câble ; il ne change ni le chemin du trafic vers le WLC ni le comportement en cas de perte du WLC.",
+      "c": "En commutation centrale, le trafic remonte quand même au WLC par le WAN ; et en mode standalone, les WLAN commutés centralement sont coupés."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — FlexConnect"
+  },
+  {
+    "slug": "ccna-2.7-local-mode-ap-port-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un AP Catalyst 9120AX en mode local est raccordé au port Gi1/0/12 d'un Catalyst 9300 PoE+. L'AP obtient son adresse IP dans le VLAN 10 ; les WLAN qu'il diffuse placent les clients dans les VLAN 20 et 30, définis sur le WLC. Quelles deux affirmations sur la configuration du port Gi1/0/12 sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le port doit être un trunk qui autorise les VLAN 10, 20 et 30, sinon les clients n'obtiennent pas d'adresse."
+        },
+        {
+          "id": "b",
+          "text": "Un port d'accès dans le VLAN 10 suffit, car le trafic des clients est transporté dans le tunnel CAPWAP jusqu'au WLC."
+        },
+        {
+          "id": "c",
+          "text": "Le port doit être placé dans le VLAN 20, celui des clients, pour que l'AP puisse joindre le WLC."
+        },
+        {
+          "id": "d",
+          "text": "Le port doit être en « switchport mode dynamic desirable », car l'AP négocie son trunk avec DTP."
+        },
+        {
+          "id": "e",
+          "text": "Le port peut alimenter l'AP sans commande supplémentaire, car « power inline auto » est le réglage par défaut des ports PoE."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "En mode local, l'AP encapsule tout le trafic des clients dans le tunnel CAPWAP (UDP 5247) vers le WLC, qui le dépose lui-même dans le VLAN 20 ou 30 sur ses ports. Le commutateur d'accès ne voit que les paquets IP de l'AP : un port d'accès dans le VLAN de l'AP suffit. Sur un port PoE de Catalyst, « power inline auto » est actif par défaut : le commutateur détecte l'AP et lui fournit la puissance demandée, ici en PoE+ (802.3at).",
+    "distractorNotes": {
+      "a": "Ce serait le cas d'un AP FlexConnect en commutation locale ; en mode local, les VLAN des clients n'ont besoin d'exister que du côté du WLC.",
+      "c": "L'AP obtient son adresse dans le VLAN 10 : c'est ce VLAN que le port doit porter. CAPWAP étant routé, l'AP joint le WLC depuis n'importe quel VLAN qui a une route vers lui, pas besoin du VLAN des clients.",
+      "d": "Un AP ne négocie pas de trunk avec DTP, et un AP en mode local n'a de toute façon pas besoin de trunk."
+    },
+    "reference": "Cisco Catalyst 9300 Interface and Hardware Components Configuration Guide — Power over Ethernet ; Cisco Wireless Controller Configuration Guide, Release 8.10"
+  },
+  {
+    "slug": "ccna-2.7-flexconnect-trunk-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sur le WLC AireOS du siège, l'AP AP-AG1-01 est en mode FlexConnect, avec VLAN Support activé et Native VLAN ID 10 ; il obtient son adresse dans le VLAN 10 et a bien rejoint le WLC. Le WLAN CORP est en commutation locale et mappé sur le VLAN 20 de l'agence, où le routeur local assure le DHCP. Les clients du WLAN CORP s'associent mais n'obtiennent aucune adresse IP. Quelle est la cause la plus probable ?",
+      "exhibit": "SW-AG1#show running-config interface GigabitEthernet1/0/5\nBuilding configuration...\n\nCurrent configuration : 111 bytes\n!\ninterface GigabitEthernet1/0/5\n description AP-AG1-01\n switchport access vlan 10\n switchport mode access\nend",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le port est en mode accès : les trames du VLAN 20, que l'AP émet étiquetées 802.1Q, sont rejetées par le commutateur."
+        },
+        {
+          "id": "b",
+          "text": "Le Native VLAN ID de l'AP devrait être 20, le VLAN des clients du WLAN CORP, et non le VLAN 10."
+        },
+        {
+          "id": "c",
+          "text": "Le WLC du siège n'a pas d'interface dynamique dans le VLAN 20 joignable depuis le réseau de l'agence."
+        },
+        {
+          "id": "d",
+          "text": "Le canal de données CAPWAP n'est pas chiffré par DTLS, ce qui empêche les clients d'obtenir leur bail DHCP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Avec VLAN Support, un AP FlexConnect envoie son propre trafic (CAPWAP, gestion) sans étiquette dans le VLAN natif, et le trafic des WLAN commutés localement étiqueté 802.1Q avec leur VLAN. Le port qui le raccorde doit donc être un trunk de VLAN natif 10 autorisant au moins les VLAN 10 et 20 (« switchport mode trunk », « switchport trunk native vlan 10 », « switchport trunk allowed vlan 10,20 »). Ici, le port d'accès laisse passer le trafic non étiqueté de l'AP, qui rejoint donc le WLC, mais rejette les trames étiquetées VLAN 20 : les DHCP Discover des clients n'atteignent jamais le routeur.",
+    "distractorNotes": {
+      "b": "Le VLAN natif doit être celui où l'AP a son adresse et que le commutateur transporte sans étiquette, ici le VLAN 10. Le passer à 20 ne ferait pas transiter le VLAN 20 sur un port d'accès en VLAN 10 : au mieux, les clients atterriraient dans le VLAN 10.",
+      "c": "En commutation locale, le trafic des clients sort de l'AP directement sur le commutateur de l'agence ; le VLAN 20 n'a pas besoin d'exister sur le WLC du siège.",
+      "d": "Le trafic d'un WLAN commuté localement n'emprunte pas le tunnel CAPWAP ; de plus, le chiffrement DTLS des données est facultatif et n'empêche pas le DHCP."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — FlexConnect (VLAN Support) ; IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.7-wlc-lag-mode-on-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un WLC AireOS 5520, LAG est activé et les ports de distribution sont reliés à un Catalyst. Quelle commande faut-il appliquer aux ports correspondants du commutateur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "channel-group 1 mode active"
+        },
+        {
+          "id": "b",
+          "text": "channel-group 1 mode on"
+        },
+        {
+          "id": "c",
+          "text": "channel-group 1 mode desirable"
+        },
+        {
+          "id": "d",
+          "text": "channel-group 1 mode passive"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le LAG d'un WLC AireOS est un agrégat 802.3ad statique : le contrôleur ne négocie ni avec LACP ni avec PAgP. Les ports du commutateur doivent donc être forcés avec « channel-group 1 mode on », et le port-channel configuré en trunk 802.1Q, puisque les ports du WLC transportent les VLAN de gestion et des clients. L'activation ou la modification de LAG demande un redémarrage du contrôleur.",
+    "distractorNotes": {
+      "a": "active lance une négociation LACP ; le WLC AireOS n'échange pas de LACPDU, le port-channel ne se forme pas.",
+      "c": "desirable est un mode PAgP, protocole que le WLC AireOS ne prend pas en charge.",
+      "d": "passive attend des LACPDU que le WLC AireOS n'envoie jamais : le port-channel ne se forme pas."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Link Aggregation"
+  },
+  {
+    "slug": "ccna-2.8-wlc-management-access-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur l'accès de gestion à un WLC AireOS sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le port console ne sert qu'une fois la configuration initiale faite, celle-ci se faisant forcément en HTTPS."
+        },
+        {
+          "id": "b",
+          "text": "TACACS+ y authentifie les clients sans fil, tandis que RADIUS est réservé aux comptes administrateurs."
+        },
+        {
+          "id": "c",
+          "text": "SSH et HTTPS chiffrent toute la session, identifiants compris, contrairement à Telnet et HTTP."
+        },
+        {
+          "id": "d",
+          "text": "Un AP lightweight n'a pas de port console : il ne peut se gérer que depuis le WLC."
+        },
+        {
+          "id": "e",
+          "text": "Les comptes administrateurs peuvent être vérifiés par un serveur RADIUS ou TACACS+, en plus de la base locale."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Telnet et HTTP transportent identifiants et commandes en clair, alors que SSH et HTTPS (TLS) chiffrent toute la session : on les privilégie pour la CLI et pour l'interface graphique du WLC. Les comptes de gestion peuvent être locaux ou vérifiés de façon centralisée par RADIUS ou TACACS+, l'ordre étant fixé dans Security > Priority Order > Management User. La console reste l'accès hors réseau, utilisé notamment pour la configuration initiale.",
+    "distractorNotes": {
+      "a": "La configuration initiale se fait souvent par la console, avec l'assistant en CLI ; la console reste ensuite disponible pour la gestion hors réseau.",
+      "b": "C'est l'inverse : sur un WLC, TACACS+ ne sert qu'à l'accès des administrateurs ; RADIUS sert à l'authentification 802.1X des clients et peut aussi authentifier les administrateurs.",
+      "d": "Les AP Cisco ont un port console, utile au dépannage ; l'accès Telnet/SSH aux AP s'active depuis le WLC."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Telnet/SSH, HTTP/HTTPS, RADIUS et TACACS+"
+  },
+  {
+    "slug": "ccna-2.8-service-port-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un WLC AireOS, quelle interface est liée à un port physique dédié, sert à la gestion hors bande et à la récupération du système, et ne transporte jamais le trafic des AP ni celui des clients ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'interface de gestion (management)"
+        },
+        {
+          "id": "b",
+          "text": "L'interface virtuelle (virtual)"
+        },
+        {
+          "id": "c",
+          "text": "Une interface dynamique"
+        },
+        {
+          "id": "d",
+          "text": "Le service port"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le service port est un port physique réservé à la gestion hors bande : il ne gère pas les VLAN étiquetés, ne transporte ni CAPWAP ni trafic client, et son adresse doit être dans un sous-réseau différent de celui de l'interface de gestion. C'est aussi le seul port actif quand le contrôleur est en mode boot, d'où son intérêt pour la récupération.",
+    "distractorNotes": {
+      "a": "L'interface de gestion sert à la gestion en bande sur les ports de distribution, et c'est elle qui termine les tunnels CAPWAP des AP.",
+      "b": "L'interface virtuelle sert au relais DHCP, à la redirection de l'authentification web et à la mobilité ; elle n'est liée à aucun port physique.",
+      "c": "Une interface dynamique relie un WLAN à un VLAN pour le trafic des clients."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Service-Port Interfaces"
+  },
+  {
+    "slug": "ccna-2.8-mgmt-via-wireless-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un WLC AireOS dessert le WLAN CORP, mappé sur le VLAN 20. Depuis un poste filaire du VLAN 20, l'administrateur ouvre sans problème l'interface graphique en HTTPS et une session SSH vers l'interface de gestion du WLC, 10.10.10.5. Depuis son portable associé au WLAN CORP (10.20.0.57, dans le même VLAN 20), les deux échouent, alors qu'il joint normalement les autres serveurs du sous-réseau 10.10.10.0/24. Aucune ACL n'est appliquée. Quelle est la cause la plus probable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La gestion depuis les clients sans fil (Management > Mgmt Via Wireless) est désactivée, comme par défaut."
+        },
+        {
+          "id": "b",
+          "text": "HTTPS et SSH ne sont accessibles que par le service port, et non par l'interface de gestion du WLC."
+        },
+        {
+          "id": "c",
+          "text": "Les clients sans fil doivent viser l'adresse de l'interface virtuelle, seule joignable depuis un WLAN."
+        },
+        {
+          "id": "d",
+          "text": "Le WLAN CORP devrait être mappé sur l'interface de gestion pour que ses clients puissent administrer le WLC."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Par défaut, un WLC AireOS refuse les sessions de gestion (HTTP/HTTPS, Telnet, SSH) qui viennent de clients associés à ses propres AP : c'est une mesure de sécurité. Le même administrateur y arrive depuis le filaire et joint les autres serveurs du sous-réseau de gestion, donc le routage, les services HTTPS/SSH et les ACL sont hors de cause. L'option s'active dans Management > Mgmt Via Wireless (ou « config network mgmt-via-wireless enable »).",
+    "distractorNotes": {
+      "b": "Le poste filaire gère déjà le WLC par l'interface de gestion : HTTPS et SSH y sont donc bien accessibles.",
+      "c": "L'interface virtuelle sert au relais DHCP et à la redirection de l'authentification web, pas à l'administration du contrôleur.",
+      "d": "Le poste filaire du même VLAN 20 y arrive : le VLAN n'est pas en cause, et changer le mappage ne lèverait pas le blocage appliqué aux clients sans fil."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Management over Wireless"
+  },
+  {
+    "slug": "ccna-2.9-wlan-creation-steps-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Sur un WLC AireOS 8.10, vous devez publier le SSID « Labo », dont les clients seront placés dans le VLAN 30, qui n'existe pas encore sur le contrôleur. Remettez les étapes dans l'ordre, en commençant par le prérequis et en n'activant le WLAN qu'une fois configuré.",
+      "items": [
+        {
+          "id": "map",
+          "text": "Dans l'onglet General de la page « WLANs > Edit », choisir l'interface du VLAN 30 dans « Interface/Interface Group(G) »."
+        },
+        {
+          "id": "iface",
+          "text": "Dans Controller > Interfaces, cliquer « New » et créer l'interface dynamique du VLAN 30 (nom, VLAN ID, adresse IP, passerelle, serveur DHCP)."
+        },
+        {
+          "id": "enable",
+          "text": "Cocher « Enabled » en regard de Status, puis cliquer « Apply »."
+        },
+        {
+          "id": "create",
+          "text": "Dans le menu WLANs, choisir « Create New » dans la liste déroulante, puis cliquer « Go »."
+        },
+        {
+          "id": "ssid",
+          "text": "Choisir le type WLAN, saisir Profile Name, SSID et ID, puis cliquer « Apply »."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "iface",
+        "create",
+        "ssid",
+        "map",
+        "enable"
+      ]
+    },
+    "explanation": "L'interface dynamique doit exister avant de pouvoir être choisie dans le WLAN : c'est le prérequis. « Create New » puis « Go » ouvre la page « WLANs > New », où l'on saisit Profile Name, SSID et ID ; « Apply » crée le WLAN et ouvre sa page d'édition, avec les onglets General, Security, QoS, Policy-Mapping et Advanced. Dans l'onglet General, on associe le WLAN à l'interface du VLAN 30, puis on coche Status Enabled et on valide pour que les AP diffusent le SSID.",
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Creating WLANs (GUI) ; Configuring Dynamic Interfaces (GUI)"
+  },
+  {
+    "slug": "ccna-2.9-wlan-qos-voice-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans l'onglet QoS d'un WLAN sur un WLC AireOS, quel profil de qualité de service faut-il choisir pour un SSID réservé aux téléphones IP Wi-Fi ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gold"
+        },
+        {
+          "id": "b",
+          "text": "Silver"
+        },
+        {
+          "id": "c",
+          "text": "Platinum"
+        },
+        {
+          "id": "d",
+          "text": "Bronze"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les quatre profils QoS d'AireOS correspondent aux catégories d'accès WMM : Platinum pour la voix, Gold pour la vidéo, Silver pour le best effort et Bronze pour le background. Le profil fixe la priorité maximale accordée au trafic du WLAN, sur la radio comme dans le marquage du tunnel CAPWAP. Pour des téléphones IP, on choisit donc Platinum.",
+    "distractorNotes": {
+      "a": "Gold est le profil prévu pour la vidéo.",
+      "b": "Silver correspond au best effort ; c'est le profil par défaut d'un nouveau WLAN.",
+      "d": "Bronze correspond au trafic d'arrière-plan (background), la priorité la plus basse."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — QoS Profiles"
+  },
+  {
+    "slug": "ccna-2.9-wlan-interface-mapping-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les invités associés au SSID « Invites » devraient recevoir une adresse dans 172.16.30.0/24 (VLAN 30), mais ils obtiennent des adresses du sous-réseau de gestion 172.16.10.0/24. Quelle modification, dans l'interface graphique du WLC, corrige le problème ?",
+      "exhibit": "(Cisco Controller) >show interface summary\n\n Number of Interfaces.......................... 5\n\nInterface Name                   Port Vlan Id  IP Address      Type    Ap Mgr Guest\n-------------------------------- ---- -------- --------------- ------- ------ -----\ncorp-vlan20                      LAG  20       172.16.20.2     Dynamic No     No\nguest-vlan30                     LAG  30       172.16.30.2     Dynamic No     No\nmanagement                       LAG  10       172.16.10.5     Static  Yes    No\nservice-port                     N/A  N/A      192.168.99.2    Static  No     No\nvirtual                          N/A  N/A      192.0.2.1       Static  No     No\n\n(Cisco Controller) >show wlan summary\n\nNumber of WLANs.................................. 2\n\nWLAN ID  WLAN Profile Name / SSID               Status    Interface Name        PMIPv6 MAG\n-------  -------------------------------------  --------  --------------------  ----------\n1        CORP / CORP                            Enabled   corp-vlan20           none\n2        GUEST / Invites                        Enabled   management            none",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dans l'onglet QoS du WLAN GUEST, passer le profil de Silver à Bronze."
+        },
+        {
+          "id": "b",
+          "text": "Dans l'onglet General du WLAN GUEST, choisir guest-vlan30 dans « Interface/Interface Group(G) »."
+        },
+        {
+          "id": "c",
+          "text": "Changer l'ID du WLAN GUEST de 2 à 30, pour qu'il corresponde au VLAN 30."
+        },
+        {
+          "id": "d",
+          "text": "Dans l'onglet Advanced du WLAN GUEST, cocher « DHCP Addr. Assignment Required »."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Sur un WLC AireOS, c'est l'interface (ou le groupe d'interfaces) choisie dans l'onglet General du WLAN qui détermine le VLAN où le WLC dépose le trafic des clients. Un nouveau WLAN est associé par défaut à l'interface management : c'est le cas de GUEST dans l'exhibit, d'où les adresses du VLAN 10. En sélectionnant guest-vlan30, les invités sont placés dans le VLAN 30 et obtiennent une adresse en 172.16.30.0/24.",
+    "distractorNotes": {
+      "a": "Le profil QoS fixe la priorité du trafic, pas le VLAN dans lequel les clients sont placés.",
+      "c": "L'ID du WLAN n'a aucun lien avec le VLAN : c'est l'interface associée au WLAN qui détermine le VLAN.",
+      "d": "Cette option interdit les adresses statiques et oblige les clients à passer par DHCP, mais ils resteraient dans le VLAN de l'interface management."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Creating WLANs (GUI), Interfaces"
+  },
+  {
+    "slug": "ccna-2.9-c9800-policy-profile-vlan-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un Catalyst 9800, vous avez créé le profil WLAN CORP dans Configuration > Tags & Profiles > WLANs. Dans quel objet de configuration choisissez-vous le VLAN dans lequel seront placés les clients de ce SSID ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dans le profil WLAN CORP lui-même, onglet General"
+        },
+        {
+          "id": "b",
+          "text": "Dans le Site Tag attribué aux AP du site"
+        },
+        {
+          "id": "c",
+          "text": "Dans le Policy Profile, onglet Access Policies"
+        },
+        {
+          "id": "d",
+          "text": "Dans le RF Tag et ses profils RF"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le Catalyst 9800 répartit la configuration entre profils et tags. Le profil WLAN décrit le SSID et sa sécurité ; le Policy Profile décrit ce qui s'applique aux clients : VLAN (onglet Access Policies), QoS, ACL, mode de commutation. Un Policy Tag associe ensuite chaque profil WLAN à un Policy Profile, et c'est ce tag, attribué aux AP, qui leur fait diffuser le SSID avec ce VLAN.",
+    "distractorNotes": {
+      "a": "Le profil WLAN définit le SSID, l'ID et la sécurité ; contrairement au WLAN d'AireOS, il ne contient pas l'association au VLAN.",
+      "b": "Le Site Tag associe un AP Join Profile et, pour un site distant, un Flex Profile : il décrit le site, pas le VLAN des clients d'un SSID.",
+      "d": "Le RF Tag et ses profils RF portent les paramètres radio (débits, puissance, canaux) des bandes 2,4 et 5 GHz."
+    },
+    "reference": "Cisco Catalyst 9800 Series Wireless Controller Software Configuration Guide — WLANs, Policy Profiles et Policy Tags"
+  }
+]

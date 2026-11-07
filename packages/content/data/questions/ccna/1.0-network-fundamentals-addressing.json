@@ -1,0 +1,558 @@
+[
+  {
+    "slug": "ccna-1.6-vlsm-mask-300-hosts-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "En VLSM, chaque LAN reçoit le plus petit sous-réseau capable de le contenir. Un LAN doit accueillir 300 hôtes, interface du routeur comprise. Donnez le préfixe retenu, son masque et le nombre d'adresses d'hôtes utilisables qu'il offre.",
+      "fields": [
+        {
+          "id": "prefix",
+          "label": "Longueur du préfixe (sans le /)"
+        },
+        {
+          "id": "mask",
+          "label": "Masque en décimal pointé"
+        },
+        {
+          "id": "hosts",
+          "label": "Nombre d'adresses d'hôtes utilisables"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "prefix": {
+          "accepted": [
+            "23"
+          ],
+          "normalize": "int"
+        },
+        "mask": {
+          "accepted": [
+            "255.255.254.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "hosts": {
+          "accepted": [
+            "510"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Il faut h bits d'hôte tels que 2ʰ − 2 ≥ 300 : avec 8 bits, 2⁸ − 2 = 254 ne suffit pas ; avec 9 bits, 2⁹ − 2 = 510 convient. Le préfixe est donc /23 (32 − 9). Le 3ᵉ octet du masque vaut 11111110, soit 254 : le masque est 255.255.254.0. Le /24, souvent choisi par réflexe, ne laisse que 254 adresses utilisables.",
+    "reference": "RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-vlsm-allocation-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "hard",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Vous découpez le bloc en VLSM : les besoins sont servis du plus grand au plus petit, chacun reçoit le plus petit sous-réseau suffisant (nombre d'hôtes interface du routeur comprise) et chaque sous-réseau commence juste après le précédent, à partir de 10.50.4.0. Complétez le plan.",
+      "exhibit": "Bloc à découper : 10.50.4.0/23\n\nLAN A : 200 hôtes\nLAN B : 100 hôtes\nLAN C :  50 hôtes\nLAN D :  20 hôtes\nWAN R1-R2 : liaison point à point en /30",
+      "fields": [
+        {
+          "id": "c_net",
+          "label": "Adresse réseau du LAN C"
+        },
+        {
+          "id": "c_prefix",
+          "label": "Longueur du préfixe du LAN C (sans le /)"
+        },
+        {
+          "id": "d_bcast",
+          "label": "Adresse de broadcast du LAN D"
+        },
+        {
+          "id": "wan_net",
+          "label": "Adresse réseau de la liaison WAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "c_net": {
+          "accepted": [
+            "10.50.5.128"
+          ],
+          "normalize": "ipv4"
+        },
+        "c_prefix": {
+          "accepted": [
+            "26"
+          ],
+          "normalize": "int"
+        },
+        "d_bcast": {
+          "accepted": [
+            "10.50.5.223"
+          ],
+          "normalize": "ipv4"
+        },
+        "wan_net": {
+          "accepted": [
+            "10.50.5.224"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Plus petit bloc suffisant pour chaque besoin : 200 hôtes → /24 (254), 100 → /25 (126), 50 → /26 (62), 20 → /27 (30), WAN → /30. En empilant les blocs : LAN A 10.50.4.0/24, LAN B 10.50.5.0/25 (.0 à .127), LAN C 10.50.5.128/26 (.128 à .191), LAN D 10.50.5.192/27 (.192 à .223, broadcast .223), puis le WAN 10.50.5.224/30. Servir les besoins du plus grand au plus petit garantit que chaque bloc démarre sur une frontière alignée sur sa taille, sans trou ni chevauchement. Il reste 10.50.5.228 à 10.50.5.255 pour de futurs besoins.",
+    "reference": "RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-p2p-31-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux routeurs sont reliés par une liaison point à point et l'on veut consommer le moins d'adresses IPv4 possible. Lequel de ces plans d'adressage est valide et le plus économe ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 : 10.99.0.1/30 et R2 : 10.99.0.2/30"
+        },
+        {
+          "id": "b",
+          "text": "R1 : 10.99.0.0/31 et R2 : 10.99.0.1/31"
+        },
+        {
+          "id": "c",
+          "text": "R1 : 10.99.0.1/31 et R2 : 10.99.0.2/31"
+        },
+        {
+          "id": "d",
+          "text": "R1 : 10.99.0.1/32 et R2 : 10.99.0.2/32"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La RFC 3021 autorise le /31 sur les liaisons point à point : avec seulement deux extrémités, ni adresse réseau ni broadcast ne sont nécessaires, et les deux adresses du bloc sont attribuées aux interfaces. 10.99.0.0/31 et 10.99.0.1/31 sont bien dans le même bloc 10.99.0.0/31. Ce plan consomme deux adresses contre quatre pour le /30 classique. IOS accepte le /31 (avec un simple avertissement sur une interface Ethernet).",
+    "distractorNotes": {
+      "a": "Plan valide, mais un /30 réserve quatre adresses (réseau, deux hôtes, broadcast) pour deux interfaces : il est deux fois moins économe que le /31.",
+      "c": "10.99.0.1/31 appartient au bloc 10.99.0.0/31 et 10.99.0.2/31 au bloc 10.99.0.2/31 : les deux routeurs ne sont pas dans le même sous-réseau.",
+      "d": "Un /32 ne contient qu'une seule adresse : chaque routeur serait seul dans son sous-réseau et aucune route connectée ne mènerait à l'autre."
+    },
+    "reference": "RFC 3021"
+  },
+  {
+    "slug": "ccna-1.6-subnet-21-third-octet-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le réseau 172.20.0.0/16 est découpé en sous-réseaux de même taille avec un préfixe /21. Un hôte a l'adresse 172.20.77.200/21. Complétez.",
+      "fields": [
+        {
+          "id": "subnets",
+          "label": "Nombre de sous-réseaux /21 obtenus"
+        },
+        {
+          "id": "network",
+          "label": "Adresse réseau du sous-réseau de l'hôte"
+        },
+        {
+          "id": "broadcast",
+          "label": "Adresse de broadcast de ce sous-réseau"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "subnets": {
+          "accepted": [
+            "32"
+          ],
+          "normalize": "int"
+        },
+        "network": {
+          "accepted": [
+            "172.20.72.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "broadcast": {
+          "accepted": [
+            "172.20.79.255"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Passer de /16 à /21 emprunte 5 bits : 2⁵ = 32 sous-réseaux. Le masque /21 vaut 255.255.248.0, soit un pas de 256 − 248 = 8 dans le 3ᵉ octet : les blocs commencent à 172.20.0.0, 172.20.8.0… 172.20.72.0, 172.20.80.0. 77 est compris entre 72 et 79, donc le réseau est 172.20.72.0 et le broadcast, dernière adresse avant 172.20.80.0, est 172.20.79.255. Ici la frontière tombe dans le 3ᵉ octet : le .200 du 4ᵉ octet n'intervient pas dans le calcul.",
+    "reference": "RFC 950"
+  },
+  {
+    "slug": "ccna-1.7-apipa-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un poste Windows configuré pour obtenir son adresse automatiquement affiche l'adresse 169.254.47.12, le masque 255.255.0.0 et aucune passerelle par défaut. Quelle est la cause la plus probable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le serveur DHCP lui a attribué une adresse privée RFC 1918 de son pool."
+        },
+        {
+          "id": "b",
+          "text": "Le FAI lui a attribué une adresse de l'espace partagé du CGN."
+        },
+        {
+          "id": "c",
+          "text": "Aucun serveur DHCP n'a répondu et le poste s'est attribué une adresse APIPA."
+        },
+        {
+          "id": "d",
+          "text": "Le bail DHCP est valide mais le serveur n'a pas fourni l'option routeur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Quand un client DHCP n'obtient aucune réponse, Windows s'attribue lui-même une adresse lien local IPv4 dans 169.254.0.0/16 (APIPA, RFC 3927), après avoir vérifié par ARP qu'elle est libre. Ces adresses ne servent qu'à communiquer sur le lien local : il n'y a pas de passerelle et les routeurs ne les acheminent pas. Il faut alors chercher pourquoi le serveur DHCP est injoignable (câble, VLAN, relais DHCP absent).",
+    "distractorNotes": {
+      "a": "169.254.0.0/16 n'est pas une plage RFC 1918 (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) et n'est jamais distribuée par un serveur DHCP.",
+      "b": "L'espace partagé du CGN est 100.64.0.0/10 (RFC 6598), utilisé entre le FAI et le routeur du client, pas 169.254.0.0/16.",
+      "d": "Sans option 3, le poste aurait une adresse du pool DHCP sans passerelle ; une adresse 169.254.x.x montre qu'aucun bail n'a été obtenu."
+    },
+    "reference": "RFC 3927"
+  },
+  {
+    "slug": "ccna-1.7-nat-cgn-100-64-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. R1 est le routeur de bordure d'une PME ; son interface G0/2 est reliée au FAI. Quelles deux affirmations sont vraies ?",
+      "exhibit": "R1# show ip interface brief\nInterface              IP-Address      OK? Method Status                Protocol\nGigabitEthernet0/0     192.168.10.1    YES manual up                    up\nGigabitEthernet0/1     172.20.5.1      YES manual up                    up\nGigabitEthernet0/2     100.64.12.2     YES DHCP   up                    up\nLoopback0              10.255.0.1      YES manual up                    up",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "172.20.5.1 est une adresse publique : en classe B, seul 172.16.0.0/16 est privé."
+        },
+        {
+          "id": "b",
+          "text": "Les adresses du LAN 172.20.5.0/24 sont privées (RFC 1918) : ces hôtes ont besoin de NAT pour joindre Internet."
+        },
+        {
+          "id": "c",
+          "text": "L'adresse de G0/2 est une adresse privée RFC 1918, au même titre que celles des LAN."
+        },
+        {
+          "id": "d",
+          "text": "Le LAN 192.168.10.0/24 n'a pas besoin de NAT : les FAI acheminent 192.168.0.0/16 jusqu'à Internet."
+        },
+        {
+          "id": "e",
+          "text": "L'adresse de G0/2 appartient à l'espace partagé de la RFC 6598 : le FAI doit la traduire à son tour (CGN)."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Les trois plages RFC 1918 (10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16) se réutilisent librement en interne mais ne sont jamais routées sur Internet : les LAN de R1 doivent être traduits par NAT. L'adresse WAN 100.64.12.2 appartient à 100.64.0.0/10, l'espace partagé réservé par la RFC 6598 au Carrier-Grade NAT : elle n'est pas RFC 1918, mais elle n'est pas routable sur Internet non plus. Le trafic des LAN subit donc une première traduction sur R1, puis une seconde chez le FAI.",
+    "distractorNotes": {
+      "a": "172.16.0.0/12 couvre 172.16.0.0 à 172.31.255.255 : 172.20.5.1 est bien une adresse privée.",
+      "c": "100.64.0.0/10 ne fait pas partie de la RFC 1918 : c'est l'espace partagé du CGN défini par la RFC 6598.",
+      "d": "Les adresses RFC 1918 ne sont jamais routées sur Internet : le LAN 192.168.10.0/24 a lui aussi besoin de NAT."
+    },
+    "reference": "RFC 1918, section 3 ; RFC 6598"
+  },
+  {
+    "slug": "ccna-1.8-eui64-slaac-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un routeur annonce le préfixe 2001:db8:cafe:1::/64 dans ses Router Advertisements. Un hôte dont la carte réseau a l'adresse MAC 2c54.2d7a.019f forme son adresse par SLAAC avec un ID d'interface EUI-64 modifié (pas d'ID aléatoire). Donnez les réponses en forme compressée RFC 5952 (minuscules, zéros de tête supprimés, « :: » sur la plus longue suite de groupes nuls).",
+      "fields": [
+        {
+          "id": "iid",
+          "label": "ID d'interface (64 bits de poids faible, 4 groupes)"
+        },
+        {
+          "id": "address",
+          "label": "Adresse IPv6 globale de l'hôte"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "iid": {
+          "accepted": [
+            "2e54:2dff:fe7a:19f",
+            "::2e54:2dff:fe7a:19f"
+          ],
+          "normalize": "text"
+        },
+        "address": {
+          "accepted": [
+            "2001:db8:cafe:1:2e54:2dff:fe7a:19f"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "L'EUI-64 modifié coupe la MAC en deux (2c542d | 7a019f), insère FFFE au milieu (2c54:2dff:fe7a:019f), puis inverse le 7ᵉ bit du premier octet, le bit U/L : 0x2C = 0010 1100 devient 0010 1110 = 0x2E. L'ID d'interface est donc 2e54:2dff:fe7a:19f, zéros de tête supprimés. Accolé au préfixe /64 du RA, il donne 2001:db8:cafe:1:2e54:2dff:fe7a:19f, sans « :: » puisqu'aucun groupe n'est nul. Erreurs fréquentes : oublier d'inverser le bit (2c54:…) ou garder le zéro de tête du dernier groupe (019f).",
+    "reference": "RFC 4291, annexe A ; RFC 4862, section 5.5.3"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-48-to-64-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "hard",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une entreprise a reçu le préfixe 2001:db8:4b20::/48. Elle le découpe en sous-réseaux /64 et numérote chacun par son ID de sous-réseau (les 16 bits du 4ᵉ groupe), en commençant à 0. Écrivez les préfixes en forme compressée RFC 5952 (minuscules, zéros de tête supprimés, « :: » sur la plus longue suite de groupes nuls).",
+      "fields": [
+        {
+          "id": "count",
+          "label": "Nombre de sous-réseaux /64 disponibles"
+        },
+        {
+          "id": "p300",
+          "label": "Préfixe du sous-réseau d'ID 300 (en décimal), sans la longueur"
+        },
+        {
+          "id": "last",
+          "label": "Dernier préfixe /64 du bloc, sans la longueur"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "count": {
+          "accepted": [
+            "65536"
+          ],
+          "normalize": "int"
+        },
+        "p300": {
+          "accepted": [
+            "2001:db8:4b20:12c::",
+            "2001:db8:4b20:12c::/64"
+          ],
+          "normalize": "text"
+        },
+        "last": {
+          "accepted": [
+            "2001:db8:4b20:ffff::",
+            "2001:db8:4b20:ffff::/64"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Entre /48 et /64, il reste 16 bits d'ID de sous-réseau, soit 2¹⁶ = 65 536 préfixes /64. L'ID 300 s'écrit 0x12C en hexadécimal (1 × 256 + 2 × 16 + 12), d'où 2001:db8:4b20:12c::/64. Le dernier ID est 0xFFFF (65 535) : 2001:db8:4b20:ffff::/64. Erreur fréquente : recopier 300 tel quel dans le 4ᵉ groupe, ce qui désigne l'ID 0x300, c'est-à-dire 768.",
+    "reference": "RFC 4291, section 2.5.4 ; RFC 6177"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-eui64-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale de R1, configurez l'interface GigabitEthernet0/1 pour qu'elle forme son adresse unicast globale à partir du préfixe 2001:db8:acad:10::/64 et d'un ID d'interface EUI-64 modifié calculé depuis sa MAC. N'utilisez pas SLAAC et écrivez le préfixe tel qu'il est donné.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/1"
+        ],
+        [
+          "ipv6 address 2001:db8:acad:10::/64 eui-64"
+        ]
+      ]
+    },
+    "explanation": "La commande « ipv6 address <préfixe>/<longueur> eui-64 » se tape en mode interface : IOS garde les 64 bits du préfixe et calcule l'ID d'interface depuis la MAC (FFFE inséré au milieu, 7ᵉ bit inversé). Sans le mot-clé « eui-64 », la commande désignerait l'adresse 2001:db8:acad:10:: elle-même, dont l'ID d'interface est nul (l'adresse anycast Subnet-Router du préfixe). « ipv6 address autoconfig » serait du SLAAC, qui attend les RA d'un autre routeur. « ipv6 unicast-routing » n'est pas nécessaire pour adresser une interface : il sert à faire router IPv6. « show ipv6 interface brief » affiche ensuite l'adresse calculée.",
+    "reference": "Cisco IOS IPv6 Configuration Guide : IPv6 Addressing and Basic Connectivity"
+  },
+  {
+    "slug": "ccna-1.9-solicited-node-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une interface possède l'adresse globale 2001:db8:acad:20::2c:5 et l'adresse de lien local fe80::a8bb:ccff:fe00:6501. Donnez l'adresse multicast de nœud sollicité (solicited-node) que l'interface rejoint pour chacune, en forme compressée RFC 5952 (minuscules, zéros de tête supprimés, « :: » sur la plus longue suite de groupes nuls).",
+      "fields": [
+        {
+          "id": "gua",
+          "label": "Nœud sollicité de 2001:db8:acad:20::2c:5"
+        },
+        {
+          "id": "lla",
+          "label": "Nœud sollicité de fe80::a8bb:ccff:fe00:6501"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "gua": {
+          "accepted": [
+            "ff02::1:ff2c:5"
+          ],
+          "normalize": "text"
+        },
+        "lla": {
+          "accepted": [
+            "ff02::1:ff00:6501"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "L'adresse de nœud sollicité s'obtient en ajoutant les 24 bits de poids faible de l'adresse unicast au préfixe FF02::1:FF00:0/104. Pour 2001:db8:acad:20::2c:5, les deux derniers groupes complets sont 002c:0005 : les 24 derniers bits sont 2c:0005, d'où ff02::1:ff2c:5. Pour fe80::a8bb:ccff:fe00:6501, les 24 bits sont 00:6501, d'où ff02::1:ff00:6501. NDP envoie ses Neighbor Solicitation (résolution d'adresse, DAD) à ce groupe, que seules les interfaces concernées écoutent, au lieu de déranger tous les nœuds du lien.",
+    "reference": "RFC 4291, section 2.7.1"
+  },
+  {
+    "slug": "ccna-1.9-ipv6-multicast-groups-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque adresse multicast IPv6 au groupe qu'elle désigne.",
+      "left": [
+        {
+          "id": "m1",
+          "text": "FF02::1"
+        },
+        {
+          "id": "m2",
+          "text": "FF02::2"
+        },
+        {
+          "id": "m3",
+          "text": "FF02::1:2"
+        },
+        {
+          "id": "m4",
+          "text": "FF02::1:FF00:A"
+        }
+      ],
+      "right": [
+        {
+          "id": "nodes",
+          "text": "Tous les nœuds IPv6 du lien"
+        },
+        {
+          "id": "routers",
+          "text": "Tous les routeurs IPv6 du lien"
+        },
+        {
+          "id": "dhcp",
+          "text": "Tous les serveurs et relais DHCPv6 du lien"
+        },
+        {
+          "id": "sn",
+          "text": "Groupe de nœud sollicité, visé par les Neighbor Solicitation"
+        },
+        {
+          "id": "loop",
+          "text": "Adresse de bouclage de l'hôte lui-même"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "m1": "nodes",
+        "m2": "routers",
+        "m3": "dhcp",
+        "m4": "sn"
+      }
+    },
+    "explanation": "FF02::1 joint tous les nœuds du lien (c'est la destination des RA périodiques) et FF02::2 tous les routeurs (destination des Router Solicitation). FF02::1:2 regroupe les serveurs et relais DHCPv6, auxquels un client envoie son Solicit. Les adresses FF02::1:FFxx:xxxx sont des groupes de nœud sollicité : FF02::1:FF00:A correspond aux adresses unicast qui se terminent par 00:000a. Le préfixe FF02 indique une portée lien local : ces paquets ne sont jamais routés.",
+    "distractorNotes": {
+      "loop": "L'adresse de bouclage IPv6 est l'unicast ::1, à ne pas confondre avec le groupe multicast FF02::1."
+    },
+    "reference": "RFC 4291, section 2.7.1 ; RFC 8415, section 7.1"
+  },
+  {
+    "slug": "ccna-1.9-link-local-reuse-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sur R1, GigabitEthernet0/0 et GigabitEthernet0/1 sont reliées à deux LAN distincts. Quel est le résultat de cette configuration ?",
+      "exhibit": "R1# show running-config | section interface GigabitEthernet0/[01]\ninterface GigabitEthernet0/0\n no ip address\n duplex auto\n speed auto\n ipv6 address FE80::1 link-local\n ipv6 address 2001:DB8:ACAD:1::1/64\ninterface GigabitEthernet0/1\n no ip address\n duplex auto\n speed auto\n ipv6 address FE80::1 link-local\n ipv6 address 2001:DB8:ACAD:2::1/64",
+      "options": [
+        {
+          "id": "a",
+          "text": "IOS rejette la commande sur G0/1, car FE80::1 chevauche l'adresse déjà configurée sur G0/0."
+        },
+        {
+          "id": "b",
+          "text": "Le DAD détecte un doublon et FE80::1 passe à l'état [DUP] sur G0/1."
+        },
+        {
+          "id": "c",
+          "text": "Chaque interface garde son adresse de lien local EUI-64 et FE80::1 s'y ajoute en seconde adresse."
+        },
+        {
+          "id": "d",
+          "text": "La configuration est valide : une adresse de lien local n'a besoin d'être unique que sur son lien."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une adresse de lien local (FE80::/10) n'a de portée que sur son lien : elle doit y être unique, mais rien n'interdit de la réutiliser sur un autre lien, même sur le même routeur. Configurer FE80::1 sur toutes les interfaces d'un routeur est d'ailleurs une pratique courante, car les hôtes voient ainsi une passerelle par défaut facile à reconnaître. La contrepartie : la même adresse existant sur plusieurs liens, il faut toujours préciser l'interface de sortie quand on vise une adresse de lien local (ping, prochain saut d'une route statique).",
+    "distractorNotes": {
+      "a": "Le contrôle de chevauchement d'IOS porte sur les préfixes globaux (deux interfaces dans le même /64) ; il ne s'applique pas aux adresses de lien local, propres à chaque lien.",
+      "b": "Le DAD n'interroge que le lien de l'interface : G0/0 étant sur un autre LAN, personne ne répond pour FE80::1 sur le lien de G0/1.",
+      "c": "Une adresse configurée avec « link-local » remplace l'adresse de lien local générée automatiquement : chaque interface n'en a qu'une."
+    },
+    "reference": "RFC 4291, section 2.5.6 ; RFC 4862, section 5.4"
+  }
+]
