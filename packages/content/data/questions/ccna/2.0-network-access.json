@@ -98,11 +98,11 @@
       "type": "mcq_single",
       "correct": "b"
     },
-    "explanation": "Un port alternate reçoit des BPDU meilleures d'un autre commutateur : c'est un chemin de remplacement vers la racine, qui devient port racine immédiatement si celui-ci tombe.",
+    "explanation": "Un port alternate reçoit des BPDU supérieures émises par un autre commutateur : il offre un chemin de remplacement vers la racine et devient root port immédiatement, sans attendre les timers, si le root port tombe. Il se distingue du port backup, qui reçoit des BPDU supérieures émises par son propre commutateur sur un segment partagé. Tant qu'il n'est pas utilisé, le port alternate reste en état discarding.",
     "distractorNotes": {
       "a": "Le port designated est celui qui transmet vers le segment, pas un port de secours.",
       "c": "Le port backup protège un segment partagé où le commutateur a déjà un port designated, pas le chemin vers la racine.",
-      "d": "Un port edge (PortFast) mène à un poste final, il ne participe pas au chemin vers la racine."
+      "d": "Edge n'est pas un rôle RSTP mais un type de port (PortFast) : un port edge mène à un poste final et ne fournit aucun chemin vers la racine."
     },
     "reference": "IEEE 802.1w"
   },
@@ -130,7 +130,8 @@
         ]
       ]
     },
-    "explanation": "« vlan 20 » crée le VLAN et fait passer en mode de configuration du VLAN (SW1(config-vlan)#), où « name SALES » lui donne son nom."
+    "explanation": "« vlan 20 » crée le VLAN 20 dans la base VLAN et fait passer en mode de configuration du VLAN (SW1(config-vlan)#), où « name SALES » lui donne son nom. Sans cette commande, IOS lui attribue le nom par défaut VLAN0020. Le VLAN 20 appartient à la plage normale (1 à 1005) ; on vérifie sa création et son nom avec « show vlan brief ».",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
   },
   {
     "slug": "ccna-2.3-lldp-standard-001",
@@ -755,10 +756,7 @@
       "commands": [
         [
           "interface range GigabitEthernet1/0/1 - 2",
-          "interface range GigabitEthernet1/0/1-2",
-          "interface range GigabitEthernet1/0/1 , GigabitEthernet1/0/2",
-          "interface range GigabitEthernet1/0/1, GigabitEthernet1/0/2",
-          "interface range GigabitEthernet1/0/1,GigabitEthernet1/0/2"
+          "interface range GigabitEthernet1/0/1, GigabitEthernet1/0/2"
         ],
         [
           "channel-group 1 mode active"
@@ -1121,7 +1119,7 @@
         },
         {
           "id": "newprio",
-          "label": "Plus grande priorité à configurer sur SW3 pour qu'il devienne root bridge du VLAN 30 sans dépendre de la comparaison des adresses MAC"
+          "label": "Plus grande valeur numérique de priorité (valeur de « spanning-tree vlan 30 priority ») que l'on peut configurer sur SW3 pour qu'il devienne root bridge du VLAN 30 sans dépendre de la comparaison des adresses MAC"
         }
       ]
     },
@@ -1142,7 +1140,7 @@
         }
       }
     },
-    "explanation": "La priorité affichée dans un bridge ID additionne la priorité configurée et le sys-id-ext, égal au numéro de VLAN : 24606 − 30 = 24576 pour la racine, et 32768 + 30 = 32798 pour SW3, resté à la valeur par défaut. La priorité se règle par pas de 4096. Avec 24576, SW3 serait à égalité de priorité avec la racine et perdrait sur l'adresse MAC (2c3e.4a10.0300 est plus grande que 2c3e.4a10.0100). Il faut donc descendre au pas inférieur, 20480 (soit 20510 dans le bridge ID), pour l'emporter sur la seule priorité.",
+    "explanation": "La priorité affichée dans un bridge ID additionne la priorité configurée et le sys-id-ext, égal au numéro de VLAN : 24606 − 30 = 24576 pour la racine, et 32768 + 30 = 32798 pour SW3, resté à la valeur par défaut. La priorité se règle par pas de 4096. Avec 24576, SW3 serait à égalité de priorité avec la racine et perdrait sur l'adresse MAC (2c3e.4a10.0300 est plus grande que 2c3e.4a10.0100). Il faut donc descendre au pas inférieur, 20480 (soit 20510 dans le bridge ID), pour l'emporter sur la seule priorité. Toute valeur plus basse (16384, 12288… jusqu'à 0) ferait aussi de SW3 la racine ; 20480 est la plus grande qui y suffit.",
     "reference": "IEEE 802.1D-2004 (bridge identifier) ; IEEE 802.1t (extended system ID)"
   },
   {

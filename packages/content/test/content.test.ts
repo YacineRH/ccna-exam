@@ -105,6 +105,10 @@ describe('ccna', () => {
     expect(byType('mcq_single')).toBeGreaterThan(byType('mcq_multi'));
   });
 
+  it('cite une référence (RFC, norme IEEE ou documentation Cisco) pour chaque question', () => {
+    expect(questions.filter((q) => !q.reference?.trim()).map((q) => q.slug)).toEqual([]);
+  });
+
   it('dose les difficultés : environ 30 % faciles, 50 % moyennes, 20 % difficiles', () => {
     const share = (d: Question['difficulty']) => count((q) => q.difficulty === d) / questions.length;
     expect(share('easy')).toBeGreaterThanOrEqual(0.25);
