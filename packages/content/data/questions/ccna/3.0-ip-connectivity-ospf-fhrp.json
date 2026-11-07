@@ -820,7 +820,7 @@
         },
         {
           "id": "c",
-          "text": "C'est un protocole normalisé par l'IETF dans la RFC 5798."
+          "text": "C'est un protocole normalisé par l'IETF dans la RFC 9568."
         },
         {
           "id": "d",
@@ -842,7 +842,7 @@
     "explanation": "Dans un groupe GLBP, l'AVG (Active Virtual Gateway) attribue une MAC virtuelle à chaque routeur, jusqu'à quatre AVF (Active Virtual Forwarders). Tous les hôtes utilisent la même passerelle, mais l'AVG répond à leurs requêtes ARP avec des MAC différentes (round-robin par défaut) : plusieurs routeurs transmettent ainsi le trafic en même temps. Les MAC virtuelles commencent par 0007.b4 et contiennent le numéro de groupe (0 à 1023) puis celui de l'AVF, en hexadécimal : 0007.b400.0101 à 0007.b400.0104 pour les quatre AVF du groupe 1.",
     "distractorNotes": {
       "a": "C'est le fonctionnement actif/en attente de HSRP et de VRRP ; avec GLBP, plusieurs routeurs transmettent en même temps.",
-      "c": "La RFC 5798 définit VRRP ; GLBP est propriétaire Cisco.",
+      "c": "La RFC 9568 (VRRPv3, qui remplace la RFC 5798) définit VRRP ; GLBP est propriétaire Cisco.",
       "d": "C'est le contournement utilisé avec HSRP (plusieurs groupes) ; GLBP répartit la charge avec une seule adresse IP virtuelle."
     },
     "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide (GLBP)"
@@ -926,7 +926,7 @@
       "c": "224.0.0.102 est l'adresse utilisée par HSRP version 2 et par GLBP.",
       "d": "L'AVG est le rôle de coordination de GLBP ; VRRP parle de master et de backup."
     },
-    "reference": "RFC 5798"
+    "reference": "RFC 9568 (VRRPv3, remplace la RFC 5798)"
   },
   {
     "slug": "ccna-3.5-hsrp-version2-groups-001",

@@ -23,7 +23,7 @@ const KEYWORDS = [
   'mac-address', 'mask', 'maximum', 'mode', 'modulus', 'name', 'nat', 'native', 'neighbor', 'neq',
   'network', 'no', 'nonegotiate', 'ntp', 'originate', 'ospf', 'outside', 'overload', 'passive-interface', 'password',
   'permit', 'point-to-point', 'pool', 'port-security', 'portfast', 'preempt', 'priority', 'rapid-pvst',
-  'range', 'reference-bandwidth', 'remark', 'restrict', 'rip', 'route',
+  'range', 'reference-bandwidth', 'remark', 'restrict', 'rip', 'root', 'route',
   'router', 'router-id', 'rsa', 'running-config', 'scrypt', 'secret', 'server', 'service', 'show',
   'shutdown', 'snmp-server', 'snooping', 'source', 'spanning-tree', 'speed', 'ssh', 'standard', 'standby',
   'startup-config', 'static', 'sticky', 'switchport', 'tcp', 'terminal', 'transport', 'trunk', 'trust', 'udp',
@@ -62,6 +62,12 @@ const NEXT_KEYWORDS: Record<string, string[]> = {
   switchport: ['access', 'mode', 'trunk', 'voice', 'port-security', 'nonegotiate', 'priority', 'host'],
   transport: ['input', 'output', 'preferred'],
   snooping: ['trust', 'vlan', 'limit', 'information', 'database'],
+  trunk: ['allowed', 'encapsulation', 'native', 'pruning'],
+  bpduguard: ['enable', 'disable'],
+  // « mode » selon la commande : EtherChannel, port de commutateur, Spanning Tree.
+  'channel-group mode': ['active', 'passive', 'on', 'auto', 'desirable'],
+  'switchport mode': ['access', 'trunk', 'dynamic'],
+  'spanning-tree mode': ['rapid-pvst', 'pvst', 'mst'],
   'access-list': ['standard', 'extended', 'resequence'],
   nat: ['inside', 'outside', 'pool', 'translation'],
   source: ['list', 'static', 'route-map'],
@@ -101,8 +107,8 @@ const INTERFACE_TYPES: [RegExp, string][] = [
 
 const INTERFACE_CONTEXT = ['interface', 'interfaces', 'range', 'passive-interface', ',', '-'];
 
-function expandKeyword(token: string, prev: string | undefined): string {
-  const next = prev ? NEXT_KEYWORDS[prev] : undefined;
+function expandKeyword(token: string, prev: string | undefined, first: string | undefined): string {
+  const next = prev ? (NEXT_KEYWORDS[`${first} ${prev}`] ?? NEXT_KEYWORDS[prev]) : undefined;
   const scoped = next?.filter((k) => k.startsWith(token));
   if (scoped?.length === 1) return scoped[0] as string;
   if (ALIASES[token]) return ALIASES[token];
@@ -174,7 +180,7 @@ export function normalizeCommand(line: string): string {
     }
 
     // Les valeurs (nombres, adresses, noms entre guillemets, mots de passe) restent telles quelles.
-    if (/^[a-z][a-z-]*$/.test(token)) out.push(expandKeyword(token, prev));
+    if (/^[a-z][a-z-]*$/.test(token)) out.push(expandKeyword(token, prev, out[0]));
     else out.push(token);
   }
   return out.join(' ');

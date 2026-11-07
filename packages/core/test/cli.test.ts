@@ -78,6 +78,13 @@ describe('normalizeCommand', () => {
     expect(commandMatches('ip nat ins so li 1 int g0/1 ov', ['ip nat inside source list 1 interface GigabitEthernet0/1 overload'])).toBe(true);
     expect(commandMatches('cry key gen rsa mod 2048', ['crypto key generate rsa modulus 2048'])).toBe(true);
     expect(commandMatches('standby 10 pri 110', ['standby 10 priority 110'])).toBe(true);
+    expect(commandMatches('sw tr nat vl 99', ['switchport trunk native vlan 99'])).toBe(true);
+    expect(commandMatches('sw tr al vl add 30', ['switchport trunk allowed vlan add 30'])).toBe(true);
+    expect(commandMatches('span vl 10 roo pri', ['spanning-tree vlan 10 root primary'])).toBe(true);
+    expect(commandMatches('span bpduguard e', ['spanning-tree bpduguard enable'])).toBe(true);
+    // « mode ac » : active pour un EtherChannel, access pour un port de commutateur.
+    expect(commandMatches('channel-group 1 mode ac', ['channel-group 1 mode active'])).toBe(true);
+    expect(commandMatches('sw mode ac', ['switchport mode access'])).toBe(true);
     expect(commandMatches('net 10.1.12.0 0.0.0.3 ar 0', ['network 10.1.12.0 0.0.0.3 area 0'])).toBe(true);
     // Toujours ambigu, comme dans IOS : "pr" (preempt, priority).
     expect(normalizeCommand('standby 10 pr')).toBe('standby 10 pr');

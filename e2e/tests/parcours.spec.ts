@@ -345,24 +345,30 @@ test('examen blanc complet : toutes les questions et le chrono officiel, soumis 
   expect(shown).toBeLessThanOrEqual(examFormat.durationMinutes * 60);
   expect(shown).toBeGreaterThan(examFormat.durationMinutes * 60 - 60);
 
-  // Une seule réponse si la première question est un QCM, puis on passe à la suivante et on termine.
+  // Une réponse à la première question si c'est un QCM, puis on passe à la suivante et on termine.
+  // (Une question « ordre » a d'office une réponse : l'ordre affiché.)
   const q = questionByStem(cert.code, await stemText());
-  let answered = 0;
   if (q.body.type === 'mcq_single' || q.body.type === 'mcq_multi') {
     await page.getByRole('main').getByRole(q.body.type === 'mcq_multi' ? 'checkbox' : 'radio').first().click();
-    answered = 1;
   }
   await page.getByRole('button', { name: /^Suivant/ }).click();
   await expect(page.getByText(`Question 2 / ${examFormat.questionCount}`)).toBeVisible();
   await page.getByRole('button', { name: "Terminer l'examen" }).click();
   const dialog = page.getByRole('dialog', { name: "Terminer l'examen ?" });
-  await expect(dialog).toContainText(`${examFormat.questionCount - answered} questions sans réponse`);
+  await expect(dialog).toContainText(/\d+ questions sans réponse/);
+  const unanswered = Number(((await dialog.textContent()) ?? '').match(/(\d+) questions sans réponse/)![1]);
+  expect(unanswered).toBeGreaterThanOrEqual(examFormat.questionCount - 2);
   await dialog.getByRole('button', { name: 'Terminer et voir le résultat' }).click();
 
   await expect(page).toHaveURL(new RegExp(`/tentatives/${id}/resultat$`));
   await expect(page.getByText('Score final')).toBeVisible();
-  const result = (await (await page.request.get(`/api/v1/attempts/${id}/result`)).json()) as { status: string; totalCount: number };
+  const result = (await (await page.request.get(`/api/v1/attempts/${id}/result`)).json()) as {
+    status: string;
+    totalCount: number;
+    review: { response: unknown }[];
+  };
   expect(result).toMatchObject({ status: 'submitted', totalCount: examFormat.questionCount });
+  expect(result.review.filter((r) => r.response === null)).toHaveLength(unanswered);
 });
 
 test('à 390 px de large : aucun débordement horizontal', async ({ browser }) => {
