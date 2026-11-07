@@ -123,7 +123,13 @@ const PROFILE: TerminalProfileInput = {
     { syntax: 'login [local]', modes: ['config-line'], key: [0] },
     { syntax: 'ip access-list extended <word>', modes: ['config'], enter: { mode: 'config-ext-nacl' } },
     { syntax: '[<1-2147483647>] {permit|deny} {ip|tcp} {any|host <ipv4>} {any|host <ipv4>} [eq <port>]', modes: ['config-ext-nacl'], sequenced: true },
-    { syntax: 'username <word> password <line>', modes: ['config'], key: [0, 1], keyGroup: 'username' },
+    {
+      syntax: 'username <word> password <line>',
+      modes: ['config'],
+      key: [0, 1],
+      keyGroup: 'username',
+      requires: [{ notConfig: '^username {$1} secret ', message: 'ERROR: Can not have both a user password and a user secret.' }],
+    },
     { syntax: 'transport input {ssh|telnet|all|none}', modes: ['config-line'], key: [0, 1] },
   ],
 };
@@ -258,6 +264,9 @@ describe('abréviations et formes canoniques', () => {
     const d = router('hostname R1');
     run(d, ['en', 'conf t', 'username admin password cisco', 'username admin secret Fort!', 'username bob password x']);
     expect(d.linesOf().filter((l) => l.startsWith('username'))).toEqual(['username admin secret Fort!', 'username bob password x']);
+    // Précondition négative : un secret existe déjà pour ce compte (le nom est échappé dans l'expression).
+    expect(d.execute('username admin password autre').output).toBe('ERROR: Can not have both a user password and a user secret.');
+    expect(d.execute('username adm.n password autre').status).toBe('ok');
   });
 
   it('les secrets sont masqués dans la configuration affichée, pas dans l’état', () => {

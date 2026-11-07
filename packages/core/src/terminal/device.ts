@@ -417,6 +417,11 @@ export class TerminalDevice {
         const re = new RegExp(req.config, 'i');
         if (!this.config.some((e) => !e.children && re.test(e.text))) return fill(req.message, this.vars, values);
       }
+      if (req.notConfig !== undefined) {
+        const escaped = values.map((v) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        const re = new RegExp(fill(req.notConfig, {}, escaped), 'i');
+        if (this.config.some((e) => !e.children && re.test(e.text))) return fill(req.message, this.vars, values);
+      }
       if (req.ipv4Host !== undefined) {
         const ip = parseIpv4(values[req.ipv4Host[0] - 1] ?? '');
         const mask = parseIpv4(values[req.ipv4Host[1] - 1] ?? '');

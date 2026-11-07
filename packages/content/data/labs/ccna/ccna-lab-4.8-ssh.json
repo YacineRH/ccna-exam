@@ -1,0 +1,258 @@
+{
+  "slug": "ccna-lab-4.8-ssh",
+  "certification": "ccna",
+  "domain": "4.0",
+  "subtopic": "4.8",
+  "difficulty": "medium",
+  "title": "Remplacer Telnet par SSH version 2 sur un routeur",
+  "statement": "Le routeur du siège porte encore son nom d'usine et ses lignes VTY n'acceptent que Telnet, protégé par un simple mot de passe de ligne. L'audit exige un accès distant chiffré et nominatif.\n\nConfigurez le routeur :\n1. Nommez-le R1 et donnez-lui le nom de domaine siege.lan.\n2. Générez une paire de clés RSA d'au moins 2048 bits (taille usuelle : 2048, 3072 ou 4096 bits).\n3. N'acceptez que la version 2 du protocole SSH.\n4. Créez le compte local admin, de niveau de privilège 15, dont le mot de passe est stocké sous forme de secret haché (Adm1n-Siege!).\n5. Sur les lignes VTY 0 à 4 (ou 0 à 15), authentifiez les sessions par les comptes locaux et n'autorisez que SSH.\n6. Enregistrez la configuration.",
+  "topology": "  Poste d'administration 192.168.1.50\n               |\n        G0/0/0 192.168.1.1/24\n               |\n          [routeur du siège]  (nom actuel : Router)\n               |\n        G0/0/1 (non utilisée)\n\n  Lignes VTY 0 à 4 aujourd'hui : password + login, transport input telnet",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "no ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN administration\n ip address 192.168.1.1 255.255.255.0\n no shutdown\nline vty 0 4\n password Telnet2019\n login\n transport input telnet"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "hostname",
+      "description": "Le routeur s'appelle R1.",
+      "check": { "type": "regex", "pattern": "^hostname R1$", "caseSensitive": true }
+    },
+    {
+      "id": "domain",
+      "description": "Le nom de domaine IP est siege.lan.",
+      "check": { "type": "regex", "pattern": "^ip domain[- ]name siege\\.lan$" }
+    },
+    {
+      "id": "rsa-keys",
+      "description": "Une paire de clés RSA d'au moins 2048 bits (2048, 3072 ou 4096) a été générée.",
+      "check": {
+        "type": "command",
+        "command": [
+          "crypto key generate rsa modulus 2048",
+          "crypto key generate rsa general-keys modulus 2048",
+          "crypto key generate rsa modulus 3072",
+          "crypto key generate rsa general-keys modulus 3072",
+          "crypto key generate rsa modulus 4096",
+          "crypto key generate rsa general-keys modulus 4096"
+        ]
+      }
+    },
+    {
+      "id": "ssh-v2",
+      "description": "Seule la version 2 de SSH est acceptée.",
+      "check": { "type": "line", "line": "ip ssh version 2" }
+    },
+    {
+      "id": "local-user",
+      "description": "Le compte local admin existe, de niveau 15, avec un mot de passe haché (secret) Adm1n-Siege!.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "pattern": "^username admin privilege 15 secret Adm1n-Siege!$", "caseSensitive": true },
+          { "type": "regex", "pattern": "^username admin .*password ", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "vty-login-local",
+      "description": "Les sessions des lignes VTY sont authentifiées par les comptes locaux.",
+      "check": { "type": "line", "sectionPattern": "^line vty 0 (4|15)$", "line": "login local" }
+    },
+    {
+      "id": "vty-ssh-only",
+      "description": "Les lignes VTY n'acceptent que SSH : Telnet est refusé.",
+      "check": { "type": "line", "sectionPattern": "^line vty 0 (4|15)$", "line": "transport input ssh" }
+    },
+    {
+      "id": "saved",
+      "description": "La configuration est enregistrée en NVRAM après la dernière modification.",
+      "check": { "type": "command", "command": ["copy running-config startup-config", "write memory", "write"], "afterLastChange": true }
+    }
+  ],
+  "hints": [
+    "SSH a besoin d'une paire de clés RSA, et IOS nomme ces clés d'après le nom d'hôte et le nom de domaine : il refuse de les générer tant que le routeur porte son nom d'usine ou n'a pas de domaine.",
+    "La génération des clés se fait en configuration globale avec la taille du module en argument ; SSH version 2 exige au moins 768 bits. Sur les lignes VTY, un simple « login » utilise le mot de passe de ligne : il faut demander les comptes locaux, et restreindre les protocoles de transport.",
+    "hostname R1, ip domain-name siege.lan, crypto key generate rsa modulus 2048, ip ssh version 2, username admin privilege 15 secret …, puis sous line vty 0 4 : login local et transport input ssh."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "hostname R1",
+        "ip domain-name siege.lan",
+        "crypto key generate rsa modulus 2048",
+        "ip ssh version 2",
+        "username admin privilege 15 secret Adm1n-Siege!",
+        "line vty 0 4",
+        "login local",
+        "transport input ssh",
+        "end",
+        "copy running-config startup-config"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Syntaxe IOS XE ip domain name, clés general-keys de 4096 bits, lignes VTY 0 à 15, abréviations",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "host R1",
+            "ip domain name siege.lan",
+            "username admin privilege 15 secret Adm1n-Siege!",
+            "crypto key gen rsa general-keys mod 4096",
+            "ip ssh ver 2",
+            "line vty 0 15",
+            "transport input ssh",
+            "login local",
+            "\u001a",
+            "wr mem"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Clés de 1024 bits : SSH v2 fonctionne, mais la consigne de 2048 bits n'est pas tenue",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "hostname R1",
+            "ip domain-name siege.lan",
+            "crypto key generate rsa modulus 1024",
+            "ip ssh version 2",
+            "username admin privilege 15 secret Adm1n-Siege!",
+            "line vty 0 4",
+            "login local",
+            "transport input ssh",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["rsa-keys"]
+    },
+    {
+      "description": "Clés générées avant le nom de domaine : IOS refuse, et SSH v2 ne peut pas être activé",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "hostname R1", "crypto key generate rsa modulus 2048", "ip ssh version 2", "ip domain-name siege.lan"]
+        }
+      ],
+      "failing": ["rsa-keys", "ssh-v2"]
+    },
+    {
+      "description": "login au lieu de login local, Telnet laissé à côté de SSH, compte en password",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "hostname R1",
+            "ip domain-name siege.lan",
+            "crypto key generate rsa modulus 2048",
+            "ip ssh version 2",
+            "username admin privilege 15 password Adm1n-Siege!",
+            "line vty 0 4",
+            "login",
+            "transport input telnet ssh",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["local-user", "vty-login-local", "vty-ssh-only"]
+    },
+    {
+      "description": "transport input all : SSH fonctionne, mais Telnet reste accepté",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "hostname R1",
+            "ip domain-name siege.lan",
+            "crypto key generate rsa modulus 2048",
+            "ip ssh version 2",
+            "username admin privilege 15 secret Adm1n-Siege!",
+            "line vty 0 4",
+            "login local",
+            "transport input all",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["vty-ssh-only"]
+    },
+    {
+      "description": "Compte créé sans privilege 15 : l'administrateur arrive au niveau 1",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "hostname R1",
+            "ip domain-name siege.lan",
+            "crypto key generate rsa modulus 2048",
+            "ip ssh version 2",
+            "username admin secret Adm1n-Siege!",
+            "line vty 0 4",
+            "login local",
+            "transport input ssh",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["local-user"]
+    },
+    {
+      "description": "Secret saisi sans respecter la casse (adm1n-siege!) et nom d'hôte en minuscules : ce ne sont pas les valeurs demandées",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "hostname r1",
+            "ip domain-name siege.lan",
+            "crypto key generate rsa modulus 2048",
+            "ip ssh version 2",
+            "username admin privilege 15 secret adm1n-siege!",
+            "line vty 0 4",
+            "login local",
+            "transport input ssh",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": [
+        "hostname",
+        "local-user"
+      ]
+    }
+  ],
+  "explanation": "SSH chiffre la session et, avec login local, authentifie chaque administrateur par un compte nominatif, là où Telnet circule en clair avec un mot de passe de ligne partagé. IOS génère les clés RSA sous le nom <hostname>.<domaine> : il refuse crypto key generate rsa tant que le routeur s'appelle encore Router (« Please define a hostname other than Router ») ou qu'aucun domaine n'est défini (« Please define a domain-name first »). La génération des clés active SSH (en version 1.99, c'est-à-dire 1 et 2) ; ip ssh version 2 restreint ensuite au seul protocole v2, qui exige un module d'au moins 768 bits. 2048 bits est aujourd'hui le minimum recommandé ; les clés ne figurent pas dans la configuration courante mais dans la NVRAM privée, d'où la vérification par show crypto key mypubkey rsa ou show ip ssh. username admin privilege 15 secret … stocke le mot de passe haché (type 9 ou 5 selon la version), alors que password le stocke en clair (ou en type 7, réversible, avec service password-encryption). Sur les lignes VTY, login local remplace le mot de passe de ligne par la base des comptes locaux, et transport input ssh refuse Telnet : transport input telnet ssh ou all laisserait Telnet ouvert. Le mot de passe de ligne resté en place n'est plus utilisé avec login local.",
+  "reference": "Cisco IOS XE — Secure Shell Configuration Guide, « Configuring Secure Shell » (Configuring a Device for SSH Version 2) ; Cisco IOS Security Command Reference (crypto key generate rsa, ip ssh version, username secret, transport input)",
+  "estimatedMinutes": 10
+}

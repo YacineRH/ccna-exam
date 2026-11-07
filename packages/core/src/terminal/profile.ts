@@ -16,6 +16,8 @@ const requirementSchema = z
     notEquals: z.string().optional(),
     /** Une ligne de la configuration globale doit correspondre à cette expression (insensible à la casse). */
     config: z.string().optional(),
+    /** Aucune ligne de la configuration globale ne doit correspondre (`{$1}` : paramètre, échappé). */
+    notConfig: z.string().optional(),
     /** Chaque section visée (interface…) doit contenir une ligne qui correspond à cette expression. */
     section: z.string().optional(),
     /**
@@ -29,7 +31,7 @@ const requirementSchema = z
     /** Message affiché si la condition n'est pas remplie. `{target}` : section visée. */
     message: z.string().min(1),
   })
-  .refine((r) => r.var !== undefined || r.config !== undefined || r.section !== undefined || r.ipv4Host !== undefined || (r.param !== undefined && r.notMatch !== undefined), {
+  .refine((r) => r.var !== undefined || r.config !== undefined || r.section !== undefined || r.notConfig !== undefined || r.ipv4Host !== undefined || (r.param !== undefined && r.notMatch !== undefined), {
     message: 'une condition porte sur var, config, section ou param + notMatch',
   });
 

@@ -1,0 +1,221 @@
+{
+  "slug": "ccna-lab-4.1-nat-pat",
+  "certification": "ccna",
+  "domain": "4.0",
+  "subtopic": "4.1",
+  "difficulty": "medium",
+  "title": "Partager l'accès Internet par PAT et publier un serveur en NAT statique",
+  "statement": "Le FAI a attribué à l'entreprise le bloc public 203.0.113.0/29 : 203.0.113.1 est son routeur, 203.0.113.2 l'interface G0/0/1 de R1. La route par défaut vers le FAI est déjà en place.\n\nConfigurez la traduction d'adresses sur R1 :\n1. Indiquez à R1 quelle interface est côté interne et laquelle est côté externe.\n2. Décrivez les adresses à traduire par l'ACL standard n° 1 : tout le LAN 192.168.10.0/24.\n3. Traduisez ces adresses vers l'adresse de G0/0/1, en surcharge (PAT) : tous les postes partagent la même adresse publique.\n4. Le serveur web 192.168.10.20 doit être joignable depuis Internet à l'adresse publique 203.0.113.5 : une traduction statique de l'adresse entière, ou du seul port TCP 80, convient.\n5. Enregistrez la configuration.",
+  "topology": "  LAN 192.168.10.0/24                          FAI\n  postes en DHCP, serveur web 192.168.10.20    203.0.113.1/29\n        |                                         |\n  G0/0/0 192.168.10.1/24                 G0/0/1 203.0.113.2/29\n        +------------------- R1 ------------------+\n\n  Bloc public : 203.0.113.0/29 (203.0.113.3 à .6 libres ; .5 réservée au serveur)\n  Route par défaut : 0.0.0.0/0 via 203.0.113.1",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN\n ip address 192.168.10.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien FAI\n ip address 203.0.113.2 255.255.255.248\n no shutdown\nip route 0.0.0.0 0.0.0.0 203.0.113.1"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "nat-inside",
+      "description": "L'interface du LAN est déclarée côté interne de la traduction, et pas côté externe.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "section": "interface GigabitEthernet0/0/0", "line": "ip nat inside" },
+          { "type": "line", "section": "interface GigabitEthernet0/0/1", "line": "ip nat inside", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "nat-outside",
+      "description": "L'interface vers le FAI est déclarée côté externe de la traduction.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "section": "interface GigabitEthernet0/0/1", "line": "ip nat outside" },
+          { "type": "line", "section": "interface GigabitEthernet0/0/0", "line": "ip nat outside", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "acl-lan",
+      "description": "L'ACL standard 1 désigne exactement le LAN 192.168.10.0/24.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "any",
+            "checks": [
+              { "type": "regex", "pattern": "^access-list 1 permit 192\\.168\\.10\\.0 0\\.0\\.0\\.255$" },
+              { "type": "regex", "section": "ip access-list standard 1", "pattern": "^permit 192\\.168\\.10\\.0 0\\.0\\.0\\.255$" }
+            ]
+          },
+          { "type": "regex", "pattern": "^access-list 1 (permit|deny) (?!192\\.168\\.10\\.0 0\\.0\\.0\\.255$)", "absent": true },
+          { "type": "regex", "section": "ip access-list standard 1", "pattern": "^(permit|deny) (?!192\\.168\\.10\\.0 0\\.0\\.0\\.255$)", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "pat-overload",
+      "description": "Les adresses de l'ACL 1 sont traduites vers l'adresse de G0/0/1, en surcharge (PAT).",
+      "check": { "type": "line", "line": "ip nat inside source list 1 interface GigabitEthernet0/0/1 overload" }
+    },
+    {
+      "id": "static-server",
+      "description": "Le serveur 192.168.10.20 est publié en traduction statique sur 203.0.113.5 (adresse entière ou TCP 80).",
+      "check": {
+        "type": "any",
+        "checks": [
+          { "type": "line", "line": "ip nat inside source static 192.168.10.20 203.0.113.5" },
+          { "type": "regex", "pattern": "^ip nat inside source static tcp 192\\.168\\.10\\.20 (80|www) 203\\.0\\.113\\.5 (80|www)( extendable)?$" }
+        ]
+      }
+    },
+    {
+      "id": "saved",
+      "description": "La configuration est enregistrée en NVRAM après la dernière modification.",
+      "check": { "type": "command", "command": ["copy running-config startup-config", "write memory", "write"], "afterLastChange": true }
+    }
+  ],
+  "hints": [
+    "Le NAT Cisco repose sur trois éléments : des interfaces marquées interne ou externe, une description des adresses à traduire, et une règle de traduction qui relie les deux. Sans le marquage des interfaces, aucune traduction n'a lieu.",
+    "Les adresses internes se décrivent par une ACL standard (masque générique, pas masque de sous-réseau). Pour que plusieurs postes partagent une seule adresse publique, la traduction dynamique doit porter le mot-clé overload. Une traduction statique se déclare à part, adresse locale puis adresse globale.",
+    "ip nat inside sous G0/0/0, ip nat outside sous G0/0/1, access-list 1 permit 192.168.10.0 0.0.0.255, puis ip nat inside source list 1 interface … overload. Pour le serveur : ip nat inside source static suivi de l'adresse privée et de l'adresse publique."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface GigabitEthernet0/0/0",
+        "ip nat inside",
+        "interface GigabitEthernet0/0/1",
+        "ip nat outside",
+        "exit",
+        "access-list 1 permit 192.168.10.0 0.0.0.255",
+        "ip nat inside source list 1 interface GigabitEthernet0/0/1 overload",
+        "ip nat inside source static 192.168.10.20 203.0.113.5",
+        "end",
+        "copy running-config startup-config"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations, ACL éditée en mode nommé, NAT statique du seul port TCP 80",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "ip access-list standard 1",
+            "permit 192.168.10.0 0.0.0.255",
+            "int g0/0/1",
+            "ip nat outside",
+            "int g0/0/0",
+            "ip nat inside",
+            "exit",
+            "ip nat inside source static tcp 192.168.10.20 80 203.0.113.5 80",
+            "ip nat inside source list 1 int g0/0/1 overload",
+            "\u001a",
+            "wr mem"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Interfaces interne et externe inversées",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "ip nat outside",
+            "interface g0/0/1",
+            "ip nat inside",
+            "exit",
+            "access-list 1 permit 192.168.10.0 0.0.0.255",
+            "ip nat inside source list 1 interface g0/0/1 overload",
+            "ip nat inside source static 192.168.10.20 203.0.113.5",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["nat-inside", "nat-outside"]
+    },
+    {
+      "description": "Masque de sous-réseau à la place du masque générique dans l'ACL",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "access-list 1 permit 192.168.10.0 255.255.255.0", "ip nat inside source list 1 interface g0/0/1 overload"]
+        }
+      ],
+      "failing": ["acl-lan"]
+    },
+    {
+      "description": "ACL 1 complétée par un permit any : elle ne désigne plus seulement le LAN",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "access-list 1 permit 192.168.10.0 0.0.0.255", "access-list 1 permit any", "ip nat inside source list 1 interface g0/0/1 overload"]
+        }
+      ],
+      "failing": ["acl-lan"]
+    },
+    {
+      "description": "Mot-clé overload oublié : un seul poste à la fois peut sortir",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "access-list 1 permit 192.168.10.0 0.0.0.255", "ip nat inside source list 1 interface g0/0/1"]
+        }
+      ],
+      "failing": ["pat-overload"]
+    },
+    {
+      "description": "Adresses de la traduction statique inversées (globale avant locale)",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "ip nat inside source static 203.0.113.5 192.168.10.20"] }
+      ],
+      "failing": ["static-server"]
+    },
+    {
+      "description": "Configuration enregistrée avant la traduction statique du serveur",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "ip nat inside",
+            "interface g0/0/1",
+            "ip nat outside",
+            "exit",
+            "access-list 1 permit 192.168.10.0 0.0.0.255",
+            "ip nat inside source list 1 interface g0/0/1 overload",
+            "do copy running-config startup-config",
+            "ip nat inside source static 192.168.10.20 203.0.113.5",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "saved"
+      ]
+    }
+  ],
+  "explanation": "Sur IOS, la traduction ne s'applique qu'entre une interface marquée ip nat inside et une interface marquée ip nat outside : ici G0/0/0 (LAN privé) et G0/0/1 (FAI). L'ACL standard 1 sert seulement à sélectionner les adresses locales internes à traduire ; elle prend un masque générique (0.0.0.255 pour un /24) : avec 255.255.255.0, elle désignerait des adresses dont seul le dernier octet est fixe, sans rapport avec le LAN. ip nat inside source list 1 interface GigabitEthernet0/0/1 overload traduit ces adresses vers l'adresse de l'interface externe en surcharge : c'est le PAT, qui distingue les sessions par le numéro de port et permet à des centaines de postes de partager 203.0.113.2. Sans overload, la traduction dynamique vers l'adresse de l'interface ne sert qu'un poste interne à la fois. ip nat inside source static 192.168.10.20 203.0.113.5 lie en permanence l'adresse locale du serveur à une adresse globale du bloc public, dans les deux sens : c'est ce qui rend le serveur joignable depuis Internet ; la forme static tcp … 80 … 80 ne publie que le port web. L'ordre des arguments est toujours local interne, puis global interne. show ip nat translations permet ensuite de vérifier les traductions.",
+  "reference": "Cisco IOS XE — IP Addressing: NAT Configuration Guide, « Configuring NAT for IP Address Conservation » (Configuring Static Translation, Configuring PAT / Overloading) ; Cisco IOS IP Addressing Services Command Reference (ip nat inside source)",
+  "estimatedMinutes": 10
+}

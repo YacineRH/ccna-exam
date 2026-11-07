@@ -1,0 +1,197 @@
+{
+  "slug": "ccna-lab-3.3-routage-statique",
+  "certification": "ccna",
+  "domain": "3.0",
+  "subtopic": "3.3",
+  "difficulty": "medium",
+  "title": "Routes statiques IPv4 et IPv6 vers un site distant",
+  "statement": "R1 dessert le LAN du siège et n'est relié qu'à R2, qui dessert le LAN de l'agence et la sortie Internet. Les interfaces de R1 sont déjà adressées en IPv4 et en IPv6, et activées. Aucun protocole de routage n'est utilisé : tout se fait en statique.\n\nConfigurez R1 :\n1. Une route IPv4 vers le LAN de l'agence (192.168.2.0/24), avec R2 (10.0.12.2) comme prochain saut.\n2. Une route IPv4 par défaut, également vers R2 (10.0.12.2).\n3. Activez le routage IPv6 (R1 doit transférer les paquets IPv6, pas seulement en recevoir).\n4. Une route IPv6 vers le LAN de l'agence (2001:DB8:ACAD:2::/64), par R2.\n5. Une route IPv6 par défaut, par R2.\n6. Enregistrez la configuration.\n\nPour IPv6, le prochain saut peut être l'adresse globale de R2 sur le lien, ou son adresse link-local : à vous de choisir une écriture valide.",
+  "topology": "  LAN siège                                            LAN agence\n  192.168.1.0/24                                       192.168.2.0/24\n  2001:DB8:ACAD:1::/64                                 2001:DB8:ACAD:2::/64\n        |                                                    |\n     G0/0/0 .1 / ::1                                      G0/0/0\n        R1 G0/0/1 ------------------------------ G0/0/1 R2 G0/0/2 ---- Internet\n           10.0.12.1/30                     10.0.12.2/30\n           2001:DB8:ACAD:12::1/64           2001:DB8:ACAD:12::2/64\n                                            link-local FE80::2\n\nR1 n'a pas d'autre voisin que R2.",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN siege\n ip address 192.168.1.1 255.255.255.0\n ipv6 address 2001:DB8:ACAD:1::1/64\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers R2\n ip address 10.0.12.1 255.255.255.252\n ipv6 address 2001:DB8:ACAD:12::1/64\n no shutdown"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "route-lan-agence",
+      "description": "R1 a une route statique IPv4 vers 192.168.2.0/24 dont le prochain saut est 10.0.12.2.",
+      "check": {
+        "type": "regex",
+        "pattern": "^ip route 192\\.168\\.2\\.0 255\\.255\\.255\\.0 (GigabitEthernet0/0/1 )?10\\.0\\.12\\.2( (25[0-4]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]?))?( permanent)?$"
+      }
+    },
+    {
+      "id": "route-defaut-ipv4",
+      "description": "R1 a une route IPv4 par défaut vers R2 (prochain saut 10.0.12.2).",
+      "check": {
+        "type": "regex",
+        "pattern": "^ip route 0\\.0\\.0\\.0 0\\.0\\.0\\.0 (GigabitEthernet0/0/1 )?10\\.0\\.12\\.2( (25[0-4]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]?))?( permanent)?$"
+      }
+    },
+    {
+      "id": "routage-ipv6",
+      "description": "R1 route les paquets IPv6.",
+      "check": { "type": "line", "line": "ipv6 unicast-routing" }
+    },
+    {
+      "id": "route-ipv6-agence",
+      "description": "R1 a une route statique IPv6 valide vers 2001:DB8:ACAD:2::/64, par R2.",
+      "check": {
+        "type": "regex",
+        "pattern": "^ipv6 route 2001:DB8:ACAD:2::/64 ((GigabitEthernet0/0/1 )?2001:DB8:ACAD:12::2|GigabitEthernet0/0/1 FE80::2)( \\d+)?$"
+      }
+    },
+    {
+      "id": "route-defaut-ipv6",
+      "description": "R1 a une route IPv6 par défaut valide, par R2.",
+      "check": {
+        "type": "regex",
+        "pattern": "^ipv6 route ::/0 ((GigabitEthernet0/0/1 )?2001:DB8:ACAD:12::2|GigabitEthernet0/0/1 FE80::2)( \\d+)?$"
+      }
+    },
+    {
+      "id": "sauvegarde",
+      "description": "La configuration est enregistrée en NVRAM.",
+      "check": { "type": "command", "command": ["copy running-config startup-config", "write memory", "write"] }
+    }
+  ],
+  "hints": [
+    "Les routes statiques se configurent en mode de configuration globale ; IPv4 et IPv6 ont chacun leur commande (ip route et ipv6 route), et une route par défaut est une route vers le préfixe de longueur nulle.",
+    "Sans ipv6 unicast-routing, un routeur Cisco ne transfère pas l'IPv6. Pour un prochain saut link-local (FE80::/10), IOS exige aussi l'interface de sortie, car la même adresse link-local peut exister sur chaque lien.",
+    "Forme générale : ip route <réseau> <masque> <prochain saut> et ipv6 route <préfixe>/<longueur> <prochain saut>. La route par défaut IPv4 vise 0.0.0.0 avec le masque 0.0.0.0, la route par défaut IPv6 vise ::/0 ; le prochain saut est toujours une adresse de R2 sur le lien 10.0.12.0/30 – 2001:DB8:ACAD:12::/64."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "ip route 192.168.2.0 255.255.255.0 10.0.12.2",
+        "ip route 0.0.0.0 0.0.0.0 10.0.12.2",
+        "ipv6 unicast-routing",
+        "ipv6 route 2001:DB8:ACAD:2::/64 2001:DB8:ACAD:12::2",
+        "ipv6 route ::/0 2001:DB8:ACAD:12::2",
+        "end",
+        "copy running-config startup-config"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Interface de sortie et prochain saut (route « entièrement spécifiée »), link-local pour IPv6, abréviations",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "ip route 192.168.2.0 255.255.255.0 g0/0/1 10.0.12.2",
+            "ip route 0.0.0.0 0.0.0.0 g0/0/1 10.0.12.2",
+            "ipv6 unicast-routing",
+            "ipv6 route 2001:db8:acad:2::/64 g0/0/1 fe80::2",
+            "ipv6 route ::/0 GigabitEthernet0/0/1 FE80::2",
+            "\u001a",
+            "wr"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Adresses IPv6 écrites en forme longue (IOS les ramène à la forme compressée), distance administrative explicite",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "ipv6 route 2001:0DB8:ACAD:0002:0000:0000:0000:0000/64 2001:0db8:acad:0012::0002",
+            "ipv6 route 0:0:0:0:0:0:0:0/0 GigabitEthernet0/0/1 2001:DB8:ACAD:12::2",
+            "ip route 0.0.0.0 0.0.0.0 10.0.12.2",
+            "ip route 192.168.2.0 255.255.255.0 10.0.12.2 1",
+            "do write memory"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Routes IPv6 posées sans activer ipv6 unicast-routing",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip route 192.168.2.0 255.255.255.0 10.0.12.2",
+            "ip route 0.0.0.0 0.0.0.0 10.0.12.2",
+            "ipv6 route 2001:DB8:ACAD:2::/64 2001:DB8:ACAD:12::2",
+            "ipv6 route ::/0 2001:DB8:ACAD:12::2",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["routage-ipv6"]
+    },
+    {
+      "description": "Prochain saut IPv6 link-local sans interface de sortie",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "ipv6 unicast-routing", "ipv6 route ::/0 FE80::2"]
+        }
+      ],
+      "failing": ["route-defaut-ipv6"]
+    },
+    {
+      "description": "Prochain saut link-local associé à la mauvaise interface de sortie (côté LAN)",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "ipv6 unicast-routing", "ipv6 route ::/0 g0/0/0 fe80::2", "ipv6 route 2001:DB8:ACAD:2::/64 g0/0/0 fe80::2"]
+        }
+      ],
+      "failing": ["route-defaut-ipv6", "route-ipv6-agence"]
+    },
+    {
+      "description": "Route par défaut IPv4 avec une distance administrative de 255 : jamais installée",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "ip route 0.0.0.0 0.0.0.0 10.0.12.2 255"]
+        }
+      ],
+      "failing": ["route-defaut-ipv4"]
+    },
+    {
+      "description": "Route vers la seule interface de sortie, sans le prochain saut demandé",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "ip route 192.168.2.0 255.255.255.0 g0/0/1", "ipv6 unicast-routing", "ipv6 route ::/0 g0/0/1"]
+        }
+      ],
+      "failing": ["route-lan-agence", "route-defaut-ipv6"]
+    },
+    {
+      "description": "Route IPv4 vers le LAN de l'agence avec l'adresse de R1 comme prochain saut",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "ip route 192.168.2.0 255.255.255.0 10.0.12.1"]
+        }
+      ],
+      "failing": ["route-lan-agence"]
+    }
+  ],
+  "explanation": "Une route statique IPv4 s'écrit ip route <réseau> <masque> <prochain saut | interface de sortie [prochain saut]>. Le prochain saut doit être l'adresse du voisin sur le lien partagé, ici 10.0.12.2 ; donner l'adresse de R1 lui-même n'a aucun sens. La route par défaut est la route vers 0.0.0.0/0 : elle sert pour toute destination absente de la table, ici Internet. Sur une interface Ethernet, il vaut mieux indiquer le prochain saut (seul ou avec l'interface) : une route vers la seule interface de sortie oblige le routeur à faire un ARP pour chaque destination et repose sur le proxy ARP du voisin. En IPv6, il faut d'abord activer le transfert par ipv6 unicast-routing, désactivé par défaut sur IOS : sans lui, le routeur a des adresses IPv6 mais ne route pas. La commande ipv6 route accepte une adresse globale comme prochain saut, ou une adresse link-local à condition de préciser l'interface de sortie (sinon IOS refuse la commande : une même adresse FE80:: peut exister sur chaque lien). ::/0 est la route IPv6 par défaut. IOS affiche les adresses IPv6 sous forme compressée et en majuscules, quelle que soit l'écriture saisie. Enfin, copy running-config startup-config conserve la configuration après un redémarrage. Vérifications utiles : show ip route static, show ipv6 route static, ping depuis R1 vers une adresse du LAN de l'agence, en IPv4 et en IPv6. Une distance administrative ajoutée en fin de commande (route flottante) reste valable ici tant qu'elle est inférieure à 255 : à 255, la route n'est jamais installée.",
+  "reference": "Cisco IP Routing: Protocol-Independent Configuration Guide (IOS XE), routes statiques IPv4 et « IPv6 Routing: Static Routing » ; Cisco IOS IP Routing: Protocol-Independent Command Reference (ip route) ; Cisco IOS IPv6 Command Reference (ipv6 route, ipv6 unicast-routing)",
+  "estimatedMinutes": 10
+}

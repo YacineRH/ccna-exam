@@ -1,0 +1,251 @@
+{
+  "slug": "ccna-lab-4.6-dhcp-relais",
+  "certification": "ccna",
+  "domain": "4.0",
+  "subtopic": "4.6",
+  "difficulty": "hard",
+  "title": "Serveur DHCP central et relais pour un LAN distant",
+  "statement": "Les postes du LAN de l'agence (192.168.20.0/24, derrière R2) doivent recevoir leur configuration IP par DHCP. Le service DHCP est centralisé sur R1, au siège ; R2 ne doit pas héberger de pool. Le routage entre les deux sites fonctionne déjà.\n\nSur R1 (serveur) :\n1. Réservez les adresses 192.168.20.1 à 192.168.20.10 (passerelle et équipements à adresse fixe) : elles ne doivent jamais être attribuées.\n2. Créez le pool AGENCE pour le réseau de l'agence.\n3. Les clients reçoivent comme passerelle par défaut l'adresse de R2 sur leur LAN, comme serveur DNS 192.168.10.53 (au siège), et le nom de domaine agence.lab.\n\nSur R2 (relais) :\n4. Les requêtes DHCP diffusées sur le LAN de l'agence doivent être relayées en unicast vers R1.",
+  "topology": "      LAN siège 192.168.10.0/24                         LAN agence 192.168.20.0/24\n      (DNS 192.168.10.53)                               (clients DHCP)\n             |                                                |\n          G0/0/0 192.168.10.1                          G0/0/0 192.168.20.1\n             R1 G0/0/1 --------------------------- G0/0/1 R2\n                10.0.12.1/30                  10.0.12.2/30\n\nR1 : ip route 192.168.20.0 255.255.255.0 10.0.12.2 (déjà configurée)\nR2 : ip route 0.0.0.0 0.0.0.0 10.0.12.1 (déjà configurée)",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN siege\n ip address 192.168.10.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers R2\n ip address 10.0.12.1 255.255.255.252\n no shutdown\nip route 192.168.20.0 255.255.255.0 10.0.12.2"
+    },
+    {
+      "id": "R2",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R2\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN agence\n ip address 192.168.20.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers R1\n ip address 10.0.12.2 255.255.255.252\n no shutdown\nip route 0.0.0.0 0.0.0.0 10.0.12.1"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "r1-exclusion",
+      "description": "R1 n'attribue jamais les adresses 192.168.20.1 à 192.168.20.10.",
+      "check": { "type": "line", "device": "R1", "line": "ip dhcp excluded-address 192.168.20.1 192.168.20.10" }
+    },
+    {
+      "id": "r1-pool-reseau",
+      "description": "Le pool AGENCE de R1 distribue des adresses du réseau 192.168.20.0/24, et le service DHCP de R1 est actif.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "device": "R1",
+            "section": "ip dhcp pool AGENCE",
+            "pattern": "^network 192\\.168\\.20\\.0 (255\\.255\\.255\\.0|/24)$"
+          },
+          { "type": "line", "device": "R1", "line": "no service dhcp", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "r1-passerelle",
+      "description": "Les clients du pool AGENCE reçoivent l'adresse de R2 sur leur LAN comme passerelle par défaut.",
+      "check": { "type": "line", "device": "R1", "section": "ip dhcp pool AGENCE", "line": "default-router 192.168.20.1" }
+    },
+    {
+      "id": "r1-dns",
+      "description": "Les clients du pool AGENCE reçoivent 192.168.10.53 comme serveur DNS.",
+      "check": { "type": "line", "device": "R1", "section": "ip dhcp pool AGENCE", "line": "dns-server 192.168.10.53" }
+    },
+    {
+      "id": "r1-domaine",
+      "description": "Les clients du pool AGENCE reçoivent le nom de domaine agence.lab.",
+      "check": { "type": "line", "device": "R1", "section": "ip dhcp pool AGENCE", "line": "domain-name agence.lab" }
+    },
+    {
+      "id": "r2-relais",
+      "description": "R2 relaie vers R1 les requêtes DHCP reçues sur le LAN de l'agence.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/0",
+            "pattern": "^ip helper-address (10\\.0\\.12\\.1|192\\.168\\.10\\.1)$"
+          },
+          { "type": "line", "device": "R2", "line": "no service dhcp", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "r2-sans-pool",
+      "description": "R2 n'héberge aucun pool DHCP (même vide) : le service est assuré par le pool AGENCE de R1.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "section", "device": "R1", "section": "ip dhcp pool AGENCE" },
+          { "type": "section", "device": "R2", "sectionPattern": "^ip dhcp pool ", "absent": true }
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "Côté R1, tout se joue en configuration globale (plage exclue) et dans le mode de configuration du pool. Côté R2, le relais se règle sur l'interface qui reçoit les diffusions des clients, pas sur celle qui mène au serveur.",
+    "Le relais renseigne dans la requête l'adresse de l'interface qui l'a reçue (giaddr, ici 192.168.20.1) : R1 choisit le pool dont le réseau contient cette adresse. Le pool doit donc porter le réseau de l'agence, et sa passerelle est l'adresse de R2 sur ce LAN, pas une adresse de R1.",
+    "Sur R1 : une commande globale ip dhcp excluded-address <première> <dernière>, puis, dans ip dhcp pool AGENCE, les commandes network, default-router, dns-server et domain-name. Sur R2 : une seule commande, ip helper-address, sous l'interface côté clients, vers une adresse de R1."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "ip dhcp excluded-address 192.168.20.1 192.168.20.10",
+        "ip dhcp pool AGENCE",
+        "network 192.168.20.0 255.255.255.0",
+        "default-router 192.168.20.1",
+        "dns-server 192.168.10.53",
+        "domain-name agence.lab",
+        "end"
+      ]
+    },
+    {
+      "device": "R2",
+      "commands": ["enable", "configure terminal", "interface GigabitEthernet0/0/0", "ip helper-address 10.0.12.1", "end"]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Préfixe /24, relais vers l'adresse LAN de R1, exclusion saisie depuis le pool, abréviations",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": ["en", "conf t", "int g0/0/0", "ip helper-address 192.168.10.1", "\u001a"]
+        },
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "ip dhcp pool AGENCE",
+            "network 192.168.20.0 /24",
+            "dns-server 192.168.10.53",
+            "default-router 192.168.20.1",
+            "domain-name agence.lab",
+            "ip dhcp excluded-address 192.168.20.1 192.168.20.10",
+            "\u001a"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Relais posé sur l'interface tournée vers R1",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.20.1 192.168.20.10",
+            "ip dhcp pool AGENCE",
+            "network 192.168.20.0 255.255.255.0",
+            "default-router 192.168.20.1",
+            "dns-server 192.168.10.53",
+            "domain-name agence.lab"
+          ]
+        },
+        { "device": "R2", "commands": ["enable", "configure terminal", "interface g0/0/1", "ip helper-address 10.0.12.1"] }
+      ],
+      "failing": ["r2-relais"]
+    },
+    {
+      "description": "Pool créé pour le réseau du siège, avec R1 comme passerelle",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.20.1 192.168.20.10",
+            "ip dhcp pool AGENCE",
+            "network 192.168.10.0 255.255.255.0",
+            "default-router 192.168.10.1",
+            "dns-server 192.168.10.53",
+            "domain-name agence.lab"
+          ]
+        },
+        { "device": "R2", "commands": ["enable", "configure terminal", "interface g0/0/0", "ip helper-address 10.0.12.1"] }
+      ],
+      "failing": ["r1-pool-reseau", "r1-passerelle"]
+    },
+    {
+      "description": "Solution correcte, mais un pool vide laissé sur R2",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.20.1 192.168.20.10",
+            "ip dhcp pool AGENCE",
+            "network 192.168.20.0 255.255.255.0",
+            "default-router 192.168.20.1",
+            "dns-server 192.168.10.53",
+            "domain-name agence.lab"
+          ]
+        },
+        { "device": "R2", "commands": ["enable", "configure terminal", "ip dhcp pool AGENCE", "exit", "interface g0/0/0", "ip helper-address 10.0.12.1"] }
+      ],
+      "failing": ["r2-sans-pool"]
+    },
+    {
+      "description": "no service dhcp sur R2 : le relais est désactivé avec le serveur",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.20.1 192.168.20.10",
+            "ip dhcp pool AGENCE",
+            "network 192.168.20.0 255.255.255.0",
+            "default-router 192.168.20.1",
+            "dns-server 192.168.10.53",
+            "domain-name agence.lab"
+          ]
+        },
+        { "device": "R2", "commands": ["enable", "configure terminal", "no service dhcp", "interface g0/0/0", "ip helper-address 10.0.12.1"] }
+      ],
+      "failing": ["r2-relais"]
+    },
+    {
+      "description": "Plage exclue trop courte : la passerelle .1 reste attribuable",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "ip dhcp excluded-address 192.168.20.2 192.168.20.10"] }
+      ],
+      "failing": ["r1-exclusion"]
+    },
+    {
+      "description": "Pool local sur R2 au lieu du serveur central",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.20.1 192.168.20.10",
+            "ip dhcp pool AGENCE",
+            "network 192.168.20.0 255.255.255.0",
+            "default-router 192.168.20.1",
+            "dns-server 192.168.10.53",
+            "domain-name agence.lab"
+          ]
+        }
+      ],
+      "failing": ["r1-exclusion", "r1-pool-reseau", "r2-relais", "r2-sans-pool"]
+    }
+  ],
+  "explanation": "Un client DHCP n'a pas encore d'adresse : il diffuse son DHCPDISCOVER (255.255.255.255), et un routeur ne transfère pas les diffusions. La commande ip helper-address, posée sur l'interface de R2 qui reçoit ces diffusions (G0/0/0, côté clients), fait de R2 un agent de relais : il renvoie la requête en unicast vers l'adresse indiquée, ici une adresse de R1 (10.0.12.1 ou 192.168.10.1, R1 répond sur toutes ses interfaces), après avoir écrit dans le champ giaddr l'adresse de l'interface de réception, 192.168.20.1. R1 choisit alors le pool dont le réseau contient le giaddr : le pool doit donc être celui de 192.168.20.0/24 (network 192.168.20.0 255.255.255.0, ou /24), et R1 doit savoir joindre ce réseau pour répondre, ce que fait sa route statique. La passerelle remise aux clients (default-router) est l'adresse de R2 sur leur LAN, 192.168.20.1 : c'est leur premier saut, R1 n'est pas sur leur lien. ip dhcp excluded-address est une commande de configuration globale (tapée dans le pool, IOS l'exécute en revenant au mode global) ; elle empêche d'attribuer 192.168.20.1 à .10, dont la passerelle. dns-server et domain-name ajoutent les options 6 et 15. Le service DHCP (service dhcp) est actif par défaut sur IOS ; no service dhcp désactive à la fois le serveur et l'agent de relais : ne le tapez pas sur R2 pour « supprimer le serveur », il suffit de ne pas y créer de pool. ip helper-address relaie aussi par défaut d'autres services UDP diffusés (TFTP, DNS, NetBIOS, TACACS…), ce qu'on peut restreindre par ip forward-protocol. Vérifications : show ip dhcp pool et show ip dhcp binding sur R1, show ip interface g0/0/0 sur R2 (ligne Helper address).",
+  "reference": "Cisco IP Addressing: DHCP Configuration Guide (IOS 15M&T, et son équivalent IOS XE), chapitres « Configuring the Cisco IOS DHCP Server » et « Configuring the Cisco IOS DHCP Relay Agent » ; RFC 2131 (giaddr), RFC 1542, RFC 2132 (options 3, 6 et 15)",
+  "estimatedMinutes": 15
+}
