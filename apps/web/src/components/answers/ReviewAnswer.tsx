@@ -14,7 +14,7 @@ const TONE: Record<Tone, { bg: string; border: string; color: string; symbol: st
 function Row({ tone, tag, children, note }: { tone: Tone; tag: string; children: ReactNode; note?: string }) {
   const t = TONE[tone];
   return (
-    <div className="flex items-start gap-2.5 rounded-lg px-3 py-2.5" style={{ background: t.bg, border: t.border }}>
+    <div data-tag={tag} className="flex items-start gap-2.5 rounded-lg px-3 py-2.5" style={{ background: t.bg, border: t.border }}>
       <span className="shrink-0 font-mono text-[13px] font-semibold" style={{ color: t.color }}>
         {tag}
         {t.symbol && ` ${t.symbol}`}

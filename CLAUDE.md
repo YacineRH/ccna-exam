@@ -17,7 +17,10 @@ pnpm install && pnpm build        # le build de core/content est nécessaire ava
 pnpm typecheck
 TEST_DATABASE_URL=postgres://examforge:examforge@localhost:5432/examforge_test pnpm test
 pnpm --filter @examforge/api db:generate   # après une modification de apps/api/src/db/schema.ts
+pnpm build && pnpm e2e                     # suite Playwright (e2e/), vide la base examforge_test
 ```
+
+Tests navigateur dans un conteneur de session : Chromium est préinstallé, `PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers` suffit. Ne jamais lancer `playwright install` en local (`@playwright/test` est épinglé sur la version du Chromium préinstallé) ; la CI, elle, fait `npx playwright install --with-deps chromium`.
 
 PostgreSQL local dans un conteneur de session : `pg_ctlcluster 16 main start`, puis créer le rôle `examforge` (mot de passe `examforge`) et les bases `examforge` et `examforge_test`.
 

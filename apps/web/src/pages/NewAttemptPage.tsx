@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { WithCertification } from '../certification/CertificationContext';
 import { IconPlay, IconTimer, IconTrend } from '../components/Icons';
 import { ErrorBox, Spinner } from '../components/ui';
 import { api, ApiError } from '../lib/api';
 import { examMinutes, maxFeasibleCount, planShortfalls } from '../lib/planning';
 import type { AttemptMode, AttemptState, CertificationDetail, InsufficientQuestionsDetails } from '../lib/types';
 import { useApi } from '../lib/useApi';
-
-const CERT = 'ccna';
 
 function ModeCard({
   mode,
@@ -52,9 +51,14 @@ function ModeCard({
 }
 
 export function NewAttemptPage() {
+  // Changer de certification remonte le formulaire : domaines et nombre repartent de zéro.
+  return <WithCertification>{(c) => <NewAttemptForm key={c.code} code={c.code} />}</WithCertification>;
+}
+
+function NewAttemptForm({ code }: { code: string }) {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
-  const detail = useApi<CertificationDetail>(`/certifications/${CERT}`);
+  const detail = useApi<CertificationDetail>(`/certifications/${encodeURIComponent(code)}`);
 
   const urlMode: AttemptMode = params.get('mode') === 'practice' ? 'practice' : 'exam';
   const urlDomains = params.get('domaines');
@@ -79,7 +83,7 @@ export function NewAttemptPage() {
     () => (bank ? maxFeasibleCount(chosenDomains, bank.byDomain, Math.min(200, bank.questions)) : 0),
     [chosenDomains, bank],
   );
-  const official = cert?.examFormat.questionCount ?? 102;
+  const official = cert?.examFormat.questionCount ?? 0;
   const defaultCount = mode === 'exam' ? official : 10;
   const effectiveCount = count ?? (maxPossible ? Math.min(defaultCount, maxPossible) : defaultCount);
   const shortfalls = bank ? planShortfalls(chosenDomains, bank.byDomain, effectiveCount) : [];
@@ -112,7 +116,7 @@ export function NewAttemptPage() {
       const attempt = await api<AttemptState>('/attempts', {
         method: 'POST',
         body: {
-          certification: CERT,
+          certification: code,
           mode,
           questionCount: effectiveCount,
           ...(all ? {} : { domains: chosen }),

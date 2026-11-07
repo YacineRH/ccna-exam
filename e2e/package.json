@@ -1,0 +1,18 @@
+{
+  "name": "@examforge/e2e",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tests de bout en bout dans Chromium : API sur la base de test + front buildé.",
+  "scripts": {
+    "e2e": "playwright test",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@examforge/content": "workspace:*",
+    "@examforge/core": "workspace:*",
+    "@playwright/test": "1.63.0",
+    "pg": "^8.23.1"
+  }
+}

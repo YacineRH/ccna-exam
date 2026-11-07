@@ -48,7 +48,21 @@ pnpm typecheck
 TEST_DATABASE_URL=postgres://examforge:examforge@localhost:5432/examforge_test pnpm test
 ```
 
-Les tests de l'API tournent sur une vraie base PostgreSQL (vidée à chaque lancement) ; sans `TEST_DATABASE_URL`, ils sont ignorés. La CI GitHub Actions lance tout, avec PostgreSQL, à chaque push.
+Les tests de l'API tournent sur une vraie base PostgreSQL (vidée à chaque lancement) ; sans `TEST_DATABASE_URL`, ils sont ignorés.
+
+### Tests navigateur (Playwright)
+
+Le paquet `e2e/` démarre l'API buildée sur une base de test **vidée au démarrage** (son nom doit contenir « test ») et le front buildé (`vite preview`), puis rejoue dans Chromium : inscription et tableau de bord vide, sélecteur de certification, entraînement « ordre » au clavier, entraînement « association », examen court (chrono, marquage, soumission, mêmes lettres d'options dans les résultats) et absence de débordement horizontal à 390 px.
+
+```sh
+pnpm build
+pnpm --filter @examforge/e2e exec playwright install chromium   # une fois
+E2E_DATABASE_URL=postgres://examforge:examforge@localhost:5432/examforge_test pnpm e2e
+```
+
+Sans `E2E_DATABASE_URL`, la suite prend `TEST_DATABASE_URL`, puis la base `examforge_test` locale. Ports utilisés : 3100 (API) et 4180 (front).
+
+La CI GitHub Actions lance tout, avec PostgreSQL, à chaque push : build, typecheck, tests unitaires et API, suite e2e, images Docker.
 
 ## Documentation
 
@@ -68,6 +82,7 @@ Les tests de l'API tournent sur une vraie base PostgreSQL (vidée à chaque lanc
 - [x] Phase 1 : moteur d'examen (passage, notation, historique)
 - [x] Phase 2 : tableau de bord (préparation, domaines, à revoir)
 - [x] Phase 3 : serveur MCP (génération et validation)
+- [x] Bloc 1 : corrections v0.1 (mêmes lettres d'options dans les résultats, certification choisie dans l'en-tête, chrono corrigé du décalage d'horloge, filtre par type de question, tests navigateur Playwright en CI)
 - [ ] Remplir la banque : ~100 examens blancs générés via le MCP
 - [ ] Phase 4 : CLI trainer IOS, challenges chronométrés, flashcards à répétition espacée
 - [ ] Phase 5 : finitions, accessibilité, mobile

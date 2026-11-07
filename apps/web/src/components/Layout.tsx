@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { initials } from '../lib/format';
+import { CertificationSelect } from './CertificationSelect';
 import {
   IconClose,
   IconDashboard,
@@ -14,7 +15,6 @@ import {
   IconTrend,
   LogoMark,
 } from './Icons';
-import { Led } from './ui';
 
 interface NavItem {
   to: string;
@@ -172,14 +172,7 @@ export function Layout() {
             Exam<span className="text-accent">Forge</span>
           </span>
         </Link>
-        <span
-          className="hidden h-9 items-center gap-2 rounded-lg border border-line px-3 font-mono text-[13px] font-medium sm:flex"
-          style={{ background: 'rgba(16,24,39,.8)' }}
-          title="Certification active"
-        >
-          <Led />
-          CCNA 200-301
-        </span>
+        <CertificationSelect className="hidden sm:flex" />
         <div className="flex-1" />
         <AccountMenu />
       </header>
@@ -191,6 +184,10 @@ export function Layout() {
           className={`${navOpen ? 'flex' : 'hidden'} flex-col gap-0.5 border-b border-line px-3.5 py-5 lg:sticky lg:top-16 lg:flex lg:h-[calc(100vh-4rem)] lg:w-[228px] lg:shrink-0 lg:overflow-y-auto lg:border-b-0 lg:border-r`}
           style={{ background: 'rgba(8,12,21,.6)' }}
         >
+          <div className="mb-3 flex flex-col gap-2 px-3 sm:hidden">
+            <div className="label-mono text-[10.5px] tracking-[1.6px]">// Certification</div>
+            <CertificationSelect className="flex" />
+          </div>
           <div className="label-mono px-3 py-2 text-[10.5px] tracking-[1.6px]">// Pilotage</div>
           {PILOTAGE.map((i) => (
             <SideLink key={i.to} item={i} />

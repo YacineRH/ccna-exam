@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { WithCertification } from '../certification/CertificationContext';
 import { MasteryLegend, ProgressChart, RadarChart, ReadinessGauge, Sparkline } from '../components/charts';
 import { IconPlay } from '../components/Icons';
 import { AttemptRow } from '../components/AttemptRow';
@@ -15,8 +16,6 @@ import {
 } from '../lib/format';
 import type { AttemptSummary, Stats } from '../lib/types';
 import { useApi } from '../lib/useApi';
-
-const CERT = 'ccna';
 
 function Card({ title, aside, children }: { title: string; aside?: ReactNode; children: ReactNode }) {
   return (
@@ -306,9 +305,13 @@ function RecentAttempts({ attempts }: { attempts: AttemptSummary[] }) {
 }
 
 export function DashboardPage() {
+  return <WithCertification>{(c) => <Dashboard key={c.code} code={c.code} />}</WithCertification>;
+}
+
+function Dashboard({ code }: { code: string }) {
   const { user } = useAuth();
-  const stats = useApi<Stats>(`/stats?certification=${CERT}`);
-  const attempts = useApi<{ attempts: AttemptSummary[] }>('/attempts');
+  const stats = useApi<Stats>(`/stats?certification=${encodeURIComponent(code)}`);
+  const attempts = useApi<{ attempts: AttemptSummary[] }>(`/attempts?certification=${encodeURIComponent(code)}`);
   const now = new Date();
   const firstName = user?.displayName.split(/\s+/)[0] ?? '';
 
@@ -321,8 +324,14 @@ export function DashboardPage() {
             {stats.data ? ` · ${stats.data.exams.taken} EXAMEN${stats.data.exams.taken > 1 ? 'S' : ''} BLANC${stats.data.exams.taken > 1 ? 'S' : ''}` : ''}
           </div>
           <h1 className="mt-1.5 text-[28px] font-semibold leading-tight sm:text-[34px]">
-            {greeting(now)} {firstName},{' '}
-            <span className="text-muted">on vise {stats.data?.passingScore ?? 825}.</span>
+            {greeting(now)} {firstName}
+            {stats.data ? (
+              <>
+                ,{' '}<span className="text-muted">on vise {stats.data.passingScore}.</span>
+              </>
+            ) : (
+              '.'
+            )}
           </h1>
         </div>
         <Link

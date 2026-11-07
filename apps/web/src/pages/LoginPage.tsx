@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { useCertification } from '../certification/CertificationContext';
 import { LogoMark } from '../components/Icons';
 import { ErrorBox, Led } from '../components/ui';
 import { ApiError } from '../lib/api';
+import { certificationLabel } from '../lib/certification';
 
 type Mode = 'login' | 'register';
 
@@ -25,6 +27,7 @@ function describe(err: unknown, mode: Mode): string | null {
 
 export function LoginPage() {
   const { status, login, register, bootError, retry } = useAuth();
+  const { current: certification } = useCertification();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from ?? '/';
@@ -79,9 +82,11 @@ export function LoginPage() {
           <span className="font-display text-xl font-bold tracking-[-0.3px]">
             Exam<span className="text-accent">Forge</span>
           </span>
-          <span className="ml-auto flex items-center gap-2 font-mono text-[12px] text-muted">
-            <Led /> CCNA 200-301
-          </span>
+          {certification && (
+            <span className="ml-auto flex items-center gap-2 font-mono text-[12px] text-muted" title={certification.name}>
+              <Led /> {certificationLabel(certification)}
+            </span>
+          )}
         </div>
 
         <section

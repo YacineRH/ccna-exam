@@ -37,6 +37,8 @@ export interface AttemptQuestion {
 
 export interface AttemptState {
   id: string;
+  /** Code de la certification de la tentative. */
+  certification: string;
   mode: AttemptMode;
   status: AttemptStatus;
   startedAt: string;
@@ -44,6 +46,8 @@ export interface AttemptState {
   allowBackNavigation: boolean;
   furthestPosition: number;
   totalCount: number;
+  /** Heure du serveur au moment de la réponse (ISO), pour corriger l'horloge du poste. */
+  serverNow: string;
   questions: AttemptQuestion[];
 }
 
