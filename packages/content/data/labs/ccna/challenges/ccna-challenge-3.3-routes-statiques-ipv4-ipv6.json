@@ -1,0 +1,201 @@
+{
+  "slug": "ccna-challenge-3.3-routes-statiques-ipv4-ipv6",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "3.0",
+  "subtopic": "3.3",
+  "difficulty": "medium",
+  "title": "Contre la montre : routage statique double pile entre l'agence et le siège",
+  "statement": "L'agence (R1) est reliée au siège (R2), qui porte l'accès Internet. Toutes les interfaces sont adressées en IPv4 et en IPv6 et activées, mais aucun routeur n'a de route statique, et ni l'un ni l'autre ne route encore l'IPv6.\n\nConfigurez le routage statique, en indiquant toujours l'adresse du prochain saut (seule, ou avec l'interface de sortie) :\n1. Sur R1 et sur R2, activez le routage IPv6.\n2. R1 : une route par défaut IPv4 et une route par défaut IPv6, toutes deux vers R2.\n3. R2 : une route IPv4 vers le LAN de l'agence et une route IPv6 vers son préfixe, toutes deux vers R1.\n4. R2 : une route par défaut IPv4 et une route par défaut IPv6 vers le FAI.\n\nUn onglet par routeur. Le chronomètre tourne.",
+  "topology": "  LAN agence                                                       FAI\n  192.168.1.0/24                                       203.0.113.1/30\n  2001:db8:acad:1::/64                                 2001:db8:ffff::1/64\n        |                                                      |\n  G0/0/0 .1 / ::1                                    G0/0/2 203.0.113.2/30\n        +---- R1 ---- G0/0/1 --------------- G0/0/1 ---- R2 --+   2001:db8:ffff::2/64\n                10.0.12.1/30            10.0.12.2/30        |\n                2001:db8:acad:12::1/64  2001:db8:acad:12::2/64\n                                                         G0/0/0 .1 / ::1\n                                                            |\n                                                   LAN siège 192.168.2.0/24\n                                                   2001:db8:acad:2::/64",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN agence\n ip address 192.168.1.1 255.255.255.0\n ipv6 address 2001:db8:acad:1::1/64\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers le siege\n ip address 10.0.12.1 255.255.255.252\n ipv6 address 2001:db8:acad:12::1/64\n no shutdown"
+    },
+    {
+      "id": "R2",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-2"],
+      "startupConfig": "hostname R2\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN siege\n ip address 192.168.2.1 255.255.255.0\n ipv6 address 2001:db8:acad:2::1/64\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers l'agence\n ip address 10.0.12.2 255.255.255.252\n ipv6 address 2001:db8:acad:12::2/64\n no shutdown\ninterface GigabitEthernet0/0/2\n description Lien FAI\n ip address 203.0.113.2 255.255.255.252\n ipv6 address 2001:db8:ffff::2/64\n no shutdown"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "routage-ipv6",
+      "description": "R1 et R2 routent l'IPv6.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "device": "R1", "line": "ipv6 unicast-routing" },
+          { "type": "line", "device": "R2", "line": "ipv6 unicast-routing" }
+        ]
+      }
+    },
+    {
+      "id": "r1-defaut-ipv4",
+      "description": "R1 a une route par défaut IPv4 vers R2 (prochain saut 10.0.12.2).",
+      "check": { "type": "regex", "device": "R1", "pattern": "^ip route 0\\.0\\.0\\.0 0\\.0\\.0\\.0 (GigabitEthernet0/0/1 )?10\\.0\\.12\\.2( 1)?$" }
+    },
+    {
+      "id": "r1-defaut-ipv6",
+      "description": "R1 a une route par défaut IPv6 vers R2 (prochain saut 2001:db8:acad:12::2).",
+      "check": { "type": "regex", "device": "R1", "pattern": "^ipv6 route ::/0 (GigabitEthernet0/0/1 )?2001:db8:acad:12::2( 1)?$" }
+    },
+    {
+      "id": "r2-lan-agence-ipv4",
+      "description": "R2 joint le LAN de l'agence 192.168.1.0/24 par R1 (prochain saut 10.0.12.1).",
+      "check": { "type": "regex", "device": "R2", "pattern": "^ip route 192\\.168\\.1\\.0 255\\.255\\.255\\.0 (GigabitEthernet0/0/1 )?10\\.0\\.12\\.1( 1)?$" }
+    },
+    {
+      "id": "r2-lan-agence-ipv6",
+      "description": "R2 joint le préfixe de l'agence 2001:db8:acad:1::/64 par R1 (prochain saut 2001:db8:acad:12::1).",
+      "check": { "type": "regex", "device": "R2", "pattern": "^ipv6 route 2001:db8:acad:1::/64 (GigabitEthernet0/0/1 )?2001:db8:acad:12::1( 1)?$" }
+    },
+    {
+      "id": "r2-defaut-fai",
+      "description": "R2 a une route par défaut IPv4 vers 203.0.113.1 et une route par défaut IPv6 vers 2001:db8:ffff::1, chez le FAI.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "device": "R2", "pattern": "^ip route 0\\.0\\.0\\.0 0\\.0\\.0\\.0 (GigabitEthernet0/0/2 )?203\\.0\\.113\\.1( 1)?$" },
+          { "type": "regex", "device": "R2", "pattern": "^ipv6 route ::/0 (GigabitEthernet0/0/2 )?2001:db8:ffff::1( 1)?$" }
+        ]
+      }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 6,
+    "timeLimitMinutes": 12,
+    "mode": "build",
+    "faults": []
+  },
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "ipv6 unicast-routing",
+        "ip route 0.0.0.0 0.0.0.0 10.0.12.2",
+        "ipv6 route ::/0 2001:db8:acad:12::2",
+        "end"
+      ]
+    },
+    {
+      "device": "R2",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "ipv6 unicast-routing",
+        "ip route 192.168.1.0 255.255.255.0 10.0.12.1",
+        "ipv6 route 2001:db8:acad:1::/64 2001:db8:acad:12::1",
+        "ip route 0.0.0.0 0.0.0.0 203.0.113.1",
+        "ipv6 route ::/0 2001:db8:ffff::1",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Routes entièrement spécifiées (interface de sortie et prochain saut), adresses IPv6 en majuscules et non abrégées",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": [
+            "en",
+            "conf t",
+            "ip route 0.0.0.0 0.0.0.0 g0/0/2 203.0.113.1",
+            "ipv6 route ::/0 GigabitEthernet0/0/2 2001:DB8:FFFF:0:0:0:0:1",
+            "ip route 192.168.1.0 255.255.255.0 g0/0/1 10.0.12.1",
+            "ipv6 route 2001:0DB8:ACAD:0001::/64 g0/0/1 2001:DB8:ACAD:12::1",
+            "ipv6 unicast-routing",
+            "\u001a"
+          ]
+        },
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "ipv6 route ::/0 gigabitethernet 0/0/1 2001:DB8:ACAD:12:0::2",
+            "ip route 0.0.0.0 0.0.0.0 gigabitethernet 0/0/1 10.0.12.2",
+            "ipv6 unicast-routing",
+            "\u001a"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Routage IPv6 oublié sur R2 : les routes IPv6 sont saisies, mais R2 ne relaie aucun paquet IPv6",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "ipv6 unicast-routing", "ip route 0.0.0.0 0.0.0.0 10.0.12.2", "ipv6 route ::/0 2001:db8:acad:12::2", "end"]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip route 192.168.1.0 255.255.255.0 10.0.12.1",
+            "ipv6 route 2001:db8:acad:1::/64 2001:db8:acad:12::1",
+            "ip route 0.0.0.0 0.0.0.0 203.0.113.1",
+            "ipv6 route ::/0 2001:db8:ffff::1",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["routage-ipv6"]
+    },
+    {
+      "description": "Route par défaut de R1 vers sa propre adresse 10.0.12.1",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "ip route 0.0.0.0 0.0.0.0 10.0.12.1", "end"]
+        }
+      ],
+      "failing": ["r1-defaut-ipv4"]
+    },
+    {
+      "description": "Route vers le LAN de l'agence avec un masque d'hôte /32",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "ip route 192.168.1.0 255.255.255.255 10.0.12.1", "end"]
+        }
+      ],
+      "failing": ["r2-lan-agence-ipv4"]
+    },
+    {
+      "description": "Préfixe IPv6 de l'agence saisi en /48 au lieu de /64",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "ipv6 unicast-routing", "ipv6 route 2001:db8:acad::/48 2001:db8:acad:12::1", "end"]
+        }
+      ],
+      "failing": ["r2-lan-agence-ipv6"]
+    },
+    {
+      "description": "Route par défaut de R1 vers la seule interface de sortie, sans prochain saut",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "ip route 0.0.0.0 0.0.0.0 GigabitEthernet0/0/1", "end"]
+        }
+      ],
+      "failing": ["r1-defaut-ipv4"]
+    }
+  ],
+  "explanation": "ipv6 unicast-routing est indispensable : sans elle, un routeur IOS accepte des adresses et des routes IPv6 mais ne relaie aucun paquet IPv6 (il se comporte en hôte), et n'envoie pas d'annonces RA. En IPv4, le routage est actif par défaut. Une route statique associe un préfixe à un prochain saut : ip route <réseau> <masque> <prochain saut>, et ipv6 route <préfixe>/<longueur> <prochain saut>. La route par défaut s'écrit 0.0.0.0 0.0.0.0 en IPv4 et ::/0 en IPv6. Le prochain saut est l'adresse du voisin sur le lien commun (10.0.12.2 vu de R1), jamais l'adresse locale. La forme entièrement spécifiée (interface de sortie puis prochain saut) est équivalente et évite une recherche récursive ; l'interface seule, sur un lien Ethernet, oblige le routeur à faire une requête ARP pour chaque destination et repose sur le proxy ARP du voisin, ce que la consigne exclut. La route vers le LAN de l'agence doit porter le masque du réseau (255.255.255.0) : un /32 ne couvrirait que l'adresse 192.168.1.0. De même en IPv6, le préfixe du LAN est 2001:db8:acad:1::/64 ; un /48 enverrait aussi vers R1 tout le reste du bloc 2001:db8:acad::/48 qui n'a pas de route plus précise, y compris des préfixes que l'agence n'utilise pas. Le retour est indispensable : sans la route de R2 vers 192.168.1.0/24 et 2001:db8:acad:1::/64, les réponses ne reviendraient jamais à l'agence. Vérifications : show ip route static, show ipv6 route static, ping et traceroute depuis le LAN de l'agence.",
+  "reference": "Cisco IOS XE — IP Routing: Static Routing Configuration Guide, « IPv4 Static Routes » et « IPv6 Static Routing » (ip route, ipv6 route, fully specified static routes) ; Cisco IOS IPv6 Configuration Guide (ipv6 unicast-routing)",
+  "estimatedMinutes": 6
+}

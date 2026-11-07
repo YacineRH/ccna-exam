@@ -1,0 +1,275 @@
+{
+  "slug": "ccna-challenge-2.4-etherchannel-lacp",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "2.0",
+  "subtopic": "2.4",
+  "difficulty": "medium",
+  "title": "Contre la montre : agrégat LACP en trunk entre S1 et S2",
+  "statement": "S1 et S2 (Catalyst 2960) sont reliés par deux câbles, sur leurs ports Gi0/1 et Gi0/2, encore en configuration par défaut : Spanning Tree en bloque un, la moitié de la bande passante est perdue. Les VLAN 10, 20 et 99 existent déjà sur les deux commutateurs.\n\nSur S1 et sur S2 (un onglet par commutateur) :\n1. Regroupez Gi0/1 et Gi0/2 dans l'interface Port-channel 1, négociée par LACP. S1 doit prendre l'initiative de la négociation ; S2 peut l'initier aussi ou seulement y répondre.\n2. Configurez Port-channel 1 en trunk 802.1Q statique, VLAN natif 99, limité aux VLAN 10, 20 et 99.\n3. Répartissez la charge de tous les agrégats du commutateur selon les adresses IP source et destination.\n\nLe chronomètre tourne.",
+  "topology": "  +----------+  Gi0/1 ============ Gi0/1  +----------+\n  |    S1    |                            |    S2    |\n  |          |  Gi0/2 ============ Gi0/2  |          |\n  +----------+                            +----------+\n           Port-channel 1 (LACP), trunk 802.1Q\n           VLAN natif 99, VLAN autorisés 10,20,99\n\n  VLAN existants : 10 VENTES, 20 COMPTA, 99 NATIF",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "S1",
+      "type": "switch",
+      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "startupConfig": "hostname S1\nno ip domain-lookup\nvlan 10\n name VENTES\nvlan 20\n name COMPTA\nvlan 99\n name NATIF"
+    },
+    {
+      "id": "S2",
+      "type": "switch",
+      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "startupConfig": "hostname S2\nno ip domain-lookup\nvlan 10\n name VENTES\nvlan 20\n name COMPTA\nvlan 99\n name NATIF"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "s1-lacp-actif",
+      "description": "Sur S1, Gi0/1 et Gi0/2 forment le Port-channel 1 en LACP, et S1 initie la négociation.",
+      "check": { "type": "line", "device": "S1", "sectionPattern": "^interface GigabitEthernet0/[12]$", "sections": "all", "line": "channel-group 1 mode active" }
+    },
+    {
+      "id": "s2-lacp",
+      "description": "Sur S2, Gi0/1 et Gi0/2 forment le Port-channel 1 en LACP.",
+      "check": {
+        "type": "line",
+        "device": "S2",
+        "sectionPattern": "^interface GigabitEthernet0/[12]$",
+        "sections": "all",
+        "line": ["channel-group 1 mode active", "channel-group 1 mode passive"]
+      }
+    },
+    {
+      "id": "s1-po-trunk",
+      "description": "Sur S1, Port-channel 1 est un trunk statique, VLAN natif 99, limité aux VLAN 10, 20 et 99.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "device": "S1", "section": "interface Port-channel1", "line": "switchport mode trunk" },
+          { "type": "line", "device": "S1", "section": "interface Port-channel1", "line": "switchport trunk native vlan 99" },
+          { "type": "line", "device": "S1", "section": "interface Port-channel1", "line": "switchport trunk allowed vlan 10,20,99" }
+        ]
+      }
+    },
+    {
+      "id": "s2-po-trunk",
+      "description": "Sur S2, Port-channel 1 est un trunk statique, VLAN natif 99, limité aux VLAN 10, 20 et 99.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "device": "S2", "section": "interface Port-channel1", "line": "switchport mode trunk" },
+          { "type": "line", "device": "S2", "section": "interface Port-channel1", "line": "switchport trunk native vlan 99" },
+          { "type": "line", "device": "S2", "section": "interface Port-channel1", "line": "switchport trunk allowed vlan 10,20,99" }
+        ]
+      }
+    },
+    {
+      "id": "repartition-ip",
+      "description": "Sur les deux commutateurs, la charge des agrégats est répartie selon les adresses IP source et destination.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "device": "S1", "line": "port-channel load-balance src-dst-ip" },
+          { "type": "line", "device": "S2", "line": "port-channel load-balance src-dst-ip" }
+        ]
+      }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 6,
+    "timeLimitMinutes": 12,
+    "mode": "build",
+    "faults": []
+  },
+  "solution": [
+    {
+      "device": "S1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "port-channel load-balance src-dst-ip",
+        "interface range GigabitEthernet0/1 - 2",
+        "channel-group 1 mode active",
+        "exit",
+        "interface Port-channel1",
+        "switchport mode trunk",
+        "switchport trunk native vlan 99",
+        "switchport trunk allowed vlan 10,20,99",
+        "end"
+      ]
+    },
+    {
+      "device": "S2",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "port-channel load-balance src-dst-ip",
+        "interface range GigabitEthernet0/1 - 2",
+        "channel-group 1 mode passive",
+        "exit",
+        "interface Port-channel1",
+        "switchport mode trunk",
+        "switchport trunk native vlan 99",
+        "switchport trunk allowed vlan 10,20,99",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Trunk préparé sur les ports physiques avant channel-group (le Port-channel en hérite), S2 aussi en mode active, abréviations",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "en",
+            "conf t",
+            "int range g0/1-2",
+            "sw mo tr",
+            "sw tr nat vl 99",
+            "sw tr al vl 10,20,99",
+            "channel-group 1 mode active",
+            "exit",
+            "port-channel load-balance src-dst-ip",
+            "\u001a"
+          ]
+        },
+        {
+          "device": "S2",
+          "commands": [
+            "en",
+            "conf t",
+            "int range g0/1-2",
+            "switchport mode trunk",
+            "switchport trunk native vlan 99",
+            "switchport trunk allowed vlan 10,20,99",
+            "channel-group 1 mode active",
+            "exit",
+            "port-channel load-balance src-dst-ip",
+            "\u001a"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Ports ajoutés un par un, protocole LACP fixé explicitement, liste autorisée construite avec add",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/1",
+            "channel-protocol lacp",
+            "channel-group 1 mode active",
+            "interface g0/2",
+            "channel-protocol lacp",
+            "channel-group 1 mode active",
+            "interface port-channel 1",
+            "switchport mode trunk",
+            "switchport trunk allowed vlan 10,20",
+            "switchport trunk allowed vlan add 99",
+            "switchport trunk native vlan 99",
+            "exit",
+            "port-channel load-balance src-dst-ip",
+            "end"
+          ]
+        },
+        {
+          "device": "S2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "port-channel load-balance src-dst-ip",
+            "interface g0/1",
+            "channel-group 1 mode passive",
+            "interface g0/2",
+            "channel-group 1 mode passive",
+            "interface po1",
+            "switchport mode trunk",
+            "switchport trunk native vlan 99",
+            "switchport trunk allowed vlan 10,20,99",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Les deux côtés en mode passive : aucun ne lance la négociation, l'agrégat ne se forme pas",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": ["enable", "configure terminal", "port-channel load-balance src-dst-ip", "interface range g0/1 - 2", "channel-group 1 mode passive", "interface po1", "switchport mode trunk", "switchport trunk native vlan 99", "switchport trunk allowed vlan 10,20,99", "end"]
+        },
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "port-channel load-balance src-dst-ip", "interface range g0/1 - 2", "channel-group 1 mode passive", "interface po1", "switchport mode trunk", "switchport trunk native vlan 99", "switchport trunk allowed vlan 10,20,99", "end"]
+        }
+      ],
+      "failing": ["s1-lacp-actif"]
+    },
+    {
+      "description": "Agrégat statique (mode on) : aucun protocole de négociation",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": ["enable", "configure terminal", "interface range g0/1 - 2", "channel-group 1 mode on", "end"]
+        },
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "interface range g0/1 - 2", "channel-group 1 mode on", "end"]
+        }
+      ],
+      "failing": ["s1-lacp-actif", "s2-lacp"]
+    },
+    {
+      "description": "Mode desirable : c'est PAgP, propriétaire Cisco, pas LACP",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": ["enable", "configure terminal", "interface range g0/1 - 2", "channel-group 1 mode desirable", "end"]
+        },
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "interface range g0/1 - 2", "channel-group 1 mode auto", "end"]
+        }
+      ],
+      "failing": ["s1-lacp-actif", "s2-lacp"]
+    },
+    {
+      "description": "Trunk configuré sur S1 seulement",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": ["enable", "configure terminal", "port-channel load-balance src-dst-ip", "interface range g0/1 - 2", "channel-group 1 mode active", "interface po1", "switchport mode trunk", "switchport trunk native vlan 99", "switchport trunk allowed vlan 10,20,99", "end"]
+        },
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "port-channel load-balance src-dst-ip", "interface range g0/1 - 2", "channel-group 1 mode active", "end"]
+        }
+      ],
+      "failing": ["s2-po-trunk"]
+    },
+    {
+      "description": "Répartition selon les adresses MAC au lieu des adresses IP",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": ["enable", "configure terminal", "port-channel load-balance src-dst-mac", "end"]
+        },
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "port-channel load-balance src-dst-mac", "end"]
+        }
+      ],
+      "failing": ["repartition-ip"]
+    }
+  ],
+  "explanation": "channel-group 1 mode … place un port physique dans l'agrégat et crée l'interface logique Port-channel 1. Le mode choisit le protocole : active et passive pour LACP (IEEE 802.3ad), desirable et auto pour PAgP (propriétaire Cisco), on pour un agrégat statique sans négociation. En LACP, un port active envoie des LACPDU, un port passive se contente d'y répondre : active/active et active/passive forment l'agrégat, passive/passive jamais. Le numéro de groupe n'a qu'une portée locale, mais le garder identique des deux côtés simplifie l'exploitation. La configuration de niveau 2 se pose sur l'interface Port-channel, qui la répercute sur ses membres ; inversement, un Port-channel créé par channel-group hérite de la configuration du premier port. Tous les membres doivent avoir la même configuration (mode, VLAN natif, VLAN autorisés, vitesse, duplex), sinon ils sont suspendus. Le trunk est fixé en statique (switchport mode trunk), avec le VLAN natif 99 et la liste 10,20,99 identiques des deux côtés. port-channel load-balance est une commande globale qui s'applique à tous les agrégats du commutateur : src-dst-ip calcule le lien emprunté à partir des adresses IP source et destination, ce qui répartit mieux le trafic routé qu'un hachage sur les adresses MAC (souvent les mêmes : celles des passerelles). Vérifications : show etherchannel summary (Po1(SU), ports (P)), show lacp neighbor, show interfaces trunk, show etherchannel load-balance.",
+  "reference": "Catalyst 2960 Switch Software Configuration Guide, Cisco IOS Release 15.0(2)SE — « Configuring EtherChannels » (EtherChannel Configuration Guidelines, Configuring Layer 2 EtherChannels, Configuring EtherChannel Load-Balancing, LACP Modes) ; IEEE 802.1AX",
+  "estimatedMinutes": 6
+}

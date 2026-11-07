@@ -1,0 +1,142 @@
+{
+  "slug": "ccna-challenge-4.8-ssh-vty",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "4.0",
+  "subtopic": "4.8",
+  "difficulty": "easy",
+  "title": "Dépannage : impossible d'administrer S1 en SSH",
+  "statement": "Le commutateur S1 vient d'être mis en service. Ses clés RSA (2048 bits) sont générées, SSH version 2 est activé et le compte local admin existe. Pourtant :\n- depuis le réseau d'administration 192.168.100.0/24, toute connexion SSH vers 192.168.99.2 est refusée immédiatement ;\n- un audit montre qu'une session Telnet ouverte depuis 192.168.10.25, un poste utilisateur, est acceptée par S1, puis fermée avec le message « Password required, but none set » ;\n- le compte admin n'est jamais demandé.\n\nLa politique d'administration : accès distant en SSH seulement, sur toutes les lignes VTY, authentifié par les comptes locaux, et réservé au réseau d'administration 192.168.100.0/24 grâce à l'ACL standard 10 appliquée aux lignes VTY. Corrigez S1.",
+  "topology": "  Réseau d'administration 192.168.100.0/24        Postes utilisateurs 192.168.10.0/24\n                    \\                                    /\n                     +--------- R1 (routage inter-VLAN) +\n                                 |\n                       VLAN 99 GESTION 192.168.99.0/24\n                                 |\n                     S1 : interface Vlan99 192.168.99.2/24\n                          passerelle 192.168.99.1\n                          domaine entreprise.local, compte local admin",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "S1",
+      "type": "switch",
+      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "startupConfig": "hostname S1\nno ip domain-lookup\nip domain-name entreprise.local\ncrypto key generate rsa modulus 2048\nip ssh version 2\nusername admin privilege 15 secret Adm1n-S1!\nvlan 99\n name GESTION\ninterface GigabitEthernet0/1\n description Vers R1\n switchport mode trunk\ninterface Vlan99\n ip address 192.168.99.2 255.255.255.0\nip default-gateway 192.168.99.1\naccess-list 10 permit 192.168.10.0 0.0.0.255\nline vty 0 15\n access-class 10 in\n login\n transport input telnet"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "vty-ssh-seul",
+      "description": "Toutes les lignes VTY (0 à 15) acceptent SSH, et SSH seulement.",
+      "check": { "type": "line", "sectionPattern": "^line vty \\d+ \\d+$", "sections": "all", "line": "transport input ssh" }
+    },
+    {
+      "id": "vty-comptes-locaux",
+      "description": "Toutes les lignes VTY authentifient les sessions par les comptes locaux (utilisateur et mot de passe).",
+      "check": { "type": "line", "sectionPattern": "^line vty \\d+ \\d+$", "sections": "all", "line": "login local" }
+    },
+    {
+      "id": "vty-reseau-admin",
+      "description": "Les lignes VTY restent filtrées par l'ACL 10, qui n'autorise que le réseau d'administration 192.168.100.0/24.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "sectionPattern": "^line vty \\d+ \\d+$", "sections": "all", "line": "access-class 10 in" },
+          { "type": "line", "section": "ip access-list standard 10", "line": "permit 192.168.100.0 0.0.0.255" },
+          { "type": "regex", "section": "ip access-list standard 10", "pattern": "^permit (?!192\\.168\\.100\\.0 0\\.0\\.0\\.255$)", "absent": true },
+          { "type": "regex", "section": "ip access-list standard 10", "pattern": "^deny (?!any( log)?$)", "absent": true }
+        ]
+      }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 4,
+    "timeLimitMinutes": 8,
+    "mode": "troubleshoot",
+    "faults": [
+      "Les lignes VTY 0 à 15 ont transport input telnet : SSH y est refusé et Telnet, en clair, accepté.",
+      "Les lignes VTY ont login au lieu de login local : le compte admin n'est pas utilisé, IOS attend un mot de passe de ligne qui n'existe pas.",
+      "L'ACL 10 autorise 192.168.10.0/24, le réseau des utilisateurs, au lieu du réseau d'administration 192.168.100.0/24."
+    ]
+  },
+  "solution": [
+    {
+      "device": "S1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "no access-list 10",
+        "access-list 10 permit 192.168.100.0 0.0.0.255",
+        "line vty 0 15",
+        "login local",
+        "transport input ssh",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Lignes VTY corrigées en deux blocs, ACL éditée par numéro de séquence avec un refus explicite journalisé",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "en",
+            "conf t",
+            "line vty 0 4",
+            "transport input ssh",
+            "login local",
+            "line vty 5 15",
+            "login local",
+            "transport input ssh",
+            "exit",
+            "ip access-list standard 10",
+            "no 10",
+            "permit 192.168.100.0 0.0.0.255",
+            "deny any log",
+            "\u001a"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Seules les lignes VTY 0 à 4 corrigées : les lignes 5 à 15 acceptent encore Telnet sans compte local",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": ["enable", "configure terminal", "no access-list 10", "access-list 10 permit 192.168.100.0 0.0.0.255", "line vty 0 4", "login local", "transport input ssh", "end"]
+        }
+      ],
+      "failing": ["vty-ssh-seul", "vty-comptes-locaux"]
+    },
+    {
+      "description": "transport input ssh telnet : Telnet reste ouvert",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": ["enable", "configure terminal", "no access-list 10", "access-list 10 permit 192.168.100.0 0.0.0.255", "line vty 0 15", "login local", "transport input ssh telnet", "end"]
+        }
+      ],
+      "failing": ["vty-ssh-seul"]
+    },
+    {
+      "description": "Réseau d'administration ajouté à l'ACL 10 sans retirer celui des utilisateurs",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": ["enable", "configure terminal", "access-list 10 permit 192.168.100.0 0.0.0.255", "line vty 0 15", "login local", "transport input ssh", "end"]
+        }
+      ],
+      "failing": ["vty-reseau-admin"]
+    },
+    {
+      "description": "Filtre access-class retiré des lignes VTY pour « faire marcher » SSH",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": ["enable", "configure terminal", "line vty 0 15", "no access-class 10 in", "login local", "transport input ssh", "end"]
+        }
+      ],
+      "failing": ["vty-reseau-admin"]
+    }
+  ],
+  "explanation": "Trois erreurs sur les lignes VTY. 1) transport input telnet n'autorise que Telnet : une connexion SSH est refusée d'emblée, et Telnet transmet identifiants et commandes en clair. transport input ssh n'accepte que SSH ; ssh telnet ou all laisseraient Telnet ouvert. 2) login demande le mot de passe de la ligne (commande password), absent ici : IOS refuse alors la session (« Password required, but none set »). login local utilise la base des comptes locaux (username admin … secret …), ce que la politique demande. 3) L'ACL standard 10, appliquée par access-class 10 in, filtre l'adresse source des sessions entrantes sur les lignes VTY : elle autorisait 192.168.10.0/24, les postes utilisateurs, et refusait implicitement le réseau d'administration. Il faut permit 192.168.100.0 0.0.0.255 et retirer l'ancienne entrée : no access-list 10 supprime toute l'ACL numérotée, alors que ip access-list standard 10 puis no 10 ne retire que l'entrée 10. Supprimer access-class « pour que ça marche » ouvrirait l'administration à tout le réseau. Toutes les corrections portent sur les 16 lignes VTY : line vty 0 15 les configure d'un coup (IOS les affiche en deux blocs, 0 4 et 5 15) ; ne corriger que 0 à 4 laisse les lignes 5 à 15 ouvertes à Telnet. Vérifications : show running-config | section line vty, show access-lists 10, show ip ssh, et show users pendant une session.",
+  "reference": "Cisco IOS Security Configuration Guide: Secure Connectivity, « Configuring Secure Shell » ; Catalyst 2960 Switch Software Configuration Guide, Cisco IOS Release 15.0(2)SE — « Configuring Switch-Based Authentication » (Configuring Username and Password Pairs) ; Cisco IOS Terminal Services Command Reference (transport input, login local, access-class)",
+  "estimatedMinutes": 4
+}

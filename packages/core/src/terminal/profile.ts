@@ -59,6 +59,11 @@ export const terminalCommandSchema = z.object({
    * Ailleurs, elle est inconnue (`% Invalid input`), comme `clock rate` hors d'une interface série.
    */
   onInterfaces: z.record(z.array(z.string().min(1))).optional(),
+  /**
+   * Lignes de la même section retirées quand la commande est saisie (`passive-interface default` efface
+   * les `passive-interface X` devenues inutiles), expression insensible à la casse.
+   */
+  clears: z.string().min(1).optional(),
   /** Rang d'affichage dans la configuration courante (plus petit d'abord) ; sans rang, après les autres. */
   rank: z.number().optional(),
   /**

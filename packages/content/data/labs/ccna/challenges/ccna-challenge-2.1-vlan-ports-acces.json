@@ -1,0 +1,247 @@
+{
+  "slug": "ccna-challenge-2.1-vlan-ports-acces",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "2.0",
+  "subtopic": "2.1",
+  "difficulty": "easy",
+  "title": "Contre la montre : VLAN et ports d'accès d'un nouveau commutateur",
+  "statement": "Un commutateur S1 (Catalyst 2960) tout neuf doit être prêt avant l'arrivée des équipes VENTES et COMPTA. Configurez-le le plus vite possible :\n1. Créez les VLAN 10 « VENTES », 20 « COMPTA » et 999 « PARKING ».\n2. Fa0/1 à Fa0/10 : ports d'accès statiques du VLAN 10.\n3. Fa0/11 à Fa0/20 : ports d'accès statiques du VLAN 20.\n4. Fa0/21 à Fa0/24, inutilisés : ports d'accès statiques rangés dans le VLAN 999 et désactivés.\n5. Gi0/1, le lien montant vers le cœur : trunk statique.\n\nLe chronomètre démarre avec la session.",
+  "topology": "                 cœur de réseau\n                       |\n                     Gi0/1 (trunk)\n  +----------------------------------------------+\n  |                   S1 (2960)                  |\n  +----------------------------------------------+\n   Fa0/1-10         Fa0/11-20        Fa0/21-24\n   VLAN 10 VENTES   VLAN 20 COMPTA   VLAN 999 PARKING (désactivés)",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "S1",
+      "type": "switch",
+      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "startupConfig": "hostname S1\nno ip domain-lookup"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "vlans-metier",
+      "description": "Les VLAN 10 « VENTES » et 20 « COMPTA » existent avec leur nom.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "section": "vlan 10", "line": "name VENTES" },
+          { "type": "line", "section": "vlan 20", "line": "name COMPTA" }
+        ]
+      }
+    },
+    {
+      "id": "ports-ventes",
+      "description": "Fa0/1 à Fa0/10 sont des ports d'accès statiques du VLAN 10.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "sectionPattern": "^interface FastEthernet0/([1-9]|10)$", "sections": "all", "line": "switchport mode access" },
+          { "type": "line", "sectionPattern": "^interface FastEthernet0/([1-9]|10)$", "sections": "all", "line": "switchport access vlan 10" }
+        ]
+      }
+    },
+    {
+      "id": "ports-compta",
+      "description": "Fa0/11 à Fa0/20 sont des ports d'accès statiques du VLAN 20.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "sectionPattern": "^interface FastEthernet0/(1[1-9]|20)$", "sections": "all", "line": "switchport mode access" },
+          { "type": "line", "sectionPattern": "^interface FastEthernet0/(1[1-9]|20)$", "sections": "all", "line": "switchport access vlan 20" }
+        ]
+      }
+    },
+    {
+      "id": "ports-parking",
+      "description": "Le VLAN 999 « PARKING » existe ; Fa0/21 à Fa0/24 sont des ports d'accès statiques de ce VLAN, désactivés.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "section": "vlan 999", "line": "name PARKING" },
+          { "type": "line", "sectionPattern": "^interface FastEthernet0/2[1-4]$", "sections": "all", "line": "switchport mode access" },
+          { "type": "line", "sectionPattern": "^interface FastEthernet0/2[1-4]$", "sections": "all", "line": "switchport access vlan 999" },
+          { "type": "line", "sectionPattern": "^interface FastEthernet0/2[1-4]$", "sections": "all", "line": "shutdown" }
+        ]
+      }
+    },
+    {
+      "id": "lien-montant",
+      "description": "Gi0/1, le lien montant vers le cœur, est un trunk statique.",
+      "check": { "type": "line", "section": "interface GigabitEthernet0/1", "line": "switchport mode trunk" }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 4,
+    "timeLimitMinutes": 8,
+    "mode": "build",
+    "faults": []
+  },
+  "solution": [
+    {
+      "device": "S1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "vlan 10",
+        "name VENTES",
+        "vlan 20",
+        "name COMPTA",
+        "vlan 999",
+        "name PARKING",
+        "exit",
+        "interface range FastEthernet0/1 - 10",
+        "switchport mode access",
+        "switchport access vlan 10",
+        "interface range FastEthernet0/11 - 20",
+        "switchport mode access",
+        "switchport access vlan 20",
+        "interface range FastEthernet0/21 - 24",
+        "switchport mode access",
+        "switchport access vlan 999",
+        "shutdown",
+        "interface GigabitEthernet0/1",
+        "switchport mode trunk",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Ports affectés d'abord (VLAN créés automatiquement), noms donnés ensuite, abréviations",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "en",
+            "conf t",
+            "int range fa0/1-10",
+            "sw acc vl 10",
+            "sw mo acc",
+            "int range fa0/11-20",
+            "sw mo acc",
+            "sw acc vl 20",
+            "int range fa0/21-24",
+            "shut",
+            "sw mo acc",
+            "sw acc vl 999",
+            "int g0/1",
+            "sw mo tr",
+            "vlan 10",
+            "name VENTES",
+            "vlan 20",
+            "name COMPTA",
+            "vlan 999",
+            "name PARKING",
+            "\u001a"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Plages découpées autrement (listes séparées par des virgules)",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "vlan 10",
+            "name VENTES",
+            "exit",
+            "vlan 20",
+            "name COMPTA",
+            "exit",
+            "vlan 999",
+            "name PARKING",
+            "exit",
+            "interface range fa0/1 - 5 , fa0/6 - 10",
+            "switchport mode access",
+            "switchport access vlan 10",
+            "exit",
+            "interface range fa0/11 - 20",
+            "switchport mode access",
+            "switchport access vlan 20",
+            "exit",
+            "interface range fa0/21 - 22 , fa0/23 - 24",
+            "switchport mode access",
+            "switchport access vlan 999",
+            "shutdown",
+            "exit",
+            "interface gigabitethernet 0/1",
+            "switchport mode trunk",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "VLAN d'accès affecté sans fixer le mode : les ports restent en mode dynamique",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "vlan 10",
+            "name VENTES",
+            "vlan 20",
+            "name COMPTA",
+            "exit",
+            "interface range fa0/1 - 10",
+            "switchport access vlan 10",
+            "interface range fa0/11 - 20",
+            "switchport access vlan 20",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["ports-ventes", "ports-compta"]
+    },
+    {
+      "description": "Plages décalées d'un port : Fa0/10 se retrouve dans le VLAN 20",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface range fa0/1 - 9",
+            "switchport mode access",
+            "switchport access vlan 10",
+            "interface range fa0/10 - 20",
+            "switchport mode access",
+            "switchport access vlan 20",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["ports-ventes"]
+    },
+    {
+      "description": "Ports inutilisés rangés dans le VLAN 999 mais laissés actifs",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "vlan 999",
+            "name PARKING",
+            "exit",
+            "interface range fa0/21 - 24",
+            "switchport mode access",
+            "switchport access vlan 999",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["ports-parking"]
+    }
+  ],
+  "explanation": "Un VLAN se crée par vlan <id> et se nomme par name dans le sous-mode ; switchport access vlan crée aussi le VLAN s'il n'existe pas (« % Access VLAN does not exist. Creating vlan … »), mais sans nom. interface range applique les mêmes commandes à une plage (fa0/1 - 10) ou à une liste de plages séparées par des virgules : c'est le gain de temps décisif de ce challenge. switchport mode access fixe le port en accès : sans elle, un 2960 laisse ses ports en dynamic auto, et un équipement qui négocie DTP pourrait en faire un trunk. Les ports inutilisés sont rangés dans un VLAN dédié sans usage (ici 999, pas le VLAN 1) et désactivés par shutdown : une prise brassée par erreur ne donne alors accès à rien. Enfin, switchport mode trunk fixe le lien montant en trunk 802.1Q sans dépendre de la négociation. Vérifications : show vlan brief (ports par VLAN), show interfaces status (Fa0/21 à 24 « disabled »), show interfaces trunk.",
+  "reference": "Catalyst 2960 Switch Software Configuration Guide, Cisco IOS Release 15.0(2)SE — « Configuring VLANs » (Creating or Modifying an Ethernet VLAN, Assigning Static-Access Ports to a VLAN) et « Configuring Interface Characteristics » (Configuring a Range of Interfaces)",
+  "estimatedMinutes": 4
+}

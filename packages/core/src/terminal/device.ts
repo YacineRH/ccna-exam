@@ -809,6 +809,10 @@ export class TerminalDevice {
           if (problem) return [problem];
           continue;
         }
+        if (cmd.clears) {
+          const re = new RegExp(cmd.clears, 'i');
+          for (let i = list.length - 1; i >= 0; i--) if (re.test((list[i] as ConfigEntry).text)) list.splice(i, 1);
+        }
         const negIdx = list.findIndex((e) => this.sameNegation(e, cmdIndex, cmd, cand.canon));
         if (negIdx >= 0) list.splice(negIdx, 1);
         if (cmd.negate === 'store' || (cmd.negate === 'toggle' && negIdx >= 0)) continue;
@@ -1112,9 +1116,7 @@ export class TerminalDevice {
     }
 
     if (!trailingSpace) {
-      const words = [...new Set(pool.map((c) => c.seq.elems[c.pos]).filter((e): e is Extract<SyntaxElem, { kind: 'kw' }> => e?.kind === 'kw').map((e) => e.word))]
-        .filter((w) => w.startsWith(partialWord))
-        .sort();
+      const words = this.keywordsAt(pool, partialWord);
       if (!words.length) return { output: this.profile.messages.unrecognized, ok: false };
       return { output: words.join('  '), ok: true };
     }
@@ -1146,6 +1148,41 @@ export class TerminalDevice {
     if (!list.length) return { output: this.profile.messages.unrecognized, ok: false };
     const text = columns(list);
     return { output: prefixTokens.length === 0 ? `${mode.helpTitle}\n${text}` : text, ok: true };
+  }
+
+  /** Mots-clés possibles à la position des candidats, qui commencent par `prefix`. */
+  private keywordsAt(pool: Cand[], prefix: string): string[] {
+    return [...new Set(pool.map((c) => c.seq.elems[c.pos]).filter((e): e is Extract<SyntaxElem, { kind: 'kw' }> => e?.kind === 'kw').map((e) => e.word))]
+      .filter((w) => w.startsWith(prefix))
+      .sort();
+  }
+
+  /**
+   * Complétion (touche Tab d'IOS) : si le dernier mot commencé ne peut être qu'un seul mot-clé, la ligne
+   * est complétée (suivie d'une espace) ; sinon elle est rendue telle quelle. Rien n'est exécuté ni enregistré.
+   */
+  complete(line: string): string {
+    const body = line.replace(/^\s+/, '');
+    if (!body || /\s$/.test(body)) return line;
+    const tokens = tokenize(body);
+    const last = tokens[tokens.length - 1] as Token;
+    const prefixTokens = tokens.slice(0, -1);
+    const partial = last.text.toLowerCase();
+    let pool: Cand[];
+    if (!prefixTokens.length) {
+      pool = [...this.pseudoSeqs(this.mode), ...this.seqsHere(this.mode)].map((seq) => ({ seq, pos: 0, canon: [], values: [], at: [] }));
+    } else {
+      const first = prefixTokens[0]?.text.toLowerCase() ?? '';
+      const negating = this.isConfig() && 'no'.startsWith(first) && first.length >= 2;
+      const doing = this.isConfig() && this.profile.doKeyword !== undefined && this.profile.doKeyword === first;
+      const scope = doing ? this.grammar.seqs(this.profile.endMode, this.spec.type) : this.seqsHere(this.mode);
+      const w = this.walk(scope, prefixTokens, body, negating || doing ? 1 : 0);
+      if (w.kind !== 'ok') return line;
+      pool = w.alive;
+    }
+    const words = this.keywordsAt(pool, partial);
+    if (words.length !== 1) return line;
+    return `${body.slice(0, last.start)}${words[0]} `;
   }
 
   private applyPipe(output: string, filter: string | null): string {

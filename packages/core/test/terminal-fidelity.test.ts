@@ -348,3 +348,42 @@ describe('forme no partagée entre deux orthographes', () => {
     expect(d.linesOf().filter((l) => l.includes('domain'))).toEqual([]);
   });
 });
+
+describe('complétion (Tab)', () => {
+  it('complète un mot sans ambiguïté, laisse la ligne sinon, sans rien exécuter', () => {
+    const d = router();
+    expect(d.complete('conf')).toBe('configure ');
+    expect(d.complete('configure t')).toBe('configure terminal ');
+    conf(d, ['interface s0/0/0']);
+    expect(d.complete('cl')).toBe('clock ');
+    expect(d.complete('clock r')).toBe('clock rate ');
+    // `s` : shutdown, standby… ambigu.
+    expect(d.complete('s')).toBe('s');
+    expect(d.complete('')).toBe('');
+    expect(d.complete('zz')).toBe('zz');
+    const before = d.history.length;
+    d.complete('desc');
+    expect(d.history.length).toBe(before);
+    // Hors série, clock n'existe pas : rien à compléter.
+    d.execute('interface g0/0');
+    expect(d.complete('cl')).toBe('cl');
+  });
+});
+
+describe('réglage qui efface des lignes devenues inutiles (clears)', () => {
+  it('passive-interface default efface les passive-interface X, puis no passive-interface X est gardé', () => {
+    const p = parseTerminalProfile({
+      ...PROFILE,
+      modes: [...PROFILE.modes, { id: 'config-router', prompt: '{hostname}(config-router)#', parent: 'config', config: true }],
+      commands: [
+        ...PROFILE.commands,
+        { syntax: 'router ospf <1-65535>', modes: ['config'], enter: { mode: 'config-router' } },
+        { syntax: 'passive-interface <interface>', modes: ['config-router'], negate: 'toggle' },
+        { syntax: 'passive-interface default', modes: ['config-router'], clears: '^(no )?passive-interface (?!default$)\\S+$' },
+      ],
+    });
+    const d = new TerminalDevice(p, { id: 'R1', type: 'router', interfaces: ['GigabitEthernet0/0-1'], startupConfig: 'hostname R1\nrouter ospf 1\n passive-interface g0/1' });
+    run(d, ['configure terminal', 'router ospf 1', 'passive-interface default', 'no passive-interface g0/1']);
+    expect(d.linesOf('router ospf 1')).toEqual(['passive-interface default', 'no passive-interface GigabitEthernet0/1']);
+  });
+});
