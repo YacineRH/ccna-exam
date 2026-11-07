@@ -1,5 +1,6 @@
 import { expect, test, type Browser, type BrowserContext, type Locator, type Page } from '@playwright/test';
-import { bankOf, certificationOf, labOf, maxDrawableForTypes, questionByStem, shortExamPlan } from '../support/content';
+import pg from 'pg';
+import { anotherChallenge, bankOf, certificationOf, labOf, maxDrawableForTypes, questionByStem, shortExamPlan, troubleshootChallenge } from '../support/content';
 
 /*
  * Parcours complet d'un candidat, dans l'ordre : chaque test s'appuie sur l'état laissé par
@@ -34,7 +35,21 @@ let cert: Cert;
 let examAttemptId = '';
 let practiceAttemptId = '';
 let labSessionId = '';
+let challengeSessionId = '';
+let revisionSessionId = '';
 const LAB_SLUG = 'ccna-lab-1.3-interfaces';
+const DB_URL = process.env.E2E_DATABASE_URL ?? process.env.TEST_DATABASE_URL ?? 'postgres://examforge:examforge@localhost:5432/examforge_test';
+
+/** Accès direct à la base de test, seulement pour avancer l'horloge d'un essai (échéance). */
+async function sql(text: string, params: unknown[] = []) {
+  const client = new pg.Client({ connectionString: DB_URL });
+  await client.connect();
+  try {
+    return await client.query(text, params);
+  } finally {
+    await client.end();
+  }
+}
 
 const newContext = (browser: Browser, options: Parameters<Browser['newContext']>[0] = {}) =>
   browser.newContext({ baseURL: test.info().project.use.baseURL, locale: 'fr-FR', ...options });
@@ -456,6 +471,136 @@ test('lab CLI au clavier : abréviations, erreur IOS, aide, indice, Ctrl+Z, fin 
   await expect(hist).toContainText('1 indice');
 });
 
+test('challenge de dépannage résolu au clavier avant l’échéance, puis classement mis à jour', async () => {
+  const ch = troubleshootChallenge(cert.code);
+  const steps = ch.solution[0]!;
+  await page.goto('/challenges');
+  await expect(page.getByRole('heading', { name: 'Challenges', level: 1 })).toBeVisible();
+  await page.getByLabel('Mode').selectOption('troubleshoot');
+  const row = page.getByRole('listitem').filter({ hasText: ch.title });
+  await expect(row).toContainText('DÉPANNAGE');
+  // Navigation au clavier : le lien du challenge, puis le départ.
+  await row.getByRole('link', { name: `Ouvrir le challenge ${ch.title}` }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('heading', { name: ch.title, level: 1 })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Le défi' })).toContainText(`${ch.challenge!.targetMinutes} min`);
+  await expect(page.getByRole('region', { name: 'Vos temps' })).toContainText('Aucun essai réussi');
+  await page.getByRole('button', { name: 'Lancer le chrono →' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/challenges\/sessions\/[0-9a-f-]{36}$/);
+  challengeSessionId = page.url().split('/').pop()!;
+
+  // Compte à rebours, pas d'indice.
+  const timer = page.getByRole('timer');
+  await expect(timer).toHaveAttribute('aria-live', 'off');
+  await expect(timer).toHaveAttribute('aria-label', /Temps restant : 00:\d{2}:\d{2}/);
+  await expect(page.getByRole('button', { name: /^Indice/ })).toHaveCount(0);
+
+  const input = page.getByRole('textbox', { name: new RegExp(`Commande pour ${steps.device}`) });
+  await input.focus();
+  for (const command of steps.commands) {
+    await page.keyboard.type(command === '\x1a' ? '' : command);
+    if (command === '\x1a') await page.keyboard.press('Control+z');
+    else await page.keyboard.press('Enter');
+    if (command !== steps.commands.at(-1)) await expect(input).toHaveValue('');
+  }
+  // Tous les objectifs atteints : le challenge s'arrête seul, avec les pannes et la solution.
+  const end = page.getByRole('region', { name: 'Challenge réussi' });
+  await expect(end).toBeVisible();
+  await expect(end).toContainText('✓ RÉUSSI');
+  await expect(end.getByRole('heading', { name: 'Pannes semées dans la configuration de départ' })).toBeVisible();
+  await expect(end).toContainText(ch.challenge!.faults[0]!);
+  await expect(end.getByRole('heading', { name: 'Solution' })).toBeVisible();
+  await expect(end).toContainText('1 essai réussi');
+
+  // Classement personnel : meilleur temps dans la liste, essai dans l'historique.
+  await page.goto('/challenges');
+  const listed = page.getByRole('listitem').filter({ hasText: ch.title });
+  await expect(listed).toContainText('⏱');
+  await expect(listed.getByRole('link', { name: `Rejouer le challenge ${ch.title}` })).toBeVisible();
+  await page.goto('/historique');
+  await page.getByRole('button', { name: /^Challenges/ }).click();
+  await expect(page.getByRole('listitem').filter({ hasText: `Challenge · ${ch.title}` })).toContainText('✓ RÉUSSI');
+});
+
+test('challenge expiré : fin automatique à l’échéance, écran de fin avec la solution', async () => {
+  const solved = troubleshootChallenge(cert.code);
+  const ch = anotherChallenge(cert.code, solved.slug);
+  await page.goto(`/challenges/${ch.slug}`);
+  await page.getByRole('button', { name: 'Lancer le chrono →' }).click();
+  await expect(page).toHaveURL(/\/challenges\/sessions\/[0-9a-f-]{36}$/);
+  const id = page.url().split('/').pop()!;
+  const input = page.getByRole('textbox', { name: /Commande pour / });
+  await input.fill('enable');
+  await input.press('Enter');
+  await expect(input).toHaveValue('');
+  // L'échéance est avancée à dans 4 secondes (côté serveur) : le compte à rebours se recale au rechargement.
+  await sql(`update lab_attempts set deadline_at = now() + interval '4 seconds' where id = $1`, [id]);
+  await page.reload();
+  await expect(page.getByRole('timer')).toHaveAttribute('aria-label', /Temps restant : 00:00:0[0-4]/);
+  const end = page.getByRole('region', { name: 'Temps écoulé' });
+  await expect(end).toBeVisible({ timeout: 15_000 });
+  await expect(end).toContainText('✕ NON RÉUSSI');
+  await expect(end.getByRole('heading', { name: 'Solution' })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: /Commande pour / })).toHaveCount(0);
+  // Côté serveur, l'essai est clos par l'échéance.
+  const { rows } = await sql('select status, expired from lab_attempts where id = $1', [id]);
+  expect(rows[0]).toMatchObject({ status: 'finished', expired: true });
+});
+
+test('session de révision : cartes dues, réponses, échéances recalculées', async () => {
+  await page.goto('/revision');
+  await expect(page.getByRole('heading', { name: 'À réviser aujourd’hui', level: 1 })).toBeVisible();
+  const due = page.getByRole('region', { name: 'Cartes dues' });
+  await expect(due).toContainText('Ajoutez un paquet');
+  // Ajouter un paquet : ses cartes sont dues tout de suite.
+  const available = page.getByRole('region', { name: 'Paquets disponibles' });
+  const first = available.getByRole('button', { name: /^Ajouter le paquet / }).first();
+  const deckName = ((await first.getAttribute('aria-label')) ?? '').replace('Ajouter le paquet ', '');
+  await first.click();
+  const mine = page.getByRole('region', { name: 'Vos paquets' });
+  await expect(mine.getByRole('listitem').filter({ hasText: deckName })).toContainText(/DUES?/);
+  const count = Number((await due.locator('p').first().textContent())?.trim());
+  expect(count).toBeGreaterThanOrEqual(3);
+
+  await page.getByRole('button', { name: /^Session rapide/ }).click();
+  await expect(page).toHaveURL(/\/revision\/sessions\/[0-9a-f-]{36}$/);
+  revisionSessionId = page.url().split('/').pop()!;
+
+  // Deux cartes QCM : une bonne réponse (tirée de la banque), puis une réponse quelconque ; les autres types sont passés.
+  let answered = 0;
+  for (let i = 0; answered < 2 && i < count; i++) {
+    const stem = ((await page.locator('#card-h ~ p').first().textContent()) ?? '').trim();
+    const q = questionByStem(cert.code, stem);
+    if (q.key.type === 'mcq_single' && answered === 0) {
+      const text = q.body.type === 'mcq_single' ? q.body.options.find((o) => o.id === (q.key as { correct: string }).correct)!.text : '';
+      await page.getByRole('radio', { name: new RegExp(escapeRe(text)) }).click();
+    } else if (q.body.type === 'mcq_single' || q.body.type === 'mcq_multi') {
+      const n = q.body.type === 'mcq_multi' ? q.body.selectCount : 1;
+      const role = q.body.type === 'mcq_multi' ? 'checkbox' : 'radio';
+      for (let k = 0; k < n; k++) await page.getByRole(role).nth(k).click();
+    } else {
+      await page.getByRole('button', { name: 'Passer' }).click();
+      continue;
+    }
+    await page.getByRole('button', { name: 'Valider' }).click();
+    answered++;
+    const fb = page.getByRole('region', { name: 'Correction' });
+    await expect(fb).toContainText(/BONNE RÉPONSE|RÉPONSE INCORRECTE/);
+    await expect(fb).toContainText('Explication');
+    // Juste ou faux, la carte revient demain (boîte 1).
+    await expect(fb).toContainText('Boîte 1/7 · prochaine révision demain');
+    await expect(page.getByRole('button', { name: /Carte suivante|Voir le bilan/ })).toBeFocused();
+    await page.keyboard.press('Enter');
+  }
+  // Les cartes répondues ne sont plus dues aujourd'hui.
+  await page.goto('/revision');
+  await expect(page.getByRole('region', { name: 'Cartes dues' }).locator('p').first()).not.toHaveText(String(count));
+  await page.goto('/historique');
+  await page.getByRole('button', { name: /^Révision/ }).click();
+  await expect(page.getByRole('listitem').filter({ hasText: 'Révision · cartes dues' })).toBeVisible();
+});
+
 test('à 390 px de large : aucun débordement horizontal', async ({ browser }) => {
   const mobile = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true };
 
@@ -487,6 +632,11 @@ test('à 390 px de large : aucun débordement horizontal', async ({ browser }) =
     { path: '/labs/cli', ready: () => p.getByRole('heading', { level: 1 }) },
     { path: `/labs/cli/${LAB_SLUG}`, ready: () => p.getByText('Topologie') },
     { path: `/labs/cli/sessions/${labSessionId}`, ready: () => p.getByRole('heading', { name: 'Solution' }) },
+    { path: '/challenges', ready: () => p.getByRole('heading', { level: 1 }) },
+    { path: `/challenges/${troubleshootChallenge(cert.code).slug}`, ready: () => p.getByText('Topologie') },
+    { path: `/challenges/sessions/${challengeSessionId}`, ready: () => p.getByRole('heading', { name: 'Solution' }) },
+    { path: '/revision', ready: () => p.getByRole('heading', { level: 1 }) },
+    { path: `/revision/sessions/${revisionSessionId}`, ready: () => p.getByRole('heading', { level: 1 }) },
   ];
   for (const { path, ready } of pages) {
     await p.goto(path);
