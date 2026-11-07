@@ -28,23 +28,67 @@ const requirementSchema = z
     /** Le paramètre n° `param` (à partir de 1) ne doit pas correspondre à `notMatch` (insensible à la casse). */
     param: z.number().int().min(1).optional(),
     notMatch: z.string().optional(),
+    /**
+     * Garde : la condition ne s'applique que si le paramètre n° `param` (à partir de 1) est un nombre
+     * compris entre `min` et `max` (`standby 300 …` exige `standby version 2`).
+     */
+    when: z.object({ param: z.number().int().min(1), min: z.number().optional(), max: z.number().optional() }).optional(),
+    /** Refus présenté comme une saisie invalide, le marqueur `^` sous le paramètre n° `invalidAt`. */
+    invalidAt: z.number().int().min(1).optional(),
     /** Message affiché si la condition n'est pas remplie. `{target}` : section visée. */
-    message: z.string().min(1),
+    message: z.string().min(1).optional(),
   })
   .refine((r) => r.var !== undefined || r.config !== undefined || r.section !== undefined || r.notConfig !== undefined || r.ipv4Host !== undefined || (r.param !== undefined && r.notMatch !== undefined), {
     message: 'une condition porte sur var, config, section ou param + notMatch',
-  });
+  })
+  .refine((r) => r.message !== undefined || r.invalidAt !== undefined, { message: 'message ou invalidAt attendu' });
 
 export const terminalCommandSchema = z.object({
   /**
    * Syntaxe : mots-clés en minuscules, paramètres entre chevrons, `[…]` optionnel, `{a|b}` alternative.
    * Paramètres : <ipv4>, <ipv4-mask>, <wildcard>, <ipv6>, <ipv6-prefix>, <prefix-length>, <word>, <line>,
-   * <a-b> (entier borné), <interface>, <interface-range>, <vlan-list>, <port>, <mac>, <area>.
+   * <a-b> (entier borné), <interface>, <interface-range>, <vlan-list>, <port>, <port:table> (noms de ports
+   * de la table `portNames.table`, `<port:tcp>`), <mac>, <area>.
    */
   syntax: z.string().min(1),
   modes: z.array(z.string().min(1)).min(1),
   /** Types d'équipement qui offrent la commande ; tous si absent. */
   devices: z.array(z.string()).optional(),
+  /**
+   * Types d'interface sur lesquels la commande existe, par type d'équipement (`*` : tous les équipements).
+   * Ailleurs, elle est inconnue (`% Invalid input`), comme `clock rate` hors d'une interface série.
+   */
+  onInterfaces: z.record(z.array(z.string().min(1))).optional(),
+  /** Rang d'affichage dans la configuration courante (plus petit d'abord) ; sans rang, après les autres. */
+  rank: z.number().optional(),
+  /**
+   * Réécriture de la forme canonique (`standby 0 ip …` → `standby ip …`) : la ligne réécrite est relue
+   * comme si elle avait été saisie. `replace` accepte `$1`…
+   */
+  rewrite: z.object({ pattern: z.string().min(1), replace: z.string() }).optional(),
+  /**
+   * Entrées rangées dans une section (`access-list 10 permit …` dans `ip access-list standard 10`) :
+   * la ligne, privée de ses `skip` premiers mots, y est exécutée. Sa forme `no` retire toute la section.
+   */
+  into: z.object({ section: z.string().min(1), skip: z.number().int().min(1) }).optional(),
+  /**
+   * Sections affichées à plat (ACL numérotées) : quand l'en-tête correspond à `match`, chaque ligne de la
+   * section s'affiche, et se lit dans la configuration globale, sous la forme `display` + ligne
+   * (`access-list $1` : groupe de `match`), au rang `rank`.
+   */
+  flatten: z.object({ match: z.string().min(1), display: z.string().min(1), rank: z.number().optional() }).optional(),
+  /**
+   * Sous-mode découpé en blocs fixes (`line vty 0 4` et `5 15`) : les deux derniers paramètres sont une
+   * plage ; une plage qui couvre plusieurs blocs vise chacun, une plage partielle découpe le bloc, et des
+   * morceaux voisins d'un même bloc à la configuration identique sont réunis.
+   */
+  blocks: z.array(z.tuple([z.number().int().min(0), z.number().int().min(0)])).optional(),
+  /**
+   * Agrégat (EtherChannel) : la commande rattache l'interface à la section `section` (`{$1}` : paramètre).
+   * Les lignes qui correspondent à `lines` sont recopiées : du premier membre vers l'agrégat qu'il crée,
+   * de l'agrégat vers chaque membre qui le rejoint, et de l'agrégat vers ses membres à chaque modification.
+   */
+  aggregate: z.object({ section: z.string().min(1), lines: z.string().min(1) }).optional(),
   /** Aide `?` propre à cette commande, par mot de la syntaxe (« access », « <1-4094> »…). */
   help: z.record(z.string()).default({}),
   /**
@@ -161,11 +205,16 @@ export const terminalProfileSchema = z
           virtual: z.boolean().default(false),
           range: z.tuple([z.number().int().min(0), z.number().int().min(0)]).optional(),
           devices: z.array(z.string()).optional(),
+          /**
+           * Rang d'affichage des sections de ce type : les interfaces physiques sont au rang 0 et suivent
+           * l'ordre de l'équipement ; un type logique se place avant (rang négatif) ou après.
+           */
+          rank: z.number().default(0),
         }),
       )
       .min(1),
-    /** Ports nommés acceptés à la place du numéro (`www` = 80). */
-    portNames: z.record(z.number().int().min(0).max(65535)).default({}),
+    /** Ports nommés acceptés à la place du numéro, par table (`tcp` : `www` = 80 ; `udp` : `tftp` = 69). */
+    portNames: z.record(z.record(z.number().int().min(0).max(65535))).default({}),
     /** Aide `?` des mots-clés, par défaut pour tous les modes. */
     keywordHelp: z.record(z.string()).default({}),
     /** Aide `?` des types de paramètres. */
@@ -189,6 +238,13 @@ export const terminalProfileSchema = z
       for (const d of c.devices ?? []) {
         if (!p.deviceTypes[d]) ctx.addIssue({ code: 'custom', message: `${c.syntax} : type d'équipement inconnu ${d}` });
       }
+      for (const [d, types] of Object.entries(c.onInterfaces ?? {})) {
+        if (d !== '*' && !p.deviceTypes[d]) ctx.addIssue({ code: 'custom', message: `${c.syntax} : type d'équipement inconnu ${d}` });
+        for (const t of types) {
+          if (!p.interfaceTypes.some((x) => x.name === t)) ctx.addIssue({ code: 'custom', message: `${c.syntax} : type d'interface inconnu ${t}` });
+        }
+      }
+      if (c.blocks && !c.enter) ctx.addIssue({ code: 'custom', message: `${c.syntax} : blocks sans enter` });
     }
   });
 

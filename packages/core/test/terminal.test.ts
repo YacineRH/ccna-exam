@@ -53,7 +53,7 @@ const PROFILE: TerminalProfileInput = {
     { name: 'Loopback', help: 'Loopback interface', virtual: true, range: [0, 2147483647] },
     { name: 'Port-channel', help: 'Ethernet Channel of interfaces', virtual: true, range: [1, 48] },
   ],
-  portNames: { www: 80 },
+  portNames: { tcp: { www: 80 } },
   keywordHelp: { show: 'Show running system information', shutdown: 'Shutdown the selected interface', speed: 'Configure speed operation.' },
   commands: [
     { syntax: 'enable', modes: ['user'], goto: 'privileged' },

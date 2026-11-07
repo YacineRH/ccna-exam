@@ -70,6 +70,8 @@ interface Cand {
   pos: number;
   canon: string[];
   values: string[];
+  /** Indice du mot de la ligne qui porte chaque valeur. */
+  at: number[];
   targets?: string[];
 }
 
@@ -184,6 +186,20 @@ function maskSecret(secret: string): string {
 
 const same = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
 
+/** Ordre naturel : `vlan 9` < `vlan 10`, `line vty 0 4` < `line vty 5 15`. */
+export function naturalCompare(a: string, b: string): number {
+  const pa = a.toLowerCase().match(/\d+|\D+/g) ?? [];
+  const pb = b.toLowerCase().match(/\d+|\D+/g) ?? [];
+  for (let i = 0; i < Math.min(pa.length, pb.length); i++) {
+    const x = pa[i] as string;
+    const y = pb[i] as string;
+    if (x === y) continue;
+    if (/^\d/.test(x) && /^\d/.test(y)) return Number(x) - Number(y);
+    return x < y ? -1 : 1;
+  }
+  return pa.length - pb.length;
+}
+
 export class TerminalDevice {
   readonly grammar: TerminalGrammar;
   readonly profile: TerminalProfile;
@@ -193,6 +209,8 @@ export class TerminalDevice {
   config: ConfigEntry[] = [];
   history: HistoryEntry[] = [];
   readonly interfaces: string[];
+  /** Ligne en cours d'exécution (pour placer le marqueur `^` d'un refus). */
+  private current: { tokens: Token[]; promptLen: number } | null = null;
 
   constructor(
     profile: TerminalProfile,
@@ -254,7 +272,7 @@ export class TerminalDevice {
   }
 
   private walk(seqs: Seq[], tokens: Token[], line: string, from: number, pseudo: Seq[] = []): Walk {
-    let alive: Cand[] = [...pseudo, ...seqs].map((seq) => ({ seq, pos: 0, canon: [], values: [] }));
+    let alive: Cand[] = [...pseudo, ...seqs].map((seq) => ({ seq, pos: 0, canon: [], values: [], at: [] }));
     let ti = from;
     while (ti < tokens.length) {
       const token = tokens[ti] as Token;
@@ -289,6 +307,7 @@ export class TerminalDevice {
             pos: h.cand.pos + 1,
             canon: [...h.cand.canon, h.canon],
             values: [...h.cand.values, h.canon],
+            at: [...h.cand.at, ti],
             ...(h.targets ? { targets: h.targets } : {}),
           }));
       } else if (words.length > 1) {
@@ -305,6 +324,32 @@ export class TerminalDevice {
     return { kind: 'ok', alive, complete };
   }
 
+  /** Type d'interface d'une section (`interface Port-channel1` → `Port-channel`), ou null. */
+  interfaceTypeOf(header: string): string | null {
+    const last = header.split(' ').pop() ?? '';
+    const m = /^([A-Za-z][A-Za-z-]*?)\d/.exec(last);
+    if (!m) return null;
+    return this.profile.interfaceTypes.find((t) => t.name === m[1])?.name ?? null;
+  }
+
+  /** La commande existe-t-elle sur les sections visées (types d'interface permis) ? */
+  private allowedOn(cmd: TerminalCommand, mode: string): boolean {
+    if (!cmd.onInterfaces || mode !== this.mode || !this.targets.length) return true;
+    const types = cmd.onInterfaces[this.spec.type] ?? cmd.onInterfaces['*'];
+    if (!types) return true;
+    return this.targets.every((t) => {
+      const type = this.interfaceTypeOf(t);
+      return type !== null && types.includes(type);
+    });
+  }
+
+  /** Formes linéaires offertes dans un mode, compte tenu des sections visées. */
+  private seqsHere(mode: string): Seq[] {
+    const all = this.grammar.seqs(mode, this.spec.type);
+    if (mode !== this.mode || !this.targets.length) return all;
+    return all.filter((s) => this.allowedOn(this.profile.commands[s.cmd] as TerminalCommand, mode));
+  }
+
   private pseudoSeqs(mode: string): Seq[] {
     if (!this.isConfig(mode)) return [];
     const list: Seq[] = [{ elems: [{ kind: 'kw', word: 'no' }], cmd: PSEUDO_NO, lead: 1 }];
@@ -314,7 +359,7 @@ export class TerminalDevice {
 
   /** Résout une ligne dans un mode donné. */
   private resolveIn(mode: string, tokens: Token[], line: string): Resolution {
-    const seqs = this.grammar.seqs(mode, this.spec.type);
+    const seqs = this.seqsHere(mode);
     const head = this.walk(seqs, tokens, line, 0, this.pseudoSeqs(mode));
     if (head.kind !== 'ok') return head;
     const pseudo = head.alive.find((c) => c.seq.cmd < 0);
@@ -405,22 +450,43 @@ export class TerminalDevice {
       .toLowerCase();
   }
 
-  private checkRequirements(cmd: TerminalCommand, targets: string[], values: string[]): string | null {
+  private checkRequirements(cmd: TerminalCommand, targets: string[], cand: Cand): string | null {
+    const values = cand.values;
     for (const req of cmd.requires ?? []) {
+      if (req.when) {
+        const v = Number(values[req.when.param - 1]);
+        if (!Number.isFinite(v) || (req.when.min !== undefined && v < req.when.min) || (req.when.max !== undefined && v > req.when.max)) continue;
+      }
+      const problem = this.requirementProblem(req, targets, values);
+      if (problem === null) continue;
+      if (req.invalidAt !== undefined) {
+        const token = this.current?.tokens[cand.at[req.invalidAt - 1] ?? -1];
+        const col = (this.current?.promptLen ?? 0) + (token?.start ?? 0);
+        return `${' '.repeat(col)}^\n${this.profile.messages.invalid}`;
+      }
+      return problem;
+    }
+    return null;
+  }
+
+  /** Message d'une condition non remplie, ou null. */
+  private requirementProblem(req: NonNullable<TerminalCommand['requires']>[number], targets: string[], values: string[]): string | null {
+    const msg = (vars: Record<string, string> = this.vars, target = '') => fill(req.message ?? '', vars, values, target);
+    {
       if (req.var !== undefined) {
         const v = this.vars[req.var];
-        if (v === undefined) return fill(req.message, this.vars, values);
-        if (req.min !== undefined && !(Number(v) >= req.min)) return fill(req.message, this.vars, values);
-        if (req.notEquals !== undefined && same(v, fill(req.notEquals, this.vars))) return fill(req.message, this.vars, values);
+        if (v === undefined) return msg();
+        if (req.min !== undefined && !(Number(v) >= req.min)) return msg();
+        if (req.notEquals !== undefined && same(v, fill(req.notEquals, this.vars))) return msg();
       }
       if (req.config !== undefined) {
         const re = new RegExp(req.config, 'i');
-        if (!this.config.some((e) => !e.children && re.test(e.text))) return fill(req.message, this.vars, values);
+        if (!this.config.some((e) => !e.children && re.test(e.text))) return msg();
       }
       if (req.notConfig !== undefined) {
         const escaped = values.map((v) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
         const re = new RegExp(fill(req.notConfig, {}, escaped), 'i');
-        if (this.config.some((e) => !e.children && re.test(e.text))) return fill(req.message, this.vars, values);
+        if (this.config.some((e) => !e.children && re.test(e.text))) return msg();
       }
       if (req.ipv4Host !== undefined) {
         const ip = parseIpv4(values[req.ipv4Host[0] - 1] ?? '');
@@ -430,13 +496,13 @@ export class TerminalDevice {
           const host = (ip & ~mask) >>> 0;
           const all = ~mask >>> 0;
           if (host === 0 || host === all) {
-            return fill(req.message, { ...this.vars, prefix: String(prefix), address: values[req.ipv4Host[0] - 1] ?? '' }, values);
+            return msg({ ...this.vars, prefix: String(prefix), address: values[req.ipv4Host[0] - 1] ?? '' });
           }
         }
       }
       if (req.param !== undefined && req.notMatch !== undefined) {
         const v = values[req.param - 1];
-        if (v !== undefined && new RegExp(req.notMatch, 'i').test(v)) return fill(req.message, this.vars, values);
+        if (v !== undefined && new RegExp(req.notMatch, 'i').test(v)) return msg();
       }
       if (req.section !== undefined) {
         const re = new RegExp(req.section, 'i');
@@ -444,7 +510,7 @@ export class TerminalDevice {
           const s = this.section(t);
           if (!s?.children?.some((e) => re.test(e.text))) {
             const name = t.replace(/^\S+\s+/, '');
-            return fill(req.message, this.vars, values, name);
+            return msg(this.vars, name);
           }
         }
       }
@@ -457,6 +523,15 @@ export class TerminalDevice {
     if (a === b) return true;
     const ga = this.profile.commands[a]?.keyGroup;
     return ga !== undefined && ga === this.profile.commands[b]?.keyGroup;
+  }
+
+  /** Ligne `no …` qui règle la même chose que la commande (même réglage et même clé, ou même texte). */
+  private sameNegation(e: ConfigEntry, cmdIndex: number, cmd: TerminalCommand, canon: string[]): boolean {
+    if (!e.text.startsWith('no ') || !this.sameSetting(e.cmd, cmdIndex)) return false;
+    const key = this.keyOf(cmd, canon);
+    const other = this.profile.commands[e.cmd];
+    if (key === null || !other) return same(e.text, `no ${canon.join(' ')}`);
+    return this.keyOf(other, e.text.slice(3).split(' ')) === key;
   }
 
   private entryKey(e: ConfigEntry): string | null {
@@ -538,6 +613,52 @@ export class TerminalDevice {
     this.goTo(current.parent ?? this.profile.startMode, out);
   }
 
+  /** Préfixe d'affichage à plat d'une section (ACL numérotée : `access-list 10`), ou null. */
+  private flatPrefix(e: ConfigEntry): { prefix: string; rank: number | undefined } | null {
+    const f = e.children ? this.profile.commands[e.cmd]?.flatten : undefined;
+    if (!f) return null;
+    const m = new RegExp(f.match).exec(e.text);
+    if (!m) return null;
+    return { prefix: f.display.replace(/\$(\d)/g, (_a, n: string) => m[Number(n)] ?? ''), rank: f.rank ?? this.profile.commands[e.cmd]?.rank };
+  }
+
+  private rankOf(e: ConfigEntry): number {
+    const flat = this.flatPrefix(e);
+    const rank = flat ? flat.rank : this.profile.commands[e.cmd]?.rank;
+    return rank ?? Number.POSITIVE_INFINITY;
+  }
+
+  /** Ordre de deux sections de même rang : interfaces par type puis par numéro, sinon ordre naturel. */
+  private compareSections(a: ConfigEntry, b: ConfigEntry): number {
+    const ta = this.interfaceTypeOf(a.text);
+    const tb = this.interfaceTypeOf(b.text);
+    if (ta && tb) {
+      const rank = (t: string) => this.profile.interfaceTypes.find((x) => x.name === t && (!x.devices || x.devices.includes(this.spec.type)))?.rank ?? 0;
+      const ra = rank(ta);
+      const rb = rank(tb);
+      if (ra !== rb) return ra - rb;
+      const ia = this.interfaces.findIndex((i) => same(`interface ${i}`, a.text));
+      const ib = this.interfaces.findIndex((i) => same(`interface ${i}`, b.text));
+      if (ia >= 0 && ib >= 0) return ia - ib;
+    }
+    const ka = this.flatPrefix(a)?.prefix ?? a.text;
+    const kb = this.flatPrefix(b)?.prefix ?? b.text;
+    return naturalCompare(ka, kb);
+  }
+
+  /** Entrées dans l'ordre d'affichage : par rang de commande (profil), les sections de même rang triées. */
+  private ordered(list: ConfigEntry[]): ConfigEntry[] {
+    return list
+      .map((e, i) => ({ e, i }))
+      .sort((x, y) => {
+        const r = this.rankOf(x.e) - this.rankOf(y.e);
+        if (r !== 0 && !Number.isNaN(r)) return r;
+        if (x.e.children && y.e.children) return this.compareSections(x.e, y.e) || x.i - y.i;
+        return x.i - y.i;
+      })
+      .map((x) => x.e);
+  }
+
   /** Configuration courante, telle que `show running-config` l'affiche (sans en-tête). */
   renderConfig(onlySection?: string): string[] {
     const { separator, indent } = this.profile.runningConfig;
@@ -551,13 +672,25 @@ export class TerminalDevice {
         return mask ? maskSecret(tokens.slice(Number(n)).join(' ')) : v;
       });
     };
-    for (const e of this.config) {
+    let lastFlat: string | null = null;
+    for (const e of this.ordered(this.config)) {
       if (onlySection !== undefined && !(e.children && e.text === onlySection)) continue;
+      const flat = this.flatPrefix(e);
+      if (flat && onlySection === undefined) {
+        if (lastFlat === null && lines.length && lines[lines.length - 1] !== separator) lines.push(separator);
+        for (const c of e.children ?? []) lines.push(`${flat.prefix} ${display(c)}`);
+        lastFlat = flat.prefix;
+        continue;
+      }
+      if (lastFlat !== null) {
+        lines.push(separator);
+        lastFlat = null;
+      }
       if (e.children) {
         if (e.mode && this.grammar.mode(e.mode).hidden) continue;
         if (lines.length && lines[lines.length - 1] !== separator) lines.push(separator);
         lines.push(display(e));
-        for (const c of e.children) lines.push(`${indent}${display(c)}`);
+        for (const c of this.ordered(e.children)) lines.push(`${indent}${display(c)}`);
         lines.push(separator);
       } else {
         lines.push(display(e));
@@ -591,6 +724,13 @@ export class TerminalDevice {
     }
 
     if (negated) {
+      if (cmd.into) {
+        // `no access-list 10 …` retire toute l'ACL 10, comme IOS.
+        const header = fill(cmd.into.section, this.vars, cand.values);
+        this.config = this.config.filter((e) => !(e.children && e.text === header));
+        this.history.push({ mode: r.mode, targets: [...this.targets], canonical: `no ${canonText}`, changed: false });
+        return out;
+      }
       if (cmd.enter) {
         this.config = this.config.filter((e) => !(e.children && e.text === canonText && !this.isPhysical(e.text)));
         this.history.push({ mode: r.mode, targets: [...this.targets], canonical: `no ${canonText}`, changed: false });
@@ -618,22 +758,43 @@ export class TerminalDevice {
         for (let i = list.length - 1; i >= 0; i--) if (positive(list[i] as ConfigEntry)) list.splice(i, 1);
         const mode = cmd.negate ?? 'remove';
         if (mode === 'store' || (mode === 'toggle' && !had)) {
-          if (!list.some((e) => same(e.text, `no ${canonText}`))) list.push({ text: `no ${canonText}`, cmd: cmdIndex });
+          // `no ip domain-lookup` puis `no ip domain lookup` : une seule ligne, la dernière forme saisie.
+          for (let i = list.length - 1; i >= 0; i--) if (this.sameNegation(list[i] as ConfigEntry, cmdIndex, cmd, cand.canon)) list.splice(i, 1);
+          list.push({ text: `no ${canonText}`, cmd: cmdIndex });
         }
       }
       this.history.push({ mode: r.mode, targets: [...this.targets], canonical: `no ${canonText}`, changed: false });
+      this.syncAggregates(this.targets);
       return out;
     }
 
-    const problem = this.checkRequirements(cmd, this.targets, cand.values);
+    const problem = this.checkRequirements(cmd, this.targets, cand);
     if (problem !== null) return [problem];
 
     const historyTargets = [...this.targets];
 
+    if (cmd.into && config) {
+      const done = this.applyInto(cmd, cand);
+      if (done === null) return out;
+      if (typeof done === 'string') return done ? [done] : out;
+      this.history.push({ mode: r.mode, targets: historyTargets, canonical: canonText, changed: false });
+      return [...out, ...done];
+    }
+
+    const aggregateHeader = cmd.aggregate ? fill(cmd.aggregate.section, this.vars, cand.values) : null;
+    const aggregateExisted = aggregateHeader !== null && this.section(aggregateHeader) !== undefined;
+
     if (cmd.enter && !r.viaDo) {
-      const headers = cmd.enter.range ? (cand.targets ?? []).map((t) => `${cand.canon[0]} ${t}`) : [canonText];
-      const sectionMode = cmd.enter.range ? this.rangeSectionMode(cmd.enter.mode) : cmd.enter.mode;
-      for (const h of headers) this.ensureSection(h, cmdIndex, sectionMode);
+      let headers: string[];
+      if (cmd.blocks) {
+        const pieces = this.enterBlocks(cmdIndex, cmd, cand);
+        if (typeof pieces === 'string') return [pieces];
+        headers = pieces;
+      } else {
+        headers = cmd.enter.range ? (cand.targets ?? []).map((t) => `${cand.canon[0]} ${t}`) : [canonText];
+        const sectionMode = cmd.enter.range ? this.rangeSectionMode(cmd.enter.mode) : cmd.enter.mode;
+        for (const h of headers) this.ensureSection(h, cmdIndex, sectionMode);
+      }
       this.mode = cmd.enter.mode;
       this.targets = headers;
     } else if (config && cmd.store !== false && !cmd.goto && !cmd.exit && !cmd.end) {
@@ -648,7 +809,7 @@ export class TerminalDevice {
           if (problem) return [problem];
           continue;
         }
-        const negIdx = list.findIndex((e) => e.cmd === cmdIndex && same(e.text, `no ${canonText}`));
+        const negIdx = list.findIndex((e) => this.sameNegation(e, cmdIndex, cmd, cand.canon));
         if (negIdx >= 0) list.splice(negIdx, 1);
         if (cmd.negate === 'store' || (cmd.negate === 'toggle' && negIdx >= 0)) continue;
         this.store(list, { text: canonText, cmd: cmdIndex }, cmd, cand.canon);
@@ -657,13 +818,13 @@ export class TerminalDevice {
 
     for (const tpl of cmd.create ?? []) {
       const header = fill(tpl, this.vars, cand.values);
-      const first = header.split(' ')[0]?.toLowerCase();
-      const creator = this.profile.commands.findIndex((c) => c.enter && !c.enter.range && c.syntax.split(' ')[0] === first);
       const existed = this.section(header) !== undefined;
-      this.ensureSection(header, creator, this.profile.commands[creator]?.enter?.mode ?? this.mode);
+      this.openSection(header);
       if (!existed && cmd.createOutput !== undefined) out.push(fill(cmd.createOutput, this.vars, cand.values));
     }
+    if (cmd.aggregate && aggregateHeader !== null && config) this.joinAggregate(cmd.aggregate.lines, aggregateHeader, aggregateExisted);
     for (const [name, value] of Object.entries(cmd.set ?? {})) this.vars[name] = fill(value, this.vars, cand.values);
+    if (config && !cmd.enter) this.syncAggregates(historyTargets);
 
     this.history.push({ mode: r.mode, targets: historyTargets, canonical: canonText, changed: false });
 
@@ -676,6 +837,201 @@ export class TerminalDevice {
       if (cmd.exit) this.exitMode(out);
     }
     return out;
+  }
+
+  /**
+   * Section d'en-tête donné, créée au besoin par la commande qui l'ouvre (lue comme une saisie dans le
+   * mode de configuration). Renvoie la section et son mode, ou null si l'en-tête n'ouvre aucune section.
+   */
+  private openSection(header: string): { entry: ConfigEntry; mode: string } | null {
+    const existing = this.section(header);
+    if (existing?.mode) return { entry: existing, mode: existing.mode };
+    const saved = { mode: this.mode, targets: this.targets };
+    this.mode = this.profile.configMode;
+    this.targets = [];
+    const r = this.resolveIn(this.profile.configMode, tokenize(header), header);
+    this.mode = saved.mode;
+    this.targets = saved.targets;
+    if (r.kind !== 'ok' || !r.r.cmd.enter) return null;
+    const canon = r.r.cand.canon.join(' ');
+    const mode = r.r.cmd.enter.range ? this.rangeSectionMode(r.r.cmd.enter.mode) : r.r.cmd.enter.mode;
+    return { entry: this.ensureSection(canon, r.r.cand.seq.cmd, mode), mode };
+  }
+
+  /**
+   * Commande rangée dans une section (`access-list 10 permit …`) : la fin de la ligne y est exécutée.
+   * Renvoie la sortie, un message de refus, ou null si rien n'a été fait.
+   */
+  private applyInto(cmd: TerminalCommand, cand: Cand): string[] | string | null {
+    const spec = cmd.into!;
+    const header = fill(spec.section, this.vars, cand.values);
+    const existed = this.section(header) !== undefined;
+    const saved = { mode: this.mode, targets: this.targets };
+    const opened = this.openSection(header);
+    if (!opened) return null;
+    const text = cand.canon.slice(spec.skip).join(' ');
+    this.mode = opened.mode;
+    this.targets = [opened.entry.text];
+    const r = this.resolveIn(opened.mode, tokenize(text), text);
+    let result: string[] | string | null = null;
+    if (r.kind === 'ok') {
+      const before = this.history.length;
+      const out = this.apply(r.r);
+      if (this.history.length > before) {
+        this.history.length = before;
+        result = out;
+      } else {
+        result = out.join('\n');
+      }
+    }
+    this.mode = saved.mode;
+    this.targets = saved.targets;
+    // Une section créée pour rien (entrée refusée) ne reste pas.
+    if (result === null || typeof result === 'string') {
+      if (!existed && !opened.entry.children?.length) this.config = this.config.filter((e) => e !== opened.entry);
+    }
+    return result;
+  }
+
+  /** Plage `de à` d'un morceau de bloc (`line vty 5 15`, `line vty 3`). */
+  private pieceRange(text: string, prefix: string): { from: number; to: number } | null {
+    const m = new RegExp(`^${prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} (\\d+)(?: (\\d+))?$`).exec(text);
+    if (!m) return null;
+    return { from: Number(m[1]), to: Number(m[2] ?? m[1]) };
+  }
+
+  private pieceHeader(prefix: string, from: number, to: number): string {
+    return from === to ? `${prefix} ${from}` : `${prefix} ${from} ${to}`;
+  }
+
+  private pieces(cmdIndex: number, prefix: string): { e: ConfigEntry; from: number; to: number }[] {
+    const out: { e: ConfigEntry; from: number; to: number }[] = [];
+    for (const e of this.config) {
+      if (!e.children || e.cmd !== cmdIndex) continue;
+      const r = this.pieceRange(e.text, prefix);
+      if (r) out.push({ e, ...r });
+    }
+    return out.sort((a, b) => a.from - b.from);
+  }
+
+  /** Entrée dans un sous-mode découpé en blocs : renvoie les sections visées, ou un message de refus. */
+  private enterBlocks(cmdIndex: number, cmd: TerminalCommand, cand: Cand): string[] | string {
+    const nums = cand.values.map(Number);
+    const a = nums[0] as number;
+    const b = nums[1] ?? a;
+    if (b < a) {
+      const token = this.current?.tokens[cand.at[1] ?? -1];
+      return `${' '.repeat((this.current?.promptLen ?? 0) + (token?.start ?? 0))}^\n${this.profile.messages.invalid}`;
+    }
+    const prefix = cand.canon.slice(0, cand.canon.length - cand.values.length).join(' ');
+    const mode = cmd.enter!.mode;
+    const blocks = cmd.blocks!;
+    const add = (from: number, to: number, children: ConfigEntry[] = []) => {
+      const e: ConfigEntry = { text: this.pieceHeader(prefix, from, to), cmd: cmdIndex, mode, children };
+      this.config.push(e);
+      return e;
+    };
+    for (const [x, y] of blocks) {
+      if (y < a || x > b) continue;
+      if (!this.pieces(cmdIndex, prefix).some((p) => p.from >= x && p.to <= y)) add(x, y);
+    }
+    if (!blocks.some(([x, y]) => x <= a && b <= y) && !this.pieces(cmdIndex, prefix).some((p) => p.from <= a && b <= p.to)) {
+      // Plage hors des blocs déclarés : un morceau à part.
+      if (!blocks.some(([x, y]) => !(y < a || x > b))) add(a, b);
+    }
+    const split = (at: number) => {
+      for (const p of this.pieces(cmdIndex, prefix)) {
+        if (p.from < at && p.to >= at) {
+          p.e.text = this.pieceHeader(prefix, p.from, at - 1);
+          add(at, p.to, (p.e.children ?? []).map((c) => ({ ...c })));
+        }
+      }
+    };
+    split(a);
+    split(b + 1);
+    return this.pieces(cmdIndex, prefix)
+      .filter((p) => p.from >= a && p.to <= b)
+      .map((p) => p.e.text);
+  }
+
+  /** Réunit les morceaux voisins d'un même bloc dont la configuration est identique (hors sections visées). */
+  private mergeBlocks(): void {
+    this.profile.commands.forEach((cmd, cmdIndex) => {
+      if (!cmd.blocks) return;
+      const prefixes = new Set<string>();
+      for (const e of this.config) if (e.children && e.cmd === cmdIndex) prefixes.add(e.text.replace(/( \d+){1,2}$/, ''));
+      for (const prefix of prefixes) {
+        let merged = true;
+        while (merged) {
+          merged = false;
+          const list = this.pieces(cmdIndex, prefix);
+          for (let i = 0; i + 1 < list.length; i++) {
+            const p = list[i]!;
+            const q = list[i + 1]!;
+            const block = cmd.blocks.find(([x, y]) => x <= p.from && p.to <= y);
+            if (!block || q.from !== p.to + 1 || q.to > block[1]) continue;
+            if (this.targets.includes(p.e.text) || this.targets.includes(q.e.text)) continue;
+            const text = (e: ConfigEntry) => (e.children ?? []).map((c) => c.text).join('\n');
+            if (text(p.e) !== text(q.e)) continue;
+            p.e.text = this.pieceHeader(prefix, p.from, q.to);
+            this.config = this.config.filter((e) => e !== q.e);
+            merged = true;
+            break;
+          }
+        }
+      }
+    });
+  }
+
+  /** Indice, dans la forme canonique, du premier paramètre d'une commande. */
+  private firstParam(cmdIndex: number): number {
+    const seq = this.grammar.seqs(this.profile.commands[cmdIndex]?.modes[0] ?? '', this.spec.type).find((s) => s.cmd === cmdIndex);
+    return seq ? seq.elems.findIndex((e) => e.kind === 'param') : -1;
+  }
+
+  /** Agrégat de chaque membre : en-tête de la section d'agrégat que désigne la ligne d'adhésion. */
+  private aggregateOf(member: ConfigEntry): { header: string; lines: RegExp } | null {
+    for (const c of member.children ?? []) {
+      const cmd = this.profile.commands[c.cmd];
+      if (!cmd?.aggregate || c.text.startsWith('no ')) continue;
+      const i = this.firstParam(c.cmd);
+      const value = c.text.split(' ')[i] ?? '';
+      return { header: fill(cmd.aggregate.section, this.vars, [value]), lines: new RegExp(cmd.aggregate.lines, 'i') };
+    }
+    return null;
+  }
+
+  /** Une interface rejoint un agrégat : il hérite du premier membre, les suivants héritent de lui. */
+  private joinAggregate(pattern: string, header: string, existed: boolean): void {
+    const re = new RegExp(pattern, 'i');
+    const agg = this.section(header);
+    if (!agg?.children) return;
+    let first = !existed;
+    for (const t of this.targets) {
+      const member = this.section(t);
+      if (!member?.children || member === agg) continue;
+      if (first) {
+        agg.children = [...agg.children.filter((c) => !re.test(c.text)), ...member.children.filter((c) => re.test(c.text)).map((c) => ({ ...c }))];
+        first = false;
+      } else {
+        member.children = [...member.children.filter((c) => !re.test(c.text)), ...agg.children.filter((c) => re.test(c.text)).map((c) => ({ ...c }))];
+      }
+    }
+  }
+
+  /** Après une modification d'un agrégat, ses membres reçoivent ses lignes recopiées. */
+  private syncAggregates(targets: string[]): void {
+    if (!targets.length || !this.profile.commands.some((c) => c.aggregate)) return;
+    const members = this.sections().map((e) => ({ e, agg: this.aggregateOf(e) })).filter((m) => m.agg !== null);
+    for (const t of targets) {
+      const agg = this.section(t);
+      if (!agg?.children) continue;
+      for (const m of members) {
+        if (m.agg!.header !== t || !m.e.children) continue;
+        const re = m.agg!.lines;
+        m.e.children = [...m.e.children.filter((c) => !re.test(c.text)), ...agg.children.filter((c) => re.test(c.text)).map((c) => ({ ...c }))];
+      }
+    }
   }
 
   /** Numéro de séquence en tête d'une commande numérotée, et le reste de la commande. */
@@ -736,10 +1092,10 @@ export class TerminalDevice {
     // Candidats après les mots déjà saisis, dans le mode courant (pseudo-mots `no` et `do` compris).
     const prefixTokens = trailingSpace ? tokens : tokens.slice(0, -1);
     const partialWord = trailingSpace ? '' : (tokens[tokens.length - 1]?.text.toLowerCase() ?? '');
-    const seqs = this.grammar.seqs(this.mode, this.spec.type);
+    const seqs = this.seqsHere(this.mode);
     let pool: Cand[];
     if (prefixTokens.length === 0) {
-      pool = [...this.pseudoSeqs(this.mode), ...seqs].map((seq) => ({ seq, pos: 0, canon: [], values: [] }));
+      pool = [...this.pseudoSeqs(this.mode), ...seqs].map((seq) => ({ seq, pos: 0, canon: [], values: [], at: [] }));
     } else {
       const first = prefixTokens[0]?.text.toLowerCase() ?? '';
       const negating = this.isConfig() && 'no'.startsWith(first) && first.length >= 2;
@@ -846,8 +1202,22 @@ export class TerminalDevice {
     const commandPart = pipeAt >= 0 ? line.slice(0, pipeAt) : line;
     const filter = pipeAt >= 0 ? line.slice(pipeAt + 3) : null;
 
-    const tokens = tokenize(commandPart);
-    const r = this.resolve(tokens, commandPart);
+    let tokens = tokenize(commandPart);
+    let r = this.resolve(tokens, commandPart);
+    if (r.kind === 'ok' && r.r.cmd.rewrite && !r.r.partial) {
+      // `standby 0 ip …` est relue comme `standby ip …`.
+      const re = new RegExp(r.r.cmd.rewrite.pattern, 'i');
+      const canon = r.r.cand.canon.join(' ');
+      if (re.test(canon)) {
+        const text = `${r.r.negated ? 'no ' : ''}${canon.replace(re, r.r.cmd.rewrite.replace)}`;
+        const t2 = tokenize(text);
+        const r2 = this.resolveIn(r.r.mode, t2, text);
+        if (r2.kind === 'ok') {
+          r = r2;
+          tokens = t2;
+        }
+      }
+    }
     if (r.kind !== 'ok') {
       return { echo, output: this.error(r.kind, r.at, tokens, commandPart, before.length), prompt: before, status: 'error' };
     }
@@ -856,7 +1226,10 @@ export class TerminalDevice {
     }
     const historyBefore = this.history.length;
     const snapshot = JSON.stringify(this.config);
+    this.current = { tokens, promptLen: before.length };
     const out = this.apply(r.r);
+    this.current = null;
+    this.mergeBlocks();
     const refused = this.history.length === historyBefore;
     const last = this.history[this.history.length - 1];
     if (!refused && last) last.changed = JSON.stringify(this.config) !== snapshot;
@@ -868,9 +1241,18 @@ export class TerminalDevice {
     };
   }
 
-  /** Lignes d'une section (ou de la configuration globale si `header` est vide). */
+  /**
+   * Lignes d'une section, ou de la configuration globale si `header` est vide ; la configuration globale
+   * comprend les sections affichées à plat (`access-list 10 permit …`).
+   */
   linesOf(header?: string): string[] {
-    if (!header) return this.config.filter((e) => !e.children).map((e) => e.text);
+    if (!header) {
+      return this.config.flatMap((e) => {
+        if (!e.children) return [e.text];
+        const flat = this.flatPrefix(e);
+        return flat ? e.children.map((c) => `${flat.prefix} ${c.text}`) : [];
+      });
+    }
     return this.section(header)?.children?.map((e) => e.text) ?? [];
   }
 
