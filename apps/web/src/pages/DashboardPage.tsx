@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, type ReactNode } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { WithCertification } from '../certification/CertificationContext';
 import { MasteryLegend, ProgressChart, RadarChart, ReadinessGauge, Sparkline } from '../components/charts';
@@ -14,8 +14,57 @@ import {
   formatPercent,
   greeting,
 } from '../lib/format';
-import type { AttemptSummary, Stats } from '../lib/types';
+import { api } from '../lib/api';
+import type { AttemptState, AttemptSummary, CertificationDetail, Stats } from '../lib/types';
 import { useApi } from '../lib/useApi';
+
+/** Taille d'une révision rapide lancée depuis « À revoir ». */
+const REVIEW_SIZE = 10;
+
+/**
+ * « Réviser » : un entraînement de 10 questions (moins si la banque en a moins) sur un seul
+ * sous-thème, lancé sans passer par l'écran de lancement.
+ */
+function ReviseButton({ code, subtopic, label, available }: { code: string; subtopic: string; label: string; available: number }) {
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const size = Math.min(REVIEW_SIZE, available);
+  const start = async () => {
+    if (busy || size < 1) return;
+    setBusy(true);
+    setFailed(false);
+    try {
+      const attempt = await api<AttemptState>('/attempts', {
+        method: 'POST',
+        body: { certification: code, mode: 'practice', questionCount: size, subtopics: [subtopic] },
+      });
+      navigate(`/tentatives/${attempt.id}`);
+    } catch {
+      setFailed(true);
+      setBusy(false);
+    }
+  };
+  return (
+    <span className="flex flex-col items-end gap-1">
+      <button
+        type="button"
+        className="btn-secondary btn-sm"
+        onClick={start}
+        disabled={busy || size < 1}
+        aria-label={`Réviser ${label} (${size} question${size > 1 ? 's' : ''})`}
+        title={size < 1 ? 'Aucune question publiée sur ce sous-thème' : `Entraînement rapide de ${size} question${size > 1 ? 's' : ''} sur ce sous-thème`}
+      >
+        {busy ? 'Préparation…' : 'Réviser →'}
+      </button>
+      {failed && (
+        <span role="alert" className="font-mono text-[11px] text-crit">
+          ✕ impossible de lancer la révision
+        </span>
+      )}
+    </span>
+  );
+}
 
 function Card({ title, aside, children }: { title: string; aside?: ReactNode; children: ReactNode }) {
   return (
@@ -223,7 +272,7 @@ function OfficialDomains({ stats }: { stats: Stats }) {
   );
 }
 
-function ToReview({ stats }: { stats: Stats }) {
+function ToReview({ stats, bank }: { stats: Stats; bank: CertificationDetail['bank'] | null }) {
   const names = new Map(stats.domains.map((d) => [d.code, d.name]));
   return (
     <section aria-labelledby="todo-h" className="panel px-6 py-[22px]">
@@ -261,15 +310,25 @@ function ToReview({ stats }: { stats: Stats }) {
                     {t.subtopic ?? t.domain} · {t.errors}/{t.answered} erreur{t.errors > 1 ? 's' : ''}
                   </span>
                 </span>
-                {isSubnet ? (
-                  <Link to="/labs/subnetting" className="btn-secondary btn-sm">
-                    Trainer →
-                  </Link>
-                ) : (
-                  <Link to={`/examen/nouveau?mode=practice&domaines=${t.domain}`} className="btn-secondary btn-sm">
-                    S'entraîner →
-                  </Link>
-                )}
+                <span className="flex flex-wrap items-start gap-2">
+                  {isSubnet && (
+                    <Link to="/labs/subnetting" className="btn-secondary btn-sm">
+                      Trainer →
+                    </Link>
+                  )}
+                  {t.subtopic && bank ? (
+                    <ReviseButton
+                      code={stats.certification}
+                      subtopic={t.subtopic}
+                      label={t.subtopicName ?? t.subtopic}
+                      available={bank.bySubtopic[t.subtopic] ?? 0}
+                    />
+                  ) : (
+                    <Link to={`/examen/nouveau?mode=practice&domaines=${t.domain}`} className="btn-secondary btn-sm">
+                      S'entraîner →
+                    </Link>
+                  )}
+                </span>
               </li>
             );
           })}
@@ -312,6 +371,7 @@ function Dashboard({ code }: { code: string }) {
   const { user } = useAuth();
   const stats = useApi<Stats>(`/stats?certification=${encodeURIComponent(code)}`);
   const attempts = useApi<{ attempts: AttemptSummary[] }>(`/attempts?certification=${encodeURIComponent(code)}`);
+  const detail = useApi<CertificationDetail>(`/certifications/${encodeURIComponent(code)}`);
   const now = new Date();
   const firstName = user?.displayName.split(/\s+/)[0] ?? '';
 
@@ -379,7 +439,7 @@ function Dashboard({ code }: { code: string }) {
           </div>
           <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))]">
             <OfficialDomains stats={stats.data} />
-            <ToReview stats={stats.data} />
+            <ToReview stats={stats.data} bank={detail.data?.bank ?? null} />
           </div>
         </>
       )}

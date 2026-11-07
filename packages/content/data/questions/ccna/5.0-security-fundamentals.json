@@ -20,10 +20,13 @@
         ],
         [
           "deny tcp 192.168.10.0 0.0.0.255 host 10.1.1.80 eq 80",
-          "deny tcp 192.168.10.0 0.0.0.255 10.1.1.80 0.0.0.0 eq 80"
+          "deny tcp 192.168.10.0 0.0.0.255 10.1.1.80 0.0.0.0 eq 80",
+          "10 deny tcp 192.168.10.0 0.0.0.255 host 10.1.1.80 eq 80",
+          "10 deny tcp 192.168.10.0 0.0.0.255 10.1.1.80 0.0.0.0 eq 80"
         ],
         [
-          "permit ip any any"
+          "permit ip any any",
+          "20 permit ip any any"
         ],
         [
           "interface gigabitethernet0/0/0"
@@ -63,17 +66,18 @@
         }
       }
     },
-    "explanation": "Un /20 correspond au masque 255.255.240.0. Le masque générique en est l'inverse : 255.255.255.255 − 255.255.240.0 = 0.0.15.255."
+    "explanation": "Un /20 correspond au masque 255.255.240.0. Le masque générique en est l'inverse : 255.255.255.255 − 255.255.240.0 = 0.0.15.255.",
+    "reference": "Cisco IOS Security Configuration Guide — IP Access List Overview"
   },
   {
     "slug": "ccna-5.7-port-security-violation-001",
     "certification": "ccna",
     "domain": "5.0",
     "subtopic": "5.7",
-    "difficulty": "medium",
+    "difficulty": "easy",
     "body": {
       "type": "mcq_single",
-      "stem": "Avec port-security, quel mode de violation supprime les trames des adresses MAC non autorisées, incrémente le compteur de violations et envoie un message syslog, sans désactiver le port ?",
+      "stem": "Avec port-security, quel mode de violation supprime les trames des adresses MAC non autorisées, incrémente le compteur de violations et envoie un message syslog, tout en laissant passer le trafic des adresses autorisées ?",
       "options": [
         {
           "id": "a",
@@ -102,7 +106,8 @@
       "a": "protect supprime le trafic en silence : pas de compteur, pas de syslog.",
       "c": "shutdown, le mode par défaut, place le port en err-disabled.",
       "d": "shutdown vlan désactive le VLAN concerné sur le port : le trafic légitime de ce VLAN est donc coupé lui aussi."
-    }
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
   },
   {
     "slug": "ccna-5.8-tacacs-radius-001",
@@ -144,7 +149,7 @@
         "b"
       ]
     },
-    "explanation": "TACACS+ fonctionne sur TCP 49, chiffre l'intégralité du corps des paquets et sépare authentification, autorisation et comptabilité, ce qui permet un contrôle fin des commandes.",
+    "explanation": "TACACS+ fonctionne sur TCP 49, chiffre l'intégralité du corps des paquets et sépare authentification, autorisation et traçabilité (accounting), ce qui permet un contrôle fin des commandes.",
     "distractorNotes": {
       "c": "UDP 1812 et 1813 sont les ports de RADIUS.",
       "d": "C'est RADIUS qui combine authentification et autorisation ; TACACS+ les sépare.",
@@ -157,10 +162,10 @@
     "certification": "ccna",
     "domain": "5.0",
     "subtopic": "5.9",
-    "difficulty": "medium",
+    "difficulty": "easy",
     "body": {
       "type": "mcq_single",
-      "stem": "Quelle méthode d'authentification WPA3-Personal utilise-t-il à la place de la clé pré-partagée (PSK) de WPA2 ?",
+      "stem": "Quelle méthode d'authentification WPA3-Personal utilise-t-il à la place de l'authentification par clé pré-partagée (PSK) de WPA2 ?",
       "options": [
         {
           "id": "a",
@@ -168,15 +173,15 @@
         },
         {
           "id": "b",
-          "text": "TKIP"
+          "text": "TKIP (Temporal Key Integrity Protocol)"
         },
         {
           "id": "c",
-          "text": "EAP-TLS"
+          "text": "EAP-TLS (authentification 802.1X par certificat)"
         },
         {
           "id": "d",
-          "text": "WEP"
+          "text": "OWE (Opportunistic Wireless Encryption)"
         }
       ]
     },
@@ -184,11 +189,1234 @@
       "type": "mcq_single",
       "correct": "a"
     },
-    "explanation": "WPA3-Personal remplace l'échange PSK par SAE, qui résiste aux attaques par dictionnaire hors ligne et assure la confidentialité persistante.",
+    "explanation": "WPA3-Personal remplace l'authentification PSK de WPA2 par SAE : l'échange repose toujours sur un mot de passe partagé, mais il résiste aux attaques par dictionnaire hors ligne et assure la confidentialité persistante.",
     "distractorNotes": {
-      "b": "TKIP est un ancien mécanisme de chiffrement de WPA, abandonné.",
+      "b": "TKIP est le mécanisme de chiffrement de WPA, pas une méthode d'authentification ; WPA3 l'interdit.",
       "c": "EAP-TLS est une méthode d'authentification d'entreprise (802.1X), pas le mode Personal.",
-      "d": "WEP est le protocole d'origine, cassé depuis longtemps."
-    }
+      "d": "OWE (Wi-Fi Enhanced Open) chiffre les réseaux ouverts sans aucune authentification : il remplace le mode Open, pas la PSK."
+    },
+    "reference": "Wi-Fi Alliance, WPA3 Specification ; IEEE 802.11-2020 (SAE) ; RFC 7664 (Dragonfly Key Exchange)"
+  },
+  {
+    "slug": "ccna-5.1-attack-types-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque type d'attaque à la description qui lui correspond.",
+      "left": [
+        {
+          "id": "phishing",
+          "text": "Phishing"
+        },
+        {
+          "id": "ddos",
+          "text": "DDoS"
+        },
+        {
+          "id": "mitm",
+          "text": "Man-in-the-middle"
+        },
+        {
+          "id": "spoofing",
+          "text": "Usurpation (spoofing)"
+        },
+        {
+          "id": "trojan",
+          "text": "Cheval de Troie"
+        }
+      ],
+      "right": [
+        {
+          "id": "a",
+          "text": "L'attaquant falsifie son adresse IP ou MAC source pour se faire passer pour un autre équipement."
+        },
+        {
+          "id": "b",
+          "text": "Un e-mail imitant la banque de la victime l'invite à saisir ses identifiants sur un faux site."
+        },
+        {
+          "id": "c",
+          "text": "Un programme chiffre les fichiers de la victime et exige un paiement pour les restituer."
+        },
+        {
+          "id": "d",
+          "text": "L'attaquant s'intercale entre deux hôtes et lit ou modifie leurs échanges à leur insu."
+        },
+        {
+          "id": "e",
+          "text": "Un programme d'apparence légitime installe en cachette un accès dérobé pour l'attaquant."
+        },
+        {
+          "id": "f",
+          "text": "Des milliers d'équipements compromis inondent un serveur de requêtes jusqu'à le rendre indisponible."
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "phishing": "b",
+        "ddos": "f",
+        "mitm": "d",
+        "spoofing": "a",
+        "trojan": "e"
+      }
+    },
+    "explanation": "Le phishing est une technique d'ingénierie sociale : un message trompeur pousse la victime à livrer elle-même ses identifiants. Une DDoS se distingue d'un simple DoS par la multitude de sources, souvent un botnet. Le man-in-the-middle place l'attaquant sur le chemin des échanges, souvent grâce à une usurpation préalable (ARP, DHCP), alors que l'usurpation seule consiste à falsifier une identité réseau. Le cheval de Troie est un malware caché dans un logiciel en apparence utile ; contrairement au ver, il ne se propage pas seul.",
+    "distractorNotes": {
+      "c": "Cette description est celle d'un rançongiciel (ransomware), qui ne figure pas dans la colonne de gauche."
+    },
+    "reference": "RFC 4949 (Internet Security Glossary, Version 2)"
+  },
+  {
+    "slug": "ccna-5.1-exploit-vs-vulnerability-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un éditeur annonce qu'une faille de débordement de tampon affecte le serveur web de gestion de ses routeurs. Quelques jours plus tard, un script public capable d'en tirer parti circule sur Internet, et un groupe criminel commence à l'utiliser contre les équipements exposés. En attendant le correctif, l'administrateur désactive ce serveur web. Dans ce scénario, que représente le script public ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une vulnérabilité"
+        },
+        {
+          "id": "b",
+          "text": "Un exploit"
+        },
+        {
+          "id": "c",
+          "text": "Une menace"
+        },
+        {
+          "id": "d",
+          "text": "Une technique d'atténuation"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une vulnérabilité est une faiblesse, ici le débordement de tampon ; un exploit est l'outil ou le code qui permet de tirer parti de cette faiblesse : c'est donc le script public. La menace est le risque réel qu'un acteur utilise l'exploit contre la vulnérabilité, ici le groupe criminel qui cible les routeurs exposés. Désactiver le serveur web est une technique d'atténuation : elle supprime la surface d'attaque en attendant le correctif.",
+    "distractorNotes": {
+      "a": "La vulnérabilité est la faille de débordement de tampon elle-même, c'est-à-dire la faiblesse du logiciel.",
+      "c": "La menace est la possibilité réelle qu'un acteur, ici le groupe criminel, utilise l'exploit contre la vulnérabilité.",
+      "d": "La technique d'atténuation est la désactivation du serveur web de gestion en attendant le correctif."
+    },
+    "reference": "RFC 4949 (Internet Security Glossary, Version 2)"
+  },
+  {
+    "slug": "ccna-5.1-reconnaissance-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux activités relèvent d'une attaque de reconnaissance ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Inonder un serveur web de segments TCP SYN sans jamais terminer les connexions."
+        },
+        {
+          "id": "b",
+          "text": "Envoyer des réponses ARP gratuites qui associent l'IP de la passerelle à la MAC de l'attaquant."
+        },
+        {
+          "id": "c",
+          "text": "Lancer un balayage ping (ping sweep) sur un sous-réseau pour repérer les hôtes actifs."
+        },
+        {
+          "id": "d",
+          "text": "Essayer en boucle des milliers de mots de passe sur le service SSH d'un routeur."
+        },
+        {
+          "id": "e",
+          "text": "Scanner les ports TCP d'un serveur avec un outil comme Nmap pour lister ses services."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Une attaque de reconnaissance collecte des informations sur la cible avant de l'attaquer : hôtes actifs (ping sweep), ports ouverts et services (scan de ports), versions des logiciels, informations DNS ou whois. Elle ne perturbe pas le réseau en elle-même, mais prépare le choix d'une vulnérabilité à exploiter.",
+    "distractorNotes": {
+      "a": "Le SYN flood épuise les ressources du serveur : c'est une attaque par déni de service.",
+      "b": "Des ARP gratuits falsifiés empoisonnent les caches ARP : c'est une usurpation qui mène à un man-in-the-middle.",
+      "d": "Les essais répétés de mots de passe sont une attaque par force brute, destinée à obtenir un accès."
+    },
+    "reference": "NIST SP 800-115, section 4 (Target Identification and Analysis Techniques)"
+  },
+  {
+    "slug": "ccna-5.1-dns-amplification-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le serveur 198.51.100.25 est saturé par des milliers de réponses DNS volumineuses provenant de centaines de résolveurs publics, alors qu'il n'a émis aucune requête DNS. Les journaux de l'un de ces résolveurs montrent qu'il a reçu de courtes requêtes portant toutes l'adresse source 198.51.100.25. De quelle attaque s'agit-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une attaque man-in-the-middle par empoisonnement du cache des résolveurs DNS."
+        },
+        {
+          "id": "b",
+          "text": "Une attaque de reconnaissance, les résolveurs énumérant les services du serveur."
+        },
+        {
+          "id": "c",
+          "text": "Une DDoS par réflexion et amplification, avec usurpation de l'adresse IP de la victime."
+        },
+        {
+          "id": "d",
+          "text": "Une attaque DoS classique, menée directement depuis des résolveurs compromis par l'attaquant."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'attaquant envoie de petites requêtes DNS en usurpant l'adresse source de la victime : les résolveurs répondent donc à 198.51.100.25, qui n'a rien demandé (réflexion). Chaque réponse est bien plus volumineuse que la requête (amplification) et les réponses viennent de centaines de sources différentes, d'où une DDoS. Les parades sont le filtrage anti-usurpation à l'entrée des réseaux (BCP 38) et la fermeture des résolveurs récursifs ouverts.",
+    "distractorNotes": {
+      "a": "L'empoisonnement de cache fausse les réponses données aux clients du résolveur ; il ne sert pas à inonder un hôte qui n'a rien demandé.",
+      "b": "La reconnaissance collecte des informations sans saturer la cible ; ici le serveur est rendu indisponible.",
+      "d": "Les résolveurs ne sont pas compromis : ce sont des réflecteurs légitimes qui répondent normalement à des requêtes usurpées, et la multiplicité des sources fait de l'attaque une DDoS."
+    },
+    "reference": "RFC 5358 (BCP 140) ; RFC 2827 (BCP 38)"
+  },
+  {
+    "slug": "ccna-5.2-security-program-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque mesure à l'élément du programme de sécurité auquel elle appartient.",
+      "left": [
+        {
+          "id": "phish",
+          "text": "L'équipe sécurité envoie de faux e-mails de phishing aux employés pour mesurer qui clique."
+        },
+        {
+          "id": "usb",
+          "text": "Des affiches et des messages réguliers sur l'intranet rappellent de ne jamais brancher une clé USB trouvée."
+        },
+        {
+          "id": "course",
+          "text": "Chaque nouvel employé suit une session obligatoire d'une demi-journée sur les politiques de sécurité, validée par un test."
+        },
+        {
+          "id": "badge",
+          "text": "La salle serveurs n'est accessible qu'avec un badge, et chaque passage est horodaté et enregistré."
+        }
+      ],
+      "right": [
+        {
+          "id": "awareness",
+          "text": "Sensibilisation des utilisateurs (user awareness)"
+        },
+        {
+          "id": "training",
+          "text": "Formation des utilisateurs (user training)"
+        },
+        {
+          "id": "physical",
+          "text": "Contrôle d'accès physique"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "phish": "awareness",
+        "usb": "awareness",
+        "course": "training",
+        "badge": "physical"
+      }
+    },
+    "explanation": "La sensibilisation regroupe les actions continues qui maintiennent l'attention des utilisateurs sur les menaces : campagnes de phishing simulé, affiches, rappels. La formation est un enseignement formel, structuré et périodique, souvent obligatoire et évalué, sur les politiques de sécurité de l'entreprise. Le contrôle d'accès physique protège les locaux techniques (serrures, badges, sas), et le journal des badges garde la trace de qui est entré et à quelle heure.",
+    "reference": "NIST SP 800-50 (Building an Information Technology Security Awareness and Training Program)"
+  },
+  {
+    "slug": "ccna-5.2-tailgating-mantrap-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un audit révèle que des visiteurs entrent dans la salle serveurs en suivant de près un employé qui vient de badger (tailgating). Quelle mesure de contrôle d'accès physique empêche le plus directement ce comportement ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une caméra de vidéosurveillance qui filme en permanence la porte de la salle serveurs."
+        },
+        {
+          "id": "b",
+          "text": "Un second lecteur de badge, côté intérieur, qui enregistre les sorties."
+        },
+        {
+          "id": "c",
+          "text": "Une politique de mots de passe plus stricte pour les comptes des employés."
+        },
+        {
+          "id": "d",
+          "text": "Un sas (mantrap) qui ne laisse passer qu'une personne authentifiée à la fois."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un sas comporte deux portes asservies : la seconde ne s'ouvre que lorsque la première est refermée et que la personne présente s'est authentifiée, ce qui empêche physiquement une deuxième personne de passer sur le même badge. Les autres mesures détectent ou tracent l'intrusion après coup, ou ne concernent pas l'accès physique.",
+    "distractorNotes": {
+      "a": "La caméra est une mesure de détection et de dissuasion : elle enregistre le talonnage mais ne l'empêche pas.",
+      "b": "Le badge en sortie complète la traçabilité, mais n'empêche pas un visiteur d'entrer derrière un employé.",
+      "c": "Une politique de mots de passe protège les accès logiques, pas la porte de la salle serveurs."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, contrôle PE-3 (Physical Access Control)"
+  },
+  {
+    "slug": "ccna-5.2-physical-access-console-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un routeur de succursale est protégé par un enable secret, des comptes locaux et un accès distant en SSH uniquement, mais il est installé dans un placard réseau qui n'est jamais fermé à clé. Pourquoi ce placard représente-t-il un risque majeur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un intrus branché sur la console peut redémarrer le routeur et réinitialiser ses mots de passe."
+        },
+        {
+          "id": "b",
+          "text": "Le port console contourne l'enable secret : on y arrive directement en mode EXEC privilégié."
+        },
+        {
+          "id": "c",
+          "text": "Un intrus branché sur le port console peut lire en clair les sessions SSH ouvertes par les administrateurs."
+        },
+        {
+          "id": "d",
+          "text": "Un intrus peut lire l'enable secret en clair en retirant le support de stockage du routeur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Quiconque a un accès physique à l'équipement peut interrompre son démarrage (séquence break), passer en ROMMON et modifier le registre de configuration (0x2142) pour ignorer la startup-config, puis redéfinir tous les mots de passe. Toutes les protections logiques sont alors contournées. Même avec « no service password-recovery », l'intrus peut encore réinitialiser l'équipement en effaçant sa configuration : l'accès physique reste un risque. C'est pourquoi le contrôle d'accès physique (placards verrouillés, badges) fait partie intégrante d'un programme de sécurité.",
+    "distractorNotes": {
+      "b": "Sur la console aussi, la commande enable demande l'enable secret ; c'est le redémarrage avec récupération de mot de passe qui permet de le contourner.",
+      "c": "Le port console donne accès au routeur lui-même, pas au contenu chiffré des sessions SSH des autres administrateurs.",
+      "d": "L'enable secret est stocké sous forme de hachage : il ne se lit pas en clair, même en accédant directement à la configuration."
+    },
+    "reference": "Cisco Technical Note — Password Recovery Procedures (registre de configuration 0x2142)"
+  },
+  {
+    "slug": "ccna-5.3-console-login-local-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, depuis le mode de configuration globale, créez d'abord l'utilisateur local admin dont le mot de passe N0c-Adm1n est stocké sous forme de hachage. Configurez ensuite la ligne console pour qu'elle exige un compte local et ferme la session après 5 minutes d'inactivité.",
+      "prompt": "R1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          2,
+          3
+        ]
+      ],
+      "commands": [
+        [
+          "username admin secret N0c-Adm1n",
+          "username admin secret 0 N0c-Adm1n",
+          "username admin algorithm-type scrypt secret N0c-Adm1n",
+          "username admin algorithm-type sha256 secret N0c-Adm1n",
+          "username admin algorithm-type md5 secret N0c-Adm1n"
+        ],
+        [
+          "line console 0"
+        ],
+        [
+          "login local"
+        ],
+        [
+          "exec-timeout 5 0",
+          "exec-timeout 5"
+        ]
+      ]
+    },
+    "explanation": "« username admin secret » enregistre un hachage du mot de passe (type 5, 8 ou 9 selon la version et l'algorithme), contrairement à « username admin password », stocké en clair ou en type 7. Sous « line console 0 », « login local » impose l'authentification par la base locale des utilisateurs, alors que « login » seul utiliserait le mot de passe de ligne. « exec-timeout » prend des minutes puis des secondes : « exec-timeout 5 0 » ferme la session après 5 minutes d'inactivité (10 minutes par défaut), alors que « exec-timeout 0 5 » la fermerait après 5 secondes et « exec-timeout 0 0 » désactiverait le délai.",
+    "reference": "Cisco IOS Security Configuration Guide — Configuring Security with Passwords, Privilege Levels, and Login Usernames"
+  },
+  {
+    "slug": "ccna-5.3-enable-secret-priority-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La configuration d'un routeur contient « enable password Cisco123 » et « enable secret Adm1n-2024 ». Quel mot de passe faut-il saisir après la commande enable pour passer en mode EXEC privilégié ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cisco123, car enable password est vérifié en premier."
+        },
+        {
+          "id": "b",
+          "text": "Adm1n-2024, car enable secret est prioritaire."
+        },
+        {
+          "id": "c",
+          "text": "L'un ou l'autre : IOS accepte les deux mots de passe."
+        },
+        {
+          "id": "d",
+          "text": "Cisco123, à condition que service password-encryption soit activé."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Dès qu'enable secret est configuré, IOS ignore enable password : seul le secret donne accès au mode privilégié. enable password n'existe plus que pour la compatibilité ; il est stocké en clair, ou en type 7 réversible avec service password-encryption, alors qu'enable secret est stocké sous forme de hachage. La bonne pratique est de ne configurer qu'enable secret.",
+    "distractorNotes": {
+      "a": "L'ordre n'a aucune importance : dès qu'un enable secret existe, enable password n'est plus utilisé.",
+      "c": "IOS ne vérifie qu'un seul mot de passe : celui d'enable secret lorsqu'il est défini.",
+      "d": "service password-encryption ne fait que masquer les mots de passe en type 7 ; il ne change pas la priorité d'enable secret."
+    },
+    "reference": "Cisco IOS Security Command Reference — enable secret"
+  },
+  {
+    "slug": "ccna-5.3-line-passwords-exhibit-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Quelle affirmation sur l'accès à R1 est exacte ?",
+      "exhibit": "R1# show running-config\n!\nservice password-encryption\n!\nhostname R1\n!\nenable secret 9 $9$nhEmQVczB7dqsO$X.HsgL6x1il0RxkOSSvyQYwucySCt7qFm4v7pqCxkKM\n!\n<output omitted>\n!\nline con 0\n exec-timeout 0 0\n password 7 06255F2F5F1E051C482543\n logging synchronous\nline aux 0\nline vty 0 4\n password 7 1333030B463E556779747A67\n login\n transport input telnet\n!\nend",
+      "options": [
+        {
+          "id": "a",
+          "text": "La commande no service password-encryption remettrait aussitôt les mots de passe de ligne en clair dans la configuration."
+        },
+        {
+          "id": "b",
+          "text": "Une connexion Telnet sur les lignes VTY demande un nom d'utilisateur, puis un mot de passe."
+        },
+        {
+          "id": "c",
+          "text": "Sur la console, on arrive en mode EXEC utilisateur sans mot de passe, et la session n'expire jamais."
+        },
+        {
+          "id": "d",
+          "text": "Les mots de passe de type 7 sont des hachages irréversibles, aussi robustes que celui d'enable secret."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sous line con 0, un mot de passe est défini mais la commande login est absente : IOS ne le demande donc jamais, et « exec-timeout 0 0 » désactive la déconnexion pour inactivité. L'enable secret reste nécessaire pour passer en mode privilégié. Sur les VTY, « login » vérifie le mot de passe de ligne seul, sans nom d'utilisateur. Le type 7 produit par service password-encryption n'est qu'un masquage réversible, déchiffrable instantanément, contrairement au hachage scrypt du type 9.",
+    "distractorNotes": {
+      "a": "no service password-encryption ne déchiffre rien : les mots de passe déjà masqués restent en type 7 jusqu'à ce qu'on les ressaisisse ; seuls les nouveaux seront en clair.",
+      "b": "« login » vérifie seulement le mot de passe de ligne ; une demande de nom d'utilisateur exigerait « login local » ou AAA.",
+      "d": "Le type 7 est un chiffrement réversible avec une clé connue de tous ; dans cette configuration, seul l'enable secret, haché en type 9 (scrypt), est protégé de façon robuste."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — Configuring Security with Passwords, Privilege Levels, and Login Usernames"
+  },
+  {
+    "slug": "ccna-5.4-mfa-factors-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux méthodes constituent une véritable authentification multifacteur (MFA) ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Un mot de passe, puis la réponse à une question secrète sur la ville de naissance de l'utilisateur."
+        },
+        {
+          "id": "b",
+          "text": "Un mot de passe, puis un code à usage unique généré par une application sur le smartphone."
+        },
+        {
+          "id": "c",
+          "text": "Une empreinte digitale, puis une reconnaissance faciale."
+        },
+        {
+          "id": "d",
+          "text": "Une carte à puce contenant un certificat, déverrouillée par un code PIN."
+        },
+        {
+          "id": "e",
+          "text": "Deux mots de passe différents, saisis l'un après l'autre."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La MFA combine au moins deux facteurs de catégories différentes : ce que l'on sait (mot de passe, PIN), ce que l'on possède (smartphone, carte à puce, jeton) et ce que l'on est (biométrie). Le mot de passe suivi du code généré par le smartphone associe savoir et possession ; la carte à puce et son PIN associent possession et savoir. Empiler deux éléments de la même catégorie n'ajoute pas de facteur.",
+    "distractorNotes": {
+      "a": "Le mot de passe et la question secrète relèvent tous deux de ce que l'on sait : c'est un seul facteur.",
+      "c": "L'empreinte et le visage relèvent tous deux de ce que l'on est : c'est un seul facteur.",
+      "e": "Deux mots de passe restent un seul facteur, ce que l'on sait."
+    },
+    "reference": "NIST SP 800-63B (Digital Identity Guidelines — Authentication and Lifecycle Management)"
+  },
+  {
+    "slug": "ccna-5.4-certificate-authentication-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise remplace les mots de passe par des certificats numériques pour authentifier ses postes de travail sur le réseau. Sur quoi repose cette authentification ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur la possession de la clé privée liée à un certificat signé par une autorité de confiance."
+        },
+        {
+          "id": "b",
+          "text": "Sur un secret partagé identique, configuré à la fois sur le poste et sur le serveur d'authentification."
+        },
+        {
+          "id": "c",
+          "text": "Sur une caractéristique physique de l'utilisateur, comme son empreinte digitale ou son visage."
+        },
+        {
+          "id": "d",
+          "text": "Sur l'adresse MAC du poste, enregistrée dans une liste d'adresses autorisées sur le commutateur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un certificat lie une identité à une clé publique et il est signé par une autorité de certification (CA). Le poste prouve son identité en signant un défi avec sa clé privée, qui ne quitte jamais l'appareil ; le serveur vérifie la signature et la chaîne de certification jusqu'à une CA de confiance. Aucun secret réutilisable ne circule ni ne peut être deviné, ce qui écarte les attaques sur les mots de passe : c'est le principe d'EAP-TLS en 802.1X.",
+    "distractorNotes": {
+      "b": "Un secret identique des deux côtés correspond à une clé pré-partagée (PSK), pas à un certificat.",
+      "c": "La biométrie est une autre alternative aux mots de passe, fondée sur ce que l'on est et non sur un certificat.",
+      "d": "Une liste d'adresses MAC autorisées (port security sur le commutateur, ou MAB auprès d'un serveur RADIUS) n'utilise aucun certificat et se contourne facilement en usurpant l'adresse."
+    },
+    "reference": "RFC 5280 (certificats X.509) ; RFC 5216 (EAP-TLS)"
+  },
+  {
+    "slug": "ccna-5.4-min-length-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 possédait déjà un enable secret de 12 caractères et le compte local ops, dont le secret compte 7 caractères. Quel est le résultat des deux commandes saisies ?",
+      "exhibit": "R1(config)# security passwords min-length 10\nR1(config)# enable secret Cisco1",
+      "options": [
+        {
+          "id": "a",
+          "text": "La commande enable secret est acceptée avec un simple avertissement, car la longueur minimale ne vise que les comptes locaux."
+        },
+        {
+          "id": "b",
+          "text": "Le compte ops est désactivé immédiatement, car son mot de passe compte moins de 10 caractères."
+        },
+        {
+          "id": "c",
+          "text": "La commande enable secret est acceptée, mais IOS exigera un nouveau mot de passe à la prochaine utilisation d'enable."
+        },
+        {
+          "id": "d",
+          "text": "La commande enable secret est rejetée et l'ancien enable secret reste en vigueur ; le compte ops continue de fonctionner."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "security passwords min-length impose une longueur minimale à tous les mots de passe configurés ensuite : mots de passe et secrets enable, mots de passe d'utilisateurs et mots de passe de ligne. Cisco1 ne compte que 6 caractères, donc IOS refuse la commande avec un message d'erreur et l'enable secret précédent reste actif. La règle n'est pas rétroactive : les mots de passe existants, comme celui du compte ops, restent valables (IOS ne peut d'ailleurs pas connaître la longueur d'un secret déjà haché).",
+    "distractorNotes": {
+      "a": "La longueur minimale s'applique aussi aux mots de passe et secrets enable ainsi qu'aux mots de passe de ligne.",
+      "b": "La règle ne vaut que pour les mots de passe configurés après la commande ; les comptes existants ne sont pas touchés.",
+      "c": "IOS ne gère ni expiration ni changement forcé pour enable secret : un mot de passe trop court est simplement refusé."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — Configuring Security with Passwords, Privilege Levels, and Login Usernames (security passwords min-length)"
+  },
+  {
+    "slug": "ccna-5.5-site-to-site-vpn-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent un VPN IPsec site-à-site ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le tunnel relie deux passerelles, routeurs ou pare-feu, et protège le trafic de réseaux entiers."
+        },
+        {
+          "id": "b",
+          "text": "Chaque utilisateur doit lancer un client VPN, comme Cisco Secure Client, sur son poste."
+        },
+        {
+          "id": "c",
+          "text": "Il repose obligatoirement sur TLS et s'utilise depuis un navigateur web."
+        },
+        {
+          "id": "d",
+          "text": "Les hôtes envoient du trafic IP ordinaire, sans logiciel VPN, et ignorent qu'il est chiffré."
+        },
+        {
+          "id": "e",
+          "text": "Il nécessite une liaison louée dédiée entre les deux sites, car le trafic ne doit jamais passer par Internet."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Un VPN site-à-site relie deux réseaux par un tunnel permanent entre leurs passerelles (routeurs ou pare-feu), qui chiffrent et déchiffrent le trafic de façon transparente. Les hôtes n'ont besoin d'aucun logiciel : ils envoient leurs paquets à leur passerelle habituelle. Le tunnel traverse un réseau public comme Internet, ce qui évite justement de louer une liaison dédiée.",
+    "distractorNotes": {
+      "b": "Un client installé sur chaque poste caractérise le VPN d'accès distant (remote access), pas le site-à-site.",
+      "c": "TLS depuis un navigateur correspond au VPN d'accès distant sans client (clientless) ; un VPN site-à-site IPsec n'utilise pas TLS.",
+      "e": "L'intérêt d'un VPN est justement de remplacer une liaison dédiée par un tunnel sécurisé à travers Internet."
+    },
+    "reference": "RFC 4301 (Security Architecture for the Internet Protocol)"
+  },
+  {
+    "slug": "ccna-5.5-ipsec-tunnel-steps-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Remettez dans l'ordre les étapes de la vie d'un tunnel IPsec site-à-site entre R1 et R2, négocié avec IKEv1.",
+      "items": [
+        {
+          "id": "data",
+          "text": "Les données circulent chiffrées dans le tunnel, encapsulées dans ESP."
+        },
+        {
+          "id": "ike2",
+          "text": "IKE phase 2 : les routeurs négocient les SA IPsec (protocole ESP, algorithmes, clés) qui protégeront les données."
+        },
+        {
+          "id": "traffic",
+          "text": "Un hôte du site de R1 envoie vers le site de R2 du trafic qui correspond à la politique IPsec (trafic « intéressant »)."
+        },
+        {
+          "id": "end",
+          "text": "Les SA IPsec expirent ou sont supprimées, et le tunnel se termine."
+        },
+        {
+          "id": "ike1",
+          "text": "IKE phase 1 : R1 et R2 s'authentifient mutuellement et établissent un canal de négociation sécurisé (SA IKE)."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "traffic",
+        "ike1",
+        "ike2",
+        "data",
+        "end"
+      ]
+    },
+    "explanation": "Le trafic intéressant, défini par l'ACL de la crypto map, déclenche la négociation. IKE phase 1 authentifie les pairs (clé pré-partagée ou certificats) et crée, grâce à un échange Diffie-Hellman, un canal protégé ; IKE phase 2 négocie dans ce canal les SA IPsec qui serviront aux données. Le trafic circule ensuite dans ESP jusqu'à l'expiration des SA (durée de vie ou volume) ou leur suppression, qui termine le tunnel.",
+    "reference": "RFC 2409 (IKEv1) ; RFC 4301"
+  },
+  {
+    "slug": "ccna-5.5-gre-over-ipsec-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux sites sont reliés par un VPN IPsec site-à-site classique (crypto map appliquée à l'interface WAN, sans interface tunnel). L'équipe veut faire tourner OSPF entre les deux routeurs à travers ce VPN, mais les adjacences ne se forment pas. Quelle solution répond au besoin tout en gardant le trafic chiffré ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer ESP par AH, car AH sait transporter le trafic multicast."
+        },
+        {
+          "id": "b",
+          "text": "Monter un tunnel GRE entre les deux routeurs et le chiffrer avec IPsec."
+        },
+        {
+          "id": "c",
+          "text": "Passer IPsec du mode tunnel au mode transport, qui laisse passer le multicast."
+        },
+        {
+          "id": "d",
+          "text": "Remplacer IPsec par un simple tunnel GRE, qui chiffre lui-même le trafic."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "IPsec classique ne protège que du trafic unicast : les Hello OSPF, envoyés à 224.0.0.5, ne passent pas dans le tunnel. GRE encapsule n'importe quel paquet IP, multicast compris, dans des paquets unicast (protocole IP 47) échangés entre les deux extrémités du tunnel. IPsec chiffre ensuite ces paquets GRE : on obtient à la fois le routage dynamique et la confidentialité.",
+    "distractorNotes": {
+      "a": "AH n'assure que l'intégrité et l'authentification, sans chiffrement ; et la limite au trafic unicast vient de la crypto map, pas du choix entre ESP et AH.",
+      "c": "Le mode transport change seulement la façon d'encapsuler (l'en-tête IP d'origine est conservé) ; il ne lève pas la limite au trafic unicast.",
+      "d": "GRE seul transporte bien le multicast, mais il ne chiffre rien : le trafic traverserait Internet en clair."
+    },
+    "reference": "RFC 2784 (GRE) ; RFC 4301"
+  },
+  {
+    "slug": "ccna-5.6-vty-access-class-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, depuis le mode de configuration globale, créez en une seule commande l'ACL standard numérotée 15 qui autorise le réseau d'administration 10.99.0.0/24. Appliquez-la ensuite en entrée sur les lignes VTY 0 à 15, pour que seul ce réseau puisse ouvrir une session à distance sur le commutateur.",
+      "prompt": "SW1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "access-list 15 permit 10.99.0.0 0.0.0.255"
+        ],
+        [
+          "line vty 0 15"
+        ],
+        [
+          "access-class 15 in"
+        ]
+      ]
+    },
+    "explanation": "Une ACL standard (numéros 1 à 99 et 1300 à 1999) ne teste que l'adresse source, ce qui suffit pour choisir qui peut ouvrir une session ; le masque générique de 10.99.0.0/24 est 0.0.0.255. Sur des lignes, l'ACL s'applique avec « access-class 15 in », et non avec « ip access-group », réservé aux interfaces. Le deny implicite en fin d'ACL refuse toutes les autres sources. Erreurs fréquentes : saisir le masque 255.255.255.0 au lieu du wildcard, ou ne protéger que les lignes 0 à 4.",
+    "reference": "Cisco IOS Security Configuration Guide — Controlling Access to a Virtual Terminal Line"
+  },
+  {
+    "slug": "ccna-5.6-wildcard-range-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une entrée d'ACL doit correspondre exactement aux adresses sources 10.20.16.0 à 10.20.23.255, et à aucune autre. Quel masque générique (wildcard) faut-il associer à l'adresse 10.20.16.0, et à quelle longueur de préfixe cette plage correspond-elle ?",
+      "fields": [
+        {
+          "id": "wildcard",
+          "label": "Masque générique"
+        },
+        {
+          "id": "prefix",
+          "label": "Longueur du préfixe (sans le /)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "wildcard": {
+          "accepted": [
+            "0.0.7.255"
+          ],
+          "normalize": "ipv4"
+        },
+        "prefix": {
+          "accepted": [
+            "21"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La plage couvre les valeurs 16 à 23 du troisième octet, soit 8 valeurs consécutives qui commencent sur un multiple de 8 : seuls les 3 bits de poids faible de cet octet varient, ainsi que tout le quatrième octet. Le wildcard vaut donc 0.0.7.255 (7 = 2³ − 1). Il correspond au masque 255.255.248.0, soit 8 + 8 + 5 = 21 bits de préfixe.",
+    "reference": "Cisco IOS Security Configuration Guide — IP Access List Overview"
+  },
+  {
+    "slug": "ccna-5.6-acl-first-match-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'ACL 120 est appliquée en entrée sur l'interface LAN de R1, à laquelle sont reliés les sous-réseaux de 10.1.0.0/16. Le poste 10.1.20.15 tente quatre connexions. Laquelle est autorisée ?",
+      "exhibit": "R1# show access-lists 120\nExtended IP access list 120\n    10 permit tcp 10.1.0.0 0.0.255.255 host 192.0.2.10 eq 443\n    20 deny ip 10.1.20.0 0.0.0.255 any\n    30 permit udp 10.1.0.0 0.0.255.255 any eq domain\n    40 permit icmp 10.1.0.0 0.0.255.255 any echo",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une requête DNS vers le serveur 192.0.2.53."
+        },
+        {
+          "id": "b",
+          "text": "Un ping vers 192.0.2.10."
+        },
+        {
+          "id": "c",
+          "text": "Une connexion HTTPS vers 192.0.2.10."
+        },
+        {
+          "id": "d",
+          "text": "Une connexion HTTP vers 192.0.2.10."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "IOS parcourt l'ACL de haut en bas et applique la première entrée qui correspond, sans lire la suite. Le HTTPS vers 192.0.2.10 correspond à l'entrée 10 et passe. Tous les autres flux de 10.1.20.15 tombent sur l'entrée 20, qui refuse tout le trafic IP de 10.1.20.0/24 : pour ce poste, les entrées 30 et 40 ne sont jamais atteintes. Le HTTP ne serait de toute façon autorisé par aucune entrée et finirait sur le deny implicite.",
+    "distractorNotes": {
+      "a": "L'entrée 30 autorise bien le DNS, mais l'entrée 20, placée avant, refuse déjà tout le trafic IP de 10.1.20.0/24.",
+      "b": "L'entrée 40 autorise l'echo ICMP, mais l'entrée 20 correspond en premier et rejette le paquet.",
+      "d": "L'entrée 10 ne concerne que le port 443 ; le HTTP (port 80) tombe sur l'entrée 20, et serait de toute façon bloqué par le deny implicite."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access List Overview"
+  },
+  {
+    "slug": "ccna-5.7-port-security-sticky-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, le port GigabitEthernet1/0/5 est déjà configuré en mode access. Depuis le mode de configuration globale, entrez dans cette interface, puis activez port security, autorisez au plus 2 adresses MAC, activez l'apprentissage sticky et choisissez le mode de violation restrict.",
+      "prompt": "SW1(config)#",
+      "lines": 5
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          4
+        ]
+      ],
+      "commands": [
+        [
+          "interface GigabitEthernet1/0/5"
+        ],
+        [
+          "switchport port-security"
+        ],
+        [
+          "switchport port-security maximum 2"
+        ],
+        [
+          "switchport port-security mac-address sticky"
+        ],
+        [
+          "switchport port-security violation restrict"
+        ]
+      ]
+    },
+    "explanation": "« switchport port-security » active la fonction : sans elle, les autres commandes enregistrent des paramètres mais aucun contrôle n'a lieu. Dans l'interface, ces quatre commandes peuvent être saisies dans n'importe quel ordre. Par défaut, port security n'autorise qu'une adresse MAC et applique le mode shutdown (err-disabled) ; « maximum 2 » et « violation restrict » modifient ces valeurs. « mac-address sticky » apprend dynamiquement les adresses et les inscrit dans la running-config : il faut l'enregistrer dans la startup-config pour qu'elles survivent à un redémarrage. La fonction n'est acceptée que sur un port configuré statiquement (access ou trunk), d'où la précision sur le mode access.",
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-dhcp-snooping-config-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur SW1, les clients du VLAN 10 sont branchés sur les ports d'accès Gi1/0/1 à Gi1/0/20, et le serveur DHCP légitime est joignable par le trunk Gi1/0/24. Quelles trois commandes sont nécessaires pour que DHCP snooping bloque un serveur DHCP pirate branché sur un port d'accès, tout en laissant les clients obtenir leur adresse du serveur légitime ?",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "« ip arp inspection vlan 10 » en configuration globale."
+        },
+        {
+          "id": "b",
+          "text": "« ip dhcp snooping » en configuration globale."
+        },
+        {
+          "id": "c",
+          "text": "« ip dhcp snooping trust » sur les interfaces Gi1/0/1 à Gi1/0/20."
+        },
+        {
+          "id": "d",
+          "text": "« ip dhcp snooping vlan 10 » en configuration globale."
+        },
+        {
+          "id": "e",
+          "text": "« ip dhcp snooping trust » sur l'interface Gi1/0/24."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "DHCP snooping doit être activé globalement, puis pour chaque VLAN concerné. Une fois la fonction active, tous les ports sont untrusted : ils acceptent les messages des clients (Discover, Request) mais rejettent les messages de serveur (Offer, Ack), ce qui neutralise un serveur pirate. Seul le port qui mène au serveur légitime, ici le trunk Gi1/0/24, doit être déclaré trusted.",
+    "distractorNotes": {
+      "a": "« ip arp inspection vlan 10 » active DAI, qui s'appuie sur DHCP snooping mais n'est pas nécessaire pour bloquer un serveur DHCP pirate.",
+      "c": "Déclarer trusted les ports des clients autoriserait justement un serveur pirate branché sur l'un d'eux à répondre."
+    },
+    "reference": "Cisco Catalyst 9300 Series Configuration Guide — DHCP Snooping"
+  },
+  {
+    "slug": "ccna-5.7-dai-static-host-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur SW1, DHCP snooping est actif sur le VLAN 20 et l'administrateur vient d'ajouter « ip arp inspection vlan 20 ». Les PC, qui obtiennent leur adresse par DHCP, fonctionnent normalement, mais une imprimante configurée avec l'adresse statique 10.20.0.50 ne communique plus avec personne. Quelle est la cause la plus probable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "DAI bloque tout le trafic IP des hôtes à adresse statique, et pas seulement leurs messages ARP."
+        },
+        {
+          "id": "b",
+          "text": "Le port de l'imprimante doit recevoir « ip dhcp snooping trust » pour que DAI accepte ses messages ARP."
+        },
+        {
+          "id": "c",
+          "text": "L'imprimante dépasse la limite de 15 paquets ARP par seconde et son port est passé en err-disabled."
+        },
+        {
+          "id": "d",
+          "text": "L'imprimante n'a aucune entrée dans la table de binding DHCP snooping : DAI rejette donc ses ARP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "DAI intercepte les messages ARP reçus sur les ports untrusted et vérifie que le couple adresse IP/adresse MAC annoncé figure dans la table de binding construite par DHCP snooping. Les PC en DHCP y figurent, mais pas l'imprimante à adresse statique : ses requêtes et réponses ARP sont rejetées, et plus personne ne peut résoudre son adresse MAC. On corrige en autorisant ce couple dans une ACL ARP (« arp access-list », puis « ip arp inspection filter … vlan 20 »).",
+    "distractorNotes": {
+      "a": "DAI ne filtre que l'ARP ; le filtrage du trafic IP selon la table de binding est le rôle d'IP Source Guard.",
+      "b": "La confiance DAI se configure séparément avec « ip arp inspection trust » ; « ip dhcp snooping trust » n'a aucun effet sur DAI.",
+      "c": "Une imprimante n'émet pas 15 ARP par seconde ; dépasser cette limite par défaut des ports untrusted signalerait plutôt une attaque."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Dynamic ARP Inspection"
+  },
+  {
+    "slug": "ccna-5.8-aaa-accounting-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans le modèle AAA, quelle fonction enregistre les commandes saisies par un administrateur ainsi que l'heure de début et la durée de sa session ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'authentification (authentication)"
+        },
+        {
+          "id": "b",
+          "text": "L'autorisation (authorization)"
+        },
+        {
+          "id": "c",
+          "text": "La confidentialité, par le chiffrement des échanges"
+        },
+        {
+          "id": "d",
+          "text": "La traçabilité (accounting)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Les trois fonctions AAA répondent à trois questions : l'authentification vérifie qui est l'utilisateur, l'autorisation détermine ce qu'il a le droit de faire, et la traçabilité (accounting) enregistre ce qu'il a fait. Les enregistrements d'accounting (début et fin de session, commandes exécutées) sont envoyés au serveur AAA, par exemple avec « aaa accounting exec default start-stop group tacacs+ » et « aaa accounting commands 15 default start-stop group tacacs+ » ; la traçabilité des commandes exige TACACS+.",
+    "distractorNotes": {
+      "a": "L'authentification vérifie l'identité de l'utilisateur (nom et mot de passe, certificat…) ; elle n'enregistre pas ses actions.",
+      "b": "L'autorisation détermine les commandes et services permis ; elle ne garde pas de trace de leur utilisation.",
+      "c": "Le chiffrement protège les échanges, mais ce n'est pas l'une des trois fonctions du modèle AAA."
+    },
+    "reference": "Cisco IOS Security Configuration Guide: Securing User Services — Configuring Accounting"
+  },
+  {
+    "slug": "ccna-5.8-radius-exchange-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "R1 est configuré pour authentifier les sessions SSH des administrateurs auprès d'un serveur RADIUS joint sur ses ports standard, avec traçabilité (accounting) des sessions. Remettez dans l'ordre les étapes d'une session complète.",
+      "items": [
+        {
+          "id": "accept",
+          "text": "Le serveur valide les identifiants et répond par un Access-Accept, qui contient aussi les attributs d'autorisation."
+        },
+        {
+          "id": "stop",
+          "text": "À la déconnexion de l'administrateur, R1 envoie un Accounting-Request de type Stop."
+        },
+        {
+          "id": "creds",
+          "text": "L'administrateur saisit son nom d'utilisateur et son mot de passe dans la session SSH."
+        },
+        {
+          "id": "acctresp",
+          "text": "Le serveur confirme l'enregistrement du début de session par un Accounting-Response."
+        },
+        {
+          "id": "req",
+          "text": "R1 envoie un Access-Request sur UDP 1812, dans lequel seul le mot de passe est chiffré."
+        },
+        {
+          "id": "start",
+          "text": "R1 envoie un Accounting-Request de type Start sur UDP 1813."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "creds",
+        "req",
+        "accept",
+        "start",
+        "acctresp",
+        "stop"
+      ]
+    },
+    "explanation": "R1, client RADIUS, transmet les identifiants dans un Access-Request (UDP 1812) où seul l'attribut User-Password est masqué grâce au secret partagé. RADIUS combine authentification et autorisation : l'Access-Accept porte directement les attributs d'autorisation, comme le niveau de privilège. La traçabilité utilise des Accounting-Request (UDP 1813) de type Start à l'ouverture et Stop à la fermeture, chacun acquitté par un Accounting-Response. Attention : la commande historique « radius-server host » d'IOS utilise par défaut les anciens ports 1645 et 1646.",
+    "reference": "RFC 2865 (RADIUS) ; RFC 2866 (RADIUS Accounting)"
+  },
+  {
+    "slug": "ccna-5.9-wpa3-improvements-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux nouveautés WPA3 apporte-t-il par rapport aux exigences de WPA2 ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le chiffrement AES-CCMP remplace TKIP comme protocole obligatoire."
+        },
+        {
+          "id": "b",
+          "text": "La protection des trames de gestion (PMF, IEEE 802.11w) devient obligatoire."
+        },
+        {
+          "id": "c",
+          "text": "Le mode Enterprise authentifie les utilisateurs par 802.1X/EAP auprès d'un serveur RADIUS."
+        },
+        {
+          "id": "d",
+          "text": "Le protocole TKIP reste autorisé pour la compatibilité avec les anciens clients."
+        },
+        {
+          "id": "e",
+          "text": "Le mode WPA3-Enterprise 192 bits impose le chiffrement AES-GCMP-256."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "WPA3 rend obligatoire PMF (802.11w), qui protège contre la falsification des trames de gestion comme la désauthentification, alors que PMF n'était qu'optionnel avec WPA2. Son mode Enterprise 192 bits impose en outre la suite CNSA, avec le chiffrement AES-GCMP-256, alors que WPA2 n'exigeait que l'AES-CCMP 128 bits. WPA3-Personal remplace aussi l'authentification PSK par SAE.",
+    "distractorNotes": {
+      "a": "Le passage obligatoire à AES-CCMP est l'apport de WPA2 par rapport à WPA.",
+      "c": "Le mode Enterprise avec 802.1X/EAP existe déjà dans WPA2, et même dans WPA.",
+      "d": "WPA3 interdit TKIP, abandonné pour ses faiblesses."
+    },
+    "reference": "Wi-Fi Alliance, WPA3 Specification ; IEEE 802.11w"
+  },
+  {
+    "slug": "ccna-5.9-wpa2-enterprise-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle différence fondamentale distingue WPA2-Enterprise de WPA2-Personal ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "WPA2-Enterprise chiffre avec TKIP, alors que WPA2-Personal utilise AES-CCMP."
+        },
+        {
+          "id": "b",
+          "text": "WPA2-Enterprise remplace la clé pré-partagée par l'échange SAE."
+        },
+        {
+          "id": "c",
+          "text": "WPA2-Enterprise filtre les clients selon leur adresse MAC, enregistrée au préalable sur le WLC."
+        },
+        {
+          "id": "d",
+          "text": "WPA2-Enterprise authentifie chaque utilisateur par 802.1X/EAP via un serveur RADIUS."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "En WPA2-Personal, tous les clients partagent la même clé pré-partagée (PSK). En WPA2-Enterprise, chaque utilisateur s'authentifie avec ses propres identifiants ou un certificat par 802.1X/EAP : l'AP ou le WLC joue le rôle d'authenticator et relaie l'échange vers un serveur RADIUS. Les deux modes chiffrent avec AES-CCMP ; seules l'authentification et l'obtention des clés diffèrent.",
+    "distractorNotes": {
+      "a": "Les deux modes de WPA2 utilisent AES-CCMP ; TKIP est l'héritage de WPA.",
+      "b": "SAE remplace la PSK dans WPA3-Personal, pas dans WPA2-Enterprise.",
+      "c": "Le filtrage MAC est une option distincte du WLC, facile à contourner, qui ne définit pas le mode Enterprise."
+    },
+    "reference": "IEEE 802.11-2020 (RSNA, ex-802.11i) ; IEEE 802.1X-2020"
+  },
+  {
+    "slug": "ccna-5.10-psk-ascii-length-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "easy",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur un WLC, vous configurez un WLAN WPA2-Personal et choisissez le format de PSK « ASCII ». Quelles sont les longueurs minimale et maximale de la phrase secrète acceptée ?",
+      "fields": [
+        {
+          "id": "min",
+          "label": "Longueur minimale (en caractères)"
+        },
+        {
+          "id": "max",
+          "label": "Longueur maximale (en caractères)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "min": {
+          "accepted": [
+            "8"
+          ],
+          "normalize": "int"
+        },
+        "max": {
+          "accepted": [
+            "63"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Une phrase secrète WPA2 au format ASCII compte de 8 à 63 caractères imprimables ; la PSK de 256 bits en est dérivée par PBKDF2, avec le SSID comme sel. Le format HEX attend directement ces 256 bits, soit exactement 64 chiffres hexadécimaux.",
+    "reference": "IEEE 802.11-2020, annexe J (correspondance passphrase/PSK)"
+  },
+  {
+    "slug": "ccna-5.10-wlc-gui-wpa2-psk-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un WLC AireOS, vous configurez le WLAN « Labo-Data » en WPA2-Personal avec le chiffrement recommandé. Dans WLANs > Edit > Security > Layer 2, quelle combinaison de paramètres faut-il choisir ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Layer 2 Security : WPA+WPA2 ; WPA2 Policy avec chiffrement TKIP ; Authentication Key Management : PSK, format ASCII."
+        },
+        {
+          "id": "b",
+          "text": "Layer 2 Security : WPA+WPA2 ; WPA2 Policy avec chiffrement AES ; Authentication Key Management : PSK, format ASCII."
+        },
+        {
+          "id": "c",
+          "text": "Layer 2 Security : WPA+WPA2 ; WPA2 Policy avec chiffrement AES ; Authentication Key Management : 802.1X."
+        },
+        {
+          "id": "d",
+          "text": "Layer 2 Security : None ; dans l'onglet Layer 3, Web Policy avec authentification."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "WPA2-Personal se règle dans l'onglet Security > Layer 2 : on choisit WPA+WPA2, on coche WPA2 Policy avec le chiffrement AES (CCMP), puis on active PSK dans Authentication Key Management et on saisit la phrase secrète au format ASCII. C'est la gestion des clés qui distingue Personal (PSK) d'Enterprise (802.1X).",
+    "distractorNotes": {
+      "a": "TKIP est obsolète et déconseillé ; il interdit en outre les débits 802.11n et 802.11ac. Le chiffrement recommandé avec WPA2 est AES.",
+      "c": "802.1X dans Authentication Key Management configure WPA2-Enterprise, qui exige un serveur RADIUS.",
+      "d": "Sans sécurité de niveau 2, le WLAN est ouvert : la web policy authentifie l'utilisateur sur un portail mais ne chiffre pas le trafic radio."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — WLAN Security (WPA2 PSK)"
   }
 ]

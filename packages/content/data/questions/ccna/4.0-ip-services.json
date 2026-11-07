@@ -36,7 +36,8 @@
       "a": "L'adresse inside local est 192.168.1.10, l'adresse réelle du PC.",
       "c": "Outside local est l'adresse du serveur externe telle qu'elle est vue depuis l'intérieur.",
       "d": "Outside global est l'adresse réelle du serveur web externe."
-    }
+    },
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation (NAT Inside and Outside Addresses)"
   },
   {
     "slug": "ccna-4.3-dhcp-dora-001",
@@ -83,10 +84,10 @@
     "certification": "ccna",
     "domain": "4.0",
     "subtopic": "4.5",
-    "difficulty": "medium",
+    "difficulty": "easy",
     "body": {
       "type": "mcq_single",
-      "stem": "Quel niveau de gravité syslog correspond aux messages « warnings » ?",
+      "stem": "Quel niveau de gravité syslog correspond aux messages « notifications » ?",
       "options": [
         {
           "id": "a",
@@ -108,13 +109,13 @@
     },
     "key": {
       "type": "mcq_single",
-      "correct": "c"
+      "correct": "d"
     },
-    "explanation": "Les niveaux vont de 0 à 7 : emergencies, alerts, critical, errors, warnings (4), notifications, informational, debugging.",
+    "explanation": "Les niveaux vont de 0 à 7 : 0 emergencies, 1 alerts, 2 critical, 3 errors, 4 warnings, 5 notifications, 6 informational, 7 debugging. Les messages « notifications » sont donc de niveau 5.",
     "distractorNotes": {
       "a": "2 correspond à critical.",
       "b": "3 correspond à errors.",
-      "d": "5 correspond à notifications."
+      "c": "4 correspond à warnings."
     },
     "reference": "RFC 5424"
   },
@@ -142,7 +143,7 @@
         },
         {
           "id": "d",
-          "text": "Aucune : SNMP ne chiffre jamais"
+          "text": "SNMPv2c, lorsqu'une ACL est associée à la community"
         }
       ]
     },
@@ -154,8 +155,924 @@
     "distractorNotes": {
       "a": "SNMPv1 ne protège que par une community envoyée en clair.",
       "b": "SNMPv2c utilise aussi des communities en clair.",
-      "d": "SNMPv3 chiffre bien les données au niveau authPriv."
+      "d": "Une ACL sur la community limite seulement les adresses autorisées à interroger l'agent ; la community et les données circulent toujours en clair. Seul SNMPv3 authentifie et chiffre (niveau authPriv)."
     },
     "reference": "RFC 3414"
+  },
+  {
+    "slug": "ccna-4.1-pat-acl-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, l'interface G0/0 (LAN 192.168.10.0/24) porte déjà « ip nat inside » et l'interface G0/1 (vers le FAI) « ip nat outside ». Depuis le mode de configuration globale, créez l'ACL standard numérotée 1 qui autorise le réseau 192.168.10.0/24, puis configurez la PAT pour que tous ces hôtes soient traduits vers l'adresse de l'interface G0/1.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "access-list 1 permit 192.168.10.0 0.0.0.255"
+        ],
+        [
+          "ip nat inside source list 1 interface GigabitEthernet0/1 overload"
+        ]
+      ]
+    },
+    "explanation": "L'ACL 1 sélectionne les adresses inside local à traduire ; elle s'écrit avec un wildcard mask (0.0.0.255), pas avec un masque de sous-réseau. « ip nat inside source list 1 interface GigabitEthernet0/1 overload » traduit ces adresses vers l'unique adresse de G0/1 et distingue les sessions par leur numéro de port : c'est la PAT. Sans le mot-clé « overload », la traduction serait un-pour-un et un seul hôte à la fois pourrait utiliser l'adresse de l'interface. Autre erreur fréquente : écrire « outside source », qui traduit les adresses des hôtes externes.",
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-nat-translations-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 traduit les adresses du LAN 192.168.10.0/24 ; son interface outside a l'adresse 203.0.113.2. Quelle affirmation est exacte ?",
+      "exhibit": "R1# show ip nat translations\nPro Inside global         Inside local          Outside local         Outside global\ntcp 203.0.113.2:51514     192.168.10.11:51514   198.51.100.80:443     198.51.100.80:443\ntcp 203.0.113.2:1024      192.168.10.12:51514   198.51.100.80:443     198.51.100.80:443\nudp 203.0.113.2:61002     192.168.10.13:61002   192.0.2.53:53         192.0.2.53:53",
+      "options": [
+        {
+          "id": "a",
+          "text": "198.51.100.80 est l'adresse inside global du serveur web."
+        },
+        {
+          "id": "b",
+          "text": "Les deux sessions HTTPS partagent l'adresse 203.0.113.2 et se distinguent par le port source traduit."
+        },
+        {
+          "id": "c",
+          "text": "R1 traduit aussi l'adresse du serveur web, puisque les colonnes outside sont renseignées."
+        },
+        {
+          "id": "d",
+          "text": "Le serveur web voit arriver les sessions depuis 192.168.10.11 et 192.168.10.12."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Les hôtes 192.168.10.11 et 192.168.10.12 (inside local) sont tous deux traduits en 203.0.113.2 (inside global) : c'est de la PAT. Comme ils utilisent le même port source 51514, R1 conserve ce port pour la première session et attribue le port 1024 à la seconde, ce qui lui permet de rattacher chaque réponse au bon hôte. Les colonnes outside local et outside global sont identiques : l'adresse du serveur n'est pas traduite.",
+    "distractorNotes": {
+      "a": "198.51.100.80 est un hôte externe : c'est son adresse outside local et outside global. L'adresse inside global est celle que R1 attribue aux hôtes internes (203.0.113.2).",
+      "c": "Les colonnes outside sont toujours remplies dans une entrée étendue ; outside local et outside global étant égales, l'adresse externe n'est pas traduite.",
+      "d": "Le serveur ne voit que l'adresse inside global 203.0.113.2 ; les adresses 192.168.10.x ne quittent pas le LAN."
+    },
+    "reference": "RFC 3022, section 2.2"
+  },
+  {
+    "slug": "ccna-4.1-nat-pool-exhausted-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le LAN 192.168.20.0/24 de R1 compte environ 150 postes et le FAI route le bloc 203.0.113.16/29 vers R1. Quelques postes naviguent normalement, mais la plupart n'accèdent pas à Internet. Quelles deux modifications, chacune à elle seule, permettraient à tous les postes d'accéder à Internet en même temps ?",
+      "exhibit": "! Extrait de la configuration de R1\ninterface GigabitEthernet0/0\n ip address 192.168.20.1 255.255.255.0\n ip nat inside\n!\ninterface GigabitEthernet0/1\n ip address 198.51.100.2 255.255.255.252\n ip nat outside\n!\nip nat pool PUBLIC 203.0.113.17 203.0.113.22 netmask 255.255.255.248\nip nat inside source list 10 pool PUBLIC\n!\naccess-list 10 permit 192.168.20.0 0.0.0.255\n\nR1# show ip nat statistics | begin Dynamic\nDynamic mappings:\n-- Inside Source\n[Id: 1] access-list 10 pool PUBLIC refcount 6\n pool PUBLIC: netmask 255.255.255.248\n        start 203.0.113.17 end 203.0.113.22\n        type generic, total addresses 6, allocated 6 (100%), misses 37",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter le mot-clé « overload » à la fin de « ip nat inside source list 10 pool PUBLIC »."
+        },
+        {
+          "id": "b",
+          "text": "Remplacer le masque du pool par « netmask 255.255.255.0 » pour l'agrandir."
+        },
+        {
+          "id": "c",
+          "text": "Ajouter une route par défaut vers le routeur du FAI, 198.51.100.1."
+        },
+        {
+          "id": "d",
+          "text": "Remplacer la règle par « ip nat inside source list 10 interface GigabitEthernet0/1 overload »."
+        },
+        {
+          "id": "e",
+          "text": "Remplacer l'ACL 10 par « access-list 10 permit any »."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Sans « overload », la NAT dynamique réserve une adresse du pool à chaque hôte interne : le pool PUBLIC ne contient que six adresses (203.0.113.17 à 203.0.113.22), toutes allouées, et comme une traduction simple reste en place 24 heures d'inactivité par défaut, les autres hôtes échouent (compteur misses). Avec « overload », R1 fait de la PAT sur les adresses du pool et des milliers de sessions peuvent partager une même adresse. La PAT sur l'adresse de G0/1 règle aussi le problème, en se passant du pool. En pratique, on vide les traductions dynamiques existantes (« clear ip nat translation * ») avant de modifier la règle.",
+    "distractorNotes": {
+      "b": "Le nombre d'adresses du pool dépend de la plage de début et de fin, pas du masque, qui sert seulement à vérifier la cohérence de la plage.",
+      "c": "Une partie des postes navigue déjà : le routage vers Internet fonctionne, c'est le pool qui est épuisé.",
+      "e": "L'ACL autorise déjà tout le LAN ; l'élargir n'ajoute aucune adresse au pool."
+    },
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.2-ntp-stratum-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. R1 (10.0.12.1) n'a accès à aucune source de temps externe et R2 s'est synchronisé sur lui. Quelle strate « show ntp status » affiche-t-il sur R2 ?",
+      "exhibit": "R1(config)# ntp master\n\nR2(config)# ntp server 10.0.12.1",
+      "fields": [
+        {
+          "id": "stratum",
+          "label": "Strate de R2 (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "stratum": {
+          "accepted": [
+            "9"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Sans argument, « ntp master » fait de R1 une source de temps faisant autorité, fondée sur son horloge interne, à la strate 8 par défaut. La strate d'un client NTP vaut celle de la source sur laquelle il est synchronisé, plus 1 : R2 annonce donc la strate 9 (« Clock is synchronized, stratum 9, reference is 10.0.12.1 »). Répondre 8 revient à confondre la strate du serveur et celle du client.",
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-ntp-basics-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur NTP sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "« ntp server 192.0.2.10 » fait du routeur un serveur NTP pour l'hôte 192.0.2.10."
+        },
+        {
+          "id": "b",
+          "text": "NTP utilise le transport UDP, sur le port 123."
+        },
+        {
+          "id": "c",
+          "text": "NTP transporte l'heure locale de chaque équipement, fuseau horaire compris."
+        },
+        {
+          "id": "d",
+          "text": "La strate 16 désigne une horloge de référence, comme un récepteur GPS."
+        },
+        {
+          "id": "e",
+          "text": "Plus la strate est faible, plus la source est proche de l'horloge de référence."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "NTP s'appuie sur UDP : le serveur écoute sur le port 123 (IOS l'utilise aussi comme port source). La strate mesure la distance à l'horloge de référence : un serveur de strate 1 y est directement relié et chaque niveau de synchronisation supplémentaire ajoute 1. Plus la strate est faible, plus la source est réputée précise.",
+    "distractorNotes": {
+      "a": "« ntp server 192.0.2.10 » fait au contraire du routeur un client qui se synchronise sur 192.0.2.10.",
+      "c": "NTP échange l'heure en UTC ; le fuseau horaire se règle localement, avec « clock timezone » sur IOS.",
+      "d": "La strate 16 signifie « non synchronisé » ; les horloges de référence (GPS, horloges atomiques) sont en strate 0."
+    },
+    "reference": "RFC 5905"
+  },
+  {
+    "slug": "ccna-4.3-dhcp-server-pool-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, les adresses 192.168.30.1 à 192.168.30.10 sont déjà exclues. Depuis le mode de configuration globale, créez le pool DHCP nommé LAN30, puis déclarez-y le réseau 192.168.30.0/24 avec son masque, la passerelle par défaut 192.168.30.1 et le serveur DNS 192.168.30.5.",
+      "prompt": "R1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          3
+        ]
+      ],
+      "commands": [
+        [
+          "ip dhcp pool LAN30"
+        ],
+        [
+          "network 192.168.30.0 255.255.255.0",
+          "network 192.168.30.0 /24"
+        ],
+        [
+          "default-router 192.168.30.1"
+        ],
+        [
+          "dns-server 192.168.30.5"
+        ]
+      ]
+    },
+    "explanation": "« ip dhcp pool LAN30 » crée le pool et fait passer en mode R1(dhcp-config)#. « network » définit le réseau distribué (masque en décimal pointé ou longueur de préfixe), « default-router » la passerelle (option 3) et « dns-server » le serveur DNS (option 6) transmis aux clients. Les trois sous-commandes peuvent être saisies dans n'importe quel ordre. Erreurs fréquentes : taper « default-gateway » dans le pool, alors que la passerelle des clients se déclare avec « default-router » (« ip default-gateway » est une commande globale qui fixe la passerelle de l'équipement lui-même quand il ne route pas), ou saisir « ip dhcp excluded-address » dans le pool alors qu'elle se configure en mode global.",
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Server"
+  },
+  {
+    "slug": "ccna-4.3-dns-resolution-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Un PC doit joindre www.example.com. Son serveur DNS, qui joue le rôle de résolveur récursif, vient de démarrer : son cache est vide et il ne connaît que les serveurs racine. Le PC n'a pas non plus ce nom en cache. Remettez dans l'ordre les étapes de la résolution.",
+      "items": [
+        {
+          "id": "tld",
+          "text": "Le résolveur interroge un serveur du TLD .com, qui le renvoie vers les serveurs de example.com"
+        },
+        {
+          "id": "cache",
+          "text": "Le PC consulte son propre cache DNS, sans y trouver le nom"
+        },
+        {
+          "id": "reply",
+          "text": "Le résolveur transmet l'adresse au PC et la garde en cache pendant le TTL"
+        },
+        {
+          "id": "root",
+          "text": "Le résolveur interroge un serveur racine, qui le renvoie vers les serveurs du TLD .com"
+        },
+        {
+          "id": "query",
+          "text": "Le PC envoie une requête récursive de type A à son serveur DNS, sur UDP 53"
+        },
+        {
+          "id": "auth",
+          "text": "Le résolveur interroge un serveur faisant autorité pour example.com, qui renvoie l'enregistrement A"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "cache",
+        "query",
+        "root",
+        "tld",
+        "auth",
+        "reply"
+      ]
+    },
+    "explanation": "Le PC vérifie d'abord son propre cache, puis envoie une requête récursive à son serveur DNS (UDP 53 ; TCP 53 sert aux réponses volumineuses et aux transferts de zone). Le résolveur procède alors par requêtes itératives en descendant l'arborescence : serveur racine, serveur du TLD .com, puis serveur faisant autorité pour example.com, qui fournit l'enregistrement A (AAAA pour une adresse IPv6). Il renvoie enfin la réponse au PC et la conserve en cache pendant le TTL de l'enregistrement.",
+    "reference": "RFC 1034, section 5.3.3"
+  },
+  {
+    "slug": "ccna-4.4-snmp-operations-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque message SNMP à son rôle.",
+      "left": [
+        {
+          "id": "get",
+          "text": "GetRequest"
+        },
+        {
+          "id": "set",
+          "text": "SetRequest"
+        },
+        {
+          "id": "trap",
+          "text": "Trap"
+        },
+        {
+          "id": "inform",
+          "text": "InformRequest"
+        }
+      ],
+      "right": [
+        {
+          "id": "read",
+          "text": "Le manager lit la valeur d'un OID sur l'agent"
+        },
+        {
+          "id": "notify",
+          "text": "L'agent signale un événement au manager, sans accusé de réception"
+        },
+        {
+          "id": "mib",
+          "text": "Le manager transfère une nouvelle MIB à l'agent pour l'enrichir"
+        },
+        {
+          "id": "write",
+          "text": "Le manager modifie la valeur d'un OID sur l'agent"
+        },
+        {
+          "id": "ack",
+          "text": "L'agent signale un événement au manager, qui en accuse réception"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "get": "read",
+        "set": "write",
+        "trap": "notify",
+        "inform": "ack"
+      }
+    },
+    "explanation": "Get et Set partent du manager vers l'agent, sur UDP 161, pour lire ou écrire des objets de la MIB identifiés par leur OID. Trap et Inform partent de l'agent vers le manager, sur UDP 162. L'Inform (SNMPv2c et SNMPv3) est acquitté par une réponse du manager et retransmis s'il n'en reçoit pas, contrairement au Trap.",
+    "distractorNotes": {
+      "mib": "Aucun message SNMP ne transfère de MIB : la MIB est implémentée par l'agent, et le manager se contente de la charger (compiler) pour interpréter les OID."
+    },
+    "reference": "RFC 3416"
+  },
+  {
+    "slug": "ccna-4.5-syslog-trap-level-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Au cours de la journée, SW1 génère les messages proposés. Quels trois messages sont envoyés au serveur syslog 10.10.10.50 ?",
+      "exhibit": "SW1# show running-config | include logging\nlogging trap warnings\nlogging host 10.10.10.50",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "%SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port Gi1/0/5 with BPDU Guard enabled. Disabling port."
+        },
+        {
+          "id": "b",
+          "text": "%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/5, changed state to down"
+        },
+        {
+          "id": "c",
+          "text": "%PM-4-ERR_DISABLE: bpduguard error detected on Gi1/0/5, putting Gi1/0/5 in err-disable state"
+        },
+        {
+          "id": "d",
+          "text": "%SYS-6-LOGGINGHOST_STARTSTOP: Logging to host 10.10.10.50 port 514 started - CLI initiated"
+        },
+        {
+          "id": "e",
+          "text": "%LINK-3-UPDOWN: Interface GigabitEthernet1/0/5, changed state to down"
+        },
+        {
+          "id": "f",
+          "text": "%SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.10.10.20)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Dans un message IOS « %FACILITY-GRAVITÉ-MNÉMONIQUE: description », le chiffre central est le niveau de gravité, de 0 (emergencies) à 7 (debugging). « logging trap warnings » envoie au serveur le niveau 4 et tous les niveaux plus graves, donc 0 à 4, alors que la valeur par défaut est informational (6). Partent donc SPANTREE-2 (critical), LINK-3 (errors) et PM-4 (warnings) ; les messages de niveau 5 et 6 ne sont pas transmis au serveur.",
+    "distractorNotes": {
+      "b": "LINEPROTO-5 est de niveau 5 (notifications), moins grave que warnings (4) : il est filtré.",
+      "d": "SYS-6 est de niveau 6 (informational) : il partirait avec le réglage par défaut, pas avec « logging trap warnings ».",
+      "f": "SYS-5 est de niveau 5 (notifications) : il est filtré par « logging trap warnings »."
+    },
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.6-helper-address-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Reportez-vous à l'exhibit. Les clients du réseau 192.168.40.0/24 doivent obtenir leur adresse auprès du serveur DHCP 10.1.1.10. Depuis le mode de configuration globale, configurez R1 comme agent relais DHCP sur l'interface appropriée.",
+      "exhibit": "[Clients DHCP 192.168.40.0/24] --- G0/0 (192.168.40.1/24) R1 G0/1 (10.1.1.1/24) --- [Serveur DHCP 10.1.1.10]",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/0"
+        ],
+        [
+          "ip helper-address 10.1.1.10"
+        ]
+      ]
+    },
+    "explanation": "« ip helper-address » se configure sur l'interface qui reçoit les broadcasts des clients, ici G0/0, et non sur l'interface tournée vers le serveur. R1 transforme alors le DHCPDISCOVER diffusé en unicast vers 10.1.1.10 et place 192.168.40.1 dans le champ giaddr, ce qui indique au serveur dans quel pool choisir l'adresse. L'erreur classique consiste à placer la commande sur G0/1, où aucun client n'émet de broadcast.",
+    "reference": "RFC 1542 ; IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Relay Agent"
+  },
+  {
+    "slug": "ccna-4.6-dhcp-relay-process-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "body": {
+      "type": "ordering",
+      "stem": "Reportez-vous à l'exhibit. Un PC du réseau 172.16.50.0/24 démarre sans adresse. Remettez dans l'ordre les étapes, de son premier message jusqu'à sa demande de bail.",
+      "exhibit": "[PC] --- G0/0 (172.16.50.1/24) R1 G0/1 (10.20.0.1/24) --- [Serveur DHCP 10.20.0.5]\n\n! Extrait de la configuration de R1\ninterface GigabitEthernet0/0\n ip address 172.16.50.1 255.255.255.0\n ip helper-address 10.20.0.5",
+      "items": [
+        {
+          "id": "offer",
+          "text": "Le serveur envoie le DHCPOFFER en unicast à l'agent relais 172.16.50.1"
+        },
+        {
+          "id": "disc",
+          "text": "Le PC émet un DHCPDISCOVER en broadcast, vers 255.255.255.255"
+        },
+        {
+          "id": "req",
+          "text": "Le PC répond par un DHCPREQUEST, lui aussi émis en broadcast"
+        },
+        {
+          "id": "relay",
+          "text": "R1 reçoit le broadcast sur G0/0, inscrit 172.16.50.1 dans giaddr et relaie le message en unicast vers 10.20.0.5"
+        },
+        {
+          "id": "fwd",
+          "text": "R1 transmet le DHCPOFFER au PC sur le segment 172.16.50.0/24"
+        },
+        {
+          "id": "pool",
+          "text": "Le serveur choisit le pool dont le réseau contient l'adresse giaddr"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "disc",
+        "relay",
+        "pool",
+        "offer",
+        "fwd",
+        "req"
+      ]
+    },
+    "explanation": "Le client n'a pas d'adresse : il diffuse son DHCPDISCOVER, que R1 ne route pas mais relaie grâce à « ip helper-address ». En relayant, R1 inscrit l'adresse de l'interface de réception (172.16.50.1) dans giaddr et envoie le message en unicast au serveur. Le serveur se sert de giaddr pour choisir le pool 172.16.50.0/24 et renvoie l'offre à l'agent relais (UDP 67), qui la remet au client sur le LAN. Le client poursuit l'échange DORA par un DHCPREQUEST diffusé, relayé de la même façon.",
+    "reference": "RFC 2131, section 4.1 ; RFC 1542"
+  },
+  {
+    "slug": "ccna-4.6-dhcp-client-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le FAI attribue dynamiquement l'adresse de l'interface G0/1 de R1 par DHCP. Quelle commande, saisie en mode de configuration de cette interface, fait de R1 un client DHCP ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ip address negotiated"
+        },
+        {
+          "id": "b",
+          "text": "ip address dhcp"
+        },
+        {
+          "id": "c",
+          "text": "ipv6 address autoconfig"
+        },
+        {
+          "id": "d",
+          "text": "ip dhcp pool WAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« ip address dhcp » demande à l'interface d'obtenir son adresse, son masque et, le cas échéant, une route par défaut auprès d'un serveur DHCP, comme le ferait un PC. On le vérifie avec « show ip interface brief », dont la colonne Method indique DHCP, ou avec « show dhcp lease ».",
+    "distractorNotes": {
+      "a": "« ip address negotiated » obtient l'adresse par IPCP sur une liaison PPP, pas par DHCP.",
+      "c": "« ipv6 address autoconfig » configure une adresse IPv6 par SLAAC, sans rapport avec DHCPv4.",
+      "d": "« ip dhcp pool » est une commande globale qui crée un pool côté serveur DHCP, pas un client."
+    },
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Client"
+  },
+  {
+    "slug": "ccna-4.7-dscp-values-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Donnez la valeur décimale du champ DSCP pour chacune de ces deux classes DiffServ.",
+      "fields": [
+        {
+          "id": "ef",
+          "label": "EF (Expedited Forwarding), en décimal"
+        },
+        {
+          "id": "af31",
+          "label": "AF31, en décimal"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "ef": {
+          "accepted": [
+            "46"
+          ],
+          "normalize": "int"
+        },
+        "af31": {
+          "accepted": [
+            "26"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le DSCP occupe les 6 bits de poids fort de l'ancien octet ToS. EF, utilisé pour la voix, vaut 101110 en binaire, soit 46. Pour une classe AFxy, les trois premiers bits codent la classe x et les deux suivants la priorité de rejet y, le dernier bit restant à 0 : la valeur vaut 8x + 2y, donc AF31 = 24 + 2 = 26 (011010). À ne pas confondre avec AF41 (34) ni avec CS3 (24).",
+    "reference": "RFC 2597 (AF) ; RFC 3246 (EF)"
+  },
+  {
+    "slug": "ccna-4.7-qos-tools-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque mécanisme de QoS à son action.",
+      "left": [
+        {
+          "id": "class",
+          "text": "Classification"
+        },
+        {
+          "id": "mark",
+          "text": "Marquage"
+        },
+        {
+          "id": "police",
+          "text": "Policing"
+        },
+        {
+          "id": "shape",
+          "text": "Shaping"
+        },
+        {
+          "id": "wred",
+          "text": "WRED"
+        }
+      ],
+      "right": [
+        {
+          "id": "drop",
+          "text": "Rejeter ou remarquer le trafic qui dépasse le débit autorisé"
+        },
+        {
+          "id": "identify",
+          "text": "Identifier le trafic d'après des critères (ACL, NBAR, DSCP reçu)"
+        },
+        {
+          "id": "prio",
+          "text": "Servir en priorité stricte une file réservée à la voix"
+        },
+        {
+          "id": "early",
+          "text": "Rejeter des paquets au hasard avant que la file soit pleine, pour éviter la synchronisation TCP"
+        },
+        {
+          "id": "write",
+          "text": "Inscrire une valeur DSCP ou CoS dans l'en-tête pour les équipements suivants"
+        },
+        {
+          "id": "buffer",
+          "text": "Retarder l'excédent en file d'attente pour lisser le débit sous une limite"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "class": "identify",
+        "mark": "write",
+        "police": "drop",
+        "shape": "buffer",
+        "wred": "early"
+      }
+    },
+    "explanation": "La classification range les paquets dans des classes, et le marquage écrit le résultat (DSCP sur 6 bits dans l'en-tête IP, CoS sur 3 bits dans l'étiquette 802.1Q) pour que les sauts suivants n'aient pas à reclasser. Le policing et le shaping limitent tous deux le débit : le premier rejette ou remarque l'excédent, le second le met en tampon, ce qui ajoute du délai mais réduit fortement les pertes. WRED évite la congestion en rejetant tôt et de façon sélective, plutôt que de subir le tail drop d'une file pleine.",
+    "distractorNotes": {
+      "prio": "Décrit LLQ, un mécanisme d'ordonnancement des files qui ne figure pas dans la colonne de gauche."
+    },
+    "reference": "RFC 2475 ; QoS Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.7-shaping-vs-policing-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 est relié au FAI par une interface GigabitEthernet, mais le contrat prévoit un CIR de 200 Mbit/s : le FAI applique en entrée un policing qui rejette tout le trafic au-delà. Lors des pics, les utilisateurs constatent des pertes et de nombreuses retransmissions TCP. Quelle mesure, sur R1, réduit ces pertes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Configurer un policing à 200 Mbit/s en sortie de l'interface vers le FAI."
+        },
+        {
+          "id": "b",
+          "text": "Activer WRED sur l'interface vers le FAI, sans autre modification."
+        },
+        {
+          "id": "c",
+          "text": "Marquer tout le trafic sortant en DSCP EF pour qu'il passe en priorité."
+        },
+        {
+          "id": "d",
+          "text": "Configurer un shaping à 200 Mbit/s en sortie de l'interface vers le FAI."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le lien physique à 1 Gbit/s ne sature jamais : R1 émet les rafales à pleine vitesse et c'est le policer du FAI qui jette tout ce qui dépasse 200 Mbit/s. Un shaping sortant à 200 Mbit/s met l'excédent en file d'attente sur R1 et l'émet un peu plus tard, de sorte que le trafic respecte le CIR et n'est plus rejeté. On échange ainsi des pertes contre un léger délai supplémentaire.",
+    "distractorNotes": {
+      "a": "Un policing sur R1 rejetterait lui-même l'excédent : les pertes changeraient seulement d'endroit.",
+      "b": "WRED n'agit que lorsqu'une file se remplit ; l'interface à 1 Gbit/s n'étant pas congestionnée, il ne se déclencherait pas.",
+      "c": "Le marquage ne réduit pas le débit émis : le policer du FAI, qui porte sur l'ensemble du trafic, rejetterait toujours l'excédent, et tout marquer EF rend la priorisation inutile."
+    },
+    "reference": "QoS: Policing and Shaping Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-ssh-config-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, le hostname et le nom de domaine sont déjà configurés. Depuis le mode de configuration globale, générez d'abord une paire de clés RSA de 2048 bits. Ensuite, dans l'ordre de votre choix, activez SSH en version 2 uniquement et créez l'utilisateur local admin avec le secret Cl3fSSH!. Terminez par les lignes VTY 0 à 15 : authentification par la base locale et connexions entrantes limitées à SSH.",
+      "prompt": "R1(config)#",
+      "lines": 6
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "commands": [
+        [
+          "crypto key generate rsa modulus 2048",
+          "crypto key generate rsa general-keys modulus 2048"
+        ],
+        [
+          "ip ssh version 2"
+        ],
+        [
+          "username admin secret Cl3fSSH!"
+        ],
+        [
+          "line vty 0 15"
+        ],
+        [
+          "login local"
+        ],
+        [
+          "transport input ssh"
+        ]
+      ]
+    },
+    "explanation": "Les clés RSA, nommées d'après le hostname et le domaine, activent le serveur SSH ; SSHv2 exige un modulus d'au moins 768 bits, et 2048 est la valeur recommandée. « ip ssh version 2 » refuse ensuite les clients SSHv1. Sous « line vty 0 15 », « login local » vérifie les identifiants dans la base « username » et « transport input ssh » refuse Telnet. Erreurs fréquentes : « login » sans « local », qui utilise le mot de passe de ligne, ou « ip ssh version 2 » saisi avant la génération des clés.",
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE) ; RFC 4253"
+  },
+  {
+    "slug": "ccna-4.8-rsa-prerequisites-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur un routeur sorti d'usine, qui porte encore le nom « Router », la commande « crypto key generate rsa modulus 2048 » est refusée. Quelles deux commandes faut-il saisir au préalable ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "username admin secret Cl3fSSH!"
+        },
+        {
+          "id": "b",
+          "text": "ip ssh version 2"
+        },
+        {
+          "id": "c",
+          "text": "hostname R1"
+        },
+        {
+          "id": "d",
+          "text": "transport input ssh"
+        },
+        {
+          "id": "e",
+          "text": "ip domain-name example.com"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "La paire de clés RSA par défaut est nommée d'après le FQDN du routeur, formé du hostname et du nom de domaine (ici R1.example.com). IOS refuse donc de la générer tant que le routeur s'appelle « Router » (« Please define a hostname other than Router ») ou qu'aucun domaine n'est défini (« Please define a domain-name first »).",
+    "distractorNotes": {
+      "a": "La base d'utilisateurs locale sert à l'authentification avec « login local », pas à la génération des clés.",
+      "b": "« ip ssh version 2 » exige au contraire que des clés RSA existent déjà.",
+      "d": "« transport input ssh » se configure sous les lignes VTY et filtre les protocoles d'accès ; il ne conditionne pas la génération des clés."
+    },
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-ssh-modulus-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sur ce routeur sous IOS 15, les administrateurs doivent se connecter exclusivement en SSHv2, mais leurs clients SSHv2 sont refusés. Que faut-il faire ?",
+      "exhibit": "R1(config)# crypto key generate rsa modulus 512\nThe name for the keys will be: R1.example.com\n\n% The key modulus size is 512 bits\n% Generating 512 bit RSA keys, keys will be non-exportable...\n[OK] (elapsed time was 0 seconds)\n\nR1# show ip ssh\nSSH Enabled - version 1.5\nAuthentication timeout: 120 secs; Authentication retries: 3",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter « transport input ssh » sous « line vty 0 15 », puis saisir « ip ssh version 2 »."
+        },
+        {
+          "id": "b",
+          "text": "Configurer « ip domain-name », car les clés ne sont pas utilisables sans nom de domaine."
+        },
+        {
+          "id": "c",
+          "text": "Régénérer les clés RSA avec un modulus d'au moins 768 bits, puis saisir « ip ssh version 2 »."
+        },
+        {
+          "id": "d",
+          "text": "Ne rien changer : en mode 1.99, IOS accepte quand même les clients SSHv2 avec ces clés."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "« show ip ssh » affiche la version 1.5 : SSHv2 exige une clé RSA d'au moins 768 bits, et avec 512 bits seul SSHv1 est possible (« ip ssh version 2 » serait d'ailleurs refusée). Il faut remplacer la paire de clés, par exemple avec « crypto key generate rsa modulus 2048 » (éventuellement après « crypto key zeroize rsa »), puis saisir « ip ssh version 2 », qui désactive SSHv1.",
+    "distractorNotes": {
+      "a": "« transport input ssh » filtre les protocoles acceptés sur les VTY ; il ne change rien à la taille de clé qui bloque SSHv2.",
+      "b": "Le domaine est déjà défini : la paire de clés a été nommée R1.example.com.",
+      "d": "Avec une clé de 512 bits, IOS ne propose que SSHv1 (version 1.5) ; le mode 1.99, qui accepte les deux versions, exige lui aussi une clé d'au moins 768 bits."
+    },
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.9-tftp-ftp-compare-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque caractéristique au protocole de transfert de fichiers concerné.",
+      "left": [
+        {
+          "id": "udp69",
+          "text": "Utilise UDP, port 69"
+        },
+        {
+          "id": "ctrl21",
+          "text": "Ouvre une connexion de contrôle sur TCP 21, distincte des transferts"
+        },
+        {
+          "id": "noauth",
+          "text": "N'authentifie pas l'utilisateur"
+        },
+        {
+          "id": "listing",
+          "text": "Permet de lister le contenu d'un répertoire distant"
+        },
+        {
+          "id": "image",
+          "text": "Peut copier une image IOS vers la mémoire flash d'un routeur"
+        }
+      ],
+      "right": [
+        {
+          "id": "tftp",
+          "text": "TFTP"
+        },
+        {
+          "id": "ftp",
+          "text": "FTP"
+        },
+        {
+          "id": "both",
+          "text": "TFTP et FTP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "udp69": "tftp",
+        "ctrl21": "ftp",
+        "noauth": "tftp",
+        "listing": "ftp",
+        "image": "both"
+      }
+    },
+    "explanation": "TFTP est volontairement minimal : UDP 69, aucun identifiant, seulement la lecture et l'écriture de fichiers, par blocs acquittés un à un. FTP fonctionne sur TCP avec une connexion de contrôle (port 21) et des connexions de données séparées (port 20 côté serveur en mode actif), exige un nom d'utilisateur et un mot de passe et sait lister les répertoires. Les deux servent sur IOS à sauvegarder une configuration ou à copier une image, par exemple avec « copy running-config tftp: » ou « copy ftp: flash: ».",
+    "reference": "RFC 1350 (TFTP) ; RFC 959 (FTP)"
+  },
+  {
+    "slug": "ccna-4.9-ftp-credentials-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le serveur FTP 192.0.2.25 refuse les connexions anonymes et exige le compte netops. Quelle configuration permet à R1 de s'authentifier lorsqu'on lance « copy ftp: flash: » sans indiquer d'identifiants dans la commande ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "« ip ftp username netops » et « ip ftp password <mot de passe> » en configuration globale"
+        },
+        {
+          "id": "b",
+          "text": "« ip ftp passive » en configuration globale"
+        },
+        {
+          "id": "c",
+          "text": "« username netops secret <mot de passe> » en configuration globale"
+        },
+        {
+          "id": "d",
+          "text": "Aucune : IOS réutilise automatiquement le nom et le mot de passe de la session SSH en cours"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le client FTP d'IOS prend les identifiants dans l'URL de la commande s'il y en a, sinon ceux définis par « ip ftp username » et « ip ftp password », et à défaut se connecte en anonymous. Sans identifiants dans la commande, il faut donc configurer ces deux commandes globales. TFTP, lui, n'en demande aucun : « copy running-config tftp: » ne réclame que l'adresse du serveur et le nom du fichier.",
+    "distractorNotes": {
+      "c": "« username … secret » alimente la base locale utilisée pour se connecter au routeur (login local), pas le client FTP.",
+      "b": "« ip ftp passive » choisit le mode d'ouverture de la connexion de données ; il ne fournit aucun identifiant.",
+      "d": "Sans « ip ftp username », IOS se présente en anonymous, ce que ce serveur refuse."
+    },
+    "reference": "Configuration Fundamentals Configuration Guide (Cisco IOS XE), Managing Configuration Files (Understanding the FTP Username and Password)"
   }
 ]

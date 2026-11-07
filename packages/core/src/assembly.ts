@@ -7,6 +7,8 @@ export interface PoolQuestion {
   domain: string;
   type: QuestionType;
   difficulty: Difficulty;
+  /** Code du sous-thème, s'il est renseigné. Nécessaire pour le filtre `subtopics`. */
+  subtopic?: string | null;
 }
 
 export interface AssembleOptions {
@@ -24,6 +26,12 @@ export interface AssembleOptions {
    * des autres renormalisées : un type rare reste utilisable en entraînement ciblé.
    */
   types?: readonly QuestionType[];
+  /**
+   * Restreint l'examen à certains sous-thèmes (codes de la certification), sur le modèle de `types` :
+   * une question sans sous-thème est écartée, les domaines sans question retenue aussi, et les
+   * pondérations des autres sont renormalisées (réviser un seul sous-thème, par exemple).
+   */
+  subtopics?: readonly string[];
 }
 
 /**
@@ -62,8 +70,8 @@ export class InsufficientQuestionsError extends Error {
 
 /**
  * Tire un examen dans la banque : pondération officielle respectée, jamais deux fois la même
- * question, types limités à ceux autorisés par la certification (et au filtre `types` s'il est fourni),
- * questions déjà vues en dernier recours.
+ * question, types limités à ceux autorisés par la certification (et aux filtres `types` et `subtopics`
+ * s'ils sont fournis), questions déjà vues en dernier recours.
  */
 export function assembleExam(
   pool: readonly PoolQuestion[],
@@ -74,17 +82,25 @@ export function assembleExam(
   const allowed = new Set(
     options.types?.length ? cert.allowedQuestionTypes.filter((t) => options.types?.includes(t)) : cert.allowedQuestionTypes,
   );
+  const subtopics = options.subtopics?.length ? new Set(options.subtopics) : null;
   const eligible = (q: PoolQuestion) =>
-    allowed.has(q.type) && (!options.difficulty || q.difficulty === options.difficulty);
+    allowed.has(q.type) &&
+    (!options.difficulty || q.difficulty === options.difficulty) &&
+    (!subtopics || (q.subtopic != null && subtopics.has(q.subtopic)));
 
   let domains = options.domains?.length
     ? cert.domains.filter((d) => options.domains?.includes(d.code))
     : cert.domains;
   if (domains.length === 0) throw new Error('Aucun domaine retenu');
-  if (options.types?.length) {
+  // Filtres ciblés (types, sous-thèmes) : seuls les domaines qui ont des questions retenues restent en lice.
+  if (options.types?.length || subtopics) {
     domains = domains.filter((d) => pool.some((q) => q.domain === d.code && eligible(q)));
     if (domains.length === 0) {
-      throw new InsufficientQuestionsError('*', count, 0, `Aucune question disponible pour les types ${options.types.join(', ')}`);
+      const filters = [
+        ...(options.types?.length ? [`les types ${options.types.join(', ')}`] : []),
+        ...(subtopics ? [`les sous-thèmes ${[...subtopics].join(', ')}`] : []),
+      ];
+      throw new InsufficientQuestionsError('*', count, 0, `Aucune question disponible pour ${filters.join(' et ')}`);
     }
   }
 

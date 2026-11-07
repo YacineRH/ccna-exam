@@ -4,6 +4,9 @@
  * L'échéance d'un examen est fixée par le serveur. Si l'horloge du poste avance ou retarde,
  * un décompte basé sur `Date.now()` serait faux d'autant. On estime donc le décalage au
  * chargement de la tentative grâce à `serverNow`, puis on décompte en heure serveur.
+ * Chaque enregistrement de réponse renvoie aussi `serverNow` : le décalage est recalculé à
+ * chaque fois, ce qui rattrape une horloge de poste modifiée en cours d'examen (mise en veille,
+ * resynchronisation NTP, changement manuel).
  */
 
 /**
@@ -16,6 +19,20 @@ export function clockOffset(serverNow: string, requestStartedAt: number, respons
   if (!Number.isFinite(server)) return 0;
   const midpoint = requestStartedAt + Math.max(0, responseReceivedAt - requestStartedAt) / 2;
   return Math.round(server - midpoint);
+}
+
+/**
+ * Nouveau décalage après un échange avec le serveur. Une réponse sans `serverNow` lisible
+ * (ancienne API, proxy…) garde le décalage précédent au lieu de le remettre à zéro.
+ */
+export function resyncOffset(
+  previousMs: number,
+  serverNow: string | null | undefined,
+  requestStartedAt: number,
+  responseReceivedAt: number,
+): number {
+  if (!serverNow || !Number.isFinite(Date.parse(serverNow))) return previousMs;
+  return clockOffset(serverNow, requestStartedAt, responseReceivedAt);
 }
 
 /** Heure serveur estimée (ms) à partir de l'heure locale. */

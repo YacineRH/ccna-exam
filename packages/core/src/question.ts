@@ -65,6 +65,11 @@ export const answerKeySchema = z.discriminatedUnion('type', [
     commands: z.array(z.array(z.string()).min(1)).min(1),
     /** Si faux, les lignes peuvent être données dans n'importe quel ordre. */
     ordered: z.boolean().default(true),
+    /**
+     * Avec `ordered`, plages de lignes (indices de début et de fin inclus) dont l'ordre est libre :
+     * les sous-commandes d'une interface, par exemple, après la ligne qui y entre.
+     */
+    freeOrder: z.array(z.tuple([z.number().int().min(0), z.number().int().min(0)])).optional(),
   }),
   z.object({ type: z.literal('ordering'), order: z.array(z.string()).min(2) }),
   z.object({ type: z.literal('matching'), pairs: z.record(z.string()) }),
@@ -134,6 +139,15 @@ export function checkQuestionConsistency(q: { body: QuestionBody; key: AnswerKey
       if (key.type !== 'cli') break;
       if (key.commands.length !== body.lines)
         issues.push(`lines=${body.lines} mais ${key.commands.length} commandes attendues`);
+      if (key.freeOrder?.length) {
+        if (!key.ordered) issues.push('freeOrder sans objet quand ordered vaut false');
+        const ranges = [...key.freeOrder].sort((a, b) => a[0] - b[0]);
+        ranges.forEach(([start, end], i) => {
+          if (start >= end || end >= key.commands.length) issues.push(`plage freeOrder invalide : [${start}, ${end}]`);
+          const prev = ranges[i - 1];
+          if (prev && start <= prev[1]) issues.push(`plages freeOrder qui se chevauchent : [${prev[0]}, ${prev[1]}] et [${start}, ${end}]`);
+        });
+      }
       break;
     }
     case 'ordering': {

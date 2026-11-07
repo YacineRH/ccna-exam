@@ -65,7 +65,7 @@
         },
         {
           "id": "b",
-          "text": "Il est sans connexion et n'accuse pas réception des segments."
+          "text": "Il fonctionne sans connexion et n'envoie aucun accusé de réception."
         },
         {
           "id": "c",
@@ -132,6 +132,10 @@
         {
           "id": "pff00",
           "text": "FF00::/8"
+        },
+        {
+          "id": "pfec0",
+          "text": "FEC0::/10"
         }
       ]
     },
@@ -145,7 +149,10 @@
       }
     },
     "explanation": "Les adresses globales routables sur Internet sont dans 2000::/3. Les adresses de lien local, créées automatiquement sur chaque interface, sont dans FE80::/10. Les adresses uniques locales (l'équivalent des adresses privées) sont dans FC00::/7. Tout le multicast IPv6 est dans FF00::/8.",
-    "reference": "RFC 4291, RFC 4193"
+    "reference": "RFC 4291, RFC 4193, RFC 3879",
+    "distractorNotes": {
+      "pfec0": "FEC0::/10 désignait les adresses site-local, dépréciées par la RFC 3879 et remplacées par les adresses uniques locales (FC00::/7)."
+    }
   },
   {
     "slug": "ccna-1.13-unknown-unicast-001",
@@ -163,7 +170,7 @@
         },
         {
           "id": "b",
-          "text": "Il la diffuse sur tous les ports du VLAN 10 sauf Fa0/3."
+          "text": "Il l'inonde sur tous les ports du VLAN 10 sauf Fa0/3."
         },
         {
           "id": "c",
@@ -171,7 +178,7 @@
         },
         {
           "id": "d",
-          "text": "Il la diffuse sur tous les ports du commutateur, tous VLAN confondus."
+          "text": "Il l'inonde sur tous les ports du commutateur, tous VLAN confondus."
         }
       ]
     },
@@ -184,7 +191,8 @@
       "a": "Un commutateur ne supprime pas une trame simplement parce que la destination est inconnue.",
       "c": "Un commutateur ne renvoie jamais une trame sur son port d'arrivée.",
       "d": "L'inondation reste limitée au domaine de broadcast, donc au VLAN."
-    }
+    },
+    "reference": "IEEE 802.1Q-2018 (processus de transfert et base de filtrage)"
   },
   {
     "slug": "ccna-1.7-private-range-001",
@@ -231,7 +239,7 @@
     "certification": "ccna",
     "domain": "1.0",
     "subtopic": "1.6",
-    "difficulty": "easy",
+    "difficulty": "medium",
     "body": {
       "type": "fill_blank",
       "stem": "Un hôte a l'adresse 10.44.7.203/29. Donnez l'adresse réseau et la dernière adresse d'hôte utilisable de son sous-réseau.",
@@ -263,7 +271,8 @@
         }
       }
     },
-    "explanation": "Un /29 a un pas de 8 dans le 4ᵉ octet : les blocs commencent à .192, .200, .208… 203 est dans le bloc .200, dont le broadcast est .207. Le dernier hôte utilisable est donc .206."
+    "explanation": "Un /29 a un pas de 8 dans le 4ᵉ octet : les blocs commencent à .192, .200, .208… 203 est dans le bloc .200, dont le broadcast est .207. Le dernier hôte utilisable est donc .206.",
+    "reference": "RFC 950"
   },
   {
     "slug": "ccna-1.8-ipv6-compression-001",
@@ -294,5 +303,1133 @@
     },
     "explanation": "On supprime les zéros de tête de chaque groupe, puis on remplace une seule suite de groupes nuls par « :: ». Les deux suites font ici deux groupes : la RFC 5952 impose de compresser la première. On obtient 2001:db8::a00:0:0:1.",
     "reference": "RFC 5952"
+  },
+  {
+    "slug": "ccna-1.1-component-roles-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque composant réseau à sa fonction principale.",
+      "left": [
+        {
+          "id": "rtr",
+          "text": "Routeur"
+        },
+        {
+          "id": "sw",
+          "text": "Commutateur de niveau 2"
+        },
+        {
+          "id": "ap",
+          "text": "Point d'accès (AP)"
+        },
+        {
+          "id": "wlc",
+          "text": "Contrôleur de réseau sans fil (WLC)"
+        },
+        {
+          "id": "ips",
+          "text": "Système de prévention d'intrusion (IPS)"
+        }
+      ],
+      "right": [
+        {
+          "id": "fwd-ip",
+          "text": "Transfère les paquets d'un réseau IP à un autre en consultant sa table de routage"
+        },
+        {
+          "id": "fwd-mac",
+          "text": "Transfère les trames au sein d'un VLAN d'après les adresses MAC de destination"
+        },
+        {
+          "id": "radio",
+          "text": "Raccorde les clients 802.11 par radio et relaie leur trafic vers le réseau filaire"
+        },
+        {
+          "id": "central",
+          "text": "Centralise la configuration, la gestion RF et l'authentification de nombreux AP"
+        },
+        {
+          "id": "block",
+          "text": "Inspecte le trafic en ligne et bloque les flux qui correspondent à des signatures d'attaque"
+        },
+        {
+          "id": "dns",
+          "text": "Traduit les noms de domaine en adresses IP pour les clients"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "rtr": "fwd-ip",
+        "sw": "fwd-mac",
+        "ap": "radio",
+        "wlc": "central",
+        "ips": "block"
+      }
+    },
+    "explanation": "Le routeur travaille en couche 3 : il choisit l'interface de sortie d'un paquet d'après l'adresse IP de destination et sa table de routage. Le commutateur de niveau 2 transfère les trames d'après sa table d'adresses MAC, à l'intérieur d'un VLAN. L'AP fait le pont entre le média radio 802.11 et le réseau filaire ; dans une architecture à contrôleur, le WLC gère de façon centralisée les AP légers (configuration, canaux et puissance, authentification) via CAPWAP. L'IPS est placé en coupure (inline) et peut bloquer un trafic malveillant en temps réel, contrairement à un IDS qui n'analyse qu'une copie du trafic.",
+    "distractorNotes": {
+      "dns": "C'est le rôle d'un serveur DNS, absent de la liste : aucun des composants proposés n'a la résolution de noms pour fonction principale."
+    },
+    "reference": "RFC 5415 (CAPWAP) ; IEEE 802.11-2020"
+  },
+  {
+    "slug": "ccna-1.1-ngfw-features-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise remplace son pare-feu stateful classique par un pare-feu nouvelle génération (NGFW). Quelles deux fonctions le NGFW apporte-t-il en plus ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Identifier et contrôler les applications quel que soit le port qu'elles utilisent"
+        },
+        {
+          "id": "b",
+          "text": "Suivre l'état des sessions TCP et UDP pour autoriser le trafic de retour"
+        },
+        {
+          "id": "c",
+          "text": "Intégrer un IPS qui bloque le trafic correspondant à des signatures d'attaque"
+        },
+        {
+          "id": "d",
+          "text": "Filtrer les paquets selon les adresses IP et les ports source et destination"
+        },
+        {
+          "id": "e",
+          "text": "Gérer la configuration et les paramètres RF des points d'accès sans fil"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Un pare-feu stateful classique filtre déjà sur les adresses et les ports et suit l'état des sessions pour laisser passer le trafic de retour. Un NGFW, comme Cisco Secure Firewall Threat Defense, inspecte en plus jusqu'à la couche 7 : il reconnaît les applications quel que soit le port utilisé (AVC, Application Visibility and Control) et intègre un IPS de nouvelle génération. Il ajoute en général le filtrage d'URL et la protection contre les logiciels malveillants (AMP).",
+    "distractorNotes": {
+      "b": "Le suivi de l'état des sessions est la définition même d'un pare-feu stateful : ce n'est pas un apport du NGFW.",
+      "d": "Le filtrage sur adresses IP et ports existe déjà dans les ACL et dans tout pare-feu, stateful ou non.",
+      "e": "La gestion de la configuration et de la RF des AP est le rôle d'un contrôleur WLAN (WLC), pas d'un pare-feu."
+    },
+    "reference": "Cisco Secure Firewall Threat Defense — guide de configuration (contrôle applicatif et politiques d'intrusion)"
+  },
+  {
+    "slug": "ccna-1.1-poe-plus-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un nouvel AP Wi-Fi 6 a besoin de 25,5 W, mesurés à l'entrée de l'équipement alimenté (PD), pour activer toutes ses radios. Quelle est la norme PoE minimale que doit prendre en charge le port du commutateur qui l'alimente ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "IEEE 802.3ad"
+        },
+        {
+          "id": "b",
+          "text": "IEEE 802.3af (PoE)"
+        },
+        {
+          "id": "c",
+          "text": "IEEE 802.3at (PoE+)"
+        },
+        {
+          "id": "d",
+          "text": "IEEE 802.3bt (PoE de type 3 ou 4)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La norme 802.3at (PoE+, type 2) fournit jusqu'à 30 W par port côté PSE (le commutateur), soit 25,5 W garantis à l'entrée du PD une fois déduites les pertes d'un câble de 100 m. C'est exactement le besoin de l'AP. Avec 802.3af, limité à 12,95 W au PD (15,4 W au PSE), l'AP démarrerait au mieux en mode dégradé, certaines radios désactivées.",
+    "distractorNotes": {
+      "a": "802.3ad est l'ancienne norme d'agrégation de liens (LACP, aujourd'hui 802.1AX) : elle ne fournit aucune alimentation.",
+      "b": "802.3af ne garantit que 12,95 W au PD (15,4 W au PSE), soit environ la moitié du besoin.",
+      "d": "802.3bt (60 à 90 W au PSE) alimenterait l'AP, mais ce n'est pas la norme minimale : 802.3at suffit."
+    },
+    "reference": "IEEE 802.3at-2009 (aujourd'hui IEEE 802.3, clause 33)"
+  },
+  {
+    "slug": "ccna-1.2-collapsed-core-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une architecture de campus à deux niveaux (collapsed core), quelles couches du modèle hiérarchique sont regroupées sur les mêmes commutateurs ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le cœur et l'accès"
+        },
+        {
+          "id": "b",
+          "text": "L'accès et la distribution"
+        },
+        {
+          "id": "c",
+          "text": "La distribution et la périphérie WAN"
+        },
+        {
+          "id": "d",
+          "text": "Le cœur et la distribution"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Dans un design à deux niveaux, les fonctions de cœur et de distribution sont regroupées sur une même paire de commutateurs (collapsed core), à laquelle se raccordent les commutateurs d'accès. Ce design convient à un campus de petite ou moyenne taille, souvent un seul bâtiment. Quand les blocs de distribution se multiplient, on ajoute une couche cœur dédiée : c'est le design à trois niveaux.",
+    "distractorNotes": {
+      "a": "La couche accès, où se raccordent les terminaux, reste distincte : elle n'est jamais fusionnée avec le cœur.",
+      "b": "Fusionner accès et distribution reviendrait à raccorder les terminaux sur la couche d'agrégation : ce n'est pas le collapsed core.",
+      "c": "La périphérie WAN (WAN edge) est un bloc à part du campus, pas l'une des couches regroupées dans un collapsed core."
+    },
+    "reference": "Cisco Enterprise Campus 3.0 Architecture: Overview and Framework"
+  },
+  {
+    "slug": "ccna-1.2-spine-leaf-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent une architecture de datacenter spine-leaf ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les commutateurs spine sont reliés entre eux en maillage complet."
+        },
+        {
+          "id": "b",
+          "text": "Chaque commutateur leaf est relié à chacun des commutateurs spine."
+        },
+        {
+          "id": "c",
+          "text": "Les serveurs se raccordent directement aux spines pour réduire la latence."
+        },
+        {
+          "id": "d",
+          "text": "Entre deux serveurs de leafs différents, le nombre de sauts est toujours le même."
+        },
+        {
+          "id": "e",
+          "text": "Chaque leaf est relié à ses deux leafs voisins pour former un anneau redondant."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Dans une architecture spine-leaf, chaque leaf est relié à chaque spine, mais ni les spines ni les leafs ne sont reliés entre eux. Les serveurs, pare-feu et routeurs se raccordent uniquement aux leafs. Tout flux entre deux leafs suit donc le chemin leaf, spine, leaf : la latence est prévisible et le trafic se répartit sur tous les spines (ECMP), ce qui convient au trafic est-ouest d'un datacenter.",
+    "distractorNotes": {
+      "a": "Les spines ne sont pas reliés entre eux : la redondance vient des liens de chaque leaf vers tous les spines.",
+      "c": "Les serveurs se raccordent uniquement aux leafs ; les spines ne servent qu'à interconnecter les leafs.",
+      "e": "Les leafs ne sont pas reliés entre eux : un anneau rendrait le nombre de sauts variable, à l'opposé du principe spine-leaf."
+    },
+    "reference": "Cisco Data Center Spine-and-Leaf Architecture: Design Overview (white paper)"
+  },
+  {
+    "slug": "ccna-1.2-three-tier-core-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un campus compte cinq bâtiments équipés chacun de deux commutateurs de distribution, soit dix au total. Sans couche cœur, ces dix commutateurs sont reliés en maillage complet. L'architecte propose d'ajouter deux commutateurs de cœur : chaque commutateur de distribution serait relié aux deux cœurs, et les deux cœurs seraient reliés entre eux. Combien de liens inter-commutateurs faut-il dans chaque cas, en comptant tous les liens des couches distribution et cœur, mais pas ceux vers la couche accès ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "90 liens sans cœur, 21 avec cœur"
+        },
+        {
+          "id": "b",
+          "text": "45 liens sans cœur, 21 avec cœur"
+        },
+        {
+          "id": "c",
+          "text": "45 liens sans cœur, 20 avec cœur"
+        },
+        {
+          "id": "d",
+          "text": "90 liens sans cœur, 20 avec cœur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "En maillage complet, n commutateurs demandent n(n − 1)/2 liens : 10 × 9 / 2 = 45. Avec une couche cœur, chaque commutateur de distribution n'a que deux liens, un par cœur, soit 10 × 2 = 20, plus le lien entre les deux cœurs : 21. L'écart se creuse à chaque nouveau bâtiment : deux commutateurs de distribution de plus ajoutent 21 liens au maillage complet (66 au lieu de 45), mais seulement 4 avec une couche cœur. C'est ce qui justifie le passage d'un design à deux niveaux à un design à trois niveaux.",
+    "distractorNotes": {
+      "a": "90 = 10 × 9 compte chaque lien deux fois, une fois par extrémité : il faut diviser par 2.",
+      "c": "20 oublie le lien entre les deux commutateurs de cœur.",
+      "d": "Deux erreurs : les liens du maillage sont comptés deux fois et le lien entre les cœurs est oublié."
+    },
+    "reference": "Cisco Enterprise Campus 3.0 Architecture: Overview and Framework (rôle de la couche cœur)"
+  },
+  {
+    "slug": "ccna-1.3-singlemode-fiber-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux caractéristiques distinguent la fibre monomode (SMF) de la fibre multimode (MMF) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un cœur de 50 ou 62,5 µm de diamètre"
+        },
+        {
+          "id": "b",
+          "text": "Une dispersion modale plus forte, qui limite la portée à haut débit"
+        },
+        {
+          "id": "c",
+          "text": "Un cœur d'environ 9 µm, qui ne laisse passer qu'un seul mode de propagation"
+        },
+        {
+          "id": "d",
+          "text": "Une source LED ou VCSEL à 850 nm, pour des portées de quelques centaines de mètres"
+        },
+        {
+          "id": "e",
+          "text": "Une source laser à 1310 ou 1550 nm, pour des portées de plusieurs kilomètres"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "La fibre monomode a un cœur très fin (8 à 10 µm, couramment 9/125 µm) où la lumière ne suit qu'un seul chemin : sans dispersion modale, le signal porte loin. Elle utilise des lasers à 1310 ou 1550 nm, par exemple en 10GBASE-LR (10 km) ou 10GBASE-ER (40 km). La fibre multimode, au cœur de 50 ou 62,5 µm, transporte plusieurs modes, ce qui limite la portée (300 à 400 m en 10GBASE-SR sur OM3 ou OM4) mais permet des optiques moins chères à 850 nm.",
+    "distractorNotes": {
+      "a": "Un cœur de 50 ou 62,5 µm caractérise la fibre multimode (OM1 à OM5).",
+      "b": "La dispersion modale vient des multiples chemins que suit la lumière dans une fibre multimode ; la monomode, qui ne transporte qu'un seul mode, n'en subit pas.",
+      "d": "Les sources LED ou VCSEL à 850 nm et les portées de quelques centaines de mètres sont celles de la fibre multimode."
+    },
+    "reference": "IEEE 802.3ae (10GBASE-SR, LR et ER)"
+  },
+  {
+    "slug": "ccna-1.3-cable-types-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Aucun des équipements ci-dessous ne prend en charge Auto-MDIX. Associez chaque connexion au câble à utiliser.",
+      "left": [
+        {
+          "id": "pcsw",
+          "text": "PC – commutateur (ports Ethernet)"
+        },
+        {
+          "id": "swsw",
+          "text": "Commutateur – commutateur (ports Ethernet)"
+        },
+        {
+          "id": "rsw",
+          "text": "Routeur – commutateur (ports Ethernet)"
+        },
+        {
+          "id": "rr",
+          "text": "Routeur – routeur (ports Ethernet)"
+        },
+        {
+          "id": "con",
+          "text": "PC – port console d'un routeur"
+        }
+      ],
+      "right": [
+        {
+          "id": "straight",
+          "text": "Câble droit"
+        },
+        {
+          "id": "cross",
+          "text": "Câble croisé"
+        },
+        {
+          "id": "roll",
+          "text": "Câble console (rollover)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "pcsw": "straight",
+        "swsw": "cross",
+        "rsw": "straight",
+        "rr": "cross",
+        "con": "roll"
+      }
+    },
+    "explanation": "Sans Auto-MDIX, il faut tenir compte du brochage : PC et routeurs émettent sur les broches 1-2 et reçoivent sur 3-6 (MDI), alors que les commutateurs font l'inverse (MDI-X). Entre un équipement MDI et un équipement MDI-X, un câble droit suffit ; entre deux équipements du même type (commutateur – commutateur, routeur – routeur), il faut un câble croisé qui relie 1-2 à 3-6. Le port console se raccorde avec un câble rollover, dont les huit broches sont inversées (1 vers 8, 2 vers 7…), relié au port série ou USB du PC par un adaptateur.",
+    "reference": "IEEE 802.3, clauses 14 et 25 (MDI et MDI-X)"
+  },
+  {
+    "slug": "ccna-1.3-auto-mdix-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux commutateurs Catalyst sont reliés par un câble droit entre deux ports 10/100/1000BASE-T. Auto-MDIX est activé sur SW1 et désactivé sur SW2 ; vitesse et duplex sont en auto des deux côtés. Que se passe-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le lien reste down : Auto-MDIX doit être activé aux deux extrémités pour fonctionner."
+        },
+        {
+          "id": "b",
+          "text": "Le lien reste down : deux commutateurs ne se relient qu'avec un câble croisé."
+        },
+        {
+          "id": "c",
+          "text": "Le lien monte : SW1 détecte le brochage et inverse lui-même ses paires d'émission et de réception."
+        },
+        {
+          "id": "d",
+          "text": "Le lien monte, mais à 10 Mbit/s en half duplex, car Auto-MDIX désactive l'autonégociation."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Auto-MDIX permet à un port de détecter le type de câble et de basculer ses paires d'émission et de réception (MDI ou MDI-X). Il suffit qu'une seule extrémité le fasse : SW1 compense le câble droit et le lien monte normalement, en 1000 Mbit/s full duplex négocié. Le bon type de câble (croisé entre deux commutateurs) n'est exigé que si Auto-MDIX est désactivé des deux côtés. Sur Catalyst, Auto-MDIX est activé par défaut et suppose que vitesse et duplex restent en auto.",
+    "distractorNotes": {
+      "a": "Une seule extrémité avec Auto-MDIX suffit : c'est elle qui croise les paires.",
+      "b": "Le câble croisé n'est obligatoire que si aucun des deux ports n'a Auto-MDIX activé.",
+      "d": "Auto-MDIX ne désactive pas l'autonégociation : il demande au contraire vitesse et duplex en auto, et le lien négocie normalement 1000 Mbit/s full duplex."
+    },
+    "reference": "Catalyst 9300 Interface and Hardware Components Configuration Guide (Auto-MDIX)"
+  },
+  {
+    "slug": "ccna-1.4-speed-duplex-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "L'imprimante raccordée au port GigabitEthernet1/0/7 de SW1 a une carte réseau forcée en 100 Mbit/s full duplex, sans autonégociation. Pour éviter un duplex mismatch, configurez le port de la même façon. En partant du mode de configuration globale, entrez dans l'interface, puis fixez la vitesse et le duplex.",
+      "prompt": "SW1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "interface GigabitEthernet1/0/7"
+        ],
+        [
+          "speed 100"
+        ],
+        [
+          "duplex full"
+        ]
+      ]
+    },
+    "explanation": "« interface GigabitEthernet1/0/7 » fait passer en mode de configuration de l'interface, où « speed 100 » et « duplex full », dans n'importe quel ordre, fixent les paramètres et désactivent l'autonégociation. Laissé en auto face à une carte qui ne négocie pas, le port détecterait la vitesse (parallel detection) mais pas le duplex, et se mettrait en half duplex : d'où des late collisions. Erreur fréquente : ne fixer que la vitesse, le duplex restant en auto. On vérifie avec « show interfaces GigabitEthernet1/0/7 status », qui doit afficher full et 100 sans le préfixe a- des valeurs négociées.",
+    "reference": "Catalyst 9300 Interface and Hardware Components Configuration Guide (vitesse et duplex)"
+  },
+  {
+    "slug": "ccna-1.4-late-collisions-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'utilisateur du PC raccordé à Fa0/12 de SW1 par un cordon de 3 m se plaint de lenteurs. Fa0/12 a la configuration par défaut (speed auto, duplex auto). Quelle est la cause la plus probable du problème ?",
+      "exhibit": "SW1#show interfaces FastEthernet0/12\nFastEthernet0/12 is up, line protocol is up (connected)\n  Hardware is Fast Ethernet, address is 0019.e86a.6f8c (bia 0019.e86a.6f8c)\n  MTU 1500 bytes, BW 100000 Kbit/sec, DLY 100 usec,\n     reliability 255/255, txload 1/255, rxload 1/255\n  Encapsulation ARPA, loopback not set\n  Keepalive set (10 sec)\n  Half-duplex, 100Mb/s, media type is 10/100BaseTX\n  input flow-control is off, output flow-control is unsupported\n  ARP type: ARPA, ARP Timeout 04:00:00\n  Last input never, output 00:00:01, output hang never\n  Last clearing of \"show interface\" counters 00:15:12\n  Input queue: 0/75/0/0 (size/max/drops/flushes); Total output drops: 0\n  Queueing strategy: fifo\n  Output queue: 0/40 (size/max)\n  5 minute input rate 412000 bits/sec, 61 packets/sec\n  5 minute output rate 387000 bits/sec, 58 packets/sec\n     48211 packets input, 31977418 bytes, 0 no buffer\n     Received 1204 broadcasts (980 multicasts)\n     0 runts, 0 giants, 0 throttles\n     3 input errors, 3 CRC, 0 frame, 0 overrun, 0 ignored\n     0 watchdog, 980 multicast, 0 pause input\n     0 input packets with dribble condition detected\n     45102 packets output, 29871533 bytes, 0 underruns\n     412 output errors, 1873 collisions, 0 interface resets\n     0 unknown protocol drops\n     0 babbles, 412 late collision, 0 deferred\n     0 lost carrier, 0 no carrier, 0 PAUSE output\n     0 output buffer failures, 0 output buffers swapped out",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un duplex mismatch : le PC est forcé en full duplex et Fa0/12, faute de négociation, est passé en half duplex"
+        },
+        {
+          "id": "b",
+          "text": "Un câble trop long, qui empêche de détecter les collisions dans les 64 premiers octets des trames"
+        },
+        {
+          "id": "c",
+          "text": "Une vitesse différente aux deux extrémités du lien, l'une à 10 Mbit/s et l'autre à 100 Mbit/s"
+        },
+        {
+          "id": "d",
+          "text": "Des interférences électromagnétiques qui corrompent les trames reçues par Fa0/12"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Fa0/12 fonctionne en half duplex à 100 Mbit/s et compte des centaines de late collisions, avec très peu d'erreurs CRC : c'est la signature du côté half duplex d'un duplex mismatch. Le PC, en full duplex, émet sans écouter le support, si bien que Fa0/12 détecte des collisions après les 64 premiers octets de ses trames. Le half duplex vient de l'autonégociation : face à une carte forcée qui ne négocie pas, le port détecte la vitesse (parallel detection) mais pas le duplex, et retombe en half duplex. On corrige en configurant les deux extrémités de la même façon, toutes deux en auto ou toutes deux en 100 Mbit/s full duplex.",
+    "distractorNotes": {
+      "b": "Un câble de plus de 100 m peut provoquer des late collisions, mais le PC est relié ici par un cordon de 3 m.",
+      "c": "Une vitesse différente aux deux extrémités empêche le lien de monter ; ici Fa0/12 est up/up à 100 Mbit/s.",
+      "d": "Des interférences feraient grimper les erreurs CRC en entrée ; il n'y en a que 3, alors que les late collisions se comptent par centaines."
+    },
+    "reference": "IEEE 802.3, clause 28 (autonégociation, parallel detection) ; Cisco — Troubleshoot Switch Port and Interface Problems"
+  },
+  {
+    "slug": "ccna-1.4-crc-errors-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le port Gi1/0/20 de SW2 est relié à un serveur par un câble cuivre de 60 m posé la semaine dernière. Le serveur a lui aussi négocié 1000 Mbit/s en full duplex. Quelle est la cause la plus probable des erreurs relevées ?",
+      "exhibit": "SW2#show interfaces GigabitEthernet1/0/20\nGigabitEthernet1/0/20 is up, line protocol is up (connected)\n  Hardware is Gigabit Ethernet, address is 7c21.0e4d.9a94 (bia 7c21.0e4d.9a94)\n  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec,\n     reliability 241/255, txload 1/255, rxload 3/255\n  Encapsulation ARPA, loopback not set\n  Keepalive set (10 sec)\n  Full-duplex, 1000Mb/s, media type is 10/100/1000BaseTX\n  input flow-control is off, output flow-control is unsupported\n  ARP type: ARPA, ARP Timeout 04:00:00\n  Last input 00:00:00, output 00:00:00, output hang never\n  Last clearing of \"show interface\" counters 01:02:44\n  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0\n  Queueing strategy: fifo\n  Output queue: 0/40 (size/max)\n  5 minute input rate 12408000 bits/sec, 1530 packets/sec\n  5 minute output rate 3115000 bits/sec, 912 packets/sec\n     5733120 packets input, 6011254380 bytes, 0 no buffer\n     Received 8840 broadcasts (6127 multicasts)\n     0 runts, 0 giants, 0 throttles\n     28417 input errors, 28417 CRC, 0 frame, 0 overrun, 0 ignored\n     0 watchdog, 6127 multicast, 0 pause input\n     0 input packets with dribble condition detected\n     3402761 packets output, 1588002114 bytes, 0 underruns\n     0 output errors, 0 collisions, 0 interface resets\n     0 unknown protocol drops\n     0 babbles, 0 late collision, 0 deferred\n     0 lost carrier, 0 no carrier, 0 PAUSE output\n     0 output buffer failures, 0 output buffers swapped out",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un duplex mismatch entre SW2 et le serveur"
+        },
+        {
+          "id": "b",
+          "text": "Des trames jumbo envoyées par le serveur, plus grandes que le MTU du port"
+        },
+        {
+          "id": "c",
+          "text": "Une congestion qui fait déborder la file d'attente de sortie du port"
+        },
+        {
+          "id": "d",
+          "text": "Un problème physique : câble ou connecteur défectueux, ou interférences"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le compteur CRC compte les trames reçues dont le FCS recalculé ne correspond pas à celui de la trame : elles ont été altérées pendant leur transport sur le câble. Ici, toutes les input errors sont des CRC, sans runts, giants ni collisions, sur un lien full duplex négocié des deux côtés : la cause est physique. On teste ou remplace le câble et les cordons (paire endommagée, connecteur mal serti, catégorie insuffisante) et on vérifie qu'il ne longe pas une source d'interférences électromagnétiques.",
+    "distractorNotes": {
+      "a": "Les deux côtés ont négocié 1000 Mbit/s full duplex ; un duplex mismatch ferait aussi apparaître des runts côté full duplex, or ce compteur est à 0.",
+      "b": "Des trames trop grandes seraient comptées dans giants, qui reste à 0, et non dans CRC.",
+      "c": "Une congestion se traduirait par des « Total output drops », à 0 ici ; elle ne corrompt pas les trames reçues."
+    },
+    "reference": "Cisco — Troubleshoot Switch Port and Interface Problems"
+  },
+  {
+    "slug": "ccna-1.5-web-session-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Un poste dont le cache DNS est vide, et qui connaît déjà l'adresse MAC de sa passerelle, ouvre la page http://www.example.com. Ordonnez les messages échangés, du premier au dernier.",
+      "items": [
+        {
+          "id": "syn",
+          "text": "Le poste envoie un segment TCP SYN vers le port 80 du serveur web"
+        },
+        {
+          "id": "dnsr",
+          "text": "Le serveur DNS renvoie l'adresse IP de www.example.com"
+        },
+        {
+          "id": "get",
+          "text": "Le poste envoie la requête HTTP GET"
+        },
+        {
+          "id": "dnsq",
+          "text": "Le poste envoie une requête DNS vers le port UDP 53 du serveur DNS"
+        },
+        {
+          "id": "ack",
+          "text": "Le poste répond par un segment ACK"
+        },
+        {
+          "id": "synack",
+          "text": "Le serveur web répond par un segment SYN-ACK"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "dnsq",
+        "dnsr",
+        "syn",
+        "synack",
+        "ack",
+        "get"
+      ]
+    },
+    "explanation": "Le poste doit d'abord connaître l'adresse IP du serveur : il interroge son serveur DNS, par défaut en UDP sur le port 53. Il ouvre ensuite une connexion TCP vers le port 80 (HTTP) par la poignée de main en trois temps SYN, SYN-ACK, ACK. Ce n'est qu'une fois la connexion établie que la requête HTTP GET part, dans un segment de données. Dans les deux échanges, le poste utilise comme port source un port éphémère (49152 à 65535 selon l'IANA).",
+    "reference": "RFC 9293 (TCP), section 3.5 ; RFC 1035 (DNS) ; RFC 6335 (ports)"
+  },
+  {
+    "slug": "ccna-1.5-tcp-ack-number-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "hard",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un client ouvre une connexion TCP avec un SYN de numéro de séquence 2000. Le serveur répond par un SYN-ACK de numéro de séquence 7000, puis le client termine la poignée de main. Le client envoie ensuite deux segments de 1 460 octets de données chacun, que le serveur reçoit sans erreur. Quel numéro d'acquittement le serveur place-t-il dans l'ACK qui confirme la réception des deux segments ?",
+      "fields": [
+        {
+          "id": "ack",
+          "label": "Numéro d'acquittement (en chiffres)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "ack": {
+          "accepted": [
+            "4921"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le SYN consomme à lui seul un numéro de séquence : le premier octet de données du client porte donc le numéro 2001. Les deux segments transportent 2 × 1 460 = 2 920 octets, numérotés de 2001 à 4920. L'acquittement TCP est cumulatif et indique le prochain octet attendu : le serveur renvoie ack = 4921. Erreurs fréquentes : 4920 (le dernier octet reçu, ou l'oubli du numéro consommé par le SYN) et 7001, qui est l'acquittement envoyé par le client en réponse au SYN du serveur.",
+    "reference": "RFC 9293 (TCP), section 3.4"
+  },
+  {
+    "slug": "ccna-1.10-windows-gateway-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Ce poste Windows communique avec les hôtes de son segment, mais ne joint aucun hôte d'un autre réseau, même par adresse IP. L'interface du routeur sur ce segment a l'adresse 10.20.30.129/26. Quelle correction faut-il apporter ?",
+      "exhibit": "C:\\>ipconfig /all\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Description . . . . . . . . . . . : Intel(R) Ethernet Connection I219-LM\n   Physical Address. . . . . . . . . : 54-E1-AD-3C-7F-21\n   DHCP Enabled. . . . . . . . . . . : No\n   Autoconfiguration Enabled . . . . : Yes\n   Link-local IPv6 Address . . . . . : fe80::8d4c:2f1a:9b3e:61d2%12(Preferred)\n   IPv4 Address. . . . . . . . . . . : 10.20.30.140(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.255.192\n   Default Gateway . . . . . . . . . : 10.20.30.62\n   DNS Servers . . . . . . . . . . . : 10.20.0.53\n   NetBIOS over Tcpip. . . . . . . . : Enabled",
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer le masque par 255.255.255.0 pour que la passerelle actuelle soit dans le sous-réseau"
+        },
+        {
+          "id": "b",
+          "text": "Remplacer la passerelle par défaut par 10.20.30.129"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer l'adresse du serveur DNS par celle du routeur"
+        },
+        {
+          "id": "d",
+          "text": "Activer DHCP, car une adresse statique ne permet pas de joindre d'autres réseaux"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le masque 255.255.255.192 (/26) découpe le 4ᵉ octet en blocs de 64 : 10.20.30.140 appartient au sous-réseau 10.20.30.128/26, dont les hôtes vont de .129 à .190. La passerelle configurée, 10.20.30.62, est dans un autre bloc (.0 à .63) et n'est pas le routeur : le poste joint ses voisins directement, mais il confie tout paquet destiné à un autre réseau à une adresse qui ne mène nulle part. Il faut indiquer 10.20.30.129, l'adresse du routeur dans le sous-réseau du poste, puis vérifier avec « ipconfig /all » et « route print ».",
+    "distractorNotes": {
+      "a": "En /24, 10.20.30.62 serait bien dans le sous-réseau du poste, mais ce n'est toujours pas l'adresse du routeur, et le masque ne correspondrait plus à celui du segment (/26).",
+      "c": "Le DNS ne sert qu'à résoudre des noms ; ici même les communications par adresse IP vers d'autres réseaux échouent.",
+      "d": "Une configuration statique fonctionne si elle est correcte : le problème vient de la valeur de la passerelle, pas du mode d'adressage."
+    },
+    "reference": "RFC 1122, section 3.3.1 (choix local ou distant et sélection de la passerelle)"
+  },
+  {
+    "slug": "ccna-1.10-linux-gateway-cmd-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur un poste Linux, quelles deux commandes affichent la passerelle par défaut utilisée par le système ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ip route show"
+        },
+        {
+          "id": "b",
+          "text": "ip addr show"
+        },
+        {
+          "id": "c",
+          "text": "ipconfig /all"
+        },
+        {
+          "id": "d",
+          "text": "ifconfig -a"
+        },
+        {
+          "id": "e",
+          "text": "netstat -rn"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "« ip route show » affiche la table de routage, où la passerelle apparaît sur une ligne du type « default via 192.168.1.1 dev eth0 ». « netstat -rn » affiche la même table en notation numérique : la passerelle est sur la ligne de destination 0.0.0.0 portant l'indicateur UG (route active vers une passerelle). « route -n » donnerait le même résultat.",
+    "distractorNotes": {
+      "b": "« ip addr show » liste les interfaces et leurs adresses IP, sans la table de routage.",
+      "c": "« ipconfig /all » est une commande Windows : elle n'existe pas sous Linux.",
+      "d": "« ifconfig -a » affiche les adresses et l'état des interfaces, mais pas la passerelle par défaut."
+    },
+    "reference": "Pages de manuel Linux ip-route(8) et netstat(8)"
+  },
+  {
+    "slug": "ccna-1.10-macos-ifconfig-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit, relevé sur un poste macOS. Quelle affirmation décrit correctement la configuration IPv4 de l'interface en0 ?",
+      "exhibit": "mac$ ifconfig en0\nen0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500\n\toptions=6460<TSO4,TSO6,CHANNEL_IO,PARTIAL_CSUM,ZEROINVERT_CSUM>\n\tether 3c:22:fb:91:5e:0a\n\tinet6 fe80::1c8f:7a2b:44e0:9d13%en0 prefixlen 64 secured scopeid 0xe\n\tinet 172.16.8.37 netmask 0xfffffff0 broadcast 172.16.8.47\n\tnd6 options=201<PERFORMNUD,DAD>\n\tmedia: autoselect\n\tstatus: active\nmac$ netstat -rn -f inet\nRouting tables\n\nInternet:\nDestination        Gateway            Flags               Netif Expire\ndefault            172.16.8.33        UGScg                 en0\n127                127.0.0.1          UCS                   lo0\n127.0.0.1          127.0.0.1          UH                    lo0\n172.16.8.32/28     link#14            UCS                   en0      !\n172.16.8.33/32     link#14            UCS                   en0      !\n172.16.8.33        a4:2b:b0:c1:d2:e3  UHLWIir               en0   1186\n172.16.8.37/32     link#14            UCS                   en0      !",
+      "options": [
+        {
+          "id": "a",
+          "text": "172.16.8.37/24 dans le réseau 172.16.8.0, passerelle par défaut 172.16.8.33"
+        },
+        {
+          "id": "b",
+          "text": "172.16.8.37/30 dans le réseau 172.16.8.36, passerelle par défaut 172.16.8.33"
+        },
+        {
+          "id": "c",
+          "text": "172.16.8.37/28 dans le réseau 172.16.8.32, passerelle par défaut 172.16.8.33"
+        },
+        {
+          "id": "d",
+          "text": "172.16.8.37/28 dans le réseau 172.16.8.32, passerelle par défaut 172.16.8.47"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "macOS affiche le masque en hexadécimal : 0xfffffff0 donne ff.ff.ff.f0, soit 255.255.255.240, un /28. Avec un pas de 16, 172.16.8.37 appartient au bloc 172.16.8.32 à 172.16.8.47, ce que confirment l'adresse de broadcast .47 et la route 172.16.8.32/28. La passerelle se lit dans « netstat -rn » : c'est la ligne default, avec les indicateurs UG, qui pointe vers 172.16.8.33.",
+    "distractorNotes": {
+      "a": "0xfffffff0 n'est pas 255.255.255.0, qui s'écrirait 0xffffff00 : le dernier octet f0 vaut 240.",
+      "b": "Un /30 s'écrirait 0xfffffffc ; ici le dernier octet est f0 (240), pas fc (252).",
+      "d": "172.16.8.47 est l'adresse de broadcast du /28 ; la passerelle est donnée par la ligne default de la table de routage : 172.16.8.33."
+    },
+    "reference": "Pages de manuel macOS ifconfig(8) et netstat(1)"
+  },
+  {
+    "slug": "ccna-1.11-bands-channels-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles trois affirmations sur les bandes de fréquences Wi-Fi sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les canaux 36, 40, 44 et 48 font partie de la bande 2,4 GHz."
+        },
+        {
+          "id": "b",
+          "text": "Les canaux 1, 6 et 11 de la bande 2,4 GHz ne se chevauchent pas."
+        },
+        {
+          "id": "c",
+          "text": "La bande 5 GHz offre bien plus de canaux de 20 MHz non chevauchants que la bande 2,4 GHz."
+        },
+        {
+          "id": "d",
+          "text": "La bande 6 GHz est utilisable par les clients Wi-Fi 5 (802.11ac)."
+        },
+        {
+          "id": "e",
+          "text": "Les canaux de 160 MHz sont couramment utilisés en 2,4 GHz pour augmenter le débit."
+        },
+        {
+          "id": "f",
+          "text": "À puissance égale, un signal à 2,4 GHz porte plus loin et traverse mieux les murs qu'un signal à 5 GHz."
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c",
+        "f"
+      ]
+    },
+    "explanation": "Les canaux de la bande 2,4 GHz sont espacés de 5 MHz mais occupent chacun environ 22 MHz : seuls des canaux séparés d'au moins cinq numéros, comme 1, 6 et 11, ne se chevauchent pas. La bande 5 GHz, bien plus large, offre selon les pays une vingtaine de canaux de 20 MHz non chevauchants (36, 40, 44, 48…). Plus la fréquence est élevée, plus l'affaiblissement et l'absorption par les obstacles sont forts : à puissance égale, le 2,4 GHz porte plus loin. La bande 6 GHz n'est accessible qu'aux équipements Wi-Fi 6E (802.11ax) et Wi-Fi 7 (802.11be).",
+    "distractorNotes": {
+      "a": "Les canaux 36 à 48 appartiennent à la bande 5 GHz (U-NII-1) ; la bande 2,4 GHz n'a que les canaux 1 à 13 (14 au Japon).",
+      "d": "802.11ac (Wi-Fi 5) ne fonctionne qu'en 5 GHz ; la bande 6 GHz demande des équipements Wi-Fi 6E ou Wi-Fi 7.",
+      "e": "La bande 2,4 GHz ne fait qu'environ 83 MHz de large : on y utilise des canaux de 20 MHz, plus rarement 40 MHz, jamais 160 MHz."
+    },
+    "reference": "IEEE 802.11-2020 ; IEEE 802.11ax-2021"
+  },
+  {
+    "slug": "ccna-1.11-bssid-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux AP d'un même ESS diffusent tous deux le SSID « CAMPUS ». Quel identifiant permet à un client de distinguer le BSS de chaque AP ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le SSID diffusé dans les trames balises (beacons)"
+        },
+        {
+          "id": "b",
+          "text": "Le BSSID, dérivé de l'adresse MAC de la radio de l'AP"
+        },
+        {
+          "id": "c",
+          "text": "Le numéro de canal utilisé par chaque AP"
+        },
+        {
+          "id": "d",
+          "text": "L'adresse IP de gestion de chaque AP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un BSS est l'ensemble formé par un AP et ses clients ; il est identifié par son BSSID, une adresse MAC de 48 bits liée à la radio de l'AP (un AP qui diffuse plusieurs SSID utilise un BSSID par WLAN). Plusieurs BSS qui partagent le même SSID et sont reliés par un système de distribution, en général le LAN filaire, forment un ESS dans lequel le client peut passer d'un AP à l'autre (roaming). Le BSSID figure dans l'en-tête des trames de gestion, balises comprises, et des trames de données échangées dans le BSS.",
+    "distractorNotes": {
+      "a": "Le SSID est le nom du WLAN : il est identique (« CAMPUS ») sur tous les AP de l'ESS et ne distingue donc pas les BSS.",
+      "c": "Le canal n'est pas un identifiant : deux AP éloignés peuvent utiliser le même canal, et un AP peut changer de canal.",
+      "d": "L'adresse IP de gestion sert à administrer l'AP ; elle ne figure pas dans l'en-tête des trames 802.11, que le client utilise pour distinguer les BSS."
+    },
+    "reference": "IEEE 802.11-2020 (architecture BSS et ESS)"
+  },
+  {
+    "slug": "ccna-1.11-client-association-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Un client Wi-Fi rejoint un WLAN WPA2-Personnel en sondage actif. Ordonnez les étapes, de la découverte du réseau au premier échange de données.",
+      "items": [
+        {
+          "id": "assoc",
+          "text": "Association Request du client, puis Association Response de l'AP"
+        },
+        {
+          "id": "data",
+          "text": "Échange de trames de données chiffrées"
+        },
+        {
+          "id": "preq",
+          "text": "Le client envoie une Probe Request"
+        },
+        {
+          "id": "hs",
+          "text": "4-way handshake : dérivation et installation des clés de chiffrement"
+        },
+        {
+          "id": "auth",
+          "text": "Échange de trames d'authentification 802.11 (Open System)"
+        },
+        {
+          "id": "presp",
+          "text": "L'AP répond par une Probe Response"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "preq",
+        "presp",
+        "auth",
+        "assoc",
+        "hs",
+        "data"
+      ]
+    },
+    "explanation": "En sondage actif, le client envoie une Probe Request et les AP qui servent le SSID répondent par une Probe Response. Vient ensuite l'authentification 802.11 Open System, une simple formalité, puis l'association, au cours de laquelle l'AP attribue au client un identifiant d'association (AID). Avec WPA2, le 4-way handshake dérive alors les clés de chiffrement à partir de la clé pré-partagée ; ce n'est qu'ensuite que le client peut échanger des données chiffrées.",
+    "reference": "IEEE 802.11-2020 (authentification, association et 4-way handshake)"
+  },
+  {
+    "slug": "ccna-1.12-type2-hypervisor-stack-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "easy",
+    "body": {
+      "type": "ordering",
+      "stem": "Un formateur fait tourner une VM Linux dans VirtualBox sur son ordinateur portable sous Windows. Ordonnez les couches, de la plus proche du matériel à la plus haute.",
+      "items": [
+        {
+          "id": "guestos",
+          "text": "Système d'exploitation invité (Linux)"
+        },
+        {
+          "id": "hw",
+          "text": "Matériel physique (CPU, RAM, carte réseau)"
+        },
+        {
+          "id": "app",
+          "text": "Application exécutée dans la VM"
+        },
+        {
+          "id": "hyp",
+          "text": "Hyperviseur de type 2 (VirtualBox)"
+        },
+        {
+          "id": "vm",
+          "text": "Matériel virtuel de la VM (vCPU, vRAM, vNIC)"
+        },
+        {
+          "id": "hostos",
+          "text": "Système d'exploitation hôte (Windows)"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "hw",
+        "hostos",
+        "hyp",
+        "vm",
+        "guestos",
+        "app"
+      ]
+    },
+    "explanation": "Un hyperviseur de type 2 (hosted), comme VirtualBox ou VMware Workstation, s'exécute comme une application sur un système d'exploitation hôte, lui-même installé sur le matériel. L'hyperviseur présente à chaque VM un matériel virtuel (vCPU, mémoire, carte réseau virtuelle) sur lequel s'installe l'OS invité, qui exécute à son tour les applications. Un hyperviseur de type 1 (bare metal), comme VMware ESXi, s'installe au contraire directement sur le matériel, sans OS hôte.",
+    "reference": "NIST SP 800-125, Guide to Security for Full Virtualization Technologies"
+  },
+  {
+    "slug": "ccna-1.12-containers-vs-vm-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations distinguent les conteneurs (Docker, par exemple) des machines virtuelles ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque conteneur embarque son propre noyau et un système d'exploitation complet."
+        },
+        {
+          "id": "b",
+          "text": "Les conteneurs ne fonctionnent que sur un hyperviseur de type 1 tel que VMware ESXi."
+        },
+        {
+          "id": "c",
+          "text": "Un conteneur est mieux isolé qu'une VM, car il dispose de son propre matériel virtuel."
+        },
+        {
+          "id": "d",
+          "text": "Les conteneurs d'un même hôte partagent le noyau du système d'exploitation hôte."
+        },
+        {
+          "id": "e",
+          "text": "Un conteneur démarre en général en quelques secondes et consomme moins de ressources qu'une VM."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Un conteneur virtualise au niveau du système d'exploitation : tous les conteneurs d'un hôte partagent son noyau et sont isolés par des mécanismes du noyau (namespaces et cgroups sous Linux). Ils n'embarquent que l'application et ses dépendances, d'où un démarrage en quelques secondes et une forte densité. Une VM virtualise le matériel et exécute son propre OS invité complet au-dessus d'un hyperviseur, ce qui la rend plus lourde mais mieux isolée.",
+    "distractorNotes": {
+      "a": "C'est la VM qui exécute son propre noyau et un OS complet ; le conteneur partage le noyau de l'hôte.",
+      "b": "Les conteneurs n'ont pas besoin d'hyperviseur : ils tournent directement sur un OS hôte, qu'il soit installé sur un serveur physique ou dans une VM.",
+      "c": "Un conteneur n'a pas de matériel virtuel ; comme il partage le noyau de l'hôte, il est en général moins isolé qu'une VM."
+    },
+    "reference": "NIST SP 800-190, Application Container Security Guide"
+  },
+  {
+    "slug": "ccna-1.12-vrf-lite-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les hôtes du client A (10.1.1.0/24) sont derrière Gi0/0/1, et ceux du client B, qui utilisent le même plan d'adressage, derrière Gi0/0/2. Depuis le mode d'exécution privilégié de R1, l'administrateur tape « ping 10.1.1.10 » pour tester un hôte du client A. Que se passe-t-il ?",
+      "exhibit": "R1#show running-config\n!\nvrf definition CLIENT-A\n address-family ipv4\n exit-address-family\n!\nvrf definition CLIENT-B\n address-family ipv4\n exit-address-family\n!\ninterface GigabitEthernet0/0/0\n ip address 192.0.2.1 255.255.255.0\n!\ninterface GigabitEthernet0/0/1\n vrf forwarding CLIENT-A\n ip address 10.1.1.1 255.255.255.0\n!\ninterface GigabitEthernet0/0/2\n vrf forwarding CLIENT-B\n ip address 10.1.1.1 255.255.255.0\n!\n\nR1#show ip route | begin Gateway\nGateway of last resort is not set\n\n      192.0.2.0/24 is variably subnetted, 2 subnets, 2 masks\nC        192.0.2.0/24 is directly connected, GigabitEthernet0/0/0\nL        192.0.2.1/32 is directly connected, GigabitEthernet0/0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le ping échoue : il utilise la table de routage globale, où 10.1.1.0/24 n'existe pas."
+        },
+        {
+          "id": "b",
+          "text": "Le ping part dans les deux VRF et R1 reçoit une réponse de chaque client."
+        },
+        {
+          "id": "c",
+          "text": "Le ping part dans CLIENT-A, la première VRF définie dans la configuration."
+        },
+        {
+          "id": "d",
+          "text": "Le ping est impossible : IOS a refusé l'adresse de Gi0/0/2, qui chevauche celle de Gi0/0/1."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Chaque VRF possède sa propre table de routage : IOS accepte donc la même adresse 10.1.1.1/24 sur Gi0/0/1 et Gi0/0/2, placées dans des VRF différentes. Une commande sans mot-clé vrf s'applique à la table globale, qui ne contient ici que 192.0.2.0/24 et aucune route par défaut : le ping vers 10.1.1.10 échoue. Pour tester le client A, il faut taper « ping vrf CLIENT-A 10.1.1.10 », et « show ip route vrf CLIENT-A » pour voir sa table.",
+    "distractorNotes": {
+      "b": "IOS n'envoie jamais un ping dans plusieurs tables à la fois : sans mot-clé vrf, seule la table globale est consultée.",
+      "c": "L'ordre des VRF dans la configuration ne compte pas : une commande sans mot-clé vrf utilise la table globale.",
+      "d": "Le chevauchement n'est refusé qu'entre interfaces d'une même table de routage ; dans deux VRF distinctes, il est accepté."
+    },
+    "reference": "Cisco IOS XE IP Routing Configuration Guide (VRF-lite)"
+  },
+  {
+    "slug": "ccna-1.13-mac-aging-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un commutateur Catalyst en configuration par défaut, au bout de combien de temps une entrée dynamique de la table d'adresses MAC est-elle supprimée si aucune trame portant cette adresse source n'est reçue ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "4 heures"
+        },
+        {
+          "id": "b",
+          "text": "20 secondes"
+        },
+        {
+          "id": "c",
+          "text": "15 secondes"
+        },
+        {
+          "id": "d",
+          "text": "300 secondes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Sur un Catalyst, une entrée dynamique de la table MAC expire après 300 secondes (5 minutes) sans trame reçue de cette adresse source ; chaque nouvelle trame remet le compteur à zéro. La valeur se modifie avec « mac address-table aging-time » et se vérifie avec « show mac address-table aging-time ». Ce vieillissement évite de saturer la table et permet de réapprendre une adresse qui a changé de port.",
+    "distractorNotes": {
+      "a": "4 heures est le délai par défaut du cache ARP d'IOS (ARP Timeout 04:00:00), pas celui de la table MAC.",
+      "b": "20 secondes est le max age par défaut de STP.",
+      "c": "15 secondes est le forward delay de STP, que 802.1D applique temporairement à la table MAC après un changement de topologie : ce n'est pas la valeur par défaut."
+    },
+    "reference": "IEEE 802.1D-2004 ; Catalyst 9300 System Management Configuration Guide (MAC address table)"
+  },
+  {
+    "slug": "ccna-1.13-mac-filtering-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un concentrateur (hub) est branché sur le port Gi1/0/1 de SW1, et PC1 (0050.7966.6801) et PC2 (0050.7966.6802) y sont raccordés. Tous les ports de SW1 sont dans le VLAN 10 et aucune fonction de sécurité n'est configurée. PC1 envoie une trame unicast à PC2, et cette trame arrive sur Gi1/0/1. Que fait SW1 ?",
+      "exhibit": "SW1#show mac address-table dynamic vlan 10\n          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  10    0050.7966.6801    DYNAMIC     Gi1/0/1\n  10    0050.7966.6802    DYNAMIC     Gi1/0/1\n  10    0050.7966.6803    DYNAMIC     Gi1/0/2\n  10    00a0.c9d4.12f0    DYNAMIC     Gi1/0/24\nTotal Mac Addresses for this criterion: 4",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il rafraîchit l'entrée de 0050.7966.6801 et ne retransmet la trame sur aucun port."
+        },
+        {
+          "id": "b",
+          "text": "Il rafraîchit l'entrée de 0050.7966.6801 et renvoie la trame sur Gi1/0/1, vers PC2."
+        },
+        {
+          "id": "c",
+          "text": "Il inonde la trame sur tous les ports du VLAN 10, sauf Gi1/0/1."
+        },
+        {
+          "id": "d",
+          "text": "Il place Gi1/0/1 en err-disabled, car deux adresses MAC y sont apprises."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "SW1 apprend (ici rafraîchit) l'adresse source 0050.7966.6801 sur Gi1/0/1, puis cherche la destination : 0050.7966.6802 est associée au port d'arrivée lui-même. Il filtre donc la trame, c'est-à-dire qu'il la supprime sans la retransmettre, puisqu'un commutateur ne renvoie jamais une trame sur le port où il l'a reçue. PC2 l'a d'ailleurs déjà reçue, car le concentrateur répète chaque trame sur tous ses ports.",
+    "distractorNotes": {
+      "b": "Un commutateur ne renvoie jamais une trame sur son port d'arrivée ; PC2 l'a déjà reçue par le concentrateur.",
+      "c": "L'inondation ne concerne que les destinations inconnues et les broadcasts ; ici la destination est connue, sur Gi1/0/1.",
+      "d": "Sans port security, un port peut apprendre de nombreuses adresses MAC ; l'err-disabled ne viendrait que d'une violation de port security configurée."
+    },
+    "reference": "IEEE 802.1Q-2018 (processus d'apprentissage et base de filtrage)"
   }
 ]

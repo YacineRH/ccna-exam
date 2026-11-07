@@ -56,9 +56,15 @@ export const certificationSchema = z
       ctx.addIssue({ code: 'custom', message: `La somme des pondérations vaut ${total}, attendu 1` });
     }
     const codes = new Set<string>();
+    // Les codes de sous-thèmes sont uniques dans toute la certification : le filtre `subtopics` s'appuie dessus.
+    const subtopicCodes = new Set<string>();
     for (const d of cert.domains) {
       if (codes.has(d.code)) ctx.addIssue({ code: 'custom', message: `Domaine en double : ${d.code}` });
       codes.add(d.code);
+      for (const s of d.subtopics) {
+        if (subtopicCodes.has(s.code)) ctx.addIssue({ code: 'custom', message: `Sous-thème en double : ${s.code}` });
+        subtopicCodes.add(s.code);
+      }
     }
     const { min, max, passing } = cert.scoring;
     if (!(min < passing && passing <= max)) {

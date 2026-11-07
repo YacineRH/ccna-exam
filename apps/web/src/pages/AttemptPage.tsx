@@ -10,7 +10,7 @@ import { api, ApiError } from '../lib/api';
 import { formatClock, formatDuration } from '../lib/format';
 import { startIndex } from '../lib/attempt';
 import { certificationLabel } from '../lib/certification';
-import { clockOffset, remainingSeconds, serverTime } from '../lib/clock';
+import { clockOffset, remainingSeconds, resyncOffset, serverTime } from '../lib/clock';
 import { initialResponse, isComplete, normalizeResponse, QUESTION_TYPE_LABEL, sameResponse } from '../lib/responses';
 import type { AttemptQuestion, AttemptState, CertificationDetail, PracticeFeedback, Response, SaveAnswerResult } from '../lib/types';
 import { useApi } from '../lib/useApi';
@@ -74,7 +74,7 @@ export function AttemptPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [finishing, setFinishing] = useState<'manual' | 'timeout' | null>(null);
   const [now, setNow] = useState(() => Date.now());
-  /** Décalage horloge serveur − horloge du poste (ms), mesuré au chargement. */
+  /** Décalage horloge serveur − horloge du poste (ms), mesuré au chargement puis à chaque enregistrement. */
   const [offset, setOffset] = useState(0);
 
   // Temps passé par question (cumulé sur la session de navigateur).
@@ -149,7 +149,9 @@ export function AttemptPage() {
     const spent = Math.min(86_400, Math.round(elapsedOn(question.id)));
     const payload: { response?: Response | null; secondsSpent: number } = { secondsSpent: spent };
     if (changed) payload.response = draft;
+    const requestedAt = Date.now();
     const res = await api<SaveAnswerResult>(`/attempts/${attempt.id}/answers/${question.id}`, { method: 'PUT', body: payload });
+    setOffset((previous) => resyncOffset(previous, res.serverNow, requestedAt, Date.now()));
     seconds.current[question.id] = spent;
     enteredAt.current = Date.now();
     if (changed) {
@@ -203,7 +205,9 @@ export function AttemptPage() {
     run(async () => {
       if (!attempt || !question) return;
       const flagged = !question.flagged;
-      await api(`/attempts/${attempt.id}/answers/${question.id}`, { method: 'PUT', body: { flagged } });
+      const requestedAt = Date.now();
+      const res = await api<SaveAnswerResult>(`/attempts/${attempt.id}/answers/${question.id}`, { method: 'PUT', body: { flagged } });
+      setOffset((previous) => resyncOffset(previous, res.serverNow, requestedAt, Date.now()));
       setAttempt((a) => (a ? { ...a, questions: a.questions.map((q) => (q.id === question.id ? { ...q, flagged } : q)) } : a));
     });
 
@@ -347,7 +351,7 @@ export function AttemptPage() {
             {question.flagged && <span className="chip !text-warn">MARQUÉE</span>}
           </div>
 
-          <p id="enonce" tabIndex={-1} className="m-0 max-w-[820px] whitespace-pre-line text-[18px] leading-[1.55] outline-none">
+          <p id="enonce" tabIndex={-1} className="m-0 max-w-[820px] whitespace-pre-line text-[18px] leading-[1.55] outline-none [overflow-wrap:anywhere]">
             {question.body.stem}
             {question.body.type === 'mcq_multi' && (
               <span className="text-muted"> (Choisissez {question.body.selectCount} réponses.)</span>

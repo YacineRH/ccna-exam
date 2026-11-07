@@ -5,6 +5,7 @@ export * from './scoring.js';
 export * from './assembly.js';
 export * from './random.js';
 export * from './ipv4.js';
+export * from './ipv6.js';
 export * from './cli.js';
 export * from './subnetting.js';
 export * from './public.js';

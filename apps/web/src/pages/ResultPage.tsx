@@ -49,7 +49,7 @@ function ReviewCard({
             Q{item.position + 1} {item.isCorrect ? '✓' : '✕'}
             <span className="sr-only">{item.isCorrect ? ' bonne réponse' : ' réponse fausse'}</span>
           </span>
-          <span className="line-clamp-2 min-w-0 flex-[1_1_300px] font-medium">{item.body.stem}</span>
+          <span className="line-clamp-2 min-w-0 flex-[1_1_300px] font-medium [overflow-wrap:anywhere]">{item.body.stem}</span>
           <span className="font-mono text-[11px] font-medium text-muted">
             {item.domain} {domainName ?? ''} · {QUESTION_TYPE_LABEL[item.body.type].toLowerCase()} · {formatDuration(item.secondsSpent)}
             {item.flagged ? ' · ' : ''}

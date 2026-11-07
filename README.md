@@ -7,9 +7,11 @@ Le moteur ne contient rien de propre au CCNA : une certification est une configu
 ## Fonctionnalités
 
 - Examens blancs chronométrés, tirés selon la pondération officielle des 6 domaines, sans doublon.
-- Entraînement libre par domaine, avec correction immédiate et explication des distracteurs.
+- Entraînement libre par domaine et par type de question, avec correction immédiate et explication des distracteurs.
+- Révision en un clic d'un sous-thème raté, depuis la carte « À revoir » du tableau de bord.
 - 6 types de questions : QCM simple et multiple, champs à compléter (subnetting), commandes IOS (abréviations acceptées), remise en ordre, association.
 - Tableau de bord : niveau de préparation face au seuil, maîtrise par domaine, courbe de progression, sous-thèmes à revoir.
+- Banque CCNA de plus de 210 questions relues : deux examens blancs complets sans répétition, chaque sous-thème du programme couvert.
 - Trainer de subnetting à exercices infinis.
 - Serveur MCP `exam-forge-mcp` : génération et double relecture des questions, assemblage d'examens, analyse des points faibles.
 
@@ -52,7 +54,7 @@ Les tests de l'API tournent sur une vraie base PostgreSQL (vidée à chaque lanc
 
 ### Tests navigateur (Playwright)
 
-Le paquet `e2e/` démarre l'API buildée sur une base de test **vidée au démarrage** (son nom doit contenir « test ») et le front buildé (`vite preview`), puis rejoue dans Chromium : inscription et tableau de bord vide, sélecteur de certification, entraînement « ordre » au clavier, entraînement « association », examen court (chrono, marquage, soumission, mêmes lettres d'options dans les résultats) et absence de débordement horizontal à 390 px.
+Le paquet `e2e/` démarre l'API buildée sur une base de test **vidée au démarrage** (son nom doit contenir « test ») et le front buildé (`vite preview`), puis rejoue dans Chromium : inscription et tableau de bord vide, sélecteur de certification, entraînement « ordre » au clavier, entraînement « association », entraînement filtré par type lancé depuis l'écran de lancement, examen court (chrono, marquage, soumission, mêmes lettres d'options dans les résultats), « Réviser » depuis le tableau de bord après un examen raté, examen blanc complet (toutes les questions, chrono officiel, soumis sans tout répondre) et absence de débordement horizontal à 390 px.
 
 ```sh
 pnpm build
@@ -83,6 +85,7 @@ La CI GitHub Actions lance tout, avec PostgreSQL, à chaque push : build, typech
 - [x] Phase 2 : tableau de bord (préparation, domaines, à revoir)
 - [x] Phase 3 : serveur MCP (génération et validation)
 - [x] Bloc 1 : corrections v0.1 (mêmes lettres d'options dans les résultats, certification choisie dans l'en-tête, chrono corrigé du décalage d'horloge, filtre par type de question, tests navigateur Playwright en CI)
+- [x] Bloc 2 : banque complète et entraînement ciblé (banque CCNA portée à plus de 210 questions relues, deux examens complets sans doublon ; filtre `subtopics` ; compteurs de la banque par type et sous-thème ; choix des types en entraînement ; bouton « Réviser » ; chrono recalé à chaque réponse)
 - [ ] Remplir la banque : ~100 examens blancs générés via le MCP
 - [ ] Phase 4 : CLI trainer IOS, challenges chronométrés, flashcards à répétition espacée
 - [ ] Phase 5 : finitions, accessibilité, mobile

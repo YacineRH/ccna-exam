@@ -119,6 +119,30 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
     expect((await call('GET', '/api/v1/certifications/inconnue')).statusCode).toBe(404);
   });
 
+  it('compte les questions publiées par type, par sous-thème et par domaine et type', async () => {
+    const { certification, questions: bank } = loadCertification('ccna');
+    const { bank: counts } = (await call('GET', '/api/v1/certifications/ccna')).json() as {
+      bank: { questions: number; byType: Record<string, number>; bySubtopic: Record<string, number>; byDomainType: Record<string, Record<string, number>> };
+    };
+    const tally = (keyOf: (q: (typeof bank)[number]) => string | undefined) => {
+      const out: Record<string, number> = {};
+      for (const q of bank) {
+        const k = keyOf(q);
+        if (k) out[k] = (out[k] ?? 0) + 1;
+      }
+      return out;
+    };
+    expect(counts.byType).toEqual(tally((q) => q.body.type));
+    // Tous les sous-thèmes de la configuration figurent, même sans question.
+    const subtopicCodes = certification.domains.flatMap((d) => d.subtopics.map((s) => s.code));
+    expect(Object.keys(counts.bySubtopic).sort()).toEqual([...subtopicCodes].sort());
+    expect(counts.bySubtopic).toEqual({ ...Object.fromEntries(subtopicCodes.map((c) => [c, 0])), ...tally((q) => q.subtopic) });
+    for (const d of certification.domains) {
+      expect(counts.byDomainType[d.code]).toEqual(tally((q) => (q.domain === d.code ? q.body.type : undefined)));
+    }
+    expect(Object.values(counts.byType).reduce((a, b) => a + b, 0)).toBe(counts.questions);
+  });
+
   it('refuse un doublon d\'énoncé sous un autre slug', async () => {
     const { questions: bank } = loadCertification('ccna');
     const original = bank[0]!;
@@ -141,7 +165,10 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
     const answer = async (q: { id: string }, response: Response) =>
       call('PUT', `/api/v1/attempts/${state.id}/answers/${q.id}`, { response, secondsSpent: 40 });
 
-    expect((await answer(q0!, perfect(await keyOf(q0!.id)))).json()).toEqual({ saved: true });
+    const saved = (await answer(q0!, perfect(await keyOf(q0!.id)))).json();
+    // En examen, rien d'autre que l'accusé d'enregistrement et l'heure du serveur.
+    expect(Object.keys(saved).sort()).toEqual(['saved', 'serverNow']);
+    expect(saved.saved).toBe(true);
     expect((await answer(q2!, perfect(await keyOf(q2!.id)))).statusCode).toBe(200);
     const back = await answer(q1!, perfect(await keyOf(q1!.id)));
     expect(back.statusCode).toBe(409);
@@ -178,9 +205,24 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
   });
 
   it('signale une banque insuffisante au lieu de répéter des questions', async () => {
-    const res = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'exam' });
+    // La banque permet un examen complet : on demande plus de questions qu'un domaine n'en contient.
+    const available = loadCertification('ccna').questions.filter((q) => q.domain === '4.0').length;
+    const res = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'exam', domains: ['4.0'], questionCount: available + 1 });
     expect(res.statusCode).toBe(409);
     expect(res.json().error.code).toBe('insufficient_questions');
+    expect(res.json().error.details).toMatchObject({ domain: '4.0', needed: available + 1, available });
+  });
+
+  it('tire un examen blanc complet au format officiel', async () => {
+    const { certification } = loadCertification('ccna');
+    const res = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'exam' });
+    expect(res.statusCode).toBe(201);
+    const state = res.json();
+    expect(state.questions).toHaveLength(certification.examFormat.questionCount);
+    expect(new Set(state.questions.map((q: { id: string }) => q.id)).size).toBe(certification.examFormat.questionCount);
+    expect((Date.parse(state.deadlineAt) - Date.parse(state.startedAt)) / 60_000).toBe(certification.examFormat.durationMinutes);
+    // Abandonné sans réponse : il ne doit pas fausser les statistiques suivantes.
+    await db.execute(sql`delete from attempts where id = ${state.id}`);
   });
 
   it('calcule les statistiques du tableau de bord', async () => {
@@ -230,6 +272,59 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
 
     const unknown = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'practice', types: ['essay'] });
     expect(unknown.statusCode).toBe(400);
+  });
+
+  it('filtre les questions par sous-thème (révision ciblée)', async () => {
+    const { questions: bank } = loadCertification('ccna');
+    const slugsOf = async (state: { questions: { id: string }[] }) => {
+      const ids = state.questions.map((q) => q.id);
+      const rows = await db.select({ id: questions.id, slug: questions.slug }).from(questions);
+      return rows.filter((r) => ids.includes(r.id)).map((r) => r.slug);
+    };
+    const inSubtopic = (code: string) => bank.filter((q) => q.subtopic === code);
+    const target = inSubtopic('3.4');
+    expect(target.length).toBeGreaterThanOrEqual(2);
+
+    const res = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'practice', questionCount: 2, subtopics: ['3.4'] });
+    expect(res.statusCode).toBe(201);
+    const slugs = await slugsOf(res.json());
+    expect(slugs).toHaveLength(2);
+    expect(slugs.every((slug) => target.some((q) => q.slug === slug))).toBe(true);
+
+    // Deux sous-thèmes de domaines différents, combinés avec un filtre de type.
+    const both = await call('POST', '/api/v1/attempts', {
+      certification: 'ccna',
+      mode: 'practice',
+      questionCount: 2,
+      subtopics: ['1.6', '5.6'],
+      types: ['fill_blank'],
+    });
+    expect(both.statusCode).toBe(201);
+    const picked = (await slugsOf(both.json())).map((slug) => bank.find((q) => q.slug === slug)!);
+    expect(picked.every((q) => ['1.6', '5.6'].includes(q.subtopic!) && q.body.type === 'fill_blank')).toBe(true);
+
+    const tooMany = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'practice', questionCount: target.length + 1, subtopics: ['3.4'] });
+    expect(tooMany.statusCode).toBe(409);
+    expect(tooMany.json().error.details).toMatchObject({ domain: '3.0', available: target.length });
+
+    const unknown = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'practice', questionCount: 1, subtopics: ['9.9'] });
+    expect(unknown.statusCode).toBe(409);
+    expect(unknown.json().error.details.domain).toBe('*');
+    expect((await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'practice', subtopics: [''] })).statusCode).toBe(400);
+  });
+
+  it('renvoie l\'heure du serveur à chaque enregistrement de réponse', async () => {
+    const state = (await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'practice', questionCount: 1 })).json();
+    const q = state.questions[0];
+    const before = Date.now();
+    const flagged = (await call('PUT', `/api/v1/attempts/${state.id}/answers/${q.id}`, { flagged: true })).json();
+    const answered = (await call('PUT', `/api/v1/attempts/${state.id}/answers/${q.id}`, { response: perfect(await keyOf(q.id)) })).json();
+    for (const res of [flagged, answered]) {
+      expect(res.serverNow).toBe(new Date(Date.parse(res.serverNow)).toISOString());
+      expect(Date.parse(res.serverNow)).toBeGreaterThanOrEqual(before - 1000);
+      expect(Date.parse(res.serverNow)).toBeLessThanOrEqual(Date.now() + 1000);
+    }
+    expect(answered.feedback.correct).toBe(true);
   });
 
   it('garde dans les résultats l\'ordre d\'affichage vu pendant la tentative', async () => {
@@ -320,7 +415,8 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
       const list = (await admin('GET', '/exams?certification=ccna')).json().exams;
       expect(list.map((e: { number: number }) => e.number)).toEqual([1, 2]);
 
-      const short = await admin('POST', '/exams', { certification: 'ccna' });
+      const available = (await call('GET', '/api/v1/certifications/ccna')).json().bank.byDomain['6.0'] as number;
+      const short = await admin('POST', '/exams', { certification: 'ccna', domains: ['6.0'], questionCount: available + 1 });
       expect(short.json().error.code).toBe('insufficient_questions');
 
       const attempt = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'exam', examNumber: 1 });

@@ -80,3 +80,17 @@ describe('subnetting', () => {
     expect(() => planVlsm('192.168.10.0', 26, [{ name: 'Users', hosts: 100 }])).toThrow();
   });
 });
+
+describe('compressIpv6', () => {
+  it('donne la forme canonique RFC 5952', async () => {
+    const { compressIpv6 } = await import('../src/ipv6.js');
+    expect(compressIpv6('2001:0DB8:0000:0000:0000:ff00:0042:8329')).toBe('2001:db8::ff00:42:8329');
+    expect(compressIpv6('2001:db8:0:0:1:0:0:1')).toBe('2001:db8::1:0:0:1');
+    expect(compressIpv6('2001:db8:0:1:1:1:1:1')).toBe('2001:db8:0:1:1:1:1:1');
+    expect(compressIpv6('::')).toBe('::');
+    expect(compressIpv6('fe80::0:2')).toBe('fe80::2');
+    expect(compressIpv6('1::2::3')).toBeNull();
+    expect(compressIpv6('10:00:00')).toBeNull();
+    expect(compressIpv6('2001:db8::g')).toBeNull();
+  });
+});

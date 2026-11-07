@@ -35,6 +35,17 @@ describe('certification', () => {
       parseCertification({ ...cert, domains: [{ code: 'A', name: 'A', weight: 0.6 }] }),
     ).toThrow(/pondérations/);
   });
+
+  it('refuse un code de sous-thème présent dans deux domaines', () => {
+    const twice = {
+      ...cert,
+      domains: [
+        { code: 'A', name: 'A', weight: 0.5, subtopics: [{ code: 'x.1', name: 'X' }] },
+        { code: 'B', name: 'B', weight: 0.5, subtopics: [{ code: 'x.1', name: 'X bis' }] },
+      ],
+    };
+    expect(() => parseCertification(twice)).toThrow(/Sous-thème en double : x\.1/);
+  });
 });
 
 describe('assembleExam', () => {
@@ -161,5 +172,60 @@ describe('estimateReadiness', () => {
     expect(estimateReadiness([], cert).estimate).toBeNull();
     expect(estimateReadiness([800], cert).level).toBe('almost');
     expect(estimateReadiness([600], cert).level).toBe('not_ready');
+  });
+});
+
+describe('assembleExam : filtre subtopics', () => {
+  // A : sous-thèmes A.1 (4 questions) et A.2 (2) ; B : B.1 (3) dont un QCM multiple ; C : sans sous-thème.
+  const tagged: PoolQuestion[] = [
+    ...['a0', 'a1', 'a2', 'a3'].map((id) => ({ id, domain: 'A', type: 'mcq_single' as const, difficulty: 'medium' as const, subtopic: 'A.1' })),
+    ...['a4', 'a5'].map((id) => ({ id, domain: 'A', type: 'mcq_single' as const, difficulty: 'medium' as const, subtopic: 'A.2' })),
+    { id: 'b0', domain: 'B', type: 'mcq_single', difficulty: 'easy', subtopic: 'B.1' },
+    { id: 'b1', domain: 'B', type: 'mcq_single', difficulty: 'easy', subtopic: 'B.1' },
+    { id: 'b2', domain: 'B', type: 'mcq_multi', difficulty: 'easy', subtopic: 'B.1' },
+    ...['c0', 'c1', 'c2'].map((id) => ({ id, domain: 'C', type: 'mcq_single' as const, difficulty: 'medium' as const, subtopic: null })),
+  ];
+
+  it('ne tire que le sous-thème demandé, tout entier si on le demande', () => {
+    const ids = assembleExam(tagged, cert, { seed: 3, questionCount: 4, subtopics: ['A.1'] });
+    expect(ids.sort()).toEqual(['a0', 'a1', 'a2', 'a3']);
+  });
+
+  it('écarte les domaines sans question du sous-thème et renormalise les poids', () => {
+    // A.2 (domaine A, poids 0,5) et B.1 (domaine B, poids 0,3), 3 questions : C est écarté, A en reçoit 2 et B 1.
+    // Sans renormalisation, C (poids 0,2) en demanderait une et l'assemblage échouerait.
+    const ids = assembleExam(tagged, cert, { seed: 11, questionCount: 3, subtopics: ['A.2', 'B.1'] });
+    expect(ids.filter((id) => id.startsWith('a')).sort()).toEqual(['a4', 'a5']);
+    expect(ids.filter((id) => id.startsWith('b'))).toHaveLength(1);
+  });
+
+  it('se combine avec le filtre types', () => {
+    expect(assembleExam(tagged, cert, { seed: 1, questionCount: 1, subtopics: ['B.1'], types: ['mcq_multi'] })).toEqual(['b2']);
+    expect(() => assembleExam(tagged, cert, { seed: 1, questionCount: 1, subtopics: ['A.1'], types: ['mcq_multi'] })).toThrow(
+      InsufficientQuestionsError,
+    );
+  });
+
+  it('signale « * » quand aucun domaine ne convient, et le domaine quand il est trop pauvre', () => {
+    try {
+      assembleExam(tagged, cert, { seed: 1, questionCount: 1, subtopics: ['Z.9'] });
+      expect.unreachable();
+    } catch (err) {
+      expect(err).toBeInstanceOf(InsufficientQuestionsError);
+      expect((err as InsufficientQuestionsError).domain).toBe('*');
+      expect((err as InsufficientQuestionsError).message).toContain('Z.9');
+    }
+    try {
+      assembleExam(tagged, cert, { seed: 1, questionCount: 5, subtopics: ['A.1'] });
+      expect.unreachable();
+    } catch (err) {
+      expect((err as InsufficientQuestionsError).domain).toBe('A');
+      expect((err as InsufficientQuestionsError).available).toBe(4);
+    }
+  });
+
+  it('sans filtre, les questions sans sous-thème restent tirables', () => {
+    expect(assembleExam(tagged, cert, { seed: 1, subtopics: [] })).toEqual(assembleExam(tagged, cert, { seed: 1 }));
+    expect(() => assembleExam(tagged, cert, { seed: 1, questionCount: 9, domains: ['C', 'A'] })).not.toThrow();
   });
 });
