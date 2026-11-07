@@ -100,7 +100,9 @@ export function normalizeCommand(line: string): string {
     // "interface g0/0", "int range fa0/1 - 5" : le nom d'interface peut être collé ou séparé du numéro.
     // Uniquement après un mot qui annonce une interface, pour ne pas lire "hostname S1" comme Serial1.
     const expectsInterface = prev !== undefined && INTERFACE_CONTEXT.includes(prev);
-    const iface = expectsInterface ? normalizeInterface(token) : null;
+    // Un nom d'interface avec un « / » (g0/0, s0/0/1) est sans ambiguïté, où qu'il soit :
+    // interface de sortie d'une route statique, `ip nat inside source list 1 interface g0/1 overload`…
+    const iface = expectsInterface || token.includes('/') ? normalizeInterface(token) : null;
     if (iface) {
       out.push(iface);
       continue;

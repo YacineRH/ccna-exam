@@ -22,6 +22,13 @@ describe('normalizeCommand', () => {
     expect(normalizeCommand('hostname S1')).toBe('hostname s1');
   });
 
+  it('reconnaît un nom d\'interface avec « / » hors du mot-clé interface', () => {
+    expect(normalizeCommand('ip route 0.0.0.0 0.0.0.0 g0/0')).toBe('ip route 0.0.0.0 0.0.0.0 gigabitethernet0/0');
+    expect(commandMatches('ipv6 route ::/0 Gi0/0/1 fe80::2', ['ipv6 route ::/0 GigabitEthernet0/0/1 FE80::2'])).toBe(true);
+    // Les préfixes IPv6 et les adresses ne sont pas pris pour des interfaces.
+    expect(normalizeCommand('ipv6 address 2001:db8:acad:10::/64 eui-64')).toBe('ipv6 address 2001:db8:acad:10::/64 eui-64');
+  });
+
   it('ne développe pas un préfixe ambigu', () => {
     // "s" pourrait être show, shutdown, speed, ssh... : IOS répond "Ambiguous command".
     expect(normalizeCommand('s run')).toBe('s running-config');

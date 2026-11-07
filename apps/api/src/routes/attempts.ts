@@ -19,6 +19,7 @@ const startSchema = z.object({
   questionCount: z.number().int().min(1).max(200).optional(),
   domains: z.array(z.string().max(16)).max(20).optional(),
   types: z.array(z.enum(QUESTION_TYPES)).max(QUESTION_TYPES.length).optional(),
+  subtopics: z.array(z.string().min(1).max(16)).max(100).optional(),
 });
 
 const answerSchema = z

@@ -18,6 +18,7 @@ import {
   examQuestions,
   exams,
   questions,
+  subtopics,
   type Attempt,
 } from '../db/schema.js';
 import { conflict, forbidden, notFound } from '../errors.js';
@@ -36,6 +37,8 @@ export interface StartAttemptInput {
   domains?: string[];
   /** Types de questions à tirer (entraînement ciblé). Sans effet sur un examen blanc figé. */
   types?: QuestionType[];
+  /** Sous-thèmes à tirer (révision ciblée), même logique que `types`. Sans effet sur un examen blanc figé. */
+  subtopics?: string[];
 }
 
 async function loadCertification(db: Db, code: string) {
@@ -80,9 +83,16 @@ export async function startAttempt(db: Db, userId: string, input: StartAttemptIn
     questionIds = rows.map((r) => r.id);
   } else {
     const pool = await db
-      .select({ id: questions.id, domain: domains.code, type: questions.type, difficulty: questions.difficulty })
+      .select({
+        id: questions.id,
+        domain: domains.code,
+        subtopic: subtopics.code,
+        type: questions.type,
+        difficulty: questions.difficulty,
+      })
       .from(questions)
       .innerJoin(domains, eq(domains.id, questions.domainId))
+      .leftJoin(subtopics, eq(subtopics.id, questions.subtopicId))
       .where(and(eq(questions.certificationId, cert.id), eq(questions.status, 'published')));
     const seen = await db
       .selectDistinct({ id: attemptAnswers.questionId })
@@ -97,6 +107,7 @@ export async function startAttempt(db: Db, userId: string, input: StartAttemptIn
         questionCount: count,
         ...(input.domains?.length ? { domains: input.domains } : {}),
         ...(input.types?.length ? { types: input.types } : {}),
+        ...(input.subtopics?.length ? { subtopics: input.subtopics } : {}),
         avoidIds: seen.map((s) => s.id),
       });
     } catch (err) {
@@ -247,10 +258,16 @@ export async function answerQuestion(db: Db, attemptId: string, userId: string, 
     }
   });
 
+  // `serverNow` permet au navigateur de recaler son chrono à chaque enregistrement.
+  const serverNow = new Date().toISOString();
   if (attempt.mode === 'practice' && result) {
-    return { saved: true, feedback: { ...result, key: row.key, explanation: row.explanation, distractorNotes: row.notes } };
+    return {
+      saved: true,
+      serverNow,
+      feedback: { ...result, key: row.key, explanation: row.explanation, distractorNotes: row.notes },
+    };
   }
-  return { saved: true };
+  return { saved: true, serverNow };
 }
 
 export async function submitAttempt(db: Db, attemptId: string, userId: string, opts: { expired?: boolean } = {}) {
