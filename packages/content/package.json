@@ -1,0 +1,22 @@
+{
+  "name": "@examforge/content",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Contenu des certifications (configuration + banque de questions), au format données.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" }
+  },
+  "files": ["dist", "data"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@examforge/core": "workspace:*"
+  }
+}

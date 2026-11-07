@@ -1,0 +1,175 @@
+[
+  {
+    "slug": "ccna-2.2-trunk-native-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Le commutateur SW1 ne gère que l'encapsulation 802.1Q. Vous êtes en mode de configuration de l'interface Fa0/24. Configurez-la en trunk statique avec le VLAN natif 99.",
+      "prompt": "SW1(config-if)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "switchport mode trunk"
+        ],
+        [
+          "switchport trunk native vlan 99"
+        ]
+      ]
+    },
+    "explanation": "« switchport mode trunk » force le port en trunk. « switchport trunk native vlan 99 » fait passer le trafic du VLAN 99 sans étiquette 802.1Q. Le VLAN natif doit être identique des deux côtés du lien, sinon CDP signale un native VLAN mismatch.",
+    "reference": "IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.4-lacp-modes-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux commutateurs doivent négocier un EtherChannel avec LACP. Quelle combinaison de modes forme le lien agrégé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "passive – passive"
+        },
+        {
+          "id": "b",
+          "text": "active – passive"
+        },
+        {
+          "id": "c",
+          "text": "auto – desirable"
+        },
+        {
+          "id": "d",
+          "text": "on – active"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Avec LACP, au moins un des deux côtés doit être en mode active pour envoyer des LACPDU. Les combinaisons qui fonctionnent sont donc active–active et active–passive.",
+    "distractorNotes": {
+      "a": "Deux côtés passifs attendent chacun l'autre : aucune négociation n'a lieu.",
+      "c": "auto et desirable sont des modes PAgP, le protocole propriétaire Cisco, pas LACP.",
+      "d": "Le mode on ne négocie pas : il ne fonctionne qu'avec un autre côté en mode on."
+    },
+    "reference": "IEEE 802.3ad / 802.1AX"
+  },
+  {
+    "slug": "ccna-2.5-rstp-port-roles-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "En Rapid PVST+, quel rôle a un port qui offre un chemin de secours vers le pont racine, à utiliser si le port racine tombe ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Designated"
+        },
+        {
+          "id": "b",
+          "text": "Alternate"
+        },
+        {
+          "id": "c",
+          "text": "Backup"
+        },
+        {
+          "id": "d",
+          "text": "Edge"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un port alternate reçoit des BPDU meilleures d'un autre commutateur : c'est un chemin de remplacement vers la racine, qui devient port racine immédiatement si celui-ci tombe.",
+    "distractorNotes": {
+      "a": "Le port designated est celui qui transmet vers le segment, pas un port de secours.",
+      "c": "Le port backup protège un segment partagé où le commutateur a déjà un port designated, pas le chemin vers la racine.",
+      "d": "Un port edge (PortFast) mène à un poste final, il ne participe pas au chemin vers la racine."
+    },
+    "reference": "IEEE 802.1w"
+  },
+  {
+    "slug": "ccna-2.1-create-vlan-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "difficulty": "easy",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, en mode de configuration globale, créez le VLAN 20 et nommez-le SALES.",
+      "prompt": "SW1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "vlan 20"
+        ],
+        [
+          "name SALES"
+        ]
+      ]
+    },
+    "explanation": "« vlan 20 » crée le VLAN et fait passer en mode de configuration du VLAN (SW1(config-vlan)#), où « name SALES » lui donne son nom."
+  },
+  {
+    "slug": "ccna-2.3-lldp-standard-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel protocole de découverte de niveau 2 est un standard IEEE, utilisable entre équipements de constructeurs différents ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "CDP"
+        },
+        {
+          "id": "b",
+          "text": "LLDP"
+        },
+        {
+          "id": "c",
+          "text": "VTP"
+        },
+        {
+          "id": "d",
+          "text": "DTP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "LLDP est défini par l'IEEE 802.1AB et fonctionne entre constructeurs. Sur IOS, il est désactivé par défaut et s'active avec « lldp run ».",
+    "distractorNotes": {
+      "a": "CDP est propriétaire Cisco.",
+      "c": "VTP synchronise les VLAN entre commutateurs Cisco, ce n'est pas un protocole de découverte.",
+      "d": "DTP négocie le mode trunk, il est propriétaire Cisco."
+    },
+    "reference": "IEEE 802.1AB"
+  }
+]

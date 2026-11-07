@@ -1,0 +1,161 @@
+[
+  {
+    "slug": "ccna-4.1-nat-terms-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le PC 192.168.1.10 accède à un serveur web Internet via R1, qui le traduit en 203.0.113.5. Comment s'appelle l'adresse 203.0.113.5 dans la terminologie NAT de Cisco ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Inside local"
+        },
+        {
+          "id": "b",
+          "text": "Inside global"
+        },
+        {
+          "id": "c",
+          "text": "Outside local"
+        },
+        {
+          "id": "d",
+          "text": "Outside global"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« Inside » désigne l'hôte du réseau interne, « global » l'adresse telle qu'on la voit depuis l'extérieur. 203.0.113.5 représente donc le PC interne vu d'Internet : c'est l'adresse inside global.",
+    "distractorNotes": {
+      "a": "L'adresse inside local est 192.168.1.10, l'adresse réelle du PC.",
+      "c": "Outside local est l'adresse du serveur externe telle qu'elle est vue depuis l'intérieur.",
+      "d": "Outside global est l'adresse réelle du serveur web externe."
+    }
+  },
+  {
+    "slug": "ccna-4.3-dhcp-dora-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "body": {
+      "type": "ordering",
+      "stem": "Remettez dans l'ordre les messages échangés lorsqu'un client obtient sa première adresse par DHCPv4.",
+      "items": [
+        {
+          "id": "discover",
+          "text": "DHCPDISCOVER"
+        },
+        {
+          "id": "offer",
+          "text": "DHCPOFFER"
+        },
+        {
+          "id": "request",
+          "text": "DHCPREQUEST"
+        },
+        {
+          "id": "ack",
+          "text": "DHCPACK"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "discover",
+        "offer",
+        "request",
+        "ack"
+      ]
+    },
+    "explanation": "Le client cherche un serveur (Discover), un serveur propose une adresse (Offer), le client la demande formellement (Request) et le serveur confirme le bail (Ack). C'est l'échange DORA.",
+    "reference": "RFC 2131"
+  },
+  {
+    "slug": "ccna-4.5-syslog-severity-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel niveau de gravité syslog correspond aux messages « warnings » ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "2"
+        },
+        {
+          "id": "b",
+          "text": "3"
+        },
+        {
+          "id": "c",
+          "text": "4"
+        },
+        {
+          "id": "d",
+          "text": "5"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les niveaux vont de 0 à 7 : emergencies, alerts, critical, errors, warnings (4), notifications, informational, debugging.",
+    "distractorNotes": {
+      "a": "2 correspond à critical.",
+      "b": "3 correspond à errors.",
+      "d": "5 correspond à notifications."
+    },
+    "reference": "RFC 5424"
+  },
+  {
+    "slug": "ccna-4.4-snmpv3-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle version de SNMP apporte l'authentification des messages et le chiffrement des données ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "SNMPv1"
+        },
+        {
+          "id": "b",
+          "text": "SNMPv2c"
+        },
+        {
+          "id": "c",
+          "text": "SNMPv3"
+        },
+        {
+          "id": "d",
+          "text": "Aucune : SNMP ne chiffre jamais"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "SNMPv3 introduit le modèle de sécurité par utilisateur : authentification et intégrité (niveau authNoPriv) et chiffrement (niveau authPriv).",
+    "distractorNotes": {
+      "a": "SNMPv1 ne protège que par une community envoyée en clair.",
+      "b": "SNMPv2c utilise aussi des communities en clair.",
+      "d": "SNMPv3 chiffre bien les données au niveau authPriv."
+    },
+    "reference": "RFC 3414"
+  }
+]

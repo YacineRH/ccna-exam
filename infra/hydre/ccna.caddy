@@ -1,0 +1,7 @@
+# Site ExamForge servi par le Caddy d'Hydre (fichier à placer dans hydre/caddy-sites/).
+# Let's Encrypt fournit le certificat automatiquement, comme pour hydre.yratech.fr.
+ccna.yratech.fr {
+	encode zstd gzip
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy examforge-web:80
+}
