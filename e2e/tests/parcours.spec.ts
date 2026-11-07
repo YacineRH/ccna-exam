@@ -1,5 +1,5 @@
 import { expect, test, type Browser, type BrowserContext, type Locator, type Page } from '@playwright/test';
-import { questionByStem, shortExamPlan } from '../support/content';
+import { bankOf, certificationOf, maxDrawableForTypes, questionByStem, shortExamPlan } from '../support/content';
 
 /*
  * Parcours complet d'un candidat, dans l'ordre : chaque test s'appuie sur l'état laissé par
@@ -185,8 +185,39 @@ test('entraînement « association » : choisir dans les listes, valider, vérif
   await expect(correction()).toContainText('✓ BONNE RÉPONSE');
 });
 
+test('entraînement filtré par type, lancé depuis l’interface', async () => {
+  const type = 'fill_blank';
+  const inBank = bankOf(cert.code).filter((q) => q.body.type === type).length;
+  const max = maxDrawableForTypes(cert.code, [type]);
+  expect(max).toBeGreaterThanOrEqual(3);
+
+  await page.goto('/examen/nouveau?mode=practice');
+  await expect(page.getByRole('heading', { name: 'Nouvelle session' })).toBeVisible();
+  await page.getByRole('button', { name: 'Aucun type' }).click();
+  await expect(page.getByText('▲ Cochez au moins un type de question.')).toBeVisible();
+  await expect(page.getByRole('button', { name: "Démarrer l'entraînement" })).toBeDisabled();
+
+  const box = page.getByRole('checkbox', { name: /^Texte à compléter/ });
+  await box.check();
+  await expect(page.locator('label').filter({ has: box })).toContainText(`${inBank} questions dans les domaines cochés`);
+  // La faisabilité tient compte du type : domaines sans question de ce type écartés, poids renormalisés.
+  await expect(page.locator('#count-help')).toContainText(`au plus ${max} questions avec les domaines et les types retenus`);
+  await expect(page.locator('#count')).toHaveValue(String(Math.min(10, max)));
+
+  await page.locator('#count').fill('3');
+  await page.getByRole('button', { name: "Démarrer l'entraînement" }).click();
+  await expect(page).toHaveURL(/\/tentatives\/[0-9a-f-]{36}$/);
+  for (let n = 1; n <= 3; n++) {
+    await expect(page.getByText(`Question ${n} / 3`)).toBeVisible();
+    await expect(page.getByText('TEXTE À COMPLÉTER', { exact: true })).toBeVisible();
+    expect(questionByStem(cert.code, await stemText()).body.type).toBe(type);
+    if (n < 3) await page.getByRole('button', { name: /^Suivant/ }).click();
+  }
+});
+
 test('examen court : chrono, marquage, soumission, mêmes lettres dans les résultats', async () => {
   const plan = shortExamPlan(cert.code);
+  expect(plan.count).toBeLessThanOrEqual(6);
   // Le poste retarde de 10 minutes sur le serveur : le chrono doit quand même afficher le vrai temps restant.
   await context.clock.install({ time: Date.now() - 10 * 60_000 });
 
@@ -241,7 +272,8 @@ test('examen court : chrono, marquage, soumission, mêmes lettres dans les résu
     }
     if (n < plan.count) await page.getByRole('button', { name: /^Suivant/ }).click();
   }
-  expect(seen.size).toBe(plan.mcq);
+  // Tirage aléatoire dans le domaine : au moins un QCM pour vérifier les lettres (les QCM y dominent).
+  expect(seen.size).toBeGreaterThan(0);
 
   await page.getByRole('button', { name: /^Terminer →/ }).click();
   const dialog = page.getByRole('dialog', { name: "Terminer l'examen ?" });
@@ -265,6 +297,71 @@ test('examen court : chrono, marquage, soumission, mêmes lettres dans les résu
     rec.options.forEach((o, i) => expect(got[i]!.text).toContain(o.text));
     await expect(rows.filter({ hasText: 'votre choix' })).toHaveAttribute('data-tag', rec.picked);
   }
+});
+
+test('« Réviser » depuis le tableau de bord, après un examen raté', async () => {
+  const result = (await (await page.request.get(`/api/v1/attempts/${examAttemptId}/result`)).json()) as { passed: boolean };
+  expect(result.passed).toBe(false);
+  const stats = (await (await page.request.get(`/api/v1/stats?certification=${cert.code}`)).json()) as {
+    toReview: { subtopic: string | null; subtopicName: string | null }[];
+  };
+  const first = stats.toReview.find((t) => t.subtopic !== null);
+  expect(first).toBeDefined();
+  const subtopic = first!.subtopic!;
+  const size = Math.min(10, bankOf(cert.code).filter((q) => q.subtopic === subtopic).length);
+
+  await page.goto('/');
+  const card = page.getByRole('region', { name: 'À revoir · priorisé' });
+  await expect(card).toBeVisible();
+  const button = card.getByRole('button', { name: `Réviser ${first!.subtopicName} (${size} question${size > 1 ? 's' : ''})` });
+  await button.click();
+
+  // Entraînement lancé directement, sans passer par l'écran de lancement.
+  await expect(page).toHaveURL(/\/tentatives\/[0-9a-f-]{36}$/);
+  await expect(page.getByText('Entraînement libre', { exact: false }).first()).toBeVisible();
+  await expect(page.getByText(`Question 1 / ${size}`)).toBeVisible();
+  const id = page.url().split('/').pop()!;
+  const state = (await (await page.request.get(`/api/v1/attempts/${id}`)).json()) as { mode: string; questions: { body: { stem: string } }[] };
+  expect(state.mode).toBe('practice');
+  expect(state.questions).toHaveLength(size);
+  for (const q of state.questions) expect(questionByStem(cert.code, q.body.stem).subtopic).toBe(subtopic);
+});
+
+test('examen blanc complet : toutes les questions et le chrono officiel, soumis sans tout répondre', async () => {
+  const { examFormat } = certificationOf(cert.code);
+  await page.goto('/examen/nouveau?mode=exam');
+  await expect(page.locator('#count')).toHaveValue(String(examFormat.questionCount));
+  await expect(page.locator('#count-help')).toContainText(`Durée accordée : ${examFormat.durationMinutes} min`);
+  await page.getByRole('button', { name: "Démarrer l'examen blanc" }).click();
+  await expect(page).toHaveURL(/\/tentatives\/[0-9a-f-]{36}$/);
+  const id = page.url().split('/').pop()!;
+
+  await expect(page.getByText(`Question 1 / ${examFormat.questionCount}`)).toBeVisible();
+  const grid = page.getByRole('complementary', { name: 'Navigateur de questions' });
+  await expect(grid.getByRole('button')).toHaveCount(examFormat.questionCount);
+  const timer = page.getByRole('timer');
+  const shown = clockSeconds((await timer.textContent()) ?? '');
+  expect(shown).toBeLessThanOrEqual(examFormat.durationMinutes * 60);
+  expect(shown).toBeGreaterThan(examFormat.durationMinutes * 60 - 60);
+
+  // Une seule réponse si la première question est un QCM, puis on passe à la suivante et on termine.
+  const q = questionByStem(cert.code, await stemText());
+  let answered = 0;
+  if (q.body.type === 'mcq_single' || q.body.type === 'mcq_multi') {
+    await page.getByRole('main').getByRole(q.body.type === 'mcq_multi' ? 'checkbox' : 'radio').first().click();
+    answered = 1;
+  }
+  await page.getByRole('button', { name: /^Suivant/ }).click();
+  await expect(page.getByText(`Question 2 / ${examFormat.questionCount}`)).toBeVisible();
+  await page.getByRole('button', { name: "Terminer l'examen" }).click();
+  const dialog = page.getByRole('dialog', { name: "Terminer l'examen ?" });
+  await expect(dialog).toContainText(`${examFormat.questionCount - answered} questions sans réponse`);
+  await dialog.getByRole('button', { name: 'Terminer et voir le résultat' }).click();
+
+  await expect(page).toHaveURL(new RegExp(`/tentatives/${id}/resultat$`));
+  await expect(page.getByText('Score final')).toBeVisible();
+  const result = (await (await page.request.get(`/api/v1/attempts/${id}/result`)).json()) as { status: string; totalCount: number };
+  expect(result).toMatchObject({ status: 'submitted', totalCount: examFormat.questionCount });
 });
 
 test('à 390 px de large : aucun débordement horizontal', async ({ browser }) => {
