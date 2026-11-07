@@ -360,6 +360,21 @@ export async function runLabCommands(db: Db, attemptId: string, userId: string, 
   return result;
 }
 
+/**
+ * Complétion d'une ligne (touche Tab d'IOS) dans l'état courant de l'équipement : rien n'est exécuté
+ * ni enregistré. Sert la barre d'actions tactile du terminal.
+ */
+export async function completeLabLine(db: Db, attemptId: string, userId: string, input: { device?: string; input: string }) {
+  const { attempt, lab, certification } = await ownedLabAttempt(db, attemptId, userId);
+  if (attempt.status !== 'in_progress') throw conflict('lab_finished', 'Cette session de lab est terminée');
+  const def = lab.definition;
+  const device = input.device ?? def.devices[0]?.id;
+  if (!device || !def.devices.some((d) => d.id === device)) throw badRequest(`Équipement inconnu : ${input.device}`);
+  if (input.input.length > LAB_LIMITS.lineLength || /[\r\n]/.test(input.input)) throw badRequest('Une seule ligne, de 300 caractères au plus');
+  const { session } = replay(requireProfile(certification), def, await loadCommands(db, attempt.id));
+  return { device, completed: session.device(device).complete(input.input) };
+}
+
 export async function revealHint(db: Db, attemptId: string, userId: string) {
   const { attempt, lab } = await ownedLabAttempt(db, attemptId, userId);
   if (lab.definition.kind === 'challenge') throw conflict('no_hints', 'Un challenge se joue sans indice');

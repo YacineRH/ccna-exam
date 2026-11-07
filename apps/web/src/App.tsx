@@ -1,19 +1,32 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect, type ComponentType, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { RequireAuth } from './auth/RequireAuth';
 import { Layout } from './components/Layout';
-import { AttemptPage } from './pages/AttemptPage';
-import { ChallengesPage } from './pages/ChallengesPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { HistoryPage } from './pages/HistoryPage';
-import { LabIntroPage, LabSessionPage } from './pages/LabPage';
-import { LabsPage } from './pages/LabsPage';
+import { Spinner } from './components/ui';
 import { LoginPage } from './pages/LoginPage';
-import { NewAttemptPage } from './pages/NewAttemptPage';
-import { NotFoundPage } from './pages/NotFoundPage';
-import { ResultPage } from './pages/ResultPage';
-import { RevisionPage, RevisionSessionPage } from './pages/RevisionPage';
-import { SubnetPage } from './pages/SubnetPage';
+
+/*
+ * Découpage du bundle par route : seuls la connexion et la coque (en-tête, menu) sont dans le paquet
+ * initial. Chaque écran, et les graphiques qu'il utilise, se charge à la demande.
+ */
+function page<M extends Record<string, unknown>>(load: () => Promise<M>, name: keyof M) {
+  return lazy(async () => ({ default: (await load())[name] as ComponentType }));
+}
+const DashboardPage = page(() => import('./pages/DashboardPage'), 'DashboardPage');
+const NewAttemptPage = page(() => import('./pages/NewAttemptPage'), 'NewAttemptPage');
+const AttemptPage = page(() => import('./pages/AttemptPage'), 'AttemptPage');
+const ResultPage = page(() => import('./pages/ResultPage'), 'ResultPage');
+const HistoryPage = page(() => import('./pages/HistoryPage'), 'HistoryPage');
+const SubnetPage = page(() => import('./pages/SubnetPage'), 'SubnetPage');
+const LabsPage = page(() => import('./pages/LabsPage'), 'LabsPage');
+const LabIntroPage = page(() => import('./pages/LabPage'), 'LabIntroPage');
+const LabSessionPage = page(() => import('./pages/LabPage'), 'LabSessionPage');
+const ChallengesPage = page(() => import('./pages/ChallengesPage'), 'ChallengesPage');
+const RevisionPage = page(() => import('./pages/RevisionPage'), 'RevisionPage');
+const RevisionSessionPage = page(() => import('./pages/RevisionPage'), 'RevisionSessionPage');
+const NotFoundPage = page(() => import('./pages/NotFoundPage'), 'NotFoundPage');
+
+const Loading = ({ children }: { children: ReactNode }) => <Suspense fallback={<Spinner label="Chargement de la page…" />}>{children}</Suspense>;
 
 const TITLES: [RegExp, string][] = [
   [/^\/connexion/, 'Connexion'],
@@ -50,7 +63,9 @@ export function App() {
         path="/tentatives/:id"
         element={
           <RequireAuth>
-            <AttemptPage />
+            <Loading>
+              <AttemptPage />
+            </Loading>
           </RequireAuth>
         }
       />

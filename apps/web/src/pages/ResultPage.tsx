@@ -122,6 +122,9 @@ export function ResultPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-6">
+      <h1 className="sr-only">
+        Résultats : {MODE_LABEL[r.mode].toLowerCase()} du {formatDateTime(r.startedAt)}
+      </h1>
       <nav aria-label="Fil d'Ariane" className="flex flex-wrap items-center gap-3 font-mono text-[12px] font-medium text-muted">
         <Link to="/">← Tableau de bord</Link>
         <span aria-hidden>/</span>

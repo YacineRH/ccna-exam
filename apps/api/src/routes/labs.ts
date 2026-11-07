@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { Db } from '../db/client.js';
 import { parseInput } from '../errors.js';
 import {
+  completeLabLine,
   finishLabAttempt,
   getLab,
   getLabAttemptState,
@@ -74,6 +75,13 @@ export function labAttemptRoutes(db: Db) {
       const { id } = parseInput(idParam, req.params);
       const body = parseInput(commandSchema, req.body);
       return runLabCommands(db, id, user.id, body.device !== undefined ? { device: body.device, input: body.input } : { input: body.input });
+    });
+
+    app.post('/:id/complete', async (req) => {
+      const user = await app.requireUser(req);
+      const { id } = parseInput(idParam, req.params);
+      const body = parseInput(commandSchema, req.body);
+      return completeLabLine(db, id, user.id, body.device !== undefined ? { device: body.device, input: body.input } : { input: body.input });
     });
 
     app.post('/:id/hint', async (req) => {

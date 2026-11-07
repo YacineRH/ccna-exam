@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { initials } from '../lib/format';
 import { CertificationSelect } from './CertificationSelect';
+import { Spinner } from './ui';
 import {
   IconBolt,
   IconCards,
@@ -99,14 +100,14 @@ function AccountMenu() {
     <div ref={ref} className="relative">
       <button
         type="button"
-        aria-label={`Compte de ${user.displayName}`}
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
         className="flex h-11 w-11 items-center justify-center rounded-full border border-line2 bg-raised font-display text-[13px] font-semibold text-text"
         style={{ boxShadow: '0 0 0 3px rgba(45,212,232,.12)' }}
       >
-        {initials(user.displayName)}
+        <span aria-hidden>{initials(user.displayName)}</span>
+        <span className="sr-only">Compte de {user.displayName}</span>
       </button>
       {open && (
         <div
@@ -197,7 +198,9 @@ export function Layout() {
           ))}
         </nav>
         <main id="contenu" tabIndex={-1} className="flex min-w-0 flex-1 flex-col gap-[22px] px-4 pb-14 pt-6 sm:px-8 sm:pt-[30px]">
-          <Outlet />
+          <Suspense fallback={<Spinner label="Chargement de la page…" />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

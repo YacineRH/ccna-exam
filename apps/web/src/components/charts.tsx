@@ -150,7 +150,7 @@ export function ProgressChart({ scores, passing, min, max }: { scores: ScorePoin
                 type="button"
                 aria-pressed={range === r}
                 onClick={() => setRange(r)}
-                className={`h-8 rounded-md px-2.5 ${range === r ? 'bg-[#1C2A40] text-text' : 'text-muted'}`}
+                className={`min-h-[44px] rounded-md px-2.5 ${range === r ? 'bg-[#1C2A40] text-text' : 'text-muted'}`}
               >
                 {r === '12' ? '12 ex.' : 'Tout'}
               </button>

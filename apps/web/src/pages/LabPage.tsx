@@ -41,7 +41,7 @@ function Topology({ text }: { text: string }) {
         <span className="led h-2 w-2 rounded-full bg-accent" aria-hidden />
         Topologie
       </figcaption>
-      <pre className="m-0 overflow-x-auto bg-[#070B13] px-4 py-3 font-mono text-[12.5px] leading-[1.55] text-[#C9D4E5]">{text}</pre>
+      <pre tabIndex={0} className="m-0 overflow-x-auto bg-[#070B13] px-4 py-3 font-mono text-[12.5px] leading-[1.55] text-[#C9D4E5]">{text}</pre>
     </figure>
   );
 }
@@ -437,6 +437,17 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
 
   const onAnnounce = useCallback((text: string) => setAnnounce(text), []);
 
+  /** Tab : complétion côté serveur, dans l'état courant de l'équipement (rien n'est enregistré). */
+  const completeLine = async (device: string, input: string) => {
+    try {
+      await queue.current;
+      const r = await api<{ completed: string }>(`/lab-attempts/${state.id}/complete`, { method: 'POST', body: { device, input } });
+      return r.completed;
+    } catch {
+      return input;
+    }
+  };
+
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-[22px]">
       <PageTitle eyebrow={<Eyebrow lab={lab} />} title={lab.title}>
@@ -496,7 +507,15 @@ function LabSession({ initial }: { initial: LabAttemptState }) {
               </div>
             </details>
           ) : (
-            <LabTerminal devices={state.devices} active={active} onActiveChange={setActive} transcript={state.transcript} onSubmit={submit} readOnly={timeUp} />
+            <LabTerminal
+              devices={state.devices}
+              active={active}
+              onActiveChange={setActive}
+              transcript={state.transcript}
+              onSubmit={submit}
+              onComplete={completeLine}
+              readOnly={timeUp}
+            />
           )}
         </div>
         <div className="flex min-w-0 flex-col gap-[22px]">
@@ -583,7 +602,7 @@ function Steps({ steps, label }: { steps: LabStep[]; label: string }) {
           <figcaption className="border-b border-[#223049] bg-surface px-3.5 py-2 font-mono text-[12px] font-medium text-muted">
             {label} · {s.device}
           </figcaption>
-          <pre className="m-0 overflow-x-auto bg-[#070B13] px-4 py-3 font-mono text-[12.5px] leading-[1.6] text-[#C9D4E5]">
+          <pre tabIndex={0} className="m-0 overflow-x-auto bg-[#070B13] px-4 py-3 font-mono text-[12.5px] leading-[1.6] text-[#C9D4E5]">
             {s.commands.length ? s.commands.map((c) => (c === '\x1a' ? '^Z' : c)).join('\n') : '(aucune commande acceptée)'}
           </pre>
         </figure>
@@ -711,7 +730,7 @@ function LabResult({ state, onRestart, timesKey }: { state: LabAttemptState; onR
               <figcaption className="border-b border-[#223049] bg-surface px-3.5 py-2 font-mono text-[12px] font-medium text-muted">
                 {device} · configuration courante
               </figcaption>
-              <pre className="m-0 max-h-[420px] overflow-auto bg-[#070B13] px-4 py-3 font-mono text-[12.5px] leading-[1.6] text-[#C9D4E5]">{text}</pre>
+              <pre tabIndex={0} className="m-0 max-h-[420px] overflow-auto bg-[#070B13] px-4 py-3 font-mono text-[12.5px] leading-[1.6] text-[#C9D4E5]">{text}</pre>
             </figure>
           ))}
         </div>

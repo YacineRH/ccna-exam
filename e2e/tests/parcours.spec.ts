@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type BrowserContext, type Locator, type Page } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 import pg from 'pg';
 import { anotherChallenge, bankOf, certificationOf, labOf, maxDrawableForTypes, questionByStem, shortExamPlan, troubleshootChallenge } from '../support/content';
 
@@ -638,11 +639,21 @@ test('à 390 px de large : aucun débordement horizontal', async ({ browser }) =
     { path: '/revision', ready: () => p.getByRole('heading', { level: 1 }) },
     { path: `/revision/sessions/${revisionSessionId}`, ready: () => p.getByRole('heading', { level: 1 }) },
   ];
+  const small: string[] = [];
   for (const { path, ready } of pages) {
     await p.goto(path);
     await expect(ready().first()).toBeVisible();
     await expectNoOverflow(p, path);
+    // Zones tactiles : chaque bouton, champ et lien-bouton visible fait au moins 44 px de haut.
+    const tiny = await p.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLElement>('button, select, input:not([type=checkbox]):not([type=radio]), a.btn-primary, a.btn-secondary, [role=tab]'))
+        .filter((el) => el.offsetParent !== null && !el.closest('.sr-only'))
+        .map((el) => ({ h: el.getBoundingClientRect().height, text: (el.getAttribute('aria-label') ?? el.textContent ?? el.tagName).trim().slice(0, 40) }))
+        .filter((x) => x.h > 0 && x.h < 44 && !/^Commande pour/.test(x.text)),
+    );
+    for (const t of tiny) small.push(`${path} : « ${t.text} » (${Math.round(t.h)} px)`);
   }
+  expect(small, 'zones cliquables de moins de 44 px').toEqual([]);
 
   // Menu mobile : il contient le sélecteur de certification.
   await p.goto('/');
@@ -652,4 +663,134 @@ test('à 390 px de large : aucun débordement horizontal', async ({ browser }) =
   await expect(menuSelect).toHaveValue(cert.code);
   await expectNoOverflow(p, 'menu ouvert');
   await signedIn.close();
+});
+
+test('mise en page à 360, 390, 768 et 1280 px : examen, résultats, tableau de bord, lab', async ({ browser }) => {
+  const res = await page.request.post('/api/v1/attempts', { data: { certification: cert.code, mode: 'exam', questionCount: 2 } });
+  const running = ((await res.json()) as { id: string }).id;
+  const problems: string[] = [];
+  for (const width of [360, 390, 768, 1280]) {
+    const ctx = await newContext(browser, {
+      viewport: { width, height: width < 768 ? 800 : 900 },
+      ...(width < 768 ? { isMobile: true, hasTouch: true } : {}),
+      storageState: await context.storageState(),
+    });
+    const p = await ctx.newPage();
+    const screens: { path: string; ready: () => Locator }[] = [
+      { path: `/tentatives/${running}`, ready: () => p.locator('#enonce') },
+      { path: `/tentatives/${examAttemptId}/resultat`, ready: () => p.getByText('Score final') },
+      { path: '/', ready: () => p.getByText('Indice de préparation') },
+      { path: `/labs/cli/${LAB_SLUG}`, ready: () => p.getByText('Topologie') },
+    ];
+    for (const { path, ready } of screens) {
+      await p.goto(path);
+      await expect(ready().first()).toBeVisible();
+      const m = await p.evaluate(() => ({
+        scroll: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+        client: document.documentElement.clientWidth,
+        // Un titre ou un bouton coupé hors de l'écran.
+        clipped: Array.from(document.querySelectorAll<HTMLElement>('h1, button, a.btn-primary, a.btn-secondary'))
+          .filter((el) => el.offsetParent !== null)
+          .filter((el) => {
+            const r = el.getBoundingClientRect();
+            return r.right > document.documentElement.clientWidth + 1 || r.left < -1;
+          })
+          .map((el) => (el.textContent ?? '').trim().slice(0, 30)),
+      }));
+      if (m.scroll > m.client) problems.push(`${width} px ${path} : débordement (${m.scroll} > ${m.client})`);
+      for (const c of m.clipped) problems.push(`${width} px ${path} : « ${c} » hors de l'écran`);
+    }
+    // Le terminal sur mobile : la barre d'actions tactile, une saisie à 16 px (pas de zoom).
+    await p.goto(`/labs/cli/${LAB_SLUG}`);
+    await p.getByRole('button', { name: /Démarrer le lab|Nouvelle session/ }).click();
+    const input = p.getByRole('textbox', { name: /Commande pour R1/ });
+    await expect(input).toBeVisible();
+    const bar = p.getByRole('toolbar', { name: 'Touches du terminal' });
+    if (width < 768) {
+      await expect(bar).toBeVisible();
+      expect(await input.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);
+      await input.fill('en');
+      await bar.getByRole('button', { name: 'Compléter le mot (Tab)' }).click();
+      await expect(input).toHaveValue('enable ');
+      await input.press('Enter');
+      await bar.getByRole('button', { name: 'Commande précédente' }).click();
+      await expect(input).toHaveValue('enable');
+      await expect(input).toBeFocused();
+    } else {
+      await expect(bar).toBeHidden();
+    }
+    await ctx.close();
+  }
+  expect(problems).toEqual([]);
+});
+
+/** Violations « serious » ou « critical » (WCAG 2.1 A et AA) d'une page, en texte lisible. */
+async function axeViolations(p: Page): Promise<string[]> {
+  const results = await new AxeBuilder({ page: p }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+  return results.violations
+    .filter((v) => v.impact === 'serious' || v.impact === 'critical')
+    .map((v) => `${v.impact} ${v.id} : ${v.help}\n${v.nodes.slice(0, 8).map((n) => `  ${n.html.slice(0, 200)} — ${n.failureSummary?.split('\n')[1]?.trim() ?? ''}`).join('\n')}`);
+}
+
+/** Hiérarchie des titres : un seul h1, et aucun niveau sauté (h2 → h4). */
+async function headingProblems(p: Page): Promise<string[]> {
+  const levels = await p.evaluate(() =>
+    Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6")).map((h) => ({ level: Number(h.tagName[1]), text: (h.textContent ?? '').trim().slice(0, 60) })),
+  );
+  const out: string[] = [];
+  const h1 = levels.filter((h) => h.level === 1).length;
+  if (h1 !== 1) out.push(`${h1} titre(s) h1`);
+  for (let i = 1; i < levels.length; i++) {
+    const prev = levels[i - 1]!;
+    const cur = levels[i]!;
+    if (cur.level > prev.level + 1) out.push(`h${prev.level} « ${prev.text} » suivi de h${cur.level} « ${cur.text} »`);
+  }
+  return out;
+}
+
+test('audit axe (WCAG 2.1 AA) : aucune violation grave, connecté et déconnecté', async ({ browser }) => {
+  const anon = await newContext(browser);
+  const login = await anon.newPage();
+  await login.goto('/connexion');
+  await expect(login.getByRole('heading', { name: 'Connexion' })).toBeVisible();
+  expect(await axeViolations(login), '/connexion').toEqual([]);
+  expect(await headingProblems(login), '/connexion').toEqual([]);
+  await anon.close();
+
+  // Un examen en cours, pour auditer l'écran de passage.
+  const res = await page.request.post('/api/v1/attempts', { data: { certification: cert.code, mode: 'exam', questionCount: 3 } });
+  expect(res.status()).toBe(201);
+  const running = ((await res.json()) as { id: string }).id;
+
+  const pages: { path: string; ready: () => Locator }[] = [
+    { path: '/', ready: () => page.getByText('Indice de préparation') },
+    { path: '/examen/nouveau?mode=exam', ready: () => page.getByRole('heading', { name: 'Nouvelle session' }) },
+    { path: `/tentatives/${running}`, ready: () => page.locator('#enonce') },
+    { path: `/tentatives/${examAttemptId}/resultat`, ready: () => page.getByText('Score final') },
+    { path: '/historique', ready: () => page.getByRole('heading', { name: 'Historique' }) },
+    { path: '/labs/subnetting', ready: () => page.getByRole('heading', { level: 1 }) },
+    { path: '/labs/cli', ready: () => page.getByRole('heading', { level: 1 }) },
+    { path: `/labs/cli/${LAB_SLUG}`, ready: () => page.getByText('Topologie') },
+    { path: `/labs/cli/sessions/${labSessionId}`, ready: () => page.getByRole('heading', { name: 'Solution' }) },
+    { path: '/challenges', ready: () => page.getByRole('heading', { level: 1 }) },
+    { path: `/challenges/${troubleshootChallenge(cert.code).slug}`, ready: () => page.getByText('Topologie') },
+    { path: `/challenges/sessions/${challengeSessionId}`, ready: () => page.getByRole('heading', { name: 'Solution' }) },
+    { path: '/revision', ready: () => page.getByRole('heading', { level: 1 }) },
+    { path: `/revision/sessions/${revisionSessionId}`, ready: () => page.getByRole('heading', { level: 1 }) },
+  ];
+  const problems: string[] = [];
+  for (const { path, ready } of pages) {
+    await page.goto(path);
+    await expect(ready().first()).toBeVisible();
+    // Les animations d'entrée (jauge, barres) sont terminées avant l'audit des contrastes.
+    await page.waitForTimeout(400);
+    for (const v of await axeViolations(page)) problems.push(`${path}\n${v}`);
+    for (const h of await headingProblems(page)) problems.push(`${path} : titres : ${h}`);
+  }
+  // Un lab en cours : le terminal et sa saisie.
+  await page.goto(`/labs/cli/${LAB_SLUG}`);
+  await page.getByRole('button', { name: /Démarrer le lab|Nouvelle session/ }).click();
+  await expect(page.getByRole('textbox', { name: /Commande pour R1/ })).toBeVisible();
+  for (const v of await axeViolations(page)) problems.push(`lab en cours\n${v}`);
+  expect(problems).toEqual([]);
 });

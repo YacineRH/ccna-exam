@@ -47,7 +47,7 @@ export type LabCheck =
       covers?: z.infer<typeof coversSchema>;
     }
   | { type: 'section'; device?: string; section?: string; sectionPattern?: string; absent: boolean }
-  | { type: 'sequence'; device?: string; section?: string; sectionPattern?: string; sections: 'any' | 'all'; patterns: string[]; absent: boolean }
+  | { type: 'sequence'; device?: string; section?: string; sectionPattern?: string; sections: 'any' | 'all'; patterns: string[]; absent?: boolean }
   | { type: 'command'; device?: string; mode?: string; section?: string; command: string | string[]; afterLastChange?: boolean; after?: string[] }
   | { type: 'all'; checks: LabCheck[] }
   | { type: 'any'; checks: LabCheck[] };
@@ -350,7 +350,7 @@ export class LabSession {
       case 'sequence': {
         const dev = this.device(c.device);
         const scopes = this.sectionsFor(dev, c);
-        if (scopes === null) return c.absent;
+        if (scopes === null) return c.absent === true;
         const res = c.patterns.map((p) => new RegExp(p, 'i'));
         const inOrder = (lines: string[]) => {
           let from = 0;

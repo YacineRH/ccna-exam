@@ -316,7 +316,7 @@ export function AttemptPage() {
         <div className="flex min-w-0 flex-[1_1_260px] items-center gap-3">
           <LogoMark size={24} className="shrink-0 text-accent" />
           <div className="min-w-0">
-            <div className="truncate font-semibold">{title}</div>
+            <h1 className="m-0 truncate font-sans text-[15px] font-semibold leading-normal tracking-normal">{title}</h1>
             <div className="font-mono text-[11px] font-medium tracking-[0.6px] text-muted">{subtitle}</div>
           </div>
         </div>

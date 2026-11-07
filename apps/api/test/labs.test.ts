@@ -155,6 +155,17 @@ describe.skipIf(!DATABASE_URL)('API v1 : labs CLI (PostgreSQL)', () => {
     expect(state.transcript.slice(-3).every((t: { output: string }) => t.output === 'hostname R1')).toBe(true);
   });
 
+  it('complétion (Tab) : rien n’est exécuté ni enregistré', async () => {
+    const before = (await call('GET', `/lab-attempts/${attemptId}`)).json() as { commandCount: number };
+    // La session est en mode interface : « desc » ne peut être que description.
+    const res = await track('POST', `/lab-attempts/${attemptId}/complete`, { input: 'desc' });
+    expect(res.statusCode).toBe(200);
+    expect((res.json() as { completed: string }).completed).toBe('description ');
+    expect((await track('POST', `/lab-attempts/${attemptId}/complete`, { input: 'a\nb' })).statusCode).toBe(400);
+    const after = (await call('GET', `/lab-attempts/${attemptId}`)).json() as { commandCount: number };
+    expect(after.commandCount).toBe(before.commandCount);
+  });
+
   it('indices progressifs, comptés, au plus trois', async () => {
     for (let level = 1; level <= 3; level++) {
       const res = await track('POST', `/lab-attempts/${attemptId}/hint`);
