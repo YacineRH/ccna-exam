@@ -1,0 +1,301 @@
+{
+  "slug": "ccna-lab-3.4-ospf-mono-zone",
+  "certification": "ccna",
+  "domain": "3.0",
+  "subtopic": "3.4",
+  "difficulty": "medium",
+  "title": "OSPFv2 mono-zone sur le routeur de bordure",
+  "statement": "Le réseau interne passe à OSPFv2, en une seule zone (zone 0). R2 est déjà configuré. R1 est le routeur de bordure : ses interfaces sont adressées et activées, et il a déjà une route statique par défaut vers le FAI.\n\nConfigurez OSPF sur R1 :\n1. Processus OSPF numéro 10, avec l'identifiant de routeur 1.1.1.1.\n2. Le LAN (G0/0/0) et le lien vers R2 (G0/0/1) sont dans la zone 0. Vous pouvez utiliser des commandes network ou activer OSPF directement sur les interfaces.\n3. Le lien vers le FAI (G0/0/2) ne doit pas participer à OSPF.\n4. Aucun voisin OSPF n'existe sur le LAN : R1 ne doit pas y émettre de Hello, tout en annonçant ce réseau. Le lien vers R2 doit, lui, rester actif.\n5. Comme sur R2, la bande passante de référence est de 1000 Mb/s, pour distinguer le coût des liens Gigabit de celui des liens Fast Ethernet.\n6. R1 annonce sa route par défaut dans OSPF, mais seulement tant qu'il la possède : si le lien vers le FAI tombe, l'annonce doit cesser.",
+  "topology": "                       FAI\n                  203.0.113.1/30\n                        |\n                     G0/0/2 203.0.113.2/30\n  LAN 192.168.10.0/24   |\n  ----------- G0/0/0 -- R1 -- G0/0/1 ---------------- G0/0/1 -- R2 --- LAN 192.168.20.0/24\n          192.168.10.1/24      10.0.12.1/30       10.0.12.2/30\n\nR2 : router ospf 10, router-id 2.2.2.2, zone 0, auto-cost reference-bandwidth 1000.\nR1 : ip route 0.0.0.0 0.0.0.0 203.0.113.1 (déjà configurée).",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-2"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN\n ip address 192.168.10.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers R2\n ip address 10.0.12.1 255.255.255.252\n no shutdown\ninterface GigabitEthernet0/0/2\n description Lien vers FAI\n ip address 203.0.113.2 255.255.255.252\n no shutdown\nip route 0.0.0.0 0.0.0.0 203.0.113.1"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "processus-router-id",
+      "description": "Le processus OSPF 10 tourne avec l'identifiant de routeur 1.1.1.1.",
+      "check": { "type": "line", "section": "router ospf 10", "line": "router-id 1.1.1.1" }
+    },
+    {
+      "id": "lan-zone-0",
+      "description": "L'interface du LAN (192.168.10.1) participe à OSPF, dans la zone 0.",
+      "check": {
+        "type": "any",
+        "checks": [
+          {
+            "type": "regex",
+            "section": "router ospf 10",
+            "pattern": "^network (\\S+) (\\S+) area (0|0\\.0\\.0\\.0)$",
+            "covers": { "address": "192.168.10.1" }
+          },
+          { "type": "regex", "section": "interface GigabitEthernet0/0/0", "pattern": "^ip ospf 10 area (0|0\\.0\\.0\\.0)$" }
+        ]
+      }
+    },
+    {
+      "id": "transit-zone-0",
+      "description": "L'interface du lien vers R2 (10.0.12.1) participe à OSPF, dans la zone 0.",
+      "check": {
+        "type": "any",
+        "checks": [
+          {
+            "type": "regex",
+            "section": "router ospf 10",
+            "pattern": "^network (\\S+) (\\S+) area (0|0\\.0\\.0\\.0)$",
+            "covers": { "address": "10.0.12.1" }
+          },
+          { "type": "regex", "section": "interface GigabitEthernet0/0/1", "pattern": "^ip ospf 10 area (0|0\\.0\\.0\\.0)$" }
+        ]
+      }
+    },
+    {
+      "id": "fai-hors-ospf",
+      "description": "Le processus OSPF 10 existe, et le lien vers le FAI (203.0.113.2) n'y participe pas.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "section", "section": "router ospf 10" },
+          {
+            "type": "regex",
+            "section": "router ospf 10",
+            "pattern": "^network (\\S+) (\\S+) area \\S+$",
+            "covers": { "address": "203.0.113.2" },
+            "absent": true
+          },
+          { "type": "regex", "section": "interface GigabitEthernet0/0/2", "pattern": "^ip ospf \\d+ area ", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "lan-passif",
+      "description": "R1 n'émet pas de Hello OSPF sur le LAN, mais en émet toujours vers R2.",
+      "check": {
+        "type": "any",
+        "checks": [
+          {
+            "type": "all",
+            "checks": [
+              { "type": "line", "section": "router ospf 10", "line": "passive-interface GigabitEthernet0/0/0" },
+              { "type": "line", "section": "router ospf 10", "line": "passive-interface default", "absent": true },
+              { "type": "line", "section": "router ospf 10", "line": "passive-interface GigabitEthernet0/0/1", "absent": true }
+            ]
+          },
+          {
+            "type": "all",
+            "checks": [
+              { "type": "line", "section": "router ospf 10", "line": "passive-interface default" },
+              { "type": "line", "section": "router ospf 10", "line": "no passive-interface GigabitEthernet0/0/1" },
+              { "type": "line", "section": "router ospf 10", "line": "no passive-interface GigabitEthernet0/0/0", "absent": true }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "reference-bande-passante",
+      "description": "La bande passante de référence d'OSPF est de 1000 Mb/s, comme sur R2.",
+      "check": { "type": "line", "section": "router ospf 10", "line": "auto-cost reference-bandwidth 1000" }
+    },
+    {
+      "id": "route-defaut-annoncee",
+      "description": "R1 annonce sa route par défaut aux autres routeurs OSPF, tant qu'elle est dans sa table de routage.",
+      "check": { "type": "line", "section": "router ospf 10", "line": "default-information originate" }
+    }
+  ],
+  "hints": [
+    "Tout se passe dans le mode de configuration du processus OSPF (router ospf <numéro>), sauf si vous choisissez d'activer OSPF interface par interface. Le numéro de processus est local au routeur.",
+    "Une commande network active OSPF sur les interfaces dont l'adresse correspond au couple adresse / masque générique : 0.0.0.255 pour un /24, 0.0.0.3 pour un /30, 0.0.0.0 pour une seule interface. Une interface passive annonce son réseau mais n'envoie pas de Hello. La route par défaut statique n'est pas annoncée sans commande dédiée.",
+    "Sous router ospf 10 : router-id d'abord, puis une commande network par réseau à annoncer (area 0) sans rien qui couvre 203.0.113.0/30, passive-interface pour G0/0/0 seulement, auto-cost reference-bandwidth (valeur en Mb/s) et default-information originate, sans le mot-clé always."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "router ospf 10",
+        "router-id 1.1.1.1",
+        "network 192.168.10.0 0.0.0.255 area 0",
+        "network 10.0.12.0 0.0.0.3 area 0",
+        "passive-interface GigabitEthernet0/0/0",
+        "auto-cost reference-bandwidth 1000",
+        "default-information originate",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "OSPF activé sur les interfaces, passive-interface default puis exception pour le lien vers R2",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "router ospf 10",
+            "router-id 1.1.1.1",
+            "passive-interface default",
+            "no passive-interface g0/0/1",
+            "auto-cost reference-bandwidth 1000",
+            "default-information originate",
+            "int g0/0/0",
+            "ip ospf 10 area 0",
+            "int g0/0/1",
+            "ip ospf 10 area 0",
+            "end"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Commandes network à l'adresse exacte (masque générique 0.0.0.0), zone écrite en notation pointée",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "conf t",
+            "router ospf 10",
+            "network 192.168.10.1 0.0.0.0 area 0.0.0.0",
+            "router-id 1.1.1.1",
+            "network 10.0.12.1 0.0.0.0 area 0",
+            "default-information originate",
+            "passive-interface gi0/0/0",
+            "auto-cost reference-bandwidth 1000",
+            "\u001a"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "OSPF activé par interface range sur le LAN et le lien vers R2, zone en notation pointée",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 10",
+            "router-id 1.1.1.1",
+            "auto-cost reference-bandwidth 1000",
+            "passive-interface g0/0/0",
+            "default-information originate",
+            "exit",
+            "interface range g0/0/0 - 1",
+            "ip ospf 10 area 0.0.0.0",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Commande network qui englobe toutes les interfaces, lien FAI compris",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 10",
+            "router-id 1.1.1.1",
+            "network 0.0.0.0 255.255.255.255 area 0",
+            "passive-interface GigabitEthernet0/0/0",
+            "auto-cost reference-bandwidth 1000",
+            "default-information originate",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["fai-hors-ospf"]
+    },
+    {
+      "description": "OSPF activé aussi sur l'interface du FAI",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 10",
+            "router-id 1.1.1.1",
+            "interface range g0/0/0 - 2",
+            "ip ospf 10 area 0"
+          ]
+        }
+      ],
+      "failing": ["fai-hors-ospf"]
+    },
+    {
+      "description": "Lien vers R2 rendu passif : l'adjacence avec R2 ne peut pas se former",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 10",
+            "router-id 1.1.1.1",
+            "network 192.168.10.0 0.0.0.255 area 0",
+            "network 10.0.12.0 0.0.0.3 area 0",
+            "passive-interface default",
+            "auto-cost reference-bandwidth 1000",
+            "default-information originate"
+          ]
+        }
+      ],
+      "failing": ["lan-passif"]
+    },
+    {
+      "description": "Route par défaut annoncée avec always : l'annonce continuerait sans lien FAI",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 10",
+            "router-id 1.1.1.1",
+            "network 192.168.10.0 0.0.0.255 area 0",
+            "network 10.0.12.0 0.0.0.3 area 0",
+            "passive-interface GigabitEthernet0/0/0",
+            "auto-cost reference-bandwidth 1000",
+            "default-information originate always"
+          ]
+        }
+      ],
+      "failing": ["route-defaut-annoncee"]
+    },
+    {
+      "description": "Bande passante de référence en kb/s au lieu de Mb/s",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "router ospf 10", "router-id 1.1.1.1", "auto-cost reference-bandwidth 1000000"]
+        }
+      ],
+      "failing": ["reference-bande-passante"]
+    },
+    {
+      "description": "Masque de sous-réseau tapé à la place du masque générique",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "router ospf 10", "router-id 1.1.1.1", "network 192.168.10.0 255.255.255.0 area 0"]
+        }
+      ],
+      "failing": ["lan-zone-0"]
+    }
+  ],
+  "explanation": "Le numéro de processus OSPF (ici 10) n'a qu'une portée locale : il n'a pas besoin d'être le même que sur R2, mais la zone, elle, doit correspondre (zone 0 de part et d'autre du lien). Le router-id est fixé à la main pour être stable ; sans lui, IOS prendrait la plus haute adresse de loopback, ou à défaut la plus haute adresse d'interface active (ici 203.0.113.2). Mieux vaut le saisir en premier : modifié alors que des adjacences existent, il ne prend effet qu'après clear ip ospf process ou un redémarrage. La commande network <adresse> <masque générique> area <zone> active OSPF sur chaque interface dont l'adresse correspond : 192.168.10.0 0.0.0.255 couvre 192.168.10.1, 10.0.12.0 0.0.0.3 couvre 10.0.12.1, et un masque 0.0.0.0 vise une adresse exacte. Un masque de sous-réseau (255.255.255.0) tapé à la place du masque générique change complètement le sens : seuls les bits à 0 sont comparés, et 192.168.10.1 n'est alors plus couvert. network 0.0.0.0 255.255.255.255 area 0 active OSPF partout, y compris vers le FAI, ce qui enverrait des Hello chez lui et annoncerait son préfixe. La commande ip ospf 10 area 0 sous l'interface est une alternative équivalente. passive-interface supprime l'envoi des Hello sur le LAN (pas de voisin à y trouver, et pas d'adjacence pirate possible) tout en annonçant son réseau ; avec passive-interface default, il faut réactiver le lien vers R2 par no passive-interface, sinon aucune adjacence ne se forme. Par défaut, la bande passante de référence vaut 100 Mb/s : FastEthernet et Gigabit ont alors tous deux le coût 1. auto-cost reference-bandwidth 1000 donne 1 au Gigabit et 10 au FastEthernet ; elle doit être identique sur tous les routeurs, d'où l'avertissement d'IOS. Enfin, une route statique par défaut n'est pas annoncée d'office : default-information originate l'injecte dans OSPF (LSA de type 5, vue O*E2 sur R2) tant qu'elle est dans la table de routage ; le mot-clé always l'annoncerait même sans route par défaut, et R1 attirerait alors vers lui un trafic qu'il ne peut plus livrer si le lien FAI tombe, ce que l'énoncé exclut. Vérifications : show ip ospf neighbor, show ip ospf interface brief, show ip protocols, et show ip route ospf sur R2.",
+  "reference": "Cisco IOS XE — IP Routing: OSPF Configuration Guide, « Configuring OSPF » (network area, passive-interface, auto-cost reference-bandwidth, default-information originate) ; RFC 2328",
+  "estimatedMinutes": 12
+}

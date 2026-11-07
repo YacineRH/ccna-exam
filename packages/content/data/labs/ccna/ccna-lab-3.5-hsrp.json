@@ -1,0 +1,206 @@
+{
+  "slug": "ccna-lab-3.5-hsrp",
+  "certification": "ccna",
+  "domain": "3.0",
+  "subtopic": "3.5",
+  "difficulty": "medium",
+  "title": "Passerelle redondante avec HSRP",
+  "statement": "Les postes du LAN 192.168.1.0/24 ont tous 192.168.1.1 comme passerelle par défaut. Cette adresse ne doit plus dépendre d'un seul routeur : R1 et R2, tous deux reliés au LAN par G0/0/0 et déjà adressés, vont la partager avec HSRP.\n\nConfigurez les deux routeurs (onglets R1 et R2) :\n1. HSRP version 2 sur les deux routeurs, groupe 10, adresse virtuelle 192.168.1.1.\n2. R1 est le routeur actif en temps normal : priorité 110.\n3. Quand R1 revient après une panne, il doit reprendre le rôle actif.\n4. R2 est le routeur de secours : il garde une priorité inférieure à celle de R1 (la valeur par défaut convient).",
+  "topology": "                 WAN / cœur de réseau\n                 |                 |\n             G0/0/1            G0/0/1\n               R1                R2\n             G0/0/0            G0/0/0\n          192.168.1.2       192.168.1.3\n                 |                 |\n  ===============+====== LAN =======+============\n             passerelle virtuelle 192.168.1.1\n                 |          |          |\n               PC1        PC2        PC3   (passerelle : 192.168.1.1)",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN\n ip address 192.168.1.2 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Vers le coeur\n ip address 10.0.1.1 255.255.255.252\n no shutdown"
+    },
+    {
+      "id": "R2",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R2\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN\n ip address 192.168.1.3 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Vers le coeur\n ip address 10.0.2.1 255.255.255.252\n no shutdown"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "r1-version-2",
+      "description": "R1 utilise HSRP version 2 sur son interface LAN.",
+      "check": { "type": "line", "device": "R1", "section": "interface GigabitEthernet0/0/0", "line": "standby version 2" }
+    },
+    {
+      "id": "r1-groupe-10",
+      "description": "R1 participe au groupe HSRP 10 avec l'adresse virtuelle 192.168.1.1.",
+      "check": { "type": "line", "device": "R1", "section": "interface GigabitEthernet0/0/0", "line": "standby 10 ip 192.168.1.1" }
+    },
+    {
+      "id": "r1-priorite",
+      "description": "R1 a la priorité 110 dans le groupe 10.",
+      "check": { "type": "line", "device": "R1", "section": "interface GigabitEthernet0/0/0", "line": "standby 10 priority 110" }
+    },
+    {
+      "id": "r1-preemption",
+      "description": "R1 reprend le rôle actif dès qu'il revient (préemption).",
+      "check": {
+        "type": "regex",
+        "device": "R1",
+        "section": "interface GigabitEthernet0/0/0",
+        "pattern": "^standby 10 preempt( delay minimum \\d+)?$"
+      }
+    },
+    {
+      "id": "r2-version-2",
+      "description": "R2 utilise HSRP version 2 sur son interface LAN.",
+      "check": { "type": "line", "device": "R2", "section": "interface GigabitEthernet0/0/0", "line": "standby version 2" }
+    },
+    {
+      "id": "r2-secours",
+      "description": "R2 participe au groupe 10 avec la même adresse virtuelle, avec une priorité inférieure à celle de R1.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "device": "R2", "section": "interface GigabitEthernet0/0/0", "line": "standby 10 ip 192.168.1.1" },
+          {
+            "type": "any",
+            "checks": [
+              { "type": "regex", "device": "R2", "section": "interface GigabitEthernet0/0/0", "pattern": "^standby 10 priority ", "absent": true },
+              { "type": "regex", "device": "R2", "section": "interface GigabitEthernet0/0/0", "pattern": "^standby 10 priority ([0-9]|[1-9][0-9]|10[0-9])$" }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "HSRP se configure sur l'interface qui touche le LAN, sur chacun des deux routeurs, avec des commandes qui commencent toutes par standby. Le numéro de groupe et l'adresse virtuelle doivent être identiques des deux côtés.",
+    "Sans réglage, la priorité HSRP vaut 100 et la préemption est désactivée : un routeur de priorité plus haute qui redémarre ne reprend pas le rôle actif. HSRP version 1 est la version par défaut ; les deux routeurs doivent parler la même version.",
+    "Sur les deux routeurs, sous G0/0/0 : la version (standby version), puis le groupe 10 et son adresse virtuelle (standby <groupe> ip <adresse>). Sur R1 seulement, deux commandes de plus sur le même groupe : la priorité et la préemption. Rien à régler pour la priorité de R2."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface GigabitEthernet0/0/0",
+        "standby version 2",
+        "standby 10 ip 192.168.1.1",
+        "standby 10 priority 110",
+        "standby 10 preempt",
+        "end"
+      ]
+    },
+    {
+      "device": "R2",
+      "commands": ["enable", "configure terminal", "interface GigabitEthernet0/0/0", "standby version 2", "standby 10 ip 192.168.1.1", "end"]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations, délai de préemption, priorité explicite plus basse sur R2 (et préemption aussi sur R2)",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": ["en", "conf t", "int g0/0/0", "stan ver 2", "standby 10 ip 192.168.1.1", "standby 10 pri 90", "standby 10 preempt", "\u001a"]
+        },
+        {
+          "device": "R1",
+          "commands": ["en", "conf t", "int g0/0/0", "standby 10 preempt delay minimum 30", "standby 10 priority 110", "stand ver 2", "standby 10 ip 192.168.1.1", "\u001a"]
+        }
+      ]
+    },
+    {
+      "description": "Priorité 100 écrite explicitement sur R2",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "interface g0/0/0", "standby version 2", "standby 10 ip 192.168.1.1", "standby 10 priority 110", "standby 10 preempt"]
+        },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "interface g0/0/0", "standby version 2", "standby 10 ip 192.168.1.1", "standby 10 priority 100"]
+        }
+      ]
+    },
+    {
+      "description": "Groupe créé en version 1, puis passage en version 2 sur chaque routeur",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "interface GigabitEthernet0/0/0", "standby 10 ip 192.168.1.1", "standby 10 priority 110", "standby 10 preempt", "standby version 2", "end"]
+        },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "interface GigabitEthernet0/0/0", "standby 10 ip 192.168.1.1", "standby version 2", "end"]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Priorité 110 sans préemption sur R1",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "interface g0/0/0", "standby version 2", "standby 10 ip 192.168.1.1", "standby 10 priority 110"]
+        },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "interface g0/0/0", "standby version 2", "standby 10 ip 192.168.1.1"]
+        }
+      ],
+      "failing": ["r1-preemption"]
+    },
+    {
+      "description": "HSRP version 2 sur R1 seulement",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "interface g0/0/0", "standby version 2", "standby 10 ip 192.168.1.1", "standby 10 priority 110", "standby 10 preempt"]
+        },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "interface g0/0/0", "standby 10 ip 192.168.1.1"]
+        }
+      ],
+      "failing": ["r2-version-2"]
+    },
+    {
+      "description": "Numéro de groupe différent sur R2 (groupe 1 au lieu de 10)",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "interface g0/0/0", "standby version 2", "standby 10 ip 192.168.1.1", "standby 10 priority 110", "standby 10 preempt"]
+        },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "interface g0/0/0", "standby version 2", "standby 1 ip 192.168.1.1"]
+        }
+      ],
+      "failing": ["r2-secours"]
+    },
+    {
+      "description": "Groupe sans numéro (groupe 0 par défaut) sur R1",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "interface g0/0/0", "standby version 2", "standby ip 192.168.1.1"]
+        }
+      ],
+      "failing": ["r1-groupe-10"]
+    },
+    {
+      "description": "Même priorité 110 sur les deux routeurs",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "interface g0/0/0", "standby version 2", "standby 10 ip 192.168.1.1", "standby 10 priority 110"]
+        }
+      ],
+      "failing": ["r2-secours"]
+    }
+  ],
+  "explanation": "HSRP (Hot Standby Router Protocol, propriétaire Cisco) fait partager une adresse IP et une adresse MAC virtuelles par plusieurs routeurs d'un même groupe : les postes gardent 192.168.1.1 comme passerelle, et c'est le routeur actif qui répond à l'ARP et transfère le trafic. L'élection se fait sur la priorité (100 par défaut, de 0 à 255), puis en cas d'égalité sur l'adresse IP d'interface la plus haute : avec deux priorités à 110, c'est R2 (192.168.1.3) qui l'emporterait. La préemption est désactivée par défaut : sans standby 10 preempt, R1 revenu après une panne resterait en secours derrière R2 ; preempt delay minimum laisse le temps au routage de converger avant de reprendre la main. La version par défaut est HSRPv1 (groupes 0 à 255, UDP 1985, multicast 224.0.0.2, MAC virtuelle 0000.0C07.ACxx) ; HSRPv2 (groupes 0 à 4095, multicast 224.0.0.102, MAC 0000.0C9F.Fxxx, prise en charge d'IPv6) n'est pas compatible avec la v1 : une version différente sur chaque routeur empêche les deux de se voir, et chacun se déclare actif. On peut passer en version 2 avant ou après avoir créé le groupe (tant que son numéro reste valable en v1, de 0 à 255) : le groupe redémarre alors avec la nouvelle MAC virtuelle. Le numéro de groupe et l'adresse virtuelle doivent être les mêmes sur les deux routeurs ; l'adresse virtuelle est distincte des adresses réelles .2 et .3. Vérification : show standby brief (R1 Active, R2 Standby, adresse virtuelle 192.168.1.1).",
+  "reference": "Cisco IOS XE — First Hop Redundancy Protocols Configuration Guide, « Configuring HSRP » (standby ip, standby priority, standby preempt, standby version) ; RFC 2281",
+  "estimatedMinutes": 10
+}

@@ -1,5 +1,5 @@
-import { loadCertification } from '@examforge/content';
-import { allocateByWeight, type Question } from '@examforge/core';
+import { loadCertification, loadLabs } from '@examforge/content';
+import { allocateByWeight, type Lab, type Question } from '@examforge/core';
 
 /*
  * Les tests ne codent en dur aucune question : ils lisent la banque du dépôt (packages/content),
@@ -62,4 +62,11 @@ export function maxDrawableForTypes(code: string, types: readonly string[]): num
 
 export function certificationOf(code: string) {
   return loadCertification(code).certification;
+}
+
+/** Un lab du dépôt, par son slug. */
+export function labOf(code: string, slug: string): Lab {
+  const lab = loadLabs(code).labs.find((l) => l.slug === slug);
+  if (!lab) throw new Error(`Lab introuvable : ${slug}`);
+  return lab;
 }

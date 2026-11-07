@@ -140,6 +140,7 @@ export interface Stats {
   exams: { taken: number; lastAt: string | null };
   recentScores: { attemptId: string; scaledScore: number; submittedAt: string }[];
   questions: { answered: number; correct: number };
+  labs?: { total: number; attempted: number; solved: number };
   totalSeconds: number;
   domains: { code: string; name: string; weight: number; answered: number; correct: number; percent: number | null }[];
   toReview: { domain: string; subtopic: string | null; subtopicName: string | null; errors: number; answered: number }[];
@@ -150,4 +151,130 @@ export interface InsufficientQuestionsDetails {
   needed: number;
   available: number;
   poolSize: number;
+}
+
+export type LabDifficulty = 'easy' | 'medium' | 'hard';
+
+export interface LabSummary {
+  slug: string;
+  title: string;
+  difficulty: LabDifficulty;
+  domain: string;
+  subtopic: string;
+  subtopicName: string;
+  estimatedMinutes: number;
+  objectiveCount: number;
+  devices: string[];
+  /** Sessions terminées. */
+  attempts: number;
+  /** Réussi au moins une fois. */
+  done: boolean;
+  /** Meilleur temps de réussite, en secondes. */
+  bestSeconds: number | null;
+  /** Session en cours, à reprendre. */
+  inProgress: string | null;
+}
+
+export interface PublicLab {
+  slug: string;
+  title: string;
+  difficulty: LabDifficulty;
+  domain: string;
+  subtopic: string;
+  subtopicName: string;
+  statement: string;
+  topology: string;
+  estimatedMinutes: number;
+  hintCount: number;
+  devices: { id: string; type: string }[];
+  objectives: { id: string; description: string }[];
+}
+
+export interface LabDetail {
+  certification: string;
+  lab: PublicLab;
+  attempts: number;
+  done: boolean;
+  bestSeconds: number | null;
+  inProgress: string | null;
+}
+
+export type TerminalStatus = 'ok' | 'error' | 'help' | 'empty';
+
+export interface TerminalLine {
+  device: string;
+  input: string;
+  echo: string;
+  output: string;
+  status: TerminalStatus;
+  keep?: string;
+}
+
+export interface LabStep {
+  device: string;
+  commands: string[];
+}
+
+export interface LabAttemptState {
+  id: string;
+  status: 'in_progress' | 'finished';
+  startedAt: string;
+  finishedAt: string | null;
+  serverNow: string;
+  lab: PublicLab;
+  hintsUsed: number;
+  hints: string[];
+  devices: { id: string; type: string; prompt: string }[];
+  transcript: TerminalLine[];
+  achieved: string[];
+  complete: boolean;
+  commandCount: number;
+  /** Seulement une fois la session terminée. */
+  result: null | {
+    success: boolean;
+    durationSeconds: number | null;
+    solution: LabStep[];
+    variants: { description: string; solution: LabStep[] }[];
+    explanation: string;
+    reference: string;
+    hints: string[];
+    typed: LabStep[];
+    runningConfig: Record<string, string>;
+  };
+}
+
+export interface LabCommandResult {
+  results: TerminalLine[];
+  device: string;
+  prompt: string;
+  prompts: Record<string, string>;
+  achieved: string[];
+  complete: boolean;
+  commandCount: number;
+  serverNow: string;
+}
+
+export interface LabHintResult {
+  level: number;
+  hint: string;
+  hints: string[];
+  hintsUsed: number;
+  hintCount: number;
+}
+
+export interface LabAttemptSummary {
+  id: string;
+  slug: string;
+  title: string;
+  difficulty: LabDifficulty;
+  certification: string;
+  subtopic: string;
+  subtopicName: string;
+  status: 'in_progress' | 'finished';
+  startedAt: string;
+  finishedAt: string | null;
+  success: boolean | null;
+  hintsUsed: number;
+  commandCount: number;
+  durationSeconds: number | null;
 }

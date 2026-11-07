@@ -62,7 +62,8 @@ export function createExamForgeServer(api: ApiClient): McpServer {
         "Outils de production de contenu ExamForge. Cycle d'une question : generate_question (consigne) -> " +
         'rédiger la question -> submit_question (validation automatique) -> validate_question (seconde passe de relecture) -> ' +
         'record_review (publie ou renvoie en brouillon). Seules les questions publiées entrent dans les examens. ' +
-        "generate_exam assemble un examen blanc figé à partir des questions publiées et indique quoi générer s'il en manque.",
+        "generate_exam assemble un examen blanc figé à partir des questions publiées et indique quoi générer s'il en manque. " +
+        "Labs CLI, même cycle : list_labs -> generate_lab (consigne et commandes disponibles) -> submit_lab (l'API joue la solution, les variantes et les pièges dans le simulateur) -> validate_lab (relecture) -> record_lab_review.",
     },
   );
 
@@ -257,6 +258,152 @@ export function createExamForgeServer(api: ApiClient): McpServer {
           subtopicsToReview: stats.toReview,
         };
       }),
+  );
+
+  server.registerTool(
+    'list_labs',
+    {
+      title: 'Labs CLI d\'une certification',
+      description: 'Liste les labs CLI (slug, titre, difficulté, sous-thème, statut) et leur couverture par sous-thème, pour voir quoi générer.',
+      inputSchema: {
+        certification: z.string(),
+        subtopic: z.string().optional(),
+        status: z.enum(['draft', 'validated', 'published', 'retired']).optional(),
+      },
+    },
+    async ({ certification, subtopic, status }) =>
+      run(async () => {
+        const query = new URLSearchParams({ certification, ...(subtopic ? { subtopic } : {}), ...(status ? { status } : {}) });
+        const { labs } = await api.get<{ labs: { slug: string; title: string; difficulty: string; status: string; subtopic: string }[] }>(`/admin/labs?${query}`);
+        const bySubtopic: Record<string, number> = {};
+        for (const l of labs) if (l.status === 'published') bySubtopic[l.subtopic] = (bySubtopic[l.subtopic] ?? 0) + 1;
+        return { labs, publishedBySubtopic: bySubtopic };
+      }),
+  );
+
+  server.registerTool(
+    'generate_lab',
+    {
+      title: 'Consigne de génération d\'un lab CLI',
+      description:
+        "Prépare la génération d'un lab CLI : format exact, commandes que le simulateur connaît (par mode et type d'équipement), types d'objectifs, règles de qualité et labs déjà présents sur ce sous-thème. Rédigez ensuite le lab et envoyez-le avec submit_lab.",
+      inputSchema: {
+        certification: z.string(),
+        domain: z.string(),
+        subtopic: z.string(),
+        difficulty: z.enum(DIFFICULTIES),
+        topic: z.string().optional().describe('Sujet visé, ex. « OSPF passif sur le LAN »'),
+      },
+    },
+    async ({ certification, domain, subtopic, difficulty, topic }) =>
+      run(async () => {
+        const detail = await api.get<CertificationDetail>(`/certifications/${encodeURIComponent(certification)}`);
+        const dom = detail.certification.domains.find((d) => d.code === domain);
+        if (!dom) throw new ApiError(400, 'unknown_domain', `Domaine ${domain} inconnu`, detail.certification.domains.map((d) => d.code));
+        const sub = dom.subtopics.find((s) => s.code === subtopic);
+        if (!sub) throw new ApiError(400, 'unknown_subtopic', `Sous-thème ${subtopic} inconnu`, dom.subtopics.map((s) => s.code));
+        const profile = await api.get<{ id: string; deviceTypes: string[]; interfaceTypes: string[]; modes: unknown[]; commands: unknown[] }>(
+          `/admin/lab-profile?certification=${encodeURIComponent(certification)}`,
+        );
+        const { labs } = await api.get<{ labs: { slug: string; title: string; subtopic: string }[] }>(
+          `/admin/labs?${new URLSearchParams({ certification, subtopic })}`,
+        );
+        const slugBase = `${certification}-lab-${subtopic}-`;
+        return {
+          target: { domain: `${dom.code} ${dom.name}`, subtopic: `${sub.code} ${sub.name}`, difficulty, ...(topic ? { topic } : {}) },
+          format: {
+            slug: `${slugBase}<sujet-court>-ia-${String(labs.length + 1).padStart(3, '0')}`,
+            certification,
+            domain,
+            subtopic,
+            difficulty,
+            title: '5 à 120 caractères',
+            statement: 'Contexte et consignes numérotées, toutes les valeurs nécessaires (40 caractères minimum)',
+            topology: 'Schéma texte et plan d\'adressage',
+            profile: profile.id,
+            devices: [{ id: 'R1', type: profile.deviceTypes[0], interfaces: ['GigabitEthernet0/0/0-1'], startupConfig: 'hostname R1' }],
+            objectives: [
+              { id: 'g000-address', description: 'Quoi obtenir, sans donner la commande', check: { type: 'line', section: 'interface GigabitEthernet0/0/0', line: 'ip address 192.168.10.1 255.255.255.0' } },
+            ],
+            hints: ['Indice vague', 'Indice plus précis', 'Indice qui cite la forme des commandes, sans toute la solution'],
+            solution: [{ device: 'R1', commands: ['enable', 'configure terminal', 'interface g0/0/0', 'ip address 192.168.10.1 255.255.255.0', 'no shutdown'] }],
+            variants: [{ description: 'Autre façon valide', solution: [{ device: 'R1', commands: ['…'] }] }],
+            pitfalls: [{ description: 'Erreur classique', solution: [{ device: 'R1', commands: ['…'] }], failing: ['g000-address'] }],
+            explanation: 'Explication détaillée (40 caractères minimum)',
+            reference: 'Guide de configuration ou référence de commandes Cisco précise',
+            estimatedMinutes: 10,
+          },
+          checkTypes: {
+            line: 'ligne présente (ou absente avec absent: true) dans une section exacte, sectionPattern ou la configuration globale ; plusieurs formes acceptées',
+            regex: 'ligne qui correspond à une expression (insensible à la casse, sauf caseSensitive) ; covers: { address } vérifie qu\'un couple adresse/masque générique (ou masque, mask: true) couvre une adresse',
+            section: 'une section existe (ou non, absent: true), même vide',
+            sequence: 'des lignes dans cet ordre (ACL…)',
+            command: 'une commande saisie avec succès ; afterLastChange: true pour une sauvegarde qui suit la dernière modification',
+            'all / any': 'combinaison de contrôles',
+          },
+          rules: [
+            'Exactitude technique non négociable : chaque commande, mode et valeur par défaut doit être juste sur la plateforme visée.',
+            'Les objectifs vérifient l\'état final et acceptent toutes les écritures équivalentes (abréviations, ordre, formes host / 0.0.0.0, interface range…).',
+            'Aucun objectif ne doit être atteint au départ ; la solution, chaque variante, doit les atteindre tous ; chaque piège doit échouer sur ses objectifs `failing`.',
+            'Trois indices progressifs ; le troisième ne recopie pas toute la solution.',
+            'Seules les commandes listées dans profileCommands existent dans le simulateur : toute autre est refusée comme « % Invalid input ».',
+            'Rédaction en français ; commandes et sorties IOS dans leur forme réelle.',
+            'Ne pas reprendre un lab existant ci-dessous.',
+          ],
+          profileModes: profile.modes,
+          interfaceTypes: profile.interfaceTypes,
+          profileCommands: profile.commands,
+          existingLabs: labs.map((l) => ({ slug: l.slug, title: l.title })),
+          next: 'Envoyez le lab complet avec submit_lab.',
+        };
+      }),
+  );
+
+  server.registerTool(
+    'submit_lab',
+    {
+      title: 'Soumettre un lab CLI',
+      description:
+        "Soumet un lab rédigé. L'API vérifie le schéma et le rangement, charge l'état de départ dans le simulateur, puis joue la solution, les variantes et les pièges. S'il est accepté, il passe à l'état « validated » et doit être relu avec validate_lab.",
+      inputSchema: { lab: z.record(z.unknown()).describe('Lab complet au format donné par generate_lab') },
+    },
+    async ({ lab }) =>
+      run(async () => {
+        const res = await api.post<{ slug: string; status: string }>('/admin/labs', { lab, source: 'ai' });
+        return { ...res, next: `Lancez validate_lab avec slug "${res.slug}" pour la seconde passe.` };
+      }),
+  );
+
+  server.registerTool(
+    'validate_lab',
+    {
+      title: 'Relecture d\'un lab CLI (seconde passe)',
+      description: 'Renvoie le lab complet (solution comprise) et une grille de relecture. Vérifiez chaque point, puis appelez record_lab_review.',
+      inputSchema: { slug: z.string() },
+    },
+    async ({ slug }) =>
+      run(async () => ({
+        lab: await api.get(`/admin/labs/${encodeURIComponent(slug)}`),
+        checklist: [
+          'Chaque commande de la solution existe-t-elle sous cette forme, dans ce mode, sur cette plateforme ?',
+          'Les valeurs par défaut et comportements cités dans l\'énoncé, les indices et l\'explication sont-ils exacts ?',
+          'Les calculs (adresses, masques, wildcards, plages) sont-ils justes ?',
+          'Les objectifs acceptent-ils toutes les écritures équivalentes raisonnables, et refusent-ils une solution fausse ?',
+          "L'énoncé donne-t-il toutes les valeurs nécessaires, sans donner la solution ?",
+          'La référence Cisco existe-t-elle et correspond-elle au sujet ?',
+        ],
+        next: 'Appelez record_lab_review(slug, approved, issues).',
+      })),
+  );
+
+  server.registerTool(
+    'record_lab_review',
+    {
+      title: 'Enregistrer la relecture d\'un lab',
+      description: 'Publie le lab (approved=true) ou le renvoie en brouillon avec les problèmes trouvés.',
+      inputSchema: { slug: z.string(), approved: z.boolean(), issues: z.array(z.string()).default([]) },
+    },
+    async ({ slug, approved, issues }) => run(() => api.post(`/admin/labs/${encodeURIComponent(slug)}/review`, { approved, issues })),
   );
 
   server.registerTool(

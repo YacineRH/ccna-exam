@@ -1,0 +1,380 @@
+{
+  "slug": "ccna-lab-5.6-acl-extended",
+  "certification": "ccna",
+  "domain": "5.0",
+  "subtopic": "5.6",
+  "difficulty": "hard",
+  "title": "Protéger un serveur web avec une ACL étendue nommée",
+  "statement": "Le serveur intranet 10.0.0.10 ne doit être joignable depuis le LAN utilisateurs 192.168.10.0/24 qu'en HTTP (TCP 80), en HTTPS (TCP 443) et par ping (ICMP echo). Tout autre trafic du LAN vers ce serveur est refusé ; le reste du trafic du LAN (autres serveurs de la ferme, accès WAN) passe sans restriction.\n\nConfigurez R1 :\n1. Créez l'ACL étendue nommée SRV-WEB, en fixant l'ordre de lecture par les numéros de séquence : 10 autorise HTTP vers le serveur, 20 autorise HTTPS vers le serveur, 30 autorise ICMP echo vers le serveur, 40 refuse tout autre trafic IP vers le serveur, 50 autorise tout le reste.\n2. Appliquez-la au plus près de la source, sur la seule interface qui convient et dans le bon sens.\n3. Enregistrez la configuration.",
+  "topology": "  LAN utilisateurs                 Ferme de serveurs 10.0.0.0/24\n  192.168.10.0/24                  serveur intranet 10.0.0.10\n        |                                   |\n  G0/0/0 192.168.10.1/24            G0/0/1 10.0.0.1/24\n        +--------------- R1 ----------------+\n                          |\n                  G0/0/2 198.51.100.2/30\n                          |\n                        WAN (198.51.100.1)",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-2"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN utilisateurs\n ip address 192.168.10.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Ferme de serveurs\n ip address 10.0.0.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/2\n description WAN\n ip address 198.51.100.2 255.255.255.252\n no shutdown\nip route 0.0.0.0 0.0.0.0 198.51.100.1"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "http-before-deny",
+      "description": "SRV-WEB autorise HTTP (TCP 80) du LAN vers le serveur 10.0.0.10, avant le refus vers le serveur.",
+      "check": {
+        "type": "sequence",
+        "section": "ip access-list extended SRV-WEB",
+        "patterns": [
+          "^permit tcp (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0) eq (80|www)( log)?$",
+          "^deny ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0)( log)?$"
+        ]
+      }
+    },
+    {
+      "id": "https-before-deny",
+      "description": "SRV-WEB autorise HTTPS (TCP 443) du LAN vers le serveur, avant le refus vers le serveur.",
+      "check": {
+        "type": "sequence",
+        "section": "ip access-list extended SRV-WEB",
+        "patterns": [
+          "^permit tcp (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0) eq 443( log)?$",
+          "^deny ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0)( log)?$"
+        ]
+      }
+    },
+    {
+      "id": "ping-before-deny",
+      "description": "SRV-WEB autorise les requêtes ICMP echo (ping) du LAN vers le serveur, avant le refus vers le serveur.",
+      "check": {
+        "type": "sequence",
+        "section": "ip access-list extended SRV-WEB",
+        "patterns": [
+          "^permit icmp (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0) (echo|8)( log)?$",
+          "^deny ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0)( log)?$"
+        ]
+      }
+    },
+    {
+      "id": "deny-before-rest",
+      "description": "SRV-WEB refuse tout autre trafic IP du LAN vers le serveur, avant l'autorisation générale.",
+      "check": {
+        "type": "sequence",
+        "section": "ip access-list extended SRV-WEB",
+        "patterns": [
+          "^deny ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0)( log)?$",
+          "^permit ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) any( log)?$"
+        ]
+      }
+    },
+    {
+      "id": "permit-rest",
+      "description": "SRV-WEB laisse passer tout le reste du trafic du LAN, et aucune entrée ne refuse tout le trafic.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "section": "ip access-list extended SRV-WEB", "pattern": "^permit ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) any( log)?$" },
+          { "type": "regex", "section": "ip access-list extended SRV-WEB", "pattern": "^deny ip any any", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "applied-inbound-lan",
+      "description": "SRV-WEB filtre le trafic qui entre sur l'interface du LAN utilisateurs, et elle seule.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "section": "interface GigabitEthernet0/0/0", "pattern": "^ip access-group SRV-WEB in$", "caseSensitive": true },
+          { "type": "regex", "section": "interface GigabitEthernet0/0/0", "pattern": "^ip access-group SRV-WEB out$", "absent": true },
+          { "type": "regex", "sectionPattern": "^interface GigabitEthernet0/0/[12]$", "pattern": "^ip access-group SRV-WEB ", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "saved",
+      "description": "La configuration est enregistrée en NVRAM après la dernière modification.",
+      "check": { "type": "command", "command": ["copy running-config startup-config", "write memory", "write"], "afterLastChange": true }
+    }
+  ],
+  "hints": [
+    "Une ACL étendue filtre sur la source, la destination, le protocole et les ports. IOS la lit de haut en bas et s'arrête à la première entrée qui correspond ; elle se termine par un refus implicite. C'est pour cela que l'ordre des entrées compte.",
+    "Dans le mode de l'ACL nommée, chaque entrée peut commencer par son numéro de séquence ; sans numéro, elle prend le dernier numéro + 10. Les autorisations vers le serveur doivent précéder le refus vers le serveur, et une dernière entrée doit tout autoriser, sinon le refus implicite couperait le LAN du reste du réseau. Une ACL étendue se place près de la source, en entrée.",
+    "ip access-list extended SRV-WEB, puis par exemple 10 permit tcp 192.168.10.0 0.0.0.255 host 10.0.0.10 eq 80 ; même logique pour 443 (20), icmp … echo (30), 40 deny ip … host 10.0.0.10, 50 permit ip any any. Sous interface G0/0/0 : ip access-group SRV-WEB in."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "ip access-list extended SRV-WEB",
+        "10 permit tcp 192.168.10.0 0.0.0.255 host 10.0.0.10 eq 80",
+        "20 permit tcp 192.168.10.0 0.0.0.255 host 10.0.0.10 eq 443",
+        "30 permit icmp 192.168.10.0 0.0.0.255 host 10.0.0.10 echo",
+        "40 deny ip 192.168.10.0 0.0.0.255 host 10.0.0.10",
+        "50 permit ip 192.168.10.0 0.0.0.255 any",
+        "exit",
+        "interface GigabitEthernet0/0/0",
+        "ip access-group SRV-WEB in",
+        "end",
+        "copy running-config startup-config"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Entrées saisies dans le désordre (les numéros de séquence fixent l'ordre), source any, eq www, masque générique 0.0.0.0, journalisation du refus",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "ip access-list ext SRV-WEB",
+            "50 permit ip any any",
+            "40 deny ip any 10.0.0.10 0.0.0.0 log",
+            "10 permit tcp any 10.0.0.10 0.0.0.0 eq www",
+            "30 permit icmp any host 10.0.0.10 echo",
+            "20 per tcp any host 10.0.0.10 eq 443",
+            "int g0/0/0",
+            "ip access-g SRV-WEB in",
+            "\u001a",
+            "wr"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Entrées saisies sans numéro, dans l'ordre : IOS leur donne 10, 20, 30, 40 et 50",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended SRV-WEB",
+            "permit tcp 192.168.10.0 0.0.0.255 host 10.0.0.10 eq www",
+            "permit tcp 192.168.10.0 0.0.0.255 host 10.0.0.10 eq 443",
+            "permit icmp 192.168.10.0 0.0.0.255 host 10.0.0.10 8",
+            "deny ip 192.168.10.0 0.0.0.255 host 10.0.0.10 log",
+            "permit ip 192.168.10.0 0.0.0.255 any",
+            "interface g0/0/0",
+            "ip access-group SRV-WEB in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Entrée ICMP oubliée puis insérée entre deux entrées grâce à un numéro de séquence intermédiaire (25)",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended SRV-WEB",
+            "permit tcp any host 10.0.0.10 eq 80",
+            "permit tcp any host 10.0.0.10 eq 443",
+            "deny ip any host 10.0.0.10",
+            "permit ip any any",
+            "25 permit icmp any host 10.0.0.10 echo",
+            "interface g0/0/0",
+            "ip access-group SRV-WEB in",
+            "end",
+            "write memory"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Refus vers le serveur placé en tête : il masque les autorisations HTTP, HTTPS et ping",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended SRV-WEB",
+            "10 deny ip any host 10.0.0.10",
+            "20 permit tcp any host 10.0.0.10 eq 80",
+            "30 permit tcp any host 10.0.0.10 eq 443",
+            "40 permit icmp any host 10.0.0.10 echo",
+            "50 permit ip any any",
+            "interface g0/0/0",
+            "ip access-group SRV-WEB in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["http-before-deny", "https-before-deny", "ping-before-deny"]
+    },
+    {
+      "description": "Dernière entrée oubliée : le refus implicite coupe le LAN du reste du réseau",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended SRV-WEB",
+            "10 permit tcp any host 10.0.0.10 eq 80",
+            "20 permit tcp any host 10.0.0.10 eq 443",
+            "30 permit icmp any host 10.0.0.10 echo",
+            "40 deny ip any host 10.0.0.10",
+            "interface g0/0/0",
+            "ip access-group SRV-WEB in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["deny-before-rest", "permit-rest"]
+    },
+    {
+      "description": "Entrée finale saisie en premier sous le n° 50, les autres sans numéro : elles prennent 60 à 90 et se retrouvent derrière le permit ip any any",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended SRV-WEB",
+            "50 permit ip any any",
+            "permit tcp any host 10.0.0.10 eq 80",
+            "permit tcp any host 10.0.0.10 eq 443",
+            "permit icmp any host 10.0.0.10 echo",
+            "deny ip any host 10.0.0.10",
+            "interface g0/0/0",
+            "ip access-group SRV-WEB in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["deny-before-rest"]
+    },
+    {
+      "description": "Entrée ICMP insérée avec un numéro trop grand (45) : elle se range après le refus et le ping reste bloqué",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended SRV-WEB",
+            "10 permit tcp any host 10.0.0.10 eq 80",
+            "20 permit tcp any host 10.0.0.10 eq 443",
+            "40 deny ip any host 10.0.0.10",
+            "50 permit ip any any",
+            "45 permit icmp any host 10.0.0.10 echo",
+            "interface g0/0/0",
+            "ip access-group SRV-WEB in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["ping-before-deny"]
+    },
+    {
+      "description": "ACL posée en sortie sur l'interface du LAN au lieu de l'entrée",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended SRV-WEB",
+            "10 permit tcp any host 10.0.0.10 eq 80",
+            "20 permit tcp any host 10.0.0.10 eq 443",
+            "30 permit icmp any host 10.0.0.10 echo",
+            "40 deny ip any host 10.0.0.10",
+            "50 permit ip any any",
+            "interface g0/0/0",
+            "ip access-group SRV-WEB out"
+          ]
+        }
+      ],
+      "failing": ["applied-inbound-lan"]
+    },
+    {
+      "description": "ACL posée près de la destination (sortie de G0/0/1) en plus de l'entrée du LAN",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended SRV-WEB",
+            "10 permit tcp any host 10.0.0.10 eq 80",
+            "20 permit tcp any host 10.0.0.10 eq 443",
+            "30 permit icmp any host 10.0.0.10 echo",
+            "40 deny ip any host 10.0.0.10",
+            "50 permit ip any any",
+            "interface g0/0/0",
+            "ip access-group SRV-WEB in",
+            "interface g0/0/1",
+            "ip access-group SRV-WEB out"
+          ]
+        }
+      ],
+      "failing": ["applied-inbound-lan"]
+    },
+    {
+      "description": "Nom de l'ACL mal recopié à l'application (srv-web) : IOS distingue la casse et l'interface référence une ACL inexistante, qui laisse tout passer",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended SRV-WEB",
+            "10 permit tcp any host 10.0.0.10 eq 80",
+            "20 permit tcp any host 10.0.0.10 eq 443",
+            "30 permit icmp any host 10.0.0.10 echo",
+            "40 deny ip any host 10.0.0.10",
+            "50 permit ip any any",
+            "interface g0/0/0",
+            "ip access-group srv-web in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": [
+        "applied-inbound-lan"
+      ]
+    },
+    {
+      "description": "Configuration enregistrée avant d'appliquer l'ACL à l'interface",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended SRV-WEB",
+            "10 permit tcp any host 10.0.0.10 eq 80",
+            "20 permit tcp any host 10.0.0.10 eq 443",
+            "30 permit icmp any host 10.0.0.10 echo",
+            "40 deny ip any host 10.0.0.10",
+            "50 permit ip any any",
+            "do write memory",
+            "interface g0/0/0",
+            "ip access-group SRV-WEB in",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "saved"
+      ]
+    }
+  ],
+  "explanation": "Une ACL étendue compare protocole, source, destination et ports ; IOS la parcourt dans l'ordre des numéros de séquence et applique la première entrée qui correspond, puis un refus implicite (deny ip any any) termine toute ACL. Les autorisations ciblées (TCP 80, TCP 443, ICMP echo vers host 10.0.0.10) doivent donc précéder le refus vers le serveur, et une entrée finale permit ip any any (ou permit ip 192.168.10.0 0.0.0.255 any) est indispensable pour que le reste du trafic du LAN continue de passer. Dans le mode ip access-list extended, chaque entrée peut porter son numéro de séquence : IOS les range par numéro, quel que soit l'ordre de saisie, et une entrée sans numéro prend le dernier numéro + 10 (elle s'ajoute donc en fin de liste, derrière un éventuel permit ip any any). On peut ensuite insérer une entrée entre deux autres (15, 25…) ; show access-lists SRV-WEB affiche les numéros, que show running-config omet. host 10.0.0.10 équivaut à 10.0.0.10 0.0.0.0, eq www à eq 80 et le type ICMP 8 à echo. Seul l'echo (type 8) est autorisé : la réponse echo-reply du serveur revient par G0/0/1 et n'est pas filtrée, puisque l'ACL n'est posée qu'en entrée de G0/0/0. Règle de placement : une ACL étendue se met au plus près de la source, en entrée de l'interface du LAN (ip access-group SRV-WEB in), pour que le trafic refusé ne traverse pas inutilement le réseau ; en sortie de G0/0/0, elle filtrerait le trafic qui va vers le LAN, pas celui qui en vient. Une même interface ne porte qu'une ACL IPv4 par sens.",
+  "reference": "Cisco IOS XE — Security Configuration Guide: Access Control Lists, « Creating an IP Access List and Applying It to an Interface » et « IP Access List Entry Sequence Numbering » ; Cisco IOS Security Command Reference (ip access-list extended, permit, deny, ip access-group)",
+  "estimatedMinutes": 14
+}

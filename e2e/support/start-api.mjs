@@ -27,6 +27,8 @@ Object.assign(process.env, {
   PORT: process.env.E2E_API_PORT ?? '3100',
   JWT_SECRET: randomBytes(32).toString('hex'),
   ALLOW_REGISTRATION: 'false',
+  // Le balayage de toute la banque enchaîne des centaines d'enregistrements par minute.
+  ...(process.env.E2E_RATE_LIMIT_MAX ? { RATE_LIMIT_MAX: process.env.E2E_RATE_LIMIT_MAX } : {}),
 });
 
 // Migrations, contenu du dépôt, puis écoute : comme en production.

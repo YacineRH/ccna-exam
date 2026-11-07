@@ -7,14 +7,16 @@ import {
   createRng,
   DIFFICULTIES,
   InsufficientQuestionsError,
+  labSchema,
   questionSchema,
   type PoolQuestion,
 } from '@examforge/core';
-import { checkQuestionAgainstCertification } from '@examforge/content';
+import { checkLabAgainstCertification, checkQuestionAgainstCertification } from '@examforge/content';
 import type { Db } from '../db/client.js';
-import { certifications, domains, examQuestions, exams, questions, subtopics } from '../db/schema.js';
+import { certifications, domains, examQuestions, exams, labs, questions, subtopics } from '../db/schema.js';
 import { badRequest, conflict, notFound, parseInput } from '../errors.js';
-import { DuplicateQuestionError, upsertCertification, upsertQuestion } from '../services/content-sync.js';
+import { DuplicateLabError, DuplicateQuestionError, upsertCertification, upsertLab, upsertQuestion } from '../services/content-sync.js';
+import { profileFor } from '../services/labs.js';
 
 /*
  * Routes d'administration, utilisées par le serveur MCP (jeton de service) ou un admin.
@@ -39,6 +41,15 @@ const listQuery = z.object({
   subtopic: z.string().optional(),
   status: z.enum(['draft', 'validated', 'published', 'retired']).optional(),
   limit: z.coerce.number().int().min(1).max(500).default(100),
+});
+const submitLabSchema = z.object({
+  lab: z.unknown(),
+  source: z.enum(['manual', 'import', 'ai']).default('ai'),
+});
+const labListQuery = z.object({
+  certification: z.string(),
+  subtopic: z.string().optional(),
+  status: z.enum(['draft', 'validated', 'published', 'retired']).optional(),
 });
 const examSchema = z.object({
   certification: z.string(),
@@ -154,6 +165,77 @@ export function adminRoutes(db: Db) {
       }
       const status = approved ? 'published' : 'draft';
       await db.update(questions).set({ status, updatedAt: new Date() }).where(eq(questions.id, row.id));
+      return { slug: req.params.slug, status, issues };
+    });
+
+    /*
+     * Labs : même cycle que les questions. Soumis -> validé automatiquement (schéma, rangement,
+     * état de départ, solution, variantes et pièges joués dans le simulateur) -> relu -> publié.
+     */
+    app.get('/lab-profile', async (req) => {
+      const { certification } = parseInput(z.object({ certification: z.string() }), req.query);
+      const profile = profileFor(certification);
+      if (!profile) throw notFound(`Pas de profil de terminal pour ${certification}`);
+      return {
+        id: profile.id,
+        name: profile.name,
+        deviceTypes: Object.keys(profile.deviceTypes),
+        interfaceTypes: profile.interfaceTypes.map((t) => t.name),
+        modes: profile.modes.map((m) => ({ id: m.id, prompt: m.prompt, parent: m.parent ?? null })),
+        commands: profile.commands.map((c) => ({ syntax: c.syntax, modes: c.modes, devices: c.devices ?? null, stored: c.store !== false })),
+      };
+    });
+
+    app.get('/labs', async (req) => {
+      const q = parseInput(labListQuery, req.query);
+      const cert = await certByCode(db, q.certification);
+      const rows = await db
+        .select({ slug: labs.slug, title: labs.title, difficulty: labs.difficulty, status: labs.status, subtopic: subtopics.code, source: labs.source })
+        .from(labs)
+        .innerJoin(subtopics, eq(subtopics.id, labs.subtopicId))
+        .where(and(eq(labs.certificationId, cert.id), q.subtopic ? eq(subtopics.code, q.subtopic) : undefined, q.status ? eq(labs.status, q.status) : undefined))
+        .orderBy(asc(labs.slug));
+      return { labs: rows };
+    });
+
+    app.post('/labs', async (req, reply) => {
+      const { lab, source } = parseInput(submitLabSchema, req.body);
+      const parsed = labSchema.safeParse(lab);
+      if (!parsed.success) {
+        throw badRequest('Lab rejeté par la validation automatique', parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`));
+      }
+      const l = parsed.data;
+      const cert = await certByCode(db, l.certification);
+      const profile = profileFor(cert.code);
+      if (!profile) throw conflict('no_lab_profile', `La certification ${cert.code} n'a pas de profil de terminal`);
+      const issues = checkLabAgainstCertification(l, cert.config, profile);
+      if (issues.length) throw badRequest('Lab rejeté : il ne passe pas le simulateur', issues);
+      const [existing] = await db.select({ status: labs.status }).from(labs).where(eq(labs.slug, l.slug));
+      if (existing?.status === 'published') throw conflict('already_published', `${l.slug} est déjà publié : utilisez un nouveau slug`);
+      try {
+        const r = await upsertLab(db, cert.id, l, { status: 'validated', source });
+        return reply.code(r.created ? 201 : 200).send({ id: r.id, slug: l.slug, status: 'validated' });
+      } catch (err) {
+        if (err instanceof DuplicateLabError) throw conflict('duplicate_lab', err.message, { existing: err.existingSlug });
+        throw err;
+      }
+    });
+
+    app.get<{ Params: { slug: string } }>('/labs/:slug', async (req) => {
+      const [row] = await db.select().from(labs).where(eq(labs.slug, req.params.slug));
+      if (!row) throw notFound(`Lab inconnu : ${req.params.slug}`);
+      return { slug: row.slug, status: row.status, source: row.source, lab: row.definition };
+    });
+
+    app.post<{ Params: { slug: string } }>('/labs/:slug/review', async (req) => {
+      const { approved, issues } = parseInput(reviewSchema, req.body);
+      const [row] = await db.select({ id: labs.id, status: labs.status }).from(labs).where(eq(labs.slug, req.params.slug));
+      if (!row) throw notFound(`Lab inconnu : ${req.params.slug}`);
+      if (approved && row.status !== 'validated' && row.status !== 'published') {
+        throw conflict('not_validated', 'Seul un lab validé automatiquement peut être publié');
+      }
+      const status = approved ? 'published' : 'draft';
+      await db.update(labs).set({ status, updatedAt: new Date() }).where(eq(labs.id, row.id));
       return { slug: req.params.slug, status, issues };
     });
 

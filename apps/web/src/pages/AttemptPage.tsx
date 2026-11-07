@@ -10,7 +10,7 @@ import { api, ApiError } from '../lib/api';
 import { formatClock, formatDuration } from '../lib/format';
 import { startIndex } from '../lib/attempt';
 import { certificationLabel } from '../lib/certification';
-import { clockOffset, remainingSeconds, resyncOffset, serverTime } from '../lib/clock';
+import { clockOffset, remainingSeconds, resyncOffset, scheduleClockResync, serverTime } from '../lib/clock';
 import { initialResponse, isComplete, normalizeResponse, QUESTION_TYPE_LABEL, sameResponse } from '../lib/responses';
 import type { AttemptQuestion, AttemptState, CertificationDetail, PracticeFeedback, Response, SaveAnswerResult } from '../lib/types';
 import { useApi } from '../lib/useApi';
@@ -125,6 +125,21 @@ export function AttemptPage() {
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
+
+  // Recalage périodique léger (toutes les 5 min, et au retour sur l'onglet), en plus de celui de chaque enregistrement.
+  const inProgress = attempt?.status === 'in_progress';
+  useEffect(() => {
+    if (!inProgress) return;
+    return scheduleClockResync(
+      () => {
+        const requestedAt = Date.now();
+        api<{ serverNow: string; status: string }>(`/attempts/${id}/clock`)
+          .then((c) => setOffset((previous) => resyncOffset(previous, c.serverNow, requestedAt, Date.now())))
+          .catch(() => undefined);
+      },
+      { visibility: document },
+    );
+  }, [id, inProgress]);
 
   const elapsedOn = useCallback((qid: string) => {
     return (seconds.current[qid] ?? 0) + (Date.now() - enteredAt.current) / 1000;

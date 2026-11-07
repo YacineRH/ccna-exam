@@ -76,7 +76,7 @@ jobs:
       - name: Chromium pour Playwright
         working-directory: e2e
         run: npx playwright install --with-deps chromium
-      - name: Parcours e2e (inscription, ordre, association, examen, mobile)
+      - name: Parcours e2e (inscription, ordre, association, examen, lab CLI, mobile)
         run: pnpm e2e
       - name: Rapport en cas d'échec
         if: failure()
@@ -85,6 +85,52 @@ jobs:
           name: playwright-report
           path: |
             e2e/playwright-report/
+            e2e/test-results/
+          retention-days: 7
+
+  sweep:
+    name: Balayage à 390 px de toute la banque (non bloquant)
+    runs-on: ubuntu-latest
+    # Long et purement visuel : un échec est signalé sans bloquer la fusion.
+    continue-on-error: true
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: examforge
+          POSTGRES_PASSWORD: examforge
+          POSTGRES_DB: examforge_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U examforge"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      E2E_DATABASE_URL: postgres://examforge:examforge@localhost:5432/examforge_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build (API et front servis par le balayage)
+        run: pnpm build
+      - name: Chromium pour Playwright
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+      - name: Toutes les questions à 390 px, pendant la tentative et dans le post-mortem
+        run: pnpm e2e:sweep
+      - name: Rapport en cas d'échec
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-sweep
+          path: |
+            e2e/playwright-report-sweep/
             e2e/test-results/
           retention-days: 7
 

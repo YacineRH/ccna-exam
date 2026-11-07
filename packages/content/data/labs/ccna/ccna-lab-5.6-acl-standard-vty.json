@@ -1,0 +1,388 @@
+{
+  "slug": "ccna-lab-5.6-acl-standard-vty",
+  "certification": "ccna",
+  "domain": "5.0",
+  "subtopic": "5.6",
+  "difficulty": "medium",
+  "title": "Restreindre l'accès distant au routeur par une ACL standard",
+  "statement": "Les lignes VTY de R1 acceptent aujourd'hui une session distante depuis n'importe quelle adresse. La politique de sécurité impose que seuls le réseau d'administration 192.168.99.0/27 et la station de supervision 10.20.0.5 puissent ouvrir une session à distance sur R1. Le trafic qui traverse le routeur ne doit pas être filtré.\n\nConfigurez R1 :\n1. Créez une ACL standard, soit numérotée 10, soit nommée VTY-ADMIN, qui autorise le réseau d'administration et la station de supervision.\n2. L'ACL ne contient que ces deux autorisations (des remarques sont permises) : le refus implicite de fin de liste suffit à rejeter tout le reste. Un deny any explicite (par exemple deny any log, pour journaliser les tentatives refusées) est toléré, à condition de venir après les autorisations.\n3. Appliquez-la aux sessions entrantes des lignes VTY 0 à 4 (ou 0 à 15), sans la poser sur une interface.\n4. Enregistrez la configuration.",
+  "topology": "  Admin 192.168.99.0/27          Supervision 10.20.0.5\n   (via SW-ADM)                    (via le WAN)\n        |                               |\n   G0/0/0 192.168.99.1/27        G0/0/1 10.0.12.1/30\n        +------------- R1 --------------+\n                        |\n                  G0/0/2 192.168.10.1/24\n                  LAN utilisateurs 192.168.10.0/24\n\n  Lignes VTY 0 à 4 : mot de passe et login déjà configurés.",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-2"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description Reseau administration\n ip address 192.168.99.1 255.255.255.224\n no shutdown\ninterface GigabitEthernet0/0/1\n description WAN vers supervision\n ip address 10.0.12.1 255.255.255.252\n no shutdown\ninterface GigabitEthernet0/0/2\n description LAN utilisateurs\n ip address 192.168.10.1 255.255.255.0\n no shutdown\nip route 10.20.0.0 255.255.255.0 10.0.12.2\nline vty 0 4\n password Vty-R1-2024\n login"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "acl-admin-subnet",
+      "description": "L'ACL (n° 10 ou VTY-ADMIN) autorise tout le réseau d'administration 192.168.99.0/27, et seulement lui.",
+      "check": {
+        "type": "any",
+        "checks": [
+          { "type": "regex", "pattern": "^access-list 10 permit 192\\.168\\.99\\.0 0\\.0\\.0\\.31( log)?$" },
+          { "type": "regex", "sectionPattern": "^ip access-list standard (10|VTY-ADMIN)$", "pattern": "^(\\d+ )?permit 192\\.168\\.99\\.0 0\\.0\\.0\\.31( log)?$" }
+        ]
+      }
+    },
+    {
+      "id": "acl-station",
+      "description": "La même ACL autorise la station de supervision 10.20.0.5, et seulement cette adresse.",
+      "check": {
+        "type": "any",
+        "checks": [
+          { "type": "regex", "pattern": "^access-list 10 permit (host 10\\.20\\.0\\.5|10\\.20\\.0\\.5|10\\.20\\.0\\.5 0\\.0\\.0\\.0)( log)?$" },
+          { "type": "regex", "sectionPattern": "^ip access-list standard (10|VTY-ADMIN)$", "pattern": "^(\\d+ )?permit (host 10\\.20\\.0\\.5|10\\.20\\.0\\.5|10\\.20\\.0\\.5 0\\.0\\.0\\.0)( log)?$" }
+        ]
+      }
+    },
+    {
+      "id": "acl-only-two",
+      "description": "L'ACL ne contient que ces deux autorisations, suivies au plus d'un deny any : aucun refus ne les précède.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "any",
+            "checks": [
+              { "type": "regex", "pattern": "^access-list 10 permit " },
+              { "type": "regex", "sectionPattern": "^ip access-list standard (10|VTY-ADMIN)$", "pattern": "^permit " }
+            ]
+          },
+          {
+            "type": "regex",
+            "pattern": "^access-list 10 (?!(permit (192\\.168\\.99\\.0 0\\.0\\.0\\.31|host 10\\.20\\.0\\.5|10\\.20\\.0\\.5|10\\.20\\.0\\.5 0\\.0\\.0\\.0)|deny (any|0\\.0\\.0\\.0 255\\.255\\.255\\.255))( log)?$)(permit|deny) ",
+            "absent": true
+          },
+          {
+            "type": "regex",
+            "sectionPattern": "^ip access-list standard (10|VTY-ADMIN)$",
+            "pattern": "^(?!(permit (192\\.168\\.99\\.0 0\\.0\\.0\\.31|host 10\\.20\\.0\\.5|10\\.20\\.0\\.5|10\\.20\\.0\\.5 0\\.0\\.0\\.0)|deny (any|0\\.0\\.0\\.0 255\\.255\\.255\\.255))( log)?$)(permit|deny) ",
+            "absent": true
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "all",
+                "checks": [
+                  { "type": "regex", "pattern": "^access-list 10 deny ", "absent": true },
+                  { "type": "regex", "sectionPattern": "^ip access-list standard (10|VTY-ADMIN)$", "pattern": "^deny ", "absent": true }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  { "type": "sequence", "patterns": ["^access-list 10 permit 192\\.168\\.99\\.0 0\\.0\\.0\\.31( log)?$", "^access-list 10 deny "] },
+                  { "type": "sequence", "patterns": ["^access-list 10 permit (host 10\\.20\\.0\\.5|10\\.20\\.0\\.5|10\\.20\\.0\\.5 0\\.0\\.0\\.0)( log)?$", "^access-list 10 deny "] }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "sequence",
+                    "sectionPattern": "^ip access-list standard (10|VTY-ADMIN)$",
+                    "patterns": ["^permit 192\\.168\\.99\\.0 0\\.0\\.0\\.31( log)?$", "^deny "]
+                  },
+                  {
+                    "type": "sequence",
+                    "sectionPattern": "^ip access-list standard (10|VTY-ADMIN)$",
+                    "patterns": ["^permit (host 10\\.20\\.0\\.5|10\\.20\\.0\\.5|10\\.20\\.0\\.5 0\\.0\\.0\\.0)( log)?$", "^deny "]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "vty-access-class",
+      "description": "Les sessions entrantes des lignes VTY sont filtrées par cette ACL, et aucune interface ne la porte.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "all",
+                "checks": [
+                  { "type": "regex", "sectionPattern": "^line vty 0 (4|15)$", "pattern": "^access-class 10 in$" },
+                  {
+                    "type": "any",
+                    "checks": [
+                      { "type": "regex", "pattern": "^access-list 10 permit " },
+                      { "type": "regex", "sectionPattern": "^ip access-list standard 10$", "pattern": "permit " }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  { "type": "regex", "sectionPattern": "^line vty 0 (4|15)$", "pattern": "^access-class VTY-ADMIN in$", "caseSensitive": true },
+                  { "type": "regex", "section": "ip access-list standard VTY-ADMIN", "pattern": "^permit " }
+                ]
+              }
+            ]
+          },
+          { "type": "regex", "sectionPattern": "^interface ", "pattern": "^ip access-group ", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "saved",
+      "description": "La configuration est enregistrée en NVRAM après la dernière modification.",
+      "check": { "type": "command", "command": ["copy running-config startup-config", "write memory", "write"], "afterLastChange": true }
+    }
+  ],
+  "hints": [
+    "Une ACL standard ne filtre que sur l'adresse source : c'est exactement ce qu'il faut pour dire qui a le droit d'ouvrir une session. Sur les lignes VTY, elle ne s'applique pas comme sur une interface.",
+    "Un /27 laisse 5 bits d'hôte : le masque générique vaut 0.0.0.31. Une adresse seule s'écrit avec le mot-clé host (ou le masque générique 0.0.0.0). Sur les lignes, l'ACL se pose avec access-class, dans le sens des connexions entrantes.",
+    "access-list 10 permit 192.168.99.0 0.0.0.31 et access-list 10 permit host 10.20.0.5 en configuration globale, puis sous line vty 0 4 : access-class 10 in. N'oubliez pas d'enregistrer."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "access-list 10 remark Acces distant : administration et supervision",
+        "access-list 10 permit 192.168.99.0 0.0.0.31",
+        "access-list 10 permit host 10.20.0.5",
+        "line vty 0 4",
+        "access-class 10 in",
+        "end",
+        "copy running-config startup-config"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "ACL nommée VTY-ADMIN, appliquée aux lignes VTY 0 à 15, sauvegarde par write memory",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "ip access-list standard VTY-ADMIN",
+            "remark Acces distant autorise",
+            "permit 192.168.99.0 0.0.0.31",
+            "permit 10.20.0.5 0.0.0.0",
+            "exit",
+            "line vty 0 15",
+            "access-class VTY-ADMIN in",
+            "\u001a",
+            "wr mem"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "ACL numérotée terminée par un deny any log explicite, pour journaliser les tentatives refusées",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 10 permit 192.168.99.0 0.0.0.31",
+            "access-list 10 permit host 10.20.0.5",
+            "access-list 10 deny any log",
+            "line vty 0 4",
+            "access-class 10 in",
+            "end",
+            "write memory"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "ACL nommée dont le deny any log est saisi en premier, mais avec un numéro de séquence qui le place en dernier",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list standard VTY-ADMIN",
+            "100 deny any log",
+            "10 permit 192.168.99.0 0.0.0.31",
+            "20 permit host 10.20.0.5",
+            "line vty 0 4",
+            "access-class VTY-ADMIN in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "ACL numérotée éditée en mode nommé, avec numéros de séquence et l'adresse seule de la station",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "ip access-list standard 10",
+            "10 permit 10.20.0.5",
+            "20 permit 192.168.99.0 0.0.0.31",
+            "line vty 0 4",
+            "access-class 10 in",
+            "do copy run start"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "ACL appliquée sur l'interface d'administration avec ip access-group au lieu des lignes VTY",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 10 permit 192.168.99.0 0.0.0.31",
+            "access-list 10 permit host 10.20.0.5",
+            "interface g0/0/0",
+            "ip access-group 10 in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["vty-access-class"]
+    },
+    {
+      "description": "Masque générique d'un /24 au lieu d'un /27 : tout 192.168.99.0/24 est autorisé",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 10 permit 192.168.99.0 0.0.0.255",
+            "access-list 10 permit host 10.20.0.5",
+            "line vty 0 4",
+            "access-class 10 in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["acl-admin-subnet", "acl-only-two"]
+    },
+    {
+      "description": "Un deny any saisi avant les autorisations : l'ACL numérotée l'ajoute en tête, et il bloque tout le monde",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 10 deny any",
+            "access-list 10 permit 192.168.99.0 0.0.0.31",
+            "access-list 10 permit host 10.20.0.5",
+            "line vty 0 4",
+            "access-class 10 in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["acl-only-two"]
+    },
+    {
+      "description": "ACL nommée : deny any log saisi sans numéro (il prend le n° 10), puis les autorisations sans numéro, rangées derrière lui",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list standard VTY-ADMIN",
+            "deny any log",
+            "permit 192.168.99.0 0.0.0.31",
+            "permit host 10.20.0.5",
+            "line vty 0 4",
+            "access-class VTY-ADMIN in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["acl-only-two"]
+    },
+    {
+      "description": "Refus d'un hôte d'administration ajouté à l'ACL : seules les deux autorisations sont demandées",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 10 deny host 192.168.99.10",
+            "access-list 10 permit 192.168.99.0 0.0.0.31",
+            "access-list 10 permit host 10.20.0.5",
+            "line vty 0 4",
+            "access-class 10 in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": ["acl-only-two"]
+    },
+    {
+      "description": "ACL appliquée dans le mauvais sens (out) sur les lignes VTY",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 10 permit 192.168.99.0 0.0.0.31",
+            "access-list 10 permit host 10.20.0.5",
+            "line vty 0 4",
+            "access-class 10 out"
+          ]
+        }
+      ],
+      "failing": ["vty-access-class"]
+    },
+    {
+      "description": "ACL nommée VTY-ADMIN mais appliquée sous le nom vty-admin : IOS distingue la casse, la ligne référence une ACL inexistante",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list standard VTY-ADMIN",
+            "permit 192.168.99.0 0.0.0.31",
+            "permit host 10.20.0.5",
+            "line vty 0 4",
+            "access-class vty-admin in",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": [
+        "vty-access-class"
+      ]
+    }
+  ],
+  "explanation": "Une ACL standard (numéros 1 à 99, ou nommée avec ip access-list standard) ne compare que l'adresse source, ce qui suffit pour décider qui peut ouvrir une session Telnet ou SSH sur le routeur. Le réseau 192.168.99.0/27 s'écrit avec le masque générique 0.0.0.31 (l'inverse de 255.255.255.224) ; la station unique s'écrit host 10.20.0.5, ou 10.20.0.5 0.0.0.0, ou simplement 10.20.0.5 dans une ACL standard. Toute ACL se termine par un refus implicite : deny any n'est pas nécessaire. Ajouté en fin de liste sous la forme deny any log, il est même utile, car il journalise les tentatives refusées et compte ses correspondances dans show access-lists, ce que le refus implicite ne fait pas. Placé avant les autorisations, il bloquerait en revanche tout le monde, y compris l'administrateur, car IOS lit les entrées dans l'ordre et s'arrête à la première qui correspond : la commande globale access-list ajoute chaque entrée en fin de liste, alors qu'en mode ip access-list un numéro de séquence permet de la placer où l'on veut (une entrée sans numéro prend le dernier + 10). Pour protéger l'accès au routeur, on applique l'ACL sur les lignes avec access-class 10 in : elle filtre alors les connexions entrantes vers les VTY, quelle que soit l'interface par laquelle elles arrivent, sans toucher au trafic qui traverse le routeur. Poser l'ACL sur une interface avec ip access-group filtrerait tout le trafic entrant par cette interface, ce qui n'est pas le besoin et laisserait ouvertes les autres interfaces. access-class out filtre les sessions sortantes ouvertes depuis une VTY (telnet vers un autre équipement), pas les connexions entrantes.",
+  "reference": "Cisco IOS XE — Security Configuration Guide: Access Control Lists, « IP Access List Overview » et « Controlling Access to a Virtual Terminal Line » (access-class) ; Cisco IOS Security Command Reference (access-list, access-class)",
+  "estimatedMinutes": 8
+}

@@ -5,6 +5,7 @@ import type { Db } from '../db/client.js';
 import { parseInput } from '../errors.js';
 import {
   answerQuestion,
+  getAttemptClock,
   getAttemptResult,
   getAttemptState,
   listAttempts,
@@ -55,6 +56,13 @@ export function attemptRoutes(db: Db) {
       const user = await app.requireUser(req);
       const { id } = parseInput(idParam, req.params);
       return getAttemptState(db, id, user.id);
+    });
+
+    // Recalage léger du chrono : heure du serveur, échéance et statut, sans les questions.
+    app.get('/:id/clock', async (req) => {
+      const user = await app.requireUser(req);
+      const { id } = parseInput(idParam, req.params);
+      return getAttemptClock(db, id, user.id);
     });
 
     app.put('/:id/answers/:questionId', async (req) => {

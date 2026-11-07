@@ -47,3 +47,33 @@ export function remainingSeconds(deadlineAt: string | null, clientNow: number, o
   if (!Number.isFinite(deadline)) return null;
   return Math.max(0, Math.round((deadline - serverTime(clientNow, offsetMs)) / 1000));
 }
+
+/** Intervalle du recalage périodique du chrono d'examen. */
+export const RESYNC_INTERVAL_MS = 5 * 60_000;
+
+/** Ce qu'il faut d'un document pour savoir quand l'onglet redevient visible (le vrai, ou un double de test). */
+export interface VisibilitySource {
+  readonly visibilityState: DocumentVisibilityState | string;
+  addEventListener(type: 'visibilitychange', listener: () => void): void;
+  removeEventListener(type: 'visibilitychange', listener: () => void): void;
+}
+
+/**
+ * Recalage léger du chrono : toutes les `intervalMs` (5 min), et dès que l'onglet redevient visible
+ * (le navigateur ralentit les minuteries d'un onglet caché, et une veille du poste fait sauter son horloge).
+ * Renvoie la fonction d'arrêt.
+ */
+export function scheduleClockResync(
+  sync: () => void,
+  { intervalMs = RESYNC_INTERVAL_MS, visibility }: { intervalMs?: number; visibility?: VisibilitySource } = {},
+): () => void {
+  const timer = setInterval(sync, intervalMs);
+  const onVisible = () => {
+    if (visibility?.visibilityState === 'visible') sync();
+  };
+  visibility?.addEventListener('visibilitychange', onVisible);
+  return () => {
+    clearInterval(timer);
+    visibility?.removeEventListener('visibilitychange', onVisible);
+  };
+}

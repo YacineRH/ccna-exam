@@ -1,0 +1,327 @@
+{
+  "slug": "ccna-lab-5.7-port-security",
+  "certification": "ccna",
+  "domain": "5.0",
+  "subtopic": "5.7",
+  "difficulty": "medium",
+  "title": "Verrouiller des ports utilisateurs : port-security, PortFast et BPDU guard",
+  "statement": "Sur le commutateur S1 (Catalyst 2960), deux prises murales du VLAN 10 posent problème : un visiteur y a branché un petit commutateur personnel. L'ancien administrateur leur a donné le VLAN 10, mais les a laissées en mode dynamique.\n\nConfigurez S1 :\n1. Fa0/1 et Fa0/2 deviennent des ports d'accès statiques (elles restent dans le VLAN 10).\n2. Fa0/1 (bureau RH) : port-security activé, au plus 2 adresses MAC, apprises dynamiquement et conservées dans la configuration ; en cas de violation, le trafic fautif est rejeté et journalisé, mais le port reste actif.\n3. Fa0/2 (salle de réunion) : port-security activé, une seule adresse MAC, et le port se désactive en cas de violation.\n4. Sur Fa0/1 et Fa0/2, le port passe immédiatement en transmission (sans attendre les états d'écoute et d'apprentissage de Spanning Tree) et se désactive s'il reçoit une BPDU.\n5. Enregistrez la configuration.",
+  "topology": "                    S1 (Catalyst 2960)\n   Fa0/1  --> prise bureau RH          (VLAN 10, 2 MAC max, sticky)\n   Fa0/2  --> prise salle de réunion   (VLAN 10, 1 MAC max)\n   Gi0/1  --> lien montant vers le cœur (hors de ce lab)\n\n   État de départ de Fa0/1 et Fa0/2 :\n     switchport access vlan 10   (mode : dynamic auto par défaut)",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "S1",
+      "type": "switch",
+      "interfaces": [
+        "FastEthernet0/1-24",
+        "GigabitEthernet0/1-2"
+      ],
+      "startupConfig": "hostname S1\nno ip domain-lookup\nvlan 10\n name UTILISATEURS\ninterface FastEthernet0/1\n switchport access vlan 10\ninterface FastEthernet0/2\n switchport access vlan 10\ninterface GigabitEthernet0/1\n switchport mode trunk"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "acces-statique",
+      "description": "Fa0/1 et Fa0/2 sont des ports d'accès statiques du VLAN 10.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "sectionPattern": "^interface FastEthernet0/[12]$",
+            "sections": "all",
+            "line": "switchport mode access"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^interface FastEthernet0/[12]$",
+            "sections": "all",
+            "line": "switchport access vlan 10"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fa01-port-security",
+      "description": "Le port-security est activé sur Fa0/1.",
+      "check": {
+        "type": "line",
+        "section": "interface FastEthernet0/1",
+        "line": "switchport port-security"
+      }
+    },
+    {
+      "id": "fa01-maximum",
+      "description": "Fa0/1 accepte au plus 2 adresses MAC.",
+      "check": {
+        "type": "line",
+        "section": "interface FastEthernet0/1",
+        "line": "switchport port-security maximum 2"
+      }
+    },
+    {
+      "id": "fa01-sticky",
+      "description": "Fa0/1 apprend ses adresses MAC dynamiquement et les garde dans la configuration.",
+      "check": {
+        "type": "line",
+        "section": "interface FastEthernet0/1",
+        "line": "switchport port-security mac-address sticky"
+      }
+    },
+    {
+      "id": "fa01-violation",
+      "description": "Une violation sur Fa0/1 rejette et journalise le trafic sans désactiver le port.",
+      "check": {
+        "type": "line",
+        "section": "interface FastEthernet0/1",
+        "line": "switchport port-security violation restrict"
+      }
+    },
+    {
+      "id": "fa02-port-security",
+      "description": "Fa0/2 : port-security activé, une seule adresse MAC, port désactivé en cas de violation.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "section": "interface FastEthernet0/2",
+            "line": "switchport port-security"
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "line",
+                "section": "interface FastEthernet0/2",
+                "line": "switchport port-security maximum 1"
+              },
+              {
+                "type": "regex",
+                "section": "interface FastEthernet0/2",
+                "pattern": "^switchport port-security maximum ",
+                "absent": true
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "line",
+                "section": "interface FastEthernet0/2",
+                "line": "switchport port-security violation shutdown"
+              },
+              {
+                "type": "regex",
+                "section": "interface FastEthernet0/2",
+                "pattern": "^switchport port-security violation ",
+                "absent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "portfast-bpduguard",
+      "description": "Fa0/1 et Fa0/2 passent immédiatement en transmission et se désactivent à la réception d'une BPDU.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "sectionPattern": "^interface FastEthernet0/[12]$",
+            "sections": "all",
+            "line": "spanning-tree portfast"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^interface FastEthernet0/[12]$",
+            "sections": "all",
+            "line": "spanning-tree bpduguard enable"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sauvegarde",
+      "description": "La configuration est enregistrée dans la NVRAM.",
+      "check": {
+        "type": "command",
+        "command": [
+          "copy running-config startup-config",
+          "write memory",
+          "write"
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "Le port-security ne s'applique qu'à un port dont le mode est fixé : IOS refuse de l'activer sur un port encore en mode dynamique. Commencez donc par le mode des deux ports.",
+    "Activer le port-security est une commande à part entière ; le nombre maximal d'adresses, l'apprentissage « sticky » et l'action en cas de violation (protect, restrict ou shutdown) sont des options séparées. Pour Fa0/2, demandez-vous quelles sont les valeurs par défaut. PortFast et BPDU guard sont des options Spanning Tree de l'interface.",
+    "Sur chaque port : switchport mode access avant switchport port-security. Sous Fa0/1, ajoutez switchport port-security maximum <n>, switchport port-security mac-address sticky et switchport port-security violation <action qui journalise sans couper>. Sur les deux ports : spanning-tree portfast et spanning-tree bpduguard enable."
+  ],
+  "solution": [
+    {
+      "device": "S1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface FastEthernet0/1",
+        "switchport mode access",
+        "switchport port-security",
+        "switchport port-security maximum 2",
+        "switchport port-security mac-address sticky",
+        "switchport port-security violation restrict",
+        "spanning-tree portfast",
+        "spanning-tree bpduguard enable",
+        "interface FastEthernet0/2",
+        "switchport mode access",
+        "switchport port-security",
+        "switchport port-security maximum 1",
+        "switchport port-security violation shutdown",
+        "spanning-tree portfast",
+        "spanning-tree bpduguard enable",
+        "end",
+        "copy running-config startup-config"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Parties communes en interface range, valeurs par défaut laissées implicites sur Fa0/2, abréviations",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "en",
+            "conf t",
+            "int range fa0/1 - 2",
+            "sw mo acc",
+            "sw port-sec",
+            "span portf",
+            "span bpdu en",
+            "int fa0/1",
+            "sw port-sec max 2",
+            "sw port-sec mac st",
+            "sw port-sec vio res",
+            "\u001a",
+            "wr mem"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Options réglées avant l'activation du port-security, ports dans l'ordre inverse",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface fa0/2",
+            "switchport mode access",
+            "spanning-tree bpduguard enable",
+            "spanning-tree portfast",
+            "switchport port-security",
+            "interface fa0/1",
+            "switchport mode access",
+            "switchport port-security violation restrict",
+            "switchport port-security mac-address sticky",
+            "switchport port-security maximum 2",
+            "switchport port-security",
+            "spanning-tree bpduguard enable",
+            "spanning-tree portfast",
+            "end",
+            "write"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Port-security activé sans fixer le mode accès : IOS refuse la commande",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface fa0/1",
+            "switchport port-security",
+            "interface fa0/2",
+            "switchport port-security"
+          ]
+        }
+      ],
+      "failing": [
+        "acces-statique",
+        "fa01-port-security",
+        "fa02-port-security"
+      ]
+    },
+    {
+      "description": "Options réglées mais port-security jamais activé",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface fa0/1",
+            "switchport mode access",
+            "switchport port-security maximum 2",
+            "switchport port-security mac-address sticky",
+            "switchport port-security violation restrict"
+          ]
+        }
+      ],
+      "failing": [
+        "fa01-port-security"
+      ]
+    },
+    {
+      "description": "Violation en protect (rejet silencieux, sans journalisation) sur Fa0/1",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface fa0/1",
+            "switchport mode access",
+            "switchport port-security",
+            "switchport port-security violation protect"
+          ]
+        }
+      ],
+      "failing": [
+        "fa01-violation"
+      ]
+    },
+    {
+      "description": "Deux adresses autorisées aussi en salle de réunion",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface range fa0/1 - 2",
+            "switchport mode access",
+            "switchport port-security",
+            "switchport port-security maximum 2"
+          ]
+        }
+      ],
+      "failing": [
+        "fa02-port-security"
+      ]
+    }
+  ],
+  "explanation": "Le port-security limite les adresses MAC sources admises sur un port d'accès. IOS ne l'active que sur un port en mode access (ou trunk) statique : sur un port dynamique, il répond « Command rejected: FastEthernet0/1 is a dynamic port. ». La commande switchport port-security l'active ; ses options se règlent à part : maximum (1 par défaut), mac-address sticky (les adresses apprises sont ajoutées à la configuration courante sous la forme switchport port-security mac-address sticky <MAC>, et survivent au redémarrage si l'on enregistre), et violation. Les trois actions : protect rejette le trafic des adresses en trop sans rien signaler ; restrict le rejette, incrémente le compteur de violations et envoie un message syslog et un trap SNMP ; shutdown (le défaut) passe le port en err-disabled, à réactiver par shutdown puis no shutdown ou par errdisable recovery. Pour Fa0/2, une adresse et shutdown sont donc les valeurs par défaut : les écrire ou non revient au même. PortFast fait passer un port d'accès directement à l'état forwarding, sans les 30 secondes d'écoute et d'apprentissage ; BPDU guard le met en err-disabled s'il reçoit une BPDU, ce qui neutralise le commutateur personnel du visiteur. Vérification : show port-security interface fa0/1 et show running-config interface fa0/1.",
+  "reference": "Catalyst 2960 Switch Software Configuration Guide, Cisco IOS Release 15.0(2)SE — « Configuring Port-Based Traffic Control » (Configuring Port Security, Security Violations) et « Configuring Optional Spanning-Tree Features » (PortFast, BPDU Guard)",
+  "estimatedMinutes": 12
+}

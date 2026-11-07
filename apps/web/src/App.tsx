@@ -3,9 +3,10 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { RequireAuth } from './auth/RequireAuth';
 import { Layout } from './components/Layout';
 import { AttemptPage } from './pages/AttemptPage';
-import { CliPage } from './pages/CliPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { HistoryPage } from './pages/HistoryPage';
+import { LabIntroPage, LabSessionPage } from './pages/LabPage';
+import { LabsPage } from './pages/LabsPage';
 import { LoginPage } from './pages/LoginPage';
 import { NewAttemptPage } from './pages/NewAttemptPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -19,6 +20,8 @@ const TITLES: [RegExp, string][] = [
   [/^\/tentatives\//, 'Session en cours'],
   [/^\/historique/, 'Historique'],
   [/^\/labs\/subnetting/, 'Subnetting trainer'],
+  [/^\/labs\/cli\/sessions\//, 'Session de lab CLI'],
+  [/^\/labs\/cli\/.+/, 'Lab CLI'],
   [/^\/labs\/cli/, 'CLI Cisco IOS'],
   [/^\/$/, 'Tableau de bord'],
 ];
@@ -56,7 +59,9 @@ export function App() {
         <Route path="tentatives/:id/resultat" element={<ResultPage />} />
         <Route path="historique" element={<HistoryPage />} />
         <Route path="labs/subnetting" element={<SubnetPage />} />
-        <Route path="labs/cli" element={<CliPage />} />
+        <Route path="labs/cli" element={<LabsPage />} />
+        <Route path="labs/cli/sessions/:id" element={<LabSessionPage />} />
+        <Route path="labs/cli/:slug" element={<LabIntroPage />} />
         <Route path="labs" element={<Navigate to="/labs/subnetting" replace />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

@@ -15,7 +15,7 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
-import type { AnswerKey, CertificationConfig, QuestionBody, Response } from '@examforge/core';
+import type { AnswerKey, CertificationConfig, Lab, QuestionBody, Response } from '@examforge/core';
 
 /*
  * Le moteur ne connaît que des certifications, domaines et questions génériques.
@@ -209,5 +209,74 @@ export const attemptAnswers = pgTable(
   ],
 );
 
+export const labAttemptStatus = pgEnum('lab_attempt_status', ['in_progress', 'finished']);
+
+/**
+ * Labs CLI : la définition complète (état de départ, objectifs, indices, solution) est stockée d'un bloc.
+ * Elle ne quitte jamais le serveur avant la fin d'une session : seule sa partie publique est envoyée.
+ */
+export const labs = pgTable(
+  'labs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    certificationId: uuid('certification_id')
+      .notNull()
+      .references(() => certifications.id, { onDelete: 'cascade' }),
+    slug: text('slug').notNull().unique(),
+    domainId: uuid('domain_id')
+      .notNull()
+      .references(() => domains.id),
+    subtopicId: uuid('subtopic_id')
+      .notNull()
+      .references(() => subtopics.id),
+    difficulty: text('difficulty').notNull(),
+    title: text('title').notNull(),
+    definition: jsonb('definition').$type<Lab>().notNull(),
+    status: questionStatus('status').notNull().default('published'),
+    source: questionSource('source').notNull().default('manual'),
+    ...timestamps,
+  },
+  (t) => [index('labs_cert_status_idx').on(t.certificationId, t.status)],
+);
+
+/** Une session de lab : les commandes sont rejouées dans l'ordre pour reconstituer l'état des équipements. */
+export const labAttempts = pgTable(
+  'lab_attempts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    labId: uuid('lab_id')
+      .notNull()
+      .references(() => labs.id, { onDelete: 'cascade' }),
+    status: labAttemptStatus('status').notNull().default('in_progress'),
+    startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+    /** Premier instant où tous les objectifs étaient atteints. */
+    solvedAt: timestamp('solved_at', { withTimezone: true }),
+    finishedAt: timestamp('finished_at', { withTimezone: true }),
+    /** Tous les objectifs atteints à la fin de la session. */
+    success: boolean('success'),
+    hintsUsed: integer('hints_used').notNull().default(0),
+    commandCount: integer('command_count').notNull().default(0),
+  },
+  (t) => [index('lab_attempts_user_idx').on(t.userId, t.startedAt), index('lab_attempts_lab_idx').on(t.labId, t.userId)],
+);
+
+export const labAttemptCommands = pgTable(
+  'lab_attempt_commands',
+  {
+    attemptId: uuid('attempt_id')
+      .notNull()
+      .references(() => labAttempts.id, { onDelete: 'cascade' }),
+    seq: integer('seq').notNull(),
+    device: text('device').notNull(),
+    input: text('input').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.attemptId, t.seq] })],
+);
+
 export type User = typeof users.$inferSelect;
+export type LabAttempt = typeof labAttempts.$inferSelect;
 export type Attempt = typeof attempts.$inferSelect;

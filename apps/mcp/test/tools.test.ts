@@ -57,10 +57,15 @@ describe('exam-forge-mcp', () => {
       'add_certification',
       'analyze_weakness',
       'generate_exam',
+      'generate_lab',
       'generate_question',
       'get_certification',
+      'list_labs',
+      'record_lab_review',
       'record_review',
+      'submit_lab',
       'submit_question',
+      'validate_lab',
       'validate_question',
     ]);
   });
@@ -109,6 +114,42 @@ describe('exam-forge-mcp', () => {
     const res = await client.callTool({ name: 'generate_exam', arguments: { certification: 'ccna', question_count: 102 } });
     expect(payload(res).details.todo).toContain('au moins 22 question(s)');
     expect(calls.at(-1)?.body).toEqual({ certification: 'ccna', questionCount: 102 });
+  });
+
+  it('list_labs et generate_lab passent par l’API : couverture, commandes du simulateur, labs existants', async () => {
+    const labs = [
+      { slug: 'ccna-lab-3.4-ospf', title: 'OSPF', difficulty: 'medium', status: 'published', subtopic: '3.4' },
+      { slug: 'ccna-lab-3.4-ospf-ia-001', title: 'OSPF bis', difficulty: 'hard', status: 'validated', subtopic: '3.4' },
+    ];
+    const { api, calls } = fakeApi({
+      'GET /admin/labs': () => ({ labs }),
+      'GET /admin/lab-profile': () => ({ id: 'cisco-ios', deviceTypes: ['router', 'switch'], interfaceTypes: ['GigabitEthernet'], modes: [], commands: [{ syntax: 'router ospf <1-65535>' }] }),
+    });
+    const client = await connect(api);
+    const list = payload(await client.callTool({ name: 'list_labs', arguments: { certification: 'ccna' } }));
+    expect(list.publishedBySubtopic).toEqual({ '3.4': 1 });
+    const brief = payload(await client.callTool({ name: 'generate_lab', arguments: { certification: 'ccna', domain: '3.0', subtopic: '3.4', difficulty: 'hard' } }));
+    expect(brief.format.slug).toMatch(/^ccna-lab-3\.4-<sujet-court>-ia-003/);
+    expect(brief.format.profile).toBe('cisco-ios');
+    expect(brief.profileCommands).toEqual([{ syntax: 'router ospf <1-65535>' }]);
+    expect(brief.existingLabs).toHaveLength(2);
+    expect(calls.every((c) => c.method === 'GET')).toBe(true);
+  });
+
+  it('submit_lab, validate_lab et record_lab_review : double validation par l’API', async () => {
+    const { api, calls } = fakeApi({
+      'POST /admin/labs': () => ({ slug: 'ccna-lab-x', status: 'validated' }),
+      'GET /admin/labs/ccna-lab-x': () => ({ slug: 'ccna-lab-x', status: 'validated', lab: { solution: [] } }),
+      'POST /admin/labs/ccna-lab-x/review': (body) => ({ slug: 'ccna-lab-x', status: (body as { approved: boolean }).approved ? 'published' : 'draft' }),
+    });
+    const client = await connect(api);
+    const sub = payload(await client.callTool({ name: 'submit_lab', arguments: { lab: { slug: 'ccna-lab-x' } } }));
+    expect(sub.next).toContain('validate_lab');
+    expect(calls.at(-1)?.body).toEqual({ lab: { slug: 'ccna-lab-x' }, source: 'ai' });
+    const review = payload(await client.callTool({ name: 'validate_lab', arguments: { slug: 'ccna-lab-x' } }));
+    expect(review.checklist.length).toBeGreaterThan(3);
+    const done = payload(await client.callTool({ name: 'record_lab_review', arguments: { slug: 'ccna-lab-x', approved: true } }));
+    expect(done.status).toBe('published');
   });
 
   it('le client HTTP envoie le jeton de service et décode les erreurs', async () => {

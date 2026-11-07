@@ -24,6 +24,8 @@ const envSchema = z.object({
   /** Clé de service pour le serveur MCP (outils d'administration et de génération). */
   SERVICE_TOKEN: z.string().min(32).optional(),
   CORS_ORIGIN: z.string().optional(),
+  /** Requêtes par minute et par IP hors connexion (300 par défaut). Relevé pour le balayage e2e seulement. */
+  RATE_LIMIT_MAX: z.coerce.number().int().positive().default(300),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
 });
 

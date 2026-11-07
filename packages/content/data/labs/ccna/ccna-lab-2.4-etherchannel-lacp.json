@@ -1,0 +1,264 @@
+{
+  "slug": "ccna-lab-2.4-etherchannel-lacp",
+  "certification": "ccna",
+  "domain": "2.0",
+  "subtopic": "2.4",
+  "difficulty": "medium",
+  "title": "Agréger deux liens montants en EtherChannel LACP",
+  "statement": "Le commutateur d'accès S1 (Catalyst 2960) est relié au commutateur de distribution D1 par deux câbles, sur ses ports Gi0/1 et Gi0/2. Sans agrégation, Spanning Tree bloque l'un des deux liens.\n\nD1 est déjà configuré : ses deux ports forment le port-channel 1 en LACP mode actif, et ce port-channel est un trunk qui transporte les VLAN 10 et 20.\n\nSur S1 :\n1. Groupez Gi0/1 et Gi0/2 dans le groupe EtherChannel 1, en LACP, de façon que S1 initie lui aussi la négociation.\n2. Configurez l'interface logique Port-channel1 : description « Uplink vers D1 », trunk statique, VLAN 10 et 20 seulement.\n3. Enregistrez la configuration.\n\nConfigurez le trunk sur Port-channel1 une fois le groupe créé : c'est l'interface logique qui porte la configuration de couche 2 de l'agrégat. Un vrai commutateur recopie ensuite cette configuration sur Gi0/1 et Gi0/2 ; ce simulateur ne la recopie pas (ni dans un sens ni dans l'autre) : c'est la configuration de Port-channel1 qui est vérifiée.",
+  "topology": "                 +-------------+\n                 |     D1      |  Po1 : LACP active, trunk VLAN 10,20\n                 +--+-------+--+\n               Gi1/0/1   Gi1/0/2\n                    |       |\n                    |       |   EtherChannel (Po1)\n                    |       |\n                 Gi0/1     Gi0/2\n                 +--+-------+--+\n                 |     S1      |  Fa0/1-12 : VLAN 10, Fa0/13-24 : VLAN 20\n                 +-------------+",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "S1",
+      "type": "switch",
+      "interfaces": [
+        "FastEthernet0/1-24",
+        "GigabitEthernet0/1-2"
+      ],
+      "startupConfig": "hostname S1\nno ip domain-lookup\nvlan 10\n name VENTES\nvlan 20\n name COMPTA\ninterface range FastEthernet0/1 - 12\n switchport mode access\n switchport access vlan 10\ninterface range FastEthernet0/13 - 24\n switchport mode access\n switchport access vlan 20"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "g01-lacp",
+      "description": "Gi0/1 appartient au groupe EtherChannel 1 en LACP actif.",
+      "check": {
+        "type": "line",
+        "section": "interface GigabitEthernet0/1",
+        "line": "channel-group 1 mode active"
+      }
+    },
+    {
+      "id": "g02-lacp",
+      "description": "Gi0/2 appartient au groupe EtherChannel 1 en LACP actif.",
+      "check": {
+        "type": "line",
+        "section": "interface GigabitEthernet0/2",
+        "line": "channel-group 1 mode active"
+      }
+    },
+    {
+      "id": "po1-description",
+      "description": "Port-channel1 porte la description « Uplink vers D1 ».",
+      "check": {
+        "type": "line",
+        "section": "interface Port-channel1",
+        "line": "description Uplink vers D1"
+      }
+    },
+    {
+      "id": "po1-trunk",
+      "description": "Port-channel1 est un trunk statique.",
+      "check": {
+        "type": "line",
+        "section": "interface Port-channel1",
+        "line": "switchport mode trunk"
+      }
+    },
+    {
+      "id": "po1-allowed",
+      "description": "Le trunk Port-channel1 ne transporte que les VLAN 10 et 20.",
+      "check": {
+        "type": "line",
+        "section": "interface Port-channel1",
+        "line": "switchport trunk allowed vlan 10,20"
+      }
+    },
+    {
+      "id": "sauvegarde",
+      "description": "La configuration est enregistrée dans la NVRAM.",
+      "check": {
+        "type": "command",
+        "command": [
+          "copy running-config startup-config",
+          "write memory",
+          "write"
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "L'agrégation se déclare sur chaque port physique, avec un numéro de groupe et un mode de négociation ; IOS crée alors une interface logique du même numéro.",
+    "En LACP, deux modes existent : l'un envoie les LACPDU (il initie), l'autre se contente de répondre. Le mode « on » ne négocie rien, et « desirable »/« auto » sont des modes PAgP, incompatibles avec un voisin LACP. Le trunk et la liste de VLAN se règlent ensuite sur l'interface Port-channel.",
+    "Sous interface range gi0/1 - 2 : channel-group 1 mode <mode LACP qui initie>. Puis, sous interface port-channel 1 : la description, switchport mode trunk et switchport trunk allowed vlan <liste>."
+  ],
+  "solution": [
+    {
+      "device": "S1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface range GigabitEthernet0/1 - 2",
+        "channel-group 1 mode active",
+        "exit",
+        "interface Port-channel1",
+        "description Uplink vers D1",
+        "switchport mode trunk",
+        "switchport trunk allowed vlan 10,20",
+        "end",
+        "copy running-config startup-config"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Ports configurés un par un, abréviations, write memory",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "en",
+            "conf t",
+            "int g0/1",
+            "channel-group 1 mode act",
+            "int g0/2",
+            "channel-group 1 mode act",
+            "int po1",
+            "desc Uplink vers D1",
+            "sw mo tr",
+            "sw tr al vl 10,20",
+            "\u001a",
+            "wr mem"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Plage écrite en liste, nom d'interface en deux mots, liste de VLAN construite par remove",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface range gi0/1 , gi0/2",
+            "channel-group 1 mode active",
+            "exit",
+            "interface port-channel 1",
+            "switchport mode trunk",
+            "switchport trunk allowed vlan 1,10,20",
+            "switchport trunk allowed vlan remove 1",
+            "description Uplink vers D1",
+            "end",
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Port-channel1 créée et configurée avant d'y rattacher les ports physiques",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface port-channel 1",
+            "description Uplink vers D1",
+            "switchport mode trunk",
+            "switchport trunk allowed vlan 10,20",
+            "interface range gi0/1 - 2",
+            "channel-group 1 mode active",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Mode on : agrégation statique, sans LACP",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface range gi0/1 - 2",
+            "channel-group 1 mode on",
+            "interface po1",
+            "description Uplink vers D1",
+            "switchport mode trunk",
+            "switchport trunk allowed vlan 10,20",
+            "end",
+            "copy run start"
+          ]
+        }
+      ],
+      "failing": [
+        "g01-lacp",
+        "g02-lacp"
+      ]
+    },
+    {
+      "description": "Mode desirable (PAgP) face à un voisin LACP",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface range gi0/1 - 2",
+            "channel-group 1 mode desirable"
+          ]
+        }
+      ],
+      "failing": [
+        "g01-lacp",
+        "g02-lacp"
+      ]
+    },
+    {
+      "description": "Un seul port ajouté au groupe",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface gi0/1",
+            "channel-group 1 mode active",
+            "interface po1",
+            "description Uplink vers D1",
+            "switchport mode trunk",
+            "switchport trunk allowed vlan 10,20",
+            "end",
+            "copy run start"
+          ]
+        }
+      ],
+      "failing": [
+        "g02-lacp"
+      ]
+    },
+    {
+      "description": "Mode passive : le canal se formerait face à D1 actif, mais S1 n'initie pas la négociation",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface range gi0/1 - 2",
+            "channel-group 1 mode passive",
+            "interface po1",
+            "description Uplink vers D1",
+            "switchport mode trunk",
+            "switchport trunk allowed vlan 10,20",
+            "end",
+            "write memory"
+          ]
+        }
+      ],
+      "failing": [
+        "g01-lacp",
+        "g02-lacp"
+      ]
+    }
+  ],
+  "explanation": "Un EtherChannel regroupe jusqu'à 8 liens physiques actifs en une interface logique Port-channel : Spanning Tree ne voit qu'un lien, la bande passante s'additionne et le trafic est réparti par une fonction de hachage. channel-group <n> mode <mode> déclare l'appartenance d'un port ; au premier port, IOS crée l'interface Port-channel <n> (« Creating a port-channel interface Port-channel 1 »). LACP (IEEE 802.3ad, aujourd'hui 802.1AX) propose deux modes : active envoie les LACPDU, passive se contente de répondre ; active–active et active–passive forment le groupe, passive–passive non. Ici l'énoncé demande que S1 initie la négociation : active. Le mode on force l'agrégation sans aucun protocole (il ne se forme qu'avec un voisin lui aussi en on), et auto/desirable sont les modes de PAgP, propriétaire Cisco, qui ne dialogue pas avec LACP. Les ports d'un groupe doivent avoir la même vitesse, le même duplex et la même configuration de couche 2 ; on configure donc le trunk et la liste de VLAN sur l'interface Port-channel : IOS les recopie sur les ports membres (ce que le simulateur ne fait pas), alors qu'une modification faite sur un seul membre ne concerne que lui et peut le faire suspendre du groupe. Vérification : show etherchannel summary (drapeaux SU pour le port-channel, P pour les membres) et show interfaces trunk.",
+  "reference": "Catalyst 2960 Switch Software Configuration Guide, Cisco IOS Release 15.0(2)SE — « Configuring EtherChannels » (EtherChannel Configuration Guidelines, Configuring Layer 2 EtherChannels, LACP Modes)",
+  "estimatedMinutes": 10
+}

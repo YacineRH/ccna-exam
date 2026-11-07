@@ -1,6 +1,6 @@
-import { listCertificationCodes, loadCertification } from '@examforge/content';
+import { listCertificationCodes, listLabCertificationCodes, loadCertification, loadLabs } from '@examforge/content';
 import type { Db } from './client.js';
-import { upsertCertification, upsertQuestion } from '../services/content-sync.js';
+import { upsertCertification, upsertLab, upsertQuestion } from '../services/content-sync.js';
 
 /** Importe toutes les certifications du paquet de contenu. Idempotent : on peut le relancer. */
 export async function seedContent(db: Db, log: (msg: string) => void = () => {}): Promise<void> {
@@ -13,6 +13,11 @@ export async function seedContent(db: Db, log: (msg: string) => void = () => {})
       if (r.created) created++;
     }
     log(`${code} : ${questions.length} questions (${created} nouvelles)`);
+    if (listLabCertificationCodes().includes(code)) {
+      const { labs } = loadLabs(code);
+      for (const lab of labs) await upsertLab(db, certId, lab, { source: 'import' });
+      log(`${code} : ${labs.length} labs`);
+    }
   }
 }
 
