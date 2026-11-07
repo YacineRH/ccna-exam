@@ -14,7 +14,10 @@ Le moteur ne contient rien de propre au CCNA : une certification est une configu
 - Banque CCNA de plus de 210 questions relues : deux examens blancs complets sans répétition, chaque sous-thème du programme couvert.
 - Trainer de subnetting à exercices infinis.
 - Trainer CLI IOS : 13 labs CCNA sur un routeur ou un commutateur simulé (modes, prompts, abréviations, erreurs et aide `?` comme sur IOS), objectifs vérifiés en direct, trois indices, solution et explication à la fin, meilleur temps et historique.
-- Serveur MCP `exam-forge-mcp` : génération et double relecture des questions et des labs CLI, assemblage d'examens, analyse des points faibles.
+- Challenges chronométrés : 11 défis CCNA sans indice (7 de dépannage, des pannes à trouver dans la configuration de départ), échéance contrôlée par le serveur, fin automatique, meilleur temps et courbe des temps.
+- Révision espacée : flashcards par sous-thème tirées de la banque (Leitner, intervalles de 1 à 64 jours), écran « À réviser aujourd'hui », correction immédiate.
+- Accessible (WCAG 2.1 AA, audit axe en CI) et utilisable sur mobile (terminal avec barre d'actions tactile).
+- Serveur MCP `exam-forge-mcp` : génération et double relecture des questions, des labs CLI et des challenges, assemblage d'examens, analyse des points faibles.
 
 ## Stack
 
@@ -55,7 +58,9 @@ Les tests de l'API tournent sur une vraie base PostgreSQL (vidée à chaque lanc
 
 ### Tests navigateur (Playwright)
 
-Le paquet `e2e/` démarre l'API buildée sur une base de test **vidée au démarrage** (son nom doit contenir « test ») et le front buildé (`vite preview`), puis rejoue dans Chromium : inscription et tableau de bord vide, sélecteur de certification, entraînement « ordre » au clavier, entraînement « association », entraînement filtré par type lancé depuis l'écran de lancement, examen court (chrono, marquage, soumission, mêmes lettres d'options dans les résultats), « Réviser » depuis le tableau de bord après un examen raté, examen blanc complet (toutes les questions, chrono officiel, soumis sans tout répondre), lab CLI résolu au clavier (abréviations, erreur IOS, aide, indice, collage, Ctrl+Z, écran de fin, lab marqué fait et présent dans l'historique) et absence de débordement horizontal à 390 px.
+Le paquet `e2e/` démarre l'API buildée sur une base de test **vidée au démarrage** (son nom doit contenir « test ») et le front buildé (`vite preview`), puis rejoue dans Chromium : inscription et tableau de bord vide, sélecteur de certification, entraînement « ordre » au clavier, entraînement « association », entraînement filtré par type lancé depuis l'écran de lancement, examen court (chrono, marquage, soumission, mêmes lettres d'options dans les résultats), « Réviser » depuis le tableau de bord après un examen raté, examen blanc complet (toutes les questions, chrono officiel, soumis sans tout répondre), lab CLI résolu au clavier (abréviations, erreur IOS, aide, indice, collage, Ctrl+Z, écran de fin, lab marqué fait et présent dans l'historique), challenge de dépannage résolu au clavier puis classement mis à jour, challenge expiré (fin automatique), session de révision (cartes dues, réponses, échéances recalculées), absence de débordement et zones de 44 px à 390 px, mise en page à 360, 390, 768 et 1280 px (terminal mobile compris), et audit axe-core de toutes les pages.
+
+`pnpm e2e:browsers` joue un test de fumée (connexion, examen court, lab) dans Chromium, Firefox et WebKit ; Firefox et WebKit ne sont pas préinstallés dans les conteneurs de session, la CI les installe (job non bloquant). `pnpm bundle:check` vérifie le budget du bundle initial après `pnpm build`.
 
 `pnpm e2e:sweep` affiche en plus chaque question de la banque à 390 px (pendant la tentative et dans le post-mortem). Il est long : la CI le lance dans un job séparé, non bloquant.
 
@@ -80,7 +85,7 @@ La CI GitHub Actions lance tout, avec PostgreSQL, à chaque push : build, typech
 
 - Une question : un objet JSON dans `packages/content/data/questions/<certification>/`. `pnpm --filter @examforge/content test` vérifie le schéma, la cohérence de la correction, les doublons, et qu'une bonne réponse obtient bien tous les points.
 - Une certification : un fichier dans `packages/content/data/certifications/`, ou l'outil MCP `add_certification`.
-- Un lab CLI : un fichier JSON dans `packages/content/data/labs/<certification>/` (format dans `docs/ARCHITECTURE.md`), ou les outils MCP `generate_lab` puis `submit_lab`. `pnpm --filter @examforge/content test` joue chaque lab : sa solution et ses variantes doivent réussir, ses pièges échouer.
+- Un lab CLI : un fichier JSON dans `packages/content/data/labs/<certification>/` (format dans `docs/ARCHITECTURE.md`), ou les outils MCP `generate_lab` puis `submit_lab`. Un challenge : même format avec `kind: "challenge"`, dans `packages/content/data/labs/<certification>/challenges/`, ou `generate_challenge` puis `submit_lab`. `pnpm --filter @examforge/content test` joue chaque lab : sa solution et ses variantes doivent réussir, ses pièges échouer.
 
 ## Feuille de route
 
@@ -92,6 +97,6 @@ La CI GitHub Actions lance tout, avec PostgreSQL, à chaque push : build, typech
 - [x] Bloc 2 : banque complète et entraînement ciblé (banque CCNA portée à plus de 210 questions relues, deux examens complets sans doublon ; filtre `subtopics` ; compteurs de la banque par type et sous-thème ; choix des types en entraînement ; bouton « Réviser » ; chrono recalé à chaque réponse)
 - [x] Bloc 3 : trainer CLI IOS (simulateur de terminal générique, profil IOS en données, 13 labs CCNA relus, routes `/labs` et `/lab-attempts`, écran `/labs/cli`, labs dans le tableau de bord et l'historique, outils MCP `list_labs` et `generate_lab`) ; chrono d'examen recalé toutes les 5 min ; balayage à 390 px de toute la banque (`pnpm e2e:sweep`)
 - [ ] Remplir la banque : ~100 examens blancs générés via le MCP
-- [ ] Phase 4 (suite) : challenges chronométrés, flashcards à répétition espacée
-- [ ] Phase 5 : finitions, accessibilité, mobile
+- [x] Bloc 4 : challenges chronométrés et révision espacée (fidélité du simulateur : ordre de `show running-config`, EtherChannel, VTY 0 4 / 5 15, ACL numérotées en mode nommé, HSRP, ports TCP/UDP ; 11 challenges CCNA relus, dont 7 de dépannage ; échéance serveur, classement personnel ; flashcards Leitner ; `generate_challenge`)
+- [x] Bloc 5 : finitions, accessibilité (audit axe WCAG 2.1 AA en CI, titres, zones de 44 px, mouvement réduit), mobile (terminal tactile, 360 à 1280 px, fumée Firefox et WebKit), performance (découpage par route, budget du bundle, polices auto-hébergées, Lighthouse ≥ 90)
 - [ ] Phase 6 : deuxième certification (Security+)

@@ -125,7 +125,7 @@ function History({ cert }: { cert: CertificationSummary }) {
         </div>
       </div>
 
-      {loading && !data && <Spinner />}
+      {loading && !data && <Spinner label="Chargement de l’historique…" />}
       {error != null && <ErrorBox error={error} onRetry={reload} title="Historique indisponible" />}
       {labData.error != null && <ErrorBox error={labData.error} onRetry={labData.reload} title="Historique des labs indisponible" />}
       {revisionData.error != null && <ErrorBox error={revisionData.error} onRetry={revisionData.reload} title="Historique des révisions indisponible" />}

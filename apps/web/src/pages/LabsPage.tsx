@@ -77,7 +77,7 @@ function Labs({ cert }: { cert: CertificationSummary }) {
         indices progressifs et révèle la solution à la fin.
       </p>
 
-      {loading && !data && <Spinner />}
+      {loading && !data && <Spinner label="Chargement des labs…" />}
       {error != null && <ErrorBox error={error} onRetry={reload} title="Labs indisponibles" />}
       {data && (
         <section aria-label="Labs" className="panel flex flex-col gap-4 px-4 py-5 sm:px-6">
