@@ -1,0 +1,995 @@
+[
+  {
+    "slug": "ccna-3.4-ospf-network-passive-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "R1 est relié à R2 par G0/0 (10.1.12.1/30) et au LAN des utilisateurs par G0/1 (172.16.10.1/24). En partant du mode de configuration globale, configurez OSPFv2 dans cet ordre : démarrez le processus 1 ; fixez l'ID de routeur à 1.1.1.1 ; annoncez dans l'area 0 le sous-réseau de G0/0, puis celui de G0/1, avec des commandes network dont le wildcard correspond exactement à chaque sous-réseau ; enfin, empêchez l'envoi de Hello OSPF sur G0/1 sans retirer ce LAN d'OSPF.",
+      "prompt": "R1(config)#",
+      "lines": 5
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "router ospf 1"
+        ],
+        [
+          "router-id 1.1.1.1"
+        ],
+        [
+          "network 10.1.12.0 0.0.0.3 area 0",
+          "network 10.1.12.0 0.0.0.3 area 0.0.0.0"
+        ],
+        [
+          "network 172.16.10.0 0.0.0.255 area 0",
+          "network 172.16.10.0 0.0.0.255 area 0.0.0.0"
+        ],
+        [
+          "passive-interface GigabitEthernet0/1"
+        ]
+      ]
+    },
+    "explanation": "« router ospf 1 » crée le processus (son numéro reste local au routeur) et ouvre le mode R1(config-router)#. Le wildcard est l'inverse du masque : 0.0.0.3 pour un /30, 0.0.0.255 pour un /24 ; toute interface dont l'adresse correspond est activée dans l'area 0. « passive-interface GigabitEthernet0/1 » supprime les Hello sur le LAN, donc aucune adjacence ne peut s'y former, mais 172.16.10.0/24 reste annoncé aux autres routeurs. Erreurs fréquentes : taper passive-interface en mode interface (c'est une commande du mode router), ou oublier qu'un router-id saisi sur un processus déjà actif ne s'applique qu'après « clear ip ospf process ».",
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-interface-p2p-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Le processus OSPF 1 existe déjà sur R2, relié directement à R1 par un lien Ethernet sur GigabitEthernet0/0. En partant du mode de configuration globale et sans utiliser de commande network : entrez dans l'interface, activez-y OSPF (processus 1, area 0), puis passez le type de réseau OSPF de cette interface en point-to-point pour supprimer l'élection DR/BDR.",
+      "prompt": "R2(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/0"
+        ],
+        [
+          "ip ospf 1 area 0",
+          "ip ospf 1 area 0.0.0.0"
+        ],
+        [
+          "ip ospf network point-to-point"
+        ]
+      ]
+    },
+    "explanation": "La méthode par interface remplace la commande network : « ip ospf 1 area 0 » rattache l'interface au processus 1 dans l'area 0. Sur Ethernet, le type par défaut est BROADCAST, avec élection DR/BDR et attente du Wait timer (40 s) avant l'élection ; « ip ospf network point-to-point » supprime cette élection et accélère la convergence sur un lien qui ne relie que deux routeurs. Il faut appliquer le même type de réseau sur l'interface de R1 : deux types différents aux extrémités du lien empêchent un fonctionnement correct.",
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-cost-reference-bandwidth-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "R1 utilise la bande passante de référence OSPF par défaut, et aucune commande « bandwidth » ni « ip ospf cost » n'est configurée sur ses interfaces. L'administrateur saisit ensuite « auto-cost reference-bandwidth 10000 » sous « router ospf 1 ». Donnez les coûts OSPF calculés par IOS.",
+      "fields": [
+        {
+          "id": "gig_before",
+          "label": "Coût d'une interface GigabitEthernet (1 Gbit/s) avant la commande"
+        },
+        {
+          "id": "gig_after",
+          "label": "Coût de cette interface GigabitEthernet après la commande"
+        },
+        {
+          "id": "fast_after",
+          "label": "Coût d'une interface FastEthernet (100 Mbit/s) après la commande"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "gig_before": {
+          "accepted": [
+            "1"
+          ],
+          "normalize": "int"
+        },
+        "gig_after": {
+          "accepted": [
+            "10"
+          ],
+          "normalize": "int"
+        },
+        "fast_after": {
+          "accepted": [
+            "100"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "IOS calcule le coût = bande passante de référence / bande passante de l'interface, arrondi à l'entier inférieur avec un minimum de 1. Par défaut la référence vaut 100 Mbit/s : 100 / 1000 = 0,1, ramené à 1, si bien que toutes les interfaces de 100 Mbit/s et plus ont le même coût. La valeur de « auto-cost reference-bandwidth » s'exprime en Mbit/s : avec 10000, le GigabitEthernet coûte 10000 / 1000 = 10 et le FastEthernet 10000 / 100 = 100. La même référence doit être appliquée sur tous les routeurs du domaine OSPF.",
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide (auto-cost reference-bandwidth)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-neighbor-states-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "body": {
+      "type": "ordering",
+      "stem": "R1 et R2 sont reliés par un lien point-to-point. Remettez dans l'ordre les états OSPF que R1 associe à R2, depuis la réception du premier Hello de R2 jusqu'à l'adjacence complète.",
+      "items": [
+        {
+          "id": "exchange",
+          "text": "Exchange"
+        },
+        {
+          "id": "init",
+          "text": "Init"
+        },
+        {
+          "id": "full",
+          "text": "Full"
+        },
+        {
+          "id": "exstart",
+          "text": "ExStart"
+        },
+        {
+          "id": "twoway",
+          "text": "2-Way"
+        },
+        {
+          "id": "loading",
+          "text": "Loading"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "init",
+        "twoway",
+        "exstart",
+        "exchange",
+        "loading",
+        "full"
+      ]
+    },
+    "explanation": "Avant tout Hello, le voisin est à l'état Down. Le premier Hello reçu le fait passer en Init ; quand R1 trouve son propre router ID dans un Hello de R2, la communication est bidirectionnelle (2-Way). En ExStart, les routeurs désignent le maître (plus haut router ID), qui fixe le numéro de séquence ; en Exchange, ils échangent des DBD qui résument leur LSDB ; en Loading, ils demandent et reçoivent les LSA manquants ; ils passent en Full quand les bases sont synchronisées.",
+    "reference": "RFC 2328, section 10.1"
+  },
+  {
+    "slug": "ccna-3.4-ospf-packet-sequence-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Deux routeurs OSPF forment une adjacence sur un lien point-to-point. Remettez dans l'ordre les types de paquets OSPF selon leur première apparition dans un échange normal, jusqu'à la synchronisation des bases de données.",
+      "items": [
+        {
+          "id": "lsr",
+          "text": "Link-State Request (LSR)"
+        },
+        {
+          "id": "hello",
+          "text": "Hello"
+        },
+        {
+          "id": "lsack",
+          "text": "Link-State Acknowledgment (LSAck)"
+        },
+        {
+          "id": "dbd",
+          "text": "Database Description (DBD)"
+        },
+        {
+          "id": "lsu",
+          "text": "Link-State Update (LSU)"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "hello",
+        "dbd",
+        "lsr",
+        "lsu",
+        "lsack"
+      ]
+    },
+    "explanation": "Les Hello découvrent le voisin et vérifient les paramètres qui doivent concorder (area, sous-réseau, timers). Les DBD, envoyés en ExStart puis en Exchange, ne transportent que les en-têtes des LSA de chaque base. Chaque routeur réclame ensuite par LSR les LSA qui lui manquent ou qui sont plus récents chez le voisin ; celui-ci les envoie dans des LSU, et chaque LSA reçu est confirmé par un LSAck.",
+    "reference": "RFC 2328, section 10 et annexe A.3"
+  },
+  {
+    "slug": "ccna-3.4-ospf-show-commands-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque besoin de vérification OSPF à la commande IOS qui y répond.",
+      "left": [
+        {
+          "id": "state",
+          "text": "Voir l'état de chaque voisin (FULL, 2WAY…) et le temps restant avant l'expiration de son Dead timer"
+        },
+        {
+          "id": "iftype",
+          "text": "Voir le type de réseau OSPF et le coût d'une interface"
+        },
+        {
+          "id": "lsdb",
+          "text": "Lister les LSA de type 1 et de type 2 de la base de données de la zone"
+        },
+        {
+          "id": "routes",
+          "text": "Voir les routes apprises par OSPF et installées dans la table de routage"
+        }
+      ],
+      "right": [
+        {
+          "id": "nbr",
+          "text": "show ip ospf neighbor"
+        },
+        {
+          "id": "intf",
+          "text": "show ip ospf interface"
+        },
+        {
+          "id": "db",
+          "text": "show ip ospf database"
+        },
+        {
+          "id": "rib",
+          "text": "show ip route ospf"
+        },
+        {
+          "id": "brief",
+          "text": "show ip interface brief"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "state": "nbr",
+        "iftype": "intf",
+        "lsdb": "db",
+        "routes": "rib"
+      }
+    },
+    "explanation": "« show ip ospf neighbor » liste chaque voisin avec sa priorité, son état et son rôle (FULL/DR, 2WAY/DROTHER…), son Dead Time et l'interface. « show ip ospf interface » donne pour chaque interface l'area, le type de réseau, le coût, les timers et le DR/BDR du segment. « show ip ospf database » affiche la LSDB (Router Link States pour le type 1, Net Link States pour le type 2), et « show ip route ospf » ne montre que les routes OSPF retenues dans la table de routage.",
+    "distractorNotes": {
+      "brief": "Elle affiche l'adresse IP et l'état (Status/Protocol) de chaque interface, mais aucune information OSPF."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference"
+  },
+  {
+    "slug": "ccna-3.4-ospf-point-to-point-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Les deux extrémités d'un lien Ethernet entre R1 et R2 sont configurées avec « ip ospf network point-to-point », sans autre modification des paramètres OSPF. Quelles deux affirmations sont vraies ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Aucun DR ni BDR n'est élu sur ce lien."
+        },
+        {
+          "id": "b",
+          "text": "Les timers passent à Hello 30 s et Dead 120 s."
+        },
+        {
+          "id": "c",
+          "text": "R1 et R2 restent à l'état 2-WAY, car seul un DR forme des adjacences complètes."
+        },
+        {
+          "id": "d",
+          "text": "Les timers restent à Hello 10 s et Dead 40 s, comme sur un réseau broadcast."
+        },
+        {
+          "id": "e",
+          "text": "Le voisin apparaît à l'état FULL/DR ou FULL/BDR dans « show ip ospf neighbor »."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Le type POINT_TO_POINT suppose un seul voisin sur le lien : il n'y a ni élection DR/BDR ni LSA de type 2, et les deux routeurs forment directement une adjacence complète. Les timers par défaut de ce type sont les mêmes que ceux du type BROADCAST : Hello 10 s et Dead 40 s. Sur Ethernet, ce réglage évite aussi le Wait timer de l'élection et accélère la convergence.",
+    "distractorNotes": {
+      "b": "30/120 sont les valeurs par défaut des types NBMA et point-to-multipoint, pas du type point-to-point.",
+      "c": "Sur un lien point-to-point, les deux routeurs forment toujours une adjacence complète (FULL) ; la restriction aux DR/BDR ne concerne que les réseaux multiaccès.",
+      "e": "Sans élection, aucun rôle n'est affiché : l'état apparaît sous la forme « FULL/  - »."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide ; RFC 2328, section 9"
+  },
+  {
+    "slug": "ccna-3.4-ospf-drother-2way-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. R1, R2, R3 et R4 partagent le même segment Ethernet (type BROADCAST). Quelles trois affirmations sont vraies ?",
+      "exhibit": "R1# show ip ospf neighbor\n\nNeighbor ID     Pri   State           Dead Time   Address         Interface\n2.2.2.2           1   FULL/DR         00:00:36    172.16.50.2     GigabitEthernet0/0\n3.3.3.3           1   FULL/BDR        00:00:33    172.16.50.3     GigabitEthernet0/0\n4.4.4.4           1   2WAY/DROTHER    00:00:38    172.16.50.4     GigabitEthernet0/0",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 est le BDR du segment, puisqu'il est FULL avec le DR."
+        },
+        {
+          "id": "b",
+          "text": "R1 est un DROTHER sur ce segment."
+        },
+        {
+          "id": "c",
+          "text": "L'état 2WAY avec 4.4.4.4 est normal : deux DROTHER ne forment pas d'adjacence complète entre eux."
+        },
+        {
+          "id": "d",
+          "text": "Les timers Hello/Dead de 4.4.4.4 ne correspondent pas à ceux de R1."
+        },
+        {
+          "id": "e",
+          "text": "R1 envoie ses LSU au DR et au BDR à l'adresse multicast 224.0.0.6."
+        },
+        {
+          "id": "f",
+          "text": "R1 ne reçoit plus les Hello de 4.4.4.4."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Un segment broadcast n'a qu'un DR et qu'un BDR, ici 2.2.2.2 et 3.3.3.3 : R1 et 4.4.4.4 sont donc des DROTHER. Les DROTHER ne forment une adjacence complète (FULL) qu'avec le DR et le BDR et restent en 2WAY entre eux, ce qui est le fonctionnement attendu. Pour annoncer un changement, un DROTHER envoie ses LSU à AllDRouters (224.0.0.6), que seuls le DR et le BDR écoutent ; le DR les relaie ensuite à AllSPFRouters (224.0.0.5).",
+    "distractorNotes": {
+      "a": "Le BDR est 3.3.3.3, et il n'y en a qu'un par segment ; un DROTHER est lui aussi FULL avec le DR et le BDR.",
+      "d": "Avec des timers différents, les Hello seraient rejetés et 4.4.4.4 n'apparaîtrait pas dans la table ; l'état 2WAY prouve que ces paramètres concordent.",
+      "f": "Un Dead Time de 38 s montre qu'un Hello de 4.4.4.4 vient d'arriver, et l'état 2WAY que ce Hello mentionne R1."
+    },
+    "reference": "RFC 2328, sections 10.4 et 13.3"
+  },
+  {
+    "slug": "ccna-3.4-ospf-router-id-selection-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R3 vient de redémarrer avec cette configuration, qui ne contient aucune commande router-id. Quel router ID le processus OSPF 1 utilise-t-il ?",
+      "exhibit": "R3# show ip interface brief\nInterface              IP-Address      OK? Method Status                Protocol\nGigabitEthernet0/0     192.168.100.1   YES manual up                    up\nGigabitEthernet0/1     10.10.10.1      YES manual up                    up\nGigabitEthernet0/2     198.51.100.254  YES manual administratively down down\nLoopback0              172.16.0.3      YES manual up                    up\nLoopback1              172.31.255.3    YES manual administratively down down\n\nR3# show running-config | section router ospf\nrouter ospf 1\n network 10.10.10.0 0.0.0.255 area 0\n network 192.168.100.0 0.0.0.255 area 0",
+      "options": [
+        {
+          "id": "a",
+          "text": "198.51.100.254"
+        },
+        {
+          "id": "b",
+          "text": "172.31.255.3"
+        },
+        {
+          "id": "c",
+          "text": "172.16.0.3"
+        },
+        {
+          "id": "d",
+          "text": "192.168.100.1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sans commande router-id, IOS retient la plus haute adresse IPv4 des loopbacks actives, puis, s'il n'y en a aucune, la plus haute adresse des autres interfaces actives. Loopback1 étant administratively down, la seule loopback candidate est Loopback0, d'où 172.16.0.3. Peu importe que Loopback0 ne soit couverte par aucune commande network : le choix du router ID ne dépend pas des interfaces annoncées dans OSPF.",
+    "distractorNotes": {
+      "a": "C'est l'adresse la plus haute du routeur, mais G0/2 est administratively down, et une loopback active passe de toute façon avant les interfaces physiques.",
+      "b": "C'est la plus haute adresse de loopback, mais Loopback1 est administratively down : seules les interfaces actives sont candidates.",
+      "d": "C'est la plus haute adresse d'une interface physique active ; elle ne serait retenue qu'en l'absence de loopback active."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-dr-election-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les quatre routeurs démarrent leur processus OSPF en même temps sur ce segment. Quels routeurs deviennent DR et BDR ?",
+      "exhibit": "Segment Ethernet 10.50.0.0/24 (type BROADCAST)\n\nRouteur   Router ID       Priorité OSPF (G0/0)\nR1        192.168.1.1     1\nR2        10.255.255.2    1\nR3        203.0.113.3     0\nR4        10.0.0.4        50",
+      "options": [
+        {
+          "id": "a",
+          "text": "DR : R4, BDR : R1"
+        },
+        {
+          "id": "b",
+          "text": "DR : R3, BDR : R1"
+        },
+        {
+          "id": "c",
+          "text": "DR : R4, BDR : R3"
+        },
+        {
+          "id": "d",
+          "text": "DR : R4, BDR : R2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'élection compare d'abord la priorité d'interface (1 par défaut, de 0 à 255), puis, en cas d'égalité, le plus haut router ID. R3, de priorité 0, ne peut être ni DR ni BDR. R4 (priorité 50) devient DR ; R1 et R2 sont à égalité de priorité et R1 l'emporte avec le router ID le plus élevé (192.168.1.1 > 10.255.255.2) : il devient BDR.",
+    "distractorNotes": {
+      "b": "R3 a le plus haut router ID, mais sa priorité de 0 l'exclut de l'élection ; la priorité est comparée avant le router ID.",
+      "c": "Une priorité de 0 interdit à R3 de devenir DR comme BDR, quel que soit son router ID.",
+      "d": "À priorité égale, le plus haut router ID gagne : 192.168.1.1 est supérieur à 10.255.255.2."
+    },
+    "reference": "RFC 2328, section 9.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-dr-no-preemption-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un segment Ethernet, R1 (router ID 1.1.1.1), R2 (2.2.2.2) et R3 (3.3.3.3) ont la priorité OSPF par défaut ; l'élection a fait de R3 le DR et de R2 le BDR. On ajoute ensuite R4 (4.4.4.4), configuré avec « ip ospf priority 200 ». Plus tard, R3 tombe en panne. Quelle est la situation une fois la convergence terminée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R4 devient DR grâce à sa priorité de 200, et R2 reste BDR."
+        },
+        {
+          "id": "b",
+          "text": "R2 devient DR et R4 devient BDR."
+        },
+        {
+          "id": "c",
+          "text": "R2 devient DR et R1 devient BDR."
+        },
+        {
+          "id": "d",
+          "text": "R2 devient DR, et aucun BDR n'est élu tant que R3 n'est pas revenu."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "À son arrivée, R4 trouve un DR et un BDR déjà élus : l'élection OSPF n'étant pas préemptive, il reste DROTHER malgré sa priorité de 200. Quand le DR R3 disparaît, le BDR R2 prend sa place, ce qui est précisément le rôle du BDR. Un nouveau BDR est alors élu parmi les routeurs restants : R4, de priorité 200, l'emporte sur R1 (priorité 1).",
+    "distractorNotes": {
+      "a": "L'élection n'est pas préemptive : le BDR en place est promu DR, et R4 ne peut pas lui prendre ce rôle malgré sa priorité.",
+      "c": "Le nouveau BDR est élu parmi les DROTHER restants, et R4 l'emporte sur R1 grâce à sa priorité de 200.",
+      "d": "L'élection du nouveau BDR a lieu dès la promotion de R2 ; elle n'attend pas le retour de R3."
+    },
+    "reference": "RFC 2328, section 9.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-mtu-exstart-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'adjacence entre R1 et R2 reste plusieurs minutes dans cet état, puis le voisin 2.2.2.2 repasse à DOWN avec le motif « Too many retransmissions », et le cycle recommence. Quelle est la cause la plus probable ?",
+      "exhibit": "R1# show ip ospf neighbor\n\nNeighbor ID     Pri   State           Dead Time   Address         Interface\n2.2.2.2           1   EXSTART/DR      00:00:34    10.12.0.2       GigabitEthernet0/1",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les timers Hello/Dead diffèrent entre R1 et R2."
+        },
+        {
+          "id": "b",
+          "text": "L'interface G0/1 de R2 est configurée en passive-interface."
+        },
+        {
+          "id": "c",
+          "text": "La MTU IP des interfaces de R1 et de R2 est différente."
+        },
+        {
+          "id": "d",
+          "text": "R1 et R2 ont tous deux une priorité OSPF de 0 sur ce segment."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Atteindre ExStart prouve que les Hello sont acceptés : area, sous-réseau, timers et authentification concordent. Les DBD échangés en ExStart et en Exchange indiquent la MTU de l'interface, et un routeur rejette un DBD qui annonce une MTU supérieure à la sienne : les retransmissions s'accumulent jusqu'à la chute du voisin. Il faut aligner la MTU (« ip mtu ») des deux côtés ; « ip ospf mtu-ignore » ne fait que masquer le problème.",
+    "distractorNotes": {
+      "a": "Des timers différents font rejeter les Hello : R2 n'apparaîtrait pas dans la table des voisins et n'atteindrait jamais ExStart.",
+      "b": "Une interface passive n'envoie pas de Hello : R1 ne verrait pas du tout R2 comme voisin.",
+      "d": "Sans routeur éligible, il n'y aurait pas de DR et les deux routeurs resteraient en 2WAY ; l'exhibit montre d'ailleurs une priorité de 1 et le rôle DR pour R2."
+    },
+    "reference": "RFC 2328, section 10.6"
+  },
+  {
+    "slug": "ccna-3.4-ospf-default-information-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 est le routeur de bordure vers le FAI et possède la route « ip route 0.0.0.0 0.0.0.0 203.0.113.1 ». Les autres routeurs OSPF de l'area 0 doivent apprendre une route par défaut vers R1. Quelle commande faut-il ajouter sous « router ospf 1 » sur R1 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "network 0.0.0.0 255.255.255.255 area 0"
+        },
+        {
+          "id": "b",
+          "text": "redistribute static"
+        },
+        {
+          "id": "c",
+          "text": "network 203.0.113.0 0.0.0.3 area 0"
+        },
+        {
+          "id": "d",
+          "text": "default-information originate"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "« default-information originate » fait de R1 un ASBR qui génère un LSA de type 5 pour 0.0.0.0/0, à condition qu'une route par défaut figure dans sa table de routage (ici la route statique) ; le mot-clé « always » lève cette condition. Les autres routeurs installent alors « O*E2 0.0.0.0/0 » en direction de R1. C'est la méthode standard pour diffuser la sortie Internet dans un domaine OSPF.",
+    "distractorNotes": {
+      "a": "Ce network active OSPF sur toutes les interfaces de R1, mais n'annonce aucune route par défaut.",
+      "b": "En OSPF, « redistribute static » n'injecte pas la route 0.0.0.0/0 ; seule « default-information originate » le fait.",
+      "c": "Cela active OSPF sur le lien vers le FAI et annonce ce sous-réseau, pas une route par défaut."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide ; RFC 2328, section 12.4.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-lsa-type2-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un segment Ethernet multiaccès (type BROADCAST), quel routeur génère le LSA de type 2 (Network LSA) qui décrit ce segment ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le DR du segment"
+        },
+        {
+          "id": "b",
+          "text": "Le BDR du segment"
+        },
+        {
+          "id": "c",
+          "text": "Chacun des routeurs connectés au segment"
+        },
+        {
+          "id": "d",
+          "text": "Le routeur qui a le plus petit router ID"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Chaque routeur OSPF génère un LSA de type 1 (Router LSA) qui décrit ses propres liens dans la zone. Sur un réseau multiaccès, le DR génère en plus un LSA de type 2 qui décrit le segment lui-même : son masque et la liste des routeurs qui y sont attachés. Un lien point-to-point n'a pas de DR, donc pas de LSA de type 2.",
+    "distractorNotes": {
+      "b": "Le BDR maintient des adjacences pour pouvoir remplacer le DR, mais ne génère pas le LSA de type 2 tant qu'il n'est pas DR.",
+      "c": "Chaque routeur génère un LSA de type 1 ; le LSA de type 2 n'est généré qu'une fois par segment.",
+      "d": "Le plus petit router ID ne joue aucun rôle ; c'est le plus élevé qui départage l'élection du DR."
+    },
+    "reference": "RFC 2328, section 12.4.2"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-config-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "R1 et R2 desservent le VLAN des utilisateurs, 192.168.10.0/24 ; l'interface GigabitEthernet0/1 de R1 a l'adresse 192.168.10.2. Vous êtes déjà en mode de configuration de cette interface. Configurez le groupe HSRP 10 avec l'adresse virtuelle 192.168.10.1, donnez à R1 la priorité 110 et permettez-lui de reprendre le rôle active dès qu'il est disponible.",
+      "prompt": "R1(config-if)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "standby 10 ip 192.168.10.1"
+        ],
+        [
+          "standby 10 priority 110"
+        ],
+        [
+          "standby 10 preempt"
+        ]
+      ]
+    },
+    "explanation": "« standby 10 ip 192.168.10.1 » crée le groupe 10 et fixe l'adresse IP virtuelle, qui sera la passerelle par défaut des hôtes. La priorité par défaut est 100 : avec 110, R1 l'emporte sur R2 lors de l'élection. La préemption est désactivée par défaut ; sans « standby 10 preempt », R1 ne reprendrait pas le rôle active à R2 après un redémarrage. Erreur fréquente : changer de numéro de groupe d'une commande à l'autre, ce qui crée des groupes distincts.",
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide (HSRP)"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-v1-virtual-mac-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un routeur exécute HSRP version 1 pour le groupe 25. Quelle adresse MAC virtuelle utilise-t-il pour ce groupe ?",
+      "fields": [
+        {
+          "id": "mac",
+          "label": "Adresse MAC virtuelle (format Cisco xxxx.xxxx.xxxx)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "mac": {
+          "accepted": [
+            "0000.0c07.ac19",
+            "00:00:0c:07:ac:19",
+            "00-00-0c-07-ac-19"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "HSRP version 1 utilise les MAC virtuelles 0000.0c07.acXX, où XX est le numéro de groupe en hexadécimal. 25 = 16 + 9, soit 0x19 : la MAC est 0000.0c07.ac19. C'est l'adresse que le routeur active donne dans ses réponses ARP pour l'IP virtuelle ; elle ne change pas quand un autre routeur devient active, si bien que les hôtes n'ont pas à mettre à jour leur cache ARP.",
+    "reference": "RFC 2281"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-states-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "R1 est le seul routeur en service dans le groupe HSRP 10, et l'adresse IP virtuelle est configurée localement sur son interface. Remettez dans l'ordre les états HSRP que R1 traverse, de l'activation du groupe jusqu'à ce qu'il transmette le trafic de l'adresse virtuelle.",
+      "items": [
+        {
+          "id": "speak",
+          "text": "Speak"
+        },
+        {
+          "id": "init",
+          "text": "Initial"
+        },
+        {
+          "id": "active",
+          "text": "Active"
+        },
+        {
+          "id": "listen",
+          "text": "Listen"
+        },
+        {
+          "id": "standby",
+          "text": "Standby"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "init",
+        "listen",
+        "speak",
+        "standby",
+        "active"
+      ]
+    },
+    "explanation": "Le groupe démarre en Initial. Connaissant l'adresse virtuelle, R1 passe en Listen, où il écoute les Hello, puis en Speak, où il envoie ses propres Hello et participe à l'élection. Ne voyant aucun routeur standby, il devient Standby, puis, faute de Hello d'un routeur active avant l'expiration du hold time, il devient Active. L'état Learn n'apparaît que si l'adresse virtuelle n'est pas configurée localement et doit être apprise d'un Hello du routeur active.",
+    "reference": "RFC 2281"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-defaults-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles trois affirmations décrivent HSRP version 1 avec les valeurs par défaut d'IOS ?",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "La priorité d'un routeur du groupe est 100."
+        },
+        {
+          "id": "b",
+          "text": "La MAC virtuelle a la forme 0000.5e00.01XX."
+        },
+        {
+          "id": "c",
+          "text": "Les Hello sont envoyés toutes les secondes, avec un hold time de 3 s."
+        },
+        {
+          "id": "d",
+          "text": "La préemption est désactivée."
+        },
+        {
+          "id": "e",
+          "text": "Les Hello sont envoyés à 224.0.0.2 sur le port UDP 1985."
+        },
+        {
+          "id": "f",
+          "text": "En cas d'égalité de priorité, la plus petite adresse IP d'interface l'emporte."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Sans configuration particulière, chaque routeur HSRP a la priorité 100 et ne préempte pas : le premier routeur devenu active garde le rôle même si un routeur de priorité supérieure arrive ensuite. HSRP version 1 envoie ses Hello en multicast à 224.0.0.2 sur UDP 1985, toutes les 3 s, avec un hold time de 10 s. À priorité égale, la plus haute adresse IP d'interface départage les routeurs.",
+    "distractorNotes": {
+      "b": "0000.5e00.01XX est la MAC virtuelle de VRRP ; HSRP version 1 utilise 0000.0c07.acXX.",
+      "c": "HSRP envoie un Hello toutes les 3 s avec un hold time de 10 s ; l'intervalle d'une seconde est celui des annonces VRRP.",
+      "f": "À priorité égale, c'est la plus haute adresse IP d'interface qui devient active."
+    },
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-glbp-load-balancing-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent le fonctionnement de GLBP ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Un seul routeur du groupe transmet le trafic à un instant donné ; les autres attendent une panne."
+        },
+        {
+          "id": "b",
+          "text": "L'AVG répond aux requêtes ARP pour l'adresse virtuelle avec les MAC virtuelles de différents AVF."
+        },
+        {
+          "id": "c",
+          "text": "C'est un protocole normalisé par l'IETF dans la RFC 5798."
+        },
+        {
+          "id": "d",
+          "text": "Chaque routeur doit avoir sa propre adresse IP virtuelle, donnée comme passerelle à une partie des hôtes."
+        },
+        {
+          "id": "e",
+          "text": "Les MAC virtuelles ont la forme 0007.b400.XXYY, où XX est le groupe et YY le numéro d'AVF."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Dans un groupe GLBP, l'AVG (Active Virtual Gateway) attribue une MAC virtuelle à chaque routeur, jusqu'à quatre AVF (Active Virtual Forwarders). Tous les hôtes utilisent la même passerelle, mais l'AVG répond à leurs requêtes ARP avec des MAC différentes (round-robin par défaut) : plusieurs routeurs transmettent ainsi le trafic en même temps. Les MAC suivent le format 0007.b400.XXYY, avec le numéro de groupe et celui de l'AVF en hexadécimal.",
+    "distractorNotes": {
+      "a": "C'est le fonctionnement actif/en attente de HSRP et de VRRP ; avec GLBP, plusieurs routeurs transmettent en même temps.",
+      "c": "La RFC 5798 définit VRRP ; GLBP est propriétaire Cisco.",
+      "d": "C'est le contournement utilisé avec HSRP (plusieurs groupes) ; GLBP répartit la charge avec une seule adresse IP virtuelle."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide (GLBP)"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-preempt-troubleshoot-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 (10.20.30.2) doit être le routeur active du groupe HSRP 20 chaque fois qu'il est en service. Après un redémarrage de R1, R2 (10.20.30.3) est resté active. Quelle modification rend R1 active tout de suite, puis après chaque futur redémarrage ?",
+      "exhibit": "R1# show standby GigabitEthernet0/1\nGigabitEthernet0/1 - Group 20\n  State is Standby\n    4 state changes, last state change 00:12:41\n  Virtual IP address is 10.20.30.1\n  Active virtual MAC address is 0000.0c07.ac14 (MAC Not In Use)\n    Local virtual MAC address is 0000.0c07.ac14 (v1 default)\n  Hello time 3 sec, hold time 10 sec\n    Next hello sent in 1.248 secs\n  Preemption disabled\n  Active router is 10.20.30.3, priority 100 (expires in 9.312 sec)\n  Standby router is local\n  Priority 120 (configured 120)\n  Group name is \"hsrp-Gi0/1-20\" (default)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur R1 : « standby 20 priority 150 »"
+        },
+        {
+          "id": "b",
+          "text": "Sur R2 : « standby 20 preempt »"
+        },
+        {
+          "id": "c",
+          "text": "Sur R2 : « standby 20 priority 90 »"
+        },
+        {
+          "id": "d",
+          "text": "Sur R1 : « standby 20 preempt »"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'exhibit montre que R1 a la priorité la plus haute (120 contre 100 pour R2) mais « Preemption disabled ». HSRP ne préempte pas par défaut : le routeur active en place, R2, devenu active pendant le redémarrage de R1, garde ce rôle. Avec « standby 20 preempt », R1 envoie un message Coup et reprend le rôle active dès qu'il constate que sa priorité est supérieure, maintenant comme après chaque redémarrage.",
+    "distractorNotes": {
+      "a": "R1 a déjà la priorité la plus haute (120 contre 100) ; sans préemption, l'augmenter encore ne lui fait pas reprendre le rôle active.",
+      "b": "La préemption sur R2 ne sert qu'à R2, face à un routeur active de priorité inférieure ; elle n'aide pas R1.",
+      "c": "Baisser la priorité de R2 ne déclenche aucune bascule : sans préemption, R1 attend la panne de R2 pour devenir active."
+    },
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-vrrp-master-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un groupe VRRP, comment s'appelle le routeur qui transmet le trafic destiné à l'adresse IP virtuelle, et à quelle adresse multicast envoie-t-il ses annonces ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Active, 224.0.0.2"
+        },
+        {
+          "id": "b",
+          "text": "Master, 224.0.0.18"
+        },
+        {
+          "id": "c",
+          "text": "Master, 224.0.0.102"
+        },
+        {
+          "id": "d",
+          "text": "AVG, 224.0.0.18"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "VRRP élit un routeur master, qui répond pour l'adresse virtuelle avec la MAC 0000.5e00.01XX (XX = numéro de groupe, le VRID) ; les autres routeurs sont backup. Le master envoie ses annonces à 224.0.0.18 (protocole IP 112), par défaut toutes les secondes. Contrairement à HSRP, la préemption est activée par défaut.",
+    "distractorNotes": {
+      "a": "« Active » et 224.0.0.2 correspondent à HSRP version 1.",
+      "c": "224.0.0.102 est l'adresse utilisée par HSRP version 2 et par GLBP.",
+      "d": "L'AVG est le rôle de coordination de GLBP ; VRRP parle de master et de backup."
+    },
+    "reference": "RFC 5798"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-version2-groups-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pour aligner les numéros de groupe sur les VLAN, un administrateur doit configurer le groupe HSRP 1500 sur deux routeurs qui exécutent HSRP avec les paramètres par défaut. Que doit-il faire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Configurer « standby version 2 » sur l'interface des deux routeurs."
+        },
+        {
+          "id": "b",
+          "text": "Rien : HSRP version 1 accepte les numéros de groupe de 0 à 4095."
+        },
+        {
+          "id": "c",
+          "text": "Configurer « standby version 2 » sur un seul routeur ; l'autre peut rester en version 1."
+        },
+        {
+          "id": "d",
+          "text": "Passer à VRRP, qui accepte des numéros de groupe jusqu'à 4095."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Par défaut, IOS exécute HSRP version 1, limitée aux groupes 0 à 255. La version 2, activée par « standby version 2 » en mode interface, étend la plage à 0–4095, envoie ses Hello à 224.0.0.102 et utilise les MAC 0000.0c9f.f000 à 0000.0c9f.ffff : pour le groupe 1500 (0x5DC), 0000.0c9f.f5dc. Elle doit être configurée sur tous les routeurs du groupe.",
+    "distractorNotes": {
+      "b": "HSRP version 1 limite les groupes à 0–255 ; la plage 0–4095 est celle de la version 2.",
+      "c": "Les versions 1 et 2 n'utilisent ni la même adresse multicast ni le même format de paquet : tous les routeurs du groupe doivent exécuter la même version.",
+      "d": "Le numéro de groupe de VRRP (VRID) va seulement de 1 à 255."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide (HSRP version 2)"
+  },
+  {
+    "slug": "ccna-3.5-fhrp-default-gateway-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 (192.168.50.2) et R2 (192.168.50.3) assurent la redondance de la passerelle du VLAN 50 avec HSRP ; l'adresse IP virtuelle du groupe est 192.168.50.1. Quelle passerelle par défaut faut-il configurer sur les hôtes du VLAN ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "192.168.50.2, l'adresse du routeur de plus haute priorité"
+        },
+        {
+          "id": "b",
+          "text": "Aucune : les hôtes repèrent le routeur active grâce aux Hello HSRP"
+        },
+        {
+          "id": "c",
+          "text": "192.168.50.1, l'adresse IP virtuelle du groupe"
+        },
+        {
+          "id": "d",
+          "text": "192.168.50.2 et 192.168.50.3, déclarées comme deux passerelles"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un FHRP présente aux hôtes une passerelle unique : l'adresse IP virtuelle, associée à une MAC virtuelle. Le routeur active répond aux requêtes ARP pour cette adresse ; s'il tombe en panne, le routeur standby reprend l'adresse et la MAC virtuelles, sans aucun changement sur les hôtes. Les adresses réelles des routeurs servent à leur gestion et aux échanges HSRP entre eux.",
+    "distractorNotes": {
+      "a": "Si R1 tombait en panne, les hôtes perdraient leur passerelle : la redondance ne fonctionne qu'avec l'adresse virtuelle.",
+      "b": "Les hôtes ne participent pas à HSRP ; les Hello ne sont échangés qu'entre les routeurs du groupe.",
+      "d": "Le principe d'un FHRP est d'éviter aux hôtes de gérer plusieurs passerelles : ils n'en connaissent qu'une, l'adresse virtuelle, et la bascule se fait entre les routeurs."
+    },
+    "reference": "RFC 2281"
+  }
+]
