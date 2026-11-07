@@ -173,5 +173,855 @@
       "c": "Chef utilise aussi un agent et des recettes en Ruby.",
       "d": "Terraform décrit l'infrastructure en HCL et passe par les API des fournisseurs ; il ne s'appuie pas sur des playbooks YAML."
     }
+  },
+  {
+    "slug": "ccna-6.1-automation-consistency-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une équipe doit remplacer l'adresse du serveur syslog sur 600 commutateurs. Par rapport à une saisie manuelle en CLI sur chaque équipement, quel est le principal avantage d'un outil d'automatisation ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le changement n'a plus besoin d'être testé ni planifié, puisque l'outil ne peut pas se tromper."
+        },
+        {
+          "id": "b",
+          "text": "Les commutateurs se synchronisent ensuite entre eux, comme le fait VTP pour les VLAN."
+        },
+        {
+          "id": "c",
+          "text": "La même modification est appliquée vite et à l'identique partout, avec moins d'erreurs de saisie."
+        },
+        {
+          "id": "d",
+          "text": "Les commutateurs n'ont plus besoin d'accès de gestion (SSH ou API) une fois l'outil installé."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'automatisation applique une modification décrite une seule fois (modèle, playbook ou script) à un grand nombre d'équipements. Le déploiement est beaucoup plus rapide et chaque commutateur reçoit exactement la même configuration, sans les fautes de frappe et les oublis inévitables sur 600 saisies manuelles. Les changements doivent toutefois toujours être testés et suivis.",
+    "distractorNotes": {
+      "a": "Un outil d'automatisation exécute fidèlement ce qu'on lui donne, erreurs comprises : les tests et la gestion des changements restent nécessaires.",
+      "b": "VTP ne synchronise que la base des VLAN ; l'automatisation ne crée aucune synchronisation entre équipements, chacun reçoit sa configuration de l'outil.",
+      "d": "L'outil a justement besoin d'un accès de gestion (SSH, NETCONF, RESTCONF…) pour pousser la configuration."
+    },
+    "reference": "RFC 3535, section 3 (besoins des opérateurs en gestion de configuration)"
+  },
+  {
+    "slug": "ccna-6.1-source-of-truth-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise abandonne les modifications manuelles : les configurations sont générées à partir de modèles stockés dans un dépôt Git, puis déployées par un outil d'automatisation. Quels deux bénéfices peut-elle en attendre ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Un historique de chaque changement (auteur, date, contenu) et la possibilité de revenir à une version antérieure."
+        },
+        {
+          "id": "b",
+          "text": "Le remplacement des protocoles de routage par des routes statiques poussées par l'outil."
+        },
+        {
+          "id": "c",
+          "text": "Le transfert du plan de données des commutateurs vers le serveur d'automatisation."
+        },
+        {
+          "id": "d",
+          "text": "La détection des écarts entre la configuration réelle d'un équipement et la configuration de référence."
+        },
+        {
+          "id": "e",
+          "text": "La disparition de tout risque de panne lors des changements, puisqu'ils sont automatisés."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Le dépôt Git devient la source de vérité : chaque modification est un commit traçable (qui, quoi, quand) et une version antérieure peut être redéployée en cas de problème. En comparant l'état réel des équipements à cette référence, l'outil détecte la dérive de configuration, par exemple une modification faite à la main hors du processus. L'automatisation réduit les erreurs de saisie, mais ne supprime pas le risque propre à un changement.",
+    "distractorNotes": {
+      "b": "L'automatisation configure les protocoles existants ; elle ne remplace pas le routage dynamique, qui reste exécuté par les équipements.",
+      "c": "Le plan de données reste sur les équipements ; un outil d'automatisation agit sur la configuration, c'est-à-dire par le plan de gestion.",
+      "e": "Une erreur dans un modèle est reproduite sur tous les équipements : l'automatisation réduit les erreurs de saisie, pas le risque lié au contenu du changement."
+    },
+    "reference": "RFC 3535, section 3"
+  },
+  {
+    "slug": "ccna-6.1-automation-blast-radius-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un script non testé a poussé en quelques minutes une ACL erronée sur les lignes VTY de 400 routeurs, coupant tout accès SSH d'administration. Quelle pratique aurait le mieux limité l'impact de ce type d'erreur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Renoncer au script et appliquer l'ACL à la main, routeur par routeur."
+        },
+        {
+          "id": "b",
+          "text": "La valider en maquette, puis la déployer sur un groupe pilote avec un retour arrière prévu."
+        },
+        {
+          "id": "c",
+          "text": "Lancer le script en parallèle sur les 400 routeurs pour réduire la fenêtre de maintenance."
+        },
+        {
+          "id": "d",
+          "text": "Pousser l'ACL par SNMP plutôt que par SSH pour que la session du script ne soit pas coupée."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La vitesse et la portée de l'automatisation jouent dans les deux sens : une erreur est reproduite partout aussi vite qu'une bonne modification. On limite ce « rayon d'impact » en testant le changement en maquette, en le déployant par vagues (groupe pilote, puis le reste du parc) avec une vérification après chaque vague, et en prévoyant un retour arrière. Sur IOS, un « reload in » programmé avant le changement, ou « configure replace » vers une configuration sauvegardée, sert de filet de sécurité. Le problème n'est pas le script, mais l'absence de validation et de déploiement progressif.",
+    "distractorNotes": {
+      "a": "La saisie manuelle sur 400 routeurs est lente et ajoute des fautes de frappe ; une ACL fausse resterait fausse, appliquée simplement plus lentement.",
+      "c": "Le parallélisme accélère encore la propagation de l'erreur : tous les routeurs sont touchés avant qu'on ait pu la détecter.",
+      "d": "Le transport ne valide pas le contenu : une fois appliquée, l'ACL erronée bloquerait toujours les sessions SSH d'administration."
+    },
+    "reference": "Cisco IOS Configuration Fundamentals Configuration Guide, « Configuration Replace and Configuration Rollback »"
+  },
+  {
+    "slug": "ccna-6.2-distributed-control-plane-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un réseau traditionnel, sans contrôleur, où s'exécute le plan de contrôle (OSPF, STP…) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur un serveur central qui calcule les tables de tous les équipements."
+        },
+        {
+          "id": "b",
+          "text": "Uniquement sur le root bridge, qui calcule la topologie pour tout le réseau."
+        },
+        {
+          "id": "c",
+          "text": "Sur chaque équipement, qui échange avec ses voisins et calcule ses propres tables."
+        },
+        {
+          "id": "d",
+          "text": "Dans le plan de données, au moment où chaque paquet est transféré."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Dans un réseau traditionnel, le plan de contrôle est distribué : chaque routeur ou commutateur exécute ses protocoles (OSPF, STP, ARP…), échange des messages avec ses voisins et construit lui-même ses tables de routage, d'adresses MAC ou de topologie. Un réseau piloté par contrôleur centralise tout ou partie de ces décisions dans un logiciel qui dispose d'une vue globale du réseau.",
+    "distractorNotes": {
+      "a": "C'est le modèle SDN centralisé, où un contrôleur prend les décisions pour les équipements.",
+      "b": "Le root bridge est la référence de l'arbre STP, mais chaque commutateur exécute STP et détermine lui-même le rôle de ses ports.",
+      "d": "Le plan de données applique les tables déjà construites ; il ne les calcule pas."
+    },
+    "reference": "RFC 7426 (SDN : couches et terminologie des plans)"
+  },
+  {
+    "slug": "ccna-6.2-central-policy-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise doit appliquer une nouvelle politique QoS sur 250 commutateurs d'accès gérés par Cisco Catalyst Center. Comment procède-t-on dans ce modèle piloté par contrôleur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "On se connecte en SSH à chaque commutateur pour y saisir la politique en CLI."
+        },
+        {
+          "id": "b",
+          "text": "On configure un premier commutateur, qui propage la politique à ses voisins par CDP."
+        },
+        {
+          "id": "c",
+          "text": "Le contrôleur fait transiter le trafic des utilisateurs par lui-même pour lui appliquer la QoS."
+        },
+        {
+          "id": "d",
+          "text": "On définit la politique une fois dans le contrôleur, qui la traduit et la déploie sur les commutateurs."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Dans un réseau piloté par contrôleur, l'administrateur exprime une politique centrale (l'intention) au lieu de configurer chaque boîtier. Catalyst Center la traduit en configuration adaptée à chaque plateforme et la pousse par ses interfaces sud (SSH/CLI, NETCONF…). Le trafic des utilisateurs reste traité localement par les commutateurs, qui appliquent la QoS reçue.",
+    "distractorNotes": {
+      "a": "C'est la configuration boîtier par boîtier d'un réseau traditionnel, que le contrôleur permet justement d'éviter.",
+      "b": "CDP découvre les voisins directement connectés ; il ne transporte aucune politique de configuration.",
+      "c": "Le contrôleur n'est pas dans le chemin des données : le plan de données reste sur les commutateurs."
+    },
+    "reference": "Cisco Catalyst Center User Guide, « Configure Application Policies »"
+  },
+  {
+    "slug": "ccna-6.2-controller-outage-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un campus est géré par Cisco Catalyst Center, qui configure les commutateurs et collecte leur télémétrie pour l'assurance. Le serveur Catalyst Center devient injoignable pendant deux heures. Quel est l'effet le plus probable sur le réseau ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le trafic continue d'être transféré ; seuls les nouveaux déploiements et l'assurance sont indisponibles."
+        },
+        {
+          "id": "b",
+          "text": "Le trafic des utilisateurs s'arrête, car il est relayé par le contrôleur."
+        },
+        {
+          "id": "c",
+          "text": "Les commutateurs vident leurs tables de routage et MAC, faute de plan de contrôle."
+        },
+        {
+          "id": "d",
+          "text": "Les commutateurs rechargent leur startup-config pour revenir à un mode sans contrôleur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Catalyst Center calcule et pousse les configurations puis supervise le réseau, mais il n'est pas dans le chemin des données. Les commutateurs gardent leur configuration et continuent d'exécuter localement leurs plans de contrôle (OSPF, STP, LISP en SD-Access) et de données. Pendant la panne, on perd seulement les fonctions centrales : provisionnement, modification des politiques, assurance. Dans un SDN de type OpenFlow pur, l'impact pourrait être plus fort, car les nouveaux flux ne pourraient plus être programmés par le contrôleur.",
+    "distractorNotes": {
+      "b": "Le trafic des utilisateurs ne transite pas par Catalyst Center ; il est transféré par les commutateurs eux-mêmes.",
+      "c": "Les plans de contrôle (OSPF, STP, LISP…) s'exécutent sur les commutateurs, pas sur Catalyst Center : leurs tables restent en place.",
+      "d": "Aucun rechargement n'a lieu : la configuration déjà déployée reste dans la running-config et continue de s'appliquer."
+    },
+    "reference": "Cisco Software-Defined Access Solution Design Guide (CVD)"
+  },
+  {
+    "slug": "ccna-6.3-sda-fabric-components-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque élément d'une architecture Cisco SD-Access, gérée par Catalyst Center, à la technologie qui le met en œuvre.",
+      "left": [
+        {
+          "id": "data",
+          "text": "Plan de données de la fabric (encapsulation du trafic dans l'overlay)"
+        },
+        {
+          "id": "control",
+          "text": "Plan de contrôle de la fabric (localisation des terminaux)"
+        },
+        {
+          "id": "policy",
+          "text": "Plan de politique (segmentation par groupes)"
+        },
+        {
+          "id": "north",
+          "text": "API nord de Catalyst Center"
+        }
+      ],
+      "right": [
+        {
+          "id": "lisp",
+          "text": "LISP"
+        },
+        {
+          "id": "rest",
+          "text": "API REST en JSON sur HTTPS (Intent API)"
+        },
+        {
+          "id": "openflow",
+          "text": "OpenFlow"
+        },
+        {
+          "id": "vxlan",
+          "text": "VXLAN"
+        },
+        {
+          "id": "sgt",
+          "text": "Cisco TrustSec (SGT)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "data": "vxlan",
+        "control": "lisp",
+        "policy": "sgt",
+        "north": "rest"
+      }
+    },
+    "explanation": "Dans SD-Access, le trafic des terminaux est encapsulé dans VXLAN entre les nœuds de la fabric (plan de données). LISP sert de plan de contrôle : le control plane node enregistre l'emplacement de chaque terminal (EID) derrière l'adresse de son edge node (RLOC). La segmentation repose sur Cisco TrustSec : l'étiquette SGT, transportée dans l'en-tête VXLAN, permet d'appliquer la politique entre groupes. Catalyst Center expose enfin ses fonctions aux applications et aux scripts par une API REST nord, l'Intent API.",
+    "distractorNotes": {
+      "openflow": "OpenFlow est un protocole sud employé par certains contrôleurs SDN (OpenDaylight, par exemple) ; SD-Access ne l'utilise pas."
+    },
+    "reference": "Cisco Software-Defined Access Solution Design Guide (CVD) ; RFC 7348 (VXLAN) ; RFC 9301 (plan de contrôle LISP)"
+  },
+  {
+    "slug": "ccna-6.3-underlay-overlay-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur l'underlay et l'overlay d'une fabric SD-Access sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les sous-réseaux des terminaux sont annoncés dans le routage de l'underlay pour que les edge nodes puissent les joindre."
+        },
+        {
+          "id": "b",
+          "text": "L'underlay étend les VLAN des utilisateurs à tout le campus et s'appuie sur STP pour éviter les boucles."
+        },
+        {
+          "id": "c",
+          "text": "L'underlay est le réseau IP physique qui assure la joignabilité entre les nœuds de la fabric, notamment entre leurs loopbacks."
+        },
+        {
+          "id": "d",
+          "text": "Une fois l'overlay en service, l'underlay peut être retiré : les tunnels assurent seuls le transport."
+        },
+        {
+          "id": "e",
+          "text": "L'overlay est formé de réseaux virtuels construits par des tunnels VXLAN au-dessus de l'underlay."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "La fabric SD-Access superpose deux couches. L'underlay est un réseau IP routé (souvent IS-IS, déployé par LAN Automation) dont le rôle est de rendre joignables les loopbacks des nœuds, qui servent d'extrémités de tunnels (RLOC). L'overlay regroupe les réseaux virtuels (VN) des utilisateurs, transportés dans des tunnels VXLAN par-dessus l'underlay ; l'emplacement des terminaux y est connu grâce à LISP, et non grâce au routage de l'underlay.",
+    "distractorNotes": {
+      "a": "Les adresses des terminaux sont enregistrées dans LISP et vivent dans les réseaux virtuels de l'overlay ; l'underlay ne connaît que les adresses des nœuds (RLOC).",
+      "b": "L'underlay SD-Access est routé jusqu'aux edge nodes (routed access) ; l'extension de niveau 2, quand elle est nécessaire, se fait dans l'overlay.",
+      "d": "Les tunnels VXLAN sont transportés par l'underlay : sans lui, aucun paquet encapsulé ne peut circuler."
+    },
+    "reference": "Cisco Software-Defined Access Solution Design Guide (CVD)"
+  },
+  {
+    "slug": "ccna-6.3-control-plane-function-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Laquelle de ces fonctions d'un routeur appartient au plan de contrôle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Décrémenter le TTL d'un paquet et recalculer la somme de contrôle de l'en-tête IPv4."
+        },
+        {
+          "id": "b",
+          "text": "Échanger des LSA OSPF avec les voisins et calculer les routes à installer dans la table de routage."
+        },
+        {
+          "id": "c",
+          "text": "Réécrire les adresses MAC source et destination d'une trame avant de l'émettre sur l'interface de sortie."
+        },
+        {
+          "id": "d",
+          "text": "Répondre à une requête SNMP qui interroge le taux d'utilisation du CPU."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le plan de contrôle regroupe les fonctions qui construisent les tables de transfert : échanges des protocoles de routage (LSA OSPF, calcul SPF), STP, ARP… Le plan de données utilise ensuite ces tables pour chaque paquet : décrémenter le TTL, réécrire l'en-tête de niveau 2, choisir l'interface de sortie. Le plan de gestion sert à administrer et superviser l'équipement (SSH, SNMP, syslog). Les architectures SDN exploitent cette séparation en centralisant tout ou partie du plan de contrôle.",
+    "distractorNotes": {
+      "a": "Le traitement de chaque paquet transféré (TTL, somme de contrôle) relève du plan de données.",
+      "c": "La réécriture de l'en-tête de niveau 2 au moment du transfert relève du plan de données.",
+      "d": "La supervision par SNMP relève du plan de gestion."
+    },
+    "reference": "RFC 7426 (SDN : couches et terminologie des plans)"
+  },
+  {
+    "slug": "ccna-6.4-generative-vs-predictive-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lequel de ces usages, dans l'exploitation d'un réseau, relève de l'IA générative plutôt que de l'IA prédictive ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Prévoir, d'après l'historique de trafic, qu'un lien WAN sera saturé dans trois semaines."
+        },
+        {
+          "id": "b",
+          "text": "Signaler un pic anormal d'échecs d'authentification par rapport au comportement habituel."
+        },
+        {
+          "id": "c",
+          "text": "Estimer la probabilité qu'un module optique tombe en panne d'après ses mesures de température."
+        },
+        {
+          "id": "d",
+          "text": "Rédiger, à partir d'une demande en langage naturel, un résumé d'incident ou un brouillon de configuration."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'IA générative produit un contenu nouveau (texte, configuration, résumé) à partir d'une demande, souvent formulée en langage naturel, grâce à un grand modèle de langage. L'IA prédictive analyse des données historiques ou en temps réel pour estimer ce qui va se passer ou repérer ce qui sort de la normale : prévision de capacité, détection d'anomalies, panne probable d'un composant. Dans les deux cas, le résultat aide l'ingénieur, et un contenu généré doit être vérifié avant usage.",
+    "distractorNotes": {
+      "a": "La prévision de capacité à partir de l'historique est un cas typique d'IA prédictive.",
+      "b": "Comparer l'activité à une référence pour détecter un comportement anormal relève de la détection d'anomalies, pas de la génération de contenu.",
+      "c": "Estimer une probabilité de panne à partir de mesures relève de la maintenance prédictive."
+    },
+    "reference": "NIST AI 600-1, Generative Artificial Intelligence Profile (2024)"
+  },
+  {
+    "slug": "ccna-6.4-unsupervised-baseline-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un outil d'analyse apprend, sans aucun exemple étiqueté, le comportement habituel de chaque site (durée d'association Wi-Fi, délai d'obtention d'une adresse DHCP, débit), puis signale les écarts importants par rapport à cette référence. Quelle approche met-il en œuvre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Apprentissage non supervisé"
+        },
+        {
+          "id": "b",
+          "text": "Apprentissage supervisé"
+        },
+        {
+          "id": "c",
+          "text": "Apprentissage par renforcement"
+        },
+        {
+          "id": "d",
+          "text": "Règles statiques à seuils fixes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'apprentissage non supervisé travaille sur des données sans étiquette : il dégage lui-même des regroupements et une référence (baseline) du comportement normal, puis repère ce qui s'en écarte. C'est le principe de la détection d'anomalies utilisée en AIOps, où la référence est propre à chaque site et évolue avec lui. L'apprentissage supervisé, au contraire, a besoin d'exemples déjà classés (par exemple « incident » ou « normal ») pour apprendre à prédire une étiquette.",
+    "distractorNotes": {
+      "b": "L'apprentissage supervisé suppose des exemples étiquetés, que l'énoncé exclut explicitement.",
+      "c": "L'apprentissage par renforcement apprend par essais et récompenses en agissant sur un environnement ; l'outil décrit observe et signale.",
+      "d": "Des seuils fixes ne s'apprennent pas : ils sont configurés à la main et ne s'adaptent pas au comportement propre à chaque site."
+    },
+    "reference": "ISO/IEC 22989:2022 (concepts et terminologie de l'intelligence artificielle)"
+  },
+  {
+    "slug": "ccna-6.4-genai-config-review-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un ingénieur demande à un assistant d'IA générative de rédiger la configuration d'un nouveau routeur d'agence. Quelles deux pratiques sont appropriées avant de déployer cette configuration ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Fournir à l'assistant les mots de passe et clés de production pour obtenir une configuration complète."
+        },
+        {
+          "id": "b",
+          "text": "La tester en maquette ou sur un équipement virtuel avant la mise en production."
+        },
+        {
+          "id": "c",
+          "text": "La pousser directement en production, puisque le modèle a été entraîné sur la documentation Cisco."
+        },
+        {
+          "id": "d",
+          "text": "Poser deux fois la même demande : si les réponses sont identiques, la configuration est forcément juste."
+        },
+        {
+          "id": "e",
+          "text": "Faire relire la configuration par un ingénieur, car le modèle peut proposer des commandes plausibles mais fausses."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Un modèle génératif produit un texte statistiquement plausible, pas une configuration vérifiée : il peut inventer une commande, se tromper de syntaxe pour la plateforme ou ignorer une contrainte du site (on parle d'hallucination ou de confabulation). La configuration générée se traite donc comme un brouillon : relecture par un ingénieur, puis test en maquette ou en environnement virtuel avant le déploiement. Il faut aussi éviter de transmettre des secrets (mots de passe, clés) à un service externe.",
+    "distractorNotes": {
+      "a": "Transmettre des secrets à un service d'IA expose à une fuite de données ; on utilise des valeurs factices ou des variables remplies au déploiement.",
+      "c": "L'entraînement sur une documentation ne garantit pas l'exactitude d'une réponse, et aucune validation humaine ne serait faite.",
+      "d": "Deux réponses identiques peuvent être identiquement fausses : la cohérence d'un modèle n'est pas une preuve d'exactitude."
+    },
+    "reference": "NIST AI 600-1, Generative Artificial Intelligence Profile (risques « confabulation » et « sécurité de l'information »)"
+  },
+  {
+    "slug": "ccna-6.5-status-201-created-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Un script crée un VLAN par l'API REST d'un contrôleur. La requête a réussi : une nouvelle ressource a été créée et son URI est indiquée dans l'en-tête Location. Quel code de statut HTTP remplace « ??? » dans la réponse ?",
+      "exhibit": "POST /api/v1/vlans HTTP/1.1\nHost: 192.0.2.10\nAuthorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6...\nContent-Type: application/json\n\n{\"id\": 30, \"name\": \"VOIX\"}\n\nHTTP/1.1 ???\nLocation: /api/v1/vlans/30\nContent-Type: application/json\n\n{\"id\": 30, \"name\": \"VOIX\"}",
+      "fields": [
+        {
+          "id": "code",
+          "label": "Code de statut (3 chiffres)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "code": {
+          "accepted": [
+            "201"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "201 Created indique que la requête a abouti et a créé une ou plusieurs ressources ; le serveur donne l'URI de la nouvelle ressource dans l'en-tête Location. 200 OK signale un succès générique (typiquement pour un GET), 204 No Content un succès sans corps de réponse, et 202 Accepted une requête acceptée mais traitée plus tard, comme le font certaines API de contrôleur qui renvoient un identifiant de tâche.",
+    "reference": "RFC 9110, section 15.3.2"
+  },
+  {
+    "slug": "ccna-6.5-status-codes-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque code de statut HTTP renvoyé par une API REST à sa signification.",
+      "left": [
+        {
+          "id": "c204",
+          "text": "204"
+        },
+        {
+          "id": "c400",
+          "text": "400"
+        },
+        {
+          "id": "c401",
+          "text": "401"
+        },
+        {
+          "id": "c403",
+          "text": "403"
+        },
+        {
+          "id": "c404",
+          "text": "404"
+        }
+      ],
+      "right": [
+        {
+          "id": "nocontent",
+          "text": "Succès, sans corps de réponse"
+        },
+        {
+          "id": "badreq",
+          "text": "Requête mal formée, par exemple un corps JSON invalide"
+        },
+        {
+          "id": "unauth",
+          "text": "Authentification absente, invalide ou expirée"
+        },
+        {
+          "id": "forbidden",
+          "text": "Client authentifié, mais non autorisé à effectuer cette action"
+        },
+        {
+          "id": "notfound",
+          "text": "Aucune ressource ne correspond à l'URI demandée"
+        },
+        {
+          "id": "server",
+          "text": "Erreur interne du serveur pendant le traitement"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "c204": "nocontent",
+        "c400": "badreq",
+        "c401": "unauth",
+        "c403": "forbidden",
+        "c404": "notfound"
+      }
+    },
+    "explanation": "Les codes 2xx signalent un succès (204 : rien à renvoyer, fréquent après un DELETE ou un PUT). Les codes 4xx désignent une erreur du client : 400 pour une requête que le serveur ne peut pas interpréter, 401 quand l'authentification manque ou que le jeton est invalide ou expiré (malgré son nom « Unauthorized »), 403 quand le client est bien identifié mais n'a pas les droits, 404 quand l'URI ne correspond à aucune ressource. Les codes 5xx indiquent une erreur côté serveur.",
+    "distractorNotes": {
+      "server": "Cette signification correspond à 500 Internal Server Error, absent de la liste : les codes 5xx signalent une erreur côté serveur."
+    },
+    "reference": "RFC 9110, section 15"
+  },
+  {
+    "slug": "ccna-6.5-token-auth-workflow-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Un script doit récupérer la liste des équipements gérés par Cisco Catalyst Center à l'aide de son API REST. Mettez les étapes dans l'ordre.",
+      "items": [
+        {
+          "id": "parse",
+          "text": "Vérifier le code 200 OK, puis lire la liste des équipements dans le corps JSON de la réponse."
+        },
+        {
+          "id": "auth",
+          "text": "Envoyer un POST à /dna/system/api/v1/auth/token avec l'identifiant et le mot de passe en authentification Basic."
+        },
+        {
+          "id": "get",
+          "text": "Envoyer un GET à /dna/intent/api/v1/network-device en plaçant le jeton dans l'en-tête X-Auth-Token."
+        },
+        {
+          "id": "token",
+          "text": "Extraire le jeton du corps JSON de la réponse (clé « Token »)."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "auth",
+        "token",
+        "get",
+        "parse"
+      ]
+    },
+    "explanation": "Catalyst Center n'accepte pas l'identifiant et le mot de passe sur ses API métier : le script s'authentifie d'abord en Basic (POST sur /auth/token) et reçoit un jeton dans la réponse JSON. Comme REST est sans état, le serveur ne garde aucune session : le jeton doit accompagner chaque requête suivante, ici dans l'en-tête X-Auth-Token. Le script vérifie enfin le code de statut avant d'exploiter le JSON. Un 401 signalerait un jeton absent ou expiré (il expire au bout d'une heure), qu'il faudrait redemander.",
+    "reference": "Cisco Catalyst Center Platform API, « Authentication API » (POST /dna/system/api/v1/auth/token)"
+  },
+  {
+    "slug": "ccna-6.6-terraform-workflow-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Un ingénieur gère des ressources réseau avec Terraform. Mettez dans l'ordre les étapes d'un premier déploiement.",
+      "items": [
+        {
+          "id": "apply",
+          "text": "Exécuter terraform apply pour appliquer les changements et mettre à jour le fichier d'état."
+        },
+        {
+          "id": "write",
+          "text": "Décrire l'état souhaité des ressources en HCL dans des fichiers .tf."
+        },
+        {
+          "id": "replan",
+          "text": "Relancer terraform plan et constater qu'il n'y a plus aucun changement à appliquer."
+        },
+        {
+          "id": "init",
+          "text": "Exécuter terraform init pour préparer le répertoire et télécharger les providers."
+        },
+        {
+          "id": "plan",
+          "text": "Exécuter terraform plan pour afficher les créations, modifications et suppressions prévues."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "write",
+        "init",
+        "plan",
+        "apply",
+        "replan"
+      ]
+    },
+    "explanation": "Terraform est déclaratif : on décrit en HCL l'état final souhaité, sans écrire les étapes pour y parvenir. terraform init prépare le répertoire de travail (providers, backend) ; sans lui, plan échoue faute de providers installés. terraform plan compare ensuite la configuration à l'état enregistré et à l'existant pour présenter les actions prévues, que terraform apply exécute avant d'enregistrer le résultat dans le fichier d'état (terraform.tfstate). Relancer plan ne propose alors plus rien : l'infrastructure correspond à la configuration.",
+    "reference": "Documentation HashiCorp Terraform, « The Core Terraform Workflow » et référence des commandes init, plan et apply"
+  },
+  {
+    "slug": "ccna-6.6-ansible-inventory-groups-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'administrateur exécute « ansible-playbook -i hosts.ini ntp.yml » depuis le nœud de contrôle. Sur quels équipements la commande ntp server est-elle appliquée, et comment ?",
+      "exhibit": "# hosts.ini\n[lyon]\nlyon-sw1 ansible_host=10.1.0.11\nlyon-sw2 ansible_host=10.1.0.12\n\n[nantes]\nnantes-sw1 ansible_host=10.2.0.11\n\n[core]\ncore-r1 ansible_host=10.0.0.1\n\n[access:children]\nlyon\nnantes\n\n[all:vars]\nansible_connection=ansible.netcommon.network_cli\nansible_network_os=cisco.ios.ios\nansible_user=netops\n\n# ntp.yml\n---\n- name: Serveur NTP des commutateurs d'accès\n  hosts: access\n  gather_facts: false\n  tasks:\n    - name: Configurer le serveur NTP\n      cisco.ios.ios_config:\n        lines:\n          - ntp server 10.0.0.50",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur les quatre équipements, car les variables de [all:vars] s'appliquent à tous les hôtes."
+        },
+        {
+          "id": "b",
+          "text": "Sur aucun équipement, car un groupe défini avec :children ne contient pas d'hôtes en propre."
+        },
+        {
+          "id": "c",
+          "text": "Sur lyon-sw1, lyon-sw2 et nantes-sw1, par des sessions SSH ouvertes depuis le nœud de contrôle."
+        },
+        {
+          "id": "d",
+          "text": "Sur lyon-sw1, lyon-sw2 et nantes-sw1, par un agent Ansible qui récupère le playbook sur chaque commutateur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le groupe access est défini avec :children : il regroupe les groupes lyon et nantes, donc les hôtes lyon-sw1, lyon-sw2 et nantes-sw1. La ligne « hosts: access » limite le play à ces trois hôtes ; core-r1, qui n'appartient qu'au groupe core, n'est pas concerné. Le bloc [all:vars] définit seulement des variables communes, dont la connexion network_cli : le nœud de contrôle ouvre une session SSH vers chaque commutateur et pousse la commande, car Ansible fonctionne sans agent.",
+    "distractorNotes": {
+      "a": "[all:vars] attribue des variables à tous les hôtes, mais seuls les hôtes ciblés par « hosts: access » sont configurés ; core-r1 n'est pas dans ce groupe.",
+      "b": "Un groupe :children contient les hôtes de ses groupes enfants ; access contient donc les trois commutateurs de Lyon et de Nantes.",
+      "d": "Ansible est sans agent et fonctionne en mode push : rien n'est installé sur les commutateurs, qui ne vont chercher aucun playbook."
+    },
+    "reference": "Documentation Ansible, « How to build your inventory » et « Ansible for Network Automation » (connexion network_cli)"
+  },
+  {
+    "slug": "ccna-6.7-restconf-json-types-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit, obtenu par RESTCONF sur un routeur IOS XE. Quelles deux affirmations sur les données JSON renvoyées sont exactes ?",
+      "exhibit": "GET /restconf/data/ietf-interfaces:interfaces/interface=GigabitEthernet2 HTTP/1.1\nHost: 192.0.2.1\nAccept: application/yang-data+json\n\nHTTP/1.1 200 OK\nContent-Type: application/yang-data+json\n\n{\n  \"ietf-interfaces:interface\": {\n    \"name\": \"GigabitEthernet2\",\n    \"description\": \"Vers SW-DIST-1\",\n    \"type\": \"iana-if-type:ethernetCsmacd\",\n    \"enabled\": true,\n    \"ietf-ip:ipv4\": {\n      \"address\": [\n        {\n          \"ip\": \"172.16.40.1\",\n          \"netmask\": \"255.255.255.0\"\n        }\n      ]\n    },\n    \"ietf-ip:ipv6\": {}\n  }\n}",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La valeur de « enabled » est un booléen."
+        },
+        {
+          "id": "b",
+          "text": "La valeur de « netmask » est un nombre."
+        },
+        {
+          "id": "c",
+          "text": "La valeur de « address » est un tableau qui contient un seul objet."
+        },
+        {
+          "id": "d",
+          "text": "La valeur de « ietf-ip:ipv4 » est un tableau."
+        },
+        {
+          "id": "e",
+          "text": "La valeur de « ietf-ip:ipv6 » est null, faute d'adresse IPv6."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "En JSON, une valeur entre guillemets est une chaîne, true et false (sans guillemets) sont des booléens, les accolades délimitent un objet et les crochets un tableau. Ici « enabled » vaut true, un booléen, et « address » est un tableau ([ ]) qui contient un objet ({ }) avec les clés ip et netmask. « ietf-ip:ipv4 » est un objet (il correspond à un conteneur YANG), et le préfixe ietf-ip: indique le module YANG qui définit ce nœud.",
+    "distractorNotes": {
+      "b": "« 255.255.255.0 » est entre guillemets : c'est une chaîne. Un nombre JSON ne pourrait d'ailleurs pas contenir plusieurs points.",
+      "d": "La valeur commence par une accolade : c'est un objet, qui contient lui-même le tableau address.",
+      "e": "{} est un objet vide, pas la valeur null, qui s'écrirait null, sans guillemets ni accolades."
+    },
+    "reference": "RFC 8259 ; RFC 8040 (RESTCONF) ; RFC 7951 (encodage JSON des données YANG)"
+  },
+  {
+    "slug": "ccna-6.7-json-object-count-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit, renvoyé par l'API REST d'un contrôleur. Combien d'objets JSON contient-il au total, objet racine compris ?",
+      "exhibit": "{\n  \"response\": [\n    {\n      \"hostname\": \"R1\",\n      \"location\": {\"site\": \"Lyon\", \"floor\": 2},\n      \"interfaces\": [\n        {\"name\": \"GigabitEthernet0/0/0\", \"ipv4\": \"203.0.113.1\", \"enabled\": true},\n        {\"name\": \"GigabitEthernet0/0/1\", \"ipv4\": \"10.20.0.1\", \"enabled\": false}\n      ]\n    },\n    {\n      \"hostname\": \"R2\",\n      \"location\": {\"site\": \"Nantes\", \"floor\": 1},\n      \"interfaces\": [\n        {\"name\": \"GigabitEthernet0/0/0\", \"ipv4\": \"198.51.100.2\", \"enabled\": true}\n      ]\n    }\n  ],\n  \"version\": \"1.0\"\n}",
+      "options": [
+        {
+          "id": "a",
+          "text": "3"
+        },
+        {
+          "id": "b",
+          "text": "6"
+        },
+        {
+          "id": "c",
+          "text": "7"
+        },
+        {
+          "id": "d",
+          "text": "8"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Chaque paire d'accolades { } délimite un objet. On compte l'objet racine (1), les deux éléments du tableau response (2), leurs deux objets location (2) et les objets des tableaux interfaces : deux pour R1 et un pour R2 (3), soit 1 + 2 + 2 + 3 = 8. Les crochets [ ] délimitent des tableaux, qui ne sont pas des objets même lorsqu'ils contiennent des objets.",
+    "distractorNotes": {
+      "a": "3 est le nombre de tableaux (response et les deux tableaux interfaces), pas le nombre d'objets.",
+      "b": "6 oublie les deux objets location, écrits sur une seule ligne mais eux aussi délimités par des accolades.",
+      "c": "7 oublie l'objet racine, que l'énoncé demande de compter."
+    },
+    "reference": "RFC 8259, sections 4 et 5"
   }
 ]
