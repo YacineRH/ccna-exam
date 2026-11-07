@@ -351,7 +351,7 @@ export function AttemptPage() {
             {question.flagged && <span className="chip !text-warn">MARQUÉE</span>}
           </div>
 
-          <p id="enonce" tabIndex={-1} className="m-0 max-w-[820px] whitespace-pre-line text-[18px] leading-[1.55] outline-none">
+          <p id="enonce" tabIndex={-1} className="m-0 max-w-[820px] whitespace-pre-line text-[18px] leading-[1.55] outline-none [overflow-wrap:anywhere]">
             {question.body.stem}
             {question.body.type === 'mcq_multi' && (
               <span className="text-muted"> (Choisissez {question.body.selectCount} réponses.)</span>

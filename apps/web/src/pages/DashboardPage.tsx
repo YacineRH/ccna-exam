@@ -49,7 +49,7 @@ function ReviseButton({ code, subtopic, label, available }: { code: string; subt
     <span className="flex flex-col items-end gap-1">
       <button
         type="button"
-        className="btn-primary btn-sm"
+        className="btn-secondary btn-sm"
         onClick={start}
         disabled={busy || size < 1}
         aria-label={`Réviser ${label} (${size} question${size > 1 ? 's' : ''})`}

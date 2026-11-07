@@ -246,16 +246,17 @@ function Matching({ body, value, onChange, disabled }: Props<Of<'matching'>>) {
       {body.left.map((l) => (
         <div
           key={l.id}
-          className="grid items-center gap-2 rounded-[10px] border border-[#223049] bg-surface px-4 py-2.5 sm:[grid-template-columns:1fr_minmax(220px,1fr)] sm:gap-4"
+          className="grid items-center gap-2 rounded-[10px] border border-[#223049] bg-surface px-4 py-2.5 [grid-template-columns:minmax(0,1fr)] sm:[grid-template-columns:minmax(0,1fr)_minmax(220px,1fr)] sm:gap-4"
         >
           <label htmlFor={`${uid}-${l.id}`}>{l.text}</label>
-          <span className="field min-h-[44px]">
+          {/* min-w-0 : une option longue ne doit pas élargir la liste au-delà de l'écran. */}
+          <span className="field min-h-[44px] min-w-0">
             <select
               id={`${uid}-${l.id}`}
               disabled={disabled}
               value={pairs[l.id] ?? ''}
               onChange={(e) => onChange({ type: 'matching', pairs: { ...pairs, [l.id]: e.target.value } })}
-              className="input-bare h-11 cursor-pointer bg-chrome"
+              className="input-bare h-11 w-full min-w-0 cursor-pointer text-ellipsis bg-chrome"
             >
               <option value="">— Choisir —</option>
               {body.right.map((r) => (
