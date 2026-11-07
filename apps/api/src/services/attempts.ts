@@ -370,7 +370,7 @@ export async function getAttemptResult(db: Db, attemptId: string, userId: string
   };
 }
 
-export async function listAttempts(db: Db, userId: string, limit = 50) {
+export async function listAttempts(db: Db, userId: string, opts: { certification?: string; limit?: number } = {}) {
   return db
     .select({
       id: attempts.id,
@@ -386,8 +386,8 @@ export async function listAttempts(db: Db, userId: string, limit = 50) {
     })
     .from(attempts)
     .innerJoin(certifications, eq(certifications.id, attempts.certificationId))
-    .where(eq(attempts.userId, userId))
+    .where(and(eq(attempts.userId, userId), opts.certification ? eq(certifications.code, opts.certification) : undefined))
     .orderBy(desc(attempts.startedAt))
-    .limit(limit);
+    .limit(opts.limit ?? 50);
 }
 

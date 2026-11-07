@@ -356,6 +356,8 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
   it('isole les tentatives entre utilisateurs', async () => {
     const mine = (await call('GET', '/api/v1/attempts')).json().attempts;
     expect(mine.length).toBeGreaterThanOrEqual(2);
+    expect((await call('GET', '/api/v1/attempts?certification=ccna')).json().attempts).toHaveLength(mine.length);
+    expect((await call('GET', '/api/v1/attempts?certification=secplus')).json().attempts).toEqual([]);
     const forged = await app.jwt.sign({ sub: '00000000-0000-0000-0000-000000000000', role: 'user' });
     const res = await call('GET', `/api/v1/attempts/${mine[0].id}`, undefined, `ef_session=${forged}`);
     expect(res.statusCode).toBe(403);

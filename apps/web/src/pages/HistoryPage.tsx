@@ -1,14 +1,20 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { WithCertification } from '../certification/CertificationContext';
 import { AttemptRow } from '../components/AttemptRow';
 import { EmptyState, ErrorBox, Spinner } from '../components/ui';
-import type { AttemptMode, AttemptSummary } from '../lib/types';
+import { certificationLabel } from '../lib/certification';
+import type { AttemptMode, AttemptSummary, CertificationSummary } from '../lib/types';
 import { useApi } from '../lib/useApi';
 
 type Filter = 'all' | AttemptMode;
 
 export function HistoryPage() {
-  const { data, error, loading, reload } = useApi<{ attempts: AttemptSummary[] }>('/attempts');
+  return <WithCertification>{(c) => <History key={c.code} cert={c} />}</WithCertification>;
+}
+
+function History({ cert }: { cert: CertificationSummary }) {
+  const { data, error, loading, reload } = useApi<{ attempts: AttemptSummary[] }>(`/attempts?certification=${encodeURIComponent(cert.code)}`);
   const [filter, setFilter] = useState<Filter>('all');
   const attempts = data?.attempts ?? [];
   const shown = filter === 'all' ? attempts : attempts.filter((a) => a.mode === filter);
@@ -19,7 +25,7 @@ export function HistoryPage() {
       <div className="flex flex-wrap items-end gap-4">
         <div className="min-w-0 flex-[1_1_320px]">
           <div className="font-mono text-[12px] font-medium tracking-[0.6px] text-muted">
-            <span className="text-accent">●</span> CCNA 200-301 · 50 DERNIÈRES SESSIONS
+            <span className="text-accent">●</span> {certificationLabel(cert)} · 50 DERNIÈRES SESSIONS
           </div>
           <h1 className="mt-1.5 text-[28px] font-semibold sm:text-[34px]">Historique</h1>
         </div>

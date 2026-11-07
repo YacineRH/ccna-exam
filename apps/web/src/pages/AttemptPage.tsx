@@ -9,6 +9,8 @@ import { ErrorBox, Spinner } from '../components/ui';
 import { api, ApiError } from '../lib/api';
 import { formatClock, formatDuration } from '../lib/format';
 import { startIndex } from '../lib/attempt';
+import { certificationLabel } from '../lib/certification';
+import { clockOffset, remainingSeconds, serverTime } from '../lib/clock';
 import { initialResponse, isComplete, normalizeResponse, QUESTION_TYPE_LABEL, sameResponse } from '../lib/responses';
 import type { AttemptQuestion, AttemptState, CertificationDetail, PracticeFeedback, Response, SaveAnswerResult } from '../lib/types';
 import { useApi } from '../lib/useApi';
@@ -54,13 +56,15 @@ function NavCell({
 export function AttemptPage() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
-  const cert = useApi<CertificationDetail>('/certifications/ccna');
+  const [attempt, setAttempt] = useState<AttemptState | null>(null);
+  // La certification est celle de la tentative, pas celle choisie dans l'en-tête.
+  const certCode = attempt?.certification ?? null;
+  const cert = useApi<CertificationDetail>(certCode ? `/certifications/${encodeURIComponent(certCode)}` : null);
   const domainName = useMemo(
     () => new Map((cert.data?.certification.domains ?? []).map((d) => [d.code, d.name])),
     [cert.data],
   );
 
-  const [attempt, setAttempt] = useState<AttemptState | null>(null);
   const [loadError, setLoadError] = useState<unknown>(null);
   const [index, setIndex] = useState(0);
   const [drafts, setDrafts] = useState<Record<string, Response | null>>({});
@@ -70,6 +74,8 @@ export function AttemptPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [finishing, setFinishing] = useState<'manual' | 'timeout' | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  /** Décalage horloge serveur − horloge du poste (ms), mesuré au chargement. */
+  const [offset, setOffset] = useState(0);
 
   // Temps passé par question (cumulé sur la session de navigateur).
   const seconds = useRef<Record<string, number>>({});
@@ -81,9 +87,11 @@ export function AttemptPage() {
 
   useEffect(() => {
     let cancelled = false;
+    const requestedAt = Date.now();
     api<AttemptState>(`/attempts/${id}`)
       .then((a) => {
         if (cancelled) return;
+        setOffset(clockOffset(a.serverNow, requestedAt, Date.now()));
         if (a.status !== 'in_progress') {
           goResult();
           return;
@@ -111,7 +119,7 @@ export function AttemptPage() {
   const question = attempt?.questions[index] ?? null;
   const isPractice = attempt?.mode === 'practice';
   const deadline = attempt?.deadlineAt ? new Date(attempt.deadlineAt).getTime() : null;
-  const remaining = deadline !== null ? Math.max(0, Math.round((deadline - now) / 1000)) : null;
+  const remaining = remainingSeconds(attempt?.deadlineAt ?? null, now, offset);
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
@@ -270,13 +278,14 @@ export function AttemptPage() {
     if (deadline === null) return null;
     const start = new Date(attempt.startedAt).getTime();
     const target = (deadline - start) / 1000 / total;
-    const spent = (now - start) / 1000;
+    const spent = (serverTime(now, offset) - start) / 1000;
     const avg = answeredCount ? spent / answeredCount : null;
     const ahead = answeredCount * target - spent;
     return { target, avg, ahead };
   })();
 
-  const title = isPractice ? 'Entraînement libre · CCNA 200-301' : 'Examen blanc · CCNA 200-301';
+  const certName = cert.data ? certificationLabel(cert.data.certification) : attempt.certification.toUpperCase();
+  const title = `${isPractice ? 'Entraînement libre' : 'Examen blanc'} · ${certName}`;
   const subtitle = isPractice
     ? 'CORRECTION IMMÉDIATE · NAVIGATION LIBRE'
     : `MODE JOUR J · ${attempt.allowBackNavigation ? 'RETOUR ARRIÈRE AUTORISÉ' : 'SANS RETOUR ARRIÈRE'} · SANS CORRECTION`;

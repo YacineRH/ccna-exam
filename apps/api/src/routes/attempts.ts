@@ -31,6 +31,7 @@ const answerSchema = z
     message: 'Rien à enregistrer',
   });
 
+const listQuery = z.object({ certification: z.string().min(1).max(64).optional() });
 const idParam = z.object({ id: z.string().uuid() });
 const answerParams = idParam.extend({ questionId: z.string().uuid() });
 
@@ -38,7 +39,8 @@ export function attemptRoutes(db: Db) {
   return async (app: FastifyInstance) => {
     app.get('/', async (req) => {
       const user = await app.requireUser(req);
-      return { attempts: await listAttempts(db, user.id) };
+      const { certification } = parseInput(listQuery, req.query);
+      return { attempts: await listAttempts(db, user.id, { ...(certification ? { certification } : {}) }) };
     });
 
     app.post('/', async (req, reply) => {
