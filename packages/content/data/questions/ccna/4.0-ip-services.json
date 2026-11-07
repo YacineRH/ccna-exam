@@ -36,7 +36,8 @@
       "a": "L'adresse inside local est 192.168.1.10, l'adresse réelle du PC.",
       "c": "Outside local est l'adresse du serveur externe telle qu'elle est vue depuis l'intérieur.",
       "d": "Outside global est l'adresse réelle du serveur web externe."
-    }
+    },
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation (NAT Inside and Outside Addresses)"
   },
   {
     "slug": "ccna-4.3-dhcp-dora-001",
@@ -83,10 +84,10 @@
     "certification": "ccna",
     "domain": "4.0",
     "subtopic": "4.5",
-    "difficulty": "medium",
+    "difficulty": "easy",
     "body": {
       "type": "mcq_single",
-      "stem": "Quel niveau de gravité syslog correspond aux messages « warnings » ?",
+      "stem": "Quel niveau de gravité syslog correspond aux messages « notifications » ?",
       "options": [
         {
           "id": "a",
@@ -108,13 +109,13 @@
     },
     "key": {
       "type": "mcq_single",
-      "correct": "c"
+      "correct": "d"
     },
-    "explanation": "Les niveaux vont de 0 à 7 : emergencies, alerts, critical, errors, warnings (4), notifications, informational, debugging.",
+    "explanation": "Les niveaux vont de 0 à 7 : 0 emergencies, 1 alerts, 2 critical, 3 errors, 4 warnings, 5 notifications, 6 informational, 7 debugging. Les messages « notifications » sont donc de niveau 5.",
     "distractorNotes": {
       "a": "2 correspond à critical.",
       "b": "3 correspond à errors.",
-      "d": "5 correspond à notifications."
+      "c": "4 correspond à warnings."
     },
     "reference": "RFC 5424"
   },
@@ -142,7 +143,7 @@
         },
         {
           "id": "d",
-          "text": "Aucune : SNMP ne chiffre jamais"
+          "text": "SNMPv2c, lorsqu'une ACL est associée à la community"
         }
       ]
     },
@@ -154,7 +155,7 @@
     "distractorNotes": {
       "a": "SNMPv1 ne protège que par une community envoyée en clair.",
       "b": "SNMPv2c utilise aussi des communities en clair.",
-      "d": "SNMPv3 chiffre bien les données au niveau authPriv."
+      "d": "Une ACL sur la community limite seulement les adresses autorisées à interroger l'agent ; la community et les données circulent toujours en clair. Seul SNMPv3 authentifie et chiffre (niveau authPriv)."
     },
     "reference": "RFC 3414"
   },
@@ -234,7 +235,7 @@
     "difficulty": "hard",
     "body": {
       "type": "mcq_multi",
-      "stem": "Reportez-vous à l'exhibit. Le LAN 192.168.20.0/24 de R1 compte environ 150 postes et le FAI route le bloc 203.0.113.16/29 vers R1. Aux heures de pointe, une partie des postes n'accède plus à Internet alors que les autres naviguent normalement. Quelles deux modifications, chacune à elle seule, permettraient à tous les postes d'accéder à Internet en même temps ?",
+      "stem": "Reportez-vous à l'exhibit. Le LAN 192.168.20.0/24 de R1 compte environ 150 postes et le FAI route le bloc 203.0.113.16/29 vers R1. Quelques postes naviguent normalement, mais la plupart n'accèdent pas à Internet. Quelles deux modifications, chacune à elle seule, permettraient à tous les postes d'accéder à Internet en même temps ?",
       "exhibit": "! Extrait de la configuration de R1\ninterface GigabitEthernet0/0\n ip address 192.168.20.1 255.255.255.0\n ip nat inside\n!\ninterface GigabitEthernet0/1\n ip address 198.51.100.2 255.255.255.252\n ip nat outside\n!\nip nat pool PUBLIC 203.0.113.17 203.0.113.22 netmask 255.255.255.248\nip nat inside source list 10 pool PUBLIC\n!\naccess-list 10 permit 192.168.20.0 0.0.0.255\n\nR1# show ip nat statistics | begin Dynamic\nDynamic mappings:\n-- Inside Source\n[Id: 1] access-list 10 pool PUBLIC refcount 6\n pool PUBLIC: netmask 255.255.255.248\n        start 203.0.113.17 end 203.0.113.22\n        type generic, total addresses 6, allocated 6 (100%), misses 37",
       "selectCount": 2,
       "options": [
@@ -267,7 +268,7 @@
         "d"
       ]
     },
-    "explanation": "Sans « overload », la NAT dynamique réserve une adresse du pool à chaque hôte interne : le pool PUBLIC ne contient que six adresses (203.0.113.17 à 203.0.113.22), toutes allouées, et chaque hôte supplémentaire échoue (compteur misses). Avec « overload », R1 fait de la PAT sur les adresses du pool et des milliers de sessions peuvent partager une même adresse. La PAT sur l'adresse de G0/1 règle aussi le problème, en se passant du pool.",
+    "explanation": "Sans « overload », la NAT dynamique réserve une adresse du pool à chaque hôte interne : le pool PUBLIC ne contient que six adresses (203.0.113.17 à 203.0.113.22), toutes allouées, et comme une traduction simple reste en place 24 heures d'inactivité par défaut, les autres hôtes échouent (compteur misses). Avec « overload », R1 fait de la PAT sur les adresses du pool et des milliers de sessions peuvent partager une même adresse. La PAT sur l'adresse de G0/1 règle aussi le problème, en se passant du pool. En pratique, on vide les traductions dynamiques existantes (« clear ip nat translation * ») avant de modifier la règle.",
     "distractorNotes": {
       "b": "Le nombre d'adresses du pool dépend de la plage de début et de fin, pas du masque, qui sert seulement à vérifier la cohérence de la plage.",
       "c": "Une partie des postes navigue déjà : le routage vers Internet fonctionne, c'est le pool qui est épuisé.",
@@ -303,7 +304,7 @@
         }
       }
     },
-    "explanation": "Sans argument, « ntp master » fait de R1 une source de temps faisant autorité, fondée sur son horloge interne, à la strate 8 par défaut. Un client NTP se place toujours une strate au-dessus de la source sur laquelle il est synchronisé : R2 annonce donc la strate 9 (« Clock is synchronized, stratum 9, reference is 10.0.12.1 »). Répondre 8 revient à confondre la strate du serveur et celle du client.",
+    "explanation": "Sans argument, « ntp master » fait de R1 une source de temps faisant autorité, fondée sur son horloge interne, à la strate 8 par défaut. La strate d'un client NTP vaut celle de la source sur laquelle il est synchronisé, plus 1 : R2 annonce donc la strate 9 (« Clock is synchronized, stratum 9, reference is 10.0.12.1 »). Répondre 8 revient à confondre la strate du serveur et celle du client.",
     "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
   },
   {
@@ -346,7 +347,7 @@
         "e"
       ]
     },
-    "explanation": "NTP s'appuie sur UDP, port 123, côté client comme côté serveur. La strate mesure la distance à l'horloge de référence : un serveur de strate 1 y est directement relié et chaque niveau de synchronisation supplémentaire ajoute 1. Plus la strate est faible, plus la source est réputée précise.",
+    "explanation": "NTP s'appuie sur UDP : le serveur écoute sur le port 123 (IOS l'utilise aussi comme port source). La strate mesure la distance à l'horloge de référence : un serveur de strate 1 y est directement relié et chaque niveau de synchronisation supplémentaire ajoute 1. Plus la strate est faible, plus la source est réputée précise.",
     "distractorNotes": {
       "a": "« ntp server 192.0.2.10 » fait au contraire du routeur un client qui se synchronise sur 192.0.2.10.",
       "c": "NTP échange l'heure en UTC ; le fuseau horaire se règle localement, avec « clock timezone » sur IOS.",
@@ -362,13 +363,19 @@
     "difficulty": "medium",
     "body": {
       "type": "cli",
-      "stem": "Sur R1, les adresses 192.168.30.1 à 192.168.30.10 sont déjà exclues. Depuis le mode de configuration globale, créez le pool DHCP nommé LAN30, puis, dans cet ordre, déclarez le réseau 192.168.30.0/24 avec son masque, la passerelle par défaut 192.168.30.1 et le serveur DNS 192.168.30.5.",
+      "stem": "Sur R1, les adresses 192.168.30.1 à 192.168.30.10 sont déjà exclues. Depuis le mode de configuration globale, créez le pool DHCP nommé LAN30, puis déclarez-y le réseau 192.168.30.0/24 avec son masque, la passerelle par défaut 192.168.30.1 et le serveur DNS 192.168.30.5.",
       "prompt": "R1(config)#",
       "lines": 4
     },
     "key": {
       "type": "cli",
       "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          3
+        ]
+      ],
       "commands": [
         [
           "ip dhcp pool LAN30"
@@ -385,7 +392,7 @@
         ]
       ]
     },
-    "explanation": "« ip dhcp pool LAN30 » crée le pool et fait passer en mode R1(dhcp-config)#. « network » définit le réseau distribué (masque en décimal pointé ou longueur de préfixe), « default-router » la passerelle (option 3) et « dns-server » le serveur DNS (option 6) transmis aux clients. Erreurs fréquentes : utiliser « default-gateway », qui est une commande globale de commutateur, ou saisir « ip dhcp excluded-address » dans le pool alors qu'elle se configure en mode global.",
+    "explanation": "« ip dhcp pool LAN30 » crée le pool et fait passer en mode R1(dhcp-config)#. « network » définit le réseau distribué (masque en décimal pointé ou longueur de préfixe), « default-router » la passerelle (option 3) et « dns-server » le serveur DNS (option 6) transmis aux clients. Les trois sous-commandes peuvent être saisies dans n'importe quel ordre. Erreurs fréquentes : taper « default-gateway » dans le pool, alors que la passerelle des clients se déclare avec « default-router » (« ip default-gateway » est une commande globale qui fixe la passerelle de l'équipement lui-même quand il ne route pas), ou saisir « ip dhcp excluded-address » dans le pool alors qu'elle se configure en mode global.",
     "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Server"
   },
   {
@@ -396,7 +403,7 @@
     "difficulty": "medium",
     "body": {
       "type": "ordering",
-      "stem": "Un PC doit joindre www.example.com. Ni le PC ni son serveur DNS, qui joue le rôle de résolveur récursif, n'ont ce nom en cache. Remettez dans l'ordre les étapes de la résolution.",
+      "stem": "Un PC doit joindre www.example.com. Son serveur DNS, qui joue le rôle de résolveur récursif, vient de démarrer : son cache est vide et il ne connaît que les serveurs racine. Le PC n'a pas non plus ce nom en cache. Remettez dans l'ordre les étapes de la résolution.",
       "items": [
         {
           "id": "tld",
@@ -511,7 +518,7 @@
     "difficulty": "hard",
     "body": {
       "type": "mcq_multi",
-      "stem": "Reportez-vous à l'exhibit. Après un incident sur le port Gi1/0/5, SW1 génère les messages proposés. Quels trois messages sont envoyés au serveur syslog 10.10.10.50 ?",
+      "stem": "Reportez-vous à l'exhibit. Au cours de la journée, SW1 génère les messages proposés. Quels trois messages sont envoyés au serveur syslog 10.10.10.50 ?",
       "exhibit": "SW1# show running-config | include logging\nlogging trap warnings\nlogging host 10.10.10.50",
       "selectCount": 3,
       "options": [
@@ -713,7 +720,7 @@
         }
       }
     },
-    "explanation": "Le DSCP occupe les 6 bits de poids fort de l'ancien octet ToS. EF, réservé à la voix, vaut 101110 en binaire, soit 46. Pour une classe AFxy, les trois premiers bits codent la classe x et les deux suivants la priorité de rejet y, le dernier bit restant à 0 : la valeur vaut 8x + 2y, donc AF31 = 24 + 2 = 26 (011010). À ne pas confondre avec AF41 (34) ni avec CS3 (24).",
+    "explanation": "Le DSCP occupe les 6 bits de poids fort de l'ancien octet ToS. EF, utilisé pour la voix, vaut 101110 en binaire, soit 46. Pour une classe AFxy, les trois premiers bits codent la classe x et les deux suivants la priorité de rejet y, le dernier bit restant à 0 : la valeur vaut 8x + 2y, donc AF31 = 24 + 2 = 26 (011010). À ne pas confondre avec AF41 (34) ni avec CS3 (24).",
     "reference": "RFC 2597 (AF) ; RFC 3246 (EF)"
   },
   {
@@ -784,7 +791,7 @@
         "wred": "early"
       }
     },
-    "explanation": "La classification range les paquets dans des classes, et le marquage écrit le résultat (DSCP sur 6 bits dans l'en-tête IP, CoS sur 3 bits dans l'étiquette 802.1Q) pour que les sauts suivants n'aient pas à reclasser. Le policing et le shaping limitent tous deux le débit : le premier rejette ou remarque l'excédent, le second le met en tampon, ce qui ajoute du délai mais évite les pertes. WRED évite la congestion en rejetant tôt et de façon sélective, plutôt que de subir le tail drop d'une file pleine.",
+    "explanation": "La classification range les paquets dans des classes, et le marquage écrit le résultat (DSCP sur 6 bits dans l'en-tête IP, CoS sur 3 bits dans l'étiquette 802.1Q) pour que les sauts suivants n'aient pas à reclasser. Le policing et le shaping limitent tous deux le débit : le premier rejette ou remarque l'excédent, le second le met en tampon, ce qui ajoute du délai mais réduit fortement les pertes. WRED évite la congestion en rejetant tôt et de façon sélective, plutôt que de subir le tail drop d'une file pleine.",
     "distractorNotes": {
       "prio": "Décrit LLQ, un mécanisme d'ordonnancement des files qui ne figure pas dans la colonne de gauche."
     },
@@ -838,13 +845,23 @@
     "difficulty": "medium",
     "body": {
       "type": "cli",
-      "stem": "Sur R1, le hostname et le nom de domaine sont déjà configurés. Depuis le mode de configuration globale, saisissez dans cet ordre : la génération d'une paire de clés RSA de 2048 bits ; l'activation de SSH en version 2 uniquement ; la création de l'utilisateur local admin avec le secret Cl3fSSH! ; l'entrée dans les lignes VTY 0 à 15 ; l'authentification par la base locale ; enfin, la restriction des connexions entrantes à SSH.",
+      "stem": "Sur R1, le hostname et le nom de domaine sont déjà configurés. Depuis le mode de configuration globale, générez d'abord une paire de clés RSA de 2048 bits. Ensuite, dans l'ordre de votre choix, activez SSH en version 2 uniquement et créez l'utilisateur local admin avec le secret Cl3fSSH!. Terminez par les lignes VTY 0 à 15 : authentification par la base locale et connexions entrantes limitées à SSH.",
       "prompt": "R1(config)#",
       "lines": 6
     },
     "key": {
       "type": "cli",
       "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ],
+        [
+          4,
+          5
+        ]
+      ],
       "commands": [
         [
           "crypto key generate rsa modulus 2048",
@@ -926,12 +943,12 @@
     "difficulty": "hard",
     "body": {
       "type": "mcq_single",
-      "stem": "Reportez-vous à l'exhibit. Sur ce routeur sous IOS 15, les administrateurs doivent se connecter exclusivement en SSHv2. Que faut-il faire ?",
-      "exhibit": "R1(config)# crypto key generate rsa modulus 512\nThe name for the keys will be: R1.example.com\n\n% The key modulus size is 512 bits\n% Generating 512 bit RSA keys, keys will be non-exportable...\n[OK] (elapsed time was 0 seconds)\n\nR1(config)# ip ssh version 2\nPlease create RSA keys (of atleast 768 bits size) to enable SSH v2.",
+      "stem": "Reportez-vous à l'exhibit. Sur ce routeur sous IOS 15, les administrateurs doivent se connecter exclusivement en SSHv2, mais leurs clients SSHv2 sont refusés. Que faut-il faire ?",
+      "exhibit": "R1(config)# crypto key generate rsa modulus 512\nThe name for the keys will be: R1.example.com\n\n% The key modulus size is 512 bits\n% Generating 512 bit RSA keys, keys will be non-exportable...\n[OK] (elapsed time was 0 seconds)\n\nR1# show ip ssh\nSSH Enabled - version 1.5\nAuthentication timeout: 120 secs; Authentication retries: 3",
       "options": [
         {
           "id": "a",
-          "text": "Ajouter « transport input ssh » sous « line vty 0 15 », puis saisir de nouveau « ip ssh version 2 »."
+          "text": "Ajouter « transport input ssh » sous « line vty 0 15 », puis saisir « ip ssh version 2 »."
         },
         {
           "id": "b",
@@ -939,7 +956,7 @@
         },
         {
           "id": "c",
-          "text": "Régénérer les clés RSA avec un modulus d'au moins 768 bits, puis saisir de nouveau « ip ssh version 2 »."
+          "text": "Régénérer les clés RSA avec un modulus d'au moins 768 bits, puis saisir « ip ssh version 2 »."
         },
         {
           "id": "d",
@@ -951,7 +968,7 @@
       "type": "mcq_single",
       "correct": "c"
     },
-    "explanation": "Le message indique que SSHv2 exige une clé RSA d'au moins 768 bits ; avec 512 bits, seul SSHv1 est possible et « ip ssh version 2 » est refusée. Il faut remplacer la paire de clés, par exemple avec « crypto key generate rsa modulus 2048 » (éventuellement après « crypto key zeroize rsa »), puis saisir de nouveau « ip ssh version 2 », qui désactive SSHv1.",
+    "explanation": "« show ip ssh » affiche la version 1.5 : SSHv2 exige une clé RSA d'au moins 768 bits, et avec 512 bits seul SSHv1 est possible (« ip ssh version 2 » serait d'ailleurs refusée). Il faut remplacer la paire de clés, par exemple avec « crypto key generate rsa modulus 2048 » (éventuellement après « crypto key zeroize rsa »), puis saisir « ip ssh version 2 », qui désactive SSHv1.",
     "distractorNotes": {
       "a": "« transport input ssh » filtre les protocoles acceptés sur les VTY ; il ne change rien à la taille de clé qui bloque SSHv2.",
       "b": "Le domaine est déjà défini : la paire de clés a été nommée R1.example.com.",
@@ -1056,6 +1073,6 @@
       "b": "« ip ftp passive » choisit le mode d'ouverture de la connexion de données ; il ne fournit aucun identifiant.",
       "d": "Sans « ip ftp username », IOS se présente en anonymous, ce que ce serveur refuse."
     },
-    "reference": "Configuration Fundamentals Configuration Guide (Cisco IOS XE), Using the Cisco IOS Integrated File System"
+    "reference": "Configuration Fundamentals Configuration Guide (Cisco IOS XE), Managing Configuration Files (Understanding the FTP Username and Password)"
   }
 ]
