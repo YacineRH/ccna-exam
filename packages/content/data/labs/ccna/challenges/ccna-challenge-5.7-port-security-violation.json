@@ -13,36 +13,81 @@
     {
       "id": "S1",
       "type": "switch",
-      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "interfaces": [
+        "FastEthernet0/1-24",
+        "GigabitEthernet0/1-2"
+      ],
       "startupConfig": "hostname S1\nno ip domain-lookup\nvlan 10\n name BUREAUX\ninterface FastEthernet0/5\n description Bureau cheffe de projet\n switchport mode access\n switchport access vlan 10\n switchport port-security\n switchport port-security mac-address sticky\n switchport port-security mac-address sticky 0050.7966.6801\ninterface GigabitEthernet0/1\n description Vers le coeur\n switchport mode trunk"
     }
   ],
   "objectives": [
     {
       "id": "fa05-deux-mac",
-      "description": "Le port-security reste actif sur Fa0/5 et y accepte au plus 2 adresses MAC.",
+      "description": "Fa0/5 reste protégé par le port-security, conformément à la politique : au plus 2 adresses MAC, apprises dynamiquement et conservées dans la configuration.",
       "check": {
         "type": "all",
         "checks": [
-          { "type": "line", "section": "interface FastEthernet0/5", "line": "switchport port-security" },
-          { "type": "line", "section": "interface FastEthernet0/5", "line": "switchport port-security maximum 2" }
+          {
+            "type": "line",
+            "section": "interface FastEthernet0/5",
+            "line": "switchport port-security"
+          },
+          {
+            "type": "line",
+            "section": "interface FastEthernet0/5",
+            "line": "switchport port-security maximum 2"
+          },
+          {
+            "type": "line",
+            "section": "interface FastEthernet0/5",
+            "line": "switchport port-security mac-address sticky"
+          }
         ]
       }
     },
     {
       "id": "fa05-restrict",
-      "description": "Une violation sur Fa0/5 rejette et journalise le trafic fautif, sans désactiver le port.",
-      "check": { "type": "line", "section": "interface FastEthernet0/5", "line": "switchport port-security violation restrict" }
+      "description": "Un équipement en trop sur Fa0/5 n'interrompt plus la prise : son trafic est rejeté et journalisé, les autres continuent de fonctionner.",
+      "check": {
+        "type": "line",
+        "section": "interface FastEthernet0/5",
+        "line": "switchport port-security violation restrict"
+      }
     },
     {
       "id": "fa05-reactive",
-      "description": "Fa0/5 a été sorti de l'état err-disabled à la main (désactivé puis réactivé) et reste actif.",
+      "description": "Fa0/5 est de nouveau en service, sans récupération automatique.",
       "check": {
         "type": "all",
         "checks": [
-          { "type": "command", "section": "interface FastEthernet0/5", "command": "shutdown" },
-          { "type": "command", "section": "interface FastEthernet0/5", "command": "no shutdown" },
-          { "type": "line", "section": "interface FastEthernet0/5", "line": "shutdown", "absent": true }
+          {
+            "type": "command",
+            "section": "interface FastEthernet0/5",
+            "command": "shutdown",
+            "after": [
+              "switchport port-security maximum 2",
+              "switchport port-security violation restrict"
+            ]
+          },
+          {
+            "type": "command",
+            "section": "interface FastEthernet0/5",
+            "command": "no shutdown",
+            "after": [
+              "shutdown"
+            ]
+          },
+          {
+            "type": "line",
+            "section": "interface FastEthernet0/5",
+            "line": "shutdown",
+            "absent": true
+          },
+          {
+            "type": "regex",
+            "pattern": "^errdisable recovery cause (all|psecure-violation)$",
+            "absent": true
+          }
         ]
       }
     }
@@ -101,40 +146,148 @@
       "solution": [
         {
           "device": "S1",
-          "commands": ["enable", "configure terminal", "interface fa0/5", "switchport port-security maximum 2", "switchport port-security violation protect", "shutdown", "no shutdown", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface fa0/5",
+            "switchport port-security maximum 2",
+            "switchport port-security violation protect",
+            "shutdown",
+            "no shutdown",
+            "end"
+          ]
         }
       ],
-      "failing": ["fa05-restrict"]
+      "failing": [
+        "fa05-restrict"
+      ]
     },
     {
       "description": "no shutdown seul : un port err-disabled ne repart pas sans shutdown préalable",
       "solution": [
         {
           "device": "S1",
-          "commands": ["enable", "configure terminal", "interface fa0/5", "switchport port-security maximum 2", "switchport port-security violation restrict", "no shutdown", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface fa0/5",
+            "switchport port-security maximum 2",
+            "switchport port-security violation restrict",
+            "no shutdown",
+            "end"
+          ]
         }
       ],
-      "failing": ["fa05-reactive"]
+      "failing": [
+        "fa05-reactive"
+      ]
     },
     {
       "description": "Port-security désactivé sur la prise pour « régler » le problème",
       "solution": [
         {
           "device": "S1",
-          "commands": ["enable", "configure terminal", "interface fa0/5", "no switchport port-security", "switchport port-security maximum 2", "switchport port-security violation restrict", "shutdown", "no shutdown", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface fa0/5",
+            "no switchport port-security",
+            "switchport port-security maximum 2",
+            "switchport port-security violation restrict",
+            "shutdown",
+            "no shutdown",
+            "end"
+          ]
         }
       ],
-      "failing": ["fa05-deux-mac"]
+      "failing": [
+        "fa05-deux-mac"
+      ]
     },
     {
       "description": "Port désactivé pour l'intervention, puis oublié en shutdown",
       "solution": [
         {
           "device": "S1",
-          "commands": ["enable", "configure terminal", "interface fa0/5", "shutdown", "switchport port-security maximum 2", "switchport port-security violation restrict", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface fa0/5",
+            "shutdown",
+            "switchport port-security maximum 2",
+            "switchport port-security violation restrict",
+            "end"
+          ]
         }
       ],
-      "failing": ["fa05-reactive"]
+      "failing": [
+        "fa05-reactive"
+      ]
+    },
+    {
+      "description": "Port réactivé avant de corriger la configuration : la violation se reproduit aussitôt",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface fa0/5",
+            "shutdown",
+            "no shutdown",
+            "switchport port-security maximum 2",
+            "switchport port-security violation restrict",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "fa05-reactive"
+      ]
+    },
+    {
+      "description": "Apprentissage sticky retiré : les adresses apprises ne sont plus conservées dans la configuration",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface fa0/5",
+            "no switchport port-security mac-address sticky",
+            "switchport port-security maximum 2",
+            "switchport port-security violation restrict",
+            "shutdown",
+            "no shutdown",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "fa05-deux-mac"
+      ]
+    },
+    {
+      "description": "Récupération automatique activée au lieu d'une réactivation manuelle",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "errdisable recovery cause psecure-violation",
+            "interface fa0/5",
+            "switchport port-security maximum 2",
+            "switchport port-security violation restrict",
+            "shutdown",
+            "no shutdown",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "fa05-reactive"
+      ]
     }
   ],
   "explanation": "Le port-security limite le nombre d'adresses MAC apprises sur un port d'accès : 1 par défaut. Avec sticky, les adresses apprises sont recopiées dans la configuration courante (switchport port-security mac-address sticky 0050.7966.6801). Le PC occupait déjà la seule place ; la première trame de l'imprimante, une deuxième adresse, a provoqué une violation. Le mode par défaut, shutdown, place alors le port en err-disabled et coupe tous les équipements de la prise. La politique demande maximum 2 et le mode restrict, qui rejette les trames des adresses en trop, incrémente le compteur de violations et envoie un message syslog, tout en laissant le port actif ; protect rejette aussi, mais sans journaliser. Corriger la configuration ne suffit pas : un port err-disabled le reste jusqu'à une intervention, soit shutdown puis no shutdown sur l'interface (un no shutdown seul n'a aucun effet sur un port qui n'est pas administrativement désactivé), soit une récupération automatique (errdisable recovery cause psecure-violation, au bout de 300 s par défaut), que la consigne exclut. On réactive après avoir corrigé la configuration, sinon la violation se reproduit aussitôt. Désactiver le port-security réglerait le symptôme en violant la politique. Vérifications : show port-security interface fa0/5 (Port Status « Secure-up », Maximum MAC Addresses 2, Violation Mode Restrict), show port-security address, show interfaces status.",

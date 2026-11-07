@@ -13,7 +13,10 @@
     {
       "id": "S1",
       "type": "switch",
-      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "interfaces": [
+        "FastEthernet0/1-24",
+        "GigabitEthernet0/1-2"
+      ],
       "startupConfig": "hostname S1\nno ip domain-lookup"
     }
   ],
@@ -24,8 +27,18 @@
       "check": {
         "type": "all",
         "checks": [
-          { "type": "line", "section": "vlan 10", "line": "name VENTES" },
-          { "type": "line", "section": "vlan 20", "line": "name COMPTA" }
+          {
+            "type": "regex",
+            "section": "vlan 10",
+            "pattern": "^name VENTES$",
+            "caseSensitive": true
+          },
+          {
+            "type": "regex",
+            "section": "vlan 20",
+            "pattern": "^name COMPTA$",
+            "caseSensitive": true
+          }
         ]
       }
     },
@@ -35,8 +48,18 @@
       "check": {
         "type": "all",
         "checks": [
-          { "type": "line", "sectionPattern": "^interface FastEthernet0/([1-9]|10)$", "sections": "all", "line": "switchport mode access" },
-          { "type": "line", "sectionPattern": "^interface FastEthernet0/([1-9]|10)$", "sections": "all", "line": "switchport access vlan 10" }
+          {
+            "type": "line",
+            "sectionPattern": "^interface FastEthernet0/([1-9]|10)$",
+            "sections": "all",
+            "line": "switchport mode access"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^interface FastEthernet0/([1-9]|10)$",
+            "sections": "all",
+            "line": "switchport access vlan 10"
+          }
         ]
       }
     },
@@ -46,8 +69,18 @@
       "check": {
         "type": "all",
         "checks": [
-          { "type": "line", "sectionPattern": "^interface FastEthernet0/(1[1-9]|20)$", "sections": "all", "line": "switchport mode access" },
-          { "type": "line", "sectionPattern": "^interface FastEthernet0/(1[1-9]|20)$", "sections": "all", "line": "switchport access vlan 20" }
+          {
+            "type": "line",
+            "sectionPattern": "^interface FastEthernet0/(1[1-9]|20)$",
+            "sections": "all",
+            "line": "switchport mode access"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^interface FastEthernet0/(1[1-9]|20)$",
+            "sections": "all",
+            "line": "switchport access vlan 20"
+          }
         ]
       }
     },
@@ -57,17 +90,41 @@
       "check": {
         "type": "all",
         "checks": [
-          { "type": "line", "section": "vlan 999", "line": "name PARKING" },
-          { "type": "line", "sectionPattern": "^interface FastEthernet0/2[1-4]$", "sections": "all", "line": "switchport mode access" },
-          { "type": "line", "sectionPattern": "^interface FastEthernet0/2[1-4]$", "sections": "all", "line": "switchport access vlan 999" },
-          { "type": "line", "sectionPattern": "^interface FastEthernet0/2[1-4]$", "sections": "all", "line": "shutdown" }
+          {
+            "type": "regex",
+            "section": "vlan 999",
+            "pattern": "^name PARKING$",
+            "caseSensitive": true
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^interface FastEthernet0/2[1-4]$",
+            "sections": "all",
+            "line": "switchport mode access"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^interface FastEthernet0/2[1-4]$",
+            "sections": "all",
+            "line": "switchport access vlan 999"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^interface FastEthernet0/2[1-4]$",
+            "sections": "all",
+            "line": "shutdown"
+          }
         ]
       }
     },
     {
       "id": "lien-montant",
       "description": "Gi0/1, le lien montant vers le cœur, est un trunk statique.",
-      "check": { "type": "line", "section": "interface GigabitEthernet0/1", "line": "switchport mode trunk" }
+      "check": {
+        "type": "line",
+        "section": "interface GigabitEthernet0/1",
+        "line": "switchport mode trunk"
+      }
     }
   ],
   "hints": [],
@@ -198,7 +255,10 @@
           ]
         }
       ],
-      "failing": ["ports-ventes", "ports-compta"]
+      "failing": [
+        "ports-ventes",
+        "ports-compta"
+      ]
     },
     {
       "description": "Plages décalées d'un port : Fa0/10 se retrouve dans le VLAN 20",
@@ -218,7 +278,9 @@
           ]
         }
       ],
-      "failing": ["ports-ventes"]
+      "failing": [
+        "ports-ventes"
+      ]
     },
     {
       "description": "Ports inutilisés rangés dans le VLAN 999 mais laissés actifs",
@@ -238,7 +300,32 @@
           ]
         }
       ],
-      "failing": ["ports-parking"]
+      "failing": [
+        "ports-parking"
+      ]
+    },
+    {
+      "description": "Noms de VLAN saisis en minuscules",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "vlan 10",
+            "name ventes",
+            "vlan 20",
+            "name compta",
+            "vlan 999",
+            "name parking",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "vlans-metier",
+        "ports-parking"
+      ]
     }
   ],
   "explanation": "Un VLAN se crée par vlan <id> et se nomme par name dans le sous-mode ; switchport access vlan crée aussi le VLAN s'il n'existe pas (« % Access VLAN does not exist. Creating vlan … »), mais sans nom. interface range applique les mêmes commandes à une plage (fa0/1 - 10) ou à une liste de plages séparées par des virgules : c'est le gain de temps décisif de ce challenge. switchport mode access fixe le port en accès : sans elle, un 2960 laisse ses ports en dynamic auto, et un équipement qui négocie DTP pourrait en faire un trunk. Les ports inutilisés sont rangés dans un VLAN dédié sans usage (ici 999, pas le VLAN 1) et désactivés par shutdown : une prise brassée par erreur ne donne alors accès à rien. Enfin, switchport mode trunk fixe le lien montant en trunk 802.1Q sans dépendre de la négociation. Vérifications : show vlan brief (ports par VLAN), show interfaces status (Fa0/21 à 24 « disabled »), show interfaces trunk.",

@@ -13,14 +13,16 @@
     {
       "id": "R1",
       "type": "router",
-      "interfaces": ["GigabitEthernet0/0/0-2"],
+      "interfaces": [
+        "GigabitEthernet0/0/0-2"
+      ],
       "startupConfig": "hostname R1\nno ip domain-lookup\naccess-list 110 permit tcp 192.168.10.0 0.0.0.255 host 10.0.0.10 eq www\naccess-list 110 deny ip 192.168.10.0 0.0.0.255 host 10.0.0.10\naccess-list 110 permit tcp 192.168.10.0 0.0.0.255 host 10.0.0.10 eq 443\ninterface GigabitEthernet0/0/0\n description LAN utilisateurs\n ip address 192.168.10.1 255.255.255.0\n ip access-group 110 out\n no shutdown\ninterface GigabitEthernet0/0/1\n description Ferme de serveurs\n ip address 10.0.0.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/2\n description WAN\n ip address 198.51.100.2 255.255.255.252\n no shutdown\nip route 0.0.0.0 0.0.0.0 198.51.100.1"
     }
   ],
   "objectives": [
     {
-      "id": "web-avant-refus",
-      "description": "L'ACL 110 autorise HTTP (TCP 80) et HTTPS (TCP 443) du LAN vers le serveur 10.0.0.10 avant de refuser le reste du trafic vers ce serveur.",
+      "id": "web-serveur",
+      "description": "Depuis le LAN utilisateurs, le serveur intranet 10.0.0.10 est joignable en HTTP (TCP 80) et en HTTPS (TCP 443).",
       "check": {
         "type": "all",
         "checks": [
@@ -39,31 +41,86 @@
               "^permit tcp (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0) eq 443( log)?$",
               "^deny ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0)( log)?$"
             ]
+          },
+          {
+            "type": "sequence",
+            "section": "ip access-list extended 110",
+            "patterns": [
+              "^deny ",
+              "^permit tcp (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0) eq (80|www)( log)?$"
+            ],
+            "absent": true
+          },
+          {
+            "type": "sequence",
+            "section": "ip access-list extended 110",
+            "patterns": [
+              "^deny ",
+              "^permit tcp (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0) eq 443( log)?$"
+            ],
+            "absent": true
           }
         ]
       }
     },
     {
-      "id": "reste-autorise",
-      "description": "Après le refus vers le serveur, l'ACL 110 laisse passer tout le reste du trafic du LAN (ferme de serveurs, WAN).",
+      "id": "reste-filtre",
+      "description": "Tout autre trafic du LAN vers le serveur 10.0.0.10 est refusé, alors que le reste du trafic du LAN (ferme de serveurs, WAN) passe.",
       "check": {
-        "type": "sequence",
-        "section": "ip access-list extended 110",
-        "patterns": [
-          "^deny ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0)( log)?$",
-          "^permit ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) any( log)?$"
+        "type": "all",
+        "checks": [
+          {
+            "type": "sequence",
+            "section": "ip access-list extended 110",
+            "patterns": [
+              "^deny ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0)( log)?$",
+              "^permit ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) any( log)?$"
+            ]
+          },
+          {
+            "type": "sequence",
+            "section": "ip access-list extended 110",
+            "patterns": [
+              "^permit ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (any|host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0)( log)?$",
+              "^deny ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) (host 10\\.0\\.0\\.10|10\\.0\\.0\\.10 0\\.0\\.0\\.0)( log)?$"
+            ],
+            "absent": true
+          },
+          {
+            "type": "sequence",
+            "section": "ip access-list extended 110",
+            "patterns": [
+              "^deny ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) any( log)?$",
+              "^permit ip (any|192\\.168\\.10\\.0 0\\.0\\.0\\.255) any( log)?$"
+            ],
+            "absent": true
+          }
         ]
       }
     },
     {
-      "id": "filtre-entrant-lan",
-      "description": "L'ACL 110 filtre le trafic qui entre dans R1 par l'interface du LAN utilisateurs, et seulement celui-là.",
+      "id": "filtre-pres-source",
+      "description": "L'ACL 110 est appliquée une seule fois sur R1, au plus près de la source du trafic qu'elle doit filtrer, dans le sens qui convient.",
       "check": {
         "type": "all",
         "checks": [
-          { "type": "line", "section": "interface GigabitEthernet0/0/0", "line": "ip access-group 110 in" },
-          { "type": "line", "section": "interface GigabitEthernet0/0/0", "line": "ip access-group 110 out", "absent": true },
-          { "type": "regex", "sectionPattern": "^interface GigabitEthernet0/0/[12]$", "pattern": "^ip access-group 110 ", "absent": true }
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "ip access-group 110 in"
+          },
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "ip access-group 110 out",
+            "absent": true
+          },
+          {
+            "type": "regex",
+            "sectionPattern": "^interface GigabitEthernet0/0/[12]$",
+            "pattern": "^ip access-group 110 ",
+            "absent": true
+          }
         ]
       }
     }
@@ -163,7 +220,9 @@
           ]
         }
       ],
-      "failing": ["web-avant-refus"]
+      "failing": [
+        "web-serveur"
+      ]
     },
     {
       "description": "ip access-group 110 in ajouté sans retirer l'application en sortie",
@@ -183,7 +242,9 @@
           ]
         }
       ],
-      "failing": ["filtre-entrant-lan"]
+      "failing": [
+        "filtre-pres-source"
+      ]
     },
     {
       "description": "ACL déplacée en entrée sur l'interface de la ferme de serveurs, loin de la source",
@@ -205,7 +266,9 @@
           ]
         }
       ],
-      "failing": ["filtre-entrant-lan"]
+      "failing": [
+        "filtre-pres-source"
+      ]
     },
     {
       "description": "no access-list 110 permit … pour retirer une seule entrée : c'est toute l'ACL 110 qui disparaît",
@@ -224,7 +287,83 @@
           ]
         }
       ],
-      "failing": ["web-avant-refus"]
+      "failing": [
+        "web-serveur"
+      ]
+    },
+    {
+      "description": "Entrée 20 laissée en place, nouveau refus ajouté en fin de liste : le HTTPS reste bloqué par l'entrée 20",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended 110",
+            "40 deny ip 192.168.10.0 0.0.0.255 host 10.0.0.10",
+            "50 permit ip 192.168.10.0 0.0.0.255 any",
+            "exit",
+            "interface g0/0/0",
+            "no ip access-group 110 out",
+            "ip access-group 110 in",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "web-serveur"
+      ]
+    },
+    {
+      "description": "5 deny ip any any ajouté en tête : plus rien ne passe",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended 110",
+            "5 deny ip any any",
+            "15 permit tcp 192.168.10.0 0.0.0.255 host 10.0.0.10 eq 443",
+            "no 30",
+            "40 permit ip 192.168.10.0 0.0.0.255 any",
+            "exit",
+            "interface g0/0/0",
+            "no ip access-group 110 out",
+            "ip access-group 110 in",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "web-serveur",
+        "reste-filtre"
+      ]
+    },
+    {
+      "description": "permit ip any any ajouté en tête : le serveur devient joignable sur tous ses services",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip access-list extended 110",
+            "5 permit ip any any",
+            "15 permit tcp 192.168.10.0 0.0.0.255 host 10.0.0.10 eq 443",
+            "no 30",
+            "40 permit ip 192.168.10.0 0.0.0.255 any",
+            "exit",
+            "interface g0/0/0",
+            "no ip access-group 110 out",
+            "ip access-group 110 in",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "reste-filtre"
+      ]
     }
   ],
   "explanation": "Trois erreurs se cumulaient. 1) Mauvais sens : appliquée en sortie (out) sur G0/0/0, l'ACL voyait le trafic qui va vers le LAN, c'est-à-dire les réponses des serveurs et du WAN. Leur adresse source n'est jamais dans 192.168.10.0/24 : aucune entrée ne correspond et le deny any implicite, à la fin de toute ACL, les rejette toutes. Une ACL étendue se place au plus près de la source, donc en entrée (in) sur l'interface du LAN : no ip access-group 110 out, puis ip access-group 110 in. Ajouter in sans retirer out laisse le filtre en sortie actif : une interface accepte une ACL par sens. 2) Mauvais ordre : une ACL est lue de haut en bas et s'arrête à la première correspondance. Le refus 20 (deny ip vers 10.0.0.10) capture le HTTPS avant l'autorisation 30, qui n'est jamais atteinte. On insère l'autorisation avant le refus grâce aux numéros de séquence (ip access-list extended 110, puis 15 permit …, et no 30 pour retirer l'entrée inutile), ou on déplace le refus après elle. Une entrée saisie sans numéro est ajoutée en fin de liste, donc toujours après le refus. 3) Pas d'autorisation finale : sans permit ip 192.168.10.0 0.0.0.255 any (ou permit ip any any) après le refus, le deny any implicite bloque aussi la ferme et le WAN. Piège classique : no access-list 110 suivi d'une entrée supprime toute l'ACL numérotée, pas seulement cette ligne ; pour retirer une seule entrée, on passe par ip access-list extended 110 et no <séquence>. Vérifications : show access-lists 110 (ordre et compteurs de correspondances), show ip interface g0/0/0 (« Inbound access list is 110 », « Outgoing access list is not set »).",

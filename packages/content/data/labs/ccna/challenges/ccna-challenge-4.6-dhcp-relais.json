@@ -13,41 +13,67 @@
     {
       "id": "R1",
       "type": "router",
-      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "interfaces": [
+        "GigabitEthernet0/0/0-1"
+      ],
       "startupConfig": "hostname R1\nno ip domain-lookup\nip dhcp excluded-address 192.168.10.1 192.168.10.10\nip dhcp excluded-address 192.168.20.1 192.168.20.10\nip dhcp pool LAN10\n network 192.168.10.0 255.255.255.0\n default-router 192.168.10.1\n dns-server 192.168.10.5\nip dhcp pool LAN20\n network 192.168.2.0 255.255.255.0\n default-router 192.168.10.1\n dns-server 192.168.10.5\ninterface GigabitEthernet0/0/0\n description LAN 10\n ip address 192.168.10.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers R2\n ip address 10.0.12.1 255.255.255.252\n no shutdown\nip route 192.168.20.0 255.255.255.0 10.0.12.2"
     },
     {
       "id": "R2",
       "type": "router",
-      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "interfaces": [
+        "GigabitEthernet0/0/0-1"
+      ],
       "startupConfig": "hostname R2\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN 20\n ip address 192.168.20.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers R1\n ip address 10.0.12.2 255.255.255.252\n no shutdown\nip route 0.0.0.0 0.0.0.0 10.0.12.1"
     }
   ],
   "objectives": [
     {
       "id": "r2-relais",
-      "description": "R2 relaie vers le serveur DHCP (R1) les requêtes diffusées par les postes du LAN 20.",
+      "description": "Les demandes DHCP des postes du LAN 20 parviennent au serveur DHCP, R1.",
       "check": {
         "type": "line",
         "device": "R2",
         "section": "interface GigabitEthernet0/0/0",
-        "line": ["ip helper-address 10.0.12.1", "ip helper-address 192.168.10.1"]
+        "line": [
+          "ip helper-address 10.0.12.1",
+          "ip helper-address 192.168.10.1"
+        ]
       }
     },
     {
       "id": "pool-reseau",
-      "description": "Le pool LAN20 de R1 distribue des adresses du réseau 192.168.20.0/24.",
+      "description": "Le pool LAN20 attribue aux postes du LAN 20 des adresses de leur réseau, 192.168.20.0/24.",
       "check": {
         "type": "line",
         "device": "R1",
         "section": "ip dhcp pool LAN20",
-        "line": ["network 192.168.20.0 255.255.255.0", "network 192.168.20.0 /24"]
+        "line": [
+          "network 192.168.20.0 255.255.255.0",
+          "network 192.168.20.0 /24"
+        ]
       }
     },
     {
       "id": "pool-passerelle",
-      "description": "Le pool LAN20 donne aux postes la passerelle 192.168.20.1, l'adresse de R2 sur le LAN 20.",
-      "check": { "type": "line", "device": "R1", "section": "ip dhcp pool LAN20", "line": "default-router 192.168.20.1" }
+      "description": "Le pool LAN20 donne aux postes une passerelle joignable depuis leur LAN (R2, 192.168.20.1) et le DNS 192.168.10.5.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "device": "R1",
+            "section": "ip dhcp pool LAN20",
+            "line": "default-router 192.168.20.1"
+          },
+          {
+            "type": "line",
+            "device": "R1",
+            "section": "ip dhcp pool LAN20",
+            "line": "dns-server 192.168.10.5"
+          }
+        ]
+      }
     }
   ],
   "hints": [],
@@ -64,7 +90,13 @@
   "solution": [
     {
       "device": "R2",
-      "commands": ["enable", "configure terminal", "interface GigabitEthernet0/0/0", "ip helper-address 10.0.12.1", "end"]
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface GigabitEthernet0/0/0",
+        "ip helper-address 10.0.12.1",
+        "end"
+      ]
     },
     {
       "device": "R1",
@@ -84,11 +116,24 @@
       "solution": [
         {
           "device": "R1",
-          "commands": ["en", "conf t", "ip dhcp pool LAN20", "default-router 192.168.20.1", "network 192.168.20.0 /24", "\u001a"]
+          "commands": [
+            "en",
+            "conf t",
+            "ip dhcp pool LAN20",
+            "default-router 192.168.20.1",
+            "network 192.168.20.0 /24",
+            "\u001a"
+          ]
         },
         {
           "device": "R2",
-          "commands": ["en", "conf t", "int g0/0/0", "ip helper-address 192.168.10.1", "\u001a"]
+          "commands": [
+            "en",
+            "conf t",
+            "int g0/0/0",
+            "ip helper-address 192.168.10.1",
+            "\u001a"
+          ]
         }
       ]
     },
@@ -110,7 +155,13 @@
         },
         {
           "device": "R2",
-          "commands": ["enable", "configure terminal", "interface gigabitethernet 0/0/0", "ip helper-address 10.0.12.1", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface gigabitethernet 0/0/0",
+            "ip helper-address 10.0.12.1",
+            "end"
+          ]
         }
       ]
     }
@@ -121,48 +172,126 @@
       "solution": [
         {
           "device": "R2",
-          "commands": ["enable", "configure terminal", "interface g0/0/1", "ip helper-address 10.0.12.1", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/1",
+            "ip helper-address 10.0.12.1",
+            "end"
+          ]
         },
         {
           "device": "R1",
-          "commands": ["enable", "configure terminal", "ip dhcp pool LAN20", "network 192.168.20.0 255.255.255.0", "default-router 192.168.20.1", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp pool LAN20",
+            "network 192.168.20.0 255.255.255.0",
+            "default-router 192.168.20.1",
+            "end"
+          ]
         }
       ],
-      "failing": ["r2-relais"]
+      "failing": [
+        "r2-relais"
+      ]
     },
     {
       "description": "Relais configuré sur R1, le serveur, au lieu de R2",
       "solution": [
         {
           "device": "R1",
-          "commands": ["enable", "configure terminal", "interface g0/0/1", "ip helper-address 10.0.12.1", "ip dhcp pool LAN20", "network 192.168.20.0 255.255.255.0", "default-router 192.168.20.1", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/1",
+            "ip helper-address 10.0.12.1",
+            "ip dhcp pool LAN20",
+            "network 192.168.20.0 255.255.255.0",
+            "default-router 192.168.20.1",
+            "end"
+          ]
         }
       ],
-      "failing": ["r2-relais"]
+      "failing": [
+        "r2-relais"
+      ]
     },
     {
       "description": "ip helper-address pointant vers l'adresse de R2 lui-même",
       "solution": [
         {
           "device": "R2",
-          "commands": ["enable", "configure terminal", "interface g0/0/0", "ip helper-address 10.0.12.2", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "ip helper-address 10.0.12.2",
+            "end"
+          ]
         }
       ],
-      "failing": ["r2-relais"]
+      "failing": [
+        "r2-relais"
+      ]
     },
     {
       "description": "Réseau du pool corrigé, mais passerelle laissée sur 192.168.10.1",
       "solution": [
         {
           "device": "R2",
-          "commands": ["enable", "configure terminal", "interface g0/0/0", "ip helper-address 10.0.12.1", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "ip helper-address 10.0.12.1",
+            "end"
+          ]
         },
         {
           "device": "R1",
-          "commands": ["enable", "configure terminal", "ip dhcp pool LAN20", "network 192.168.20.0 255.255.255.0", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp pool LAN20",
+            "network 192.168.20.0 255.255.255.0",
+            "end"
+          ]
         }
       ],
-      "failing": ["pool-passerelle"]
+      "failing": [
+        "pool-passerelle"
+      ]
+    },
+    {
+      "description": "Serveur DNS du pool LAN20 remplacé par un DNS public",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "ip helper-address 10.0.12.1",
+            "end"
+          ]
+        },
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp pool LAN20",
+            "network 192.168.20.0 255.255.255.0",
+            "default-router 192.168.20.1",
+            "dns-server 8.8.8.8",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "pool-passerelle"
+      ]
     }
   ],
   "explanation": "Trois pannes s'additionnaient. 1) Pas de relais sur R2 : un client DHCP émet son DHCPDISCOVER en diffusion (255.255.255.255), et un routeur ne relaie pas les diffusions. La commande ip helper-address 10.0.12.1 sur l'interface qui reçoit ces diffusions, G0/0/0 côté LAN 20, transforme la requête en unicast vers le serveur, avec le champ giaddr renseigné à 192.168.20.1 (toute adresse de R1 joignable, comme 192.168.10.1, convient aussi). Placée sur G0/0/1, ou sur R1, elle ne voit jamais les requêtes du LAN 20. 2) Réseau du pool erroné : le serveur choisit le pool dont le réseau contient le giaddr. Avec network 192.168.2.0 255.255.255.0, aucun pool ne contient 192.168.20.1 et R1 ne répond pas. La commande network remplace l'ancienne valeur du pool. 3) Passerelle erronée : default-router 192.168.10.1 (copiée du pool LAN10) n'est pas dans le LAN 20 ; les postes obtiendraient une adresse mais aucune passerelle joignable. Il faut default-router 192.168.20.1. La route statique de R1 vers 192.168.20.0/24 était déjà là : elle permet au serveur de renvoyer ses réponses vers le relais. Vérifications : show ip dhcp binding et show ip dhcp server statistics sur R1, show ip interface g0/0/0 sur R2 (« Helper address is 10.0.12.1 »), ipconfig /all sur un poste.",

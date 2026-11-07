@@ -13,48 +13,114 @@
     {
       "id": "S1",
       "type": "switch",
-      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "interfaces": [
+        "FastEthernet0/1-24",
+        "GigabitEthernet0/1-2"
+      ],
       "startupConfig": "hostname S1\nno ip domain-lookup\nvlan 10\n name VENTES\nvlan 20\n name COMPTA\nvlan 99\n name NATIF\ninterface FastEthernet0/23\n description Serveur VENTES\n switchport mode access\n switchport access vlan 10\ninterface FastEthernet0/24\n description Serveur COMPTA\n switchport mode access\n switchport access vlan 20\ninterface GigabitEthernet0/1\n description Trunk vers S2\n switchport mode trunk\n switchport trunk native vlan 99\n switchport trunk allowed vlan 10,99\n switchport nonegotiate"
     },
     {
       "id": "S2",
       "type": "switch",
-      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "interfaces": [
+        "FastEthernet0/1-24",
+        "GigabitEthernet0/1-2"
+      ],
       "startupConfig": "hostname S2\nno ip domain-lookup\nvlan 10\n name VENTES\nvlan 20\n name COMPTA\nvlan 99\n name NATIF\ninterface FastEthernet0/1\n description PC VENTES\n switchport mode access\n switchport access vlan 10\ninterface FastEthernet0/2\n description PC COMPTA\n switchport mode access\n switchport access vlan 20\ninterface FastEthernet0/3\n description Imprimante COMPTA\n switchport mode access\n switchport access vlan 20\n shutdown\ninterface GigabitEthernet0/1\n description Trunk vers S1\n switchport mode trunk\n switchport trunk allowed vlan 10,20,99\n switchport nonegotiate"
     }
   ],
   "objectives": [
     {
-      "id": "vlan-natif-99",
-      "description": "Le trunk Gi0/1 entre S1 et S2 utilise le même VLAN natif, le VLAN 99, des deux côtés.",
+      "id": "trunk-politique",
+      "description": "Le lien Gi0/1 entre S1 et S2 respecte la politique : trunk 802.1Q statique, sans DTP, VLAN natif 99 aux deux extrémités.",
       "check": {
         "type": "all",
         "checks": [
-          { "type": "line", "device": "S1", "section": "interface GigabitEthernet0/1", "line": "switchport trunk native vlan 99" },
-          { "type": "line", "device": "S2", "section": "interface GigabitEthernet0/1", "line": "switchport trunk native vlan 99" }
+          {
+            "type": "line",
+            "device": "S1",
+            "section": "interface GigabitEthernet0/1",
+            "line": "switchport mode trunk"
+          },
+          {
+            "type": "line",
+            "device": "S1",
+            "section": "interface GigabitEthernet0/1",
+            "line": "switchport nonegotiate"
+          },
+          {
+            "type": "line",
+            "device": "S1",
+            "section": "interface GigabitEthernet0/1",
+            "line": "switchport trunk native vlan 99"
+          },
+          {
+            "type": "line",
+            "device": "S2",
+            "section": "interface GigabitEthernet0/1",
+            "line": "switchport mode trunk"
+          },
+          {
+            "type": "line",
+            "device": "S2",
+            "section": "interface GigabitEthernet0/1",
+            "line": "switchport nonegotiate"
+          },
+          {
+            "type": "line",
+            "device": "S2",
+            "section": "interface GigabitEthernet0/1",
+            "line": "switchport trunk native vlan 99"
+          }
         ]
       }
     },
     {
-      "id": "vlans-autorises",
-      "description": "Des deux côtés, le trunk transporte les VLAN 10, 20 et 99, et eux seuls.",
+      "id": "vlans-transportes",
+      "description": "Le trafic des VLAN 10, 20 et 99, et seulement celui-là, traverse le trunk entre S1 et S2.",
       "check": {
         "type": "all",
         "checks": [
-          { "type": "line", "device": "S1", "section": "interface GigabitEthernet0/1", "line": "switchport trunk allowed vlan 10,20,99" },
-          { "type": "line", "device": "S2", "section": "interface GigabitEthernet0/1", "line": "switchport trunk allowed vlan 10,20,99" }
+          {
+            "type": "line",
+            "device": "S1",
+            "section": "interface GigabitEthernet0/1",
+            "line": "switchport trunk allowed vlan 10,20,99"
+          },
+          {
+            "type": "line",
+            "device": "S2",
+            "section": "interface GigabitEthernet0/1",
+            "line": "switchport trunk allowed vlan 10,20,99"
+          }
         ]
       }
     },
     {
-      "id": "imprimante-active",
-      "description": "Le port Fa0/3 de S2 (imprimante COMPTA) est actif, en accès statique dans le VLAN 20.",
+      "id": "imprimante-en-service",
+      "description": "L'imprimante COMPTA de S2 (Fa0/3) a de nouveau accès au réseau, dans le VLAN 20.",
       "check": {
         "type": "all",
         "checks": [
-          { "type": "line", "device": "S2", "section": "interface FastEthernet0/3", "line": "shutdown", "absent": true },
-          { "type": "line", "device": "S2", "section": "interface FastEthernet0/3", "line": "switchport mode access" },
-          { "type": "line", "device": "S2", "section": "interface FastEthernet0/3", "line": "switchport access vlan 20" }
+          {
+            "type": "line",
+            "device": "S2",
+            "section": "interface FastEthernet0/3",
+            "line": "shutdown",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "device": "S2",
+            "section": "interface FastEthernet0/3",
+            "line": "switchport mode access"
+          },
+          {
+            "type": "line",
+            "device": "S2",
+            "section": "interface FastEthernet0/3",
+            "line": "switchport access vlan 20"
+          }
         ]
       }
     }
@@ -100,11 +166,25 @@
       "solution": [
         {
           "device": "S1",
-          "commands": ["en", "conf t", "int g0/1", "sw tr al vl 10,20,99", "\u001a"]
+          "commands": [
+            "en",
+            "conf t",
+            "int g0/1",
+            "sw tr al vl 10,20,99",
+            "\u001a"
+          ]
         },
         {
           "device": "S2",
-          "commands": ["en", "conf t", "int fa0/3", "no shut", "int gi0/1", "sw tr nat vl 99", "\u001a"]
+          "commands": [
+            "en",
+            "conf t",
+            "int fa0/3",
+            "no shut",
+            "int gi0/1",
+            "sw tr nat vl 99",
+            "\u001a"
+          ]
         }
       ]
     },
@@ -113,11 +193,26 @@
       "solution": [
         {
           "device": "S1",
-          "commands": ["enable", "configure terminal", "interface GigabitEthernet 0/1", "switchport trunk allowed vlan 99,20,10", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface GigabitEthernet 0/1",
+            "switchport trunk allowed vlan 99,20,10",
+            "end"
+          ]
         },
         {
           "device": "S2",
-          "commands": ["enable", "configure terminal", "interface range fa0/3", "no shutdown", "exit", "interface g0/1", "switchport trunk native vlan 99", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface range fa0/3",
+            "no shutdown",
+            "exit",
+            "interface g0/1",
+            "switchport trunk native vlan 99",
+            "end"
+          ]
         }
       ]
     }
@@ -128,52 +223,141 @@
       "solution": [
         {
           "device": "S1",
-          "commands": ["enable", "configure terminal", "interface GigabitEthernet0/1", "no switchport trunk native vlan 99", "switchport trunk allowed vlan add 20", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface GigabitEthernet0/1",
+            "no switchport trunk native vlan 99",
+            "switchport trunk allowed vlan add 20",
+            "end"
+          ]
         },
         {
           "device": "S2",
-          "commands": ["enable", "configure terminal", "interface FastEthernet0/3", "no shutdown", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface FastEthernet0/3",
+            "no shutdown",
+            "end"
+          ]
         }
       ],
-      "failing": ["vlan-natif-99"]
+      "failing": [
+        "trunk-politique"
+      ]
     },
     {
       "description": "switchport trunk allowed vlan 20 sans add sur S1 : la liste ne contient plus que le VLAN 20",
       "solution": [
         {
           "device": "S1",
-          "commands": ["enable", "configure terminal", "interface GigabitEthernet0/1", "switchport trunk allowed vlan 20", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface GigabitEthernet0/1",
+            "switchport trunk allowed vlan 20",
+            "end"
+          ]
         },
         {
           "device": "S2",
-          "commands": ["enable", "configure terminal", "interface GigabitEthernet0/1", "switchport trunk native vlan 99", "interface FastEthernet0/3", "no shutdown", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface GigabitEthernet0/1",
+            "switchport trunk native vlan 99",
+            "interface FastEthernet0/3",
+            "no shutdown",
+            "end"
+          ]
         }
       ],
-      "failing": ["vlans-autorises"]
+      "failing": [
+        "vlans-transportes"
+      ]
     },
     {
       "description": "Port de l'imprimante réactivé sur S1 au lieu de S2",
       "solution": [
         {
           "device": "S1",
-          "commands": ["enable", "configure terminal", "interface GigabitEthernet0/1", "switchport trunk allowed vlan add 20", "interface FastEthernet0/3", "no shutdown", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface GigabitEthernet0/1",
+            "switchport trunk allowed vlan add 20",
+            "interface FastEthernet0/3",
+            "no shutdown",
+            "end"
+          ]
         },
         {
           "device": "S2",
-          "commands": ["enable", "configure terminal", "interface GigabitEthernet0/1", "switchport trunk native vlan 99", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface GigabitEthernet0/1",
+            "switchport trunk native vlan 99",
+            "end"
+          ]
         }
       ],
-      "failing": ["imprimante-active"]
+      "failing": [
+        "imprimante-en-service"
+      ]
     },
     {
       "description": "VLAN 20 ajouté sur le trunk de S2, où il figurait déjà, au lieu de S1",
       "solution": [
         {
           "device": "S2",
-          "commands": ["enable", "configure terminal", "interface GigabitEthernet0/1", "switchport trunk native vlan 99", "switchport trunk allowed vlan add 20", "interface FastEthernet0/3", "no shutdown", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface GigabitEthernet0/1",
+            "switchport trunk native vlan 99",
+            "switchport trunk allowed vlan add 20",
+            "interface FastEthernet0/3",
+            "no shutdown",
+            "end"
+          ]
         }
       ],
-      "failing": ["vlans-autorises"]
+      "failing": [
+        "vlans-transportes"
+      ]
+    },
+    {
+      "description": "Négociation DTP réactivée sur S1 pendant le dépannage (no switchport nonegotiate), contraire à la politique",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface GigabitEthernet0/1",
+            "switchport trunk allowed vlan add 20",
+            "no switchport nonegotiate",
+            "end"
+          ]
+        },
+        {
+          "device": "S2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface GigabitEthernet0/1",
+            "switchport trunk native vlan 99",
+            "interface FastEthernet0/3",
+            "no shutdown",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "trunk-politique"
+      ]
     }
   ],
   "explanation": "Trois pannes se cumulaient. 1) VLAN natif incohérent : S1 utilise le VLAN 99 comme VLAN natif, mais S2 n'a aucune commande switchport trunk native vlan, son VLAN natif est donc le VLAN 1. Les trames non étiquetées envoyées par l'un tombent dans un autre VLAN chez l'autre (fuite entre VLAN 1 et VLAN 99) ; CDP le signale par %CDP-4-NATIVE_VLAN_MISMATCH et PVST+ peut bloquer le port pour les VLAN concernés (état « PVID inconsistent »). La correction suit la politique : switchport trunk native vlan 99 sur S2. Remettre S1 sur le VLAN 1 rendrait le lien cohérent, mais en contradiction avec la consigne. 2) VLAN manquant sur le trunk : la liste de S1 est 10,99, les trames du VLAN 20 venues de S2 sont rejetées, d'où la panne limitée aux postes COMPTA. Il faut ajouter le VLAN avec switchport trunk allowed vlan add 20 (ou retaper la liste complète 10,20,99) ; sans le mot-clé add, la commande remplace toute la liste et coupe les VLAN 10 et 99. La liste de S2 était déjà correcte : les deux extrémités doivent autoriser le VLAN pour qu'il passe. 3) Le port Fa0/3 de S2 était administrativement désactivé (shutdown) : no shutdown le réactive. Vérifications : show interfaces trunk (mode, VLAN natif, VLAN autorisés et actifs de part et d'autre), show interfaces status (Fa0/3 « connected » et non « disabled »), show cdp neighbors detail, et show spanning-tree vlan 20.",

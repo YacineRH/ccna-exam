@@ -13,52 +13,78 @@
     {
       "id": "R1",
       "type": "router",
-      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "interfaces": [
+        "GigabitEthernet0/0/0-1"
+      ],
       "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN 10\n ip address 192.168.10.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers R2\n ip address 10.0.12.1 255.255.255.252\n no shutdown\nrouter ospf 1\n router-id 1.1.1.1\n passive-interface GigabitEthernet0/0/0\n passive-interface GigabitEthernet0/0/1\n network 192.168.10.0 0.0.0.255 area 0\n network 10.0.12.0 0.0.0.3 area 0"
     },
     {
       "id": "R2",
       "type": "router",
-      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "interfaces": [
+        "GigabitEthernet0/0/0-1"
+      ],
       "startupConfig": "hostname R2\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN 20\n ip address 192.168.20.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers R1\n ip address 10.0.12.2 255.255.255.252\n ip ospf hello-interval 5\n no shutdown\nrouter ospf 1\n router-id 2.2.2.2\n passive-interface GigabitEthernet0/0/0\n network 10.0.12.0 0.0.0.3 area 1\n network 192.168.20.0 0.0.0.0 area 0"
     }
   ],
   "objectives": [
     {
-      "id": "r1-hello-transit",
-      "description": "R1 émet des Hello OSPF sur le lien vers R2, tout en restant passif sur son LAN.",
-      "check": {
-        "type": "any",
-        "checks": [
-          {
-            "type": "all",
-            "checks": [
-              { "type": "line", "device": "R1", "section": "router ospf 1", "line": "passive-interface GigabitEthernet0/0/0" },
-              { "type": "line", "device": "R1", "section": "router ospf 1", "line": "passive-interface GigabitEthernet0/0/1", "absent": true },
-              { "type": "line", "device": "R1", "section": "router ospf 1", "line": "passive-interface default", "absent": true }
-            ]
-          },
-          {
-            "type": "all",
-            "checks": [
-              { "type": "line", "device": "R1", "section": "router ospf 1", "line": "passive-interface default" },
-              { "type": "line", "device": "R1", "section": "router ospf 1", "line": "no passive-interface GigabitEthernet0/0/1" },
-              { "type": "line", "device": "R1", "section": "router ospf 1", "line": "no passive-interface GigabitEthernet0/0/0", "absent": true }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "id": "r2-transit-zone-0",
-      "description": "L'interface de R2 vers R1 (10.0.12.2) participe à OSPF en zone 0, comme celle de R1, et y émet des Hello.",
+      "id": "voisins-ospf",
+      "description": "R1 et R2 sont voisins OSPF sur le lien 10.0.12.0/30.",
       "check": {
         "type": "all",
         "checks": [
           {
             "type": "any",
             "checks": [
-              { "type": "regex", "device": "R2", "section": "interface GigabitEthernet0/0/1", "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$" },
+              {
+                "type": "regex",
+                "device": "R1",
+                "section": "interface GigabitEthernet0/0/1",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (0|0\\.0\\.0\\.0)$",
+                    "covers": {
+                      "address": "10.0.12.1"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
+                    "absent": true,
+                    "covers": {
+                      "address": "10.0.12.1"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf \\d+ area ",
+                    "absent": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "R2",
+                "section": "interface GigabitEthernet0/0/1",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
               {
                 "type": "all",
                 "checks": [
@@ -67,42 +93,242 @@
                     "device": "R2",
                     "section": "router ospf 1",
                     "pattern": "^network (\\S+) (\\S+) area (0|0\\.0\\.0\\.0)$",
-                    "covers": { "address": "10.0.12.2" }
+                    "covers": {
+                      "address": "10.0.12.2"
+                    }
                   },
                   {
                     "type": "regex",
                     "device": "R2",
                     "section": "router ospf 1",
                     "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
-                    "covers": { "address": "10.0.12.2" },
-                    "absent": true
+                    "absent": true,
+                    "covers": {
+                      "address": "10.0.12.2"
+                    }
                   },
-                  { "type": "regex", "device": "R2", "section": "interface GigabitEthernet0/0/1", "pattern": "^ip ospf \\d+ area ", "absent": true }
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf \\d+ area ",
+                    "absent": true
+                  }
                 ]
               }
             ]
           },
-          { "type": "line", "device": "R2", "section": "router ospf 1", "line": "passive-interface GigabitEthernet0/0/1", "absent": true },
           {
             "type": "any",
             "checks": [
-              { "type": "line", "device": "R2", "section": "router ospf 1", "line": "passive-interface default", "absent": true },
-              { "type": "line", "device": "R2", "section": "router ospf 1", "line": "no passive-interface GigabitEthernet0/0/1" }
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface GigabitEthernet0/0/1",
+                    "absent": true
+                  },
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default",
+                    "absent": true
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default"
+                  },
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "no passive-interface GigabitEthernet0/0/1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface GigabitEthernet0/0/1",
+                    "absent": true
+                  },
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default",
+                    "absent": true
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default"
+                  },
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "no passive-interface GigabitEthernet0/0/1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf hello-interval (?!10$)",
+                    "absent": true
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval (?!40$)",
+                    "absent": true
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf hello-interval (?!10$)",
+                    "absent": true
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval (?!40$)",
+                    "absent": true
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "line": "ip ospf hello-interval 5"
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval ",
+                    "absent": true
+                  },
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "line": "ip ospf hello-interval 5"
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval ",
+                    "absent": true
+                  }
+                ]
+              }
             ]
           }
         ]
       }
     },
     {
-      "id": "r2-lan-zone-0",
-      "description": "Le LAN de R2 (interface 192.168.20.1) est annoncé en zone 0, sans Hello émis vers les postes.",
+      "id": "r1-apprend-lan20",
+      "description": "R1 apprend par OSPF le LAN 192.168.20.0/24 de R2.",
       "check": {
         "type": "all",
         "checks": [
           {
             "type": "any",
             "checks": [
-              { "type": "regex", "device": "R2", "section": "interface GigabitEthernet0/0/0", "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$" },
+              {
+                "type": "regex",
+                "device": "R1",
+                "section": "interface GigabitEthernet0/0/1",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (0|0\\.0\\.0\\.0)$",
+                    "covers": {
+                      "address": "10.0.12.1"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
+                    "absent": true,
+                    "covers": {
+                      "address": "10.0.12.1"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf \\d+ area ",
+                    "absent": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "R2",
+                "section": "interface GigabitEthernet0/0/1",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
               {
                 "type": "all",
                 "checks": [
@@ -111,17 +337,27 @@
                     "device": "R2",
                     "section": "router ospf 1",
                     "pattern": "^network (\\S+) (\\S+) area (0|0\\.0\\.0\\.0)$",
-                    "covers": { "address": "192.168.20.1" }
+                    "covers": {
+                      "address": "10.0.12.2"
+                    }
                   },
                   {
                     "type": "regex",
                     "device": "R2",
                     "section": "router ospf 1",
                     "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
-                    "covers": { "address": "192.168.20.1" },
-                    "absent": true
+                    "absent": true,
+                    "covers": {
+                      "address": "10.0.12.2"
+                    }
                   },
-                  { "type": "regex", "device": "R2", "section": "interface GigabitEthernet0/0/0", "pattern": "^ip ospf \\d+ area ", "absent": true }
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf \\d+ area ",
+                    "absent": true
+                  }
                 ]
               }
             ]
@@ -129,12 +365,192 @@
           {
             "type": "any",
             "checks": [
-              { "type": "line", "device": "R2", "section": "router ospf 1", "line": "passive-interface GigabitEthernet0/0/0" },
               {
                 "type": "all",
                 "checks": [
-                  { "type": "line", "device": "R2", "section": "router ospf 1", "line": "passive-interface default" },
-                  { "type": "line", "device": "R2", "section": "router ospf 1", "line": "no passive-interface GigabitEthernet0/0/0", "absent": true }
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface GigabitEthernet0/0/1",
+                    "absent": true
+                  },
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default",
+                    "absent": true
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default"
+                  },
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "no passive-interface GigabitEthernet0/0/1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface GigabitEthernet0/0/1",
+                    "absent": true
+                  },
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default",
+                    "absent": true
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default"
+                  },
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "no passive-interface GigabitEthernet0/0/1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf hello-interval (?!10$)",
+                    "absent": true
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval (?!40$)",
+                    "absent": true
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf hello-interval (?!10$)",
+                    "absent": true
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval (?!40$)",
+                    "absent": true
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "line": "ip ospf hello-interval 5"
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval ",
+                    "absent": true
+                  },
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "line": "ip ospf hello-interval 5"
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval ",
+                    "absent": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "R2",
+                "section": "interface GigabitEthernet0/0/0",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (0|0\\.0\\.0\\.0)$",
+                    "covers": {
+                      "address": "192.168.20.1"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
+                    "absent": true,
+                    "covers": {
+                      "address": "192.168.20.1"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/0",
+                    "pattern": "^ip ospf \\d+ area ",
+                    "absent": true
+                  }
                 ]
               }
             ]
@@ -143,15 +559,517 @@
       }
     },
     {
-      "id": "temporisateurs-defaut",
-      "description": "Le lien R1–R2 utilise les temporisateurs OSPF par défaut (Hello 10 s, Dead 40 s) des deux côtés.",
+      "id": "r2-apprend-lan10",
+      "description": "R2 apprend par OSPF le LAN 192.168.10.0/24 de R1.",
       "check": {
         "type": "all",
         "checks": [
-          { "type": "regex", "device": "R1", "section": "interface GigabitEthernet0/0/1", "pattern": "^ip ospf hello-interval (?!10$)", "absent": true },
-          { "type": "regex", "device": "R1", "section": "interface GigabitEthernet0/0/1", "pattern": "^ip ospf dead-interval (?!40$)", "absent": true },
-          { "type": "regex", "device": "R2", "section": "interface GigabitEthernet0/0/1", "pattern": "^ip ospf hello-interval (?!10$)", "absent": true },
-          { "type": "regex", "device": "R2", "section": "interface GigabitEthernet0/0/1", "pattern": "^ip ospf dead-interval (?!40$)", "absent": true }
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "R1",
+                "section": "interface GigabitEthernet0/0/1",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (0|0\\.0\\.0\\.0)$",
+                    "covers": {
+                      "address": "10.0.12.1"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
+                    "absent": true,
+                    "covers": {
+                      "address": "10.0.12.1"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf \\d+ area ",
+                    "absent": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "R2",
+                "section": "interface GigabitEthernet0/0/1",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (0|0\\.0\\.0\\.0)$",
+                    "covers": {
+                      "address": "10.0.12.2"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
+                    "absent": true,
+                    "covers": {
+                      "address": "10.0.12.2"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf \\d+ area ",
+                    "absent": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface GigabitEthernet0/0/1",
+                    "absent": true
+                  },
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default",
+                    "absent": true
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default"
+                  },
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "no passive-interface GigabitEthernet0/0/1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface GigabitEthernet0/0/1",
+                    "absent": true
+                  },
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default",
+                    "absent": true
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default"
+                  },
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "no passive-interface GigabitEthernet0/0/1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf hello-interval (?!10$)",
+                    "absent": true
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval (?!40$)",
+                    "absent": true
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf hello-interval (?!10$)",
+                    "absent": true
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval (?!40$)",
+                    "absent": true
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "line": "ip ospf hello-interval 5"
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval ",
+                    "absent": true
+                  },
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "line": "ip ospf hello-interval 5"
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R2",
+                    "section": "interface GigabitEthernet0/0/1",
+                    "pattern": "^ip ospf dead-interval ",
+                    "absent": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "R1",
+                "section": "interface GigabitEthernet0/0/0",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (0|0\\.0\\.0\\.0)$",
+                    "covers": {
+                      "address": "192.168.10.1"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
+                    "absent": true,
+                    "covers": {
+                      "address": "192.168.10.1"
+                    }
+                  },
+                  {
+                    "type": "regex",
+                    "device": "R1",
+                    "section": "interface GigabitEthernet0/0/0",
+                    "pattern": "^ip ospf \\d+ area ",
+                    "absent": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "politique-site",
+      "description": "La politique du site est respectée : zone 0 partout, temporisateurs par défaut, aucun Hello vers les postes, identifiants de routeur inchangés.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/1",
+            "pattern": "^ip ospf hello-interval (?!10$)",
+            "absent": true
+          },
+          {
+            "type": "regex",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/1",
+            "pattern": "^ip ospf dead-interval (?!40$)",
+            "absent": true
+          },
+          {
+            "type": "regex",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/1",
+            "pattern": "^ip ospf hello-interval (?!10$)",
+            "absent": true
+          },
+          {
+            "type": "regex",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/1",
+            "pattern": "^ip ospf dead-interval (?!40$)",
+            "absent": true
+          },
+          {
+            "type": "regex",
+            "device": "R1",
+            "pattern": "^ip ospf \\d+ area (?!(0|0\\.0\\.0\\.0)$)",
+            "absent": true,
+            "sectionPattern": "^interface "
+          },
+          {
+            "type": "regex",
+            "device": "R2",
+            "pattern": "^ip ospf \\d+ area (?!(0|0\\.0\\.0\\.0)$)",
+            "absent": true,
+            "sectionPattern": "^interface "
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "R1",
+                "section": "interface GigabitEthernet0/0/0",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
+              {
+                "type": "regex",
+                "device": "R1",
+                "section": "router ospf 1",
+                "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
+                "absent": true,
+                "covers": {
+                  "address": "192.168.10.1"
+                }
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "R1",
+                "section": "interface GigabitEthernet0/0/1",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
+              {
+                "type": "regex",
+                "device": "R1",
+                "section": "router ospf 1",
+                "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
+                "absent": true,
+                "covers": {
+                  "address": "10.0.12.1"
+                }
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "R2",
+                "section": "interface GigabitEthernet0/0/0",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
+              {
+                "type": "regex",
+                "device": "R2",
+                "section": "router ospf 1",
+                "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
+                "absent": true,
+                "covers": {
+                  "address": "192.168.20.1"
+                }
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "R2",
+                "section": "interface GigabitEthernet0/0/1",
+                "pattern": "^ip ospf 1 area (0|0\\.0\\.0\\.0)$"
+              },
+              {
+                "type": "regex",
+                "device": "R2",
+                "section": "router ospf 1",
+                "pattern": "^network (\\S+) (\\S+) area (?!(0|0\\.0\\.0\\.0)$)\\S+$",
+                "absent": true,
+                "covers": {
+                  "address": "10.0.12.2"
+                }
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface GigabitEthernet0/0/0"
+                  },
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default",
+                    "absent": true
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default"
+                  },
+                  {
+                    "type": "line",
+                    "device": "R1",
+                    "section": "router ospf 1",
+                    "line": "no passive-interface GigabitEthernet0/0/0",
+                    "absent": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface GigabitEthernet0/0/0"
+                  },
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default",
+                    "absent": true
+                  }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "passive-interface default"
+                  },
+                  {
+                    "type": "line",
+                    "device": "R2",
+                    "section": "router ospf 1",
+                    "line": "no passive-interface GigabitEthernet0/0/0",
+                    "absent": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "line",
+            "device": "R1",
+            "section": "router ospf 1",
+            "line": "router-id 1.1.1.1"
+          },
+          {
+            "type": "line",
+            "device": "R2",
+            "section": "router ospf 1",
+            "line": "router-id 2.2.2.2"
+          }
         ]
       }
     }
@@ -171,7 +1089,13 @@
   "solution": [
     {
       "device": "R1",
-      "commands": ["enable", "configure terminal", "router ospf 1", "no passive-interface GigabitEthernet0/0/1", "end"]
+      "commands": [
+        "enable",
+        "configure terminal",
+        "router ospf 1",
+        "no passive-interface GigabitEthernet0/0/1",
+        "end"
+      ]
     },
     {
       "device": "R2",
@@ -196,11 +1120,26 @@
       "solution": [
         {
           "device": "R1",
-          "commands": ["en", "conf t", "router ospf 1", "no passive-int g0/0/1", "end"]
+          "commands": [
+            "en",
+            "conf t",
+            "router ospf 1",
+            "no passive-int g0/0/1",
+            "end"
+          ]
         },
         {
           "device": "R2",
-          "commands": ["en", "conf t", "int g0/0/1", "no ip ospf hello-interval", "ip ospf 1 area 0", "int g0/0/0", "ip ospf 1 area 0", "end"]
+          "commands": [
+            "en",
+            "conf t",
+            "int g0/0/1",
+            "no ip ospf hello-interval",
+            "ip ospf 1 area 0",
+            "int g0/0/0",
+            "ip ospf 1 area 0",
+            "end"
+          ]
         }
       ]
     },
@@ -209,7 +1148,13 @@
       "solution": [
         {
           "device": "R1",
-          "commands": ["enable", "conf t", "router ospf 1", "no passive-interface gi0/0/1", "\u001a"]
+          "commands": [
+            "enable",
+            "conf t",
+            "router ospf 1",
+            "no passive-interface gi0/0/1",
+            "\u001a"
+          ]
         },
         {
           "device": "R2",
@@ -227,6 +1172,37 @@
           ]
         }
       ]
+    },
+    {
+      "description": "passive-interface default sur R1, avec une exception pour le lien vers R2",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 1",
+            "passive-interface default",
+            "no passive-interface GigabitEthernet0/0/1",
+            "end"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/1",
+            "no ip ospf hello-interval",
+            "exit",
+            "router ospf 1",
+            "no network 10.0.12.0 0.0.0.3 area 1",
+            "network 10.0.12.0 0.0.0.3 area 0",
+            "network 192.168.20.0 0.0.0.255 area 0",
+            "end"
+          ]
+        }
+      ]
     }
   ],
   "pitfalls": [
@@ -235,58 +1211,253 @@
       "solution": [
         {
           "device": "R1",
-          "commands": ["enable", "configure terminal", "router ospf 1", "passive-interface default", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 1",
+            "passive-interface default",
+            "end"
+          ]
         },
         {
           "device": "R2",
-          "commands": ["enable", "configure terminal", "interface g0/0/1", "no ip ospf hello-interval 5", "router ospf 1", "no network 10.0.12.0 0.0.0.3 area 1", "network 10.0.12.0 0.0.0.3 area 0", "network 192.168.20.0 0.0.0.255 area 0", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/1",
+            "no ip ospf hello-interval 5",
+            "router ospf 1",
+            "no network 10.0.12.0 0.0.0.3 area 1",
+            "network 10.0.12.0 0.0.0.3 area 0",
+            "network 192.168.20.0 0.0.0.255 area 0",
+            "end"
+          ]
         }
       ],
-      "failing": ["r1-hello-transit"]
+      "failing": [
+        "voisins-ospf",
+        "r1-apprend-lan20",
+        "r2-apprend-lan10"
+      ]
     },
     {
       "description": "Lien de transit ajouté en zone 0 sur R2 sans retirer l'annonce en zone 1",
       "solution": [
         {
           "device": "R2",
-          "commands": ["enable", "configure terminal", "router ospf 1", "network 10.0.12.0 0.0.0.3 area 0", "network 192.168.20.0 0.0.0.255 area 0", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 1",
+            "network 10.0.12.0 0.0.0.3 area 0",
+            "network 192.168.20.0 0.0.0.255 area 0",
+            "end"
+          ]
         }
       ],
-      "failing": ["r2-transit-zone-0"]
+      "failing": [
+        "voisins-ospf",
+        "politique-site"
+      ]
     },
     {
       "description": "Masque de sous-réseau saisi à la place du masque générique pour le LAN de R2",
       "solution": [
         {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 1",
+            "no passive-interface g0/0/1",
+            "end"
+          ]
+        },
+        {
           "device": "R2",
-          "commands": ["enable", "configure terminal", "router ospf 1", "network 192.168.20.0 255.255.255.0 area 0", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/1",
+            "no ip ospf hello-interval 5",
+            "router ospf 1",
+            "no network 10.0.12.0 0.0.0.3 area 1",
+            "network 10.0.12.0 0.0.0.3 area 0",
+            "network 192.168.20.0 255.255.255.0 area 0",
+            "end"
+          ]
         }
       ],
-      "failing": ["r2-lan-zone-0"]
+      "failing": [
+        "r1-apprend-lan20"
+      ]
     },
     {
       "description": "Temporisateurs alignés en passant aussi R1 à Hello 5 s, contraire à la politique",
       "solution": [
         {
           "device": "R1",
-          "commands": ["enable", "configure terminal", "interface g0/0/1", "ip ospf hello-interval 5", "router ospf 1", "no passive-interface g0/0/1", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/1",
+            "ip ospf hello-interval 5",
+            "router ospf 1",
+            "no passive-interface g0/0/1",
+            "end"
+          ]
         },
         {
           "device": "R2",
-          "commands": ["enable", "configure terminal", "router ospf 1", "no network 10.0.12.0 0.0.0.3 area 1", "network 10.0.12.0 0.0.0.3 area 0", "network 192.168.20.0 0.0.0.255 area 0", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 1",
+            "no network 10.0.12.0 0.0.0.3 area 1",
+            "network 10.0.12.0 0.0.0.3 area 0",
+            "network 192.168.20.0 0.0.0.255 area 0",
+            "end"
+          ]
         }
       ],
-      "failing": ["temporisateurs-defaut"]
+      "failing": [
+        "politique-site"
+      ]
     },
     {
       "description": "LAN de R2 annoncé, mais rendu actif (no passive-interface) : des Hello partent vers les postes",
       "solution": [
         {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 1",
+            "no passive-interface g0/0/1",
+            "end"
+          ]
+        },
+        {
           "device": "R2",
-          "commands": ["enable", "configure terminal", "router ospf 1", "no passive-interface g0/0/0", "network 192.168.20.0 0.0.0.255 area 0", "end"]
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/1",
+            "no ip ospf hello-interval 5",
+            "router ospf 1",
+            "no network 10.0.12.0 0.0.0.3 area 1",
+            "network 10.0.12.0 0.0.0.3 area 0",
+            "network 192.168.20.0 0.0.0.255 area 0",
+            "no passive-interface g0/0/0",
+            "end"
+          ]
         }
       ],
-      "failing": ["r2-lan-zone-0"]
+      "failing": [
+        "politique-site"
+      ]
+    },
+    {
+      "description": "Commandes network de R1 retirées : ni son LAN ni le lien de transit ne participent plus à OSPF",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 1",
+            "no passive-interface g0/0/1",
+            "no network 192.168.10.0 0.0.0.255 area 0",
+            "no network 10.0.12.0 0.0.0.3 area 0",
+            "end"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/1",
+            "no ip ospf hello-interval 5",
+            "router ospf 1",
+            "no network 10.0.12.0 0.0.0.3 area 1",
+            "network 10.0.12.0 0.0.0.3 area 0",
+            "network 192.168.20.0 0.0.0.255 area 0",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "voisins-ospf",
+        "r1-apprend-lan20",
+        "r2-apprend-lan10"
+      ]
+    },
+    {
+      "description": "Zones « alignées » en passant le lien de R1 en zone 1 (ip ospf 1 area 1)",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 1",
+            "no passive-interface g0/0/1",
+            "interface g0/0/1",
+            "ip ospf 1 area 1",
+            "end"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/1",
+            "no ip ospf hello-interval 5",
+            "router ospf 1",
+            "network 192.168.20.0 0.0.0.255 area 0",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "voisins-ospf",
+        "politique-site"
+      ]
+    },
+    {
+      "description": "Identifiant de routeur de R2 modifié pendant le dépannage",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "router ospf 1",
+            "no passive-interface g0/0/1",
+            "end"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/1",
+            "no ip ospf hello-interval 5",
+            "router ospf 1",
+            "no network 10.0.12.0 0.0.0.3 area 1",
+            "network 10.0.12.0 0.0.0.3 area 0",
+            "network 192.168.20.0 0.0.0.255 area 0",
+            "router-id 3.3.3.3",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "politique-site"
+      ]
     }
   ],
   "explanation": "Quatre pannes empêchaient l'adjacence ou l'annonce du LAN 20. 1) Sur R1, passive-interface GigabitEthernet0/0/1 rendait passif le lien de transit : une interface passive annonce son réseau mais n'envoie ni ne traite de Hello, aucune adjacence ne peut s'y former. On retire la commande (no passive-interface G0/0/1) en gardant G0/0/0 passive ; avec passive-interface default, il faut une exception no passive-interface pour le lien vers R2. 2) Sur R2, le lien de transit était en zone 1 alors que R1 l'a en zone 0 : l'identifiant de zone est porté par chaque Hello et doit être identique des deux côtés : une fois R1 réactivé, ses Hello seraient rejetés par R2 (« mismatched area ID »). Il faut retirer l'ancienne commande (no network 10.0.12.0 0.0.0.3 area 1) puis l'annoncer en zone 0 ; ajouter seulement la bonne commande laisse deux déclarations contradictoires pour la même interface. La commande ip ospf 1 area 0 sous l'interface est une alternative : elle est prioritaire sur les commandes network. 3) network 192.168.20.0 0.0.0.0 area 0 ne couvre que l'adresse exacte 192.168.20.0 : le masque générique 0.0.0.0 compare les 32 bits, et l'interface 192.168.20.1 n'est pas activée. Il faut 0.0.0.255 pour le /24 (ou l'adresse exacte de l'interface avec 0.0.0.0). Un masque de sous-réseau saisi à la place (255.255.255.0) ne compare que le dernier octet et ne couvre pas non plus .1. L'interface reste passive, comme l'exige la politique. 4) ip ospf hello-interval 5 sur R2 donne Hello 5 s et Dead 20 s (quatre fois le Hello) ; les temporisateurs Hello et Dead doivent être identiques entre voisins, sinon les Hello sont ignorés. On revient aux valeurs par défaut des réseaux broadcast (10 s / 40 s) avec no ip ospf hello-interval sur R2 ; passer R1 à 5 s formerait l'adjacence mais violerait la politique. Vérifications : show ip ospf interface brief (zone, état passif), show ip ospf neighbor (état FULL), show ip route ospf sur chaque routeur, et debug ip ospf adj pour voir la cause des rejets.",
