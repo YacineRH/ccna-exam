@@ -647,7 +647,7 @@
     "source": "ai",
     "body": {
       "type": "mcq_single",
-      "stem": "Reportez-vous à l'exhibit. Un AP en mode local raccordé à Gi1/0/8 reste éteint, aucune LED allumée. Branché sur le port voisin, configuré de la même façon sans la dernière ligne, le même AP démarre normalement, et le commutateur dispose encore de 210 W de budget PoE. Quelle est la cause ?",
+      "stem": "Reportez-vous à l'exhibit. Un AP en mode local raccordé à Gi1/0/8 reste éteint, aucune LED allumée. Branché sur le port voisin Gi1/0/7, prévu lui aussi pour un AP, le même AP démarre normalement, et le commutateur dispose encore de 210 W de budget PoE. Quelle est la cause ?",
       "exhibit": "SW1#show running-config interface GigabitEthernet1/0/8\nBuilding configuration...\n\nCurrent configuration : 130 bytes\n!\ninterface GigabitEthernet1/0/8\n description AP-B2-08\n switchport access vlan 10\n switchport mode access\n power inline never\nend",
       "options": [
         {
