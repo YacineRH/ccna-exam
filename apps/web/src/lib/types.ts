@@ -9,11 +9,17 @@ export interface User {
   role: 'admin' | 'user' | string;
 }
 
+/** Modules de l'application qu'une certification propose (voir `MODULES` dans packages/core). */
+export type Module = 'exam' | 'practice' | 'flashcards' | 'subnet' | 'cli' | 'challenges';
+
 export interface CertificationSummary {
   code: string;
   name: string;
+  /** Nom court du sélecteur : « CCNA », « Security+ ». */
+  shortName: string;
   vendor: string;
   examCode: string;
+  modules: Module[];
 }
 
 export interface CertificationDetail {
@@ -412,4 +418,23 @@ export interface SeriesProgress {
   passed: number;
   nextNumber: number | null;
   exams: SeriesExam[];
+}
+
+/** Ligne de l'écran d'administration (`GET /admin/certifications`). */
+export interface AdminCertification {
+  code: string;
+  name: string;
+  vendor: string;
+  examCode: string;
+  active: boolean;
+  modules: Module[];
+  domains: number;
+  subtopics: number;
+  examFormat: { questionCount: number; durationMinutes: number; allowBackNavigation: boolean };
+  scoring: { min: number; max: number; passing: number };
+  bank: { published: number; validated: number; draft: number; retired: number };
+  labs: { lab: number; challenge: number };
+  series: { exams: number; taken: number };
+  lastImportedAt: string | null;
+  lastImport: { created?: number; updated?: number; exams?: number; examsFrozen?: number[] } | null;
 }

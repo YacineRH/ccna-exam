@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   checkLab,
+  canonicalOrder,
   expandSyntax,
   formatNumberList,
   LabSession,
@@ -149,6 +150,17 @@ describe('syntaxe des commandes', () => {
 
   it('refuse une syntaxe mal formée', () => {
     expect(() => expandSyntax('show [version')).toThrow(/mal fermée/);
+    // Groupe en ordre libre : sous-ensembles dans tous les ordres, chaque mot au plus une fois.
+    const free = expandSyntax('t [* [a] [b] [c] *]').map((s) => s.map((e) => (e.kind === 'kw' ? e.word : '?')).join(' '));
+    expect(free).toHaveLength(16);
+    expect(free).toContain('t c a');
+    expect(free).not.toContain('t a a');
+    const typed = ['t', 'c', 'b', 'a'];
+    const form = expandSyntax('t [* [a] [b] [c] *]').find((f) => f.map((e) => (e.kind === 'kw' ? e.word : '')).join(' ') === typed.join(' '))!;
+    expect(canonicalOrder(form, typed)).toEqual(['t', 'a', 'b', 'c']);
+    expect(() => expandSyntax('t [* [a] *]')).toThrow(/moins de deux/);
+    expect(() => expandSyntax('t [* [<word>] [b] *]')).toThrow(/mots-clés/);
+    expect(() => expandSyntax('t [* [a] [b]')).toThrow(/mal fermé/);
     expect(() => expandSyntax('description <line> extra')).toThrow(/terminer/);
     expect(() => expandSyntax('ip <inconnu>')).toThrow(/paramètre inconnu/);
   });

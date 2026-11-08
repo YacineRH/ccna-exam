@@ -1,0 +1,1220 @@
+[
+  {
+    "slug": "security-plus-4.1-cis-benchmark-baseline-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une équipe d'exploitation doit établir la première base de configuration sécurisée de ses serveurs Windows Server 2022. Elle veut partir d'un référentiel de paramètres recommandés, reconnu et tenu à jour, plutôt que de tout définir elle-même. Quelle source est la plus adaptée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le CIS Benchmark de Windows Server 2022"
+        },
+        {
+          "id": "b",
+          "text": "La liste OWASP Top 10 des risques web (2021)"
+        },
+        {
+          "id": "c",
+          "text": "La spécification de notation FIRST CVSS v3.1"
+        },
+        {
+          "id": "d",
+          "text": "La matrice MITRE ATT&CK for Enterprise"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Une base de configuration sécurisée (secure baseline) fixe les réglages attendus d'un système : services désactivés, stratégies de comptes, journalisation, protocoles autorisés. Les CIS Benchmarks sont des guides de configuration consensuels, publiés par système et par version (Windows Server 2022, Ubuntu, Cisco IOS…), avec la justification de chaque paramètre et des niveaux de profil. Ils forment le point de départ habituel : l'équipe les adapte ensuite à ses contraintes métier, documente les écarts et fait approuver la baseline avant de la déployer.",
+    "distractorNotes": {
+      "b": "L'OWASP Top 10 classe les grandes catégories de risques des applications web ; il ne donne aucun paramètre de configuration d'un système d'exploitation.",
+      "c": "CVSS sert à noter la gravité d'une vulnérabilité ; ce n'est pas un catalogue de réglages de durcissement.",
+      "d": "ATT&CK décrit les tactiques et techniques des attaquants ; utile pour la détection, il ne fournit pas de configuration de référence d'un serveur."
+    },
+    "reference": "CIS Benchmarks ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-baseline-drift-exception-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyste examine le rapport de conformité du 12 octobre 2026 et le registre des exceptions approuvées. Quel serveur présente une dérive par rapport à la baseline qui n'est couverte par aucune exception valide ?",
+      "exhibit": "Rapport de conformité - baseline SRV-WIN-2022 v3.2 - 2026-10-12 09:00\nServeur    Contrôle                          Résultat\n----------------------------------------------------------\nsrv-app01  Pare-feu Windows activé           NON CONFORME\nsrv-app02  SMBv1 désactivé                   NON CONFORME\nsrv-app03  Compte Invité désactivé           CONFORME\nsrv-app04  Journalisation PowerShell active  NON CONFORME\n\nRegistre des exceptions approuvées\nID       Serveur    Contrôle                          Valable jusqu'au\n--------------------------------------------------------------------\nEXC-014  srv-app01  Pare-feu Windows activé           2026-12-31\nEXC-019  srv-app02  SMBv1 désactivé                   2026-09-30\nEXC-022  srv-app04  Journalisation PowerShell active  2027-03-31",
+      "options": [
+        {
+          "id": "a",
+          "text": "srv-app01"
+        },
+        {
+          "id": "b",
+          "text": "srv-app02"
+        },
+        {
+          "id": "c",
+          "text": "srv-app03"
+        },
+        {
+          "id": "d",
+          "text": "srv-app04"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une dérive de configuration n'est acceptable que si elle fait l'objet d'une exception approuvée et en cours de validité. srv-app01 et srv-app04 sont non conformes, mais leurs exceptions courent jusqu'au 31/12/2026 et au 31/03/2027. srv-app03 est conforme. srv-app02 a SMBv1 actif et son exception EXC-019 a expiré le 30/09/2026, avant le scan du 12/10 : c'est une dérive non autorisée. L'analyste doit la signaler pour remédiation (retour à la baseline par le processus de changement) ou pour renouvellement formel de l'exception.",
+    "distractorNotes": {
+      "a": "srv-app01 est non conforme sur le pare-feu, mais l'exception EXC-014 reste valable jusqu'au 31/12/2026 : l'écart est accepté.",
+      "c": "srv-app03 est conforme pour le contrôle évalué (compte Invité désactivé) : il ne présente aucune dérive.",
+      "d": "srv-app04 est non conforme sur la journalisation PowerShell, mais l'exception EXC-022 est valable jusqu'au 31/03/2027."
+    },
+    "reference": "CIS Benchmarks ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-baseline-lifecycle-order-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une mutuelle formalise la gestion de la base de configuration sécurisée de ses postes de travail : établir, déployer, maintenir. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "deploy",
+          "text": "Déployer la baseline sur tout le parc par stratégie de groupe"
+        },
+        {
+          "id": "bench",
+          "text": "Adapter un CIS Benchmark aux besoins métier et le faire approuver"
+        },
+        {
+          "id": "revise",
+          "text": "Réviser la baseline en intégrant les écarts justifiés relevés par l'analyse"
+        },
+        {
+          "id": "pilot",
+          "text": "Tester la baseline sur un groupe pilote de postes"
+        },
+        {
+          "id": "scan",
+          "text": "Analyser la conformité du parc pour repérer les dérives"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "bench",
+        "pilot",
+        "deploy",
+        "scan",
+        "revise"
+      ]
+    },
+    "explanation": "Le cycle d'une baseline suit trois temps. Établir : partir d'un référentiel reconnu (CIS Benchmark), l'adapter au métier et le faire approuver. Déployer : tester d'abord sur un groupe pilote pour détecter les applications cassées par un réglage, puis généraliser par un outil centralisé (stratégies de groupe, gestion de configuration). Maintenir : analyser régulièrement la conformité pour repérer les dérives, puis réviser la baseline à partir des écarts justifiés constatés ; la révision dépend donc de l'analyse qui la précède.",
+    "distractorNotes": {},
+    "reference": "CIS Benchmarks ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-router-management-plane-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "L'audit d'un routeur de site distant relève que l'administration se fait en Telnet et que la supervision utilise SNMPv2c avec la communauté « public ». Quelles deux mesures durcissent le mieux le plan d'administration de ce routeur ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer Telnet par SSH version 2 pour l'accès à distance"
+        },
+        {
+          "id": "b",
+          "text": "Activer le serveur HTTP intégré pour l'administration web"
+        },
+        {
+          "id": "c",
+          "text": "Passer à SNMPv3 avec authentification et chiffrement (authPriv)"
+        },
+        {
+          "id": "d",
+          "text": "Garder SNMPv2c en remplaçant « public » par « private »"
+        },
+        {
+          "id": "e",
+          "text": "Activer CDP sur l'interface reliée au fournisseur d'accès"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Telnet et SNMPv2c transmettent identifiants et chaînes de communauté en clair : toute capture sur le chemin les révèle. SSH version 2 chiffre et authentifie la session d'administration. SNMPv3 au niveau authPriv authentifie chaque message (modèle USM) et en chiffre le contenu, contrairement aux communautés de SNMPv1/v2c. Ces deux changements sont au cœur des guides de durcissement des routeurs, avec la limitation des accès d'administration à des adresses sources autorisées.",
+    "distractorNotes": {
+      "b": "Le serveur HTTP en clair ajoute un service d'administration non chiffré : il élargit la surface d'attaque au lieu de la réduire.",
+      "d": "« private » est une autre valeur par défaut bien connue, et SNMPv2c reste sans chiffrement ni véritable authentification.",
+      "e": "CDP divulgue le modèle, la version logicielle et les adresses de l'équipement ; on le désactive sur les interfaces exposées à l'extérieur."
+    },
+    "reference": "RFC 3414 (SNMPv3, modèle USM) ; CIS Benchmarks (Cisco IOS) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-ics-legacy-segmentation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une régie municipale de l'eau exploite des automates programmables (PLC) et une station de supervision SCADA sous un système d'exploitation que l'éditeur ne maintient plus. Le fabricant interdit tout correctif ou agent logiciel sous peine de perdre la garantie. Quel contrôle réduit le mieux le risque ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Isoler le réseau OT dans un segment filtré, sans flux direct depuis la bureautique"
+        },
+        {
+          "id": "b",
+          "text": "Installer un antivirus à analyse en temps réel sur la station de supervision SCADA"
+        },
+        {
+          "id": "c",
+          "text": "Appliquer chaque mois les derniers correctifs cumulatifs publiés pour ce système"
+        },
+        {
+          "id": "d",
+          "text": "Ouvrir un accès Internet direct aux automates pour la télémaintenance du fabricant"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Quand un système industriel ne peut être ni corrigé ni équipé d'agents, le durcissement porte sur son environnement : c'est un contrôle compensatoire. La segmentation place les automates et la supervision dans une zone OT séparée, derrière un pare-feu qui n'autorise que les flux indispensables (souvent via une DMZ industrielle ou une passerelle unidirectionnelle), sans communication directe avec le réseau bureautique ni Internet. Une compromission de l'IT ne peut alors plus atteindre directement les automates.",
+    "distractorNotes": {
+      "b": "L'énoncé exclut tout agent logiciel ; de plus, une analyse en temps réel peut perturber un système de supervision.",
+      "c": "L'éditeur ne maintient plus ce système : il n'existe plus de correctifs, et le fabricant interdit d'en appliquer.",
+      "d": "Exposer des automates sur Internet augmente fortement le risque ; la télémaintenance passe par un accès distant contrôlé et journalisé."
+    },
+    "reference": "NIST SP 800-82 Rev. 3 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-rtos-agent-determinism-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un fabricant de robots industriels utilise un système d'exploitation temps réel (RTOS) dans ses contrôleurs. Un consultant propose d'y installer un agent antimalware qui analyse chaque fichier à l'accès. L'ingénieur produit refuse. Quelle raison justifie le mieux ce refus ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un RTOS ne dispose d'aucune pile réseau et ne peut donc pas être infecté"
+        },
+        {
+          "id": "b",
+          "text": "Un RTOS réside en mémoire morte et ne peut jamais être mis à jour"
+        },
+        {
+          "id": "c",
+          "text": "L'agent ajouterait des délais imprévisibles aux tâches à échéance stricte"
+        },
+        {
+          "id": "d",
+          "text": "Les licences des RTOS interdisent tout logiciel de sécurité tiers installé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un RTOS garantit qu'une tâche s'exécute dans un délai borné et prévisible : c'est sa raison d'être dans un robot, un automate ou un équipement médical. Un agent qui intercepte chaque accès fichier consomme du processeur et de la mémoire de façon imprévisible et peut faire manquer une échéance, avec des conséquences physiques. On durcit plutôt un RTOS par la réduction des fonctions activées, des mises à jour de micrologiciel signées, la segmentation réseau et la surveillance passive du trafic.",
+    "distractorNotes": {
+      "a": "De nombreux RTOS ont une pile réseau (Ethernet industriel, Wi-Fi, Bluetooth) et des vulnérabilités ont déjà été publiées sur ces piles.",
+      "b": "Les RTOS reçoivent des mises à jour de micrologiciel ; elles doivent être signées et validées, mais elles existent.",
+      "d": "Aucune règle générale de licence ne l'interdit ; le frein est technique (contraintes temps réel et ressources limitées)."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-iot-default-credentials-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une agence immobilière installe une vingtaine de caméras IP grand public. Le prestataire rappelle que le botnet Mirai a compromis des centaines de milliers d'objets connectés de ce type. Quelle mesure de durcissement contre le mieux la faiblesse que Mirai exploitait ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chiffrer les flux vidéo enregistrés sur le serveur NAS"
+        },
+        {
+          "id": "b",
+          "text": "Remplacer les identifiants par défaut par des mots de passe uniques"
+        },
+        {
+          "id": "c",
+          "text": "Connecter les caméras au Wi-Fi en WPA3 plutôt qu'en WPA2"
+        },
+        {
+          "id": "d",
+          "text": "Synchroniser l'horloge des caméras avec un serveur NTP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Mirai parcourait Internet à la recherche de services Telnet ouverts et tentait une courte liste de couples identifiant / mot de passe d'usine (admin/admin, root/12345…). Les objets dont ces identifiants n'avaient jamais été changés rejoignaient le botnet, utilisé ensuite pour des attaques DDoS massives. Le premier durcissement d'un objet IoT est donc de remplacer les identifiants par défaut par des mots de passe uniques et robustes, puis de désactiver les services inutiles (Telnet) et d'appliquer les mises à jour du micrologiciel.",
+    "distractorNotes": {
+      "a": "Le chiffrement des enregistrements protège la confidentialité des vidéos, pas l'accès d'administration des caméras.",
+      "c": "WPA3 protège la liaison radio ; un attaquant atteignant le service Telnet par le réseau se connecterait toujours avec les identifiants d'usine.",
+      "d": "NTP améliore l'horodatage, sans effet sur la prise de contrôle par identifiants par défaut."
+    },
+    "reference": "NISTIR 8259A ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-workstation-hardening-image-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un cabinet comptable prépare l'image de référence de ses postes Windows 11. Quelles deux mesures relèvent du durcissement de ces postes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Activer le compte Invité pour les visiteurs du cabinet"
+        },
+        {
+          "id": "b",
+          "text": "Désinstaller les logiciels et services inutiles au métier"
+        },
+        {
+          "id": "c",
+          "text": "Autoriser l'exécution automatique des supports USB"
+        },
+        {
+          "id": "d",
+          "text": "Désactiver le pare-feu local, le pare-feu du site suffisant"
+        },
+        {
+          "id": "e",
+          "text": "Retirer aux utilisateurs les droits d'administrateur local"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Durcir un poste, c'est réduire sa surface d'attaque et les privilèges disponibles. Retirer les logiciels et services inutiles supprime autant de vulnérabilités potentielles et de ports en écoute. Retirer les droits d'administrateur local applique le moindre privilège : un logiciel malveillant lancé par l'utilisateur ne peut plus installer de pilote, désactiver l'antivirus ou modifier la configuration du système. Ces deux mesures figurent dans tous les guides de configuration, dont les CIS Benchmarks.",
+    "distractorNotes": {
+      "a": "Le compte Invité donne un accès sans authentification nominative ; les baselines exigent qu'il reste désactivé.",
+      "c": "L'exécution automatique des supports amovibles est un vecteur classique de logiciels malveillants ; on la désactive.",
+      "d": "Le pare-feu local protège aussi contre les mouvements latéraux internes ; le désactiver affaiblit le poste."
+    },
+    "reference": "CIS Benchmarks ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-web-server-nmap-baseline-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. La baseline du serveur web public www (203.0.113.20) n'autorise que : HTTPS (443/tcp) ; HTTP (80/tcp) pour rediriger vers HTTPS ; SSH (22/tcp) depuis le bastion 198.51.100.10. La base de données est hébergée sur un autre serveur. L'analyste lance le scan depuis le bastion. Quels deux services doivent être désactivés pour rendre le serveur conforme ? (Choisissez-en deux.)",
+      "exhibit": "$ nmap -sV 203.0.113.20\nStarting Nmap 7.94 ( https://nmap.org ) at 2026-11-03 14:02 CET\nNmap scan report for www.example.com (203.0.113.20)\nHost is up (0.0021s latency).\nNot shown: 995 closed tcp ports (reset)\nPORT     STATE SERVICE  VERSION\n22/tcp   open  ssh      OpenSSH 9.6 (protocol 2.0)\n23/tcp   open  telnet   Linux telnetd\n80/tcp   open  http     nginx 1.24.0\n443/tcp  open  ssl/http nginx 1.24.0\n3306/tcp open  mysql    MySQL 8.0.36\n\nNmap done: 1 IP address (1 host up) scanned in 12.41 seconds",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "22/tcp (ssh)"
+        },
+        {
+          "id": "b",
+          "text": "23/tcp (telnet)"
+        },
+        {
+          "id": "c",
+          "text": "80/tcp (http)"
+        },
+        {
+          "id": "d",
+          "text": "443/tcp (https)"
+        },
+        {
+          "id": "e",
+          "text": "3306/tcp (mysql)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Le scan part du bastion, seule source autorisée pour SSH : voir 22/tcp ouvert est donc attendu. 80/tcp est permis pour la redirection et 443/tcp est le service nominal. En revanche, Telnet (23/tcp) n'est prévu par aucune règle et transmet les identifiants en clair, et MySQL (3306/tcp) n'a rien à faire sur ce serveur puisque la base est hébergée ailleurs : ces deux services sont des écarts à la baseline et doivent être désinstallés ou désactivés. Il restera à vérifier, par un scan depuis une autre source, que SSH est bien filtré hors du bastion.",
+    "distractorNotes": {
+      "a": "SSH est autorisé depuis le bastion, d'où part le scan ; on vérifie son filtrage depuis une autre source, sans le désactiver.",
+      "c": "La baseline autorise HTTP pour rediriger les visiteurs vers HTTPS.",
+      "d": "HTTPS est le service que le serveur web public doit justement offrir."
+    },
+    "reference": "CIS Benchmarks ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-hardening-measure-target-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le RSSI d'un groupe industriel répartit les mesures de durcissement entre les équipes. Associez chaque mesure à la cible qu'elle durcit.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Activer BPDU Guard sur les ports reliés aux postes utilisateurs"
+        },
+        {
+          "id": "l2",
+          "text": "Restreindre les groupes de sécurité aux seuls flux entrants nécessaires à l'instance"
+        },
+        {
+          "id": "l3",
+          "text": "Interdire le débridage et l'installation d'applications hors magasin officiel"
+        },
+        {
+          "id": "l4",
+          "text": "Placer une diode de données entre le réseau de supervision industrielle et la bureautique"
+        },
+        {
+          "id": "l5",
+          "text": "Filtrer par ACL le trafic entrant de l'interface WAN et désactiver le routage par la source"
+        }
+      ],
+      "right": [
+        {
+          "id": "sw",
+          "text": "Commutateur d'accès"
+        },
+        {
+          "id": "rtr",
+          "text": "Routeur de bordure"
+        },
+        {
+          "id": "cloud",
+          "text": "Instance IaaS dans le cloud"
+        },
+        {
+          "id": "mob",
+          "text": "Smartphone d'entreprise"
+        },
+        {
+          "id": "ics",
+          "text": "Système ICS/SCADA"
+        },
+        {
+          "id": "srv",
+          "text": "Serveur de fichiers sur site"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "sw",
+        "l2": "cloud",
+        "l3": "mob",
+        "l4": "ics",
+        "l5": "rtr"
+      }
+    },
+    "explanation": "BPDU Guard désactive un port d'accès qui reçoit des BPDU Spanning Tree, ce qui protège la topologie d'un commutateur pirate : mesure de commutateur. Les groupes de sécurité sont les pare-feu virtuels des instances cloud. Interdire le débridage (jailbreak, root) et le sideloading se règle sur les terminaux mobiles par le MDM. La diode de données n'autorise le flux que dans un sens, de la supervision industrielle vers l'IT : protection type des ICS/SCADA. Les ACL sur l'interface WAN et la désactivation du routage par la source durcissent un routeur de bordure.",
+    "distractorNotes": {
+      "srv": "Aucune mesure de la liste ne vise un serveur de fichiers, qui se durcit par exemple en désactivant SMBv1 et en restreignant les partages et les permissions NTFS."
+    },
+    "reference": "CIS Benchmarks ; NIST SP 800-82 Rev. 3 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-8021x-port-nac-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une clinique veut que ses commutateurs d'accès bloquent tout le trafic d'un poste nouvellement branché, à l'exception des échanges d'authentification, tant que le serveur RADIUS n'a pas validé son identité. Quelle norme IEEE de contrôle d'accès réseau par port doit-elle mettre en œuvre ?",
+      "fields": [
+        {
+          "id": "std",
+          "label": "Norme IEEE (format : 802.3)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "std": {
+          "accepted": [
+            "802.1X",
+            "IEEE 802.1X",
+            "IEEE802.1X",
+            "802.1X-2020",
+            "IEEE 802.1X-2020"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "IEEE 802.1X définit le contrôle d'accès réseau par port (PNAC). Trois rôles interviennent : le demandeur (supplicant) sur le poste, l'authentificateur (le commutateur ou le point d'accès) et le serveur d'authentification, généralement RADIUS. Tant que l'authentification n'a pas réussi, le port ne laisse passer que les trames EAPOL ; le commutateur relaie les échanges EAP vers le serveur RADIUS, puis ouvre le port, éventuellement dans un VLAN attribué par le serveur. 802.1X durcit ainsi les commutateurs comme les réseaux Wi-Fi d'entreprise.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1X-2020 ; RFC 3748 (EAP) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-wifi-heat-map-purpose-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avant d'installer le Wi-Fi d'un entrepôt logistique, le prestataire réalise une étude de site et remet une carte thermique (heat map). Quelle information cette carte apporte-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La température des baies réseau aux différents points de l'entrepôt"
+        },
+        {
+          "id": "b",
+          "text": "La liste des adresses MAC des clients associés à chaque point d'accès"
+        },
+        {
+          "id": "c",
+          "text": "L'intensité du signal radio mesurée dans chaque zone du bâtiment"
+        },
+        {
+          "id": "d",
+          "text": "Le débit du lien WAN entre l'entrepôt et le siège de l'entreprise"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "En réseau sans fil, une carte thermique superpose au plan du bâtiment l'intensité du signal (en dBm), souvent aussi le rapport signal sur bruit et les canaux, mesurés lors de l'étude de site. Elle montre les zones mortes à combler, les recouvrements entre points d'accès et les débordements du signal hors des murs, que l'on réduit en ajustant puissance et emplacement pour limiter l'exposition aux attaquants situés à l'extérieur. Elle guide donc à la fois la qualité de couverture et la sécurité du déploiement.",
+    "distractorNotes": {
+      "a": "Le terme « thermique » désigne ici l'échelle de couleurs de l'intensité radio, pas une mesure de température.",
+      "b": "La liste des clients associés se lit sur le contrôleur Wi-Fi ; elle ne figure pas sur une carte de couverture.",
+      "d": "Le débit WAN relève de la supervision du lien opérateur, sans rapport avec la couverture radio."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-wpa3-sae-offline-cracking-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une boulangerie artisanale dispose d'un seul réseau Wi-Fi protégé par une phrase de passe partagée, sans serveur RADIUS. Le prestataire veut qu'un attaquant qui capture les échanges d'association ne puisse pas tester hors ligne des phrases de passe candidates. Quelle configuration répond à cet objectif ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "WPA2-Personal avec chiffrement AES-CCMP"
+        },
+        {
+          "id": "b",
+          "text": "WPA2-Personal avec diffusion du SSID désactivée"
+        },
+        {
+          "id": "c",
+          "text": "WPA-Personal avec chiffrement TKIP"
+        },
+        {
+          "id": "d",
+          "text": "WPA3-Personal avec authentification SAE"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "En WPA2-Personal, la poignée de main en quatre temps capturée suffit à tester des phrases de passe hors ligne, à la vitesse du matériel de l'attaquant. WPA3-Personal remplace la PSK par SAE (Simultaneous Authentication of Equals), un échange de type Dragonfly : chaque tentative exige une interaction avec le point d'accès, ce qui rend inutile la capture pour une attaque par dictionnaire hors ligne, et apporte la confidentialité persistante. SAE garde une phrase de passe partagée, sans exiger de serveur RADIUS.",
+    "distractorNotes": {
+      "a": "AES-CCMP chiffre bien le trafic, mais l'authentification PSK de WPA2 reste exposée aux attaques par dictionnaire hors ligne.",
+      "b": "Masquer le SSID ne protège rien : il apparaît dans les trames des clients, et la poignée de main reste capturable.",
+      "c": "WPA avec TKIP est obsolète et cumule les faiblesses ; il ne résout pas l'attaque hors ligne."
+    },
+    "reference": "Wi-Fi Alliance WPA3 Specification ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-eap-methods-characteristics-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un hôpital compare les méthodes EAP utilisables avec son infrastructure 802.1X/RADIUS pour le Wi-Fi. Associez chaque méthode à sa caractéristique.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "EAP-TLS"
+        },
+        {
+          "id": "l2",
+          "text": "PEAP"
+        },
+        {
+          "id": "l3",
+          "text": "EAP-TTLS"
+        },
+        {
+          "id": "l4",
+          "text": "EAP-FAST"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Tunnel TLS avec le certificat du serveur ; seules des méthodes EAP internes (MSCHAPv2, GTC) y sont admises"
+        },
+        {
+          "id": "r2",
+          "text": "Tunnel établi grâce à un identifiant d'accès protégé (PAC) plutôt qu'à un certificat"
+        },
+        {
+          "id": "r3",
+          "text": "Authentification mutuelle par certificat, côté client comme côté serveur"
+        },
+        {
+          "id": "r4",
+          "text": "Tunnel TLS avec le certificat du serveur, qui admet aussi des méthodes internes non EAP comme PAP ou CHAP"
+        },
+        {
+          "id": "r5",
+          "text": "Simple défi haché en MD5, sans authentification du serveur"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "r3",
+        "l2": "r1",
+        "l3": "r4",
+        "l4": "r2"
+      }
+    },
+    "explanation": "EAP-TLS (RFC 5216) authentifie le serveur et le client par certificat : c'est la méthode la plus robuste, mais elle impose une PKI pour les postes. PEAP ouvre un tunnel TLS authentifié par le certificat du serveur, puis encapsule une méthode EAP interne, le plus souvent MSCHAPv2. EAP-TTLS (RFC 5281) ouvre lui aussi un tunnel avec le certificat du serveur, mais peut transporter des méthodes internes non EAP héritées comme PAP ou CHAP. EAP-FAST (RFC 4851), conçu par Cisco, établit son tunnel à l'aide d'un PAC, sans certificat obligatoire.",
+    "distractorNotes": {
+      "r5": "Cette description correspond à EAP-MD5, absent de la liste : sans authentification du serveur ni génération de clés, il ne convient pas au Wi-Fi."
+    },
+    "reference": "RFC 5216 (EAP-TLS) ; RFC 5281 (EAP-TTLSv0) ; RFC 4851 (EAP-FAST) ; RFC 3748 (EAP)"
+  },
+  {
+    "slug": "security-plus-4.1-wlan-policy-pmf-compliance-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. La politique sans fil d'une entreprise impose : réseaux des salariés en WPA3-Enterprise ou WPA2-Enterprise avec 802.1X ; réseau invités en WPA3-Personal ou OWE ; aucun usage de TKIP ; protection des trames de gestion (PMF, 802.11w) obligatoire sur tous les réseaux. CORP, CORP-LEGACY et ATELIER sont des réseaux de salariés. Quel WLAN l'analyste doit-il signaler comme non conforme ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ATELIER"
+        },
+        {
+          "id": "b",
+          "text": "CORP"
+        },
+        {
+          "id": "c",
+          "text": "INVITES"
+        },
+        {
+          "id": "d",
+          "text": "CORP-LEGACY"
+        }
+      ],
+      "exhibit": "Contrôleur WLC-SIEGE - résumé des WLAN - 2026-11-02 10:15\nSSID         Sécurité          Auth     Chiffrement  PMF\n------------------------------------------------------------\nCORP         WPA3-Enterprise   802.1X   CCMP-128     Requis\nCORP-LEGACY  WPA2-Enterprise   802.1X   CCMP-128     Requis\nINVITES      OWE               -        CCMP-128     Requis\nATELIER      WPA2-Enterprise   802.1X   CCMP-128     Désactivé"
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Il faut vérifier chaque critère pour chaque WLAN. CORP (WPA3-Enterprise, 802.1X, CCMP-128, PMF requis) et CORP-LEGACY (WPA2-Enterprise, 802.1X, CCMP-128, PMF requis) respectent la politique : WPA2-Enterprise y est explicitement admis. INVITES utilise OWE, autorisé pour les invités, avec PMF requis. ATELIER est en WPA2-Enterprise avec CCMP, sans TKIP, mais sa protection des trames de gestion est désactivée : des trames de désauthentification forgées peuvent alors déconnecter les clients. C'est le seul écart.",
+    "distractorNotes": {
+      "b": "CORP coche tous les critères : WPA3-Enterprise, 802.1X, CCMP-128 et PMF requis.",
+      "c": "OWE est admis pour le réseau invités, et la PMF y est requise.",
+      "d": "WPA2-Enterprise avec 802.1X est autorisé pour les salariés ; CCMP-128 n'est pas TKIP et la PMF est requise."
+    },
+    "reference": "Wi-Fi Alliance WPA3 Specification ; IEEE 802.11 (amendement 802.11w) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-wifi-site-survey-order-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un hôtel prépare le déploiement du Wi-Fi dans ses étages. Ordonnez les étapes de la démarche, de la première à la dernière.",
+      "items": [
+        {
+          "id": "install",
+          "text": "Installer et configurer les points d'accès aux emplacements retenus"
+        },
+        {
+          "id": "adjust",
+          "text": "Ajuster puissance et canaux des points d'accès selon les zones faibles mesurées"
+        },
+        {
+          "id": "survey",
+          "text": "Réaliser l'étude de site : plans, matériaux des murs, sources d'interférence"
+        },
+        {
+          "id": "validate",
+          "text": "Mener une étude de validation pour mesurer la couverture réelle"
+        },
+        {
+          "id": "plan",
+          "text": "Établir la carte thermique prévisionnelle et choisir l'emplacement des points d'accès"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "survey",
+        "plan",
+        "install",
+        "validate",
+        "adjust"
+      ]
+    },
+    "explanation": "L'étude de site préalable recueille les données qui conditionnent la propagation : plans, matériaux, sources d'interférence, besoins de densité. Elle permet de produire une carte thermique prévisionnelle et de choisir l'emplacement des points d'accès. Une fois ceux-ci installés, une étude de validation mesure la couverture réelle, qui diffère toujours un peu du modèle. Les zones faibles ou les débordements constatés conduisent enfin à ajuster puissance et canaux : l'ajustement dépend donc des mesures de validation.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-wpa3-enterprise-192-bit-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un opérateur d'importance vitale doit aligner son Wi-Fi sur la suite cryptographique CNSA. Il retient le mode renforcé de WPA3-Enterprise, qui impose notamment GCMP-256, HMAC-SHA-384 et des courbes elliptiques P-384. Ce mode est désigné par sa force de sécurité : laquelle ?",
+      "fields": [
+        {
+          "id": "bits",
+          "label": "Force de sécurité du mode, en bits (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "bits": {
+          "accepted": [
+            "192"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "WPA3-Enterprise propose un mode 192 bits (WPA3-Enterprise 192-bit mode), aligné sur la suite CNSA. Il fixe un ensemble cohérent d'algorithmes offrant au minimum 192 bits de sécurité : GCMP-256 pour le chiffrement des données, HMAC-SHA-384 pour la dérivation et la confirmation des clés, ECDH et ECDSA sur la courbe P-384 (ou RSA d'au moins 3072 bits) pour l'échange de clés et l'authentification, avec EAP-TLS. On évite ainsi qu'un algorithme plus faible serve de maillon faible. Le mode WPA3-Enterprise standard conserve, lui, CCMP-128.",
+    "distractorNotes": {},
+    "reference": "Wi-Fi Alliance WPA3 Specification ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-byod-containerization-wipe-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un cabinet d'avocats autorise le BYOD. Les collaborateurs acceptent que leurs smartphones personnels accèdent à la messagerie du cabinet, mais refusent que l'entreprise puisse effacer leurs photos et applications personnelles. Quelle solution concilie le mieux sécurité et respect de la vie privée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une conteneurisation qui sépare un profil professionnel effaçable seul"
+        },
+        {
+          "id": "b",
+          "text": "Un effacement complet à distance déclenché par le MDM en cas de perte"
+        },
+        {
+          "id": "c",
+          "text": "Une interdiction totale des smartphones personnels dans le cabinet"
+        },
+        {
+          "id": "d",
+          "text": "Un géorepérage qui bloque la messagerie hors des locaux du cabinet"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La conteneurisation (profil professionnel Android, inscription utilisateur iOS, gestion des applications par MAM) isole les applications et données du cabinet dans un espace chiffré géré par l'entreprise. En cas de perte ou de départ, l'entreprise déclenche un effacement sélectif qui ne supprime que ce conteneur, sans toucher aux photos ni aux applications personnelles. La sécurité des données professionnelles est assurée tout en respectant la vie privée, condition d'acceptation d'un programme BYOD.",
+    "distractorNotes": {
+      "b": "L'effacement complet supprime aussi les données personnelles : c'est précisément ce que refusent les collaborateurs.",
+      "c": "Interdire les smartphones personnels supprime le BYOD au lieu de le sécuriser ; ce n'est pas la conciliation demandée.",
+      "d": "Le géorepérage limite l'usage selon le lieu, mais ne sépare pas les données et ne répond pas au refus de l'effacement."
+    },
+    "reference": "NIST SP 800-124 Rev. 2 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-bluetooth-trade-show-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Les commerciaux d'un éditeur de logiciels passent leurs journées dans des salons professionnels bondés. Le RSSI veut réduire le risque d'attaques Bluetooth (repérage de l'appareil, extraction de données, appairage par un inconnu) sur leurs smartphones d'entreprise. Quelles deux mesures imposées par le MDM répondent le mieux à ce risque ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Désactiver le mode visible (découvrable) du Bluetooth"
+        },
+        {
+          "id": "b",
+          "text": "Activer la connexion automatique aux Wi-Fi ouverts"
+        },
+        {
+          "id": "c",
+          "text": "Allonger le délai de verrouillage automatique de l'écran"
+        },
+        {
+          "id": "d",
+          "text": "Refuser l'appairage avec les appareils non approuvés"
+        },
+        {
+          "id": "e",
+          "text": "Laisser le NFC actif en permanence pour les paiements"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Le bluesnarfing consiste à extraire sans autorisation des données (contacts, messages, fichiers) d'un appareil Bluetooth vulnérable, et le bluejacking à lui envoyer des messages non sollicités. Un appareil non découvrable n'annonce plus sa présence aux personnes qui balaient les environs, et le refus de l'appairage avec des appareils non approuvés empêche un inconnu d'établir une liaison de confiance avec le téléphone. Ces deux réglages figurent parmi les recommandations de NIST SP 800-121 Rev. 2, avec la désactivation du Bluetooth quand il ne sert pas et la tenue à jour du système.",
+    "distractorNotes": {
+      "b": "La connexion automatique aux Wi-Fi ouverts expose à des points d'accès malveillants ; elle augmente le risque au lieu de le réduire.",
+      "c": "Un délai de verrouillage plus long accroît l'exposition en cas de vol, sans effet sur les attaques Bluetooth.",
+      "e": "Le NFC est une autre interface radio ; le laisser actif en permanence n'apporte aucune protection Bluetooth."
+    },
+    "reference": "NIST SP 800-121 Rev. 2 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-lost-phone-mdm-controls-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un technicien d'une société de maintenance perd son smartphone d'entreprise dans un train. Quelles deux fonctions du MDM, configurées à l'avance, limitent le mieux l'exposition des données stockées sur l'appareil ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La liste d'autorisation des applications installables"
+        },
+        {
+          "id": "b",
+          "text": "Le VPN permanent vers le siège de l'entreprise"
+        },
+        {
+          "id": "c",
+          "text": "L'effacement à distance de l'appareil"
+        },
+        {
+          "id": "d",
+          "text": "La mise à jour automatique du système"
+        },
+        {
+          "id": "e",
+          "text": "Le chiffrement du stockage avec code de verrouillage imposé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Pour un appareil perdu, deux protections agissent sur les données stockées. Le chiffrement du stockage, lié à un code de verrouillage imposé par le MDM, rend les données illisibles pour qui trouve le téléphone sans connaître le code. L'effacement à distance, déclenché dès le signalement de la perte, supprime les données dès que l'appareil se reconnecte. L'un protège immédiatement, l'autre élimine le risque résiduel : ils se complètent.",
+    "distractorNotes": {
+      "a": "La liste d'autorisation empêche l'installation d'applications non approuvées ; elle ne protège pas les données d'un appareil tombé entre d'autres mains.",
+      "b": "Le VPN permanent protège les données en transit, pas celles stockées sur le téléphone.",
+      "d": "Les mises à jour corrigent des vulnérabilités, mais ne rendent pas illisibles les données d'un appareil perdu."
+    },
+    "reference": "NIST SP 800-124 Rev. 2 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-cellular-disable-2g-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Des auditeurs d'un cabinet de conseil se rendent régulièrement dans des pays où l'usage de fausses stations de base (IMSI catchers) est documenté. Ces équipements forcent les téléphones à basculer sur le réseau 2G (GSM) pour intercepter les communications. Quelle mesure, imposée par le MDM sur leurs smartphones Android récents, contre le mieux cette technique ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Imposer un code PIN sur la carte SIM de chaque téléphone"
+        },
+        {
+          "id": "b",
+          "text": "Désactiver la connectivité 2G dans les réglages du réseau mobile"
+        },
+        {
+          "id": "c",
+          "text": "Imposer le chiffrement complet du stockage de chaque téléphone"
+        },
+        {
+          "id": "d",
+          "text": "Désactiver le partage de connexion Wi-Fi de chaque téléphone"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "En GSM, seul l'abonné s'authentifie auprès du réseau : le téléphone ne vérifie pas la station de base, et le chiffrement radio peut être faible ou désactivé à la demande du réseau. Une fausse station peut donc se faire accepter et intercepter le trafic. Les réseaux 3G, 4G et 5G imposent une authentification mutuelle (AKA), d'où l'intérêt pour l'attaquant de forcer une rétrogradation vers la 2G. Les versions récentes d'Android permettent de désactiver la 2G, réglage que les solutions de gestion des terminaux peuvent imposer : la rétrogradation devient impossible.",
+    "distractorNotes": {
+      "a": "Le code PIN de la SIM protège contre l'usage de la carte volée, pas contre l'interception radio par une fausse station.",
+      "c": "Le chiffrement du stockage protège les données au repos ; il n'agit pas sur les communications captées par voie radio.",
+      "d": "Le partage de connexion concerne le Wi-Fi émis par le téléphone ; le désactiver n'empêche pas la bascule forcée vers la 2G."
+    },
+    "reference": "3GPP TS 33.102 (sécurité 3G, authentification AKA) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-mobile-deployment-models-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une entreprise de services numériques décrit quatre situations à ses nouveaux salariés. Associez chacune au modèle de déploiement mobile correspondant.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Un consultant lit sa messagerie professionnelle sur le smartphone qu'il a acheté lui-même"
+        },
+        {
+          "id": "l2",
+          "text": "Une commerciale choisit son modèle dans un catalogue de trois appareils, que l'entreprise achète, possède et gère"
+        },
+        {
+          "id": "l3",
+          "text": "L'entreprise remet à chaque technicien un modèle unique qu'elle possède, en autorisant un usage personnel raisonnable"
+        },
+        {
+          "id": "l4",
+          "text": "Un prestataire externe se connecte à l'intranet depuis sa tablette personnelle"
+        }
+      ],
+      "right": [
+        {
+          "id": "cope",
+          "text": "COPE"
+        },
+        {
+          "id": "byod",
+          "text": "BYOD"
+        },
+        {
+          "id": "vdi",
+          "text": "VDI"
+        },
+        {
+          "id": "cyod",
+          "text": "CYOD"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "byod",
+        "l2": "cyod",
+        "l3": "cope",
+        "l4": "byod"
+      }
+    },
+    "explanation": "BYOD (Bring Your Own Device) : l'appareil appartient à l'utilisateur, qui l'emploie aussi pour le travail ; c'est le cas du consultant et du prestataire avec leur matériel personnel. CYOD (Choose Your Own Device) : l'utilisateur choisit parmi une liste d'appareils approuvés que l'entreprise fournit et gère. COPE (Corporate-Owned, Personally Enabled) : l'entreprise choisit, possède et gère l'appareil, tout en autorisant un usage personnel. Le modèle conditionne le niveau de contrôle que l'entreprise peut exercer par le MDM.",
+    "distractorNotes": {
+      "vdi": "La VDI (infrastructure de postes de travail virtuels) est une technique d'accès à un bureau hébergé, pas un modèle de propriété des terminaux mobiles."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-cookie-secure-attribute-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un audit d'une boutique en ligne révèle que le cookie de session peut être transmis en clair lorsqu'un client suit un ancien lien en http://. Quel attribut du cookie garantit que le navigateur ne l'envoie que sur une connexion HTTPS ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "HttpOnly"
+        },
+        {
+          "id": "b",
+          "text": "SameSite=Strict"
+        },
+        {
+          "id": "c",
+          "text": "Secure"
+        },
+        {
+          "id": "d",
+          "text": "Max-Age"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'attribut Secure demande au navigateur de n'envoyer le cookie que sur un canal sécurisé (HTTPS). Sans lui, une requête vers l'adresse en http:// emporte le cookie de session en clair, et un attaquant placé sur le réseau (Wi-Fi public, par exemple) peut le capturer et usurper la session. On combine Secure avec HttpOnly (cookie inaccessible au JavaScript), SameSite (limitation des envois intersites) et, côté serveur, HSTS pour que le navigateur n'emprunte plus du tout le HTTP.",
+    "distractorNotes": {
+      "a": "HttpOnly empêche le JavaScript de lire le cookie ; il n'interdit pas son envoi sur une connexion HTTP en clair.",
+      "b": "SameSite contrôle l'envoi du cookie dans les requêtes intersites (protection contre le CSRF), pas le chiffrement du canal.",
+      "d": "Max-Age fixe la durée de vie du cookie, sans effet sur le protocole de transport."
+    },
+    "reference": "RFC 6265 (cookies HTTP) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-server-side-input-validation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'un test d'intrusion d'une application de prise de rendez-vous, l'équipe contourne les contrôles de format écrits en JavaScript en modifiant les requêtes avec un proxy d'interception. Quelle correction le développeur doit-il apporter en priorité ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Obfusquer le code JavaScript pour masquer les règles de validation"
+        },
+        {
+          "id": "b",
+          "text": "Valider côté serveur chaque entrée selon une liste d'autorisation"
+        },
+        {
+          "id": "c",
+          "text": "Ajouter un CAPTCHA au formulaire de prise de rendez-vous en ligne"
+        },
+        {
+          "id": "d",
+          "text": "Renforcer les expressions régulières du code JavaScript du formulaire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Tout ce qui s'exécute dans le navigateur est sous le contrôle de l'utilisateur : un proxy d'interception modifie la requête après le contrôle JavaScript, qui n'apporte donc qu'un confort d'ergonomie. La validation de sécurité doit avoir lieu côté serveur, sur chaque entrée, de préférence par liste d'autorisation (type, longueur, format, plage de valeurs attendus) plutôt que par recherche de motifs interdits. Elle se complète par l'encodage des sorties et les requêtes paramétrées selon l'usage des données.",
+    "distractorNotes": {
+      "a": "L'obfuscation ralentit la lecture du code mais n'empêche pas de modifier la requête après son exécution.",
+      "c": "Un CAPTCHA freine l'automatisation ; il ne vérifie pas le contenu des champs envoyés.",
+      "d": "Des expressions régulières plus strictes côté client restent contournables de la même façon par le proxy."
+    },
+    "reference": "OWASP Application Security Verification Standard 4.0 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-signed-release-pipeline-order-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un éditeur automatise la livraison de son agent de sauvegarde. Ordonnez les étapes de son pipeline, du dépôt du code à l'installation chez le client.",
+      "items": [
+        {
+          "id": "sign",
+          "text": "Le binaire compilé est signé avec la clé privée de l'éditeur"
+        },
+        {
+          "id": "push",
+          "text": "Le développeur pousse ses modifications dans le dépôt Git"
+        },
+        {
+          "id": "verify",
+          "text": "Le poste client vérifie la signature du binaire avant de l'installer"
+        },
+        {
+          "id": "build",
+          "text": "Le serveur d'intégration compile le code validé par l'analyse"
+        },
+        {
+          "id": "sast",
+          "text": "L'analyse statique (SAST) examine le code source poussé"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "push",
+        "sast",
+        "build",
+        "sign",
+        "verify"
+      ]
+    },
+    "explanation": "Chaque étape dépend de la précédente. Le code poussé dans le dépôt déclenche le pipeline ; l'analyse statique examine le code source sans l'exécuter et bloque la suite si elle trouve une faille grave ; le serveur d'intégration compile ensuite le code validé. La signature ne peut porter que sur le binaire final, avec la clé privée de l'éditeur protégée, idéalement dans un HSM. Enfin, le client vérifie cette signature avant l'installation, ce qui prouve l'origine et l'intégrité du binaire reçu.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-appsec-practices-purpose-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'équipe de développement d'une banque en ligne présente ses pratiques de sécurité applicative à l'auditeur. Associez chaque pratique à ce qu'elle apporte.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Analyse statique du code (SAST)"
+        },
+        {
+          "id": "l2",
+          "text": "Sandboxing"
+        },
+        {
+          "id": "l3",
+          "text": "Validation des entrées"
+        },
+        {
+          "id": "l4",
+          "text": "Surveillance applicative"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Détecter en production un comportement anormal grâce aux journaux et aux métriques"
+        },
+        {
+          "id": "r2",
+          "text": "Repérer des failles en examinant le code source sans l'exécuter"
+        },
+        {
+          "id": "r3",
+          "text": "Tester l'application en cours d'exécution en lui envoyant des requêtes malformées"
+        },
+        {
+          "id": "r4",
+          "text": "Limiter ce qu'un processus compromis peut atteindre sur le système"
+        },
+        {
+          "id": "r5",
+          "text": "Rejeter les données qui ne respectent pas le format attendu"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "r2",
+        "l2": "r4",
+        "l3": "r5",
+        "l4": "r1"
+      }
+    },
+    "explanation": "L'analyse statique examine le code source (ou compilé) sans l'exécuter et signale des motifs dangereux, tôt dans le cycle de développement. Le sandboxing exécute l'application dans un environnement isolé aux droits restreints : une exploitation réussie reste confinée. La validation des entrées rejette les données hors du type, de la longueur ou du format attendus. La surveillance applicative collecte journaux, métriques et alertes en production pour repérer erreurs en rafale, abus ou comportements anormaux.",
+    "distractorNotes": {
+      "r3": "Envoyer des requêtes malformées à une application en cours d'exécution relève de l'analyse dynamique (DAST, fuzzing), pratique absente de la liste."
+    },
+    "reference": "OWASP Application Security Verification Standard 4.0 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  }
+]

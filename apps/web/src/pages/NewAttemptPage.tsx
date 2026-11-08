@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { WithCertification } from '../certification/CertificationContext';
+import { ModuleGate } from '../certification/ModuleGate';
+import { hasModule } from '../lib/certification';
 import { IconPlay, IconTimer, IconTrend } from '../components/Icons';
 import { SeriesLaunchPanel } from '../components/Series';
 import { ErrorBox, Spinner } from '../components/ui';
@@ -55,16 +57,28 @@ function ModeCard({
 
 export function NewAttemptPage() {
   // Changer de certification remonte le formulaire : domaines et nombre repartent de zéro.
-  return <WithCertification>{(c) => <NewAttemptForm key={c.code} code={c.code} />}</WithCertification>;
+  return (
+    <WithCertification>
+      {(c) =>
+        hasModule(c, 'exam') || hasModule(c, 'practice') ? (
+          <NewAttemptForm key={c.code} code={c.code} modes={(['exam', 'practice'] as const).filter((m) => hasModule(c, m))} />
+        ) : (
+          <ModuleGate module="exam">{null}</ModuleGate>
+        )
+      }
+    </WithCertification>
+  );
 }
 
-function NewAttemptForm({ code }: { code: string }) {
+function NewAttemptForm({ code, modes }: { code: string; modes: readonly AttemptMode[] }) {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const detail = useApi<CertificationDetail>(`/certifications/${encodeURIComponent(code)}`);
-  const series = useApi<SeriesProgress>(`/exams?certification=${encodeURIComponent(code)}`);
+  const series = useApi<SeriesProgress>(modes.includes('exam') ? `/exams?certification=${encodeURIComponent(code)}` : null);
 
-  const urlMode: AttemptMode = params.get('mode') === 'practice' ? 'practice' : 'exam';
+  // Mode demandé par l'URL, ramené aux modes que la certification propose.
+  const asked: AttemptMode = params.get('mode') === 'practice' ? 'practice' : 'exam';
+  const urlMode: AttemptMode = modes.includes(asked) ? asked : (modes[0] as AttemptMode);
   const urlDomains = params.get('domaines');
   const [mode, setMode] = useState<AttemptMode>(urlMode);
   const [count, setCount] = useState<number | null>(null);
@@ -175,22 +189,22 @@ function NewAttemptForm({ code }: { code: string }) {
           Mode
         </div>
         <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))]">
-          <ModeCard
+          {modes.includes('exam') && <ModeCard
             mode="exam"
             checked={mode === 'exam'}
             onChange={changeMode}
             icon={<IconTimer />}
             title="Examen blanc chronométré"
             description={`Conditions du jour J : chrono, ${cert.examFormat.allowBackNavigation ? 'retour arrière autorisé' : 'pas de retour arrière'}, correction à la fin. Compte pour l'indice de préparation.`}
-          />
-          <ModeCard
+          />}
+          {modes.includes('practice') && <ModeCard
             mode="practice"
             checked={mode === 'practice'}
             onChange={changeMode}
             icon={<IconTrend />}
             title="Entraînement libre"
             description="Sans chrono, navigation libre, correction et explications après chaque question."
-          />
+          />}
         </div>
       </fieldset>
 

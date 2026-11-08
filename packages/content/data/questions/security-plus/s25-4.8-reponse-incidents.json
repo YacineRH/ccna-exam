@@ -1,0 +1,1244 @@
+[
+  {
+    "slug": "security-plus-4.8-recovery-phase-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après la suppression d'un logiciel malveillant, l'équipe de réponse aux incidents d'une PME restaure deux serveurs à partir de sauvegardes vérifiées saines, puis les remet en production sous surveillance renforcée. Dans quelle phase du processus de réponse aux incidents se trouve-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Confinement"
+        },
+        {
+          "id": "b",
+          "text": "Éradication"
+        },
+        {
+          "id": "c",
+          "text": "Reprise"
+        },
+        {
+          "id": "d",
+          "text": "Retour d'expérience"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La reprise (recovery) ramène les systèmes touchés à un fonctionnement normal : restauration depuis des sauvegardes saines ou reconstruction, vérification de leur bon fonctionnement, puis remise en production progressive. Une surveillance renforcée accompagne ce retour pour détecter au plus vite une réinfection ou une persistance oubliée. Elle suit l'éradication, qui a retiré la menace, et précède le retour d'expérience.",
+    "distractorNotes": {
+      "a": "Le confinement limite l'extension de l'incident (isolement, blocage) ; il ne remet aucun service en production.",
+      "b": "L'éradication supprime la menace (logiciel malveillant, persistance, comptes créés) ; elle est déjà terminée dans le scénario.",
+      "d": "Le retour d'expérience intervient une fois l'incident clos, pour analyser son déroulement et améliorer le plan."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-4.8-faraday-bag-preservation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'une investigation interne, un enquêteur saisit le smartphone professionnel allumé d'un salarié et le place aussitôt dans un sac de Faraday. Quel est l'objectif principal de cette mesure ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Protéger l'appareil contre les chocs et les décharges électrostatiques pendant le transport"
+        },
+        {
+          "id": "b",
+          "text": "Bloquer les signaux radio pour éviter qu'un effacement à distance ou une synchronisation ne modifie les données"
+        },
+        {
+          "id": "c",
+          "text": "Chiffrer le contenu de l'appareil afin qu'aucun tiers ne puisse le lire avant l'analyse"
+        },
+        {
+          "id": "d",
+          "text": "Maintenir la batterie chargée pour conserver le contenu de la mémoire vive jusqu'au laboratoire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La préservation vise à garder la preuve dans l'état où elle a été saisie. Un smartphone allumé reste joignable par le réseau mobile, le Wi-Fi ou le Bluetooth : une commande d'effacement à distance, une synchronisation ou la simple réception de messages modifierait ou détruirait des données. Le sac de Faraday atténue ces signaux et isole l'appareil de tout réseau jusqu'à l'acquisition en laboratoire.",
+    "distractorNotes": {
+      "a": "Un sac de Faraday n'est pas une protection mécanique ; les sacs antistatiques et le calage servent à cela.",
+      "c": "Le sac ne chiffre rien : il bloque seulement les ondes radio, sans toucher au contenu de l'appareil.",
+      "d": "Le sac ne fournit aucune alimentation ; il faut au contraire prévoir une batterie externe si l'appareil doit rester allumé."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-101 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.8-lessons-learned-meeting-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux semaines après la clôture d'un incident d'hameçonnage ciblé, l'équipe de réponse se réunit pour examiner les délais de détection, ce qui a bien fonctionné et les modifications à apporter au plan. Quelle phase du processus de réponse aux incidents cette réunion représente-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Détection"
+        },
+        {
+          "id": "b",
+          "text": "Analyse"
+        },
+        {
+          "id": "c",
+          "text": "Reprise"
+        },
+        {
+          "id": "d",
+          "text": "Retour d'expérience"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le retour d'expérience (lessons learned) est la dernière phase : une fois l'incident clos, l'équipe revoit sa chronologie, mesure ses délais, relève ce qui a fonctionné ou non et décide des améliorations (plan, outils, formation, contrôles). NIST SP 800-61 recommande de tenir cette réunion peu après la fin de l'incident, tant que les faits sont frais. Ses conclusions nourrissent la préparation des incidents suivants.",
+    "distractorNotes": {
+      "a": "La détection consiste à repérer les signes d'un incident ; ici, l'incident est déjà clos.",
+      "b": "L'analyse détermine la nature, l'étendue et la gravité d'un incident en cours, pas les améliorations à apporter après coup.",
+      "c": "La reprise remet les systèmes en service ; elle est terminée avant la clôture de l'incident."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-4.8-threat-hunting-ttp-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "À la lecture d'un rapport de renseignement décrivant les techniques d'un groupe qui cible son secteur, un analyste interroge l'EDR et le SIEM pour rechercher ces comportements sur le parc, alors qu'aucune alerte n'a été levée. Quelle activité mène-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une analyse des causes racines"
+        },
+        {
+          "id": "b",
+          "text": "Une chasse aux menaces"
+        },
+        {
+          "id": "c",
+          "text": "Un scan de vulnérabilités"
+        },
+        {
+          "id": "d",
+          "text": "Un test d'intrusion"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La chasse aux menaces (threat hunting) est une recherche proactive, guidée par une hypothèse, d'un attaquant qui aurait échappé aux contrôles automatiques. Elle s'appuie souvent sur le renseignement sur les menaces : à partir des tactiques, techniques et procédures (TTP) d'un groupe, l'analyste formule une hypothèse et la vérifie dans les données de télémétrie (EDR, SIEM, journaux), sans attendre qu'une alerte se déclenche.",
+    "distractorNotes": {
+      "a": "L'analyse des causes racines suit un incident avéré, pour comprendre pourquoi il a pu se produire ; aucun incident n'est encore connu ici.",
+      "c": "Un scan de vulnérabilités recherche des failles connues dans les systèmes, pas les traces d'un attaquant déjà présent.",
+      "d": "Un test d'intrusion simule une attaque pour éprouver les défenses ; il ne cherche pas d'activité adverse réelle dans la télémétrie."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; MITRE ATT&CK"
+  },
+  {
+    "slug": "security-plus-4.8-preparation-activities-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une collectivité met en place sa capacité de réponse aux incidents. Quelles deux activités relèvent de la phase de préparation ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Isoler du réseau les postes sur lesquels un rançongiciel a été détecté"
+        },
+        {
+          "id": "b",
+          "text": "Rédiger et valider des playbooks pour les scénarios d'incident les plus probables"
+        },
+        {
+          "id": "c",
+          "text": "Réimager le serveur compromis à partir d'une image de référence"
+        },
+        {
+          "id": "d",
+          "text": "Former les membres de l'équipe et tenir à jour la liste des contacts d'escalade"
+        },
+        {
+          "id": "e",
+          "text": "Rédiger le rapport final de l'incident pour la direction"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La préparation regroupe tout ce qui se fait avant un incident pour pouvoir y répondre : politique et plan de réponse, playbooks, constitution et formation de l'équipe, liste des contacts (direction, juridique, prestataires, autorités), outils et kit d'intervention, ainsi que les exercices. Les autres actions supposent un incident en cours ou terminé et appartiennent aux phases suivantes.",
+    "distractorNotes": {
+      "a": "Isoler des postes infectés est une mesure de confinement, prise pendant un incident.",
+      "c": "Réimager un serveur compromis relève de l'éradication et de la reprise, après l'incident détecté.",
+      "e": "Le rapport final de l'incident est produit lors de l'activité post-incident (retour d'expérience)."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-4.8-forensics-concepts-match-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Dans une investigation numérique, associez chaque action à la notion correspondante.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Suspendre la suppression automatique des données susceptibles de servir dans un litige"
+        },
+        {
+          "id": "l2",
+          "text": "Consigner chaque personne qui a eu la preuve en main, avec la date, l'heure et le motif"
+        },
+        {
+          "id": "l3",
+          "text": "Rechercher, collecter et remettre les informations électroniques demandées dans une procédure"
+        },
+        {
+          "id": "l4",
+          "text": "Réaliser une copie bit à bit d'un support et en calculer l'empreinte"
+        }
+      ],
+      "right": [
+        {
+          "id": "hold",
+          "text": "Conservation légale (legal hold)"
+        },
+        {
+          "id": "coc",
+          "text": "Chaîne de traçabilité"
+        },
+        {
+          "id": "edisc",
+          "text": "Découverte électronique (e-discovery)"
+        },
+        {
+          "id": "acq",
+          "text": "Acquisition"
+        },
+        {
+          "id": "hunt",
+          "text": "Chasse aux menaces"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "hold",
+        "l2": "coc",
+        "l3": "edisc",
+        "l4": "acq"
+      }
+    },
+    "explanation": "La conservation légale gèle des données quand un litige est engagé ou prévisible, en suspendant les règles de purge. La chaîne de traçabilité documente chaque transfert de la preuve (qui, quand, pourquoi) pour en démontrer l'intégrité. La découverte électronique est le processus qui identifie, collecte, examine et produit les informations électroniques demandées. L'acquisition crée une copie fidèle d'un support, vérifiée par une empreinte.",
+    "distractorNotes": {
+      "hunt": "La chasse aux menaces est une recherche proactive d'attaquants dans la télémétrie, pas une étape du traitement des preuves."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-86"
+  },
+  {
+    "slug": "security-plus-4.8-legal-hold-term-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une entreprise est informée qu'un ancien fournisseur l'assigne en justice. Le service juridique demande à la DSI de suspendre, pour les boîtes aux lettres de cinq salariés, la purge automatique prévue par la politique de conservation, jusqu'à nouvel ordre. Comment s'appelle cette mesure ?",
+      "fields": [
+        {
+          "id": "term",
+          "label": "Nom de la mesure (en français ou en anglais)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "term": {
+          "accepted": [
+            "legal hold",
+            "litigation hold",
+            "conservation légale",
+            "conservation legale",
+            "gel juridique",
+            "gel légal",
+            "gel legal"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "La conservation légale (legal hold, ou litigation hold) oblige l'organisation à préserver toutes les données pertinentes pour un litige engagé ou raisonnablement prévisible. Elle prime sur la politique de conservation habituelle : les suppressions automatiques et les rotations sont suspendues pour les données visées jusqu'à la levée de la mesure par le service juridique. Détruire ces données malgré l'obligation de les conserver exposerait l'entreprise à des sanctions.",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8"
+  },
+  {
+    "slug": "security-plus-4.8-nist-lifecycle-phases-count-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Pour rédiger son plan de réponse aux incidents, une PME s'appuie sur le cycle de vie décrit par NIST SP 800-61 Rev. 2, qui regroupe en une même phase le confinement, l'éradication et la reprise. Combien de phases ce cycle de vie compte-t-il ?",
+      "fields": [
+        {
+          "id": "n",
+          "label": "Nombre de phases (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "n": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "NIST SP 800-61 Rev. 2 décrit un cycle de vie en quatre phases : préparation ; détection et analyse ; confinement, éradication et reprise ; activité post-incident. Les objectifs CompTIA SY0-701 détaillent le même processus en sept étapes (préparation, détection, analyse, confinement, éradication, reprise, retour d'expérience) en séparant ce que le NIST regroupe. La Rev. 3, publiée en 2025, réorganise ces recommandations autour des fonctions du CSF 2.0.",
+    "reference": "NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-4.8-ransomware-first-action-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un analyste du SOC confirme qu'un rançongiciel chiffre des partages réseau depuis trois postes du service comptable et que d'autres postes commencent à être touchés. L'incident est déclaré. Quelle mesure l'équipe doit-elle prendre EN PREMIER ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Réinstaller les trois postes à partir de l'image de référence"
+        },
+        {
+          "id": "b",
+          "text": "Restaurer les partages chiffrés depuis la dernière sauvegarde"
+        },
+        {
+          "id": "c",
+          "text": "Isoler du réseau les postes touchés pour stopper la propagation"
+        },
+        {
+          "id": "d",
+          "text": "Organiser la réunion de retour d'expérience avec les équipes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une fois l'incident confirmé, la priorité est le confinement : limiter les dégâts et empêcher la propagation. Isoler les postes touchés (déconnexion, quarantaine réseau par l'EDR, VLAN dédié) arrête le chiffrement de nouveaux partages tout en conservant les machines allumées pour l'investigation. L'éradication (réinstallation), la reprise (restauration) et le retour d'expérience viennent ensuite, dans cet ordre.",
+    "distractorNotes": {
+      "a": "Réinstaller les postes relève de l'éradication : le faire avant de confiner laisse la propagation continuer et détruit des preuves.",
+      "b": "Restaurer avant de confiner expose les données restaurées à un nouveau chiffrement ; la restauration appartient à la reprise.",
+      "d": "Le retour d'expérience a lieu après la clôture de l'incident, pas pendant sa propagation."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-4.8-volatility-first-collect-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un analyste intervient sur un serveur Linux compromis, toujours allumé, avant son extinction. Il ne peut pas tout collecter en même temps. Selon l'ordre de volatilité de la RFC 3227, quelle source doit-il collecter EN PREMIER ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une image complète du disque système"
+        },
+        {
+          "id": "b",
+          "text": "Le contenu de la mémoire vive"
+        },
+        {
+          "id": "c",
+          "text": "Les journaux déjà transmis au serveur syslog central"
+        },
+        {
+          "id": "d",
+          "text": "Les sauvegardes sur bande de la semaine précédente"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La RFC 3227 demande de collecter d'abord les données dont la durée de vie est la plus courte. La mémoire vive (processus, connexions, clés, code injecté) disparaît à l'extinction et évolue sans cesse : elle passe avant le disque, qui persiste. Les journaux centralisés à distance et les supports d'archivage sont parmi les sources les moins volatiles et peuvent être récupérés plus tard sans perte.",
+    "distractorNotes": {
+      "a": "Le disque conserve son contenu après l'extinction : il vient après la mémoire dans l'ordre de volatilité.",
+      "c": "Les journaux déjà centralisés sur un serveur distant ne dépendent plus de l'état du serveur compromis : ils sont peu volatils.",
+      "d": "Les supports d'archivage sont la source la moins volatile de la liste de la RFC 3227."
+    },
+    "reference": "RFC 3227"
+  },
+  {
+    "slug": "security-plus-4.8-root-cause-analysis-goal-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après la reprise d'un service web compromis, le RSSI ne veut pas se contenter de corriger la faille exploitée : il demande de comprendre quelles défaillances de processus ont permis l'intrusion, afin qu'un incident semblable ne se reproduise pas. Quelle démarche répond à cette demande ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une analyse des causes racines"
+        },
+        {
+          "id": "b",
+          "text": "Une chasse aux menaces"
+        },
+        {
+          "id": "c",
+          "text": "Une découverte électronique (e-discovery)"
+        },
+        {
+          "id": "d",
+          "text": "Un exercice sur table"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'analyse des causes racines (root cause analysis) remonte du symptôme observé vers la cause profonde, souvent par des « pourquoi » successifs ou un diagramme d'Ishikawa : une faille non corrigée cache par exemple un actif absent de l'inventaire ou un processus de correctifs défaillant. Corriger la cause racine, et pas seulement le symptôme, empêche la répétition de l'incident. Elle alimente le retour d'expérience.",
+    "distractorNotes": {
+      "b": "La chasse aux menaces recherche de façon proactive un attaquant encore présent ; elle n'explique pas pourquoi l'incident a pu se produire.",
+      "c": "La découverte électronique sert à produire des informations électroniques dans une procédure judiciaire.",
+      "d": "Un exercice sur table teste le plan de réponse sur un scénario fictif, pas les causes d'un incident réel."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8"
+  },
+  {
+    "slug": "security-plus-4.8-write-blocker-acquisition-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un expert doit réaliser une image bit à bit du disque d'un poste saisi, en garantissant que le disque source ne sera en aucun cas modifié pendant l'opération. Quel équipement doit-il utiliser ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un module matériel de sécurité (HSM)"
+        },
+        {
+          "id": "b",
+          "text": "Un sac de Faraday"
+        },
+        {
+          "id": "c",
+          "text": "Un bloqueur d'écriture"
+        },
+        {
+          "id": "d",
+          "text": "Un port miroir (SPAN)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le bloqueur d'écriture (write blocker), matériel ou logiciel, s'intercale entre le support source et la station d'acquisition : il laisse passer les commandes de lecture et bloque toute écriture. Le simple montage d'un disque par un système d'exploitation peut en effet modifier des métadonnées. Avec l'empreinte calculée sur la source et sur l'image, il permet de démontrer que l'acquisition n'a pas altéré la preuve.",
+    "distractorNotes": {
+      "a": "Un HSM protège et utilise des clés cryptographiques ; il ne contrôle pas les écritures sur un disque.",
+      "b": "Un sac de Faraday bloque les signaux radio d'un appareil mobile ; il n'empêche pas les écritures d'un ordinateur sur un disque.",
+      "d": "Un port miroir copie le trafic réseau d'un commutateur pour l'analyser ; il ne protège pas un support de stockage."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-86"
+  },
+  {
+    "slug": "security-plus-4.8-ediscovery-process-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un litige commercial, les données d'une société sont déjà sous conservation légale. Ses avocats doivent maintenant identifier, collecter, examiner puis remettre à la partie adverse les courriels et documents électroniques pertinents. Comment s'appelle ce processus ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La chaîne de traçabilité"
+        },
+        {
+          "id": "b",
+          "text": "La découverte électronique (e-discovery)"
+        },
+        {
+          "id": "c",
+          "text": "L'ordre de volatilité"
+        },
+        {
+          "id": "d",
+          "text": "La chasse aux menaces"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La découverte électronique (e-discovery) est le processus qui identifie, préserve, collecte, traite, examine et produit les informations stockées électroniquement (ESI) demandées dans une procédure. La conservation légale en est l'étape amont : elle gèle les données ; la découverte électronique les exploite ensuite, souvent à l'aide d'outils de recherche et de filtrage, avant de les remettre à la partie adverse ou au tribunal.",
+    "distractorNotes": {
+      "a": "La chaîne de traçabilité documente les transferts successifs d'une preuve ; elle ne recherche ni ne produit de documents.",
+      "c": "L'ordre de volatilité fixe l'ordre de collecte des données techniques sur un système, pas la production de documents dans un litige.",
+      "d": "La chasse aux menaces recherche un attaquant dans la télémétrie ; elle n'a pas de finalité judiciaire."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8"
+  },
+  {
+    "slug": "security-plus-4.8-forensic-report-content-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un expert termine l'analyse d'un poste compromis ; son rapport pourra être produit devant un tribunal et contre-expertisé. Quel contenu rend ce rapport défendable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les seules conclusions, sans détail technique, pour rester lisibles par un juge"
+        },
+        {
+          "id": "b",
+          "text": "La méthode suivie, les outils employés et les constats rattachés aux empreintes des preuves"
+        },
+        {
+          "id": "c",
+          "text": "Les hypothèses de l'enquêteur sur l'identité de l'auteur, présentées comme des faits établis"
+        },
+        {
+          "id": "d",
+          "text": "Une copie des journaux bruts, sans description de la manière dont ils ont été obtenus"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le rapport d'investigation doit permettre à un autre expert de reproduire l'analyse et d'aboutir aux mêmes constats : il décrit les preuves (avec leurs empreintes), la méthode, les outils et leurs versions, la chronologie des actions et des constats factuels, en séparant clairement les faits des interprétations. Un résumé lisible pour les non-spécialistes peut s'ajouter, mais il ne remplace pas ce détail.",
+    "distractorNotes": {
+      "a": "Sans méthode ni détail technique, les conclusions ne peuvent ni être vérifiées ni résister à une contre-expertise.",
+      "c": "Présenter des hypothèses comme des faits affaiblit le rapport ; les interprétations doivent être signalées comme telles.",
+      "d": "Des données brutes sans description de leur obtention ne démontrent ni leur origine ni leur intégrité."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-86"
+  },
+  {
+    "slug": "security-plus-4.8-eradication-action-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un serveur compromis est déjà isolé dans un VLAN de quarantaine. L'analyse montre que l'attaquant y a installé un service malveillant et ajouté une clé de registre Run pour persister, à l'aide d'un compte local qu'il a créé. Quelle action relève de la phase d'éradication ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bloquer sur le pare-feu périmétrique l'adresse du serveur de commande et de contrôle"
+        },
+        {
+          "id": "b",
+          "text": "Restaurer les données applicatives depuis la sauvegarde et rouvrir le service aux utilisateurs"
+        },
+        {
+          "id": "c",
+          "text": "Mettre à jour le playbook avec les enseignements tirés de cet incident"
+        },
+        {
+          "id": "d",
+          "text": "Supprimer le service, la clé Run et le compte créé, puis changer les mots de passe exposés"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'éradication élimine les composants de l'incident : logiciel malveillant, mécanismes de persistance, comptes créés par l'attaquant, identifiants compromis, et corrige la vulnérabilité exploitée. Elle intervient après le confinement, qui a limité les dégâts, et avant la reprise, qui remet le service en production. Une éradication incomplète, une persistance oubliée par exemple, conduit souvent à une réinfection après la reprise.",
+    "distractorNotes": {
+      "a": "Bloquer le serveur de commande et de contrôle limite l'extension de l'incident : c'est une mesure de confinement.",
+      "b": "Restaurer les données et rouvrir le service relève de la reprise, qui suit l'éradication.",
+      "c": "Mettre à jour le playbook est une action du retour d'expérience, une fois l'incident clos."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-4.8-chain-of-custody-fields-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un CSIRT conçoit le formulaire de chaîne de traçabilité qui accompagnera chaque preuve saisie. Quelles deux informations ce formulaire doit-il consigner à chaque transfert ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'identité et la signature de la personne qui remet la preuve et de celle qui la reçoit"
+        },
+        {
+          "id": "b",
+          "text": "Le coût estimé de l'incident pour l'organisation"
+        },
+        {
+          "id": "c",
+          "text": "La date, l'heure et le motif du transfert"
+        },
+        {
+          "id": "d",
+          "text": "Le niveau de culpabilité présumé du salarié concerné"
+        },
+        {
+          "id": "e",
+          "text": "Le mot de passe de session du poste saisi"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "La chaîne de traçabilité doit montrer, sans interruption, qui a détenu la preuve, quand et pourquoi, depuis la saisie jusqu'à la présentation au tribunal. Chaque transfert indique donc la personne qui remet la preuve et celle qui la reçoit (avec leurs signatures), la date, l'heure et le motif, en plus de la description de la preuve et de son identifiant de scellé. Toute période non documentée permet de contester l'intégrité de la preuve.",
+    "distractorNotes": {
+      "b": "Le coût de l'incident relève de l'analyse d'impact ; il n'aide pas à prouver que la preuve n'a pas été altérée.",
+      "d": "Le formulaire consigne des faits sur la manipulation de la preuve, jamais une appréciation sur la culpabilité.",
+      "e": "Un secret d'authentification n'a pas sa place sur un formulaire qui circule entre plusieurs personnes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-86"
+  },
+  {
+    "slug": "security-plus-4.8-volatility-above-disk-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un analyste prépare la collecte sur un poste compromis allumé. Selon la RFC 3227, quelles deux sources sont plus volatiles que le disque local et doivent donc être collectées avant lui ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les journaux envoyés au serveur de journalisation distant"
+        },
+        {
+          "id": "b",
+          "text": "Le cache ARP"
+        },
+        {
+          "id": "c",
+          "text": "Les supports d'archivage (bandes)"
+        },
+        {
+          "id": "d",
+          "text": "Les systèmes de fichiers temporaires"
+        },
+        {
+          "id": "e",
+          "text": "La configuration physique et la topologie du réseau"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La RFC 3227 classe les sources de la plus volatile à la moins volatile : registres et cache ; table de routage, cache ARP, table des processus, statistiques du noyau et mémoire ; systèmes de fichiers temporaires ; disque ; journalisation et supervision distantes ; configuration physique et topologie du réseau ; supports d'archivage. Le cache ARP et les systèmes de fichiers temporaires précèdent donc le disque.",
+    "distractorNotes": {
+      "a": "La RFC 3227 place la journalisation distante juste après le disque : elle est moins volatile que lui.",
+      "c": "Les supports d'archivage ferment la liste de la RFC 3227 : ce sont les moins volatils.",
+      "e": "La configuration physique et la topologie du réseau viennent après le disque dans l'ordre de la RFC 3227."
+    },
+    "reference": "RFC 3227"
+  },
+  {
+    "slug": "security-plus-4.8-threat-hunting-traits-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un RSSI veut lancer un programme de chasse aux menaces au sein de son SOC. Quelles deux affirmations décrivent cette activité ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle ne démarre qu'après une alerte du SIEM classée critique"
+        },
+        {
+          "id": "b",
+          "text": "Elle part d'une hypothèse et la vérifie dans les données, sans attendre d'alerte"
+        },
+        {
+          "id": "c",
+          "text": "Elle remplace la phase de confinement du processus de réponse aux incidents"
+        },
+        {
+          "id": "d",
+          "text": "Elle suppose qu'un attaquant a pu échapper aux contrôles de détection en place"
+        },
+        {
+          "id": "e",
+          "text": "Elle est confiée à un auditeur externe chargé de vérifier la conformité"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La chasse aux menaces est proactive : au lieu d'attendre les alertes, des analystes formulent une hypothèse (par exemple à partir du renseignement sur les menaces ou des techniques MITRE ATT&CK) et la vérifient dans la télémétrie. Elle part du principe qu'un attaquant a pu contourner les outils automatiques. Ses résultats peuvent déclencher la réponse aux incidents et améliorer les règles de détection.",
+    "distractorNotes": {
+      "a": "Attendre une alerte est la démarche réactive de la détection classique ; la chasse aux menaces intervient justement sans alerte.",
+      "c": "La chasse aux menaces ne confine rien : si elle découvre un incident, le processus de réponse prend le relais.",
+      "e": "Un audit de conformité vérifie des exigences ; la chasse est menée par des analystes de sécurité à la recherche d'activité adverse."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; MITRE ATT&CK"
+  },
+  {
+    "slug": "security-plus-4.8-phase-actions-match-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Lors d'une intrusion, l'équipe de réponse d'une PME mène les actions suivantes. Associez chacune à la phase du processus de réponse aux incidents à laquelle elle appartient.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Constituer un kit d'intervention (disques de collecte, bloqueur d'écriture, outils sur support protégé)"
+        },
+        {
+          "id": "l2",
+          "text": "Placer les postes infectés dans un VLAN de quarantaine"
+        },
+        {
+          "id": "l3",
+          "text": "Supprimer la tâche planifiée et le compte créés par l'attaquant"
+        },
+        {
+          "id": "l4",
+          "text": "Remettre la base de données en production après restauration depuis une sauvegarde saine"
+        },
+        {
+          "id": "l5",
+          "text": "Réunir l'équipe pour décider des améliorations à apporter au plan"
+        }
+      ],
+      "right": [
+        {
+          "id": "prep",
+          "text": "Préparation"
+        },
+        {
+          "id": "cont",
+          "text": "Confinement"
+        },
+        {
+          "id": "erad",
+          "text": "Éradication"
+        },
+        {
+          "id": "rec",
+          "text": "Reprise"
+        },
+        {
+          "id": "lessons",
+          "text": "Retour d'expérience"
+        },
+        {
+          "id": "det",
+          "text": "Détection"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "prep",
+        "l2": "cont",
+        "l3": "erad",
+        "l4": "rec",
+        "l5": "lessons"
+      }
+    },
+    "explanation": "La préparation réunit en amont les moyens de réponse, dont le kit d'intervention. Le confinement limite la propagation (quarantaine, blocage). L'éradication retire tout ce que l'attaquant a laissé : logiciels, persistances, comptes. La reprise rétablit les services à partir d'éléments sains, sous surveillance. Le retour d'expérience, après la clôture, transforme les constats en améliorations du plan, qui reviennent à la préparation.",
+    "distractorNotes": {
+      "det": "La détection consiste à repérer les signes d'un incident (alertes, signalements) ; aucune des actions listées ne relève de ce repérage."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-4.8-exercise-types-match-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un responsable de la sécurité planifie le programme annuel de son équipe de réponse aux incidents. Associez chaque activité au type correspondant.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Les responsables déroulent oralement un scénario d'exfiltration autour d'une table, sans toucher aux systèmes"
+        },
+        {
+          "id": "l2",
+          "text": "Les analystes exécutent réellement leurs procédures face à une attaque rejouée dans un environnement isolé"
+        },
+        {
+          "id": "l3",
+          "text": "Les nouveaux analystes suivent un module sur l'usage des playbooks et des outils d'investigation"
+        },
+        {
+          "id": "l4",
+          "text": "Un animateur interroge la directrice de la communication sur ce qu'elle dirait à la presse, sans que les systèmes soient touchés"
+        },
+        {
+          "id": "l5",
+          "text": "L'équipe mesure le délai réel entre la première alerte et l'isolement effectif des hôtes attaqués"
+        }
+      ],
+      "right": [
+        {
+          "id": "table",
+          "text": "Exercice sur table"
+        },
+        {
+          "id": "sim",
+          "text": "Simulation"
+        },
+        {
+          "id": "train",
+          "text": "Formation"
+        },
+        {
+          "id": "rca",
+          "text": "Analyse des causes racines"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "table",
+        "l2": "sim",
+        "l3": "train",
+        "l4": "table",
+        "l5": "sim"
+      }
+    },
+    "explanation": "L'exercice sur table est une discussion animée : un animateur fait évoluer le scénario et les participants expliquent leurs décisions, sans action technique. La simulation fait réellement exécuter les procédures face à une attaque reproduite : c'est elle qui permet de mesurer des délais réels de détection et de confinement. La formation transmet les connaissances et les savoir-faire nécessaires avant d'être mis à l'épreuve par ces exercices.",
+    "distractorNotes": {
+      "rca": "L'analyse des causes racines porte sur un incident réel déjà survenu ; ce n'est ni un exercice ni une formation."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-84"
+  },
+  {
+    "slug": "security-plus-4.8-forensic-process-order-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une équipe d'investigation numérique suit le processus de NIST SP 800-86 pour traiter le disque d'un poste saisi. Ordonnez ses actions, de la première à la dernière.",
+      "items": [
+        {
+          "id": "ana",
+          "text": "Interpréter les données extraites pour établir la chronologie et répondre aux questions de l'enquête"
+        },
+        {
+          "id": "rep",
+          "text": "Rédiger le rapport décrivant la méthode, les constats et leurs limites"
+        },
+        {
+          "id": "coll",
+          "text": "Acquérir une copie bit à bit du disque et en calculer l'empreinte"
+        },
+        {
+          "id": "exam",
+          "text": "Extraire et filtrer les données pertinentes de l'image (fichiers, journaux, artefacts) avec des outils adaptés"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "coll",
+        "exam",
+        "ana",
+        "rep"
+      ]
+    },
+    "explanation": "NIST SP 800-86 décrit quatre phases : la collecte (identifier, étiqueter et acquérir les données en préservant leur intégrité, ici par une copie vérifiée par empreinte), l'examen (extraire et trier les données pertinentes avec des outils adaptés), l'analyse (interpréter ces données pour répondre aux questions de l'enquête) et la restitution (rapport). Chaque phase s'appuie sur la précédente : on n'analyse pas des données qui n'ont pas été collectées ni extraites.",
+    "reference": "NIST SP 800-86 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8"
+  },
+  {
+    "slug": "security-plus-4.8-custody-gap-exhibit-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'avocat de la partie adverse examine le formulaire de chaîne de traçabilité d'un disque saisi lors d'une enquête interne. Quelle faiblesse peut-il exploiter pour contester la preuve ?",
+      "exhibit": "FORMULAIRE DE CHAÎNE DE TRAÇABILITÉ - Scellé PR-2026-031\nPreuve : disque SSD 512 Go, n° de série S4EVNX0R123456\nSHA-256 à l'acquisition : 9f2c41d7...e41a (consignée le 2026-10-12)\n\nDate/heure        Remis par          Reçu par           Motif\n2026-10-12 09:40  J. Martin (DSI)    L. Petit (CSIRT)   Saisie sur le poste\n2026-10-12 11:15  L. Petit (CSIRT)   Coffre CSIRT       Mise sous scellé\n2026-10-14 08:30  Coffre CSIRT       A. Roux (expert)   Analyse\n2026-10-16 17:05  S. Blanc (expert)  Coffre CSIRT       Fin d'analyse",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le disque a été remis par un membre de la DSI et non directement par un enquêteur du CSIRT"
+        },
+        {
+          "id": "b",
+          "text": "L'empreinte a été calculée en SHA-256 au lieu de MD5, l'algorithme attendu par les tribunaux"
+        },
+        {
+          "id": "c",
+          "text": "Aucune ligne ne consigne la remise du disque d'A. Roux à S. Blanc"
+        },
+        {
+          "id": "d",
+          "text": "Le disque est resté deux jours au coffre du CSIRT avant d'être analysé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La chaîne de traçabilité doit être continue : chaque personne qui détient la preuve la reçoit d'une personne identifiée lors d'un transfert consigné. Ici, A. Roux reçoit le disque le 14 octobre, mais c'est S. Blanc qui le rend le 16 sans qu'aucun transfert entre eux ne figure au formulaire. Pendant cette période, la détention n'est pas documentée : la défense peut soutenir que la preuve a pu être altérée. Une nouvelle empreinte comparée à celle de l'acquisition atténuerait ce doute sans le lever entièrement.",
+    "distractorNotes": {
+      "a": "Le premier intervenant peut être un membre de la DSI : ce qui compte est que la remise soit consignée, ce qu'elle est.",
+      "b": "SHA-256 est plus robuste que MD5, qui est sujet aux collisions ; son usage renforce la preuve au lieu de l'affaiblir.",
+      "d": "Un stockage au coffre, consigné à l'entrée et à la sortie, fait partie d'une chaîne de traçabilité correcte, quelle que soit sa durée."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-86"
+  },
+  {
+    "slug": "security-plus-4.8-five-whys-corrective-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Lors du retour d'expérience, le RSSI veut retenir la mesure corrective qui traite la cause racine identifiée. Quelle mesure choisir ?",
+      "exhibit": "Analyse des causes racines - INC-2026-118 (méthode des 5 pourquoi)\nProblème : le serveur web extranet a été compromis le 2026-09-21.\nPourquoi ? L'attaquant a exploité une vulnérabilité connue d'un module PHP.\nPourquoi ? Le correctif, publié en juin, n'avait pas été installé.\nPourquoi ? Le serveur n'apparaissait pas dans l'outil de gestion des\n           correctifs.\nPourquoi ? Il avait été déployé par un projet hors du processus de\n           gestion des changements et n'était pas inscrit à l'inventaire\n           des actifs.",
+      "options": [
+        {
+          "id": "a",
+          "text": "Installer sans délai sur le serveur extranet le correctif du module PHP exploité"
+        },
+        {
+          "id": "b",
+          "text": "Bloquer sur le pare-feu les adresses IP utilisées par l'attaquant"
+        },
+        {
+          "id": "c",
+          "text": "Placer un pare-feu applicatif web (WAF) en coupure devant le serveur extranet"
+        },
+        {
+          "id": "d",
+          "text": "Faire passer tout déploiement par la gestion des changements et l'inventaire des actifs"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Dans la méthode des 5 pourquoi, la cause racine est la réponse la plus profonde : le serveur a échappé à la gestion des changements, donc à l'inventaire, donc à la gestion des correctifs. Seule une mesure sur ce processus empêche qu'un autre serveur déployé de la même façon reste lui aussi sans correctifs. Installer le correctif reste indispensable pendant l'éradication, mais il ne traite que le symptôme observé sur ce serveur.",
+    "distractorNotes": {
+      "a": "Le correctif supprime la vulnérabilité de ce serveur seulement ; d'autres actifs absents de l'inventaire resteraient exposés.",
+      "b": "Bloquer les adresses de l'attaquant est une mesure de confinement facile à contourner ; elle ne touche pas la cause identifiée.",
+      "c": "Un WAF est une mesure compensatoire utile, mais il ne corrige pas le défaut de processus qui a laissé le serveur hors inventaire."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8"
+  },
+  {
+    "slug": "security-plus-4.8-legal-hold-trigger-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le service juridique d'une société apprend qu'un ancien client prépare une action en justice à propos d'une fuite de données ; aucune assignation n'a encore été reçue. La politique de conservation prévoit la purge automatique des journaux du proxy au bout de 90 jours, et ceux de la période concernée l'atteindront dans cinq jours. Que doit faire la société ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Laisser la purge s'exécuter, tant qu'aucune décision de justice n'est notifiée"
+        },
+        {
+          "id": "b",
+          "text": "Placer dès maintenant les journaux concernés sous conservation légale"
+        },
+        {
+          "id": "c",
+          "text": "Transmettre sans attendre les journaux à l'avocat de l'ancien client"
+        },
+        {
+          "id": "d",
+          "text": "Supprimer manuellement les journaux de la période avant toute demande"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'obligation de préserver les données pertinentes naît dès qu'un litige est raisonnablement prévisible, sans attendre une assignation ou une décision. La conservation légale prime alors sur la politique de conservation : la purge des données visées est suspendue jusqu'à la levée de la mesure par le service juridique. Laisser la purge détruire ces journaux, ou les supprimer, constituerait une destruction de preuves exposant la société à des sanctions.",
+    "distractorNotes": {
+      "a": "La politique de conservation cède devant l'obligation de préserver, qui s'applique dès que le litige est prévisible.",
+      "c": "La remise des données à la partie adverse intervient plus tard, dans le cadre de la découverte électronique et par l'intermédiaire des avocats.",
+      "d": "Détruire volontairement des données pertinentes pour un litige prévisible est une destruction de preuves, sanctionnable."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8"
+  },
+  {
+    "slug": "security-plus-4.8-acquisition-admissibility-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un expert doit acquérir le disque d'un ordinateur portable éteint, saisi lors d'une enquête pour fraude ; ses constats pourront être produits devant un tribunal. Quelles trois pratiques préservent la valeur probante de la preuve ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Démarrer le portable sur son propre système pour vérifier rapidement que le disque contient des données"
+        },
+        {
+          "id": "b",
+          "text": "Raccorder le disque à la station d'acquisition au travers d'un bloqueur d'écriture"
+        },
+        {
+          "id": "c",
+          "text": "Mener l'analyse directement sur le disque original pour éviter toute différence avec la copie"
+        },
+        {
+          "id": "d",
+          "text": "Calculer l'empreinte de la source et celle de l'image, puis vérifier qu'elles sont identiques"
+        },
+        {
+          "id": "e",
+          "text": "Copier par glisser-déposer les dossiers utiles vers une clé USB pour accélérer l'acquisition"
+        },
+        {
+          "id": "f",
+          "text": "Consigner dans le formulaire de chaîne de traçabilité chaque remise du disque et de l'image"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "f"
+      ]
+    },
+    "explanation": "Une acquisition défendable produit une copie bit à bit sans modifier la source : le bloqueur d'écriture empêche toute écriture, les empreintes identiques de la source et de l'image prouvent la fidélité de la copie, et la chaîne de traçabilité documente qui a détenu chaque élément. L'analyse se fait ensuite sur une copie de travail, jamais sur l'original, qui reste sous scellé.",
+    "distractorNotes": {
+      "a": "Démarrer le système installé écrit sur le disque (journaux, fichiers temporaires, horodatages) et altère la preuve.",
+      "c": "Travailler sur l'original risque de le modifier ; l'analyse se fait sur une copie vérifiée par son empreinte.",
+      "e": "Une copie de fichiers ignore l'espace non alloué et les fichiers supprimés, et peut modifier les métadonnées : ce n'est pas une image légale."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; NIST SP 800-86"
+  },
+  {
+    "slug": "security-plus-4.8-hunt-hypothesis-events-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit, extrait du journal de sécurité d'un contrôleur de domaine. Une analyste mène une chasse aux menaces avec l'hypothèse suivante : « un compte de service compromis sert à créer un accès persistant, puis à effacer les traces ». Quels deux événements appuient cette hypothèse ? (Choisissez-en deux.)",
+      "exhibit": "Heure (UTC)          ID    Compte            Détail\n2026-10-03 09:02:11  4624  CORP\\m.durand     Logon Type 3, depuis WS-114\n2026-10-03 09:47:30  4625  CORP\\m.durand     Échec : mot de passe incorrect\n2026-10-03 12:30:02  4634  CORP\\m.durand     Fermeture de session, type 3\n2026-10-04 02:13:05  4720  CORP\\svc-backup   Compte créé : CORP\\adm-support\n2026-10-04 02:20:12  1102  CORP\\svc-backup   Journal de sécurité effacé",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'événement 4624 de 09:02:11"
+        },
+        {
+          "id": "b",
+          "text": "L'événement 4625 de 09:47:30"
+        },
+        {
+          "id": "c",
+          "text": "L'événement 4634 de 12:30:02"
+        },
+        {
+          "id": "d",
+          "text": "L'événement 4720 de 02:13:05"
+        },
+        {
+          "id": "e",
+          "text": "L'événement 1102 de 02:20:12"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "L'événement 4720 signale la création d'un compte : ici, le compte de service svc-backup, qui n'a pas vocation à administrer des comptes, crée adm-support à 2 h du matin, une persistance typique. Sept minutes plus tard, l'événement 1102 indique l'effacement du journal de sécurité par le même compte, une technique d'effacement de traces (MITRE ATT&CK T1070.001). Les trois événements de m.durand décrivent une journée de travail ordinaire.",
+    "distractorNotes": {
+      "a": "Une ouverture de session réseau de m.durand depuis son poste à 9 h est une activité normale, sans lien avec le compte de service.",
+      "b": "Un échec isolé de mot de passe d'un utilisateur en journée est banal ; il ne concerne ni création de compte ni effacement.",
+      "c": "La fermeture de session de m.durand en milieu de journée est une activité ordinaire."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.8 ; MITRE ATT&CK T1070.001"
+  },
+  {
+    "slug": "security-plus-4.8-rfc3227-collection-pitfalls-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une analyste du CSIRT doit collecter des preuves sur un serveur Windows compromis encore en fonctionnement. Quelles deux pratiques sont conformes aux recommandations de la RFC 3227 ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Copier les répertoires suspects avec un outil d'archivage comme xcopy pour gagner du temps"
+        },
+        {
+          "id": "b",
+          "text": "Analyser les données sur le serveur avant de les collecter, afin de ne prélever que l'utile"
+        },
+        {
+          "id": "c",
+          "text": "Exécuter des outils de collecte fiables depuis un support protégé en écriture, plutôt que les programmes du serveur"
+        },
+        {
+          "id": "d",
+          "text": "Commencer par l'image du disque, qui est la preuve la plus complète"
+        },
+        {
+          "id": "e",
+          "text": "Ne pas éteindre le serveur avant d'avoir terminé la collecte des données volatiles"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "La RFC 3227 met en garde contre plusieurs écueils : ne pas faire confiance aux programmes du système compromis (ils peuvent avoir été modifiés), d'où l'emploi d'outils sûrs sur un support protégé ; ne pas éteindre la machine avant la fin de la collecte, sous peine de perdre les données volatiles ; ne pas lancer de programmes qui modifient les dates d'accès de tous les fichiers. Elle demande aussi de réduire au minimum les changements sur les données et de suivre l'ordre de volatilité.",
+    "distractorNotes": {
+      "a": "La RFC 3227 cite justement tar et xcopy comme des programmes à éviter, car ils modifient la date d'accès des fichiers parcourus.",
+      "b": "Analyser les données sur le serveur modifie son état et fait perdre des éléments volatils ; la RFC 3227 demande de réduire au minimum les changements, donc de collecter d'abord selon l'ordre de volatilité, et d'analyser ensuite sur des copies.",
+      "d": "Le disque est moins volatil que la mémoire et les données du système en cours : il passe après eux."
+    },
+    "reference": "RFC 3227"
+  }
+]

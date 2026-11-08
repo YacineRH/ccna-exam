@@ -1,6 +1,10 @@
 /**
  * Lecture des syntaxes de commandes du profil : `ip route <ipv4> <ipv4-mask> {<ipv4>|<interface>} [<1-255>]`
  * devient la liste de ses formes linéaires (une par combinaison d'options et d'alternatives).
+ *
+ * `[* [a] [b] [c] *]` : groupe d'options en ordre libre. Chaque option peut être donnée au plus une fois,
+ * dans n'importe quel ordre ; la forme canonique les range dans l'ordre de la syntaxe (`groupOrder`).
+ * Exemple : `datetime [* [msec] [localtime] [show-timezone] [year] *]` accepte `datetime localtime msec`.
  */
 
 export const PARAM_TYPES = [
@@ -23,10 +27,30 @@ export const PARAM_TYPES = [
 export type ParamType = (typeof PARAM_TYPES)[number];
 
 export type SyntaxElem =
-  | { kind: 'kw'; word: string }
+  | {
+      kind: 'kw';
+      word: string;
+      /** Dans un groupe en ordre libre : identifiant du groupe et rang de l'option dans la syntaxe. */
+      group?: number;
+      groupOrder?: number;
+    }
   | { kind: 'param'; type: ParamType; label: string; min?: number; max?: number; table?: string };
 
-type Node = SyntaxElem | { kind: 'opt'; alts: Node[][] } | { kind: 'alt'; alts: Node[][] };
+type Node = SyntaxElem | { kind: 'opt'; alts: Node[][] } | { kind: 'alt'; alts: Node[][] } | { kind: 'free'; items: Node[][]; id: number };
+
+/** Toutes les suites ordonnées de parties distinctes d'une liste (sous-ensembles, dans tous les ordres). */
+function arrangements<T>(items: readonly T[]): T[][] {
+  const out: T[][] = [[]];
+  const rec = (prefix: T[], rest: readonly T[]) => {
+    rest.forEach((item, i) => {
+      const next = [...prefix, item];
+      out.push(next);
+      rec(next, [...rest.slice(0, i), ...rest.slice(i + 1)]);
+    });
+  };
+  rec([], items);
+  return out;
+}
 
 function parseParam(raw: string): SyntaxElem {
   const inner = raw.slice(1, -1);
@@ -44,17 +68,53 @@ function parseParam(raw: string): SyntaxElem {
   return { kind: 'param', type: inner as ParamType, label: raw };
 }
 
+/**
+ * Forme canonique d'une suite de mots reconnue : dans chaque groupe en ordre libre, les options reprennent
+ * l'ordre de la syntaxe (IOS affiche `datetime msec localtime`, quel que soit l'ordre saisi).
+ */
+export function canonicalOrder(elems: readonly SyntaxElem[], words: readonly string[]): string[] {
+  const out = [...words];
+  let i = 0;
+  while (i < elems.length) {
+    const e = elems[i] as SyntaxElem;
+    if (e.kind !== 'kw' || e.group === undefined) {
+      i++;
+      continue;
+    }
+    let j = i;
+    while (j < elems.length && (elems[j] as SyntaxElem).kind === 'kw' && (elems[j] as { group?: number }).group === e.group) j++;
+    const run = elems.slice(i, j).map((x, k) => ({ order: (x as { groupOrder?: number }).groupOrder ?? 0, k, word: words[i + k] as string }));
+    run.sort((a, b) => a.order - b.order || a.k - b.k).forEach((r, k) => (out[i + k] = r.word));
+    i = j;
+  }
+  return out;
+}
+
 /** Formes linéaires d'une syntaxe. Lève une erreur lisible si la syntaxe est mal formée. */
 export function expandSyntax(syntax: string): SyntaxElem[][] {
-  const tokens = syntax.match(/\[|\]|\{|\}|\||<[^>\s]+>|[^\s[\]{}|<>]+/g) ?? [];
+  const tokens = syntax.match(/\[\*|\*\]|\[|\]|\{|\}|\||<[^>\s]+>|[^\s[\]{}|<>]+/g) ?? [];
   let i = 0;
+  let groups = 0;
 
   const parseSeq = (): Node[] => {
     const seq: Node[] = [];
     while (i < tokens.length) {
       const t = tokens[i] as string;
-      if (t === ']' || t === '}' || t === '|') break;
+      if (t === ']' || t === '}' || t === '|' || t === '*]') break;
       i++;
+      if (t === '[*') {
+        // Groupe en ordre libre : une suite d'options `[mot]`, sans paramètre (les valeurs `{$n}` garderaient leur rang).
+        const inner = parseSeq();
+        if (tokens[i++] !== '*]') throw new Error(`groupe en ordre libre mal fermé : ${syntax}`);
+        const items = inner.map((n) => {
+          if (n.kind !== 'opt' || n.alts.length !== 1 || !(n.alts[0] as Node[]).every((e) => e.kind === 'kw'))
+            throw new Error(`un groupe en ordre libre ne contient que des options de mots-clés [mot] : ${syntax}`);
+          return n.alts[0] as Node[];
+        });
+        if (items.length < 2) throw new Error(`groupe en ordre libre de moins de deux options : ${syntax}`);
+        seq.push({ kind: 'free', items, id: ++groups });
+        continue;
+      }
       if (t === '[' || t === '{') {
         const alts: Node[][] = [parseSeq()];
         while (tokens[i] === '|') {
@@ -82,6 +142,13 @@ export function expandSyntax(syntax: string): SyntaxElem[][] {
     for (const n of nodes) {
       if (n.kind === 'kw' || n.kind === 'param') {
         out = out.map((s) => [...s, n]);
+        continue;
+      }
+      if (n.kind === 'free') {
+        const tagged = n.items.map((item, rank) => item.map((e) => ({ ...(e as SyntaxElem & { kind: 'kw' }), group: n.id, groupOrder: rank })));
+        const variants = arrangements(tagged).map((parts) => parts.flat());
+        out = out.flatMap((s) => variants.map((v) => [...s, ...v]));
+        if (out.length > 5000) throw new Error(`syntaxe trop combinatoire : ${syntax}`);
         continue;
       }
       const variants = n.alts.flatMap(expand);

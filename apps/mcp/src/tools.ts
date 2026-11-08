@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { DIFFICULTIES, QUESTION_TYPES, type CertificationConfig } from '@examforge/core';
+import { DIFFICULTIES, MODULES, QUESTION_TYPES, type CertificationConfig } from '@examforge/core';
 import { ApiError, type ApiClient } from './api-client.js';
 
 type ToolResult = { content: { type: 'text'; text: string }[]; isError?: boolean };
@@ -72,7 +72,7 @@ export function createExamForgeServer(api: ApiClient): McpServer {
     {
       title: 'Certification et état de la banque',
       description: 'Configuration d\'une certification (domaines, pondérations, sous-thèmes, barème, format) et nombre de questions publiées par domaine.',
-      inputSchema: { certification: z.string().describe('Code, ex. "ccna"') },
+      inputSchema: { certification: z.string().describe('Code de la certification, tel que GET /certifications le liste') },
     },
     async ({ certification }) => run(() => api.get(`/certifications/${encodeURIComponent(certification)}`)),
   );
@@ -131,8 +131,8 @@ export function createExamForgeServer(api: ApiClient): McpServer {
             'Une note dans distractorNotes pour chaque option fausse.',
             "Pas de « toutes les réponses » ni de « aucune réponse ». Pas d'indice grammatical vers la bonne réponse.",
             "L'ordre des options est mélangé à l'affichage : ne pas s'appuyer sur la position.",
-            'CLI : une ligne par commande attendue, formes complètes (les abréviations IOS sont acceptées automatiquement).',
-            'Rédaction en français ; noms de commandes, protocoles et sorties IOS dans leur forme réelle.',
+            'CLI : une ligne par commande attendue, formes complètes (les abréviations du terminal sont acceptées automatiquement).',
+            'Rédaction en français ; noms de commandes, protocoles et sorties d'équipement dans leur forme réelle.',
             'Ne pas reprendre un énoncé existant ci-dessous, même reformulé.',
           ],
           existingStems: existing.questions.map((q) => ({ slug: q.slug, stem: q.stem })),
@@ -170,7 +170,7 @@ export function createExamForgeServer(api: ApiClient): McpServer {
       run(async () => ({
         question: await api.get(`/admin/questions/${encodeURIComponent(slug)}`),
         checklist: [
-          'La bonne réponse est-elle techniquement exacte (valeurs par défaut, syntaxe IOS, numéros de RFC) ?',
+          'La bonne réponse est-elle techniquement exacte (valeurs par défaut, syntaxe, numéros de RFC et de norme) ?',
           'Chaque distracteur est-il faux sans ambiguïté, y compris dans un cas limite ?',
           "L'énoncé contient-il toutes les informations nécessaires, et seulement celles-là ?",
           "Le niveau de difficulté annoncé est-il réaliste pour l'examen ?",
@@ -330,7 +330,7 @@ export function createExamForgeServer(api: ApiClient): McpServer {
             variants: [{ description: 'Autre façon valide', solution: [{ device: 'R1', commands: ['…'] }] }],
             pitfalls: [{ description: 'Erreur classique', solution: [{ device: 'R1', commands: ['…'] }], failing: ['g000-address'] }],
             explanation: 'Explication détaillée (40 caractères minimum)',
-            reference: 'Guide de configuration ou référence de commandes Cisco précise',
+            reference: 'Guide de configuration ou référence de commandes de l’éditeur, précise',
             estimatedMinutes: 10,
           },
           checkTypes: {
@@ -347,7 +347,7 @@ export function createExamForgeServer(api: ApiClient): McpServer {
             'Aucun objectif ne doit être atteint au départ ; la solution, chaque variante, doit les atteindre tous ; chaque piège doit échouer sur ses objectifs `failing`.',
             'Trois indices progressifs ; le troisième ne recopie pas toute la solution.',
             'Seules les commandes listées dans profileCommands existent dans le simulateur : toute autre est refusée comme « % Invalid input ».',
-            'Rédaction en français ; commandes et sorties IOS dans leur forme réelle.',
+            'Rédaction en français ; commandes et sorties d'équipement dans leur forme réelle.',
             'Ne pas reprendre un lab existant ci-dessous.',
           ],
           profileModes: profile.modes,
@@ -420,7 +420,7 @@ export function createExamForgeServer(api: ApiClient): McpServer {
             variants: [{ description: 'Autre façon valide', solution: [{ device: 'R1', commands: ['…'] }] }],
             pitfalls: [{ description: 'Erreur classique', solution: [{ device: 'R1', commands: ['…'] }], failing: ['objectif'] }],
             explanation: troubleshoot ? 'Chaque panne, son symptôme et sa correction' : 'Explication détaillée',
-            reference: 'Guide de configuration ou référence de commandes Cisco précise',
+            reference: 'Guide de configuration ou référence de commandes de l’éditeur, précise',
             estimatedMinutes: duree_cible,
           },
           rules: [
@@ -429,13 +429,13 @@ export function createExamForgeServer(api: ApiClient): McpServer {
             'Le challenge se termine dès que tous les objectifs sont atteints : ils doivent couvrir tout le travail demandé.',
             ...(troubleshoot
               ? [
-                  'Dépannage : la configuration de départ est complète et réaliste, avec 1 à 4 pannes CCNA classiques (VLAN natif incohérent, ACL mal placée, réseau OSPF manquant, interface en shutdown…).',
+                  'Dépannage : la configuration de départ est complète et réaliste, avec 1 à 4 pannes classiques du programme de la certification (ex. VLAN natif incohérent, ACL mal placée, interface éteinte).',
                   'Une entrée de faults par panne ; au plus autant de pannes que d’objectifs. Les descriptions d’objectifs sont publiques : elles décrivent le service rétabli, pas la panne.',
                 ]
               : ['Construction : un travail précis et rapide, toutes les valeurs données dans l’énoncé.']),
             "Les objectifs vérifient l'état final et acceptent toutes les écritures équivalentes ; aucun n'est atteint au départ ; la solution et chaque variante les atteignent tous ; chaque piège échoue sur ses objectifs `failing`.",
             'Seules les commandes listées dans profileCommands existent dans le simulateur.',
-            'Rédaction en français ; commandes et sorties IOS dans leur forme réelle.',
+            'Rédaction en français ; commandes et sorties d'équipement dans leur forme réelle.',
             'Ne pas reprendre un challenge existant ci-dessous.',
           ],
           profileModes: profile.modes,
@@ -478,7 +478,7 @@ export function createExamForgeServer(api: ApiClient): McpServer {
           'Les calculs (adresses, masques, wildcards, plages) sont-ils justes ?',
           'Les objectifs acceptent-ils toutes les écritures équivalentes raisonnables, et refusent-ils une solution fausse ?',
           "L'énoncé donne-t-il toutes les valeurs nécessaires, sans donner la solution ?",
-          'La référence Cisco existe-t-elle et correspond-elle au sujet ?',
+          'La référence (éditeur, RFC, norme) existe-t-elle et correspond-elle au sujet ?',
         ],
         next: 'Appelez record_lab_review(slug, approved, issues).',
       })),
@@ -499,7 +499,7 @@ export function createExamForgeServer(api: ApiClient): McpServer {
     {
       title: 'Déclarer une certification',
       description:
-        "Ajoute ou met à jour une certification sans toucher au code : domaines (pondérations dont la somme vaut 1), sous-thèmes, barème, format d'examen, types de questions autorisés.",
+        "Ajoute ou met à jour une certification sans toucher au code : domaines (pondérations dont la somme vaut 1), sous-thèmes, barème, format d'examen, types de questions autorisés, modules proposés. Même résultat que le fichier de données de la certification.",
       inputSchema: {
         config: z
           .object({
@@ -518,8 +518,12 @@ export function createExamForgeServer(api: ApiClient): McpServer {
             scoring: z.object({ min: z.number(), max: z.number(), passing: z.number() }),
             examFormat: z.object({ questionCount: z.number(), durationMinutes: z.number(), allowBackNavigation: z.boolean() }),
             allowedQuestionTypes: z.array(z.enum(QUESTION_TYPES)),
+            modules: z
+              .array(z.enum(MODULES))
+              .optional()
+              .describe('Modules proposés (exam, practice, flashcards, subnet, cli, challenges) ; par défaut exam, practice, flashcards'),
           })
-          .describe('Configuration complète de la certification'),
+          .describe('Configuration complète de la certification, au format de packages/content/data/certifications/<code>.json'),
       },
     },
     async ({ config }) => run(() => api.post('/admin/certifications', { config })),

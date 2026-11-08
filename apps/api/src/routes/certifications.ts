@@ -3,16 +3,20 @@ import type { FastifyInstance } from 'fastify';
 import type { Db } from '../db/client.js';
 import { certifications, domains, exams, questions, subtopics } from '../db/schema.js';
 import { notFound } from '../errors.js';
+import { modulesOf } from '../services/modules.js';
 
 export function certificationRoutes(db: Db) {
   return async (app: FastifyInstance) => {
     app.get('/', async () => {
       const rows = await db
-        .select({ code: certifications.code, name: certifications.name, vendor: certifications.vendor, examCode: certifications.examCode })
+        .select({ code: certifications.code, name: certifications.name, vendor: certifications.vendor, examCode: certifications.examCode, config: certifications.config })
         .from(certifications)
         .where(eq(certifications.active, true))
         .orderBy(certifications.code);
-      return { certifications: rows };
+      // Les modules suivent la liste : le navigateur masque ce qu'une certification ne propose pas.
+      return {
+        certifications: rows.map(({ config, ...r }) => ({ ...r, shortName: config.shortName ?? r.code.toUpperCase(), modules: modulesOf(config) })),
+      };
     });
 
     app.get<{ Params: { code: string } }>('/:code', async (req) => {
@@ -52,7 +56,7 @@ export function certificationRoutes(db: Db) {
       }
 
       return {
-        certification: cert.config,
+        certification: { ...cert.config, modules: modulesOf(cert.config) },
         bank: {
           questions: perDomain.reduce((s, d) => s + d.questions, 0),
           byDomain: Object.fromEntries(perDomain.map((d) => [d.domain, d.questions])),

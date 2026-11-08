@@ -1,7 +1,7 @@
 import { maskToPrefix, parseIpv4 } from '../ipv4.js';
 import { formatNumberList, interfaceTypeHelp, paramLabel, parseNumberList, readParam, type ParamContext } from './params.js';
 import type { TerminalCommand, TerminalMode, TerminalProfile } from './profile.js';
-import { expandSyntax, type SyntaxElem } from './syntax.js';
+import { canonicalOrder, expandSyntax, type SyntaxElem } from './syntax.js';
 
 /**
  * Simulateur de terminal générique et sans I/O : un équipement, ses modes, sa configuration courante.
@@ -332,7 +332,10 @@ export class TerminalDevice {
       // Les mots `no` et `do` absorbent la suite : leur résolution se fait à part.
       if (alive.every((c) => c.seq.cmd < 0)) return { kind: 'ok', alive, complete: alive };
     }
-    const complete = alive.filter((c) => c.pos === c.seq.elems.length);
+    // Groupes en ordre libre : la forme reconnue est ramenée à l'ordre de la syntaxe (une seule forme stockée).
+    const complete = alive
+      .filter((c) => c.pos === c.seq.elems.length)
+      .map((c) => (c.seq.elems.some((e) => e.kind === 'kw' && e.group !== undefined) ? { ...c, canon: canonicalOrder(c.seq.elems, c.canon) } : c));
     return { kind: 'ok', alive, complete };
   }
 
@@ -778,7 +781,12 @@ export class TerminalDevice {
           if (e.text.startsWith('no ')) return false;
           // `no 20` ou `no 20 permit …` : l'entrée n° 20 d'une ACL nommée.
           if (seqNo !== null) return e.seq === seqNo.seq;
-          if (r.partial) return r.partialCmds.includes(e.cmd) && e.text.toLowerCase().startsWith(`${canonText.toLowerCase()} `);
+          if (r.partial) {
+            if (r.partialCmds.includes(e.cmd) && e.text.toLowerCase().startsWith(`${canonText.toLowerCase()} `)) return true;
+            // `negateGroup` : même incomplète, la forme `no` remet tout le réglage du groupe à son défaut
+            // (`no spanning-tree vlan 10 root` retire aussi `spanning-tree vlan 10 priority 4096`).
+            return cmd.negateGroup === true && key !== null && this.sameSetting(e.cmd, cmdIndex) && this.entryKey(e) === key;
+          }
           if (!this.sameSetting(e.cmd, cmdIndex)) return false;
           return key !== null ? this.entryKey(e) === key : same(e.text, canonText);
         };

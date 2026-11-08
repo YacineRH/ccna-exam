@@ -32,6 +32,21 @@ function perfect(key: AnswerKey): Response {
   }
 }
 
+/** Champs qui portent une correction : aucun ne doit apparaître dans l'état d'un examen en cours. */
+const CORRECTION_FIELDS = ['key', 'answerKey', 'correct', 'accepted', 'explanation', 'distractorNotes', 'isCorrect', 'feedback'];
+
+/** Tous les noms de propriétés d'un objet JSON, à toute profondeur. */
+function propertyNames(value: unknown, out: string[] = []): string[] {
+  if (Array.isArray(value)) for (const v of value) propertyNames(v, out);
+  else if (value && typeof value === 'object') {
+    for (const [k, v] of Object.entries(value)) {
+      out.push(k);
+      propertyNames(v, out);
+    }
+  }
+  return out;
+}
+
 describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
   let app: FastifyInstance;
   let db: Db;
@@ -158,8 +173,10 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
     const state = start.json();
     expect(state.questions).toHaveLength(10);
     expect(state.deadlineAt).not.toBeNull();
-    // Aucune correction ne doit transiter vers le navigateur pendant l'examen.
-    expect(JSON.stringify(state)).not.toMatch(/"key"|"answerKey"|"correct"|"accepted"|"explanation"/);
+    // Aucune correction ne doit transiter vers le navigateur pendant l'examen. On cherche des noms de
+    // propriétés, pas des chaînes : une option d'identifiant « key » (ccna-4.8-commands-roles-001) n'est
+    // pas une fuite, et une recherche dans le JSON sérialisé échouait sur 1 % des tirages (bloc 7).
+    expect(propertyNames(state).filter((k) => CORRECTION_FIELDS.includes(k))).toEqual([]);
 
     const [q0, q1, q2] = state.questions as { id: string; position: number; body: { type: string } }[];
     const answer = async (q: { id: string }, response: Response) =>
@@ -192,6 +209,18 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
 
     const closed = await answer(q2!, perfect(await keyOf(q2!.id)));
     expect(closed.json().error.code).toBe('attempt_closed');
+  });
+
+  it('mode examen : une option d\'identifiant « key » n\'est pas une fuite de correction (régression du bloc 6)', async () => {
+    // Cause de l'échec isolé du bloc 6 : la recherche de "key" dans le JSON sérialisé trouvait l'identifiant
+    // d'une option. On force ici le tirage de cette question pour que le cas soit joué à chaque passage.
+    const start = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'exam', subtopics: ['4.8'], types: ['matching'], questionCount: 1 });
+    expect(start.statusCode).toBe(201);
+    const state = start.json();
+    const raw = JSON.stringify(state);
+    expect(raw).toContain('"id":"key"');
+    expect(propertyNames(state).filter((k) => CORRECTION_FIELDS.includes(k))).toEqual([]);
+    await call('POST', `/api/v1/attempts/${state.id}/submit`);
   });
 
   it('mode entraînement : correction immédiate', async () => {
@@ -454,7 +483,10 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
       const bad = await admin('POST', '/certifications', { config: { ...config, domains: config.domains.slice(1) } });
       expect(bad.statusCode).toBe(400);
       const list = (await call('GET', '/api/v1/certifications')).json().certifications.map((c: { code: string }) => c.code);
-      expect(list).toEqual(['ccna', 'secplus']);
+      expect(list).toEqual(['ccna', 'secplus', 'security-plus']);
+      // Déclarée sans liste de modules : ceux qui ne demandent que des questions.
+      const declared = (await call('GET', '/api/v1/certifications/secplus')).json().certification;
+      expect(declared.modules).toEqual(['exam', 'practice', 'flashcards']);
     });
   });
 

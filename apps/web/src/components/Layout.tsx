@@ -2,6 +2,9 @@ import { Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { initials } from '../lib/format';
+import { useCertification } from '../certification/CertificationContext';
+import { hasModule } from '../lib/certification';
+import type { Module } from '../lib/types';
 import { CertificationSelect } from './CertificationSelect';
 import { Spinner } from './ui';
 import {
@@ -13,6 +16,7 @@ import {
   IconHistory,
   IconLogout,
   IconMenu,
+  IconSettings,
   IconTerminal,
   IconTimer,
   IconTrend,
@@ -21,6 +25,8 @@ import {
 
 interface NavItem {
   to: string;
+  /** Module de la certification qui donne accès à l'entrée ; sans module, toujours visible. */
+  module?: Module;
   label: string;
   icon: ReactNode;
   badge?: ReactNode;
@@ -32,24 +38,26 @@ const PILOTAGE: NavItem[] = [
   { to: '/', label: 'Tableau de bord', icon: <IconDashboard />, match: (p) => p === '/' },
   {
     to: '/examen/nouveau?mode=exam',
+    module: 'exam',
     label: 'Examens blancs',
     icon: <IconTimer />,
     match: (p, s) => p === '/examen/nouveau' && !s.includes('mode=practice'),
   },
   {
     to: '/examen/nouveau?mode=practice',
+    module: 'practice',
     label: 'Entraînement libre',
     icon: <IconTrend />,
     match: (p, s) => p === '/examen/nouveau' && s.includes('mode=practice'),
   },
-  { to: '/revision', label: 'Révision', icon: <IconCards />, match: (p) => p.startsWith('/revision') },
+  { to: '/revision', module: 'flashcards', label: 'Révision', icon: <IconCards />, match: (p) => p.startsWith('/revision') },
   { to: '/historique', label: 'Historique', icon: <IconHistory />, match: (p) => p === '/historique' || p.endsWith('/resultat') },
 ];
 
 const LABS: NavItem[] = [
-  { to: '/labs/subnetting', label: 'Subnetting', icon: <IconGrid /> },
-  { to: '/labs/cli', label: 'CLI Cisco IOS', icon: <IconTerminal /> },
-  { to: '/challenges', label: 'Challenges', icon: <IconBolt /> },
+  { to: '/labs/subnetting', module: 'subnet', label: 'Subnetting', icon: <IconGrid /> },
+  { to: '/labs/cli', module: 'cli', label: 'Labs CLI', icon: <IconTerminal /> },
+  { to: '/challenges', module: 'challenges', label: 'Challenges', icon: <IconBolt /> },
 ];
 
 function SideLink({ item }: { item: NavItem }) {
@@ -138,6 +146,12 @@ function AccountMenu() {
 }
 
 export function Layout() {
+  const { current } = useCertification();
+  const { user } = useAuth();
+  // La navigation suit les modules de la certification choisie : la Security+ n'a ni CLI ni subnetting.
+  const visible = (items: NavItem[]) => items.filter((i) => !i.module || hasModule(current, i.module));
+  const pilotage = visible(PILOTAGE);
+  const labs = visible(LABS);
   const [navOpen, setNavOpen] = useState(false);
   const location = useLocation();
   useEffect(() => setNavOpen(false), [location.pathname, location.search]);
@@ -189,13 +203,23 @@ export function Layout() {
             <CertificationSelect className="flex" />
           </div>
           <div className="label-mono px-3 py-2 text-[10.5px] tracking-[1.6px]">// Pilotage</div>
-          {PILOTAGE.map((i) => (
+          {pilotage.map((i) => (
             <SideLink key={i.to} item={i} />
           ))}
-          <div className="label-mono px-3 pb-2 pt-5 text-[10.5px] tracking-[1.6px]">// Labs</div>
-          {LABS.map((i) => (
-            <SideLink key={i.to} item={i} />
-          ))}
+          {labs.length > 0 && (
+            <>
+              <div className="label-mono px-3 pb-2 pt-5 text-[10.5px] tracking-[1.6px]">// Labs</div>
+              {labs.map((i) => (
+                <SideLink key={i.to} item={i} />
+              ))}
+            </>
+          )}
+          {user?.role === 'admin' && (
+            <>
+              <div className="label-mono px-3 pb-2 pt-5 text-[10.5px] tracking-[1.6px]">// Administration</div>
+              <SideLink item={{ to: '/admin', label: 'Certifications', icon: <IconSettings /> }} />
+            </>
+          )}
         </nav>
         <main id="contenu" tabIndex={-1} className="flex min-w-0 flex-1 flex-col gap-[22px] px-4 pb-14 pt-6 sm:px-8 sm:pt-[30px]">
           <Suspense fallback={<Spinner label="Chargement de la page…" />}>

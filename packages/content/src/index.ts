@@ -4,11 +4,13 @@ import { fileURLToPath } from 'node:url';
 import {
   checkLab,
   checkSeries,
+  parseBankTargets,
   parseCertification,
   parseExamSeries,
   parseLab,
   parseQuestion,
   parseTerminalProfile,
+  type BankTargets,
   type CertificationConfig,
   type ExamSeries,
   type Lab,
@@ -201,4 +203,20 @@ export function loadExamSeries(code: string, dataDir = DATA_DIR): ExamSeries | n
   issues.push(...checkSeries(series.exams.map((e) => e.questions), poolOf(questions), certification, series.constraints));
   if (issues.length) throw new ContentError(`Série d'examens invalide pour ${code}`, issues);
   return series;
+}
+
+/** Cibles chiffrées de la banque et de la série d'une certification (null si elle n'en a pas). */
+export function loadBankTargets(code: string, dataDir = DATA_DIR): BankTargets | null {
+  const path = join(dataDir, 'bank-targets', `${code}.json`);
+  if (!existsSync(path)) return null;
+  const targets = parseBankTargets(readJson(path));
+  if (targets.certification !== code) throw new ContentError(`Cibles invalides pour ${code}`, [`certification ${targets.certification} au lieu de ${code}`]);
+  return targets;
+}
+
+/** Certifications qui ont des cibles de banque (un fichier `data/bank-targets/<code>.json`). */
+export function listBankTargetCodes(dataDir = DATA_DIR): string[] {
+  const dir = join(dataDir, 'bank-targets');
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => f.replace(/\.json$/, '')).sort();
 }

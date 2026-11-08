@@ -2,6 +2,8 @@
 
 Cette consigne est donnée telle quelle à l'agent qui rédige un lot (20 à 40 questions d'un ou deux sous-thèmes). Elle reprend le format et les règles de l'outil MCP `generate_question` ; le lot reçoit en plus son brief (sous-thèmes, nombre de questions par type et par difficulté, angles à couvrir, fichier de sortie).
 
+> **Par certification.** Les exemples ci-dessous sont ceux du CCNA. Pour une autre certification, passer `--cert <code>` à tous les scripts et lire son annexe, qui l'emporte en cas de conflit : `annexe-security-plus.md` pour la Security+ (SY0-701).
+
 ## 1. Préparer
 
 1. Lire le brief du lot (fichier `lots/<id>.json` indiqué dans la demande).

@@ -103,7 +103,7 @@ raw.forEach((item, index) => {
   if (bankSlugs.has(q.slug)) err(slug, 'slug déjà présent dans la banque');
   if (seenSlugs.has(q.slug)) err(slug, 'slug en double dans le lot');
   seenSlugs.add(q.slug);
-  if (!q.reference?.trim()) err(slug, 'référence manquante (RFC, norme IEEE ou documentation Cisco)');
+  if (!q.reference?.trim()) err(slug, 'référence manquante (norme, RFC ou documentation de l’éditeur)');
   if (q.explanation.length < 150) warn(slug, `explication courte (${q.explanation.length} caractères)`);
 
   const key = contentKey(q.body);

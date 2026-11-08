@@ -2,6 +2,8 @@
 
 Cette consigne est donnée à un agent **distinct** de celui qui a rédigé le lot : il n'a vu ni la rédaction ni ses échanges, seulement le fichier du lot. Il cherche les erreurs, il ne les suppose pas absentes.
 
+> **Par certification.** Les exemples ci-dessous sont ceux du CCNA. Pour une autre certification, passer `--cert <code>` à tous les scripts et lire son annexe, qui l'emporte en cas de conflit : `annexe-security-plus.md` pour la Security+ (SY0-701).
+
 ## 1. Lire
 
 Pour chaque question : énoncé, exhibit, options, correction (`key`), explication, notes des distracteurs, référence, difficulté. Le format est décrit dans `docs/generation/consigne-redaction.md` ; le contexte de la banque s'obtient avec

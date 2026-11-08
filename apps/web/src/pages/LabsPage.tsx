@@ -61,7 +61,7 @@ function Labs({ cert }: { cert: CertificationSummary }) {
       <PageTitle
         eyebrow={
           <>
-            <span className="text-accent">●</span> {certificationLabel(cert)} · LABS CISCO IOS
+            <span className="text-accent">●</span> {certificationLabel(cert)} · LABS CLI
           </>
         }
         title="CLI trainer"
