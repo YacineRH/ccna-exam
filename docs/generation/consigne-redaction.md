@@ -31,7 +31,7 @@ Le fichier de sortie est un **tableau JSON** de questions. Chaque question :
 
 - **slug** : `ccna-<sous-thème>-<sujet-court>-<NNN>`, minuscules, chiffres, points et tirets ; sujet court descriptif et propre à la question ; `NNN` = `001`, ou le numéro suivant si le sujet existe déjà. Unique dans toute la banque (le contrôle le vérifie).
 - **source** : toujours `"ai"`.
-- **reference** : obligatoire. RFC (avec section si possible), norme IEEE, guide de configuration ou note technique Cisco.
+- **reference** : obligatoire. RFC, norme IEEE, guide de configuration ou note technique Cisco. Un numéro de section seulement si l'on en est sûr ; sinon, la norme ou le guide sans section (jamais de référence inventée).
 - **exhibit** : sortie de commande, extrait de configuration ou topologie en texte. Sorties IOS réalistes et cohérentes avec l'énoncé (mêmes adresses, mêmes noms). Lignes de 80 caractères au plus. L'énoncé commence alors par « Reportez-vous à l'exhibit. ».
 
 ### Les six types

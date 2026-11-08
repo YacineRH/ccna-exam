@@ -25,6 +25,19 @@ Un lab suit donc le même cycle qu'une question : `generate_lab` → rédaction 
 
 Un challenge suit le même cycle : `generate_challenge` → rédaction → `submit_lab` (joué dans le simulateur : configuration de départ avec ses pannes, solution, variantes, pièges) → `validate_lab` → `record_lab_review`. Seuls les challenges publiés apparaissent dans `/challenges`.
 
+## Génération en lots (banque complète)
+
+Pour remplir une banque d'un coup (bloc 6 : 1 308 questions CCNA en 43 lots), on ne passe pas question par question par l'API : les lots sont rédigés et relus hors ligne, puis versionnés dans `packages/content/data/`, que l'API importe au démarrage (voir `docs/DEPLOIEMENT.md`). Le format et les règles sont exactement ceux de `generate_question` ; les contrôles sont ceux de `submit_question`, plus la détection des quasi-doublons.
+
+1. **Plan** : cibles par domaine, sous-thème, type et difficulté (`docs/ARCHITECTURE.md`), découpées en lots de 20 à 40 questions d'un ou deux sous-thèmes. Chaque lot a un brief : sous-thèmes, nombre exact de questions par type et par difficulté, angles du programme à couvrir. Deux lots d'un même sous-thème ont des angles disjoints et ne tournent pas en même temps : le second voit le premier dans la banque.
+2. **Rédaction** par un agent, avec `docs/generation/consigne-redaction.md` et le brief. Il lit l'existant (`pnpm --filter @examforge/content batch:context <sous-thème> --full`) et contrôle son lot jusqu'à zéro erreur (`batch:check <lot> --subtopics …` : schéma, correction cohérente, bonne réponse qui obtient tous les points, note par distracteur, référence, source `ai`, slug unique, doublon exact, quasi-doublon au-delà de 0,70 face à la banque et dans le lot).
+3. **Relecture** par un second agent qui n'a vu ni la rédaction ni ses échanges, avec `docs/generation/consigne-relecture.md` : exactitude IOS / CCNA 200-301, bonne réponse unique, distracteurs faux sans ambiguïté, explication et notes justes, pas d'indice grammatical, calculs refaits. Il corrige (en distinguant fond et forme) ou rejette, écrit le lot relu et un journal (une entrée par question), et relance `batch:check`.
+4. **Publication** du seul lot relu : `pnpm --filter @examforge/content batch:merge <lot relu> <fichier>` (contrôle puis copie dans `data/questions/<code>/`), puis `pnpm --filter @examforge/content test`. Un commit par domaine.
+5. **Contrôle d'échantillon** : une troisième passe relit 5 % des questions publiées, tirées au hasard dans chaque lot. Au-delà de 2 % d'erreurs dans l'échantillon d'un lot, tout le lot est relu de nouveau.
+6. **Série** : `pnpm --filter @examforge/content series:build` assemble les 100 examens figés (`data/exams/<code>.json`) et affiche le rapport ; `series:check` vérifie que le fichier est à jour. `near-duplicates` liste les paires suspectes de toute la banque pour la relecture.
+
+Le journal des relectures du bloc 6 est résumé dans `docs/generation/journal-bloc-6.md`. Une banque déjà en production se complète de la même façon : les nouvelles questions arrivent au déploiement suivant, et la série n'est régénérée que si l'on accepte qu'elle change pour les examens jamais commencés (ceux déjà passés ne bougent pas).
+
 ## Pourquoi la génération se fait côté client
 
 Le serveur ne contient pas de clé d'API d'IA : c'est le modèle qui appelle les outils qui rédige les questions. `generate_question` lui donne un cadre strict, puis `submit_question` et `validate_question` assurent le contrôle qualité en deux passes. Aucun secret d'IA n'est donc stocké sur le serveur, et n'importe quel client MCP peut produire du contenu.

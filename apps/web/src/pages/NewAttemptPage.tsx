@@ -2,11 +2,13 @@ import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 're
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { WithCertification } from '../certification/CertificationContext';
 import { IconPlay, IconTimer, IconTrend } from '../components/Icons';
+import { SeriesLaunchPanel } from '../components/Series';
 import { ErrorBox, Spinner } from '../components/ui';
 import { api, ApiError } from '../lib/api';
 import { countsForTypes, domainsForTypes, examMinutes, maxFeasibleCount, planShortfalls } from '../lib/planning';
 import { QUESTION_TYPE_NAME } from '../lib/responses';
-import type { AttemptMode, AttemptState, CertificationDetail, InsufficientQuestionsDetails } from '../lib/types';
+import { parseExamNumber } from '../lib/series';
+import type { AttemptMode, AttemptState, CertificationDetail, InsufficientQuestionsDetails, SeriesProgress } from '../lib/types';
 import { useApi } from '../lib/useApi';
 
 function ModeCard({
@@ -60,6 +62,7 @@ function NewAttemptForm({ code }: { code: string }) {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const detail = useApi<CertificationDetail>(`/certifications/${encodeURIComponent(code)}`);
+  const series = useApi<SeriesProgress>(`/exams?certification=${encodeURIComponent(code)}`);
 
   const urlMode: AttemptMode = params.get('mode') === 'practice' ? 'practice' : 'exam';
   const urlDomains = params.get('domaines');
@@ -150,6 +153,10 @@ function NewAttemptForm({ code }: { code: string }) {
     }
   };
 
+  const seriesData = series.data && series.data.total > 0 ? series.data : null;
+  const showSeries = mode === 'exam' && seriesData !== null;
+  const initialExam = seriesData ? parseExamNumber(params.get('examen') ?? '', seriesData.total) : null;
+
   const insufficient =
     error instanceof ApiError && error.code === 'insufficient_questions' ? (error.details as InsufficientQuestionsDetails | undefined) : undefined;
 
@@ -186,6 +193,14 @@ function NewAttemptForm({ code }: { code: string }) {
           />
         </div>
       </fieldset>
+
+      {showSeries && seriesData && <SeriesLaunchPanel code={code} progress={seriesData} initial={initialExam} />}
+      {mode === 'exam' && series.error != null && <ErrorBox error={series.error} onRetry={series.reload} title="Série d'examens indisponible" />}
+      {showSeries && (
+        <h2 className="-mb-2 mt-1 text-base font-semibold">
+          Ou un tirage pondéré dans la banque
+        </h2>
+      )}
 
       <fieldset className="panel m-0 flex flex-col gap-3 px-5 py-5 sm:px-6">
         <legend className="sr-only">Nombre de questions</legend>

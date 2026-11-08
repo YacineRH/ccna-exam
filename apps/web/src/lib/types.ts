@@ -390,3 +390,26 @@ export interface RevisionSessionSummary {
   answeredCount: number;
   correctCount: number;
 }
+
+/** Un examen de la série figée, vu par l'utilisateur (`GET /exams`). */
+export interface SeriesExam {
+  number: number;
+  title: string;
+  questionCount: number;
+  taken: number;
+  bestScore: number | null;
+  passed: boolean;
+  lastAt: string | null;
+  inProgress: string | null;
+}
+
+/** Progression dans la série d'examens blancs figés. */
+export interface SeriesProgress {
+  certification: string;
+  passingScore: number;
+  total: number;
+  taken: number;
+  passed: number;
+  nextNumber: number | null;
+  exams: SeriesExam[];
+}

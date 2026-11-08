@@ -5,6 +5,7 @@ import { WithCertification } from '../certification/CertificationContext';
 import { MasteryLegend, ProgressChart, RadarChart, ReadinessGauge, Sparkline } from '../components/charts';
 import { IconPlay } from '../components/Icons';
 import { AttemptRow } from '../components/AttemptRow';
+import { SeriesDashboardCard } from '../components/Series';
 import { EmptyState, ErrorBox, MasteryBar, MasteryValue, Spinner } from '../components/ui';
 import {
   formatDate,
@@ -16,7 +17,7 @@ import {
 } from '../lib/format';
 import { api, ApiError } from '../lib/api';
 import { labForSubtopic } from '../lib/labs';
-import type { AttemptState, AttemptSummary, CertificationDetail, LabSummary, Stats } from '../lib/types';
+import type { AttemptState, AttemptSummary, CertificationDetail, LabSummary, SeriesProgress, Stats } from '../lib/types';
 import { useApi } from '../lib/useApi';
 
 /** Taille d'une révision rapide lancée depuis « À revoir ». */
@@ -429,6 +430,7 @@ function Dashboard({ code }: { code: string }) {
   const attempts = useApi<{ attempts: AttemptSummary[] }>(`/attempts?certification=${encodeURIComponent(code)}`);
   const detail = useApi<CertificationDetail>(`/certifications/${encodeURIComponent(code)}`);
   const labs = useApi<{ labs: LabSummary[] }>(`/labs?certification=${encodeURIComponent(code)}`);
+  const series = useApi<SeriesProgress>(`/exams?certification=${encodeURIComponent(code)}`);
   const now = new Date();
   const firstName = user?.displayName.split(/\s+/)[0] ?? '';
 
@@ -470,6 +472,9 @@ function Dashboard({ code }: { code: string }) {
         <>
           <Readiness stats={stats.data} />
           <Indicators stats={stats.data} />
+          {series.data && series.data.total > 0 && (
+            <SeriesDashboardCard code={code} progress={series.data} min={stats.data.scale.min} max={stats.data.scale.max} />
+          )}
           <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))]">
             <DomainsPanel stats={stats.data} />
             <section aria-labelledby="prog-h" className="panel flex flex-col px-6 py-[22px]">

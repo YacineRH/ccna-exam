@@ -412,21 +412,23 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
       expect(twin.json().error.code).toBe('duplicate_question');
     });
 
-    it('assemble des examens figés numérotés et signale les manques', async () => {
+    it('assemble des examens figés numérotés à la suite de la série et signale les manques', async () => {
+      // La série du contenu (100 examens) est importée au démarrage : les examens du MCP viennent après.
+      const before = (await admin('GET', '/exams?certification=ccna')).json().exams as { number: number }[];
+      const last = before.at(-1)?.number ?? 0;
       const first = await admin('POST', '/exams', { certification: 'ccna', questionCount: 6 });
       expect(first.statusCode).toBe(201);
-      expect(first.json()).toMatchObject({ number: 1, questionCount: 6, freshQuestions: 6 });
+      expect(first.json()).toMatchObject({ number: last + 1, questionCount: 6 });
       const second = (await admin('POST', '/exams', { certification: 'ccna', questionCount: 6 })).json();
-      expect(second.number).toBe(2);
-      expect(second.freshQuestions).toBe(6);
+      expect(second.number).toBe(last + 2);
       const list = (await admin('GET', '/exams?certification=ccna')).json().exams;
-      expect(list.map((e: { number: number }) => e.number)).toEqual([1, 2]);
+      expect(list.map((e: { number: number }) => e.number).slice(-2)).toEqual([last + 1, last + 2]);
 
       const available = (await call('GET', '/api/v1/certifications/ccna')).json().bank.byDomain['6.0'] as number;
       const short = await admin('POST', '/exams', { certification: 'ccna', domains: ['6.0'], questionCount: available + 1 });
       expect(short.json().error.code).toBe('insufficient_questions');
 
-      const attempt = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'exam', examNumber: 1 });
+      const attempt = await call('POST', '/api/v1/attempts', { certification: 'ccna', mode: 'exam', examNumber: last + 1 });
       expect(attempt.statusCode).toBe(201);
       expect(attempt.json().totalCount).toBe(6);
     });

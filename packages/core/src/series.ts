@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { allocateByWeight, type PoolQuestion } from './assembly.js';
 import { DIFFICULTIES, type CertificationConfig, type Difficulty } from './certification.js';
 import { createRng, shuffle } from './random.js';
@@ -464,4 +465,38 @@ export function checkSeries(
     issues.push(`les examens ${report.overlap.maxPair?.join(' et ')} ont ${report.overlap.max} questions communes (plafond ${constraints.maxOverlap})`);
   }
   return issues;
+}
+
+/**
+ * Fichier d'une série figée (`data/exams/<certification>.json`) : le seed et les plafonds qui l'ont produite,
+ * puis chaque examen, numéroté de 1 à N, avec ses questions (slugs) dans l'ordre de passage.
+ */
+export const examSeriesSchema = z
+  .object({
+    certification: z.string().min(1),
+    seed: z.number().int().nonnegative(),
+    constraints: z.object({
+      maxUses: z.number().int().positive(),
+      maxOverlap: z.number().int().nonnegative(),
+    }),
+    exams: z
+      .array(
+        z.object({
+          number: z.number().int().positive(),
+          title: z.string().min(1),
+          questions: z.array(z.string().min(1)).min(1),
+        }),
+      )
+      .min(1),
+  })
+  .superRefine((series, ctx) => {
+    series.exams.forEach((exam, i) => {
+      if (exam.number !== i + 1) ctx.addIssue({ code: 'custom', message: `examen en position ${i + 1} numéroté ${exam.number}` });
+    });
+  });
+
+export type ExamSeries = z.infer<typeof examSeriesSchema>;
+
+export function parseExamSeries(input: unknown): ExamSeries {
+  return examSeriesSchema.parse(input);
 }
