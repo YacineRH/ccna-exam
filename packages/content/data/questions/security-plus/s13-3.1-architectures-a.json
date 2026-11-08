@@ -1,0 +1,996 @@
+[
+  {
+    "slug": "security-plus-3.1-saas-customer-responsibility-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME de 40 salariés remplace son serveur de messagerie interne par une messagerie en mode SaaS. Selon le modèle de responsabilité partagée, quelle tâche de sécurité reste à la charge de la PME ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Appliquer les correctifs du système d'exploitation des serveurs de messagerie"
+        },
+        {
+          "id": "b",
+          "text": "Assurer la sécurité physique des centres de données du fournisseur"
+        },
+        {
+          "id": "c",
+          "text": "Gérer les comptes des utilisateurs et leurs droits d'accès aux boîtes"
+        },
+        {
+          "id": "d",
+          "text": "Installer les mises à jour de sécurité de l'application de messagerie"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "En SaaS, le fournisseur exploite toute la pile : centres de données, réseau, serveurs, système d'exploitation et application elle-même, correctifs compris. Le client conserve en revanche, quel que soit le modèle de service, la responsabilité de ses données et des identités : création et suppression des comptes, attribution des droits, activation de l'authentification multifacteur. Une boîte restée active après le départ d'un salarié est donc une faute du client, pas du fournisseur.",
+    "distractorNotes": {
+      "a": "En SaaS, le client n'a aucun accès aux serveurs du fournisseur : leurs correctifs système relèvent du fournisseur.",
+      "b": "La sécurité physique des centres de données incombe toujours au fournisseur, en SaaS comme en IaaS ou en PaaS.",
+      "d": "L'application est exploitée par le fournisseur, qui la met à jour pour tous ses clients ; la PME ne peut pas la corriger elle-même."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1 ; NIST SP 800-145"
+  },
+  {
+    "slug": "security-plus-3.1-iaas-guest-os-patch-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une société de logistique héberge son application de suivi sur des machines virtuelles louées en IaaS. Un attaquant compromet l'une d'elles en exploitant une vulnérabilité du système d'exploitation invité, corrigée par l'éditeur depuis trois mois mais jamais appliquée. À qui revenait la responsabilité d'appliquer ce correctif ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Au fournisseur, car il exploite l'infrastructure qui héberge la machine virtuelle"
+        },
+        {
+          "id": "b",
+          "text": "À parts égales au client et au fournisseur, selon le contrat de service"
+        },
+        {
+          "id": "c",
+          "text": "À l'éditeur du système d'exploitation, qui doit pousser le correctif sur l'instance"
+        },
+        {
+          "id": "d",
+          "text": "Au client, car en IaaS le système d'exploitation invité est sous sa gestion"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "En IaaS, le fournisseur gère la couche physique, le réseau du centre de données, le stockage et l'hyperviseur. Tout ce qui s'exécute dans la machine virtuelle relève du client : système d'exploitation invité, middleware, applications, données et pare-feu de l'hôte. Le correctif du système invité était donc à la charge de la société de logistique. C'est l'erreur de lecture la plus fréquente de la matrice de responsabilité : louer l'infrastructure ne délègue pas la maintenance des systèmes qu'on y installe.",
+    "distractorNotes": {
+      "a": "Le fournisseur IaaS s'arrête à l'hyperviseur ; il n'administre pas le système invité, dont il n'a d'ailleurs pas les identifiants.",
+      "b": "La responsabilité partagée répartit les couches entre les parties, elle ne les partage pas à parts égales : le système invité est entièrement côté client en IaaS.",
+      "c": "L'éditeur publie le correctif, mais son déploiement sur une instance relève de celui qui administre le système, ici le client."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1 ; NIST SP 800-145"
+  },
+  {
+    "slug": "security-plus-3.1-paas-customer-duties-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une banque en ligne déploie une nouvelle API sur une offre PaaS : elle fournit son code, et la plateforme fournit le runtime, le système d'exploitation et l'infrastructure. Quelles deux responsabilités de sécurité restent à la charge de la banque ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Appliquer les correctifs du système d'exploitation qui exécute la plateforme"
+        },
+        {
+          "id": "b",
+          "text": "Corriger les failles du code de l'API déployée sur la plateforme"
+        },
+        {
+          "id": "c",
+          "text": "Mettre à jour le runtime fourni par la plateforme lorsqu'une faille y est publiée"
+        },
+        {
+          "id": "d",
+          "text": "Classer et protéger les données que l'API stocke et expose"
+        },
+        {
+          "id": "e",
+          "text": "Remplacer les disques défaillants des serveurs de la plateforme"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "En PaaS, le fournisseur gère l'infrastructure physique, la virtualisation, le système d'exploitation et le runtime (version du langage, middleware) qu'il met à disposition. Le client garde la responsabilité de ce qu'il apporte : le code de son application, dont les vulnérabilités (injection, contrôle d'accès défaillant) sont les siennes, et les données qu'elle traite, avec leur classification, leur chiffrement et les droits d'accès. Plus on monte dans les modèles de service, moins le client gère de couches, mais le code et les données ne quittent jamais sa responsabilité.",
+    "distractorNotes": {
+      "a": "Le système d'exploitation sous-jacent est géré par le fournisseur en PaaS ; le client n'y a pas accès.",
+      "c": "Le runtime fourni par la plateforme est maintenu par le fournisseur ; le client choisit au plus une version prise en charge.",
+      "e": "Le matériel physique relève toujours du fournisseur, quel que soit le modèle de service."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1 ; NIST SP 800-145"
+  },
+  {
+    "slug": "security-plus-3.1-responsibility-matrix-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le RSSI d'un éditeur de logiciels remplit la matrice de responsabilité partagée de ses services cloud (machines virtuelles IaaS, base de données managée PaaS, outil de gestion de projet SaaS). Associez chaque tâche à la partie qui en est responsable.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Corriger l'hyperviseur sur lequel tournent les machines virtuelles IaaS"
+        },
+        {
+          "id": "l2",
+          "text": "Définir les règles du groupe de sécurité réseau qui filtre le trafic vers une VM IaaS"
+        },
+        {
+          "id": "l3",
+          "text": "Corriger le moteur de la base de données managée PaaS"
+        },
+        {
+          "id": "l4",
+          "text": "Attribuer aux comptes applicatifs les droits de lecture sur les tables de la base PaaS"
+        },
+        {
+          "id": "l5",
+          "text": "Décider quels documents confidentiels sont déposés dans l'outil SaaS"
+        }
+      ],
+      "right": [
+        {
+          "id": "client",
+          "text": "Client"
+        },
+        {
+          "id": "fournisseur",
+          "text": "Fournisseur"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "fournisseur",
+        "l2": "client",
+        "l3": "fournisseur",
+        "l4": "client",
+        "l5": "client"
+      }
+    },
+    "explanation": "L'hyperviseur fait partie de l'infrastructure que le fournisseur IaaS exploite : il le corrige. Les règles du groupe de sécurité réseau sont un paramétrage que le client applique à ses propres ressources. Dans une base managée PaaS, le moteur est maintenu par le fournisseur, mais les droits accordés sur les données restent du ressort du client. Enfin, en SaaS, le choix et la classification des données déposées appartiennent toujours au client. Règle générale : le fournisseur gère les couches qu'il opère, le client gère sa configuration, ses identités et ses données.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1 ; NIST SP 800-145"
+  },
+  {
+    "slug": "security-plus-3.1-hybrid-cloud-model-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un centre hospitalier conserve les dossiers patients dans un cloud privé hébergé dans ses propres locaux et utilise une offre de cloud public pour absorber les pics de calcul de ses analyses d'imagerie anonymisées, les deux environnements étant reliés. De quel modèle de déploiement s'agit-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cloud public"
+        },
+        {
+          "id": "b",
+          "text": "Cloud communautaire"
+        },
+        {
+          "id": "c",
+          "text": "Cloud hybride"
+        },
+        {
+          "id": "d",
+          "text": "Cloud privé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "NIST SP 800-145 définit le cloud hybride comme la composition de deux infrastructures cloud distinctes ou plus (privée, communautaire ou publique), qui restent des entités séparées mais sont reliées par une technologie permettant de déplacer données et applications, par exemple pour déborder vers le cloud public lors des pics. C'est exactement le cas ici. Côté sécurité, le modèle hybride impose d'appliquer des politiques cohérentes (identités, chiffrement, journalisation) dans les deux environnements et de bien maîtriser les flux qui les relient.",
+    "distractorNotes": {
+      "a": "Le cloud public n'est qu'une des deux composantes : les dossiers patients restent dans le cloud privé de l'hôpital.",
+      "b": "Un cloud communautaire est partagé par plusieurs organisations ayant des besoins communs, ce qui n'est pas décrit ici.",
+      "d": "Le cloud privé ne couvre que la partie interne ; l'usage relié d'un cloud public fait du tout un modèle hybride."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1 ; NIST SP 800-145"
+  },
+  {
+    "slug": "security-plus-3.1-third-party-right-to-audit-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une collectivité négocie le contrat d'hébergement de son application de gestion des aides sociales chez un fournisseur cloud. Le RSSI veut pouvoir, après un incident ou à intervalle régulier, faire vérifier lui-même ou par un cabinet de son choix les contrôles de sécurité du fournisseur. Quelle clause doit-il faire inscrire au contrat ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une clause de droit d'audit"
+        },
+        {
+          "id": "b",
+          "text": "Une clause de confidentialité"
+        },
+        {
+          "id": "c",
+          "text": "Une clause de réversibilité"
+        },
+        {
+          "id": "d",
+          "text": "Un engagement de niveau de service"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le recours à un fournisseur cloud fait de lui un tiers dont dépend la sécurité des données de la collectivité. La clause de droit d'audit (right-to-audit) autorise le client à contrôler, directement ou par un auditeur mandaté, la mise en œuvre des mesures de sécurité promises, selon des modalités fixées au contrat (préavis, périmètre, fréquence). Elle complète les rapports d'audit fournis par le prestataire, en permettant une vérification ciblée après un incident. Sans elle, le client ne dispose que des déclarations et des certifications du fournisseur.",
+    "distractorNotes": {
+      "b": "Une clause de confidentialité oblige le fournisseur à ne pas divulguer les informations du client ; elle ne donne aucun droit de vérification.",
+      "c": "La réversibilité organise la restitution des données et la sortie du contrat ; elle ne permet pas de contrôler les mesures de sécurité en cours d'exécution.",
+      "d": "Un SLA fixe des engagements de service mesurables et des pénalités, pas un droit d'inspecter les contrôles du fournisseur."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1"
+  },
+  {
+    "slug": "security-plus-3.1-iac-template-scanning-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une équipe déploie toute son infrastructure cloud avec des modèles Terraform stockés dans un dépôt Git. Le mois dernier, un compartiment de stockage a été rendu public par une erreur dans un modèle. L'équipe veut empêcher qu'une telle erreur atteigne de nouveau la production. Quelle mesure tire LE MIEUX parti de l'infrastructure as code ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Corriger directement dans la console du fournisseur chaque ressource signalée comme mal configurée"
+        },
+        {
+          "id": "b",
+          "text": "Analyser automatiquement les modèles dans le pipeline d'intégration et exiger une revue avant fusion"
+        },
+        {
+          "id": "c",
+          "text": "Lancer chaque trimestre un scan de vulnérabilités sur les ressources de production"
+        },
+        {
+          "id": "d",
+          "text": "Accorder à chaque développeur les droits d'administrateur du compte cloud pour appliquer ses modèles"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Avec l'IaC, l'infrastructure est décrite par du code versionné : on peut donc la contrôler comme du code, avant qu'elle n'existe. Une analyse statique des modèles (détection d'un compartiment public, d'un port d'administration ouvert à Internet) dans le pipeline, complétée par une revue obligatoire avant fusion, bloque l'erreur avant le déploiement. Le même modèle validé produit ensuite des environnements identiques et reproductibles, ce qui limite les écarts de configuration et facilite le retour à un état connu.",
+    "distractorNotes": {
+      "a": "Une modification manuelle en console crée un écart entre le code et l'infrastructure réelle : le prochain déploiement du modèle réintroduira l'erreur.",
+      "c": "Un scan trimestriel détecte l'erreur après coup, parfois des semaines après l'exposition : il n'empêche rien d'atteindre la production.",
+      "d": "Élargir les droits va à l'encontre du moindre privilège et supprime le point de contrôle que constitue le pipeline."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1"
+  },
+  {
+    "slug": "security-plus-3.1-iac-configuration-drift-fill-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une équipe gère ses ressources cloud par infrastructure as code. Lors d'un incident, un administrateur ouvre un port directement dans la console du fournisseur ; la configuration réelle ne correspond plus à celle décrite dans le code. Comment appelle-t-on cet écart ?",
+      "fields": [
+        {
+          "id": "terme",
+          "label": "Terme (en français ou en anglais)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "terme": {
+          "accepted": [
+            "dérive de configuration",
+            "derive de configuration",
+            "dérive de la configuration",
+            "derive de la configuration",
+            "dérive",
+            "derive",
+            "configuration drift",
+            "drift"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "On parle de dérive de configuration (configuration drift) quand l'état réel d'une ressource s'écarte de l'état déclaré dans le code, en général à la suite d'une modification manuelle. La dérive annule les bénéfices de l'IaC : le code ne documente plus l'infrastructure, les revues ne voient plus les changements, et un redéploiement peut écraser ou réintroduire des réglages sans prévenir. Les outils d'IaC savent la détecter en comparant l'état déclaré à l'état réel ; la parade consiste à interdire les changements hors pipeline et à reporter toute correction urgente dans le code.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1"
+  },
+  {
+    "slug": "security-plus-3.1-serverless-no-os-patching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une jeune entreprise développe son application sous forme de fonctions serverless exécutées à la demande par un fournisseur cloud. Quelle tâche de sécurité n'a-t-elle plus à assurer ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Corriger les failles du code de ses fonctions"
+        },
+        {
+          "id": "b",
+          "text": "Corriger le système d'exploitation sous-jacent"
+        },
+        {
+          "id": "c",
+          "text": "Limiter les permissions accordées au rôle de chaque fonction"
+        },
+        {
+          "id": "d",
+          "text": "Protéger les clés d'API utilisées par les fonctions"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "En serverless, le client ne fournit que le code de ses fonctions et leur configuration ; le fournisseur alloue, exploite et corrige les serveurs, le système d'exploitation et l'environnement d'exécution, sans que le client y ait accès. Les correctifs système sortent donc de son périmètre. Le code, les permissions de chaque fonction, la gestion des secrets et la validation des événements qui déclenchent les fonctions restent en revanche de sa responsabilité : le serverless déplace la surface d'attaque, il ne la supprime pas.",
+    "distractorNotes": {
+      "a": "Le code des fonctions est écrit par le client : ses vulnérabilités restent les siennes.",
+      "c": "Les permissions des fonctions sont un paramétrage du client, et un rôle trop large est l'une des failles les plus courantes en serverless.",
+      "d": "Les secrets utilisés par le code relèvent du client, qui doit les placer dans un coffre de secrets plutôt que dans le code."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1"
+  },
+  {
+    "slug": "security-plus-3.1-serverless-function-audit-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Un audit porte sur une fonction serverless qui traite les factures déposées par les fournisseurs. Quelles deux mesures corrigent LE MIEUX les constats ?",
+      "exhibit": "Rapport d'audit - fonction traiter-factures (compte cloud example.com)\nDéclencheur : dépôt d'un fichier dans le compartiment factures-entrantes\nConstat 1 : rôle d'exécution role-traiter-factures\n  {\"Effect\": \"Allow\", \"Action\": \"*\", \"Resource\": \"*\"}\nConstat 2 : le nom du fichier reçu est concaténé tel quel dans une\n  requête SQL vers la base comptable",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Limiter le rôle d'exécution aux seules actions dont la fonction a besoin"
+        },
+        {
+          "id": "b",
+          "text": "Installer un agent EDR sur le serveur qui exécute la fonction"
+        },
+        {
+          "id": "c",
+          "text": "Allonger le délai d'exécution maximal accordé à la fonction"
+        },
+        {
+          "id": "d",
+          "text": "Valider le nom du fichier reçu et passer par une requête paramétrée"
+        },
+        {
+          "id": "e",
+          "text": "Planifier chaque mois les correctifs du système d'exploitation de la fonction"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Le constat 1 montre un rôle d'exécution qui autorise toutes les actions sur toutes les ressources : si la fonction est détournée, l'attaquant hérite de ces droits sur tout le compte. La parade est le moindre privilège, avec un rôle propre à la fonction limité à ce qu'elle fait réellement. Le constat 2 décrit une injection possible par l'événement déclencheur : en serverless, les données d'entrée (nom de fichier, requête HTTP, message) doivent être validées comme toute saisie, et la requête SQL paramétrée. L'hôte et son système d'exploitation sont, eux, gérés par le fournisseur.",
+    "distractorNotes": {
+      "b": "Le client n'a pas accès aux serveurs d'exécution en serverless : il ne peut pas y installer d'agent, et ce n'est pas ce que relèvent les constats.",
+      "c": "Le délai d'exécution est un paramètre de fonctionnement ; il ne réduit ni les droits du rôle ni le risque d'injection.",
+      "e": "Le système d'exploitation de l'environnement d'exécution est maintenu par le fournisseur en serverless ; le client ne le corrige pas."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1 ; OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-3.1-microservices-mtls-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une plateforme de commerce en ligne a été découpée en 30 microservices qui s'appellent par des API REST internes. Un test d'intrusion montre qu'un service compromis peut interroger tous les autres sans aucune authentification. Quelle mesure répond LE MIEUX à ce constat ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Placer un pare-feu applicatif web devant le portail public et laisser libres les échanges internes"
+        },
+        {
+          "id": "b",
+          "text": "Regrouper les services dans un seul serveur afin de réduire le nombre d'API exposées"
+        },
+        {
+          "id": "c",
+          "text": "Attribuer à tous les services un même compte de service autorisé sur toutes les bases"
+        },
+        {
+          "id": "d",
+          "text": "Authentifier et chiffrer chaque appel entre services par TLS mutuel avec une identité par service"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une architecture en microservices multiplie les interfaces : chaque appel entre services est un point d'entrée potentiel, et un service compromis peut se déplacer latéralement si le réseau interne est implicitement de confiance. Le TLS mutuel (mTLS) donne à chaque service une identité vérifiée par certificat et chiffre les échanges ; chaque service peut alors n'accepter que les appelants autorisés. Le découpage limite ainsi le rayon d'impact d'une compromission au lieu de l'étendre, conformément au principe de ne jamais faire confiance implicitement au trafic interne.",
+    "distractorNotes": {
+      "a": "Un WAF en périmètre ne filtre que le trafic entrant depuis Internet ; le constat porte sur les échanges internes entre services, qu'il ne voit pas.",
+      "b": "Revenir à un monolithe sacrifie l'évolutivité et le déploiement indépendant sans traiter le défaut d'authentification.",
+      "c": "Un compte partagé et surprivilégié aggrave le problème : la compromission d'un seul service donne accès à toutes les données."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1 ; NIST SP 800-204"
+  },
+  {
+    "slug": "security-plus-3.1-container-shared-kernel-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une équipe hésite entre machines virtuelles et conteneurs pour héberger ses applications internes. Quelle caractéristique des conteneurs a la plus forte implication de sécurité par rapport aux machines virtuelles ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ils partagent le noyau du système d'exploitation de l'hôte"
+        },
+        {
+          "id": "b",
+          "text": "Ils embarquent chacun un noyau de système d'exploitation complet"
+        },
+        {
+          "id": "c",
+          "text": "Ils ne peuvent s'exécuter que sur un hyperviseur de type 1"
+        },
+        {
+          "id": "d",
+          "text": "Ils ne peuvent recevoir aucune règle de filtrage réseau"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Une machine virtuelle embarque son propre système d'exploitation complet, isolé des autres par l'hyperviseur. Un conteneur, lui, ne contient que l'application et ses dépendances : tous les conteneurs d'un hôte partagent le noyau du système hôte, l'isolation reposant sur des mécanismes de ce noyau (espaces de noms, cgroups). Le conteneur est donc plus léger et plus rapide à déployer, mais une vulnérabilité du noyau hôte ou un conteneur trop privilégié peut affecter tous les conteneurs de la machine : l'isolation est plus faible qu'entre deux VM.",
+    "distractorNotes": {
+      "b": "C'est la caractéristique d'une machine virtuelle ; un conteneur n'embarque pas de noyau.",
+      "c": "Les conteneurs s'exécutent sur un système d'exploitation hôte, physique ou virtuel ; ils n'exigent aucun type d'hyperviseur.",
+      "d": "Le trafic des conteneurs se filtre très bien, par des politiques réseau de l'orchestrateur ou par le pare-feu de l'hôte."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1 ; NIST SP 800-190"
+  },
+  {
+    "slug": "security-plus-3.1-container-hardening-practices-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "L'équipe DevOps d'un assureur rédige son guide de sécurité des conteneurs avant la mise en production. Quelles deux pratiques doit-elle retenir ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Inclure les clés d'API dans l'image pour simplifier le déploiement"
+        },
+        {
+          "id": "b",
+          "text": "Corriger une faille en se connectant au conteneur en production pour y installer la mise à jour"
+        },
+        {
+          "id": "c",
+          "text": "Bâtir les images sur une image de base minimale issue d'un registre de confiance et les analyser"
+        },
+        {
+          "id": "d",
+          "text": "Lancer les conteneurs en mode privilégié pour éviter les erreurs de permissions"
+        },
+        {
+          "id": "e",
+          "text": "Exécuter les processus du conteneur sous un utilisateur non privilégié plutôt qu'en root"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "NIST SP 800-190 insiste sur la sécurité des images et de l'exécution. Une image de base minimale réduit le nombre de composants vulnérables, un registre de confiance limite le risque d'image piégée, et l'analyse des vulnérabilités avant déploiement bloque les composants connus pour être faillibles. À l'exécution, un processus non root limite ce qu'un attaquant peut faire s'il compromet l'application, et réduit le risque d'atteindre le noyau partagé de l'hôte. Les conteneurs sont immuables : on corrige en reconstruisant l'image, puis en redéployant.",
+    "distractorNotes": {
+      "a": "Une clé placée dans une image est lisible par quiconque récupère l'image ; les secrets se fournissent à l'exécution par un gestionnaire de secrets.",
+      "b": "Une modification à chaud est perdue au prochain redéploiement et crée un écart avec l'image ; on reconstruit et on redéploie l'image corrigée.",
+      "d": "Le mode privilégié donne au conteneur un accès quasi complet à l'hôte et supprime l'essentiel de l'isolation."
+    },
+    "reference": "NIST SP 800-190 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1"
+  },
+  {
+    "slug": "security-plus-3.1-onprem-to-iaas-duties-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une PME héberge aujourd'hui tous ses serveurs dans une salle de son siège et envisage de les migrer vers une offre IaaS. Quelles deux responsabilités, qu'elle assume aujourd'hui sur site, passeraient au fournisseur ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La sécurité physique de la salle qui abrite les serveurs"
+        },
+        {
+          "id": "b",
+          "text": "Les correctifs du système d'exploitation des serveurs"
+        },
+        {
+          "id": "c",
+          "text": "La gestion des comptes des utilisateurs de ses applications"
+        },
+        {
+          "id": "d",
+          "text": "L'alimentation électrique et le refroidissement du matériel"
+        },
+        {
+          "id": "e",
+          "text": "Les règles du pare-feu local de chaque serveur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Sur site, l'organisation assume toute la pile : bâtiment et contrôle d'accès physique, énergie, climatisation, matériel, réseau, systèmes et applications. Elle garde un contrôle total, mais supporte aussi la consommation électrique, l'achat de capacité de calcul et les risques physiques. En IaaS, le fournisseur prend en charge les couches basses : sécurité physique des centres de données, alimentation, refroidissement, matériel et virtualisation. Le système d'exploitation, sa configuration, les identités et les données restent côté client.",
+    "distractorNotes": {
+      "b": "En IaaS, le système d'exploitation des machines virtuelles reste géré, et donc corrigé, par le client.",
+      "c": "Les identités et les droits des utilisateurs restent de la responsabilité du client dans tous les modèles de service.",
+      "e": "Le pare-feu local d'une VM fait partie de la configuration du système invité, qui reste côté client en IaaS."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1 ; NIST SP 800-145"
+  },
+  {
+    "slug": "security-plus-3.1-vm-sprawl-lifecycle-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur la plateforme de virtualisation interne d'une mutuelle, un audit découvre 60 machines virtuelles absentes de l'inventaire, créées pour des tests puis oubliées, sans correctifs depuis plus d'un an. Quelle mesure traite LE MIEUX la cause du problème ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter de la mémoire aux hôtes pour éviter la saturation de la plateforme"
+        },
+        {
+          "id": "b",
+          "text": "Chiffrer les disques virtuels de toutes les machines de la plateforme"
+        },
+        {
+          "id": "c",
+          "text": "Imposer un cycle de vie : demande approuvée, propriétaire et date d'expiration"
+        },
+        {
+          "id": "d",
+          "text": "Migrer les machines de test vers un hyperviseur de type 2 installé sur un poste"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le constat décrit la prolifération de machines virtuelles (VM sprawl) : la facilité de création des VM conduit à des machines non suivies, que personne ne corrige ni ne surveille, et qui deviennent des points d'entrée. La cause est l'absence de gouvernance, pas un manque de ressources : la réponse est un processus de cycle de vie qui exige une demande approuvée, désigne un propriétaire, inscrit chaque VM à l'inventaire et fixe une date d'expiration au-delà de laquelle elle est revue ou supprimée.",
+    "distractorNotes": {
+      "a": "Ajouter de la mémoire traite un éventuel problème de capacité, pas l'absence de suivi et de correctifs des VM oubliées.",
+      "b": "Le chiffrement protège les données au repos, mais les VM resteraient non répertoriées, non corrigées et exposées.",
+      "d": "Déplacer les VM vers un poste disperse encore davantage le parc et réduit la maîtrise, sans établir de gouvernance."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1 ; NIST SP 800-125"
+  },
+  {
+    "slug": "security-plus-3.1-service-models-responsibility-order-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Pour une formation interne, un consultant classe les modèles d'hébergement selon la part de la pile technique dont le client doit assurer la sécurité. Ordonnez-les, du modèle où le client en gère le PLUS à celui où il en gère le MOINS.",
+      "items": [
+        {
+          "id": "paas",
+          "text": "PaaS"
+        },
+        {
+          "id": "onprem",
+          "text": "Sur site"
+        },
+        {
+          "id": "saas",
+          "text": "SaaS"
+        },
+        {
+          "id": "iaas",
+          "text": "IaaS"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "onprem",
+        "iaas",
+        "paas",
+        "saas"
+      ]
+    },
+    "explanation": "Sur site, le client gère tout, du bâtiment à l'application. En IaaS, le fournisseur prend en charge les installations, le matériel et la virtualisation ; le client garde le système d'exploitation, le middleware, les applications et les données. En PaaS, le fournisseur gère aussi le système d'exploitation et le runtime ; le client conserve son code et ses données. En SaaS, le fournisseur exploite l'application entière ; il reste au client ses données, ses utilisateurs et le paramétrage de l'application. Dans tous les cas, données et identités restent côté client.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1 ; NIST SP 800-145"
+  },
+  {
+    "slug": "security-plus-3.1-type2-hypervisor-stack-order-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un analyste du SOC monte sur son ordinateur portable un laboratoire d'analyse de logiciels malveillants : il installe un hyperviseur de type 2 sur son système habituel, puis une machine virtuelle dans laquelle tourne l'outil d'analyse. Ordonnez les couches de cette pile, de la plus basse à la plus haute.",
+      "items": [
+        {
+          "id": "guest",
+          "text": "Système d'exploitation invité"
+        },
+        {
+          "id": "hw",
+          "text": "Matériel du portable"
+        },
+        {
+          "id": "app",
+          "text": "Outil d'analyse"
+        },
+        {
+          "id": "hyp",
+          "text": "Hyperviseur de type 2"
+        },
+        {
+          "id": "host",
+          "text": "Système d'exploitation hôte"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "hw",
+        "host",
+        "hyp",
+        "guest",
+        "app"
+      ]
+    },
+    "explanation": "Un hyperviseur de type 2 (hébergé) s'installe comme une application sur un système d'exploitation hôte, lui-même installé sur le matériel. La machine virtuelle exécute son propre système invité, dans lequel tourne l'application. Par contraste, un hyperviseur de type 1 (bare metal) s'exécute directement sur le matériel, sans système hôte, ce qui réduit la surface d'attaque. Pour l'analyste, toute faille du système hôte ou de l'hyperviseur compromet l'isolation du laboratoire : un échappement de VM exposerait le portable lui-même.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-125 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1"
+  },
+  {
+    "slug": "security-plus-3.1-centralized-architecture-spof-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une enseigne de 200 magasins gère aujourd'hui, dans chaque magasin, son propre serveur d'authentification et ses propres journaux. Le RSSI veut centraliser l'authentification et la journalisation dans le centre de données du siège. Quel nouveau risque cette architecture centralisée doit-il compenser en priorité ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'hétérogénéité des politiques de sécurité appliquées d'un magasin à l'autre"
+        },
+        {
+          "id": "b",
+          "text": "Le point de défaillance unique que deviennent les serveurs centraux"
+        },
+        {
+          "id": "c",
+          "text": "La multiplication des serveurs dispersés à corriger et à surveiller"
+        },
+        {
+          "id": "d",
+          "text": "Le manque de visibilité globale sur les événements de sécurité"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une architecture centralisée apporte une politique homogène, une administration et des correctifs regroupés et une vision globale des événements. En contrepartie, elle concentre le risque : si le service central d'authentification tombe, ou si le lien vers le siège est coupé, aucun magasin ne peut plus authentifier ses utilisateurs, et ce point unique devient aussi une cible de grande valeur. Le RSSI doit donc prévoir de la redondance (serveurs en grappe, second site, liens de secours) et protéger particulièrement ces serveurs.",
+    "distractorNotes": {
+      "a": "L'hétérogénéité des politiques est un défaut de l'architecture décentralisée actuelle, que la centralisation corrige.",
+      "c": "La dispersion des serveurs à maintenir caractérise la situation actuelle ; la centralisation la réduit.",
+      "d": "La centralisation des journaux améliore justement la visibilité globale ; ce n'est pas un risque qu'elle crée."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1"
+  },
+  {
+    "slug": "security-plus-3.1-architecture-choice-seasonal-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une association de billetterie voit son trafic quasi nul onze mois sur douze, puis multiplié par cinquante pendant les quatre jours de la mise en vente annuelle. L'équipe compte deux développeurs et aucun administrateur système. Le conseil exige de payer selon l'usage, d'absorber le pic sans intervention manuelle et de n'avoir aucun système d'exploitation à maintenir. Quelle architecture répond LE MIEUX à toutes ces exigences ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des serveurs physiques sur site dimensionnés pour le pic annuel"
+        },
+        {
+          "id": "b",
+          "text": "Des machines virtuelles IaaS de taille fixe dimensionnées pour le pic"
+        },
+        {
+          "id": "c",
+          "text": "Des conteneurs sur des hôtes installés et maintenus par l'équipe"
+        },
+        {
+          "id": "d",
+          "text": "Des fonctions serverless déclenchées par les requêtes de l'API"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Il faut croiser plusieurs critères d'architecture. Coût : le serverless est facturé à l'exécution, donc presque rien hors période de vente, alors que les autres options paient toute l'année une capacité dimensionnée pour le pic. Évolutivité : le fournisseur multiplie automatiquement les exécutions pendant le pic. Facilité de déploiement et capacité de correctifs : l'équipe ne déploie que du code, sans système d'exploitation à maintenir, ce qui convient à une équipe sans administrateur. En contrepartie, elle doit sécuriser son code, ses permissions et sa dépendance envers le fournisseur.",
+    "distractorNotes": {
+      "a": "Des serveurs sur site imposent l'achat, l'énergie et la maintenance d'une capacité inutilisée onze mois sur douze, ainsi que les correctifs des systèmes.",
+      "b": "Des VM de taille fixe sont payées en permanence et leurs systèmes invités restent à corriger par le client en IaaS.",
+      "c": "Des hôtes maintenus par l'équipe imposent des systèmes d'exploitation à corriger et une capacité à prévoir pour le pic."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1"
+  },
+  {
+    "slug": "security-plus-3.1-risk-transference-saas-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une société de services établie en France confie la gestion de ses données clients, dont des données personnelles, à un fournisseur SaaS. Le contrat prévoit un SLA de disponibilité avec crédits de service. Le comité de direction estime avoir ainsi « transféré le risque ». Quelles deux affirmations sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le risque d'atteinte à la réputation de la société en cas de fuite chez le fournisseur est transféré au fournisseur"
+        },
+        {
+          "id": "b",
+          "text": "Le contrat transfère au fournisseur une partie des conséquences financières d'une indisponibilité"
+        },
+        {
+          "id": "c",
+          "text": "La société n'a plus à évaluer les contrôles du fournisseur une fois le contrat signé"
+        },
+        {
+          "id": "d",
+          "text": "La société reste responsable du traitement des données personnelles au sens du RGPD"
+        },
+        {
+          "id": "e",
+          "text": "Les crédits de service du SLA compensent intégralement les pertes d'exploitation subies"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Externaliser vers le cloud transfère une partie du risque, pas sa totalité. Le SLA et ses crédits font porter au fournisseur une partie du coût d'une indisponibilité : c'est un transfert contractuel partiel. Mais la société, qui détermine les finalités du traitement, reste responsable de traitement au sens du RGPD, le fournisseur agissant comme sous-traitant ; elle doit choisir un prestataire offrant des garanties suffisantes et répondre d'une violation devant l'autorité et les personnes concernées. Le risque résiduel se gère : évaluation du tiers, clauses d'audit, plan de continuité.",
+    "distractorNotes": {
+      "a": "Les clients et le public tiennent la société pour responsable de leurs données : l'atteinte à la réputation ne se transfère pas par contrat.",
+      "c": "Le recours à un tiers impose au contraire une évaluation initiale puis un suivi régulier (rapports d'audit, droit d'audit, revues).",
+      "e": "Les crédits de service sont en général plafonnés à une fraction de l'abonnement et couvrent rarement les pertes réelles."
+    },
+    "reference": "RGPD (règlement (UE) 2016/679) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1"
+  },
+  {
+    "slug": "security-plus-3.1-composite-availability-fill-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un site marchand repose sur un répartiteur de charge unique, d'une disponibilité de 99,9 %, placé devant deux serveurs web redondants, chacun disponible à 99 %. Le service fonctionne tant que le répartiteur et au moins un des deux serveurs fonctionnent ; les pannes sont indépendantes. Quelle est la disponibilité globale du service ?",
+      "fields": [
+        {
+          "id": "dispo",
+          "label": "Disponibilité en pourcentage, arrondie à deux décimales, sans le signe %"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "dispo": {
+          "accepted": [
+            "99,89",
+            "99.89",
+            "99,89 %",
+            "99.89 %",
+            "99,89%",
+            "99.89%"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Les deux serveurs sont en parallèle : le groupe n'est indisponible que si les deux tombent en même temps, soit une probabilité de 0,01 × 0,01 = 0,0001 ; sa disponibilité vaut donc 1 − 0,0001 = 0,9999. Le répartiteur est en série avec ce groupe : on multiplie les disponibilités, 0,999 × 0,9999 = 0,9989001, soit 99,89 %. La redondance des serveurs fait passer leur part de 99 % à 99,99 %, mais le répartiteur unique, point de défaillance unique, plafonne l'ensemble sous 99,9 % : c'est lui qu'il faudrait doubler pour améliorer la résilience.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1"
+  },
+  {
+    "slug": "security-plus-3.1-architecture-considerations-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le comité d'architecture d'un groupe de distribution évalue un projet de migration vers le cloud. Associez chaque constat du dossier à la considération d'architecture qu'il illustre.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "La plateforme passe de 2 à 20 instances quand le nombre de clients décuple"
+        },
+        {
+          "id": "l2",
+          "text": "Le fournisseur garantit que le service est accessible 99,95 % du temps sur le mois"
+        },
+        {
+          "id": "l3",
+          "text": "Une assurance cyber couvre les pertes d'exploitation en cas d'incident majeur"
+        },
+        {
+          "id": "l4",
+          "text": "L'environnement complet se reconstruit en 30 minutes à partir des modèles IaC et des sauvegardes"
+        },
+        {
+          "id": "l5",
+          "text": "L'éditeur d'une appliance conservée sur site ne publie plus de mise à jour de son micrologiciel"
+        }
+      ],
+      "right": [
+        {
+          "id": "scal",
+          "text": "Évolutivité"
+        },
+        {
+          "id": "avail",
+          "text": "Disponibilité"
+        },
+        {
+          "id": "risk",
+          "text": "Transfert du risque"
+        },
+        {
+          "id": "recov",
+          "text": "Facilité de reprise"
+        },
+        {
+          "id": "patch",
+          "text": "Capacité à appliquer des correctifs"
+        },
+        {
+          "id": "power",
+          "text": "Consommation électrique"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "scal",
+        "l2": "avail",
+        "l3": "risk",
+        "l4": "recov",
+        "l5": "patch"
+      }
+    },
+    "explanation": "L'ajout d'instances pour suivre la charge relève de l'évolutivité. Un engagement exprimé en pourcentage du temps où le service est accessible mesure la disponibilité. L'assurance fait supporter par un tiers une partie des conséquences financières d'un incident : c'est un transfert du risque. Reconstruire rapidement l'environnement depuis le code et les sauvegardes illustre la facilité de reprise. Enfin, un équipement dont l'éditeur ne publie plus de correctifs pose la question de la capacité à appliquer des correctifs, qui impose des contrôles compensatoires ou un remplacement.",
+    "distractorNotes": {
+      "power": "Aucun constat ne porte sur l'énergie consommée par le matériel ; cette considération pèse surtout dans l'arbitrage entre centre de données sur site et cloud."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.1"
+  }
+]

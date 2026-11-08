@@ -1,0 +1,927 @@
+[
+  {
+    "slug": "security-plus-1.3-backout-plan-driver-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après la mise à jour du pilote de la carte réseau d'un serveur de fichiers, celui-ci perd toute connectivité. Le technicien suit alors le document, préparé avant le changement, qui décrit comment revenir à la version précédente du pilote. Comment s'appelle ce document ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Analyse d'impact"
+        },
+        {
+          "id": "b",
+          "text": "Procédure opérationnelle standard"
+        },
+        {
+          "id": "c",
+          "text": "Plan de retour arrière"
+        },
+        {
+          "id": "d",
+          "text": "Demande de changement"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le plan de retour arrière (backout plan) décrit, avant la mise en œuvre, comment ramener le système à son état antérieur si le changement échoue : étapes de restauration, sauvegardes ou versions à réinstaller, critères de déclenchement. Il fait partie des éléments que le CAB examine avant d'approuver un changement : sans lui, un échec peut transformer une simple mise à jour en interruption prolongée. Ici, revenir à l'ancien pilote rétablit la connectivité le temps d'analyser le problème.",
+    "distractorNotes": {
+      "a": "L'analyse d'impact évalue en amont les conséquences et les risques du changement ; elle ne décrit pas la procédure pour l'annuler.",
+      "b": "Une procédure opérationnelle standard décrit une tâche courante et répétable ; elle n'est pas le document de restauration propre à ce changement.",
+      "d": "La demande de changement décrit ce qui doit changer et pourquoi ; elle sert à lancer le processus, pas à revenir en arrière."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-maintenance-window-purpose-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque en ligne doit mettre à jour le microprogramme de ses répartiteurs de charge. Le comité consultatif des changements (CAB) impose de réaliser l'opération le dimanche entre 02:00 et 04:00, dans la fenêtre de maintenance prévue. Quel est l'objectif principal de cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dispenser le changement d'un plan de retour arrière"
+        },
+        {
+          "id": "b",
+          "text": "Limiter l'impact sur l'activité en intervenant quand elle est faible"
+        },
+        {
+          "id": "c",
+          "text": "Garantir que le changement ne provoquera aucune interruption"
+        },
+        {
+          "id": "d",
+          "text": "Éviter de devoir tester le changement avant la production"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La fenêtre de maintenance est une plage horaire convenue avec les métiers, choisie quand l'activité est la plus faible, pendant laquelle une interruption de service est acceptée. Elle réduit l'impact d'un changement sur les opérations, sans supprimer le risque : il faut toujours un plan de retour arrière, des tests préalables et une validation, et la fenêtre doit laisser le temps d'exécuter le retour arrière si besoin. Les utilisateurs et parties prenantes sont prévenus à l'avance.",
+    "distractorNotes": {
+      "a": "La fenêtre ne remplace pas le plan de retour arrière : elle doit au contraire laisser le temps de l'exécuter en cas d'échec.",
+      "c": "Une fenêtre de maintenance accepte une interruption éventuelle ; elle en limite les conséquences mais ne garantit pas son absence.",
+      "d": "Les tests préalables restent nécessaires : intervenir la nuit ne rend pas un changement plus sûr."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-change-ownership-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une demande de changement porte sur la migration de la messagerie vers un nouveau fournisseur. Le CAB exige qu'une personne soit désignée pour piloter le changement jusqu'à sa clôture et en rendre compte, même si les opérations techniques sont réalisées par d'autres. Quel élément du processus de gestion des changements cette exigence vise-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La propriété du changement"
+        },
+        {
+          "id": "b",
+          "text": "L'identification des parties prenantes"
+        },
+        {
+          "id": "c",
+          "text": "La fenêtre de maintenance"
+        },
+        {
+          "id": "d",
+          "text": "La procédure opérationnelle standard"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La propriété (ownership) consiste à désigner un propriétaire du changement : une personne ou une équipe responsable de son déroulement et de son résultat, qui gère le processus, répond aux questions du CAB et veille à la clôture. Le propriétaire n'est pas forcément celui qui exécute les opérations. Sans propriétaire clairement identifié, personne ne suit les tests, la communication ou le retour arrière, et le changement risque de rester inachevé.",
+    "distractorNotes": {
+      "b": "Les parties prenantes sont les personnes ou services concernés par le changement ; elles sont consultées et informées, mais ne pilotent pas le changement.",
+      "c": "La fenêtre de maintenance fixe le moment de l'intervention, pas la personne qui en est responsable.",
+      "d": "Une procédure opérationnelle standard décrit comment réaliser une tâche répétable ; elle ne désigne pas de responsable du changement."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-sop-certificate-renewal-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Chaque mois, l'équipe d'exploitation renouvelle les certificats des serveurs internes. Pour que le résultat soit identique quel que soit l'opérateur, la tâche suit toujours les mêmes étapes, décrites dans un document validé et tenu à jour. Comment s'appelle ce document ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un plan de retour arrière"
+        },
+        {
+          "id": "b",
+          "text": "Une analyse d'impact"
+        },
+        {
+          "id": "c",
+          "text": "Un registre des risques"
+        },
+        {
+          "id": "d",
+          "text": "Une procédure opérationnelle standard"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une procédure opérationnelle standard (SOP, standard operating procedure) décrit pas à pas une tâche répétable, afin qu'elle soit exécutée de la même façon par chacun. Dans la gestion des changements, elle encadre les opérations courantes et réduit les erreurs humaines ; elle doit être mise à jour quand un changement modifie la façon de faire. Ici, le renouvellement mensuel des certificats est une tâche récurrente, bien connue, qui se prête à une SOP.",
+    "distractorNotes": {
+      "a": "Le plan de retour arrière sert à annuler un changement précis qui échoue ; il ne décrit pas une tâche récurrente.",
+      "b": "L'analyse d'impact évalue les conséquences d'un changement donné ; elle ne décrit pas les étapes d'une opération courante.",
+      "c": "Le registre des risques recense les risques identifiés, leur évaluation et leur traitement ; ce n'est pas un mode opératoire."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-allow-list-agent-blocked-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le changement RFC-2026-0377 déployait, à 21:30, un nouvel agent de supervision sur les serveurs de la finance. Sur SRV-FIN02, l'agent ne démarre pas. Quelle action corrige LE MIEUX la situation tout en conservant la protection existante ?",
+      "exhibit": "2026-11-03 21:42:17 SRV-FIN02 Contrôle d'applications (mode : blocage)\n  Fichier   : C:\\Program Files\\NetWatch\\nwagent.exe\n  Éditeur   : NetWatch SAS    Signature : valide\n  Politique : liste d'autorisation (tout le reste est refusé)\n  Règle     : aucune règle d'autorisation correspondante\n  Action    : exécution bloquée",
+      "options": [
+        {
+          "id": "a",
+          "text": "Passer le contrôle d'applications en mode audit sur les serveurs"
+        },
+        {
+          "id": "b",
+          "text": "Ajouter une règle d'autorisation pour l'agent signé par NetWatch SAS"
+        },
+        {
+          "id": "c",
+          "text": "Ajouter nwagent.exe à la liste de refus du contrôle d'applications"
+        },
+        {
+          "id": "d",
+          "text": "Réinstaller l'agent dans un autre répertoire du serveur SRV-FIN02"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le journal montre que le contrôle d'applications fonctionne en mode blocage avec une liste d'autorisation : tout exécutable sans règle correspondante est bloqué. L'agent, pourtant légitime et correctement signé, n'a pas été ajouté à la liste. C'est une implication technique que l'analyse du changement aurait dû prévoir : un nouveau logiciel exige une mise à jour de la liste d'autorisation, de préférence par une règle d'éditeur qui survit aux mises à jour de l'agent. Ajouter cette règle, dans le cadre du changement, corrige le problème sans affaiblir la protection.",
+    "distractorNotes": {
+      "a": "Le mode audit laisse s'exécuter tout logiciel non autorisé sur tous les serveurs : il supprime la protection au lieu de corriger l'oubli.",
+      "c": "Une liste de refus bloque explicitement ce qu'elle contient : y ajouter l'agent confirmerait le blocage.",
+      "d": "Le blocage vient de l'absence de règle d'autorisation, pas de l'emplacement du fichier : l'agent resterait bloqué ailleurs."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, famille CM (Configuration Management)"
+  },
+  {
+    "slug": "security-plus-1.3-legacy-tls-client-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Depuis le changement de la nuit, le poste du magasin ne parvient plus à synchroniser ses stocks avec l'API interne ; les autres clients de l'API fonctionnent normalement. Quelle est la cause LA PLUS probable ?",
+      "exhibit": "Changement RFC-2026-0388 (17/10, 02:00-02:30) : api-int.example.com\n  avant : ssl_protocols TLSv1 TLSv1.1 TLSv1.2;\n  après : ssl_protocols TLSv1.2 TLSv1.3;\n\nJournal d'erreurs nginx, api-int (17/10) :\n2026/10/17 08:02:11 [info] 2211#2211: *4182 SSL_do_handshake() failed\n  (SSL: unsupported protocol) while SSL handshaking, client: 10.20.4.31\n2026/10/17 08:02:41 [info] 2211#2211: *4190 SSL_do_handshake() failed\n  (SSL: unsupported protocol) while SSL handshaking, client: 10.20.4.31\n\nInventaire : 10.20.4.31 = poste magasin, client StockPro 6\n  (logiciel édité en 2011, plus maintenu par l'éditeur)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le certificat du serveur api-int a expiré pendant le changement."
+        },
+        {
+          "id": "b",
+          "text": "Le pare-feu bloque désormais le port TCP 443 depuis 10.20.4.31."
+        },
+        {
+          "id": "c",
+          "text": "L'adresse 10.20.4.31 figure désormais dans une liste de refus."
+        },
+        {
+          "id": "d",
+          "text": "Le client StockPro 6 ne gère que des versions de TLS retirées."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le changement a retiré TLS 1.0 et TLS 1.1 de la configuration nginx. Le journal montre que la connexion du poste 10.20.4.31 atteint bien le serveur, mais échoue pendant la négociation TLS avec « unsupported protocol » : le client propose une version que le serveur n'accepte plus. Le client est une application héritée (2011, plus maintenue), qui ne gère vraisemblablement que ces anciennes versions. L'analyse d'impact devait recenser ces applications héritées : on les remplace, on les isole ou on prévoit une exception documentée et limitée dans le temps, plutôt que de réactiver TLS 1.0 pour tous.",
+    "distractorNotes": {
+      "a": "Un certificat expiré gênerait tous les clients, et l'erreur serait une erreur de vérification du certificat côté client, pas un protocole non pris en charge.",
+      "b": "Le journal du serveur enregistre la tentative de négociation TLS : la connexion TCP a donc abouti, aucun pare-feu ne l'a bloquée.",
+      "c": "Une liste de refus rejetterait la connexion ou la requête ; elle ne produirait pas une erreur de version de protocole pendant la négociation TLS."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3 ; RFC 8996 (retrait de TLS 1.0 et 1.1)"
+  },
+  {
+    "slug": "security-plus-1.3-ldap-restart-dependencies-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un correctif impose de redémarrer le serveur d'annuaire LDAP de l'entreprise. L'analyse d'impact n'a prévu qu'une coupure de cinq minutes pour les utilisateurs du VPN. Pendant le redémarrage, le Wi-Fi 802.1X (dont le serveur RADIUS valide les comptes dans l'annuaire) et le système de contrôle d'accès des badges, récent et maintenu, cessent aussi de fonctionner. Quelle implication technique l'analyse d'impact a-t-elle mal évaluée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les dépendances entre services"
+        },
+        {
+          "id": "b",
+          "text": "Les applications héritées"
+        },
+        {
+          "id": "c",
+          "text": "Les listes d'autorisation"
+        },
+        {
+          "id": "d",
+          "text": "Les activités restreintes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le Wi-Fi 802.1X et le contrôle d'accès des badges s'appuient sur l'annuaire LDAP : ce sont des dépendances. Redémarrer un service central interrompt aussi tout ce qui dépend de lui, directement ou en cascade. L'analyse d'impact doit donc s'appuyer sur une cartographie des dépendances à jour pour recenser l'ensemble des services touchés, prévenir les parties prenantes concernées et choisir une fenêtre adaptée ; ici, seuls les utilisateurs du VPN avaient été pris en compte.",
+    "distractorNotes": {
+      "b": "Les systèmes touchés sont récents et maintenus : le problème ne vient pas d'une application héritée, mais de leur dépendance à l'annuaire.",
+      "c": "Aucun logiciel n'a été bloqué : l'interruption vient de l'arrêt de l'annuaire dont les services dépendent, pas d'une liste d'autorisation.",
+      "d": "Les activités restreintes limitent ce que l'on peut faire pendant le changement ; le problème est ici un impact non prévu sur d'autres services."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, famille CM (Configuration Management)"
+  },
+  {
+    "slug": "security-plus-1.3-restricted-activities-scope-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pendant la fenêtre de maintenance approuvée pour mettre à jour le microprogramme d'un pare-feu, un administrateur remarque une règle NAT obsolète qu'il aimerait supprimer « puisqu'il est déjà connecté ». Cette suppression ne figure pas dans la demande de changement approuvée. Que doit-il faire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Supprimer la règle, puis la mentionner dans le ticket de clôture"
+        },
+        {
+          "id": "b",
+          "text": "Supprimer la règle, la fenêtre de maintenance couvrant l'équipement"
+        },
+        {
+          "id": "c",
+          "text": "Supprimer la règle après l'accord oral d'un collègue présent"
+        },
+        {
+          "id": "d",
+          "text": "Noter la règle et ouvrir une demande de changement distincte"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une demande de changement approuvée définit un périmètre précis : seules les activités décrites et analysées sont autorisées pendant la fenêtre (activités restreintes). Supprimer une règle NAT non prévue introduit un risque que personne n'a évalué : elle peut servir à un flux encore actif, elle n'est pas couverte par le plan de retour arrière et les tests ne la vérifient pas. L'administrateur doit consigner l'anomalie et la faire passer par le processus normal, avec sa propre analyse d'impact et sa propre approbation.",
+    "distractorNotes": {
+      "a": "Documenter après coup ne remplace pas l'analyse d'impact ni l'approbation : la modification resterait hors du périmètre approuvé.",
+      "b": "La fenêtre autorise le changement approuvé, pas toute intervention sur l'équipement : le périmètre est fixé par la demande.",
+      "c": "Un accord oral contourne le processus d'approbation et ne laisse aucune trace : ce n'est pas une approbation valable."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-version-control-scripts-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un administrateur déploie par erreur une ancienne version du script de durcissement des serveurs, ce qui annule un correctif appliqué la semaine précédente. Personne ne peut dire quelle version était en production ni qui l'a modifiée en dernier. Quelle mesure permet LE MIEUX d'éviter que la situation se reproduise ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Planifier les déploiements dans une fenêtre de maintenance"
+        },
+        {
+          "id": "b",
+          "text": "Chiffrer les scripts au repos sur le serveur de fichiers"
+        },
+        {
+          "id": "c",
+          "text": "Gérer les scripts dans un outil de gestion de versions"
+        },
+        {
+          "id": "d",
+          "text": "Ajouter le script de durcissement à la liste d'autorisation"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un outil de gestion de versions (par exemple Git) conserve l'historique de chaque modification : contenu, auteur, date et motif, souvent lié au numéro de changement. On sait alors exactement quelle version est déployée, on compare deux versions, et l'on revient proprement à une version antérieure si besoin. La gestion de versions fait partie de la documentation d'un changement : elle évite d'écraser une correction par une copie périmée et facilite le retour arrière comme l'audit.",
+    "distractorNotes": {
+      "a": "Une fenêtre de maintenance fixe le moment du déploiement ; elle n'empêche pas de déployer la mauvaise version ni n'en garde l'historique.",
+      "b": "Le chiffrement protège la confidentialité des scripts, mais ne dit pas quelle version est la bonne ni qui l'a modifiée.",
+      "d": "La liste d'autorisation contrôle ce qui peut s'exécuter ; une ancienne version autorisée s'exécuterait tout autant."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-cab-review-test-version-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le CAB examine cette demande avant de l'approuver. Quel point doit-il faire corriger AVANT de donner son approbation ?",
+      "exhibit": "RFC-2026-0412   Mise à jour du module de paiement en ligne\nPropriétaire      : M. Laurent (responsable des applications web)\nParties prenantes : e-commerce, finance, support client\nAnalyse d'impact  : paiement indisponible pendant le déploiement ;\n                    dépendances : passerelle bancaire, ERP (commandes)\nVersion déployée  : paiement-4.2.1   Durée estimée : 30 min\nTests             : validés en préproduction le 03/11 (paiement-4.2.0)\nRetour arrière    : réinstallation de paiement-4.1.9 et restauration de\n                    la base (sauvegarde du jour, 25 min, testé le 03/11)\nFenêtre           : 09/11, 01:00-03:00",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le plan de retour arrière n'indique pas comment restaurer la base."
+        },
+        {
+          "id": "b",
+          "text": "Les tests ont porté sur une autre version que celle à déployer."
+        },
+        {
+          "id": "c",
+          "text": "Le propriétaire du changement n'est pas identifié dans la demande."
+        },
+        {
+          "id": "d",
+          "text": "La fenêtre est trop courte pour un éventuel retour arrière complet."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La demande est complète en apparence : propriétaire, parties prenantes, analyse d'impact avec dépendances, plan de retour arrière testé, fenêtre de deux heures. Mais les tests ont été réalisés sur paiement-4.2.0 alors que le changement déploie paiement-4.2.1 : les résultats ne prouvent rien sur la version qui ira en production. Le CAB doit exiger des tests de la version exacte à déployer avant d'approuver. La fenêtre suffit : 30 minutes de déploiement plus 25 minutes de retour arrière tiennent largement dans 01:00-03:00.",
+    "distractorNotes": {
+      "a": "Le plan de retour arrière prévoit la restauration de la base à partir de la sauvegarde du jour, en 25 minutes, et il a été testé.",
+      "c": "Le propriétaire est désigné : M. Laurent, responsable des applications web.",
+      "d": "Le déploiement (30 min) suivi d'un retour arrière complet (25 min) tient dans les deux heures de la fenêtre."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, famille CM (Configuration Management)"
+  },
+  {
+    "slug": "security-plus-1.3-post-change-documentation-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le serveur SIEM vient d'être déplacé dans un nouveau sous-réseau ; le changement est validé et les journaux arrivent bien à sa nouvelle adresse. Quelles deux actions de documentation l'équipe doit-elle réaliser avant de clôturer le changement ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Supprimer la sauvegarde de l'ancienne configuration pour éviter toute confusion"
+        },
+        {
+          "id": "b",
+          "text": "Mettre à jour les schémas réseau et l'inventaire avec la nouvelle adresse"
+        },
+        {
+          "id": "c",
+          "text": "Reporter la mise à jour des procédures d'exploitation au prochain audit"
+        },
+        {
+          "id": "d",
+          "text": "Écraser l'ancienne version des configurations par la nouvelle, sans historique"
+        },
+        {
+          "id": "e",
+          "text": "Enregistrer les configurations modifiées dans l'outil de gestion de versions"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Un changement n'est terminé que lorsque la documentation reflète la nouvelle situation : schémas réseau, inventaire, procédures et politiques concernées. Des schémas périmés ralentissent la réponse aux incidents et faussent les analyses d'impact suivantes. Les configurations modifiées sont enregistrées dans l'outil de gestion de versions, avec la référence du changement : on garde l'historique, on sait ce qui est en production et l'on peut revenir en arrière.",
+    "distractorNotes": {
+      "a": "L'ancienne configuration doit être conservée : elle sert au retour arrière et à l'historique du changement.",
+      "c": "Attendre l'audit laisse des procédures fausses en service pendant des mois ; la documentation se met à jour à la clôture du changement.",
+      "d": "Écraser sans historique fait perdre la version précédente : c'est précisément ce que la gestion de versions doit éviter."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-pilot-testing-reasons-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Avant de déployer une nouvelle version du client VPN sur 800 postes, l'équipe l'installe d'abord sur un groupe pilote dans un environnement de préproduction. Quelles deux raisons justifient cette étape de test ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vérifier que le changement produit le résultat attendu"
+        },
+        {
+          "id": "b",
+          "text": "Dispenser le changement de l'approbation du CAB"
+        },
+        {
+          "id": "c",
+          "text": "Rendre inutile une fenêtre de maintenance en production"
+        },
+        {
+          "id": "d",
+          "text": "Détecter des effets de bord sur les applications des postes"
+        },
+        {
+          "id": "e",
+          "text": "Éviter de rédiger un plan de retour arrière pour la production"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Tester un changement avant la production sert à vérifier qu'il produit bien le résultat attendu et à découvrir ses effets de bord (conflits avec d'autres logiciels, dépendances, performances) quand ils sont encore sans conséquence. Les résultats des tests sont joints à la demande et éclairent la décision du CAB ; ils permettent aussi de vérifier le plan de retour arrière. Les tests complètent le processus, ils ne remplacent ni l'approbation, ni la fenêtre de maintenance, ni le plan de retour arrière.",
+    "distractorNotes": {
+      "b": "Les résultats des tests alimentent la décision du CAB ; ils ne la remplacent pas.",
+      "c": "Même testé, un déploiement en production peut perturber les utilisateurs : la fenêtre de maintenance reste utile.",
+      "e": "Un test réussi en préproduction ne garantit pas le succès en production : le plan de retour arrière reste obligatoire."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-dependency-map-impact-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Quels trois services l'analyse d'impact doit-elle déclarer interrompus pendant le redémarrage de sql-rh01 ? (Choisissez-en trois.)",
+      "exhibit": "Changement RFC-2026-0450 : redémarrage de sql-rh01 (correctif mensuel)\n\nCartographie des dépendances (A -> B : A ne fonctionne pas sans B)\n  portail-rh  -> api-rh\n  api-rh      -> sql-rh01\n  api-rh      -> ldap01\n  paie-batch  -> sql-rh01\n  intranet    -> ldap01\n  messagerie  -> ldap01",
+      "options": [
+        {
+          "id": "a",
+          "text": "portail-rh"
+        },
+        {
+          "id": "b",
+          "text": "intranet"
+        },
+        {
+          "id": "c",
+          "text": "api-rh"
+        },
+        {
+          "id": "d",
+          "text": "messagerie"
+        },
+        {
+          "id": "e",
+          "text": "paie-batch"
+        },
+        {
+          "id": "f",
+          "text": "ldap01"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Il faut suivre les dépendances vers sql-rh01, directes et indirectes. api-rh et paie-batch dépendent directement de sql-rh01 : ils s'arrêtent avec lui. portail-rh dépend d'api-rh : il est interrompu en cascade, même s'il ne se connecte pas lui-même à la base. ldap01 ne dépend pas de sql-rh01, et intranet comme messagerie ne dépendent que de ldap01 : ils continuent de fonctionner. Une cartographie des dépendances à jour évite d'oublier ces effets en cascade lors de l'analyse d'impact.",
+    "distractorNotes": {
+      "b": "intranet dépend seulement de ldap01, qui n'est pas concerné par le redémarrage.",
+      "d": "messagerie dépend seulement de ldap01 : elle n'est pas touchée.",
+      "f": "ldap01 est utilisé par api-rh, mais ne dépend pas de sql-rh01 : il reste disponible."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, famille CM (Configuration Management)"
+  },
+  {
+    "slug": "security-plus-1.3-firewall-allow-rules-change-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le pare-feu interne fonctionne en liste d'autorisation, avec un refus implicite en fin de liste. Le changement qui installe ArchivePro doit ajouter les règles nécessaires, au plus juste. Quelles deux règles faut-il ajouter ? (Choisissez-en deux.)",
+      "exhibit": "Exigences réseau d'ArchivePro (serveur 10.0.5.20) :\n  - licence        : HTTPS vers licence.example.com\n  - journaux       : syslog (UDP 514) vers le SIEM 10.0.9.5\n  - administration : SSH depuis le réseau d'admin 10.0.1.0/24\n\nRègles actuelles du pare-feu interne :\n  10  permit tcp 10.0.1.0/24 -> 10.0.5.0/24  port 22\n  20  permit tcp 10.0.0.0/16 -> 10.0.9.5     port 443\n  99  deny   ip  any         -> any",
+      "options": [
+        {
+          "id": "a",
+          "text": "permit tcp 10.0.1.0/24 -> 10.0.5.20 port 22"
+        },
+        {
+          "id": "b",
+          "text": "permit tcp 10.0.5.20 -> licence.example.com port 443"
+        },
+        {
+          "id": "c",
+          "text": "permit tcp 10.0.5.20 -> 10.0.9.5 port 514"
+        },
+        {
+          "id": "d",
+          "text": "permit ip any -> 10.0.5.20"
+        },
+        {
+          "id": "e",
+          "text": "permit udp 10.0.5.20 -> 10.0.9.5 port 514"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Avec une liste d'autorisation, tout flux non autorisé explicitement est refusé : le changement doit prévoir chaque flux nouveau, et seulement eux. ArchivePro doit joindre le serveur de licences en HTTPS (TCP 443) et envoyer ses journaux en syslog sur UDP 514 au SIEM ; aucune règle existante ne couvre ces deux flux. L'administration SSH depuis 10.0.1.0/24 est déjà autorisée par la règle 10, qui couvre tout 10.0.5.0/24. Oublier ces règles dans l'analyse du changement provoquerait un dysfonctionnement dès la mise en service.",
+    "distractorNotes": {
+      "a": "La règle 10 autorise déjà SSH depuis 10.0.1.0/24 vers tout 10.0.5.0/24, donc vers 10.0.5.20 : une nouvelle règle serait redondante.",
+      "c": "Les journaux partent en syslog sur UDP 514 : une règle TCP ne laisserait pas passer ce flux.",
+      "d": "Ouvrir tout le trafic vers le serveur contredit le principe du moindre privilège et la demande de règles au plus juste."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, famille CM (Configuration Management)"
+  },
+  {
+    "slug": "security-plus-1.3-backout-plan-contents-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le CAB rejette une demande de changement dont la rubrique « retour arrière » indique seulement : « en cas de problème, on avisera ». Le demandeur doit compléter cette rubrique. Quels deux éléments doit-elle contenir ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "La justification métier et le bénéfice attendu du changement"
+        },
+        {
+          "id": "b",
+          "text": "Le résultat du vote des membres du CAB sur la demande"
+        },
+        {
+          "id": "c",
+          "text": "Les critères qui déclenchent le retour arrière et l'heure limite"
+        },
+        {
+          "id": "d",
+          "text": "Les étapes pour restaurer l'état antérieur du système"
+        },
+        {
+          "id": "e",
+          "text": "Les nouvelles fonctionnalités prévues pour la version suivante"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "Un plan de retour arrière décrit, avant la mise en œuvre, comment revenir à l'état antérieur : sauvegardes ou instantanés à restaurer, version précédente à réinstaller, ordre des opérations, durée. Il précise aussi quand l'exécuter : critères d'échec (tests de validation non concluants, erreurs) et heure limite pour le lancer afin de finir dans la fenêtre de maintenance. « On avisera » ne permet ni au CAB d'évaluer le risque, ni à l'équipe d'agir vite en cas d'échec.",
+    "distractorNotes": {
+      "a": "La justification métier figure dans la demande de changement elle-même ; elle ne dit pas comment annuler le changement.",
+      "b": "Le vote du CAB est la trace de l'approbation, qui intervient après l'examen du plan ; il n'en fait pas partie.",
+      "e": "Les évolutions futures n'ont aucun rapport avec l'annulation du changement en cours."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-match-change-categories-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Lors d'une formation à la gestion des changements, le formateur demande de classer chaque élément selon les catégories des objectifs CompTIA Security+. Associez chaque élément à sa catégorie.",
+      "left": [
+        {
+          "id": "backout",
+          "text": "Plan de retour arrière"
+        },
+        {
+          "id": "deps",
+          "text": "Dépendances entre services"
+        },
+        {
+          "id": "legacy",
+          "text": "Applications héritées"
+        },
+        {
+          "id": "diagrams",
+          "text": "Mise à jour des schémas réseau"
+        },
+        {
+          "id": "window",
+          "text": "Fenêtre de maintenance"
+        }
+      ],
+      "right": [
+        {
+          "id": "business",
+          "text": "Processus métier"
+        },
+        {
+          "id": "technical",
+          "text": "Implication technique"
+        },
+        {
+          "id": "doc",
+          "text": "Documentation"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "backout": "business",
+        "deps": "technical",
+        "legacy": "technical",
+        "diagrams": "doc",
+        "window": "business"
+      }
+    },
+    "explanation": "Les objectifs SY0-701 (1.3) rangent la gestion des changements en trois blocs. Les processus métier : approbation, propriété, parties prenantes, analyse d'impact, test des résultats, plan de retour arrière, fenêtre de maintenance, procédure opérationnelle standard. Les implications techniques : listes d'autorisation et de refus, activités restreintes, interruption de service, redémarrage de service ou d'application, applications héritées, dépendances. La documentation : mise à jour des schémas, des politiques et des procédures. La gestion de versions est citée à part.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-match-process-situations-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une entreprise prépare la migration de son application de gestion des congés. Associez chaque situation à l'élément du processus de gestion des changements qu'elle illustre.",
+      "left": [
+        {
+          "id": "s1",
+          "text": "L'équipe vérifie en préproduction que les soldes de congés sont identiques avant et après la migration."
+        },
+        {
+          "id": "s2",
+          "text": "Le comité examine la demande et autorise sa réalisation à la date prévue."
+        },
+        {
+          "id": "s3",
+          "text": "Le chef de projet recense les services RH, paie et managers concernés pour les consulter."
+        },
+        {
+          "id": "s4",
+          "text": "L'architecte évalue les services touchés, la durée d'interruption et les risques."
+        },
+        {
+          "id": "s5",
+          "text": "L'équipe prévoit de restaurer l'instantané de la base si la migration échoue."
+        }
+      ],
+      "right": [
+        {
+          "id": "test",
+          "text": "Test des résultats"
+        },
+        {
+          "id": "approval",
+          "text": "Processus d'approbation"
+        },
+        {
+          "id": "stake",
+          "text": "Parties prenantes"
+        },
+        {
+          "id": "impact",
+          "text": "Analyse d'impact"
+        },
+        {
+          "id": "backout",
+          "text": "Plan de retour arrière"
+        },
+        {
+          "id": "sop",
+          "text": "Procédure opérationnelle standard"
+        },
+        {
+          "id": "window",
+          "text": "Fenêtre de maintenance"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "test",
+        "s2": "approval",
+        "s3": "stake",
+        "s4": "impact",
+        "s5": "backout"
+      }
+    },
+    "explanation": "Vérifier en préproduction que les données migrées sont justes, c'est tester les résultats. L'autorisation du comité (CAB) relève du processus d'approbation. Recenser les services concernés pour les consulter, c'est identifier les parties prenantes. Évaluer services touchés, interruption et risques constitue l'analyse d'impact. Prévoir la restauration de l'instantané en cas d'échec forme le plan de retour arrière. Ces étapes se complètent : l'analyse et les tests éclairent la décision d'approbation, le plan de retour arrière limite les conséquences d'un échec.",
+    "distractorNotes": {
+      "sop": "Une procédure opérationnelle standard décrit une tâche courante et répétable ; aucune situation ne décrit un tel mode opératoire.",
+      "window": "Aucune situation ne fixe la plage horaire d'intervention : l'autorisation « à la date prévue » relève de l'approbation."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-order-change-process-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une équipe doit remplacer le certificat du serveur web public. Ordonnez les étapes du processus de gestion des changements, de la première à la dernière.",
+      "items": [
+        {
+          "id": "c",
+          "text": "Obtenir l'approbation du comité consultatif des changements (CAB)"
+        },
+        {
+          "id": "f",
+          "text": "Mettre à jour la documentation et clôturer le ticket"
+        },
+        {
+          "id": "a",
+          "text": "Soumettre la demande de changement"
+        },
+        {
+          "id": "e",
+          "text": "Valider le résultat par des tests en production"
+        },
+        {
+          "id": "b",
+          "text": "Analyser l'impact (services touchés, dépendances, interruption)"
+        },
+        {
+          "id": "d",
+          "text": "Mettre en œuvre le changement pendant la fenêtre de maintenance"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+      ]
+    },
+    "explanation": "Tout part de la demande de changement, qui décrit ce qui doit changer et pourquoi. L'analyse d'impact évalue ensuite les services touchés, les dépendances et l'interruption, et nourrit la décision du CAB, qui approuve ou refuse. Une fois approuvé, le changement est mis en œuvre dans la fenêtre prévue, puis son résultat est validé en production (sinon on exécute le plan de retour arrière). Enfin, la documentation est mise à jour et le ticket clôturé : sans cette dernière étape, schémas et procédures ne reflètent plus la réalité.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  },
+  {
+    "slug": "security-plus-1.3-dependent-restart-downtime-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un correctif est d'abord installé sur la base de données, qui reste en ligne pendant les 20 minutes de l'installation. Il faut ensuite redémarrer la base (arrêt et démarrage : 12 minutes), puis le serveur d'applications, qui ne peut démarrer que lorsque la base est disponible (8 minutes), puis le frontal web, qui attend le serveur d'applications (3 minutes). Le service est indisponible de l'arrêt de la base jusqu'au retour du frontal web. Quelle durée d'interruption l'analyse d'impact doit-elle annoncer ?",
+      "fields": [
+        {
+          "id": "minutes",
+          "label": "Durée d'interruption (en minutes, nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "minutes": {
+          "accepted": [
+            "23"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "L'interruption commence à l'arrêt de la base et se termine au retour du frontal web. Les redémarrages s'enchaînent à cause des dépendances : base 12 minutes, puis serveur d'applications 8 minutes, puis frontal 3 minutes, soit 12 + 8 + 3 = 23 minutes. Les 20 minutes d'installation ne comptent pas, la base restant en ligne pendant cette phase. Annoncer une durée juste permet de prévenir les parties prenantes et de vérifier que la fenêtre de maintenance suffit, retour arrière compris.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-53 Rev. 5, famille CM (Configuration Management)"
+  },
+  {
+    "slug": "security-plus-1.3-backout-deadline-window-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "La fenêtre de maintenance d'un changement va du samedi 22:00 au dimanche 02:00. Le déploiement commence à 22:30. En cas d'échec, le plan de retour arrière prévoit la restauration de l'instantané (25 minutes) puis le redémarrage de l'application (15 minutes), suivis d'une vérification fonctionnelle de 20 minutes. Le CAB exige que tout soit terminé au moins 15 minutes avant la fin de la fenêtre. Au plus tard à quelle heure l'équipe doit-elle lancer le retour arrière ?",
+      "fields": [
+        {
+          "id": "deadline",
+          "label": "Heure limite (format HH:MM, sur 24 heures)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "deadline": {
+          "accepted": [
+            "00:45",
+            "0:45",
+            "00h45",
+            "0h45"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "On part de la fin de la fenêtre et l'on remonte le temps. Tout doit être fini 15 minutes avant 02:00, donc à 01:45. La vérification de 20 minutes doit commencer à 01:25, et le retour arrière (25 + 15 = 40 minutes) à 00:45 au plus tard. L'heure de début du déploiement (22:30) n'intervient pas. Fixer cette heure limite dans le plan évite de prolonger un déploiement en difficulté au point de ne plus pouvoir revenir en arrière avant la reprise de l'activité.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.3"
+  }
+]

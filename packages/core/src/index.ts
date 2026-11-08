@@ -8,6 +8,7 @@ export * from './ipv4.js';
 export * from './ipv6.js';
 export * from './cli.js';
 export * from './subnetting.js';
+export * from './targets.js';
 export * from './public.js';
 export * from './terminal/profile.js';
 export * from './terminal/syntax.js';

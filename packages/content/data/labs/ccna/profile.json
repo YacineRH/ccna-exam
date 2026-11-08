@@ -1788,7 +1788,7 @@
    "rank": 10
   },
   {
-   "syntax": "service timestamps debug {datetime [msec] [localtime] [show-timezone] [year]|uptime}",
+   "syntax": "service timestamps debug {datetime [* [msec] [localtime] [show-timezone] [year] *]|uptime}",
    "modes": [
     "config"
    ],
@@ -1812,7 +1812,7 @@
    "negateKey": true
   },
   {
-   "syntax": "service timestamps log {datetime [msec] [localtime] [show-timezone] [year]|uptime}",
+   "syntax": "service timestamps log {datetime [* [msec] [localtime] [show-timezone] [year] *]|uptime}",
    "modes": [
     "config"
    ],
@@ -2521,6 +2521,7 @@
     "<vlan-list>": "vlan range, example: 1,3-5,7,9-11"
    },
    "keyGroup": "stp-vlan-priority",
+   "negateGroup": true,
    "rank": 78
   },
   {

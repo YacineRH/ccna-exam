@@ -38,6 +38,18 @@ describe.each(listCertificationCodes())('contenu %s', (code) => {
     expect(grade(q.key, perfectResponse(q))).toEqual({ correct: true, partial: 1 });
   });
 
+  it('la banque permet deux examens complets sans doublon', () => {
+    const pool = poolOf(questions);
+    const size = certification.examFormat.questionCount;
+    for (const seed of [1, 2, 3, 42, 2026]) {
+      const first = assembleExam(pool, certification, { seed });
+      const second = assembleExam(pool, certification, { seed: seed + 1000, avoidIds: first });
+      expect(first).toHaveLength(size);
+      expect(second).toHaveLength(size);
+      expect(new Set([...first, ...second]).size, `seed ${seed}`).toBe(2 * size);
+    }
+  });
+
   it('explique chaque distracteur', () => {
     const missing: string[] = [];
     for (const q of questions) {
@@ -62,18 +74,6 @@ const poolOf = (questions: Question[]): PoolQuestion[] =>
 describe('ccna', () => {
   const { certification, questions } = loadCertification('ccna');
   const count = (pred: (q: Question) => boolean) => questions.filter(pred).length;
-
-  it('la banque permet deux examens complets sans doublon', () => {
-    const pool = poolOf(questions);
-    const size = certification.examFormat.questionCount;
-    for (const seed of [1, 2, 3, 42, 2026]) {
-      const first = assembleExam(pool, certification, { seed });
-      const second = assembleExam(pool, certification, { seed: seed + 1000, avoidIds: first });
-      expect(first).toHaveLength(size);
-      expect(second).toHaveLength(size);
-      expect(new Set([...first, ...second]).size, `seed ${seed}`).toBe(2 * size);
-    }
-  });
 
   it('a au moins deux fois la part de chaque domaine dans un examen complet', () => {
     const plan = allocateByWeight(certification.domains, certification.examFormat.questionCount);

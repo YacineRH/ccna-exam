@@ -1,0 +1,249 @@
+[
+  {
+    "slug": "security-plus-4.1-cis-benchmark-baseline-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-baseline-drift-exception-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-baseline-lifecycle-order-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-switch-unused-ports-001",
+    "verdict": "rejetée",
+    "gravite": null,
+    "problemes": [
+      "Doublon de security-plus-2.5-unused-switch-ports (même scénario : prises murales non attribuées, bonne réponse : désactiver les ports inutilisés)."
+    ],
+    "correction": "Question retirée du lot relu."
+  },
+  {
+    "slug": "security-plus-4.1-router-management-plane-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-ics-legacy-segmentation-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-rtos-agent-determinism-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-iot-default-credentials-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-workstation-hardening-image-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-iaas-guest-os-responsibility-001",
+    "verdict": "rejetée",
+    "gravite": null,
+    "problemes": [
+      "Doublon de security-plus-3.1-iaas-guest-os-patch-001 (même fait : l'OS invité IaaS relève du client)."
+    ],
+    "correction": "Question retirée du lot relu."
+  },
+  {
+    "slug": "security-plus-4.1-web-server-nmap-baseline-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-hardening-measure-target-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-8021x-port-nac-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-wifi-heat-map-purpose-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-wpa3-sae-offline-cracking-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-eap-methods-characteristics-001",
+    "verdict": "corrigée",
+    "gravite": "fond",
+    "problemes": [
+      "PEAP/EAP-TTLS : l'option r1 (certificat du serveur seul, puis MSCHAPv2) était aussi vraie d'EAP-TTLS, qui accepte EAP-MSCHAPv2 ; la paire ne se déduisait que par élimination."
+    ],
+    "correction": "r1 précisée (seulement des méthodes EAP internes, ce qui exclut EAP-TTLS) et r4 reformulée (admet aussi des méthodes non EAP) ; réponses inchangées."
+  },
+  {
+    "slug": "security-plus-4.1-wlan-policy-pmf-compliance-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "WPA3-Enterprise avec GCMP-256 relève en réalité du mode 192 bits ; étiquette imprécise dans l'exhibit.",
+      "Un seul WLAN diffère (PMF désactivé) : difficulté hard surévaluée."
+    ],
+    "correction": "Chiffrement de CORP passé à CCMP-128 (WPA3-Enterprise standard), explication et note mises à jour ; difficulté ramenée à medium."
+  },
+  {
+    "slug": "security-plus-4.1-radius-auth-port-001",
+    "verdict": "rejetée",
+    "gravite": null,
+    "problemes": [
+      "Doublon de security-plus-3.2-radius-auth-port-fill-001 (port UDP 1812 de l'authentification RADIUS, même format)."
+    ],
+    "correction": "Question retirée du lot relu."
+  },
+  {
+    "slug": "security-plus-4.1-wifi-site-survey-order-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-wpa3-enterprise-192-bit-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Liste des algorithmes incomplète : la suite 192 bits admet aussi RSA d'au moins 3072 bits."
+    ],
+    "correction": "Précision RSA 3072 ajoutée à l'explication ; réponse 192 inchangée. GCMP-256, HMAC-SHA-384, P-384 et CCMP-128 pour le mode standard vérifiés."
+  },
+  {
+    "slug": "security-plus-4.1-byod-containerization-wipe-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-bluetooth-trade-show-001",
+    "verdict": "corrigée",
+    "gravite": "fond",
+    "problemes": [
+      "Le bluesnarfing s'exerce sans appairage : lier « refuser l'appairage » à ce risque précis était inexact, et la bonne option d était donc défendable seulement en partie."
+    ],
+    "correction": "Énoncé élargi aux attaques Bluetooth en général (repérage, extraction, appairage par un inconnu) ; explication reformulée sur NIST SP 800-121 ; réponses inchangées."
+  },
+  {
+    "slug": "security-plus-4.1-lost-phone-mdm-controls-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-cellular-disable-2g-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Difficulté hard surévaluée : rappel d'un fait avec distracteurs sans rapport."
+    ],
+    "correction": "Difficulté ramenée à medium. Faits vérifiés : désactivation de la 2G gérable sur Android 12+ (restriction MDM, matériel compatible), AKA mutuelle en 3G/4G/5G, 3GPP TS 33.102 pertinent."
+  },
+  {
+    "slug": "security-plus-4.1-mobile-deployment-models-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-cookie-secure-attribute-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-server-side-input-validation-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-code-signing-updates-001",
+    "verdict": "rejetée",
+    "gravite": null,
+    "problemes": [
+      "Doublon de security-plus-2.3-signed-update-verify-001 (même scénario : serveur de téléchargement compromis, signature de code contre empreinte, HTTPS)."
+    ],
+    "correction": "Question retirée du lot relu."
+  },
+  {
+    "slug": "security-plus-4.1-cookie-httponly-xss-exhibit-001",
+    "verdict": "rejetée",
+    "gravite": null,
+    "problemes": [
+      "Doublon de security-plus-2.3-xss-cookie-httponly-001 (XSS réfléchie, correctif à venir, HttpOnly contre Secure/SameSite) ; l'exhibit n'ajoute que le repérage du cookie."
+    ],
+    "correction": "Question retirée du lot relu."
+  },
+  {
+    "slug": "security-plus-4.1-sql-injection-code-fixes-001",
+    "verdict": "rejetée",
+    "gravite": null,
+    "problemes": [
+      "Doublon de security-plus-2.3-sqli-mesures-prevention-001 (mêmes deux bonnes réponses : requêtes paramétrées et liste d'autorisation côté serveur)."
+    ],
+    "correction": "Question retirée du lot relu."
+  },
+  {
+    "slug": "security-plus-4.1-signed-release-pipeline-order-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-4.1-appsec-practices-purpose-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  }
+]

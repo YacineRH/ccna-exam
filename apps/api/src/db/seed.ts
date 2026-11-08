@@ -1,5 +1,7 @@
 import { listCertificationCodes, listLabCertificationCodes, loadCertification, loadExamSeries, loadLabs } from '@examforge/content';
 import type { Db } from './client.js';
+import { eq } from 'drizzle-orm';
+import { certifications } from './schema.js';
 import { syncExamSeries, syncQuestions, upsertCertification, upsertLab } from '../services/content-sync.js';
 
 /**
@@ -19,13 +21,16 @@ export async function seedContent(db: Db, log: (msg: string) => void = () => {})
       log(`${code} : ${labs.length} labs`);
     }
     const series = loadExamSeries(code);
+    const summary: Record<string, unknown> = { questions: questions.length, created: q.created, updated: q.updated };
     if (series) {
       const s = await syncExamSeries(db, certId, series);
+      Object.assign(summary, { exams: series.exams.length, examsCreated: s.created, examsUpdated: s.updated, examsFrozen: s.frozen });
       log(
         `${code} : ${series.exams.length} examens blancs (${s.created} créés, ${s.updated} mis à jour, ${s.unchanged} inchangés` +
           (s.frozen.length ? `, ${s.frozen.length} déjà passés gardés tels quels : n° ${s.frozen.join(', ')})` : ')'),
       );
     }
+    await db.update(certifications).set({ lastImportedAt: new Date(), lastImport: summary }).where(eq(certifications.id, certId));
   }
 }
 

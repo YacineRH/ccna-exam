@@ -123,6 +123,11 @@ export const terminalCommandSchema = z.object({
   /** Commandes qui règlent la même chose sous des formes différentes (`username … secret` et `username … password`) : leurs clés se remplacent. */
   keyGroup: z.string().optional(),
   /**
+   * La forme `no`, même incomplète, retire toutes les lignes du `keyGroup` qui ont la même clé : le réglage
+   * revient à son défaut quelle que soit la commande qui l'avait posé. Exige `keyGroup` et `key`.
+   */
+  negateGroup: z.boolean().optional(),
+  /**
    * Entrées numérotées (ACL nommées) : un premier paramètre numérique est un numéro de séquence.
    * Les entrées sont rangées par numéro, enregistrées sans lui (comme la configuration courante d'IOS),
    * et une entrée sans numéro prend le dernier + 10.
@@ -281,6 +286,7 @@ export const terminalProfileSchema = z
       }
       if (c.blocks && !c.enter) ctx.addIssue({ code: 'custom', message: `${c.syntax} : blocks sans enter` });
       if (c.negate === 'disable' && !c.key) ctx.addIssue({ code: 'custom', message: `${c.syntax} : negate disable sans key` });
+      if (c.negateGroup && !(c.keyGroup && c.key?.length)) ctx.addIssue({ code: 'custom', message: `${c.syntax} : negateGroup sans keyGroup ni key` });
       if (c.negateKey && !(c.key?.length && c.key.every((i) => i >= 0))) ctx.addIssue({ code: 'custom', message: `${c.syntax} : negateKey sans key positive` });
       for (const re of [...(c.defaults ?? []), ...[c.rewrite ?? []].flat().map((r) => r.pattern)]) {
         try {

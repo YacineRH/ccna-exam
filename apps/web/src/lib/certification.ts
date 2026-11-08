@@ -1,12 +1,20 @@
-import type { CertificationSummary } from './types';
+import type { CertificationSummary, Module } from './types';
 
 /** Clé localStorage du choix de certification. */
 export const CERTIFICATION_STORAGE_KEY = 'examforge.certification';
 
-/** Libellé court : code de la certification en capitales, puis code d’examen. */
-export function certificationLabel(c: Pick<CertificationSummary, 'code' | 'examCode'>): string {
-  return `${c.code.toUpperCase()} ${c.examCode}`.trim();
+/** Libellé court : nom court de la certification (ou son code en capitales), puis code d’examen. */
+export function certificationLabel(c: Pick<CertificationSummary, 'code' | 'examCode'> & { shortName?: string }): string {
+  return `${c.shortName ?? c.code.toUpperCase()} ${c.examCode}`.trim();
 }
+
+/** La certification propose-t-elle ce module ? Sans liste (ancienne API), seuls les modules par défaut. */
+export function hasModule(c: { modules?: readonly Module[] } | null | undefined, module: Module): boolean {
+  return (c?.modules ?? DEFAULT_MODULES).includes(module);
+}
+
+/** Modules d'une certification déclarée sans liste (même valeur que `DEFAULT_MODULES` de packages/core). */
+export const DEFAULT_MODULES: readonly Module[] = ['exam', 'practice', 'flashcards'];
 
 /**
  * Certification à activer : celle mémorisée si elle existe encore, sinon la première de la liste

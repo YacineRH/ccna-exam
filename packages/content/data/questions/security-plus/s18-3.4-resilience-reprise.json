@@ -1,0 +1,1726 @@
+[
+  {
+    "slug": "security-plus-3.4-web-farm-load-balancer-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un site de commerce en ligne repose sur six serveurs web identiques et sans état. Lors des soldes, le trafic double et l'équipe veut répartir les requêtes entre tous les serveurs tout en continuant de servir les clients si l'un d'eux tombe. Quelle solution répond le mieux à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un cluster de basculement actif/passif à deux nœuds"
+        },
+        {
+          "id": "b",
+          "text": "Un onduleur en ligne pour chaque baie de serveurs"
+        },
+        {
+          "id": "c",
+          "text": "Un répartiteur de charge avec contrôles de santé"
+        },
+        {
+          "id": "d",
+          "text": "Un instantané quotidien de chaque serveur web"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un répartiteur de charge (load balancer) distribue les requêtes entre plusieurs serveurs actifs, ce qui augmente la capacité, et ses contrôles de santé (health checks) retirent automatiquement de la rotation un serveur qui ne répond plus : le service continue sur les autres. Il convient particulièrement à des serveurs sans état, interchangeables, comme ceux d'une ferme web. Le clustering vise plutôt une application dont un seul nœud (ou un ensemble coordonné de nœuds) doit tenir les données à jour.",
+    "distractorNotes": {
+      "a": "En actif/passif, un seul nœud sert le trafic et l'autre attend la panne : la disponibilité est assurée, mais la charge n'est pas répartie entre les six serveurs.",
+      "b": "Un onduleur protège contre les coupures électriques ; il ne répartit aucune requête et ne compense pas la panne d'un serveur.",
+      "d": "Un instantané permet de revenir à un état antérieur ; il n'apporte ni répartition du trafic ni continuité automatique."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-db-failover-cluster-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une mutuelle exploite une base de données de gestion des contrats dont un seul serveur peut écrire à la fois sur le stockage partagé. Le RSSI exige qu'en cas de panne de ce serveur, un second prenne automatiquement le relais en moins de deux minutes, sans perte de cohérence des données. Quelle solution convient le mieux ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Deux serveurs indépendants derrière un répartiteur de charge en tourniquet (round robin)"
+        },
+        {
+          "id": "b",
+          "text": "Un cluster de basculement actif/passif à deux nœuds"
+        },
+        {
+          "id": "c",
+          "text": "Un site froid équipé de l'alimentation et de la climatisation, à 200 km du site principal"
+        },
+        {
+          "id": "d",
+          "text": "Des sauvegardes différentielles toutes les heures vers une bibliothèque de bandes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un cluster de basculement regroupe des nœuds qui se surveillent par un battement de cœur. En actif/passif, le nœud actif détient seul l'accès en écriture au stockage partagé ; si le battement de cœur cesse, le nœud passif monte le stockage, reprend l'adresse du service et redémarre la base, généralement en quelques secondes ou minutes. C'est la réponse adaptée à une application qui ne tolère qu'un seul écrivain et qui ne peut pas être simplement répartie, à la différence d'une ferme de serveurs web sans état.",
+    "distractorNotes": {
+      "a": "Le tourniquet enverrait des écritures à deux bases indépendantes : les données divergeraient, ce qui viole l'exigence de cohérence.",
+      "c": "Un site froid demande d'installer le matériel et de restaurer les données : la reprise se compte en jours ou en semaines, pas en minutes.",
+      "d": "Des sauvegardes permettent de restaurer après coup ; elles n'assurent aucune reprise automatique en quelques minutes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-hot-site-minutes-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une plateforme de paiement doit pouvoir reprendre son activité moins de 15 minutes après la perte de son centre de données principal. Quel type de site de secours répond à cet objectif ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un site froid"
+        },
+        {
+          "id": "b",
+          "text": "Un site tiède"
+        },
+        {
+          "id": "c",
+          "text": "Un site mobile livré par camion"
+        },
+        {
+          "id": "d",
+          "text": "Un site chaud"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un site chaud (hot site) est un centre de secours entièrement équipé, configuré et alimenté en données à jour, souvent par réplication en continu : il peut prendre le relais en quelques minutes. C'est le seul type de site compatible avec un RTO de 15 minutes, au prix d'un coût élevé, car l'organisation paie en permanence une infrastructure quasi identique à la production. Le site tiède et le site froid demandent du temps pour installer ou mettre à jour les systèmes.",
+    "distractorNotes": {
+      "a": "Un site froid n'offre que des locaux, l'électricité et la climatisation : il faut livrer et installer le matériel, ce qui prend des jours ou des semaines.",
+      "b": "Un site tiède dispose du matériel, mais les données et parfois les configurations doivent être restaurées : la reprise se compte plutôt en heures ou en jours.",
+      "c": "Un site mobile doit être acheminé, raccordé et configuré : impossible en moins de 15 minutes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-cold-site-budget-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une association culturelle de 25 salariés établit son plan de reprise. L'analyse d'impact (BIA) montre que son système de billetterie peut rester indisponible jusqu'à trois semaines sans dommage grave, et le budget est très limité. Quelle solution de site de secours est la moins coûteuse tout en respectant ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un site froid"
+        },
+        {
+          "id": "b",
+          "text": "Un site chaud"
+        },
+        {
+          "id": "c",
+          "text": "Un site tiède"
+        },
+        {
+          "id": "d",
+          "text": "Un second centre de données actif/actif"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Avec un RTO de trois semaines, l'association a le temps de faire livrer le matériel, de l'installer et de restaurer ses sauvegardes. Le site froid, qui ne fournit que l'espace, l'électricité, la climatisation et parfois la connectivité, est le moins coûteux des sites de secours et suffit donc. Choisir un site plus équipé reviendrait à payer en permanence une capacité de reprise rapide dont l'analyse d'impact montre qu'elle n'a pas besoin.",
+    "distractorNotes": {
+      "b": "Un site chaud respecterait le RTO, mais c'est l'option la plus chère : matériel et données maintenus prêts en permanence.",
+      "c": "Un site tiède conviendrait aussi, mais son matériel déjà installé le rend plus coûteux qu'un site froid, sans bénéfice pour un RTO de trois semaines.",
+      "d": "Deux centres actifs en même temps constituent la solution la plus onéreuse et visent une disponibilité quasi continue, très au-delà du besoin."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-warm-site-72h-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un cabinet d'expertise comptable vise un RTO de 72 heures pour son application de production. Son fournisseur annonce trois semaines de délai pour livrer des serveurs neufs, et la direction refuse de financer une réplication des données en temps réel. Quelle solution est la moins coûteuse tout en respectant le RTO ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un site chaud alimenté par réplication continue"
+        },
+        {
+          "id": "b",
+          "text": "Un site froid loué auprès d'un hébergeur régional"
+        },
+        {
+          "id": "c",
+          "text": "Un site tiède équipé de serveurs, restauré depuis les sauvegardes"
+        },
+        {
+          "id": "d",
+          "text": "Une seconde salle informatique dans le même bâtiment"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le site tiède (warm site) dispose déjà du matériel et de la connectivité ; il faut seulement restaurer les données à partir des sauvegardes et vérifier les configurations, ce qui prend en général de quelques heures à quelques jours : 72 heures sont réalistes. Le site froid est exclu par le délai de livraison de trois semaines, et le site chaud par le refus de financer la réplication en temps réel. Le site tiède est donc le compromis coût-délai attendu.",
+    "distractorNotes": {
+      "a": "Le site chaud respecterait le RTO, mais repose sur la réplication continue que la direction refuse de financer ; c'est aussi l'option la plus chère.",
+      "b": "Le site froid n'a pas de matériel : avec trois semaines de délai de livraison, le RTO de 72 heures serait dépassé.",
+      "d": "Une salle dans le même bâtiment subirait le même sinistre (incendie, inondation, coupure) : elle n'assure pas la reprise après la perte du site."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-geographic-dispersion-flood-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le centre de données principal d'un transporteur est situé en bord de Loire, à Nantes. Son site chaud de secours se trouve à 8 km, dans la même zone inondable et raccordé au même poste électrique. Lors d'une crue, les deux sites ont été inondés et privés de courant pendant cinq jours. Quelle mesure corrige LE MIEUX la faiblesse révélée par cet incident ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter des générateurs au fioul sur le site de secours actuel"
+        },
+        {
+          "id": "b",
+          "text": "Doubler la fréquence de réplication vers le site de secours actuel"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer le site chaud actuel par deux sites tièdes dans la même agglomération"
+        },
+        {
+          "id": "d",
+          "text": "Installer le site de secours dans une autre région"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'incident montre que les deux sites partagent les mêmes risques : même zone inondable, même alimentation. La redondance ne protège que si les sites ne peuvent pas être touchés par le même événement : c'est le principe de la dispersion géographique. Installer le site de secours dans une autre région, avec un autre réseau électrique et d'autres risques naturels, rend très improbable une perte simultanée. Les autres mesures améliorent un site qui resterait exposé à la même crue.",
+    "distractorNotes": {
+      "a": "Des générateurs n'empêchent pas l'inondation des salles ; noyés ou inaccessibles, ils ne garantissent pas la reprise.",
+      "b": "Une réplication plus fréquente améliore le RPO, mais les données arrivent sur un site qui sera inondé en même temps que le site principal.",
+      "c": "Deux sites dans la même agglomération restent exposés à la même crue ; un site tiède allonge en plus le délai de reprise."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-multi-cloud-provider-outage-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une jeune entreprise héberge toute sa plateforme SaaS chez un seul fournisseur de cloud, répartie sur trois régions. Une panne du service d'identité global de ce fournisseur a rendu les trois régions inaccessibles pendant six heures. Quelle stratégie réduit LE MIEUX ce risque à l'avenir ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter une quatrième région chez le même fournisseur"
+        },
+        {
+          "id": "b",
+          "text": "Augmenter les seuils de mise à l'échelle automatique"
+        },
+        {
+          "id": "c",
+          "text": "Conserver des instantanés des machines dans chaque région"
+        },
+        {
+          "id": "d",
+          "text": "Adopter une architecture multi-cloud avec un second fournisseur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La panne touchait un service global du fournisseur, commun à toutes ses régions : multiplier les régions chez le même fournisseur ne supprime pas ce point de défaillance unique. Une architecture multi-cloud répartit la charge ou prévoit une reprise chez un second fournisseur, dont l'infrastructure et les services de contrôle sont indépendants. C'est une forme d'hétérogénéité des plateformes : elle complique l'exploitation (outils, compétences, coûts), mais évite qu'un seul fournisseur arrête tout le service.",
+    "distractorNotes": {
+      "a": "Une nouvelle région dépendrait du même service d'identité global : elle tomberait avec les trois autres.",
+      "b": "La mise à l'échelle automatique répond à une hausse de charge, pas à l'indisponibilité du fournisseur lui-même.",
+      "c": "Des instantanés stockés chez le même fournisseur restent inaccessibles pendant sa panne et ne remettent pas le service en ligne."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4"
+  },
+  {
+    "slug": "security-plus-3.4-capacity-planning-people-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une PME industrielle, un seul administrateur sait restaurer l'ERP à partir des sauvegardes. Pendant son arrêt maladie, une panne a immobilisé la production deux jours. Quelle mesure de planification de capacité traite LE MIEUX ce problème ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Former un second administrateur et documenter la procédure de restauration"
+        },
+        {
+          "id": "b",
+          "text": "Acheter un serveur ERP supplémentaire en attente sur le site"
+        },
+        {
+          "id": "c",
+          "text": "Augmenter la bande passante du lien vers le stockage de sauvegarde"
+        },
+        {
+          "id": "d",
+          "text": "Installer un générateur pour alimenter la salle informatique"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La planification de capacité couvre trois dimensions : les personnes, la technologie et l'infrastructure. Ici, la défaillance vient des personnes : la compétence de restauration reposait sur un seul individu. La réponse est la formation croisée d'au moins un suppléant et une procédure écrite et testée, pour que la reprise ne dépende plus d'une personne. Du matériel ou de l'infrastructure supplémentaires n'auraient pas aidé : personne n'aurait su s'en servir.",
+    "distractorNotes": {
+      "b": "Un serveur de plus est une ressource technique, pas humaine ; sans personne capable de restaurer l'ERP, il reste inutilisé.",
+      "c": "La bande passante est une ressource technique ; elle accélère une restauration, mais ne remplace pas la compétence absente.",
+      "d": "Un générateur protège contre les coupures de courant, cause étrangère à cet incident."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-tabletop-exercise-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le directeur des opérations d'un hôpital réunit en salle les chefs de service et l'équipe informatique. Un animateur décrit pas à pas une panne majeure du dossier patient informatisé et chacun explique ce qu'il ferait, sans qu'aucun système soit touché. De quel type de test s'agit-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un test de basculement"
+        },
+        {
+          "id": "b",
+          "text": "Un traitement parallèle"
+        },
+        {
+          "id": "c",
+          "text": "Un exercice sur table"
+        },
+        {
+          "id": "d",
+          "text": "Un test d'intrusion"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'exercice sur table (tabletop exercise) réunit les acteurs autour d'un scénario présenté par un animateur ; ils déroulent oralement leurs rôles et décisions. Il ne touche à aucun système, coûte peu et révèle les lacunes du plan : responsabilités floues, contacts manquants, dépendances oubliées. C'est souvent le premier test d'un plan de continuité ou de reprise, avant des tests plus techniques et plus risqués.",
+    "distractorNotes": {
+      "a": "Un test de basculement transfère réellement la charge vers les systèmes de secours, ce qui n'est pas le cas ici.",
+      "b": "Le traitement parallèle fait fonctionner les systèmes de secours sur des données réelles, en même temps que la production.",
+      "d": "Un test d'intrusion évalue la sécurité par des attaques autorisées ; il ne vérifie pas un plan de reprise."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-parallel-processing-test-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque veut valider son site de secours sans aucun risque pour la production. Pendant une semaine, les serveurs de secours traitent les mêmes opérations réelles que les serveurs principaux, qui continuent seuls à servir les clients, puis les deux résultats sont comparés. Quel type de test la banque mène-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un exercice sur table"
+        },
+        {
+          "id": "b",
+          "text": "Un traitement parallèle"
+        },
+        {
+          "id": "c",
+          "text": "Un test de basculement"
+        },
+        {
+          "id": "d",
+          "text": "Une simulation d'hameçonnage"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Dans un test en traitement parallèle (parallel processing), les systèmes de secours sont activés et traitent les mêmes données réelles que la production, qui reste la référence et continue de servir les utilisateurs. La comparaison des résultats montre que le site de secours sait effectivement faire le travail, sans interrompre le service. Ce test est plus probant qu'un exercice sur table et moins risqué qu'un basculement, où la production est réellement transférée. Dans les objectifs SY0-701, le terme figure parmi les tests de résilience ; certains supports l'emploient aussi pour un calcul réparti entre plusieurs processeurs, mais c'est ici le test de reprise qui est visé.",
+    "distractorNotes": {
+      "a": "Un exercice sur table se déroule oralement, sans faire tourner de systèmes.",
+      "c": "Lors d'un basculement, la charge de production est réellement transférée au site de secours ; ici, la production principale continue seule à servir les clients.",
+      "d": "Une simulation d'hameçonnage mesure la réaction des utilisateurs à de faux courriels, sans lien avec le site de secours."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-failover-test-regulator-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'autorité de contrôle d'un assureur exige la preuve que le trafic de production bascule réellement vers le centre de données secondaire et que celui-ci tient la charge. La direction accepte une courte interruption planifiée un dimanche. Quel test répond à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un exercice sur table avec les responsables métiers"
+        },
+        {
+          "id": "b",
+          "text": "Un test de basculement vers le site secondaire"
+        },
+        {
+          "id": "c",
+          "text": "Un traitement parallèle sur le site secondaire"
+        },
+        {
+          "id": "d",
+          "text": "Une revue documentaire du plan de reprise"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Seul un test de basculement (failover) transfère réellement la production vers le site secondaire : il vérifie le mécanisme de bascule (DNS, routage, réplication, ordre de démarrage) et la capacité du site à porter la charge réelle. C'est le test le plus probant, mais aussi le plus risqué, d'où la fenêtre d'interruption planifiée acceptée par la direction. Les autres tests apportent des informations utiles, sans prouver que la bascule elle-même fonctionne.",
+    "distractorNotes": {
+      "a": "Un exercice sur table reste théorique : il ne prouve pas que la bascule technique fonctionne.",
+      "c": "En traitement parallèle, le site secondaire traite une copie des opérations, mais la production n'y est jamais transférée : le mécanisme de bascule n'est pas éprouvé.",
+      "d": "Une revue documentaire vérifie que le plan est complet et à jour ; aucun système n'est testé."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1 ; NIST SP 800-53 Rev. 5, CP-4"
+  },
+  {
+    "slug": "security-plus-3.4-snapshot-before-patch-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avant d'appliquer une mise à jour risquée sur un serveur virtuel, un administrateur veut pouvoir revenir en quelques secondes à l'état exact de la machine en cas de problème. Quelle technique est la plus adaptée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un instantané de la machine virtuelle"
+        },
+        {
+          "id": "b",
+          "text": "Une sauvegarde complète sur bande envoyée hors site"
+        },
+        {
+          "id": "c",
+          "text": "Une sauvegarde différentielle vers le NAS"
+        },
+        {
+          "id": "d",
+          "text": "Une réplication synchrone vers un second hyperviseur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un instantané (snapshot) fige l'état d'une machine virtuelle ou d'un volume à un instant donné ; il se crée en quelques secondes et permet d'y revenir presque aussi vite. C'est l'outil classique avant une mise à jour ou un changement de configuration. Il ne remplace pas une sauvegarde : il réside en général sur le même stockage que la machine et disparaîtrait avec lui ; on le supprime une fois la mise à jour validée.",
+    "distractorNotes": {
+      "b": "Une sauvegarde sur bande hors site protège contre la perte du site, mais sa restauration prend bien plus de quelques secondes.",
+      "c": "Une différentielle ne contient que les modifications depuis la dernière complète : revenir en arrière demande de restaurer la complète puis la différentielle, ce qui est lent.",
+      "d": "La réplication synchrone recopierait immédiatement les effets d'une mise à jour défaillante sur la copie : elle ne permet pas de revenir à l'état d'avant."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4"
+  },
+  {
+    "slug": "security-plus-3.4-offsite-tape-encryption-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Chaque semaine, un transporteur emporte les bandes de sauvegarde d'un laboratoire vers un coffre hors site. Le RSSI craint qu'une bande perdue en route expose des données de santé. Quelle mesure répond directement à ce risque ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Passer des sauvegardes complètes aux sauvegardes incrémentielles"
+        },
+        {
+          "id": "b",
+          "text": "Augmenter la fréquence des enlèvements de bandes"
+        },
+        {
+          "id": "c",
+          "text": "Conserver désormais toutes les bandes dans la salle serveurs"
+        },
+        {
+          "id": "d",
+          "text": "Chiffrer les sauvegardes et gérer les clés à part"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le risque décrit porte sur la confidentialité d'un support qui quitte le site. Le chiffrement des sauvegardes (par exemple en AES-256) rend une bande perdue ou volée illisible pour qui ne possède pas la clé ; les clés doivent être conservées séparément des bandes, sans quoi le chiffrement ne protège rien et la restauration devient impossible si elles sont perdues. Le stockage hors site reste nécessaire pour survivre à un sinistre sur le site principal.",
+    "distractorNotes": {
+      "a": "Le type de sauvegarde change la quantité de données copiées, pas leur lisibilité en cas de perte de la bande.",
+      "b": "Plus d'enlèvements multiplient les trajets, donc les occasions de perte, sans protéger le contenu.",
+      "c": "Garder les bandes sur site supprime la protection hors site : un incendie détruirait à la fois les serveurs et leurs sauvegardes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-53 Rev. 5, CP-9 ; NIST SP 800-57"
+  },
+  {
+    "slug": "security-plus-3.4-replication-ransomware-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un rançongiciel a chiffré les volumes du serveur de fichiers d'un bureau d'études. Le volume répliqué de façon synchrone sur une seconde baie, dans un autre bâtiment, est lui aussi entièrement chiffré. Les seules sauvegardes datent de trois mois. Quelle mesure le RSSI doit-il retenir EN PRIORITÉ pour que cela ne se reproduise pas ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Passer la réplication en mode asynchrone vers la seconde baie distante"
+        },
+        {
+          "id": "b",
+          "text": "Ajouter une troisième baie répliquée de façon synchrone dans un autre bâtiment"
+        },
+        {
+          "id": "c",
+          "text": "Sauvegarder souvent, avec versions immuables et une copie hors ligne"
+        },
+        {
+          "id": "d",
+          "text": "Augmenter le débit du lien de réplication entre les deux bâtiments"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La réplication recopie fidèlement chaque écriture, y compris celles du rançongiciel : elle protège contre la panne d'une baie ou la perte d'un bâtiment, pas contre la corruption ou le chiffrement malveillant. Seules des sauvegardes conservant plusieurs versions dans le temps permettent de revenir à un état sain. Les rendre immuables et garder une copie hors ligne empêche l'attaquant de les chiffrer ou de les supprimer ; une fréquence élevée limite la perte de données. Le point faible ici était l'absence de sauvegardes récentes, pas la réplication.",
+    "distractorNotes": {
+      "a": "L'asynchrone ne fait que retarder la copie de quelques secondes ou minutes : les blocs chiffrés seraient répliqués quand même.",
+      "b": "Une troisième réplique recevrait les mêmes écritures chiffrées : elle multiplie les copies d'un état corrompu.",
+      "d": "Un lien plus rapide accélère la réplication, donc la propagation du chiffrement ; il n'apporte aucun point de restauration."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-53 Rev. 5, CP-9"
+  },
+  {
+    "slug": "security-plus-3.4-journaling-point-in-time-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après la corruption d'une base de données à 10 h 42, un administrateur restaure la sauvegarde complète de la nuit, puis rejoue les opérations enregistrées dans le journal des transactions jusqu'à 10 h 41. Sur quelle technique de résilience repose cette dernière étape ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'instantané de volume"
+        },
+        {
+          "id": "b",
+          "text": "La journalisation"
+        },
+        {
+          "id": "c",
+          "text": "La sauvegarde différentielle"
+        },
+        {
+          "id": "d",
+          "text": "La réplication asynchrone"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La journalisation (journaling) consiste à enregistrer chaque modification dans un journal avant ou pendant son application. Après la restauration d'une sauvegarde, on rejoue ce journal pour amener les données à un point précis dans le temps, juste avant l'incident : la perte se limite à quelques secondes ou minutes au lieu d'une journée. Le même principe permet à un système de fichiers journalisé de retrouver un état cohérent après une coupure brutale. Le journal doit être stocké à part des données qu'il protège.",
+    "distractorNotes": {
+      "a": "Un instantané capture un état figé à un instant donné ; il ne permet pas de rejouer les opérations une à une jusqu'à 10 h 41.",
+      "c": "Une différentielle copie les modifications depuis la dernière complète à heure fixe ; elle ne contient pas les transactions de la matinée.",
+      "d": "La réplication asynchrone aurait recopié la corruption sur la copie ; elle ne sert pas à rejouer un historique d'opérations."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-ups-short-outage-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une agence bancaire, de brèves microcoupures de courant de quelques secondes redémarrent régulièrement les serveurs locaux. Quel équipement résout le plus directement ce problème ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un onduleur (UPS)"
+        },
+        {
+          "id": "b",
+          "text": "Un générateur diesel"
+        },
+        {
+          "id": "c",
+          "text": "Un répartiteur de charge"
+        },
+        {
+          "id": "d",
+          "text": "Un second fournisseur d'accès à Internet"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un onduleur (UPS, Uninterruptible Power Supply) fournit immédiatement l'énergie de ses batteries dès que le secteur faiblit ou se coupe : les serveurs ne voient pas la microcoupure. Son autonomie est limitée, de quelques minutes à quelques dizaines de minutes, ce qui suffit pour franchir une coupure brève, attendre le démarrage d'un générateur ou arrêter proprement les systèmes. Les modèles en ligne (double conversion) filtrent aussi les surtensions et les baisses de tension.",
+    "distractorNotes": {
+      "b": "Un générateur met plusieurs secondes, voire des dizaines de secondes, à démarrer : seul, il n'évite pas le redémarrage provoqué par une microcoupure.",
+      "c": "Un répartiteur de charge distribue le trafic réseau ; il ne protège pas des serveurs privés de courant.",
+      "d": "Un second accès à Internet assure la redondance réseau, pas l'alimentation électrique."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-53 Rev. 5 (famille PE)"
+  },
+  {
+    "slug": "security-plus-3.4-generator-multi-day-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une tempête prive régulièrement de courant pendant deux à trois jours un centre de données régional. Ses onduleurs offrent 20 minutes d'autonomie à pleine charge. Quel ajout permet LE MIEUX de maintenir le service pendant toute la durée de ces coupures ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des onduleurs supplémentaires de même modèle"
+        },
+        {
+          "id": "b",
+          "text": "Des barrettes de distribution électrique (PDU) redondantes"
+        },
+        {
+          "id": "c",
+          "text": "Un parasurtenseur sur chaque baie"
+        },
+        {
+          "id": "d",
+          "text": "Un générateur avec réserve de carburant et contrat de ravitaillement"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Pour une coupure de plusieurs jours, seule une source de production d'énergie convient : un générateur, alimenté en carburant et ravitaillé selon un contrat. Les onduleurs restent indispensables pour couvrir les secondes de démarrage du générateur et le basculement par le commutateur de transfert automatique (ATS). Le dimensionnement doit inclure la climatisation, sans laquelle les serveurs s'arrêteraient par surchauffe, et des essais réguliers en charge.",
+    "distractorNotes": {
+      "a": "Multiplier les onduleurs allonge l'autonomie de quelques dizaines de minutes ; atteindre plusieurs jours sur batteries serait irréaliste et hors de prix.",
+      "b": "Des PDU redondantes protègent contre la panne d'une barrette, pas contre l'absence de courant en amont.",
+      "c": "Un parasurtenseur protège contre les pics de tension ; il ne fournit aucune énergie pendant une coupure."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-53 Rev. 5 (famille PE)"
+  },
+  {
+    "slug": "security-plus-3.4-differential-restore-set-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un hébergeur effectue une sauvegarde complète le dimanche à 22 h, puis une sauvegarde différentielle chaque soir à 22 h du lundi au samedi. Le jeudi à 10 h, la baie de stockage est détruite. Quel jeu MINIMAL de sauvegardes faut-il restaurer pour récupérer les données les plus récentes possibles ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La complète de dimanche, puis les différentielles de lundi, mardi et mercredi"
+        },
+        {
+          "id": "b",
+          "text": "La différentielle de mercredi seule"
+        },
+        {
+          "id": "c",
+          "text": "La complète de dimanche, puis la différentielle de mercredi"
+        },
+        {
+          "id": "d",
+          "text": "La complète de dimanche seule"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une sauvegarde différentielle contient toutes les modifications depuis la dernière sauvegarde complète ; elle grossit chaque jour jusqu'à la complète suivante. La différentielle de mercredi soir contient donc à elle seule tous les changements de lundi, mardi et mercredi. Le jeu minimal est la complète de dimanche, puis la différentielle de mercredi, la plus récente avant la panne de jeudi 10 h. Les données écrites entre mercredi 22 h et jeudi 10 h sont perdues, faute de sauvegarde plus récente.",
+    "distractorNotes": {
+      "a": "Restaurer aussi les différentielles de lundi et mardi est inutile : leur contenu est inclus dans celle de mercredi. Ce schéma correspond aux sauvegardes incrémentielles.",
+      "b": "Une différentielle ne contient que les changements depuis la complète : sans la complète de dimanche, les données inchangées depuis dimanche manqueraient.",
+      "d": "La complète seule ramène les données au dimanche soir et perd trois jours de modifications pourtant sauvegardés."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-availability-mtbf-mttr-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un opérateur doit choisir un contrôleur de stockage dont la disponibilité théorique, calculée par MTBF / (MTBF + MTTR), atteint au moins 99,95 %. Quel modèle respecte cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Modèle A : MTBF de 2 000 heures, MTTR de 4 heures"
+        },
+        {
+          "id": "b",
+          "text": "Modèle B : MTBF de 5 000 heures, MTTR de 2 heures"
+        },
+        {
+          "id": "c",
+          "text": "Modèle C : MTBF de 10 000 heures, MTTR de 20 heures"
+        },
+        {
+          "id": "d",
+          "text": "Modèle D : MTBF de 1 000 heures, MTTR de 1 heure"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La disponibilité théorique vaut MTBF / (MTBF + MTTR). Modèle A : 2 000 / 2 004 ≈ 99,80 %. Modèle B : 5 000 / 5 002 ≈ 99,96 %. Modèle C : 10 000 / 10 020 ≈ 99,80 %. Modèle D : 1 000 / 1 001 ≈ 99,90 %. Seul le modèle B atteint 99,95 %. Le calcul montre que la disponibilité dépend du rapport entre le temps moyen entre pannes (MTBF) et le temps moyen de réparation (MTTR) : un MTBF élevé ne suffit pas si chaque réparation est longue.",
+    "distractorNotes": {
+      "a": "2 000 / 2 004 ≈ 99,80 % : en dessous de l'exigence.",
+      "c": "Malgré le meilleur MTBF, un MTTR de 20 heures donne 10 000 / 10 020 ≈ 99,80 %.",
+      "d": "1 000 / 1 001 ≈ 99,90 % : la réparation est rapide, mais les pannes sont trop fréquentes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4"
+  },
+  {
+    "slug": "security-plus-3.4-load-balancer-functions-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une enseigne de distribution place un répartiteur de charge devant les quatre serveurs web de son site marchand. Quelles deux fonctions ce dispositif apporte-t-il ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Répliquer les données des serveurs vers un site de secours distant"
+        },
+        {
+          "id": "b",
+          "text": "Distribuer les requêtes des clients entre les serveurs actifs"
+        },
+        {
+          "id": "c",
+          "text": "Fournir l'alimentation électrique pendant une coupure du secteur"
+        },
+        {
+          "id": "d",
+          "text": "Retirer de la rotation un serveur qui échoue aux contrôles de santé"
+        },
+        {
+          "id": "e",
+          "text": "Conserver des versions antérieures des fichiers pour les restaurer"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le répartiteur de charge répartit les requêtes entre plusieurs serveurs selon un algorithme (tourniquet, moins de connexions, pondération), ce qui augmente la capacité et la tolérance aux pannes. Grâce à ses contrôles de santé (health checks), il détecte un serveur défaillant et cesse de lui envoyer du trafic : les clients restent servis par les autres. Il ne copie pas les données, ne fournit pas d'énergie et ne remplace pas une sauvegarde ; ces besoins relèvent d'autres mécanismes de résilience.",
+    "distractorNotes": {
+      "a": "La copie des données vers un site distant relève de la réplication, pas de la répartition de charge.",
+      "c": "L'alimentation de secours est le rôle des onduleurs et des générateurs.",
+      "e": "Garder des versions antérieures relève des sauvegardes ou des instantanés."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4"
+  },
+  {
+    "slug": "security-plus-3.4-hot-site-characteristics-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le comité de direction d'une place de marché compare les offres de sites de secours. Quelles deux caractéristiques correspondent à un site chaud ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les locaux ne fournissent que l'électricité, la climatisation et la connectivité"
+        },
+        {
+          "id": "b",
+          "text": "Le coût d'exploitation est le plus faible des trois types de sites"
+        },
+        {
+          "id": "c",
+          "text": "Le matériel est installé, configuré et prêt à prendre la charge"
+        },
+        {
+          "id": "d",
+          "text": "La reprise suppose la livraison et l'installation des serveurs"
+        },
+        {
+          "id": "e",
+          "text": "Les données sont tenues à jour en quasi-temps réel par réplication"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Un site chaud reproduit l'environnement de production : matériel installé et configuré, logiciels à jour et données répliquées en continu ou à intervalle très court. Il peut prendre le relais en quelques minutes, ce qui en fait la solution la plus rapide mais aussi la plus coûteuse, puisque l'organisation finance en permanence une capacité quasi identique à la production. Le site tiède se contente du matériel, sans données à jour, et le site froid des seuls locaux équipés.",
+    "distractorNotes": {
+      "a": "Des locaux avec seulement l'électricité, la climatisation et la connectivité décrivent un site froid.",
+      "b": "Le site chaud est au contraire le plus cher ; le site froid est le moins coûteux.",
+      "d": "Devoir livrer et installer les serveurs est le propre du site froid, d'où ses délais de plusieurs semaines."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-ransomware-proof-backups-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Après une attaque par rançongiciel dans un établissement voisin, le RSSI d'un centre hospitalier veut s'assurer que ses sauvegardes pourront réellement être restaurées après une compromission du domaine Active Directory. Quelles trois mesures y contribuent ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Tester régulièrement la restauration complète de systèmes critiques"
+        },
+        {
+          "id": "b",
+          "text": "Conserver une copie des sauvegardes hors ligne et hors site"
+        },
+        {
+          "id": "c",
+          "text": "Répliquer en mode synchrone le serveur de fichiers vers une seconde baie"
+        },
+        {
+          "id": "d",
+          "text": "Stocker les instantanés sur le même volume, accessible aux administrateurs du domaine"
+        },
+        {
+          "id": "e",
+          "text": "Activer l'immuabilité des sauvegardes pendant leur durée de rétention"
+        },
+        {
+          "id": "f",
+          "text": "Augmenter la fréquence des incrémentielles sur le NAS joint au domaine"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Une sauvegarde ne protège d'un rançongiciel que si l'attaquant ne peut pas l'atteindre et si elle se restaure vraiment. Une copie hors ligne et hors site (isolée du réseau) échappe à un domaine compromis. L'immuabilité (stockage WORM, verrouillage d'objets) interdit de modifier ou de supprimer les sauvegardes avant la fin de leur rétention, même avec des droits d'administrateur. Les tests de restauration réguliers prouvent que les sauvegardes sont complètes et exploitables dans le délai voulu ; une sauvegarde jamais testée n'est qu'une hypothèse.",
+    "distractorNotes": {
+      "c": "La réplication synchrone recopie immédiatement les fichiers chiffrés par le rançongiciel : elle ne conserve aucune version saine.",
+      "d": "Des instantanés sur le même volume, accessibles à des comptes du domaine compromis, peuvent être supprimés ou chiffrés par l'attaquant.",
+      "f": "Un NAS joint au domaine reste accessible à l'attaquant : des sauvegardes plus fréquentes y seraient chiffrées comme le reste."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-53 Rev. 5, CP-9 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-capacity-planning-people-measures-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le responsable de la continuité d'un opérateur de transport classe les mesures de planification de capacité selon trois axes : personnes, technologie, infrastructure. Quelles deux mesures relèvent de l'axe « personnes » ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Former des suppléants aux tâches critiques de chaque administrateur"
+        },
+        {
+          "id": "b",
+          "text": "Ajouter des nœuds au cluster de virtualisation avant les pics saisonniers"
+        },
+        {
+          "id": "c",
+          "text": "Prévoir une capacité électrique et de climatisation suffisante dans la salle"
+        },
+        {
+          "id": "d",
+          "text": "Constituer une liste d'astreinte avec des remplaçants identifiés"
+        },
+        {
+          "id": "e",
+          "text": "Souscrire un second lien opérateur vers le site de secours"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "La planification de capacité vérifie que l'organisation disposera de ressources suffisantes, en temps normal comme en crise. L'axe « personnes » porte sur les compétences et la disponibilité du personnel : formation croisée de suppléants, astreintes, remplaçants identifiés, voire recours à des prestataires. Les axes « technologie » et « infrastructure » couvrent les ressources techniques : serveurs et services capables d'absorber la charge, locaux, énergie, refroidissement et réseaux qui les portent.",
+    "distractorNotes": {
+      "b": "Ajouter des nœuds de calcul augmente une capacité technique, pas humaine.",
+      "c": "L'énergie et la climatisation de la salle relèvent de l'infrastructure, pas des personnes.",
+      "e": "Un lien réseau supplémentaire est une ressource technique, pas humaine."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-ups-roles-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une PME de logistique installe un onduleur (UPS) dans sa salle serveurs, déjà équipée d'un générateur. Quels deux rôles remplit cet onduleur ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Alimenter la salle pendant une coupure de plusieurs jours"
+        },
+        {
+          "id": "b",
+          "text": "Assurer l'alimentation le temps que le générateur démarre"
+        },
+        {
+          "id": "c",
+          "text": "Répartir la charge électrique entre deux fournisseurs d'énergie"
+        },
+        {
+          "id": "d",
+          "text": "Remplacer les essais périodiques du générateur"
+        },
+        {
+          "id": "e",
+          "text": "Laisser le temps d'arrêter proprement les serveurs"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "L'onduleur fournit une énergie immédiate à partir de ses batteries dès que le secteur disparaît. Son autonomie, de quelques minutes à quelques dizaines de minutes, sert à couvrir le délai de démarrage du générateur et le transfert de la charge sur celui-ci, ou, si le générateur ne démarre pas, à arrêter proprement les serveurs pour éviter la corruption des données. La tenue sur plusieurs jours revient au générateur, qui doit lui-même être testé régulièrement.",
+    "distractorNotes": {
+      "a": "Les batteries d'un onduleur ne tiennent que quelques minutes ou dizaines de minutes ; une coupure de plusieurs jours exige un générateur.",
+      "c": "Un onduleur ne répartit pas la charge entre fournisseurs ; il s'intercale entre une alimentation et les équipements.",
+      "d": "L'onduleur ne vérifie pas le générateur : ses essais en charge restent nécessaires pour garantir qu'il démarrera."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-53 Rev. 5 (famille PE)"
+  },
+  {
+    "slug": "security-plus-3.4-snapshot-properties-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "L'équipe d'exploitation d'une collectivité envisage de remplacer ses sauvegardes par des instantanés quotidiens des machines virtuelles, conservés sur la baie de production. Quelles deux affirmations sur ces instantanés sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Ils se créent en quelques secondes et capturent l'état à un instant donné"
+        },
+        {
+          "id": "b",
+          "text": "Ils sont des copies complètes et indépendantes, stockées sur un autre support"
+        },
+        {
+          "id": "c",
+          "text": "Ils disparaissent avec la baie si celle-ci est détruite ou chiffrée"
+        },
+        {
+          "id": "d",
+          "text": "Ils n'occupent aucun espace disque supplémentaire, quelle que soit leur durée de conservation"
+        },
+        {
+          "id": "e",
+          "text": "Ils rendent inutile toute copie de sauvegarde hors site"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Un instantané enregistre l'état d'une machine virtuelle ou d'un volume à un instant donné, en général par copie sur écriture : il se crée en quelques secondes et permet un retour arrière rapide. Mais il dépend des données d'origine et réside sur la même baie : si celle-ci est détruite, défaillante ou chiffrée par un rançongiciel, les instantanés disparaissent avec elle. Ils complètent donc les sauvegardes, en particulier les copies hors site, sans les remplacer.",
+    "distractorNotes": {
+      "b": "Un instantané n'est pas une copie indépendante : il s'appuie sur les blocs d'origine et reste sur le stockage de production.",
+      "d": "Chaque instantané conserve les blocs modifiés depuis sa création ; l'espace consommé croît avec les changements et la durée de conservation.",
+      "e": "Rangés sur la baie de production, les instantanés ne protègent pas contre la perte du site : une copie hors site reste nécessaire."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-53 Rev. 5, CP-9"
+  },
+  {
+    "slug": "security-plus-3.4-dr-site-location-factors-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une compagnie d'assurances lyonnaise choisit l'emplacement de son futur site de secours. Quels deux critères relèvent de la dispersion géographique ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Choisir un étage différent du bâtiment principal pour faciliter les déplacements"
+        },
+        {
+          "id": "b",
+          "text": "Retenir un site hors de la zone inondable et sismique du site principal"
+        },
+        {
+          "id": "c",
+          "text": "Partager le poste électrique du site principal pour simplifier le raccordement"
+        },
+        {
+          "id": "d",
+          "text": "Retenir un site desservi par un autre réseau électrique et d'autres opérateurs"
+        },
+        {
+          "id": "e",
+          "text": "Rester sur le même campus pour réutiliser le même groupe électrogène"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La dispersion géographique éloigne les ressources de secours pour qu'un même événement (inondation, séisme, incendie de grande ampleur, panne régionale d'électricité ou de télécommunications) ne puisse pas toucher à la fois le site principal et le site de secours. On recherche donc un site exposé à d'autres risques naturels et raccordé à des infrastructures différentes : autre poste électrique, autres opérateurs. La distance est à équilibrer avec la latence de la réplication et l'accès du personnel, mais le partage d'une dépendance commune est à proscrire.",
+    "distractorNotes": {
+      "a": "Un autre étage du même bâtiment subirait le même incendie, la même inondation et la même coupure.",
+      "c": "Un poste électrique partagé est un point de défaillance unique : sa panne arrêterait les deux sites.",
+      "e": "Sur le même campus, avec le même groupe électrogène, les deux sites partagent les mêmes risques et la même dépendance."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1 ; NIST SP 800-53 Rev. 5, CP-7"
+  },
+  {
+    "slug": "security-plus-3.4-platform-diversity-measures-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Après une vulnérabilité critique qui touchait à la fois ses deux pare-feu en paire et ses deux serveurs DNS, tous du même éditeur, une société de services numériques veut appliquer l'hétérogénéité des plateformes. Quelles deux mesures illustrent ce principe ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer l'un des serveurs DNS par un logiciel DNS d'un autre éditeur"
+        },
+        {
+          "id": "b",
+          "text": "Ajouter un troisième pare-feu identique aux deux premiers dans la paire"
+        },
+        {
+          "id": "c",
+          "text": "Placer en défense en profondeur deux pare-feu de constructeurs différents"
+        },
+        {
+          "id": "d",
+          "text": "Planifier une sauvegarde quotidienne de la configuration des pare-feu"
+        },
+        {
+          "id": "e",
+          "text": "Passer les deux serveurs DNS sur une version plus récente du même logiciel"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "L'hétérogénéité des plateformes (platform diversity) consiste à faire assurer une même fonction par des produits, systèmes d'exploitation ou éditeurs différents. Une vulnérabilité, un correctif défectueux ou un bogue propre à un produit ne touche alors qu'une partie des équipements, et le service survit. Deux serveurs DNS de logiciels différents ou deux pare-feu de constructeurs différents en série appliquent ce principe. Le prix à payer est une exploitation plus complexe : compétences, outils et correctifs à gérer en double.",
+    "distractorNotes": {
+      "b": "Un troisième pare-feu identique partage la même vulnérabilité : la redondance augmente, la diversité non.",
+      "d": "Sauvegarder les configurations facilite la reprise, mais tous les pare-feu restent exposés à la même faille.",
+      "e": "Une version plus récente du même logiciel reste une plateforme unique : une prochaine faille toucherait encore les deux serveurs."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4"
+  },
+  {
+    "slug": "security-plus-3.4-site-types-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un consultant présente au comité de direction d'une enseigne de distribution quatre offres de reprise. Associez chaque offre au type de site de secours qu'elle représente.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Salle équipée de serveurs configurés et alimentée en continu par réplication ; reprise en quelques minutes"
+        },
+        {
+          "id": "l2",
+          "text": "Salle dotée des serveurs et du réseau ; les données sont restaurées depuis les sauvegardes, reprise en un à trois jours"
+        },
+        {
+          "id": "l3",
+          "text": "Local loué avec électricité, climatisation et arrivée réseau, sans aucun matériel ; reprise en plusieurs semaines"
+        },
+        {
+          "id": "l4",
+          "text": "Copie de la production maintenue en permanence chez un fournisseur de cloud, prête à recevoir le trafic en quelques minutes"
+        }
+      ],
+      "right": [
+        {
+          "id": "hot",
+          "text": "Site chaud"
+        },
+        {
+          "id": "warm",
+          "text": "Site tiède"
+        },
+        {
+          "id": "cold",
+          "text": "Site froid"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "hot",
+        "l2": "warm",
+        "l3": "cold",
+        "l4": "hot"
+      }
+    },
+    "explanation": "Le type de site se reconnaît à ce qu'il faut faire avant de reprendre. Site chaud : matériel prêt et données à jour, rien à installer ni à restaurer, reprise en minutes ; la copie permanente chez un fournisseur de cloud est un site chaud virtuel. Site tiède : le matériel est en place, mais il faut restaurer les données et vérifier les configurations, ce qui prend des heures ou des jours. Site froid : seuls les locaux et les servitudes existent ; il faut livrer et installer le matériel, d'où des semaines de délai, en échange du coût le plus bas.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-dr-test-types-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le responsable du plan de continuité d'un groupe de presse prépare le calendrier annuel des tests. Associez chaque activité au type de test qu'elle représente.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Les responsables déroulent en salle un scénario d'incendie, sans toucher à aucun système"
+        },
+        {
+          "id": "l2",
+          "text": "Le trafic de production est volontairement transféré vers le site secondaire, qui doit tenir la charge"
+        },
+        {
+          "id": "l3",
+          "text": "Une fausse campagne d'hameçonnage est envoyée aux salariés pour mesurer leurs réactions"
+        },
+        {
+          "id": "l4",
+          "text": "Pendant un mois, le site de secours rejoue les opérations du jour en même temps que la production, et ses résultats sont rapprochés"
+        }
+      ],
+      "right": [
+        {
+          "id": "tab",
+          "text": "Exercice sur table"
+        },
+        {
+          "id": "fo",
+          "text": "Basculement"
+        },
+        {
+          "id": "sim",
+          "text": "Simulation"
+        },
+        {
+          "id": "par",
+          "text": "Traitement parallèle"
+        },
+        {
+          "id": "pen",
+          "text": "Test d'intrusion"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "tab",
+        "l2": "fo",
+        "l3": "sim",
+        "l4": "par"
+      }
+    },
+    "explanation": "L'exercice sur table reste théorique : les participants discutent leurs actions face à un scénario. La simulation reproduit un événement de façon contrôlée, par exemple une fausse attaque d'hameçonnage, pour observer les réactions réelles sans danger. Le traitement parallèle fait tourner les systèmes de secours sur des données réelles pendant que la production continue, sans risque pour le service. Le basculement transfère vraiment la production vers le site de secours : c'est le test le plus probant et le plus risqué.",
+    "distractorNotes": {
+      "pen": "Un test d'intrusion évalue la sécurité par des attaques autorisées ; aucune des activités décrites ne vise à exploiter des vulnérabilités."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-backup-methods-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'administrateur de sauvegarde d'une école d'ingénieurs rédige la fiche des méthodes disponibles dans son logiciel. Associez chaque description à la méthode correspondante.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Copie toutes les données sélectionnées, qu'elles aient changé ou non"
+        },
+        {
+          "id": "l2",
+          "text": "Copie ce qui a changé depuis la dernière sauvegarde, quel qu'en soit le type ; la restauration exige la complète et toutes les suivantes"
+        },
+        {
+          "id": "l3",
+          "text": "Copie ce qui a changé depuis la dernière complète ; son volume grossit chaque jour jusqu'à la complète suivante"
+        },
+        {
+          "id": "l4",
+          "text": "Fige en quelques secondes l'état d'une machine virtuelle ou d'un volume, sur le même stockage"
+        },
+        {
+          "id": "l5",
+          "text": "Enregistre chaque écriture dans un journal pour rejouer les opérations jusqu'à un instant précis"
+        }
+      ],
+      "right": [
+        {
+          "id": "full",
+          "text": "Sauvegarde complète"
+        },
+        {
+          "id": "inc",
+          "text": "Sauvegarde incrémentielle"
+        },
+        {
+          "id": "diff",
+          "text": "Sauvegarde différentielle"
+        },
+        {
+          "id": "snap",
+          "text": "Instantané"
+        },
+        {
+          "id": "jrnl",
+          "text": "Journalisation"
+        },
+        {
+          "id": "repl",
+          "text": "Réplication"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "full",
+        "l2": "inc",
+        "l3": "diff",
+        "l4": "snap",
+        "l5": "jrnl"
+      }
+    },
+    "explanation": "La complète copie tout : restauration simple, mais durée et volume maximaux. L'incrémentielle ne copie que les changements depuis la dernière sauvegarde de tout type : rapide à faire, mais il faut restaurer la complète puis chaque incrémentielle dans l'ordre. La différentielle copie les changements depuis la dernière complète : plus lourde chaque jour, mais deux jeux suffisent à la restauration. L'instantané fige un état à un instant donné sur le même stockage. La journalisation trace chaque écriture pour revenir à un point précis dans le temps.",
+    "distractorNotes": {
+      "repl": "La réplication recopie en continu les données vers un autre système ou un autre site ; aucune description ne correspond à cette copie permanente vers une seconde destination."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-recovery-metrics-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "La BIA d'une boutique en ligne et les fiches de ses fournisseurs contiennent les indicateurs suivants. Associez chaque phrase à l'indicateur qu'elle exprime.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Les commandes enregistrées peuvent être perdues sur au plus 15 minutes"
+        },
+        {
+          "id": "l2",
+          "text": "Le site marchand doit être de nouveau accessible au plus tard 4 heures après l'incident"
+        },
+        {
+          "id": "l3",
+          "text": "En moyenne, un technicien remet un contrôleur défaillant en service en 3 heures"
+        },
+        {
+          "id": "l4",
+          "text": "En moyenne, un contrôleur fonctionne 40 000 heures entre deux pannes"
+        }
+      ],
+      "right": [
+        {
+          "id": "rpo",
+          "text": "RPO"
+        },
+        {
+          "id": "rto",
+          "text": "RTO"
+        },
+        {
+          "id": "mttr",
+          "text": "MTTR"
+        },
+        {
+          "id": "mtbf",
+          "text": "MTBF"
+        },
+        {
+          "id": "aro",
+          "text": "ARO"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "rpo",
+        "l2": "rto",
+        "l3": "mttr",
+        "l4": "mtbf"
+      }
+    },
+    "explanation": "Le RPO (Recovery Point Objective) est la quantité maximale de données, exprimée en temps, que l'organisation accepte de perdre : il fixe la fréquence des sauvegardes ou de la réplication. Le RTO (Recovery Time Objective) est la durée maximale d'interruption tolérée avant le rétablissement du service. Le MTTR (Mean Time To Repair) mesure le temps moyen de réparation d'un composant ; le MTBF (Mean Time Between Failures), le temps moyen de fonctionnement entre deux pannes, indicateur de fiabilité.",
+    "distractorNotes": {
+      "aro": "L'ARO (Annualized Rate of Occurrence) est le nombre de fois par an qu'un risque est attendu ; il sert au calcul de l'ALE, pas à exprimer une perte de données ou un temps de réparation."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-incremental-restore-order-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une agence immobilière fait une sauvegarde complète le dimanche soir et une sauvegarde incrémentielle chaque soir du lundi au samedi ; sa base de données tient aussi un journal des transactions copié en continu sur un autre serveur. Le jeudi à 11 h, le serveur est perdu. Ordonnez les étapes de restauration, de la première à la dernière, pour revenir au plus près de 11 h.",
+      "items": [
+        {
+          "id": "wed",
+          "text": "Restaurer l'incrémentielle de mercredi soir"
+        },
+        {
+          "id": "full",
+          "text": "Restaurer la sauvegarde complète de dimanche soir"
+        },
+        {
+          "id": "log",
+          "text": "Rejouer le journal des transactions jusqu'à jeudi 10 h 59"
+        },
+        {
+          "id": "mon",
+          "text": "Restaurer l'incrémentielle de lundi soir"
+        },
+        {
+          "id": "tue",
+          "text": "Restaurer l'incrémentielle de mardi soir"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "full",
+        "mon",
+        "tue",
+        "wed",
+        "log"
+      ]
+    },
+    "explanation": "Chaque incrémentielle ne contient que les changements depuis la sauvegarde précédente, quel qu'en soit le type : elles forment une chaîne qui doit être restaurée à partir de la complète, puis dans l'ordre chronologique, sans en sauter aucune. Une fois l'état de mercredi soir reconstitué, le journal des transactions, conservé sur un autre serveur, permet de rejouer les opérations de jeudi matin jusqu'à 10 h 59. Rejouer le journal plus tôt serait impossible : il s'applique sur l'état de la base au moment où il commence.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-power-failure-sequence-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Le centre de données d'un hébergeur dispose d'onduleurs, d'un générateur et d'un commutateur de transfert automatique (ATS). Ordonnez les événements d'une coupure du réseau électrique, du premier au dernier, dans un fonctionnement normal de ces équipements.",
+      "items": [
+        {
+          "id": "gen",
+          "text": "Le générateur démarre et atteint sa tension et sa fréquence nominales"
+        },
+        {
+          "id": "cut",
+          "text": "Le réseau électrique public est coupé"
+        },
+        {
+          "id": "back",
+          "text": "Le secteur revenu et stable, l'ATS rebascule la charge sur le réseau public"
+        },
+        {
+          "id": "ups",
+          "text": "Les onduleurs alimentent immédiatement les serveurs sur batteries"
+        },
+        {
+          "id": "ats",
+          "text": "L'ATS transfère la charge du réseau public vers le générateur"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "cut",
+        "ups",
+        "gen",
+        "ats",
+        "back"
+      ]
+    },
+    "explanation": "Dès la coupure, les onduleurs prennent le relais sans interruption : c'est leur rôle de pont. Le générateur reçoit l'ordre de démarrer et doit atteindre une tension et une fréquence stables, ce qui prend quelques secondes à quelques dizaines de secondes. L'ATS ne transfère la charge qu'une fois cette source stable, et les onduleurs se rechargent alors sur le générateur. Au retour du secteur, après une temporisation de stabilité, l'ATS rebascule sur le réseau public et le générateur s'arrête après refroidissement.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-53 Rev. 5 (famille PE)"
+  },
+  {
+    "slug": "security-plus-3.4-contingency-planning-process-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une communauté de communes construit son plan de continuité en suivant le processus de planification de NIST SP 800-34 Rev. 1. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "bia",
+          "text": "Conduire l'analyse d'impact sur l'activité (BIA)"
+        },
+        {
+          "id": "plan",
+          "text": "Rédiger le plan de secours du système d'information"
+        },
+        {
+          "id": "policy",
+          "text": "Établir la politique de planification de la continuité"
+        },
+        {
+          "id": "test",
+          "text": "Tester le plan, former le personnel et organiser des exercices"
+        },
+        {
+          "id": "strat",
+          "text": "Définir les stratégies de reprise (sites, sauvegardes, priorités)"
+        },
+        {
+          "id": "prev",
+          "text": "Identifier les contrôles préventifs"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "policy",
+        "bia",
+        "prev",
+        "strat",
+        "plan",
+        "test"
+      ]
+    },
+    "explanation": "NIST SP 800-34 Rev. 1 décrit sept étapes : établir la politique, qui donne le mandat et les rôles ; conduire la BIA, qui fixe les systèmes critiques, les RTO et les RPO ; identifier les contrôles préventifs, qui réduisent la probabilité ou l'impact d'une interruption (onduleurs, générateurs, redondance) ; définir les stratégies de reprise adaptées aux objectifs de la BIA ; rédiger le plan ; le tester, former et exercer ; enfin le maintenir à jour. Chaque étape s'appuie sur les résultats de la précédente.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-rpo-backup-schedule-loss-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Le serveur de commandes d'une PME tombe en panne le mardi à 19 h 40 et ses disques sont perdus. Les sauvegardes durent quelques secondes et se sont toutes terminées avec succès. Combien de minutes de données la PME a-t-elle perdues, au mieux, en restaurant la dernière sauvegarde ?",
+      "exhibit": "Politique de sauvegarde - srv-cmd01.example.com\nRPO fixé par la BIA : 4 heures\nPlanification      : tous les jours à 02:00, 08:00, 14:00 et 20:00\nType               : complète à 02:00, incrémentielle aux autres heures\nStockage           : NAS de sauvegarde, réplication hors site à 03:00",
+      "fields": [
+        {
+          "id": "loss",
+          "label": "Perte de données (en minutes, nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "loss": {
+          "accepted": [
+            "340"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La dernière sauvegarde réussie avant la panne de 19 h 40 est celle de 14 h 00 ; la suivante, prévue à 20 h 00, n'a pas eu lieu. Les données écrites entre 14 h 00 et 19 h 40 sont perdues : 5 heures 40 minutes, soit 5 × 60 + 40 = 340 minutes. Avec un intervalle de six heures entre sauvegardes, la perte peut atteindre près de six heures : le RPO de 4 heures fixé par la BIA n'est donc pas garanti. Il faudrait sauvegarder au moins toutes les quatre heures, ou recourir à la réplication ou à la journalisation.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-incremental-restore-count-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une étude notariale réalise une sauvegarde complète le dimanche à 23 h, puis une sauvegarde incrémentielle chaque soir à 23 h du lundi au vendredi. Le samedi à 9 h, le serveur est détruit. Combien de jeux de sauvegarde faut-il restaurer, au total, pour revenir à l'état du vendredi soir ?",
+      "fields": [
+        {
+          "id": "sets",
+          "label": "Nombre de jeux de sauvegarde (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "sets": {
+          "accepted": [
+            "6"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Une incrémentielle ne contient que les modifications depuis la sauvegarde précédente, quel qu'en soit le type. Pour revenir au vendredi soir, il faut donc restaurer la complète de dimanche, puis les cinq incrémentielles de lundi, mardi, mercredi, jeudi et vendredi, dans l'ordre : 1 + 5 = 6 jeux. Avec des différentielles, deux jeux auraient suffi (la complète et la différentielle de vendredi). L'incrémentielle est plus rapide à réaliser et occupe moins d'espace, mais la restauration est plus longue et la perte d'un seul jeu brise la chaîne.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-3.4-mttr-average-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur un trimestre, le pare-feu principal d'une clinique a connu quatre pannes, réparées respectivement en 2, 3, 5 et 6 heures. Quel est son MTTR sur cette période ?",
+      "fields": [
+        {
+          "id": "mttr",
+          "label": "MTTR (en heures, nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "mttr": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le MTTR (Mean Time To Repair) est la durée moyenne nécessaire pour remettre un composant en service après une panne : temps total de réparation divisé par le nombre de pannes. Ici, (2 + 3 + 5 + 6) / 4 = 16 / 4 = 4 heures. Cet indicateur se compare au RTO : si la réparation moyenne d'un équipement unique dépasse la durée d'interruption tolérée, il faut prévoir de la redondance (paire de pare-feu en haute disponibilité) plutôt que compter sur la réparation.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4"
+  },
+  {
+    "slug": "security-plus-3.4-mtbf-mttr-annual-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur une année de 8 760 heures, un serveur de messagerie a subi quatre pannes, dont les réparations ont duré 6, 10, 9 et 15 heures. Le MTBF est calculé sur le seul temps de fonctionnement effectif (temps total moins temps de réparation), divisé par le nombre de pannes. Calculez le MTTR et le MTBF.",
+      "fields": [
+        {
+          "id": "mttr",
+          "label": "MTTR (en heures, nombre entier)"
+        },
+        {
+          "id": "mtbf",
+          "label": "MTBF (en heures, nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "mttr": {
+          "accepted": [
+            "10"
+          ],
+          "normalize": "int"
+        },
+        "mtbf": {
+          "accepted": [
+            "2180"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Temps total de réparation : 6 + 10 + 9 + 15 = 40 heures. MTTR = 40 / 4 = 10 heures. Temps de fonctionnement effectif : 8 760 − 40 = 8 720 heures. MTBF = 8 720 / 4 = 2 180 heures. La disponibilité observée vaut MTBF / (MTBF + MTTR) = 2 180 / 2 190 ≈ 99,54 %, soit 8 720 heures de service sur 8 760. Le MTBF mesure la fiabilité, le MTTR la rapidité de remise en service : améliorer l'un ou l'autre augmente la disponibilité.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.4"
+  }
+]

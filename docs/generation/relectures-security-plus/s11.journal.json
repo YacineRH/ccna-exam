@@ -1,0 +1,196 @@
+[
+ {
+  "slug": "security-plus-2.4-rfid-badge-clone-night-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-rfid-clone-mitigation-crypto-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-door-forced-brute-force-001",
+  "verdict": "corrigée",
+  "gravite": "forme",
+  "problemes": [
+   "Indice : la seule bonne option (d) reprend « attaque physique » de l'énoncé (« Quelle attaque physique… »)."
+  ],
+  "correction": "Option d reformulée : « La force brute sur la porte et sa serrure »."
+ },
+ {
+  "slug": "security-plus-2.4-sqli-root-cause-parameterized-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-api-replay-nonce-hmac-001",
+  "verdict": "rejetée",
+  "gravite": null,
+  "problemes": [
+   "Doublon avec security-plus-2.4-replay-iot-static-token-001 du lot s10 : même gabarit (rejeu d'un message authentifié), même bonne réponse (nonce à usage unique + horodatage vérifiés) et mêmes distracteurs (algorithme plus fort, clé plus longue, transformation du message)."
+  ],
+  "correction": "Retirée ; garder la version du lot s10."
+ },
+ {
+  "slug": "security-plus-2.4-linux-uid0-backdoor-privesc-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-csrf-hidden-image-transfer-001",
+  "verdict": "corrigée",
+  "gravite": "forme",
+  "problemes": [
+   "Explication imprécise : un navigateur récent n'envoie pas, par défaut (SameSite=Lax), le cookie dans une sous-requête intersite comme une image ; l'envoi « automatique » suppose un cookie sans attribut SameSite restrictif."
+  ],
+  "correction": "Explication précisée : le cookie est joint faute d'attribut SameSite restrictif."
+ },
+ {
+  "slug": "security-plus-2.4-ssrf-metadata-allowlist-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-ping-tool-command-injection-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-impossible-travel-contain-first-001",
+  "verdict": "corrigée",
+  "gravite": "forme",
+  "problemes": [
+   "Difficulté surévaluée : les trois distracteurs (retour d'expérience, autoriser le pays, attendre) s'écartent d'emblée ; c'est une application, pas une analyse en plusieurs étapes.",
+   "Distance Lyon-Singapour d'environ 10 600 km (recalculée), « environ 10 000 km » approximatif."
+  ],
+  "correction": "Difficulté hard → medium ; « plus de 10 000 km »."
+ },
+ {
+  "slug": "security-plus-2.4-hr-backup-out-of-cycle-log-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-proxy-denied-beacon-host-001",
+  "verdict": "rejetée",
+  "gravite": null,
+  "problemes": [
+   "Doublon avec security-plus-2.4-rat-beaconing-proxy-001 du lot s10 : même poste 10.20.4.37, même journal de proxy, mêmes requêtes toutes les cinq minutes la nuit, même conclusion (logiciel malveillant qui balise vers son serveur de commande). Le seul apport (requêtes bloquées) est déjà couvert par l'item « contenu bloqué » de security-plus-2.4-indicators-soc-matching-001."
+  ],
+  "correction": "Retirée ; garder la version du lot s10."
+ },
+ {
+  "slug": "security-plus-2.4-darkweb-sale-published-001",
+  "verdict": "corrigée",
+  "gravite": "forme",
+  "problemes": [
+   "Indice : la seule bonne option « Une compromission publiée » reprend « publié » de l'énoncé."
+  ],
+  "correction": "Énoncé : « un message mis en ligne sur un forum cybercriminel »."
+ },
+ {
+  "slug": "security-plus-2.4-ssrf-localhost-admin-term-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-path-traversal-resolved-file-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-physical-attacks-matching-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-app-attack-payloads-matching-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-indicators-soc-matching-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-privesc-server-volatility-order-001",
+  "verdict": "rejetée",
+  "gravite": null,
+  "problemes": [
+   "Doublon avec security-plus-2.4-rootkit-volatility-order-001 du lot s10 : même ordre de volatilité RFC 3227 sur les cinq mêmes éléments (registres et cache, mémoire vive, fichiers temporaires, disque, archives), même réponse ; seul le prétexte (rootkit / élévation de privilèges) change."
+  ],
+  "correction": "Retirée ; garder la version du lot s10."
+ },
+ {
+  "slug": "security-plus-2.4-ssrf-incident-response-order-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-stack-overflow-os-protections-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-path-traversal-fix-measures-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-security-log-cleared-gap-001",
+  "verdict": "corrigée",
+  "gravite": "fond",
+  "problemes": [
+   "Exhibit incohérent : après l'effacement du journal Sécurité à 02:03 (1102), les événements 4624/4672 de 01:58 ne figurent plus dans le journal local du serveur ; ils ne peuvent provenir que d'une copie déjà transmise au SIEM."
+  ],
+  "correction": "Énoncé : « Ces événements du journal Sécurité d'un serveur de fichiers ont été collectés par le SIEM. »"
+ },
+ {
+  "slug": "security-plus-2.4-environmental-attack-resilience-001",
+  "verdict": "ok",
+  "gravite": null,
+  "problemes": [],
+  "correction": ""
+ },
+ {
+  "slug": "security-plus-2.4-privesc-hunt-indicators-001",
+  "verdict": "corrigée",
+  "gravite": "forme",
+  "problemes": [
+   "Option c contradictoire : « un processus du compte de service […] qui tourne sous SYSTEM »."
+  ],
+  "correction": "Option c : « Un processus lancé par l'application web, d'ordinaire sous un compte de service, qui tourne sous SYSTEM »."
+ }
+]

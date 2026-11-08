@@ -15,6 +15,18 @@ export const QUESTION_TYPES = [
 ] as const;
 export type QuestionType = (typeof QUESTION_TYPES)[number];
 
+/**
+ * Modules de l'application qu'une certification propose. Le navigateur masque les autres
+ * (navigation, tableau de bord, lancement) et l'API répond 404 sur leurs routes.
+ * - `exam` : examens blancs (tirés ou figés) ; `practice` : entraînement libre ;
+ * - `flashcards` : révision espacée ; `subnet` : entraîneur de subnetting IPv4 ;
+ * - `cli` : labs dans le simulateur de terminal ; `challenges` : challenges chronométrés.
+ */
+export const MODULES = ['exam', 'practice', 'flashcards', 'subnet', 'cli', 'challenges'] as const;
+export type Module = (typeof MODULES)[number];
+/** Modules par défaut d'une certification déclarée sans liste : ceux qui ne demandent que des questions. */
+export const DEFAULT_MODULES: readonly Module[] = ['exam', 'practice', 'flashcards'];
+
 export const DIFFICULTIES = ['easy', 'medium', 'hard'] as const;
 export type Difficulty = (typeof DIFFICULTIES)[number];
 
@@ -35,6 +47,8 @@ export const certificationSchema = z
   .object({
     code: z.string().regex(/^[a-z0-9-]+$/, 'code en minuscules, chiffres et tirets'),
     name: z.string().min(1),
+    /** Nom court affiché dans le sélecteur (« CCNA », « Security+ ») ; par défaut le code en capitales. */
+    shortName: z.string().min(1).max(24).optional(),
     vendor: z.string().min(1),
     examCode: z.string().min(1),
     domains: z.array(domainSchema).min(1),
@@ -49,6 +63,15 @@ export const certificationSchema = z
       allowBackNavigation: z.boolean(),
     }),
     allowedQuestionTypes: z.array(z.enum(QUESTION_TYPES)).min(1),
+    modules: z
+      .array(z.enum(MODULES))
+      .min(1)
+      .default([...DEFAULT_MODULES]),
+    /**
+     * Sous-thèmes qu'un module d'entraînement exerce directement : la carte « À revoir » y propose un lien
+     * vers le module (le subnetting pour l'adressage IPv4 du CCNA). Les labs CLI, eux, déclarent leur sous-thème.
+     */
+    moduleSubtopics: z.record(z.enum(MODULES), z.array(z.string().min(1))).optional(),
   })
   .superRefine((cert, ctx) => {
     const total = cert.domains.reduce((s, d) => s + d.weight, 0);
@@ -66,6 +89,13 @@ export const certificationSchema = z
         subtopicCodes.add(s.code);
       }
     }
+    for (const [module, codes] of Object.entries(cert.moduleSubtopics ?? {})) {
+      if (!cert.modules.includes(module as Module)) ctx.addIssue({ code: 'custom', message: `moduleSubtopics : module ${module} absent de modules` });
+      for (const c of codes ?? []) if (!subtopicCodes.has(c)) ctx.addIssue({ code: 'custom', message: `moduleSubtopics : sous-thème inconnu ${c}` });
+    }
+    if (new Set(cert.modules).size !== cert.modules.length) ctx.addIssue({ code: 'custom', message: 'Module en double' });
+    if (cert.modules.includes('challenges') && !cert.modules.includes('cli'))
+      ctx.addIssue({ code: 'custom', message: 'Le module challenges demande le module cli (même simulateur)' });
     const { min, max, passing } = cert.scoring;
     if (!(min < passing && passing <= max)) {
       ctx.addIssue({ code: 'custom', message: 'Barème incohérent : il faut min < passing <= max' });

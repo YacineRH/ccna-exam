@@ -1,0 +1,169 @@
+[
+  {
+    "slug": "security-plus-3.1-air-gap-removable-media-vector-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-sdn-automated-quarantine-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-rtos-airbag-deadline-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-embedded-pump-unpatchable-segment-001",
+    "verdict": "rejetée",
+    "gravite": null,
+    "problemes": [
+      "Doublon de la banque : même gabarit (équipement non corrigeable, fin de support, remplacement dans deux ans) et même réponse (segment dédié filtré) que security-plus-2.5-legacy-ics-isolation, security-plus-2.5-iot-camera-segmentation et security-plus-1.1-legacy-plc-segmentation-001."
+    ],
+    "correction": "Question retirée du lot relu."
+  },
+  {
+    "slug": "security-plus-3.1-ics-modbus-write-office-host-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-iot-camera-botnet-default-creds-001",
+    "verdict": "rejetée",
+    "gravite": null,
+    "problemes": [
+      "Doublon de la banque : caméras IP compromises par les identifiants d'usine, mesure attendue « remplacer les identifiants d'usine », déjà couverte par security-plus-2.5-iot-camera-segmentation (option d), security-plus-2.2-camera-telnet-identifiants-usine-001 et security-plus-2.3-cameras-identifiants-defaut-001.",
+      "Distracteurs très faibles (débit, durée de conservation)."
+    ],
+    "correction": "Question retirée du lot relu."
+  },
+  {
+    "slug": "security-plus-3.1-embedded-firmware-signature-boot-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-ha-active-active-capacity-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-air-gap-data-diode-historian-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-air-gap-cellular-modem-bypass-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Indice de forme : trois options sur quatre commencent par « Garder le modem », la bonne réponse est la seule à le retirer, et elle est nettement plus longue."
+    ],
+    "correction": "Option a remplacée par un distracteur « Retirer le modem et donner un accès VPN IPsec » (faux : l'isolation reste rompue), note a réécrite ; option b raccourcie."
+  },
+  {
+    "slug": "security-plus-3.1-ics-passive-asset-discovery-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "La note b affirmait un fait absent de l'énoncé (« la production n'est pas arrêtée la nuit ») ; reformulée à partir de l'exhibit."
+    ],
+    "correction": "Note b réécrite en s'appuyant sur l'exhibit (automate en RUN avant 02:14)."
+  },
+  {
+    "slug": "security-plus-3.1-sdn-controller-api-hardening-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-ics-patching-constraints-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-iot-procurement-requirements-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-ha-spof-topology-review-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-sdn-planes-functions-matching-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-ics-components-roles-matching-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-isolation-physical-vs-logical-matching-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "La catégorie « Isolation physique (air gap) » ne convient pas sûrement à l'élément l4 : un laboratoire non relié à la bureautique peut rester relié à un autre réseau (Internet), ce qui est une séparation physique mais pas un air gap."
+    ],
+    "correction": "Catégorie renommée « Séparation physique (matériel et câblage distincts) » ; explication adaptée (l'air gap en est la forme extrême)."
+  },
+  {
+    "slug": "security-plus-3.1-ics-purdue-model-levels-order-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-sdn-reactive-flow-setup-order-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-3.1-ha-sla-three-nines-downtime-001",
+    "verdict": "rejetée",
+    "gravite": null,
+    "problemes": [
+      "Doublon exact de la banque : security-plus-1.2-cia-sla-downtime-hours-001 (99,9 % sur 365 jours = 8,76 h), même calcul et même réponse."
+    ],
+    "correction": "Question retirée du lot relu."
+  },
+  {
+    "slug": "security-plus-3.1-ics-modbus-tcp-port-rule-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  }
+]

@@ -108,11 +108,14 @@ L'import est **idempotent** :
 - **examens** : rangés par numéro ; un examen absent est créé, un examen identique (mêmes questions, même ordre) n'est pas touché. Un second import ne crée donc ni doublon ni nouvel examen ;
 - **examens déjà passés** : un examen que quelqu'un a commencé **ne change jamais de contenu**. Si le fichier de la série a changé depuis (série régénérée après un ajout de questions), l'examen passé garde ses questions et son ordre, et le journal le signale : `ccna : 100 examens blancs (0 créés, 3 mis à jour, 95 inchangés, 2 déjà passés gardés tels quels : n° 12, 42)`. Seuls les examens jamais commencés suivent le nouveau fichier. Le test `apps/api/test/exams.test.ts` le vérifie.
 
-Le premier démarrage avec la banque complète importe environ 1 500 questions et 10 200 places d'examen en quelques secondes ; les suivants ne font que comparer. Pour vérifier après un déploiement :
+**Deux certifications, un import.** `seedContent` parcourt toutes les certifications de `packages/content/data/certifications/` : CCNA (`ccna`) et Security+ (`security-plus`), chacune avec sa banque, sa série et, pour le CCNA, ses labs. Chaque certification est importée indépendamment (ses questions, sa série), et la règle ci-dessus s'applique à chacune : **les examens déjà passés, CCNA comme Security+, ne changent jamais**, et un second import (ou dix) ne crée ni question ni examen de plus. Le test `apps/api/test/exams.test.ts` passe l'examen n° 42 du CCNA et le n° 7 de la Security+, réimporte deux fois et compare avant/après (questions et ordre des examens, nombres de lignes par certification) ; `apps/api/test/certifications.test.ts` vérifie l'isolation (statistiques, progression, numéros d'examen). Chaque import date la certification (`certifications.last_imported_at`) et garde son résumé (`last_import`), que l'écran `/admin` affiche. La migration `0003_last_import.sql` ajoute ces deux colonnes : elle s'applique toute seule au démarrage, sans toucher aux données existantes.
+
+Le premier démarrage avec les deux banques importe environ 2 400 questions et 12 900 places d'examen en quelques secondes ; les suivants ne font que comparer. Pour vérifier après un déploiement :
 
 ```sh
 docker compose logs api | grep -E "questions|examens blancs"
-curl -s https://ccna.yratech.fr/api/v1/certifications/ccna | jq '.bank.questions, .bank.exams'   # 1523, 100
+curl -s https://ccna.yratech.fr/api/v1/certifications/ccna | jq '.bank.questions, .bank.exams'            # 1523, 100
+curl -s https://ccna.yratech.fr/api/v1/certifications/security-plus | jq '.bank.questions, .bank.exams'     # voir le rapport de série du bloc 7, 30
 ```
 
 Une question corrigée (faute, explication) est mise à jour en place : les post-mortems la montrent corrigée, sans changer la composition d'aucun examen. Une question retirée du dépôt reste en base pour l'historique.

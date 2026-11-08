@@ -1,0 +1,189 @@
+[
+  {
+    "slug": "security-plus-2.3-xss-stockee-forum-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-sqli-journal-correction-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-xss-cookie-httponly-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-smbv1-ms17-010-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-firmware-uefi-persistance-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Distracteur c (longueur de clé BitLocker) sans rapport avec le scénario, donc trop facile à écarter.",
+      "L'explication présente l'activation de Secure Boot comme un moyen de supprimer l'implant, alors qu'elle ne fait que réduire le risque une fois le micrologiciel reflashé."
+    ],
+    "correction": "c remplacé par « Un bootkit logé dans le secteur d'amorçage du disque », avec une note (le disque a été remplacé). Explication : reflasher ou remplacer la carte mère, puis Secure Boot et la protection en écriture du micrologiciel pour réduire le risque."
+  },
+  {
+    "slug": "security-plus-2.3-commutateurs-fin-support-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-md5-sans-sel-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-tls-retrogradation-001",
+    "verdict": "corrigée",
+    "gravite": "fond",
+    "problemes": [
+      "L'explication dit que la protection anti-rétrogradation de TLS 1.3 « ne sert à rien » si le serveur propose d'anciennes versions, ce qui est faux : la sentinelle de ServerHello.random (RFC 8446) sert justement dans ce cas, mais seulement pour les clients qui la vérifient."
+    ],
+    "correction": "Phrase réécrite : le mécanisme ne protège que les clients qui le vérifient, et les clients anciens restent exposés tant que le serveur propose les protocoles obsolètes."
+  },
+  {
+    "slug": "security-plus-2.3-cameras-identifiants-defaut-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-iphone-jailbreak-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-navigateur-zero-day-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-vpn-zero-day-contournement-001",
+    "verdict": "corrigée",
+    "gravite": "fond",
+    "problemes": [
+      "Note d : « aucune signature n'existe d'ailleurs pour une zero-day » est trop général, car des signatures peuvent paraître après la divulgation."
+    ],
+    "correction": "Note d réécrite : mettre à jour les signatures des postes ne ferme pas le vecteur d'attaque sur la passerelle."
+  },
+  {
+    "slug": "security-plus-2.3-sqli-mesures-prevention-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-mdm-sideloading-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-audit-web-mauvaise-config-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-scan-tls-faiblesses-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-irm-windows7-compensatoires-001",
+    "verdict": "rejetée",
+    "gravite": "fond",
+    "problemes": [
+      "Doublon de security-plus-1.1-medical-device-compensating-001 dans la banque : hôpital, console d'imagerie sous un Windows sans correctifs, fabricant qui interdit la mise à jour, contrôles compensatoires, même bonne réponse (segmentation en VLAN filtré).",
+      "De plus, les distracteurs sont réfutés par l'énoncé lui-même (Windows Update, Windows 11 interdit) ou absurdes (RDP ouvert sur Internet) : ce n'est pas une question difficile."
+    ],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-associer-scenario-type-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-associer-indicateur-web-001",
+    "verdict": "corrigée",
+    "gravite": "fond",
+    "problemes": [
+      "p3 : une apostrophe seule n'ouvre pas de session ; il faut une saisie qui modifie la requête et commence par une apostrophe.",
+      "Dans l'explication, « Les deux se corrigent… » est ambigu, car la phrase suit la description des XSS."
+    ],
+    "correction": "p3 : « Une saisie commençant par une apostrophe… » ; explication adaptée et « Les deux injections SQL se corrigent par des requêtes paramétrées »."
+  },
+  {
+    "slug": "security-plus-2.3-associer-vuln-correction-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-cycle-gestion-vuln-001",
+    "verdict": "rejetée",
+    "gravite": "fond",
+    "problemes": [
+      "Doublon de security-plus-2.3-vuln-mgmt-cycle-vpn-001 (lot s08, même sous-thème) : mêmes cinq étapes du cycle SY0-701 (scan authentifié, priorisation CVSS, correctif, nouveau scan, compte rendu à la direction) avec un libellé presque identique.",
+      "Sujet de l'objectif 4.3, hors des angles du lot s09."
+    ],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-zero-day-cms-nist-001",
+    "verdict": "rejetée",
+    "gravite": "fond",
+    "problemes": [
+      "Même gabarit que security-plus-1.1-ransomware-controls-ir-order-001 (banque) : ordonner les phases de NIST SP 800-61 Rev. 2, avec la même étape de préparation (« Déployer l'EDR »). Le lot s08 contient aussi security-plus-2.3-malicious-update-ir-001, du même gabarit.",
+      "Elle évalue la réponse aux incidents (4.8) plutôt que les types de vulnérabilités (2.3)."
+    ],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-terme-sideloading-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-cvss-sqli-score-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  }
+]

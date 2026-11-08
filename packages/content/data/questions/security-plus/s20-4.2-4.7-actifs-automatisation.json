@@ -1,0 +1,1741 @@
+[
+  {
+    "slug": "security-plus-4.2-shadow-nas-procurement-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'un audit, l'équipe sécurité d'une PME découvre un NAS acheté par le service marketing avec une carte bancaire de l'entreprise. L'appareil, absent de l'inventaire, n'a jamais été mis à jour et expose un partage sans mot de passe. Quel processus de gestion des actifs aurait LE MIEUX empêché cette situation ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'effacement des supports selon le NIST SP 800-88 avant toute réaffectation"
+        },
+        {
+          "id": "b",
+          "text": "Un processus d'acquisition centralisé qui impose une validation sécurité avant tout achat"
+        },
+        {
+          "id": "c",
+          "text": "La remise d'un certificat de destruction pour chaque appareil mis au rebut"
+        },
+        {
+          "id": "d",
+          "text": "Une politique de conservation qui fixe la durée de vie des données marketing"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le NAS est un cas de shadow IT : il a été acquis hors du circuit d'approvisionnement, donc sans revue de sécurité, sans enregistrement dans l'inventaire et sans responsable chargé de sa maintenance. Un processus d'acquisition centralisé fait passer chaque achat par une validation (exigences de sécurité, compatibilité avec la gestion des correctifs) et déclenche l'inscription de l'actif dans l'inventaire avec un propriétaire. C'est la première étape du cycle de vie d'un actif, celle qui conditionne toutes les suivantes.",
+    "distractorNotes": {
+      "a": "L'effacement des supports intervient au décommissionnement ou à la réaffectation ; il ne règle pas l'achat hors circuit d'un appareil en service.",
+      "c": "Le certificat de destruction prouve l'élimination d'un actif en fin de vie ; il n'empêche pas l'achat d'un appareil non déclaré.",
+      "d": "La durée de conservation des données ne dit rien sur la façon dont un équipement entre dans l'entreprise ni sur sa sécurisation."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2"
+  },
+  {
+    "slug": "security-plus-4.2-grey-market-switches-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pour réduire ses coûts, un acheteur propose de commander vingt commutateurs d'occasion sur une place de marché en ligne, auprès d'un vendeur inconnu, à 40 % du prix catalogue. Le RSSI s'inquiète de matériel contrefait ou d'un firmware modifié. Quelle exigence d'approvisionnement répond LE MIEUX à ce risque ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Exiger du vendeur une remise de 10 % supplémentaire pour couvrir d'éventuels retours"
+        },
+        {
+          "id": "b",
+          "text": "Coller une étiquette d'inventaire sur chaque commutateur dès sa réception"
+        },
+        {
+          "id": "c",
+          "text": "Acheter auprès de distributeurs agréés par le constructeur et vérifier l'intégrité du firmware"
+        },
+        {
+          "id": "d",
+          "text": "Chiffrer la configuration des commutateurs avant leur mise en production"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le risque décrit relève de la chaîne d'approvisionnement : un équipement acheté hors des canaux autorisés peut être contrefait, reconditionné sans contrôle ou livré avec un firmware altéré. La réponse se place à l'acquisition : passer par des distributeurs agréés, qui garantissent l'origine et le support constructeur, puis vérifier la signature ou l'empreinte du firmware avant la mise en service. Les autres mesures interviennent après l'achat et ne détectent pas un matériel compromis.",
+    "distractorNotes": {
+      "a": "Une remise ne change rien à l'origine du matériel : un commutateur contrefait reste contrefait, même moins cher.",
+      "b": "L'étiquetage sert au suivi de l'actif ; il n'apporte aucune garantie sur l'authenticité du matériel ou de son firmware.",
+      "d": "Chiffrer la configuration ne protège pas contre un firmware modifié, qui s'exécute sous la configuration et peut la lire."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2"
+  },
+  {
+    "slug": "security-plus-4.2-hr-data-owner-classification-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise lance un projet de classification de ses données. La base des dossiers du personnel est hébergée chez un prestataire et administrée par l'équipe base de données de la DSI. Qui doit décider du niveau de classification de cette base ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'administrateur de la base, qui en assure la garde au quotidien"
+        },
+        {
+          "id": "b",
+          "text": "Le prestataire d'hébergement, qui traite les données pour l'entreprise"
+        },
+        {
+          "id": "c",
+          "text": "Chaque salarié, puisque la base contient ses données personnelles"
+        },
+        {
+          "id": "d",
+          "text": "Le directeur des ressources humaines, propriétaire des données"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Dans la gestion des actifs, le propriétaire des données (data owner) est le responsable métier qui rend des comptes sur l'actif : c'est lui qui fixe sa classification et qui approuve les accès. Pour les dossiers du personnel, c'est la direction des ressources humaines. Le dépositaire (custodian), ici l'équipe base de données, applique les contrôles qui découlent de cette classification (sauvegardes, droits, chiffrement) sans la décider.",
+    "distractorNotes": {
+      "a": "L'administrateur est le dépositaire (custodian) : il met en œuvre les mesures exigées par la classification, mais il ne la décide pas.",
+      "b": "Le prestataire agit pour le compte de l'entreprise (sous-traitant) ; la classification reste une décision de l'organisation propriétaire des données.",
+      "c": "Les salariés sont les personnes concernées par les données ; ils ont des droits sur leurs données, mais ne classent pas les actifs de l'entreprise."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2"
+  },
+  {
+    "slug": "security-plus-4.2-server-without-owner-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un audit interne relève qu'un serveur de fichiers inscrit dans la CMDB, avec la classification « Interne », n'a reçu aucun correctif depuis onze mois. Chaque fenêtre de maintenance a été annulée faute de personne pour l'approuver, et le champ « Propriétaire » de sa fiche est vide. Quel élément de la gestion des actifs fait défaut ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un propriétaire désigné, qui rend des comptes sur l'actif"
+        },
+        {
+          "id": "b",
+          "text": "Une étiquette d'inventaire, qui identifie physiquement l'actif"
+        },
+        {
+          "id": "c",
+          "text": "Un niveau de classification, qui encadre l'usage de l'actif"
+        },
+        {
+          "id": "d",
+          "text": "Un certificat d'élimination, qui clôture la vie de l'actif"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'attribution d'un propriétaire à chaque actif crée la responsabilité (accountability) : c'est lui qui approuve les changements, accepte les fenêtres de maintenance et arbitre les risques. Sans propriétaire, personne ne prend de décision et l'actif dérive hors de toute gestion, comme ce serveur non corrigé depuis onze mois. L'actif est pourtant inventorié et classé : c'est bien le volet « attribution » qui manque.",
+    "distractorNotes": {
+      "b": "Le serveur est déjà identifié, puisqu'il figure dans la CMDB ; l'absence d'étiquette n'explique pas que personne n'approuve la maintenance.",
+      "c": "Le serveur a déjà une classification (« Interne ») ; le problème vient de l'absence de responsable, pas du niveau de sensibilité.",
+      "d": "Un certificat d'élimination ne concerne qu'un actif en fin de vie ; ce serveur est en production."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2"
+  },
+  {
+    "slug": "security-plus-4.2-roaming-laptops-agent-inventory-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les commerciaux d'une société travaillent presque toujours hors des locaux et ne se connectent au réseau interne que quelques heures par mois. Les scans de découverte lancés chaque semaine depuis le siège ne voient donc presque jamais leurs ordinateurs portables, dont l'inventaire est très incomplet. Quelle méthode de suivi des actifs convient LE MIEUX ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lancer le même scan de découverte chaque jour au lieu de chaque semaine"
+        },
+        {
+          "id": "b",
+          "text": "Organiser un inventaire physique annuel lors du séminaire commercial"
+        },
+        {
+          "id": "c",
+          "text": "Équiper les portables d'étiquettes RFID lues aux portes du siège"
+        },
+        {
+          "id": "d",
+          "text": "Déployer un agent d'inventaire qui remonte l'état du poste via Internet"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un scan réseau ne voit que les appareils présents et joignables au moment du passage : il est mal adapté à des postes nomades. Un agent installé sur le poste (outil d'inventaire, MDM ou EDR) remonte lui-même son état (matériel, logiciels, versions, dernière connexion) vers une console accessible depuis Internet, où que se trouve l'appareil. L'inventaire reste ainsi à jour en continu, ce qui est le but de la surveillance et du suivi des actifs.",
+    "distractorNotes": {
+      "a": "Scanner plus souvent depuis le siège ne change rien : les portables restent hors du réseau interne presque tout le temps.",
+      "b": "Un inventaire physique annuel donne une photo ponctuelle ; il ne suit ni les versions logicielles ni l'état du poste le reste de l'année.",
+      "c": "Des étiquettes RFID lues au siège ne détectent les portables que lorsqu'ils y passent, ce qui est justement rare, et ne disent rien des logiciels installés."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2"
+  },
+  {
+    "slug": "security-plus-4.2-cve-software-inventory-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une vulnérabilité critique est publiée dans une bibliothèque de journalisation très répandue. L'équipe d'exploitation met quatre jours à identifier les serveurs qui l'utilisent, en se connectant à chacun d'eux. Quelle pratique aurait permis de répondre en quelques minutes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un inventaire logiciel tenu à jour, avec les composants et leurs versions"
+        },
+        {
+          "id": "b",
+          "text": "Un plan de continuité testé chaque année sur les serveurs critiques"
+        },
+        {
+          "id": "c",
+          "text": "Une politique de mots de passe imposant le changement trimestriel"
+        },
+        {
+          "id": "d",
+          "text": "Une procédure de destruction certifiée des disques en fin de vie"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La surveillance des actifs ne se limite pas au matériel : un inventaire logiciel indique, pour chaque système, les produits et composants installés avec leur version (c'est le rôle d'un outil d'inventaire ou d'une nomenclature logicielle). Quand une vulnérabilité est publiée, une simple requête dans cet inventaire donne la liste des systèmes concernés et permet de prioriser les correctifs. Sans lui, l'équipe doit énumérer les serveurs un par un, comme ici.",
+    "distractorNotes": {
+      "b": "Le plan de continuité organise la reprise après un sinistre ; il ne dit pas quels serveurs embarquent une bibliothèque donnée.",
+      "c": "La rotation des mots de passe n'apporte aucune information sur les logiciels installés.",
+      "d": "La destruction des disques concerne les actifs en fin de vie, pas l'identification des systèmes en production."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2 ; CIS Critical Security Controls v8"
+  },
+  {
+    "slug": "security-plus-4.2-ssd-resale-purge-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise revend à un broker une centaine de portables équipés de SSD qui ont contenu des données clients. Les disques sortiront définitivement de son contrôle et doivent rester utilisables par l'acheteur. Selon le NIST SP 800-88 Rev. 1, quelle méthode convient ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un formatage rapide de la partition système, suivi d'une réinstallation de l'OS"
+        },
+        {
+          "id": "b",
+          "text": "Un dégaussage de chaque SSD avant la remise au broker"
+        },
+        {
+          "id": "c",
+          "text": "Un écrasement en une passe par un logiciel via l'interface standard"
+        },
+        {
+          "id": "d",
+          "text": "Un effacement cryptographique ou la commande sanitize du fabricant"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Selon le NIST SP 800-88 Rev. 1, des supports qui quittent le contrôle de l'organisation demandent une purge, c'est-à-dire un effacement qui rend la récupération irréalisable même en laboratoire. Sur un SSD, l'écrasement logiciel (méthode « clear ») n'atteint pas les zones de réserve gérées par le contrôleur : il faut utiliser les commandes du firmware (sanitize, block erase) ou l'effacement cryptographique, qui détruit la clé de chiffrement du disque. Ces méthodes laissent le disque fonctionnel, ce qu'exige la revente.",
+    "distractorNotes": {
+      "a": "Un formatage rapide ne fait que réécrire les structures du système de fichiers : les données restent lisibles avec un outil de récupération.",
+      "b": "Le dégaussage agit sur un support magnétique ; il est sans effet sur la mémoire flash d'un SSD.",
+      "c": "L'écrasement logiciel relève de « clear » : sur un SSD, il n'atteint pas les blocs réservés ou réalloués et ne suffit pas pour des supports qui quittent l'organisation."
+    },
+    "reference": "NIST SP 800-88 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.2-shredding-proof-certificate-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une collectivité confie la destruction de 300 disques durs à un prestataire spécialisé. Son RSSI doit pouvoir prouver, lors d'un futur audit, que chacun de ces disques a bien été détruit. Quel document doit-il exiger du prestataire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un accord de confidentialité signé par les techniciens du prestataire"
+        },
+        {
+          "id": "b",
+          "text": "Un certificat de destruction listant les numéros de série des disques"
+        },
+        {
+          "id": "c",
+          "text": "Un accord de niveau de service fixant le délai d'intervention"
+        },
+        {
+          "id": "d",
+          "text": "Un bon de commande mentionnant le nombre de disques remis"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La certification est la dernière étape de l'élimination : le prestataire remet un certificat de destruction qui identifie chaque support (numéro de série ou étiquette d'inventaire), la méthode employée, la date et le responsable. Ce document prouve que les données ne sont plus récupérables et permet de clore la fiche de chaque actif dans l'inventaire. Il est souvent exigé par les auditeurs et par les réglementations sur la protection des données.",
+    "distractorNotes": {
+      "a": "Un accord de confidentialité engage le prestataire à ne pas divulguer ce qu'il voit ; il ne prouve pas que les disques ont été détruits.",
+      "c": "Un accord de niveau de service fixe des engagements de délai ou de qualité ; il ne constitue pas une preuve de destruction.",
+      "d": "Le bon de commande prouve l'achat d'une prestation, pas sa réalisation, et ne relie pas chaque disque à sa destruction."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2 ; NIST SP 800-88 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.2-failed-ssd-warranty-return-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Six SSD d'une baie de stockage contenant des données de santé tombent en panne : le contrôleur ne les reconnaît plus. Le fabricant propose un échange sous garantie, à condition de lui renvoyer les disques défectueux. Quelle décision le responsable des actifs doit-il prendre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les dégausser avant de les renvoyer, pour neutraliser les données qu'ils contiennent"
+        },
+        {
+          "id": "b",
+          "text": "Les renvoyer en l'état, puisque leurs données ne sont plus accessibles"
+        },
+        {
+          "id": "c",
+          "text": "Les garder et les faire détruire physiquement, avec un certificat"
+        },
+        {
+          "id": "d",
+          "text": "Lancer sur chacun la commande sanitize du fabricant, puis les renvoyer"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un disque en panne n'est pas un disque vide : les puces flash restent lisibles par un laboratoire qui les dessoude. Comme le disque ne répond plus, aucune méthode logique du NIST SP 800-88 Rev. 1 (clear, ou purge par commande firmware) n'est applicable, et le dégaussage n'a pas d'effet sur la flash. Il ne reste que la catégorie destroy (broyage ou désintégration à une granulométrie adaptée à la flash), avec un certificat. L'entreprise renonce donc au retour ou souscrit l'option de conservation du disque que proposent de nombreux constructeurs.",
+    "distractorNotes": {
+      "a": "Le dégaussage n'agit que sur les supports magnétiques ; il laisserait intactes les données des puces flash.",
+      "b": "Un SSD non reconnu par le contrôleur conserve ses données dans les puces : un tiers peut les lire en les dessoudant.",
+      "d": "La commande sanitize exige un disque qui répond ; ces SSD ne sont plus reconnus, la commande ne peut pas s'exécuter."
+    },
+    "reference": "NIST SP 800-88 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.2-legal-hold-before-sanitize-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'ERP SRV-COMPTA01 est remplacé et ses disques doivent être purgés. Il contient les factures clients de 2017 à 2026, ses journaux techniques de 2017 à 2024 (ceux de 2025 et 2026 sont stockés dans le SIEM, pas sur le serveur) et le dossier du litige avec le client Durand. Que doit faire l'équipe AVANT de purger les disques ?",
+      "exhibit": "Registre de conservation (extrait)\nCatégorie              Durée                           Responsable\nFactures clients       10 ans après clôture exercice   DAF\nJournaux techniques    1 an                            DSI\nDossier litige Durand  Legal hold, jusqu'à levée       Juridique",
+      "options": [
+        {
+          "id": "a",
+          "text": "Archiver seulement les journaux techniques, puis purger le reste des disques"
+        },
+        {
+          "id": "b",
+          "text": "Archiver seulement les factures, puis purger le reste, dossier Durand compris"
+        },
+        {
+          "id": "c",
+          "text": "Purger aussitôt : les factures existent aussi en PDF dans la messagerie"
+        },
+        {
+          "id": "d",
+          "text": "Archiver les factures et le dossier Durand, puis faire valider par le juridique"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La conservation des données s'impose au décommissionnement : avant d'effacer, il faut extraire vers un stockage d'archivage ce que la loi ou la politique impose de garder. Ici, les factures sont à conserver dix ans après la clôture de l'exercice, donc toutes celles du serveur. Le dossier Durand est sous conservation légale (legal hold) : aucune suppression n'est permise tant que le juridique ne l'a pas levée, même sans durée fixée. Les journaux restés sur le serveur ont plus d'un an (les plus récents sont dans le SIEM) : ils peuvent disparaître. Une fois l'archivage validé, la purge peut avoir lieu.",
+    "distractorNotes": {
+      "a": "Les journaux restés sur le serveur ont tous dépassé leur durée de conservation d'un an ; ce sont les factures et le dossier sous legal hold qu'il faut préserver.",
+      "b": "Un legal hold suspend toute suppression jusqu'à sa levée par le juridique, même si le registre ne fixe aucune durée : purger le dossier Durand serait une destruction de preuves.",
+      "c": "Des copies éparses dans une messagerie ne constituent pas un archivage maîtrisé, et la purge détruirait aussi le dossier sous legal hold."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2"
+  },
+  {
+    "slug": "security-plus-4.2-saas-procurement-requirements-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une PME choisit un logiciel de paie en mode SaaS. Le RSSI veut intégrer la sécurité dans le processus d'acquisition, avant la signature. Quelles deux exigences doit-il faire inscrire dans ce processus ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Laisser chaque service souscrire avec sa propre carte pour gagner du temps"
+        },
+        {
+          "id": "b",
+          "text": "Demander au fournisseur un rapport d'audit SOC 2 type II récent"
+        },
+        {
+          "id": "c",
+          "text": "Exiger le dégaussage des serveurs du fournisseur à la fin du contrat"
+        },
+        {
+          "id": "d",
+          "text": "Prévoir au contrat la restitution puis la suppression des données en fin de contrat"
+        },
+        {
+          "id": "e",
+          "text": "Retenir systématiquement l'offre la moins chère parmi les fournisseurs"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "L'acquisition est le moment où l'entreprise a le plus de poids sur le fournisseur. Un rapport SOC 2 type II atteste, par un auditeur indépendant, que les contrôles du fournisseur ont fonctionné sur une période donnée : c'est une évaluation de sécurité du fournisseur avant l'achat. Les clauses de restitution et de suppression des données préparent dès la signature la fin de vie de l'actif : sans elles, l'entreprise ne maîtrise ni la récupération de ses données ni leur effacement chez le prestataire.",
+    "distractorNotes": {
+      "a": "Les souscriptions individuelles contournent le processus d'acquisition et créent du shadow IT, que l'inventaire ne voit pas.",
+      "c": "En SaaS, les serveurs sont mutualisés entre clients : exiger leur dégaussage n'a pas de sens. On demande une suppression des données attestée par le fournisseur.",
+      "e": "Le prix seul ignore les exigences de sécurité ; le processus d'acquisition doit les mettre en balance avec le coût."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2 ; AICPA SOC 2"
+  },
+  {
+    "slug": "security-plus-4.2-cmdb-scan-reconciliation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Un analyste compare un extrait de la CMDB avec le résultat du scan de découverte du 7 novembre 2026, lancé sur les deux sous-réseaux concernés. Quelles deux conclusions doit-il en tirer ? (Choisissez-en deux.)",
+      "exhibit": "CMDB (extrait)\nID      Nom          IP           Propriétaire  Dernière présence\nA-0412  SRV-PAIE01   10.10.5.21   DAF           2026-11-07\nA-0418  SRV-WEB02    10.10.5.34   DSI           2026-11-07\nA-0433  LT-COMPTA7   10.10.8.57   (vide)        2026-08-02\nA-0440  NAS-RH01     10.10.5.40   DRH           2026-11-07\n\nScan de découverte 2026-11-07 (10.10.5.0/24 et 10.10.8.0/24)\nHôtes actifs : 10.10.5.21  10.10.5.34  10.10.5.40  10.10.5.77",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "NAS-RH01 n'est pas inventorié : il faut créer sa fiche dans la CMDB"
+        },
+        {
+          "id": "b",
+          "text": "LT-COMPTA7 n'a pas été vu au scan : il a été détruit et sa fiche peut être supprimée"
+        },
+        {
+          "id": "c",
+          "text": "10.10.5.77 est un appareil non inventorié, à identifier puis à rattacher ou à retirer"
+        },
+        {
+          "id": "d",
+          "text": "SRV-WEB02 n'a pas répondu au scan et doit être retiré de la CMDB"
+        },
+        {
+          "id": "e",
+          "text": "LT-COMPTA7 n'a ni propriétaire ni présence récente : son statut doit être vérifié"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Le rapprochement de l'inventaire et de l'énumération réseau fait apparaître deux écarts. L'adresse 10.10.5.77 répond au scan mais ne correspond à aucune fiche : c'est un actif inconnu (shadow IT, appareil personnel, voire équipement malveillant) qu'il faut identifier, puis rattacher à un propriétaire ou retirer. LT-COMPTA7 n'a ni propriétaire ni présence depuis le 2 août : il peut être perdu, volé ou décommissionné sans mise à jour, et il faut le vérifier avant toute décision. Les trois autres fiches répondent au scan.",
+    "distractorNotes": {
+      "a": "NAS-RH01 figure bien dans la CMDB (A-0440), avec un propriétaire et une présence le jour du scan.",
+      "b": "Une absence au scan ne prouve pas une destruction : sans certificat, la fiche doit être vérifiée, pas supprimée.",
+      "d": "SRV-WEB02 (10.10.5.34) figure dans le résultat du scan : il a bien répondu."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2 ; CIS Critical Security Controls v8"
+  },
+  {
+    "slug": "security-plus-4.2-asset-record-fields-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une PME refond la fiche type de son inventaire des actifs pour mieux suivre l'attribution et la comptabilité de chaque équipement. Quelles deux informations doivent figurer sur chaque fiche ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le propriétaire responsable de l'actif"
+        },
+        {
+          "id": "b",
+          "text": "Le mot de passe du compte administrateur local de l'appareil"
+        },
+        {
+          "id": "c",
+          "text": "La clé privée du certificat installé sur l'appareil"
+        },
+        {
+          "id": "d",
+          "text": "Le code PIN de l'utilisateur qui se sert de l'appareil"
+        },
+        {
+          "id": "e",
+          "text": "Le niveau de classification des données que traite l'actif"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "L'attribution relie chaque actif à un propriétaire, qui en répond et prend les décisions qui le concernent. La classification indique la sensibilité des données traitées et détermine les contrôles à appliquer, de la configuration jusqu'à la méthode d'effacement en fin de vie. Une fiche d'inventaire contient aussi l'identifiant, l'emplacement, l'utilisateur ou la version, mais jamais de secret : l'inventaire est consulté par de nombreuses personnes et n'est pas un coffre-fort.",
+    "distractorNotes": {
+      "b": "Un mot de passe administrateur se garde dans un coffre de secrets (ou une solution comme LAPS), jamais dans une fiche d'inventaire largement consultée.",
+      "c": "Une clé privée ne doit jamais quitter son magasin protégé ; la fiche peut au plus mentionner le certificat et sa date d'expiration.",
+      "d": "Le code PIN est un secret personnel de l'utilisateur : il n'a rien à faire dans un inventaire."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2"
+  },
+  {
+    "slug": "security-plus-4.2-unknown-assets-discovery-sources-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le RSSI d'un hôpital soupçonne la présence d'équipements connectés que personne n'a déclarés. Il demande à son équipe d'énumérer les actifs réellement présents sur le réseau pour les comparer à l'inventaire. Quelles deux sources de données répondent à ce besoin ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le registre des certificats de destruction des cinq dernières années"
+        },
+        {
+          "id": "b",
+          "text": "La politique de classification des données de l'établissement"
+        },
+        {
+          "id": "c",
+          "text": "Les journaux de baux du serveur DHCP et les tables d'adresses MAC des commutateurs"
+        },
+        {
+          "id": "d",
+          "text": "Un scan de découverte actif des sous-réseaux de l'établissement"
+        },
+        {
+          "id": "e",
+          "text": "Le plan de continuité d'activité des services de soins"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "L'énumération des actifs s'appuie sur ce qui est réellement observé sur le réseau. Un scan de découverte actif sollicite les plages d'adresses et relève les hôtes qui répondent ; les baux DHCP et les tables MAC des commutateurs révèlent, de façon passive, les appareils qui se sont connectés, y compris ceux qui ne répondent pas aux sondes. Le rapprochement de ces sources avec l'inventaire fait apparaître les équipements non déclarés.",
+    "distractorNotes": {
+      "a": "Le registre des certificats de destruction recense des actifs éliminés ; il ne montre pas les équipements présents aujourd'hui.",
+      "b": "La politique de classification fixe des niveaux de sensibilité ; elle n'observe aucun appareil sur le réseau.",
+      "e": "Le plan de continuité décrit la reprise des activités ; il ne détecte pas les appareils connectés."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2 ; CIS Critical Security Controls v8"
+  },
+  {
+    "slug": "security-plus-4.2-nist-800-88-methods-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un responsable de l'exploitation doit classer les méthodes d'élimination proposées par son prestataire selon les catégories du NIST SP 800-88 Rev. 1. Associez chaque méthode à sa catégorie.",
+      "left": [
+        {
+          "id": "m1",
+          "text": "Écraser toutes les zones adressables par l'utilisateur via les commandes d'écriture standard"
+        },
+        {
+          "id": "m2",
+          "text": "Exécuter l'effacement cryptographique d'un disque auto-chiffrant"
+        },
+        {
+          "id": "m3",
+          "text": "Lancer la commande ATA Secure Erase d'un disque dur"
+        },
+        {
+          "id": "m4",
+          "text": "Passer le disque dans un broyeur industriel"
+        },
+        {
+          "id": "m5",
+          "text": "Faire fondre les supports dans un four agréé"
+        }
+      ],
+      "right": [
+        {
+          "id": "clear",
+          "text": "Clear"
+        },
+        {
+          "id": "purge",
+          "text": "Purge"
+        },
+        {
+          "id": "destroy",
+          "text": "Destroy"
+        },
+        {
+          "id": "hold",
+          "text": "Conservation légale (legal hold)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "m1": "clear",
+        "m2": "purge",
+        "m3": "purge",
+        "m4": "destroy",
+        "m5": "destroy"
+      }
+    },
+    "explanation": "Le NIST SP 800-88 Rev. 1 distingue trois niveaux. Clear applique des techniques logiques aux emplacements adressables par l'utilisateur (écrasement par les commandes standard) : il protège contre les outils de récupération courants. Purge rend la récupération irréalisable même en laboratoire, par des commandes du firmware (ATA Secure Erase, sanitize), l'effacement cryptographique ou le dégaussage, en laissant souvent le support réutilisable. Destroy rend le support inutilisable : broyage, désintégration, pulvérisation, fusion ou incinération.",
+    "distractorNotes": {
+      "hold": "La conservation légale interdit au contraire toute suppression des données concernées ; ce n'est pas une catégorie d'effacement du NIST SP 800-88 Rev. 1."
+    },
+    "reference": "NIST SP 800-88 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.2-asset-lifecycle-activities-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une ETI documente son processus de gestion des actifs. Associez chaque activité observée à la phase de gestion des actifs qu'elle illustre.",
+      "left": [
+        {
+          "id": "a1",
+          "text": "Le service achats fait remplir un questionnaire sécurité au fournisseur avant de commander"
+        },
+        {
+          "id": "a2",
+          "text": "Le directeur financier est désigné comme propriétaire de l'application de paie"
+        },
+        {
+          "id": "a3",
+          "text": "Un scan mensuel compare les hôtes actifs à la CMDB"
+        },
+        {
+          "id": "a4",
+          "text": "Les disques des serveurs retirés sont broyés par un prestataire"
+        },
+        {
+          "id": "a5",
+          "text": "La base des contrats clients est classée « Confidentiel » par son propriétaire"
+        }
+      ],
+      "right": [
+        {
+          "id": "acq",
+          "text": "Acquisition et approvisionnement"
+        },
+        {
+          "id": "attr",
+          "text": "Attribution et comptabilité"
+        },
+        {
+          "id": "mon",
+          "text": "Surveillance et suivi"
+        },
+        {
+          "id": "disp",
+          "text": "Élimination et décommissionnement"
+        },
+        {
+          "id": "patch",
+          "text": "Gestion des correctifs"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "a1": "acq",
+        "a2": "attr",
+        "a3": "mon",
+        "a4": "disp",
+        "a5": "attr"
+      }
+    },
+    "explanation": "L'acquisition intègre la sécurité avant l'achat (évaluation du fournisseur). L'attribution et la comptabilité relient chaque actif à un propriétaire, qui en rend compte, et lui donnent une classification qui fixe les contrôles à appliquer. La surveillance et le suivi tiennent l'inventaire à jour, notamment par énumération réseau. L'élimination clôt le cycle : nettoyage ou destruction des supports, certificat, mise à jour de l'inventaire.",
+    "distractorNotes": {
+      "patch": "La gestion des correctifs relève de la gestion des vulnérabilités ; aucune des activités listées ne consiste à appliquer une mise à jour."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2"
+  },
+  {
+    "slug": "security-plus-4.2-asset-lifecycle-order-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une société formalise le cycle de vie de ses ordinateurs portables. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "l3",
+          "text": "Suivre le poste en service grâce à l'agent d'inventaire et aux scans"
+        },
+        {
+          "id": "l5",
+          "text": "Effacer les supports et faire certifier leur élimination"
+        },
+        {
+          "id": "l1",
+          "text": "Valider le fournisseur et passer la commande par le service achats"
+        },
+        {
+          "id": "l4",
+          "text": "Retirer le poste du service et récupérer les données à conserver"
+        },
+        {
+          "id": "l2",
+          "text": "Enregistrer le poste dans l'inventaire avec son propriétaire et son étiquette"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "l1",
+        "l2",
+        "l3",
+        "l4",
+        "l5"
+      ]
+    },
+    "explanation": "Le cycle de vie d'un actif commence par l'acquisition, où la sécurité intervient dès le choix du fournisseur. À la réception, l'actif est inscrit dans l'inventaire et attribué à un propriétaire : sans cette étape, aucun suivi n'est possible. Pendant sa vie utile, il est surveillé (agent, scans) pour que l'inventaire reflète la réalité. En fin de vie, il est décommissionné : retrait du service et récupération des données soumises à conservation. Enfin, ses supports sont nettoyés ou détruits et l'élimination est certifiée.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2"
+  },
+  {
+    "slug": "security-plus-4.2-server-decommission-order-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Le serveur de messagerie d'un cabinet d'avocats arrive en fin de vie ; ses disques seront purgés avant la revente du châssis. Ordonnez les étapes du décommissionnement, de la première à la dernière.",
+      "items": [
+        {
+          "id": "d4",
+          "text": "Vérifier que l'effacement a réussi et obtenir le certificat d'effacement"
+        },
+        {
+          "id": "d1",
+          "text": "Faire confirmer par les propriétaires des données les obligations de conservation"
+        },
+        {
+          "id": "d5",
+          "text": "Passer la fiche du serveur au statut « éliminé » dans l'inventaire"
+        },
+        {
+          "id": "d3",
+          "text": "Purger les disques selon le NIST SP 800-88 Rev. 1"
+        },
+        {
+          "id": "d2",
+          "text": "Archiver les données à conserver vers le stockage d'archivage"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "d1",
+        "d2",
+        "d3",
+        "d4",
+        "d5"
+      ]
+    },
+    "explanation": "On ne peut archiver correctement qu'après avoir établi ce qu'il faut garder : les propriétaires des données confirment d'abord les durées de conservation et les éventuels legal hold. Les données concernées sont ensuite copiées vers l'archivage, tant qu'elles existent encore. Vient la purge, conforme au NIST SP 800-88 Rev. 1, puis sa vérification, qui donne lieu au certificat. Ce n'est qu'avec ce certificat en main que la fiche d'inventaire est close : la passer au statut « éliminé » plus tôt ferait perdre la trace d'un support encore lisible.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2 ; NIST SP 800-88 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.2-inventory-reconciliation-count-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un établissement scolaire rapproche sa CMDB, qui recense 1 240 appareils connectés, du résultat d'une énumération réseau qui a identifié 1 310 appareils distincts (par adresse MAC). Parmi les appareils découverts, 1 198 correspondent à une fiche de la CMDB. Combien d'appareils découverts sont absents de l'inventaire, et combien de fiches de la CMDB n'ont pas été vues par l'énumération ?",
+      "fields": [
+        {
+          "id": "unknown",
+          "label": "Appareils découverts absents de la CMDB (nombre entier)"
+        },
+        {
+          "id": "missing",
+          "label": "Fiches de la CMDB non vues par l'énumération (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "unknown": {
+          "accepted": [
+            "112"
+          ],
+          "normalize": "int"
+        },
+        "missing": {
+          "accepted": [
+            "42"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Les appareils découverts sans fiche sont 1 310 − 1 198 = 112 : ce sont des actifs inconnus à identifier (shadow IT, appareils personnels, équipements non déclarés). Les fiches non vues sont 1 240 − 1 198 = 42 : appareils éteints, hors site, perdus ou décommissionnés sans mise à jour de la CMDB. Les deux écarts appellent un traitement différent : rattacher ou bloquer les inconnus, vérifier le statut des absents avant de modifier leur fiche.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.2"
+  },
+  {
+    "slug": "security-plus-4.2-degaussing-category-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un centre d'hébergement élimine les disques durs magnétiques ATA de serveurs retirés. Ils passent dans un dégausseur homologué, puis sont envoyés au recyclage sans être broyés. Dans quelle catégorie du NIST SP 800-88 Rev. 1 se range le dégaussage de ces disques ?",
+      "fields": [
+        {
+          "id": "cat",
+          "label": "Catégorie du NIST SP 800-88 Rev. 1 (un mot)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "cat": {
+          "accepted": [
+            "Purge",
+            "Purger"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Pour les disques durs magnétiques ATA, le NIST SP 800-88 Rev. 1 range le dégaussage dans la catégorie purge, avec les commandes de firmware et l'effacement cryptographique : un champ magnétique puissant efface le support de telle sorte que la récupération est irréalisable, même avec des moyens de laboratoire. Ce n'est pas un « destroy », car le support reste physiquement entier, même si le disque devient en pratique inutilisable (les pistes d'asservissement sont elles aussi effacées). Le dégaussage ne vaut que pour les supports magnétiques : il est inopérant sur la flash des SSD et des clés USB.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-88 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.7-soar-tool-choice-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le SOC d'un groupe de distribution veut qu'une alerte du SIEM déclenche automatiquement l'enrichissement des indicateurs, l'ouverture d'un ticket et le blocage de l'adresse sur le pare-feu, en enchaînant plusieurs outils. Quelle catégorie de solution répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un DLP, qui inspecte les flux sortants pour bloquer la fuite de données"
+        },
+        {
+          "id": "b",
+          "text": "Un SIEM supplémentaire, qui centralise et corrèle les journaux"
+        },
+        {
+          "id": "c",
+          "text": "Un SOAR, qui orchestre les outils et exécute des playbooks"
+        },
+        {
+          "id": "d",
+          "text": "Un CASB, qui contrôle l'usage des services cloud par les salariés"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un SOAR (Security Orchestration, Automation and Response) se connecte aux autres outils par leurs API et exécute des playbooks : il reçoit l'alerte, interroge les sources de renseignement, crée le ticket et agit sur le pare-feu sans intervention manuelle. Le SIEM collecte et corrèle les événements pour produire l'alerte ; c'est le SOAR qui orchestre la réponse. Les deux se complètent dans la plupart des SOC.",
+    "distractorNotes": {
+      "a": "Un DLP prévient la fuite de données sensibles ; il n'orchestre pas une réponse impliquant le ticketing et le pare-feu.",
+      "b": "Le SIEM produit déjà l'alerte : un second SIEM ne saurait pas mieux enchaîner les actions de réponse entre les outils.",
+      "d": "Un CASB surveille et contrôle l'usage des applications cloud ; il n'automatise pas la réponse aux alertes du SIEM."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-ransomware-playbook-definition-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après un exercice de crise, l'équipe de réponse aux incidents d'une mutuelle décide de formaliser, pour les rançongiciels, la suite des étapes à suivre et les décisions à prendre, de façon à pouvoir en automatiser une partie dans son SOAR. Comment s'appelle ce document ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un playbook"
+        },
+        {
+          "id": "b",
+          "text": "Un accord de niveau de service (SLA)"
+        },
+        {
+          "id": "c",
+          "text": "Une analyse d'impact sur l'activité (BIA)"
+        },
+        {
+          "id": "d",
+          "text": "Un protocole d'accord (MOU)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un playbook décrit, pour un type d'incident donné, l'enchaînement des étapes, les conditions de décision et les responsables. Il sert de guide aux analystes et, dans un SOAR, devient un flux exécutable dont certaines étapes sont automatisées (collecte d'indicateurs, isolement, ticket) et d'autres réservées à une validation humaine. Il garantit une réponse cohérente, quel que soit l'analyste de permanence.",
+    "distractorNotes": {
+      "b": "Un SLA fixe des engagements de service entre deux parties (disponibilité, délais) ; il ne décrit pas les étapes de réponse à un incident.",
+      "c": "Une BIA évalue l'impact de l'arrêt des activités pour fixer les priorités de reprise ; ce n'est pas une procédure de réponse.",
+      "d": "Un MOU exprime une intention de coopération entre organisations ; il ne décrit aucune procédure opérationnelle."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7 ; NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-4.7-hris-driven-provisioning-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une entreprise de 900 salariés, le support crée les comptes des nouveaux arrivants en copiant les droits d'un collègue du même service. Un audit montre que 30 % des comptes ont ainsi hérité de droits inutiles. Quelle automatisation corrige LE MIEUX ce problème ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un script qui copie automatiquement les droits du dernier arrivant du même service"
+        },
+        {
+          "id": "b",
+          "text": "Un rapport annuel qui liste les droits de chaque compte pour une revue manuelle"
+        },
+        {
+          "id": "c",
+          "text": "Une attribution automatique de droits d'administrateur limitée aux 30 premiers jours"
+        },
+        {
+          "id": "d",
+          "text": "Un provisionnement déclenché par le SIRH, avec des groupes de sécurité définis par rôle"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le provisionnement automatisé crée le compte à partir de l'événement d'embauche saisi dans le SIRH et l'affecte aux groupes de sécurité prévus pour son rôle. Les droits découlent alors d'un modèle validé, et non de l'historique d'un collègue : on applique le moindre privilège de façon uniforme et l'erreur humaine disparaît. Le même flux peut retirer les droits lors d'un changement de poste ou d'un départ.",
+    "distractorNotes": {
+      "a": "Automatiser la copie reproduit le défaut à plus grande vitesse : les droits inutiles du collègue se propagent toujours.",
+      "b": "Une revue annuelle détecte les excès après coup ; elle ne les empêche pas à la création du compte.",
+      "c": "Des droits d'administrateur temporaires aggravent le problème : ils violent le moindre privilège dès l'arrivée."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7 ; NIST SP 800-53 Rev. 5 (AC-2)"
+  },
+  {
+    "slug": "security-plus-4.7-cloud-public-bucket-guardrail-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans le cloud d'une start-up, des développeurs créent régulièrement des compartiments de stockage ouverts au public, découverts parfois des semaines plus tard. Le RSSI veut que cela devienne impossible sans freiner les déploiements. Quelle mesure répond LE MIEUX à cet objectif ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un audit manuel trimestriel des droits sur tous les compartiments"
+        },
+        {
+          "id": "b",
+          "text": "Un garde-fou automatisé qui refuse la création de tout compartiment public"
+        },
+        {
+          "id": "c",
+          "text": "Un ticket ouvert après chaque création de compartiment, revu par le SOC"
+        },
+        {
+          "id": "d",
+          "text": "Une formation obligatoire des développeurs à la sécurité du cloud"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un garde-fou (guard rail) est un contrôle automatisé qui encadre ce que les équipes peuvent faire en libre-service : ici, une politique appliquée au compte cloud ou au pipeline de déploiement refuse toute configuration publique. Les développeurs continuent de créer leurs ressources sans attendre de validation, mais la configuration dangereuse ne peut tout simplement plus exister. C'est la seule option qui empêche le problème au lieu de le détecter après coup.",
+    "distractorNotes": {
+      "a": "Un audit trimestriel détecte les compartiments publics plusieurs semaines après leur création : la fenêtre d'exposition demeure.",
+      "c": "Un ticket après création reste une détection : le compartiment est déjà public, et la revue alourdit le travail du SOC.",
+      "d": "La formation réduit les erreurs, sans les rendre impossibles : un oubli suffit à exposer des données."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-soar-single-server-outage-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une nuit, l'unique serveur qui héberge le SOAR d'une banque tombe en panne. Jusqu'au matin, aucune alerte n'est enrichie, aucun ticket n'est créé et aucun blocage n'est appliqué, alors que le SIEM continue de produire des alertes. Quelle considération liée à l'automatisation a été négligée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le point unique de défaillance"
+        },
+        {
+          "id": "b",
+          "text": "La rétention du personnel"
+        },
+        {
+          "id": "c",
+          "text": "La montée en charge sécurisée"
+        },
+        {
+          "id": "d",
+          "text": "Le multiplicateur de force"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Plus une organisation confie de tâches à une plateforme d'automatisation, plus la panne de cette plateforme a de conséquences : le SOAR devient un point unique de défaillance. Ici, tout le traitement des alertes dépendait d'un seul serveur, sans redondance ni procédure manuelle de repli. On réduit ce risque par une architecture haute disponibilité, une supervision de la plateforme elle-même et des procédures dégradées que les analystes savent appliquer.",
+    "distractorNotes": {
+      "b": "La rétention du personnel est un avantage de l'automatisation (moins de tâches répétitives) ; elle n'explique pas l'arrêt du traitement des alertes.",
+      "c": "La montée en charge sécurisée est un avantage lié à l'ajout de ressources ; le problème ici est la dépendance à un serveur unique.",
+      "d": "Le multiplicateur de force est un avantage : l'automatisation démultiplie l'équipe. La panne illustre au contraire un risque."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-soar-firewall-api-account-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un SOC intègre son SOAR au pare-feu périmétrique pour qu'un playbook puisse bloquer une adresse IP malveillante. L'ingénieur doit choisir le mode d'intégration. Quelle approche est LA PLUS sûre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Appeler l'API avec un compte de service limité au blocage, son jeton gardé dans le coffre du SOAR"
+        },
+        {
+          "id": "b",
+          "text": "Appeler l'API avec le compte personnel d'un administrateur, dont le mot de passe est dans le script"
+        },
+        {
+          "id": "c",
+          "text": "Envoyer un courriel à l'équipe réseau, qui saisit le blocage à la main dans la console"
+        },
+        {
+          "id": "d",
+          "text": "Piloter la console web du pare-feu par simulation de clics, avec le compte administrateur partagé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Les intégrations par API sont le socle de l'orchestration. Elles doivent respecter les mêmes principes que tout accès : un compte de service dédié, limité aux opérations utiles (ajouter une adresse à une liste de blocage), et un secret conservé dans un coffre plutôt qu'en clair. Les actions du playbook sont alors traçables et attribuables, et une compromission du SOAR ne donne pas les pleins pouvoirs sur le pare-feu.",
+    "distractorNotes": {
+      "b": "Un compte personnel et un mot de passe en clair dans un script exposent un accès administrateur complet et rendent les actions impossibles à attribuer au SOAR.",
+      "c": "Un courriel traité à la main n'est pas une intégration : le blocage dépend de la disponibilité de l'équipe réseau et le temps de réaction s'allonge.",
+      "d": "La simulation de clics est fragile (elle casse à chaque évolution de l'interface) et le compte administrateur partagé viole le moindre privilège."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-soar-blocked-internal-dns-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. En pleine nuit, les postes de l'entreprise ne parviennent plus à résoudre les noms. Selon la CMDB, 10.20.0.53 est le résolveur DNS interne. Quelle modification du playbook PB-12 empêche LE MIEUX que l'incident se reproduise, sans renoncer au blocage automatique ?",
+      "exhibit": "2026-10-14 02:11:07 PB-12 flux ThreatList-B : 10 nouveaux IOC reçus\n2026-10-14 02:11:09 PB-12 IOC 10.20.0.53 -> action block_ip\n2026-10-14 02:11:10 PB-12 fw-edge-01 : règle deny any <-> 10.20.0.53 ajoutée\n2026-10-14 02:14:32 SIEM : 4 812 échecs de résolution DNS (clients internes)\n2026-10-14 02:15:01 SIEM : alerte « Indisponibilité DNS » envoyée au SOC",
+      "options": [
+        {
+          "id": "a",
+          "text": "Désactiver PB-12 et confier tous les blocages aux analystes de jour"
+        },
+        {
+          "id": "b",
+          "text": "Abonner PB-12 à deux flux de renseignement supplémentaires"
+        },
+        {
+          "id": "c",
+          "text": "Attendre une heure entre la réception d'un IOC et son blocage"
+        },
+        {
+          "id": "d",
+          "text": "Confronter chaque IOC aux actifs critiques et faire valider ces cas"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le playbook a bloqué sans contrôle une adresse privée qui est en réalité le DNS interne : un faux positif du flux de renseignement est devenu une panne. Le garde-fou adapté consiste à confronter chaque IOC à une liste d'exclusion (actifs critiques de la CMDB, plages internes) et à réserver ces cas à une validation humaine, tandis que les autres blocages restent automatiques. On conserve le gain de temps de réaction tout en maîtrisant le risque d'une action automatique mal ciblée.",
+    "distractorNotes": {
+      "a": "Désactiver le playbook supprime le risque, mais aussi tout le bénéfice du blocage automatique, ce que l'énoncé exclut.",
+      "b": "Davantage de flux apporte davantage d'IOC, donc davantage de faux positifs possibles ; rien ne protège les actifs critiques.",
+      "c": "Un délai sans contrôle bloque quand même le DNS une heure plus tard ; il ralentit en plus tous les blocages légitimes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-edr-alert-escalation-logic-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. À 09:10, le playbook PB-07 traite une alerte EDR sur le serveur FIN-SRV-02, de criticité haute dans la CMDB. Le hachage du fichier détecté a une réputation « inconnu ». À 09:45, personne n'a encore pris le ticket en charge. Quelle est la situation à 09:45 ?",
+      "exhibit": "PLAYBOOK PB-07 « Alerte EDR »\n1. Enrichir : criticité de l'actif (CMDB), réputation du hachage (TI)\n2. SI réputation = malveillant ET criticité = haute\n     -> isoler l'hôte ; ticket P1 ; appeler l'astreinte\n3. SINON SI réputation = malveillant\n     -> isoler l'hôte ; ticket P2, file SOC N2\n4. SINON SI criticité = haute\n     -> ticket P2, file SOC N2 (pas d'isolement)\n5. SINON -> ticket P3, file SOC N1\n6. SI ticket P2 non pris en charge en 30 min\n     -> passer en P1 ; appeler l'astreinte",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le serveur est isolé ; un ticket P1 est ouvert et l'astreinte a été appelée"
+        },
+        {
+          "id": "b",
+          "text": "Le serveur n'est pas isolé ; le ticket P2 est passé en P1 et l'astreinte a été appelée"
+        },
+        {
+          "id": "c",
+          "text": "Le serveur n'est pas isolé ; un ticket P3 attend dans la file du SOC N1"
+        },
+        {
+          "id": "d",
+          "text": "Le serveur est isolé ; le ticket P2 attend toujours dans la file du SOC N2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La réputation n'est pas « malveillant » : les étapes 2 et 3 ne s'appliquent pas. La criticité est haute : l'étape 4 ouvre à 09:10 un ticket P2 dans la file N2, sans isolement. L'étape 6 surveille ce ticket : à 09:40, faute de prise en charge en 30 minutes, il passe en P1 et l'astreinte est appelée. À 09:45, le serveur n'est donc pas isolé et l'escalade a eu lieu. Les playbooks combinent ainsi création de tickets et escalade selon des conditions explicites.",
+    "distractorNotes": {
+      "a": "L'isolement et le P1 immédiat exigent une réputation « malveillant » (étape 2) ; ici, elle est « inconnu ».",
+      "c": "Le P3 de l'étape 5 ne concerne que les alertes qui ne remplissent aucune condition ; la criticité haute déclenche l'étape 4.",
+      "d": "Aucune étape n'isole l'hôte quand la réputation est « inconnu », et l'étape 6 escalade le P2 au bout de 30 minutes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-services-drift-baseline-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un outil de gestion des configurations vérifie toutes les 30 minutes les 400 serveurs Windows d'une entreprise. S'il trouve SMBv1 ou le service Telnet réactivé, il les désactive aussitôt et journalise l'écart. Quel avantage de l'automatisation cette mesure illustre-t-elle LE PLUS directement ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'application des bases de sécurité de façon uniforme"
+        },
+        {
+          "id": "b",
+          "text": "La rétention du personnel de l'équipe d'exploitation"
+        },
+        {
+          "id": "c",
+          "text": "La montée en charge sécurisée des nouvelles ressources"
+        },
+        {
+          "id": "d",
+          "text": "La réduction de la dette technique de la plateforme"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La désactivation automatique des services non autorisés maintient chaque serveur conforme à la configuration de référence (baseline) : toute dérive est corrigée en quelques minutes, sur les 400 serveurs à la fois, sans dépendre d'une vérification manuelle. C'est l'avantage « application des bases » de l'automatisation, appuyé ici sur le cas d'usage « activation et désactivation de services ».",
+    "distractorNotes": {
+      "b": "Moins de tâches manuelles peut aider à garder l'équipe, mais ce n'est pas ce que la mesure démontre directement.",
+      "c": "La montée en charge sécurisée concerne les ressources ajoutées lors d'une croissance ; le scénario décrit la correction de dérives sur un parc existant.",
+      "d": "L'automatisation tend plutôt à créer de la dette technique (scripts à maintenir) qu'à la réduire ; ce n'est pas l'avantage illustré."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-scripts-departed-engineer-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Dans une ETI, une trentaine de scripts d'automatisation (blocage d'IP, désactivation de comptes) ont été écrits sans documentation par un ingénieur parti l'an dernier. Ils tournent sur deux serveurs en cluster et n'utilisent aucun logiciel sous licence. Après une mise à jour de l'API du pare-feu, plusieurs scripts échouent et personne ne sait les corriger. Quelles deux considérations de l'automatisation ce cas illustre-t-il ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le coût des licences de la plateforme d'automatisation"
+        },
+        {
+          "id": "b",
+          "text": "La dette technique accumulée par des scripts non documentés"
+        },
+        {
+          "id": "c",
+          "text": "Le temps de réaction réduit face aux incidents"
+        },
+        {
+          "id": "d",
+          "text": "La supportabilité continue des automatisations dans le temps"
+        },
+        {
+          "id": "e",
+          "text": "La montée en charge sécurisée de l'infrastructure"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Des scripts écrits vite, sans documentation ni tests, constituent une dette technique : ils fonctionnent tant que rien ne change, puis coûtent cher à reprendre. La supportabilité continue pose la question de qui maintiendra l'automatisation quand les API, les outils ou les équipes évoluent. Ici, la mise à jour du pare-feu révèle les deux problèmes à la fois. On les traite par la documentation, la revue de code, la gestion de versions et l'affectation d'un responsable pour chaque automatisation.",
+    "distractorNotes": {
+      "a": "Le scénario précise qu'aucun logiciel sous licence n'est utilisé : le coût n'est pas le problème révélé.",
+      "c": "Le temps de réaction réduit est un avantage de l'automatisation ; le cas décrit au contraire des automatisations en échec.",
+      "e": "La montée en charge sécurisée est un avantage lié à l'ajout de ressources ; elle n'a pas de lien avec la panne des scripts."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-tasks-fit-for-automation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le responsable d'un SOC de cinq analystes veut automatiser entièrement certaines tâches dans son SOAR, sans validation humaine. Quelles deux tâches s'y prêtent le mieux ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Interroger la réputation des IP et des hachages d'une alerte"
+        },
+        {
+          "id": "b",
+          "text": "Décider de payer ou non une rançon après un chiffrement"
+        },
+        {
+          "id": "c",
+          "text": "Rédiger le message aux clients après une fuite de données"
+        },
+        {
+          "id": "d",
+          "text": "Fixer l'appétence au risque de l'entreprise pour l'année"
+        },
+        {
+          "id": "e",
+          "text": "Ouvrir un ticket pré-rempli pour chaque alerte du SIEM"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Les tâches à automatiser entièrement sont répétitives, à faible risque et fondées sur des règles claires : l'enrichissement d'une alerte (réputation, géolocalisation, données CMDB) et la création de tickets en sont les exemples typiques. Elles occupent beaucoup de temps d'analyste pour peu de valeur ajoutée. Les décisions de gouvernance, de communication ou de stratégie demandent du jugement et engagent la responsabilité de la direction : elles restent humaines, même si l'outil peut leur fournir des données.",
+    "distractorNotes": {
+      "b": "Payer une rançon est une décision de direction aux enjeux juridiques, éthiques et financiers ; elle ne s'automatise pas.",
+      "c": "La communication après une fuite engage la réputation et les obligations légales de l'entreprise : elle est rédigée et validée par des humains.",
+      "d": "L'appétence au risque est fixée par la direction et le conseil ; c'est un choix de gouvernance, pas une tâche répétitive."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-automation-drawbacks-committee-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le comité de direction d'une PME étudie l'achat d'une plateforme SOAR. Le RSSI doit lui présenter les points de vigilance de l'automatisation, et non ses bénéfices. Quelles deux considérations doit-il citer ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le multiplicateur de force apporté à l'équipe"
+        },
+        {
+          "id": "b",
+          "text": "Le coût des licences, de l'intégration et de la maintenance"
+        },
+        {
+          "id": "c",
+          "text": "Le point unique de défaillance que peut devenir la plateforme"
+        },
+        {
+          "id": "d",
+          "text": "La montée en charge sécurisée des nouvelles ressources"
+        },
+        {
+          "id": "e",
+          "text": "Le temps de réaction réduit face aux incidents"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "CompTIA range parmi les autres considérations de l'automatisation la complexité, le coût, le point unique de défaillance, la dette technique et la supportabilité continue. Le coût inclut les licences, mais aussi l'intégration aux outils existants et la maintenance des playbooks. Une plateforme qui pilote toute la réponse devient un point unique de défaillance si elle n'est pas redondée. Le multiplicateur de force, la montée en charge sécurisée et le temps de réaction sont au contraire des bénéfices.",
+    "distractorNotes": {
+      "a": "Le multiplicateur de force est un bénéfice : l'automatisation permet à une petite équipe d'abattre le travail d'une plus grande.",
+      "d": "La montée en charge sécurisée est un bénéfice : les nouvelles ressources reçoivent automatiquement la configuration sûre.",
+      "e": "Le temps de réaction réduit est un bénéfice : un playbook agit en quelques secondes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-autoscaling-secure-instances-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une plateforme de billetterie ajoute automatiquement des serveurs web lors des pics de ventes. L'architecte veut que cette montée en charge reste sécurisée sans intervention humaine. Quelles deux mesures doit-il automatiser ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Une configuration manuelle de chaque nouvelle instance par l'astreinte"
+        },
+        {
+          "id": "b",
+          "text": "La création des instances à partir d'une image de référence durcie"
+        },
+        {
+          "id": "c",
+          "text": "Le partage d'une même clé SSH root, publiée dans le dépôt de code"
+        },
+        {
+          "id": "d",
+          "text": "L'inscription de chaque instance dans l'EDR et le SIEM dès son lancement"
+        },
+        {
+          "id": "e",
+          "text": "La désactivation de la journalisation pour accélérer le démarrage"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La montée en charge sécurisée repose sur des configurations standard appliquées automatiquement : chaque instance naît d'une image de référence (golden image) déjà durcie et corrigée, puis s'inscrit d'elle-même dans les outils de supervision et de protection. Ainsi, cent instances créées en pleine nuit sont aussi sûres et aussi visibles que la première, sans que personne n'ait à les configurer.",
+    "distractorNotes": {
+      "a": "Une configuration manuelle ne suit pas le rythme des pics et introduit des écarts entre instances : c'est l'inverse d'une montée en charge automatisée.",
+      "c": "Une clé root partagée et publiée dans un dépôt est un secret exposé : la compromission d'une instance ou du dépôt donne accès à toutes.",
+      "e": "Sans journalisation, les nouvelles instances échappent à la détection : la montée en charge ne serait plus sécurisée."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-automation-benefits-match-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Après un an d'automatisation, le SOC d'un assureur présente ses résultats. Associez chaque constat à l'avantage de l'automatisation qu'il illustre.",
+      "left": [
+        {
+          "id": "b1",
+          "text": "Un playbook isole un poste infecté 40 secondes après l'alerte, contre 25 minutes auparavant"
+        },
+        {
+          "id": "b2",
+          "text": "Les instances ajoutées lors des pics reçoivent d'emblée l'agent EDR et la configuration durcie"
+        },
+        {
+          "id": "b3",
+          "text": "Libérée du tri manuel des alertes répétitives, l'équipe voit son taux de départs baisser"
+        },
+        {
+          "id": "b4",
+          "text": "Quatre analystes traitent désormais le volume d'alertes qui en occupait douze"
+        }
+      ],
+      "right": [
+        {
+          "id": "react",
+          "text": "Temps de réaction"
+        },
+        {
+          "id": "scale",
+          "text": "Montée en charge sécurisée"
+        },
+        {
+          "id": "retain",
+          "text": "Rétention du personnel"
+        },
+        {
+          "id": "force",
+          "text": "Multiplicateur de force"
+        },
+        {
+          "id": "spof",
+          "text": "Point unique de défaillance"
+        },
+        {
+          "id": "debt",
+          "text": "Dette technique"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "b1": "react",
+        "b2": "scale",
+        "b3": "retain",
+        "b4": "force"
+      }
+    },
+    "explanation": "Le temps de réaction mesure la vitesse de la réponse : un playbook agit en secondes là où un analyste met des minutes. La montée en charge sécurisée garantit que les ressources ajoutées sont aussi protégées que les autres. La rétention du personnel vient de la suppression des tâches répétitives, source d'usure et de départs. Le multiplicateur de force décrit une petite équipe qui abat, grâce aux outils, le travail d'une équipe bien plus grande.",
+    "distractorNotes": {
+      "spof": "Le point unique de défaillance est un risque de l'automatisation (une plateforme dont tout dépend), pas un avantage illustré par ces constats.",
+      "debt": "La dette technique est un coût caché de l'automatisation (scripts à maintenir), pas un avantage."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-automation-use-cases-match-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une DSI recense les automatisations déjà en place. Associez chaque automatisation au cas d'usage qu'elle représente.",
+      "left": [
+        {
+          "id": "u1",
+          "text": "L'embauche saisie dans le SIRH crée le compte, la boîte aux lettres et les accès du salarié"
+        },
+        {
+          "id": "u2",
+          "text": "Le pipeline refuse le déploiement de toute VM dont le port RDP est ouvert sur Internet"
+        },
+        {
+          "id": "u3",
+          "text": "Une alerte critique non prise en charge en 15 minutes déclenche l'appel de l'astreinte"
+        },
+        {
+          "id": "u4",
+          "text": "Chaque alerte du SIEM ouvre dans l'outil ITSM un ticket pré-rempli avec ses IOC"
+        },
+        {
+          "id": "u5",
+          "text": "Un script arrête le service Print Spooler sur tous les serveurs qui n'impriment pas"
+        }
+      ],
+      "right": [
+        {
+          "id": "prov",
+          "text": "Provisionnement des utilisateurs"
+        },
+        {
+          "id": "guard",
+          "text": "Garde-fou"
+        },
+        {
+          "id": "esc",
+          "text": "Escalade"
+        },
+        {
+          "id": "ticket",
+          "text": "Création de tickets"
+        },
+        {
+          "id": "svc",
+          "text": "Activation et désactivation de services"
+        },
+        {
+          "id": "force",
+          "text": "Multiplicateur de force"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "u1": "prov",
+        "u2": "guard",
+        "u3": "esc",
+        "u4": "ticket",
+        "u5": "svc"
+      }
+    },
+    "explanation": "Le provisionnement crée automatiquement comptes et accès à partir d'un événement de référence (l'embauche). Un garde-fou empêche une configuration dangereuse au moment où elle serait créée. L'escalade fait monter une alerte vers un niveau supérieur quand une condition est remplie (délai dépassé, gravité). La création de tickets transforme chaque alerte en dossier suivi. La désactivation automatique de services inutiles réduit la surface d'attaque, comme le fait l'arrêt du spouleur d'impression sur les serveurs qui n'en ont pas besoin.",
+    "distractorNotes": {
+      "force": "Le multiplicateur de force est un avantage de l'automatisation, pas un cas d'usage : aucune des automatisations listées ne se range dans cette catégorie."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-phishing-playbook-order-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Le SOAR d'une collectivité exécute un playbook sur chaque courriel signalé par un agent via le bouton « Signaler un hameçonnage ». Ordonnez les étapes du playbook, de la première à la dernière.",
+      "items": [
+        {
+          "id": "p4",
+          "text": "Si le verdict est malveillant, supprimer le message de toutes les boîtes qui l'ont reçu"
+        },
+        {
+          "id": "p2",
+          "text": "Extraire du message les URL, les pièces jointes et les en-têtes"
+        },
+        {
+          "id": "p5",
+          "text": "Clôturer le ticket en consignant le verdict et les actions menées"
+        },
+        {
+          "id": "p1",
+          "text": "Recevoir le signalement et ouvrir un ticket rattaché au message"
+        },
+        {
+          "id": "p3",
+          "text": "Soumettre les éléments extraits aux services de réputation et à la sandbox"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5"
+      ]
+    },
+    "explanation": "Le playbook part de l'événement déclencheur, le signalement, qui ouvre un ticket pour tracer tout le traitement. Il extrait ensuite les indicateurs du message, sans lesquels aucune analyse n'est possible, puis les soumet aux services de réputation et à la sandbox pour obtenir un verdict. L'action de confinement, la suppression dans toutes les boîtes, dépend de ce verdict. La clôture documentée du ticket vient en dernier et alimente les retours d'expérience.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-phishing-triage-hours-saved-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le SOC d'une université reçoit 300 signalements d'hameçonnage par mois. Leur tri manuel prend 15 minutes chacun ; avec un playbook SOAR, il ne demande plus que 3 minutes d'analyste. Combien d'heures d'analyste le playbook libère-t-il chaque mois ?",
+      "fields": [
+        {
+          "id": "h",
+          "label": "Heures libérées par mois (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "h": {
+          "accepted": [
+            "60"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Chaque signalement fait gagner 15 − 3 = 12 minutes. Sur 300 signalements, le gain est de 300 × 12 = 3 600 minutes, soit 3 600 / 60 = 60 heures par mois. Ce temps libéré illustre l'efficacité et le multiplicateur de force de l'automatisation : l'équipe peut le consacrer à la chasse aux menaces ou aux incidents complexes.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  },
+  {
+    "slug": "security-plus-4.7-soar-net-annual-gain-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un SOC envisage une plateforme SOAR à 24 000 € par an (licence, hébergement et support de l'éditeur). Elle ramènerait le traitement de 180 alertes par mois de 20 à 4 minutes d'analyste chacune. La maintenance des playbooks demanderait 6 heures d'ingénieur par mois. Une heure d'analyste ou d'ingénieur coûte 60 €. Quel serait le gain net annuel de la plateforme ?",
+      "fields": [
+        {
+          "id": "g",
+          "label": "Gain net annuel en euros (nombre entier, sans séparateur ni symbole)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "g": {
+          "accepted": [
+            "6240"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Gain par alerte : 20 − 4 = 16 minutes ; par mois : 180 × 16 = 2 880 minutes, soit 48 heures. On retire les 6 heures de maintenance : 42 heures nettes par mois, donc 42 × 12 = 504 heures par an, valorisées à 504 × 60 = 30 240 €. Après déduction du coût annuel de 24 000 €, le gain net est de 6 240 €. Le calcul montre que le coût et la maintenance (supportabilité continue) doivent entrer dans la décision d'automatiser.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.7"
+  }
+]

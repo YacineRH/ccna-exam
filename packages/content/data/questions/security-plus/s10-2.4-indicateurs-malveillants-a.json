@@ -1,0 +1,1182 @@
+[
+  {
+    "slug": "security-plus-2.4-ransomware-note-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un lundi matin, plusieurs salariés d'un cabinet comptable signalent que leurs documents portent désormais l'extension « .locked » et ne s'ouvrent plus. Un fichier LISEZMOI.txt présent dans chaque dossier réclame un paiement en cryptomonnaie contre une clé de déchiffrement. Quel type de logiciel malveillant est en cause ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un logiciel espion"
+        },
+        {
+          "id": "b",
+          "text": "Un rançongiciel"
+        },
+        {
+          "id": "c",
+          "text": "Une bombe logique"
+        },
+        {
+          "id": "d",
+          "text": "Un bloatware"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le chiffrement des fichiers de l'utilisateur, suivi d'une demande de rançon en échange de la clé, est la signature d'un rançongiciel (ransomware). Les indicateurs typiques sont le renommage massif de fichiers avec une nouvelle extension, une note de rançon déposée dans chaque dossier et une forte activité disque. La réponse passe par l'isolement des postes touchés et la restauration depuis des sauvegardes hors ligne, le paiement ne garantissant pas la récupération des données.",
+    "distractorNotes": {
+      "a": "Un logiciel espion collecte des informations en silence ; il ne rend pas les fichiers illisibles et ne se signale pas par une note de rançon.",
+      "c": "Une bombe logique est un code qui se déclenche à une condition (date, événement). Rien ici n'indique un déclenchement conditionnel, et la demande de rançon caractérise le rançongiciel.",
+      "d": "Un bloatware est un logiciel indésirable, souvent préinstallé, qui consomme des ressources ; il ne chiffre pas de données."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-trojan-free-tool-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un technicien télécharge sur un forum un utilitaire gratuit de conversion de PDF. L'outil fonctionne comme prévu, mais l'EDR détecte peu après qu'il a installé en arrière-plan un service qui ouvre un accès distant au poste. Quel terme décrit LE MIEUX ce logiciel ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un ver"
+        },
+        {
+          "id": "b",
+          "text": "Un rootkit"
+        },
+        {
+          "id": "c",
+          "text": "Un keylogger"
+        },
+        {
+          "id": "d",
+          "text": "Un cheval de Troie"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un cheval de Troie (trojan) se présente comme un programme légitime et utile, que l'utilisateur installe lui-même, mais il embarque une fonction malveillante cachée, ici l'installation d'un accès distant. Il ne se propage pas seul : c'est la confiance de l'utilisateur qui l'introduit. D'où l'intérêt de n'installer que des logiciels issus de sources approuvées et signés, et des listes d'autorisation d'applications.",
+    "distractorNotes": {
+      "a": "Un ver se propage seul de machine en machine en exploitant une vulnérabilité ; ici l'utilisateur a lui-même téléchargé et lancé le programme.",
+      "b": "Un rootkit sert à dissimuler une présence au niveau du système ; le scénario décrit un programme déguisé en outil légitime, ce qui définit le cheval de Troie.",
+      "c": "Un keylogger enregistre les frappes clavier ; le comportement observé est l'ouverture d'un accès distant, pas la capture de saisies."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-bloatware-new-laptops-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME reçoit 30 ordinateurs portables neufs. Avant leur mise en service, le technicien constate qu'ils contiennent des versions d'essai d'antivirus, des barres d'outils et des utilitaires du constructeur que personne n'utilisera et qui ralentissent le démarrage. Comment qualifie-t-on ces logiciels ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bloatware"
+        },
+        {
+          "id": "b",
+          "text": "Logiciel espion"
+        },
+        {
+          "id": "c",
+          "text": "Rançongiciel"
+        },
+        {
+          "id": "d",
+          "text": "Bombe logique"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le bloatware désigne les logiciels superflus, souvent préinstallés par le constructeur, qui consomment des ressources (disque, mémoire, temps de démarrage) sans utilité pour l'organisation. Il n'est pas forcément malveillant, mais il élargit la surface d'attaque : chaque programme inutile peut contenir des vulnérabilités et doit être corrigé. La bonne pratique consiste à déployer une image système maîtrisée ou à désinstaller ces logiciels avant la mise en production.",
+    "distractorNotes": {
+      "b": "Un logiciel espion collecte et transmet des données à l'insu de l'utilisateur ; ici, les logiciels sont visibles, fournis par le constructeur et seulement inutiles.",
+      "c": "Un rançongiciel chiffre des données pour exiger une rançon ; rien de tel n'est observé sur ces postes neufs.",
+      "d": "Une bombe logique est un code caché qui se déclenche à une condition ; les logiciels décrits sont des programmes visibles et superflus."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-spyware-browser-extension-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un analyste découvre qu'une extension de navigateur installée sur plusieurs postes envoie chaque jour, sans que les utilisateurs l'aient accepté, l'historique complet de navigation vers un serveur d'une régie publicitaire. Quel type de logiciel malveillant cela décrit-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un ver"
+        },
+        {
+          "id": "b",
+          "text": "Un rançongiciel"
+        },
+        {
+          "id": "c",
+          "text": "Un logiciel espion"
+        },
+        {
+          "id": "d",
+          "text": "Un rootkit"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un logiciel espion (spyware) surveille l'activité de l'utilisateur et transmet les informations collectées (historique, habitudes, parfois identifiants) à un tiers sans son consentement. Les extensions de navigateur sont un vecteur courant, car elles disposent souvent de droits étendus sur les pages visitées. Les mesures adaptées sont une liste d'extensions autorisées gérée de façon centralisée et la surveillance des flux sortants inhabituels.",
+    "distractorNotes": {
+      "a": "Un ver se caractérise par sa propagation autonome sur le réseau, pas par la collecte d'historique de navigation.",
+      "b": "Un rançongiciel prend les données en otage contre rançon ; ici, les données sont copiées en silence, pas rendues inaccessibles.",
+      "d": "Un rootkit dissimule une présence au cœur du système ; une extension de navigateur qui exfiltre l'historique relève du logiciel espion."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-logic-bomb-payroll-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'une revue de code après le départ d'un administrateur, l'équipe trouve dans une tâche planifiée nocturne un script qui vérifie si le compte « p.girard » existe encore dans l'annuaire et, s'il a disparu, supprime les tables de la base de paie. Le compte de p.girard doit être désactivé à la fin du mois. Quel type de menace l'équipe a-t-elle découvert ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un cheval de Troie"
+        },
+        {
+          "id": "b",
+          "text": "Un ver"
+        },
+        {
+          "id": "c",
+          "text": "Un rootkit"
+        },
+        {
+          "id": "d",
+          "text": "Une bombe logique"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une bombe logique est un code malveillant dormant qui s'exécute quand une condition précise est remplie : une date, ou comme ici la disparition d'un compte de l'annuaire. Elle est souvent posée par un initié qui a les droits nécessaires, ce qui justifie la revue de code et des tâches planifiées lors des départs, la séparation des tâches et le contrôle des modifications. La découverte avant la désactivation du compte permet de neutraliser le script avant tout dommage.",
+    "distractorNotes": {
+      "a": "Un cheval de Troie se fait passer pour un programme utile afin d'être installé ; ici le code est caché dans une tâche existante et attend une condition de déclenchement.",
+      "b": "Un ver se propage seul d'un système à l'autre ; le script décrit reste sur un serveur et n'agit qu'à une condition donnée.",
+      "c": "Un rootkit vise à masquer une présence au niveau du système ; le script n'est pas dissimulé par des techniques de bas niveau, il est conditionné à un événement."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-rootkit-hidden-connections-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un capteur réseau branché sur le port miroir du commutateur montre qu'un serveur Linux ouvre toutes les dix minutes une connexion TCP vers 203.0.113.9 sur le port 443. Sur le serveur lui-même, les commandes ps, netstat et ls, exécutées avec les binaires installés, n'affichent ni processus, ni connexion, ni fichier suspect. Quelle explication est LA PLUS probable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un ver qui se propage sur le réseau local"
+        },
+        {
+          "id": "b",
+          "text": "Un rootkit qui masque son activité aux outils du système"
+        },
+        {
+          "id": "c",
+          "text": "Une bombe logique qui attend sa date de déclenchement"
+        },
+        {
+          "id": "d",
+          "text": "Un bloatware installé avec la distribution"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un rootkit modifie le système (binaires, bibliothèques ou noyau) pour cacher ses processus, fichiers et connexions aux outils d'administration. L'écart entre ce que voit un capteur externe, indépendant de l'hôte, et ce que rapportent les outils locaux est l'indicateur clé. Comme les outils du serveur ne sont plus fiables, l'analyse doit se faire depuis un support de démarrage de confiance ou sur une image du disque et de la mémoire, et la remise en état passe en général par une réinstallation.",
+    "distractorNotes": {
+      "a": "Un ver chercherait à joindre d'autres hôtes pour se propager ; ici, la seule activité est une connexion régulière vers une adresse externe, cachée aux outils locaux.",
+      "c": "Une bombe logique dormante ne produit pas de connexions régulières ; et elle n'explique pas que les outils locaux ne voient pas l'activité.",
+      "d": "Un bloatware est un logiciel superflu visible ; il ne dissimule pas ses connexions aux commandes du système."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-ssh-brute-force-log-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyste examine le journal d'authentification d'un serveur exposé sur Internet. Quelle attaque ce journal montre-t-il ?",
+      "exhibit": "Nov  3 02:14:07 web01 sshd[2231]: Failed password for deploy from\n  203.0.113.45 port 51122 ssh2\nNov  3 02:14:09 web01 sshd[2231]: Failed password for deploy from\n  203.0.113.45 port 51122 ssh2\nNov  3 02:14:10 web01 sshd[2235]: Failed password for deploy from\n  203.0.113.45 port 51130 ssh2\nNov  3 02:14:12 web01 sshd[2235]: Failed password for deploy from\n  203.0.113.45 port 51130 ssh2\nNov  3 02:14:13 web01 sshd[2239]: Failed password for deploy from\n  203.0.113.45 port 51141 ssh2\n[... 412 lignes similaires entre 02:14:13 et 02:31:50 ...]",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une pulvérisation de mots de passe"
+        },
+        {
+          "id": "b",
+          "text": "Une attaque par rejeu d'identifiants"
+        },
+        {
+          "id": "c",
+          "text": "Une attaque par force brute en ligne"
+        },
+        {
+          "id": "d",
+          "text": "Une attaque par anniversaire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le journal montre une seule adresse source, 203.0.113.45, qui enchaîne en quelques secondes de nombreux échecs sur un seul et même compte, « deploy ». Essayer un grand nombre de mots de passe contre un compte donné, directement auprès du service, est une attaque par force brute en ligne. Les contre-mesures sont l'authentification par clé plutôt que par mot de passe, la limitation du nombre d'essais (fail2ban, verrouillage temporaire) et le filtrage de l'accès SSH.",
+    "distractorNotes": {
+      "a": "La pulvérisation essaie un petit nombre de mots de passe courants sur beaucoup de comptes différents, à faible cadence ; ici, un seul compte reçoit des essais en rafale.",
+      "b": "Le rejeu renvoie un message d'authentification valide capturé auparavant ; il aboutirait à un succès, pas à une série d'échecs avec des mots de passe différents.",
+      "d": "L'attaque par anniversaire cherche des collisions d'empreintes cryptographiques ; elle ne se manifeste pas par des tentatives de connexion répétées."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-password-spraying-4625-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le SIEM d'une entreprise a extrait ces événements des contrôleurs de domaine. Le seuil de verrouillage des comptes est fixé à 5 échecs en 30 minutes. Quelle conclusion l'analyste doit-il en tirer ?",
+      "exhibit": "Heure     ID    Compte      IP source       Sous-statut\n08:02:11  4625  a.martin    198.51.100.23   0xC000006A\n08:02:26  4625  b.lefevre   198.51.100.23   0xC000006A\n08:02:41  4625  e.bernard   198.51.100.23   0xC000006A\n08:02:56  4625  f.thomas    198.51.100.23   0xC000006A\n08:03:11  4625  g.robert    198.51.100.23   0xC000006A\n08:03:26  4624  c.dubois    198.51.100.23   -\n08:03:41  4625  h.richard   198.51.100.23   0xC000006A",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une force brute vise a.martin ; aucun compte n'est compromis à ce stade"
+        },
+        {
+          "id": "b",
+          "text": "Un rejeu d'identifiants a ouvert une session au nom de c.dubois"
+        },
+        {
+          "id": "c",
+          "text": "Une pulvérisation de mots de passe a réussi sur le compte c.dubois"
+        },
+        {
+          "id": "d",
+          "text": "Des fautes de frappe d'utilisateurs ont précédé une connexion normale"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La même adresse 198.51.100.23 tente une seule fois chacun de nombreux comptes, avec le sous-statut 0xC000006A (nom d'utilisateur valide, mot de passe faux), à raison d'un essai toutes les 15 secondes environ : c'est le profil d'une pulvérisation de mots de passe, qui reste sous le seuil de verrouillage en n'essayant qu'un mot de passe par compte. L'événement 4624 depuis la même adresse montre qu'un compte, c.dubois, a accepté le mot de passe testé. Il faut traiter ce compte comme compromis (réinitialisation, révocation des sessions, recherche d'activité) et bloquer la source.",
+    "distractorNotes": {
+      "a": "a.martin n'apparaît qu'une fois, comme les autres comptes ; une force brute multiplierait les essais sur un même compte, et l'événement 4624 montre qu'un compte est bien compromis.",
+      "b": "Le rejeu réutilise un échange d'authentification capturé ; rien n'indique de capture préalable, et la connexion réussie conclut une série d'essais de mots de passe sur des comptes différents.",
+      "d": "Des fautes de frappe viendraient de postes différents et de comptes isolés ; ici une seule adresse essaie sept comptes distincts à intervalle régulier, dont un seul avec succès."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE ATT&CK T1110.003 (Password Spraying)"
+  },
+  {
+    "slug": "security-plus-2.4-arp-poisoning-on-path-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Des utilisateurs du VLAN 20 signalent des lenteurs et des avertissements de certificat. Sur le poste 10.10.20.57, l'analyste relève la table ARP ci-dessous. 10.10.20.1 est la passerelle par défaut et 10.10.20.44 le poste d'un stagiaire. Quelle attaque est LA PLUS probable ?",
+      "exhibit": "C:\\> arp -a\n\nInterface : 10.10.20.57 --- 0x7\n  Adresse Internet      Adresse physique      Type\n  10.10.20.1            00-1a-2b-3c-4d-5e     dynamique\n  10.10.20.12           00-50-56-a1-07-3c     dynamique\n  10.10.20.44           00-1a-2b-3c-4d-5e     dynamique\n  10.10.20.255          ff-ff-ff-ff-ff-ff     statique",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une saturation de la table MAC du commutateur"
+        },
+        {
+          "id": "b",
+          "text": "Une attaque on-path par empoisonnement ARP"
+        },
+        {
+          "id": "c",
+          "text": "Un empoisonnement du cache du résolveur DNS"
+        },
+        {
+          "id": "d",
+          "text": "Un point d'accès jumeau malveillant (evil twin)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'adresse IP de la passerelle et celle du poste du stagiaire pointent vers la même adresse MAC : le poste 10.10.20.44 a envoyé des réponses ARP non sollicitées pour se faire passer pour la passerelle. Le trafic des victimes transite alors par lui avant d'être relayé, ce qui explique les lenteurs, et les avertissements de certificat trahissent une tentative d'interception TLS. C'est une attaque on-path (homme du milieu) ; l'inspection ARP dynamique (DAI) sur les commutateurs la bloque.",
+    "distractorNotes": {
+      "a": "Une saturation de la table MAC fait déborder le commutateur, qui inonde alors les trames ; elle ne modifie pas la correspondance IP-MAC dans la table ARP des postes.",
+      "c": "Un empoisonnement DNS fausse la résolution des noms ; la table ARP du poste, elle, ne serait pas modifiée et la passerelle garderait sa propre adresse MAC.",
+      "d": "Un evil twin est un faux point d'accès sans fil ; le problème touche ici la résolution ARP sur un VLAN filaire, entre deux adresses du même sous-réseau."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-md5-collision-contract-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une plateforme de signature électronique calcule une empreinte MD5 de chaque contrat, puis signe cette empreinte avec une clé RSA de 2048 bits. Un fraudeur a préparé deux contrats aux clauses différentes mais de même empreinte MD5 : il a fait signer le premier et présente maintenant le second, que la signature valide aussi. Quelle mesure corrige LE MIEUX la faiblesse exploitée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Passer la clé RSA de signature à 4096 bits"
+        },
+        {
+          "id": "b",
+          "text": "Chiffrer les contrats stockés avec AES-256"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer MD5 par SHA-256 avant la signature"
+        },
+        {
+          "id": "d",
+          "text": "Horodater chaque signature auprès d'un tiers"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le fraudeur a mené une attaque par collision : deux documents différents produisent la même empreinte, donc la même signature. La faiblesse est dans la fonction de hachage, pas dans RSA : MD5 n'est plus résistant aux collisions et ne doit plus servir aux signatures. Il faut passer à une fonction de la famille SHA-2 (SHA-256 ou plus) ou SHA-3, dont la résistance aux collisions reste hors de portée. Les signatures existantes fondées sur MD5 doivent être réexaminées.",
+    "distractorNotes": {
+      "a": "La clé RSA n'est pas attaquée : la signature reste valide pour les deux contrats parce que leurs empreintes sont identiques, quelle que soit la taille de la clé.",
+      "b": "Le chiffrement protège la confidentialité des contrats ; il n'empêche pas deux documents différents de partager la même empreinte MD5.",
+      "d": "L'horodatage prouve quand une empreinte a été signée ; il ne distingue pas deux contrats qui ont la même empreinte et ne corrige donc pas la collision."
+    },
+    "reference": "NIST FIPS 180-4 (SHA-2) ; NIST FIPS 186-5 (signatures numériques) ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-dns-cache-poisoning-dig-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Des utilisateurs internes sont redirigés vers une fausse page de connexion quand ils ouvrent portail.example.com. L'enregistrement A n'a pas été modifié depuis des mois, et les résolveurs publics renvoient la même réponse que ns1.example.com, serveur faisant autorité pour la zone. Quelle conclusion est LA PLUS probable ?",
+      "exhibit": "$ dig portail.example.com @10.0.0.53 +noall +answer\nportail.example.com.    604645  IN  A   203.0.113.66\n\n$ dig portail.example.com @ns1.example.com +noall +answer\nportail.example.com.    300     IN  A   198.51.100.10",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le domaine a été détourné chez le registraire"
+        },
+        {
+          "id": "b",
+          "text": "Le fichier hosts des postes a été modifié"
+        },
+        {
+          "id": "c",
+          "text": "Le cache du résolveur interne 10.0.0.53 a été empoisonné"
+        },
+        {
+          "id": "d",
+          "text": "Le résolveur interne subit une attaque par amplification"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le serveur faisant autorité et les résolveurs publics renvoient 198.51.100.10 avec un TTL de 300 secondes, tandis que le résolveur interne répond 203.0.113.66 avec un TTL restant d'environ sept jours, bien supérieur à celui de la zone. Une réponse fausse, servie par un seul résolveur et absente de la source faisant autorité, indique un empoisonnement de son cache. Il faut vider ce cache, rechercher la cause (réponses falsifiées acceptées, configuration de transfert) et activer la validation DNSSEC.",
+    "distractorNotes": {
+      "a": "Un détournement chez le registraire modifierait les serveurs de noms de la zone : la réponse fausse serait alors servie partout, résolveurs publics compris.",
+      "b": "dig interroge directement le serveur DNS indiqué sans lire le fichier hosts ; la mauvaise réponse vient donc bien du résolveur 10.0.0.53.",
+      "d": "Une amplification utilise des serveurs pour inonder une victime de réponses volumineuses ; elle ne fausse pas le contenu des réponses données aux clients."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-worm-vs-virus-traits-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Lors d'une sensibilisation, le RSSI veut expliquer pourquoi un ver s'est répandu en une nuit sur tous les serveurs d'un site. Quelles deux caractéristiques distinguent un ver d'un virus ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il chiffre les fichiers pour réclamer une rançon"
+        },
+        {
+          "id": "b",
+          "text": "Il se propage seul sur le réseau, sans action de l'utilisateur"
+        },
+        {
+          "id": "c",
+          "text": "Il reste inactif jusqu'à une date précise"
+        },
+        {
+          "id": "d",
+          "text": "Il n'a pas besoin de s'attacher à un fichier ou programme hôte"
+        },
+        {
+          "id": "e",
+          "text": "Il se cache dans le noyau pour échapper aux outils système"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Un ver est un programme autonome : il n'a pas besoin d'infecter un fichier hôte et se propage tout seul, en général en exploitant une vulnérabilité d'un service réseau, sans que quiconque ouvre un fichier. Un virus, lui, s'insère dans un fichier ou un programme et ne se diffuse que lorsque ce fichier hôte est exécuté ou partagé. C'est pourquoi un ver peut toucher tout un parc en quelques heures, et pourquoi la correction rapide des services exposés et la segmentation limitent sa diffusion.",
+    "distractorNotes": {
+      "a": "Le chiffrement contre rançon caractérise le rançongiciel ; un ver peut transporter une telle charge, mais ce n'est pas ce qui le distingue d'un virus.",
+      "c": "Le déclenchement à une date caractérise la bombe logique ; ce n'est pas un trait distinctif du ver.",
+      "e": "La dissimulation au niveau du noyau est le propre du rootkit, pas une caractéristique qui sépare un ver d'un virus."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-dns-tunneling-txt-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le résolveur interne a enregistré 1 800 requêtes de ce type en dix minutes, toutes émises par le poste 10.30.8.14 et toutes vers des sous-domaines différents de d.example.net, domaine enregistré il y a trois jours. Quelles deux conclusions l'analyste peut-il en tirer ? (Choisissez-en deux.)",
+      "exhibit": "10:41:02 client 10.30.8.14#53122 query:\n  8f3a91c0d27b4e65a1f09c3d.d.example.net IN TXT\n10:41:02 client 10.30.8.14#53140 query:\n  c47e0b2a99d1f36e5b8a7d04.d.example.net IN TXT\n10:41:03 client 10.30.8.14#53166 query:\n  1b6d8e3f0a25c79e4d13b6f8.d.example.net IN TXT",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le poste 10.30.8.14 est la cible d'une attaque DDoS par amplification DNS"
+        },
+        {
+          "id": "b",
+          "text": "Le poste utilise probablement le DNS comme canal caché d'exfiltration ou de commande"
+        },
+        {
+          "id": "c",
+          "text": "Le cache du résolveur interne a été empoisonné pour le domaine d.example.net"
+        },
+        {
+          "id": "d",
+          "text": "Le blocage de toutes les requêtes TXT est sans effet sur les services légitimes"
+        },
+        {
+          "id": "e",
+          "text": "Des libellés longs et aléatoires, tous uniques sous un même domaine, sont un indicateur de tunnel DNS"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Chaque requête porte un sous-domaine long, d'aspect aléatoire et jamais répété, sous un domaine récent, à un rythme élevé et depuis un seul poste : c'est le profil d'un tunnel DNS, où des données encodées dans les libellés sortent vers le serveur faisant autorité de l'attaquant, qui répond dans les enregistrements TXT. Le DNS est choisi parce qu'il est rarement filtré. Les détections reposent sur l'entropie et la longueur des libellés, le volume par domaine et l'âge du domaine ; on bloque le domaine et on isole le poste pour analyse.",
+    "distractorNotes": {
+      "a": "Dans une amplification, la victime reçoit des réponses volumineuses qu'elle n'a pas demandées ; ici c'est le poste qui émet les requêtes.",
+      "c": "Un empoisonnement fausse les réponses du résolveur pour un nom existant ; ici le problème est le volume de requêtes uniques émises par un poste.",
+      "d": "Les enregistrements TXT servent à des usages légitimes (SPF, DKIM, vérification de domaine) : les bloquer tous casserait des services. On filtre plutôt le domaine en cause."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-tls-downgrade-mitigation-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un scanner de vulnérabilités signale qu'un site web de l'entreprise accepte encore SSL 3.0 et TLS 1.0, et qu'il est exposé à des attaques par rétrogradation (downgrade) qui forcent un client à négocier un protocole faible ou à se rabattre sur HTTP en clair. Quelles deux mesures réduisent ce risque ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer le certificat RSA 2048 bits par un certificat RSA 4096 bits"
+        },
+        {
+          "id": "b",
+          "text": "Activer la compression TLS pour réduire la taille des échanges"
+        },
+        {
+          "id": "c",
+          "text": "N'accepter côté serveur que TLS 1.2 et TLS 1.3, avec des suites de chiffrement robustes"
+        },
+        {
+          "id": "d",
+          "text": "Publier un en-tête HSTS pour imposer HTTPS aux navigateurs"
+        },
+        {
+          "id": "e",
+          "text": "Signer le certificat du serveur avec SHA-256 au lieu de SHA-1"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "Une attaque par rétrogradation exploite la négociation : un attaquant placé sur le chemin pousse client et serveur à se rabattre sur la version ou la suite la plus faible que tous deux acceptent. Retirer SSL 3.0, TLS 1.0 et TLS 1.1 du serveur supprime ces options de repli. HSTS empêche en plus le navigateur de revenir au HTTP en clair (SSL stripping), autre forme de rétrogradation. TLS 1.3 intègre par ailleurs un mécanisme de protection contre la rétrogradation dans le message ServerHello.",
+    "distractorNotes": {
+      "a": "Une clé plus longue renforce le certificat, mais si le serveur accepte encore SSL 3.0, l'attaquant peut toujours forcer ce protocole faible.",
+      "b": "La compression TLS est déconseillée : elle a permis des attaques comme CRIME et n'empêche aucune rétrogradation.",
+      "e": "SHA-256 améliore la signature du certificat, mais la négociation des versions et des suites reste vulnérable tant que les protocoles faibles sont acceptés."
+    },
+    "reference": "RFC 8446 (TLS 1.3) ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-ntp-reflection-firewall-log-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le site web 203.0.113.10 d'une PME est inaccessible. Le pare-feu enregistre des dizaines de milliers de paquets UDP par seconde, venant de milliers de serveurs NTP publics. Aucun équipement de la PME n'a interrogé ces serveurs, et une requête NTP de ce type ne fait que quelques dizaines d'octets. Quelles deux affirmations décrivent l'attaque ? (Choisissez-en deux.)",
+      "exhibit": "date=2026-11-04 time=14:22:05 action=deny proto=UDP\n  src=192.0.2.41:123 dst=203.0.113.10:80 len=468\ndate=2026-11-04 time=14:22:05 action=deny proto=UDP\n  src=198.51.100.7:123 dst=203.0.113.10:53412 len=468\ndate=2026-11-04 time=14:22:05 action=deny proto=UDP\n  src=192.0.2.188:123 dst=203.0.113.10:6011 len=468\n[... 61 204 entrées similaires en 1 seconde ...]",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'attaquant a envoyé aux serveurs NTP des requêtes portant l'adresse source usurpée 203.0.113.10"
+        },
+        {
+          "id": "b",
+          "text": "Les serveurs NTP font tous partie d'un botnet contrôlé par l'attaquant"
+        },
+        {
+          "id": "c",
+          "text": "Chaque réponse est bien plus volumineuse que la requête qui l'a provoquée"
+        },
+        {
+          "id": "d",
+          "text": "Bloquer en sortie le port UDP 123 sur le pare-feu de la PME rétablit le service"
+        },
+        {
+          "id": "e",
+          "text": "Il s'agit d'une inondation SYN visant le port 443 du serveur web"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Le serveur reçoit des réponses NTP (port source 123) qu'il n'a jamais demandées : l'attaquant a usurpé son adresse dans des requêtes envoyées à des serveurs NTP mal configurés, qui répondent à la victime. C'est la réflexion. Les réponses de 468 octets, pour des requêtes de quelques dizaines d'octets, multiplient le volume : c'est l'amplification. Les serveurs ne sont pas compromis, seulement exploités. La saturation se produit en amont du pare-feu : il faut faire filtrer le trafic par le FAI ou un service anti-DDoS.",
+    "distractorNotes": {
+      "b": "Les serveurs réfléchissants sont des serveurs publics mal configurés, pas des machines compromises : c'est tout l'intérêt de la réflexion pour l'attaquant.",
+      "d": "Le flux est entrant et sature le lien avant même le pare-feu ; filtrer la sortie ne réduit pas le volume reçu, qu'il faut arrêter en amont.",
+      "e": "Les paquets sont des datagrammes UDP depuis le port 123, pas des segments TCP SYN vers le port 443."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-rat-beaconing-proxy-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Un analyste examine le journal du proxy web pour le poste 10.20.6.52, utilisé de 9 h à 18 h. L'adresse 198.51.100.77 n'est associée à aucun service connu de l'entreprise. Quelles trois observations indiquent qu'un logiciel malveillant à commande à distance (RAT) contacte son serveur de commande ? (Choisissez-en trois.)",
+      "exhibit": "Heure     Client       Méthode Destination                   Statut  Octets\n02:05:13  10.20.6.52   POST    http://198.51.100.77/api/sync 200     412\n02:10:13  10.20.6.52   POST    http://198.51.100.77/api/sync 200     412\n02:15:13  10.20.6.52   POST    http://198.51.100.77/api/sync 200     415\n02:20:14  10.20.6.52   POST    http://198.51.100.77/api/sync 200     412\n02:25:13  10.20.6.52   POST    http://198.51.100.77/api/sync 200     412",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les connexions partent à intervalle fixe de cinq minutes"
+        },
+        {
+          "id": "b",
+          "text": "Le code de statut 200 prouve que le serveur distant est légitime"
+        },
+        {
+          "id": "c",
+          "text": "Les échanges gardent une taille presque constante"
+        },
+        {
+          "id": "d",
+          "text": "L'activité se poursuit en pleine nuit, hors des heures d'usage du poste"
+        },
+        {
+          "id": "e",
+          "text": "L'adresse de destination appartient à une plage privée RFC 1918"
+        },
+        {
+          "id": "f",
+          "text": "Le volume total transféré suffit à saturer le lien Internet"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "Un implant de commande à distance « balise » (beaconing) : il contacte son serveur à intervalle régulier pour récupérer des ordres, avec des échanges courts et de taille stable tant qu'aucune commande n'est donnée. La régularité, la taille constante, une destination inconnue contactée directement par adresse IP et une activité qui continue quand l'utilisateur est absent forment un faisceau d'indicateurs. L'analyste doit isoler le poste, bloquer la destination et rechercher la même signature sur les autres postes.",
+    "distractorNotes": {
+      "b": "Un code 200 indique seulement que le serveur a répondu ; un serveur de commande répond lui aussi normalement.",
+      "e": "198.51.100.77 appartient à une plage de documentation utilisée ici comme adresse publique, pas à une plage RFC 1918 ; une destination privée ne serait d'ailleurs pas un indicateur.",
+      "f": "Les échanges font quelques centaines d'octets : le balisage est discret par nature et ne sature aucun lien."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-malware-indicator-matching-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Lors d'une revue d'incidents de l'année, le SOC classe chaque observation selon le type de logiciel malveillant en cause. Associez chaque observation au type correspondant.",
+      "left": [
+        {
+          "id": "o1",
+          "text": "Des documents bureautiques infectés insèrent leur code dans d'autres documents quand on les ouvre"
+        },
+        {
+          "id": "o2",
+          "text": "Un code ajouté à un script de facturation ne s'exécute que le jour où un compte précis est supprimé"
+        },
+        {
+          "id": "o3",
+          "text": "Un module chargé dans le noyau masque des processus et des fichiers aux outils d'administration"
+        },
+        {
+          "id": "o4",
+          "text": "Un programme installé à l'insu de l'utilisateur enregistre chaque frappe et envoie le fichier"
+        },
+        {
+          "id": "o5",
+          "text": "Un programme autonome passe de serveur en serveur par une faille SMB, sans action humaine"
+        }
+      ],
+      "right": [
+        {
+          "id": "virus",
+          "text": "Virus"
+        },
+        {
+          "id": "bomb",
+          "text": "Bombe logique"
+        },
+        {
+          "id": "rootkit",
+          "text": "Rootkit"
+        },
+        {
+          "id": "keylog",
+          "text": "Keylogger"
+        },
+        {
+          "id": "worm",
+          "text": "Ver"
+        },
+        {
+          "id": "bloat",
+          "text": "Bloatware"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "o1": "virus",
+        "o2": "bomb",
+        "o3": "rootkit",
+        "o4": "keylog",
+        "o5": "worm"
+      }
+    },
+    "explanation": "Le virus s'attache à un fichier hôte et se diffuse quand ce fichier est ouvert, comme un virus de macro dans des documents. La bombe logique attend une condition (date, événement) pour agir. Le rootkit modifie le système, souvent au niveau du noyau, pour cacher sa présence. Le keylogger capture les frappes clavier, et donc les mots de passe saisis. Le ver est autonome et se propage seul par le réseau en exploitant une vulnérabilité, ce qui explique sa vitesse de diffusion.",
+    "distractorNotes": {
+      "bloat": "Le bloatware est un logiciel superflu, souvent préinstallé, qui consomme des ressources ; aucune des observations ne décrit un tel logiciel."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-network-attack-indicator-matching-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un analyste rédige des fiches de détection pour le SOC. Associez chaque indicateur à l'attaque réseau qu'il révèle.",
+      "left": [
+        {
+          "id": "i1",
+          "text": "Un serveur reçoit un flot de grosses réponses DNS de milliers de résolveurs ouverts qu'il n'a jamais interrogés"
+        },
+        {
+          "id": "i2",
+          "text": "Le capteur sans fil relève des rafales de trames de désauthentification et les clients du Wi-Fi sont sans cesse déconnectés"
+        },
+        {
+          "id": "i3",
+          "text": "Un point d'accès inconnu diffuse le SSID de l'entreprise dans le hall, avec un BSSID absent de l'inventaire"
+        },
+        {
+          "id": "i4",
+          "text": "Un message d'authentification capturé la veille est renvoyé à l'identique et accepté par le serveur"
+        },
+        {
+          "id": "i5",
+          "text": "Les serveurs de noms du domaine ont été changés chez le registraire sans demande de l'entreprise"
+        }
+      ],
+      "right": [
+        {
+          "id": "ampl",
+          "text": "DDoS par réflexion et amplification"
+        },
+        {
+          "id": "deauth",
+          "text": "Attaque par désauthentification"
+        },
+        {
+          "id": "twin",
+          "text": "Point d'accès jumeau malveillant (evil twin)"
+        },
+        {
+          "id": "replay",
+          "text": "Rejeu d'identifiants"
+        },
+        {
+          "id": "hijack",
+          "text": "Détournement de domaine"
+        },
+        {
+          "id": "arp",
+          "text": "Empoisonnement ARP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "i1": "ampl",
+        "i2": "deauth",
+        "i3": "twin",
+        "i4": "replay",
+        "i5": "hijack"
+      }
+    },
+    "explanation": "Des réponses DNS non sollicitées venant de nombreux résolveurs signent une réflexion (adresse de la victime usurpée) avec amplification (réponses bien plus grosses que les requêtes). Les rafales de trames de désauthentification coupent les clients du Wi-Fi, souvent pour les pousser vers un faux point d'accès. Un SSID légitime diffusé par un BSSID inconnu révèle un evil twin. Un message capturé puis accepté à nouveau est un rejeu. Une modification non autorisée des serveurs de noms chez le registraire est un détournement de domaine.",
+    "distractorNotes": {
+      "arp": "L'empoisonnement ARP se repère à une table ARP où l'adresse IP de la passerelle pointe vers la MAC d'un autre poste ; aucun indicateur de la liste ne le décrit."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-crypto-password-attack-matching-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Pour un module de formation des administrateurs, associez chaque description à l'attaque qu'elle définit.",
+      "left": [
+        {
+          "id": "d1",
+          "text": "Forcer client et serveur à négocier une version de protocole ou une suite de chiffrement plus faible"
+        },
+        {
+          "id": "d2",
+          "text": "Produire deux contenus différents de même empreinte pour substituer l'un à l'autre"
+        },
+        {
+          "id": "d3",
+          "text": "Essayer un ou deux mots de passe courants sur un grand nombre de comptes"
+        },
+        {
+          "id": "d4",
+          "text": "Essayer de façon systématique un très grand nombre de mots de passe sur un même compte"
+        },
+        {
+          "id": "d5",
+          "text": "Réutiliser sur d'autres sites des couples identifiant et mot de passe issus d'une fuite"
+        }
+      ],
+      "right": [
+        {
+          "id": "down",
+          "text": "Rétrogradation (downgrade)"
+        },
+        {
+          "id": "coll",
+          "text": "Collision"
+        },
+        {
+          "id": "spray",
+          "text": "Pulvérisation de mots de passe"
+        },
+        {
+          "id": "brute",
+          "text": "Force brute"
+        },
+        {
+          "id": "stuff",
+          "text": "Bourrage d'identifiants (credential stuffing)"
+        },
+        {
+          "id": "replay",
+          "text": "Rejeu"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "d1": "down",
+        "d2": "coll",
+        "d3": "spray",
+        "d4": "brute",
+        "d5": "stuff"
+      }
+    },
+    "explanation": "La rétrogradation abuse de la négociation pour imposer un protocole ou un chiffrement faible. La collision exploite une fonction de hachage faible pour que deux contenus aient la même empreinte. La pulvérisation essaie peu de mots de passe sur beaucoup de comptes pour rester sous le seuil de verrouillage, alors que la force brute en essaie beaucoup sur un même compte. Le bourrage d'identifiants mise sur la réutilisation des mots de passe : les défenses sont la MFA et le contrôle des mots de passe compromis.",
+    "distractorNotes": {
+      "replay": "Le rejeu renvoie un message d'authentification capturé ; aucune description ne parle de réutiliser un échange intercepté."
+    },
+    "reference": "NIST SP 800-63B ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-ransomware-ir-phases-order-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un hôpital subit un rançongiciel sur son réseau administratif. Selon les phases de réponse aux incidents de NIST SP 800-61 Rev. 2, reprises par les objectifs Security+, ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "contain",
+          "text": "Isoler les segments réseau et les postes touchés"
+        },
+        {
+          "id": "prep",
+          "text": "Tenir à jour le plan de réponse et des sauvegardes hors ligne"
+        },
+        {
+          "id": "lessons",
+          "text": "Mener le retour d'expérience et mettre à jour les procédures"
+        },
+        {
+          "id": "detect",
+          "text": "Analyser les alertes de l'EDR et établir le périmètre de l'infection"
+        },
+        {
+          "id": "recover",
+          "text": "Restaurer les systèmes depuis les sauvegardes et surveiller leur retour"
+        },
+        {
+          "id": "eradicate",
+          "text": "Supprimer le logiciel malveillant et corriger la vulnérabilité exploitée"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "prep",
+        "detect",
+        "contain",
+        "eradicate",
+        "recover",
+        "lessons"
+      ]
+    },
+    "explanation": "La préparation (plan, sauvegardes hors ligne, outils) précède l'incident. Vient ensuite la détection et l'analyse, qui confirment l'incident et son étendue. Le confinement isole les systèmes touchés pour stopper la propagation du chiffrement ; l'éradication retire le logiciel malveillant et sa porte d'entrée ; la reprise restaure les systèmes sur une base saine. L'activité post-incident (leçons apprises) clôt le cycle. Restaurer avant d'éradiquer exposerait les systèmes à une nouvelle infection.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-61 Rev. 2 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-dns-amplification-factor-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Lors d'une attaque DDoS par réflexion contre un client, l'opérateur observe que chaque requête DNS usurpée de 64 octets envoyée par l'attaquant provoque une réponse de 3 200 octets vers la victime. Quel est le facteur d'amplification de cette attaque ?",
+      "fields": [
+        {
+          "id": "factor",
+          "label": "Facteur d'amplification (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "factor": {
+          "accepted": [
+            "50"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le facteur d'amplification est le rapport entre la taille de la réponse reçue par la victime et celle de la requête émise par l'attaquant : 3 200 / 64 = 50. Chaque octet envoyé par l'attaquant en fait donc arriver 50 sur la victime, ce qui lui permet de saturer un lien bien plus rapide que le sien. Les contre-mesures portent sur les résolveurs ouverts (les fermer, limiter le débit des réponses) et sur l'usurpation d'adresse (filtrage des sources à l'entrée des réseaux).",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-birthday-truncated-hash-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une application identifie les fichiers téléversés par une empreinte SHA-256 tronquée à 96 bits. Un auditeur s'inquiète d'une attaque par anniversaire, qui cherche deux fichiers quelconques de même empreinte. L'effort de cette attaque est d'environ 2^x calculs d'empreinte : quelle est la valeur de x ?",
+      "fields": [
+        {
+          "id": "x",
+          "label": "Exposant x (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "x": {
+          "accepted": [
+            "48"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le paradoxe des anniversaires montre qu'il faut beaucoup moins d'essais pour trouver deux entrées quelconques de même empreinte que pour trouver une entrée qui a une empreinte donnée : environ 2^(n/2) au lieu de 2^n. Avec 96 bits, l'effort tombe à 2^48 essais, à la portée de moyens de calcul modestes. Tronquer une empreinte réduit donc fortement sa résistance aux collisions ; SHA-256 complet offre environ 2^128.",
+    "distractorNotes": {},
+    "reference": "NIST FIPS 180-4 (SHA-2) ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-spraying-distinct-accounts-count-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Un analyste soupçonne une pulvérisation de mots de passe menée depuis 203.0.113.80. Les événements de 192.0.2.15 correspondent à un salarié qui s'est trompé de mot de passe. Combien de comptes distincts l'adresse 203.0.113.80 a-t-elle visés, et combien de tentatives a-t-elle faites en tout ?",
+      "exhibit": "Heure     ID    Compte      IP source       Sous-statut\n09:00:04  4625  j.leroy     203.0.113.80    0xC000006A\n09:00:34  4625  m.petit     203.0.113.80    0xC000006A\n09:01:02  4625  n.faure     192.0.2.15      0xC000006A\n09:01:04  4625  s.roux      203.0.113.80    0xC000006A\n09:01:20  4625  n.faure     192.0.2.15      0xC000006A\n09:01:34  4625  l.moreau    203.0.113.80    0xC000006A\n09:02:04  4625  a.garnier   203.0.113.80    0xC000006A\n09:31:04  4625  j.leroy     203.0.113.80    0xC000006A\n09:31:34  4625  m.petit     203.0.113.80    0xC000006A",
+      "fields": [
+        {
+          "id": "accounts",
+          "label": "Nombre de comptes distincts visés (nombre entier)"
+        },
+        {
+          "id": "attempts",
+          "label": "Nombre total de tentatives (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "accounts": {
+          "accepted": [
+            "5"
+          ],
+          "normalize": "int"
+        },
+        "attempts": {
+          "accepted": [
+            "7"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Depuis 203.0.113.80, on compte sept échecs 4625 : j.leroy, m.petit, s.roux, l.moreau et a.garnier entre 09:00 et 09:02, puis de nouveau j.leroy et m.petit à 09:31. Il y a donc cinq comptes distincts pour sept tentatives. La seconde vague, une demi-heure plus tard, est typique d'une pulvérisation qui attend la fin de la fenêtre de comptage du verrouillage avant d'essayer un nouveau mot de passe. Les deux lignes de n.faure, venant de 192.0.2.15, sont exclues.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE ATT&CK T1110.003 (Password Spraying)"
+  },
+  {
+    "slug": "security-plus-2.4-replay-iot-static-token-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'un test d'intrusion en boîte grise, l'équipe constate qu'une serrure connectée accepte une commande d'ouverture accompagnée d'un jeton d'authentification identique à chaque envoi. Le jeton est transmis chiffré, mais un message capturé puis renvoyé tel quel une heure plus tard ouvre toujours la porte. Quel contrôle répond LE MIEUX à ce problème ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chiffrer le jeton avec AES-256 au lieu de l'algorithme actuel"
+        },
+        {
+          "id": "b",
+          "text": "Allonger le jeton fixe de 128 à 256 bits"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer le jeton par son empreinte SHA-256"
+        },
+        {
+          "id": "d",
+          "text": "Inclure un nonce à usage unique et un horodatage vérifiés"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'équipe a réussi une attaque par rejeu : un message d'authentification valide, capturé, est renvoyé sans même être déchiffré. Tant que le message accepté est toujours le même, le rendre plus long ou mieux chiffré ne change rien. Il faut que chaque échange soit unique et limité dans le temps : un défi ou un nonce à usage unique, éventuellement associé à un horodatage ou à un compteur, que le récepteur vérifie et refuse s'il a déjà servi ou s'il est trop ancien.",
+    "distractorNotes": {
+      "a": "Un chiffrement plus fort produit toujours le même message pour le même jeton : il peut être capturé et rejoué à l'identique.",
+      "b": "Un jeton plus long résiste mieux à la devinette, mais reste fixe : l'attaquant n'a pas à le deviner, il le rejoue.",
+      "c": "L'empreinte d'un jeton fixe est elle-même fixe ; le serveur accepterait le même message rejoué."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-rootkit-volatility-order-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un serveur est soupçonné d'héberger un rootkit et doit être analysé avant d'être arrêté. Selon l'ordre de volatilité de la RFC 3227, ordonnez les éléments à collecter, du premier au dernier.",
+      "items": [
+        {
+          "id": "disk",
+          "text": "Image du disque système"
+        },
+        {
+          "id": "ram",
+          "text": "Mémoire vive, avec la table des processus et le cache ARP"
+        },
+        {
+          "id": "archive",
+          "text": "Bandes de sauvegarde archivées"
+        },
+        {
+          "id": "cache",
+          "text": "Registres et cache du processeur"
+        },
+        {
+          "id": "tmp",
+          "text": "Système de fichiers temporaire"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "cache",
+        "ram",
+        "tmp",
+        "disk",
+        "archive"
+      ]
+    },
+    "explanation": "La RFC 3227 demande de collecter d'abord ce qui disparaît le plus vite : registres et cache, puis la mémoire avec les tables de routage, ARP et de processus, puis les systèmes de fichiers temporaires, puis le disque, et enfin les supports d'archive. Face à un rootkit, la mémoire est précieuse : le code malveillant y est actif et visible même s'il se cache sur le disque, et l'arrêt du serveur l'effacerait. Les outils de collecte doivent venir d'un support de confiance.",
+    "distractorNotes": {},
+    "reference": "RFC 3227 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  }
+]

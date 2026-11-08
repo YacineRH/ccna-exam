@@ -1,0 +1,892 @@
+[
+  {
+    "slug": "security-plus-3.1-air-gap-removable-media-vector-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le réseau de commande d'une centrale hydroélectrique est isolé physiquement (air-gapped) : aucun câble ni lien sans fil ne le relie au réseau de l'entreprise ou à Internet. Les mises à jour des postes d'ingénierie y sont apportées sur des clés USB. Par quel vecteur un logiciel malveillant a-t-il LE PLUS de chances d'atteindre ce réseau ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un courriel d'hameçonnage reçu sur un poste d'ingénierie"
+        },
+        {
+          "id": "b",
+          "text": "Une attaque par déni de service lancée depuis Internet"
+        },
+        {
+          "id": "c",
+          "text": "Un support amovible infecté introduit par un intervenant"
+        },
+        {
+          "id": "d",
+          "text": "Une injection SQL visant le site web public de l'entreprise"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'isolation physique supprime tout chemin réseau vers l'extérieur : les attaques qui ont besoin d'une connexion (courriel, trafic Internet, application web exposée) ne peuvent pas atteindre les équipements isolés. Il reste en revanche les échanges physiques, au premier rang desquels les supports amovibles, seul moyen d'y faire entrer des données. C'est par ce vecteur que des campagnes comme Stuxnet ont franchi des réseaux industriels isolés. D'où les contrôles associés à un air gap : station blanche d'analyse des supports, clés dédiées et enregistrées, blocage des ports USB non autorisés.",
+    "distractorNotes": {
+      "a": "Le réseau isolé ne reçoit aucun courriel : sans lien vers la messagerie, un message d'hameçonnage ne peut pas arriver sur un poste d'ingénierie.",
+      "b": "Un déni de service depuis Internet suppose un chemin réseau jusqu'à la cible ; l'isolation physique le supprime.",
+      "d": "Le site web public est hébergé ailleurs ; sa compromission n'ouvre aucun chemin vers un réseau sans connexion."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; NIST SP 800-82 Rev. 3"
+  },
+  {
+    "slug": "security-plus-3.1-sdn-automated-quarantine-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le SOC d'une université veut qu'un poste signalé comme infecté par l'EDR soit isolé en quelques secondes, quel que soit le bâtiment où il est branché, sans qu'un technicien intervienne sur les commutateurs. Quelle architecture réseau répond LE MIEUX à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des VLAN statiques configurés à la main sur chaque commutateur"
+        },
+        {
+          "id": "b",
+          "text": "Un réseau défini par logiciel (SDN) piloté par l'API de son contrôleur"
+        },
+        {
+          "id": "c",
+          "text": "Une isolation physique (air gap) de chaque bâtiment du campus"
+        },
+        {
+          "id": "d",
+          "text": "Une redondance actif/passif des commutateurs de cœur de réseau"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le SDN sépare le plan de contrôle, centralisé dans un contrôleur, du plan de données des commutateurs. Le contrôleur expose une API (northbound) : un outil comme l'EDR ou le SOAR peut lui demander de placer le poste en quarantaine, et le contrôleur programme aussitôt les équipements concernés, où que le poste soit branché. Cette programmabilité permet une segmentation dynamique et une réponse automatisée. La contrepartie : le contrôleur et son API deviennent des cibles de grande valeur, à protéger (authentification forte, contrôle d'accès, redondance).",
+    "distractorNotes": {
+      "a": "Des VLAN statiques imposent une modification manuelle sur le commutateur où le poste est branché : ni automatique ni rapide.",
+      "c": "L'isolation physique des bâtiments ne permet pas d'isoler un poste précis à la demande et empêcherait le fonctionnement normal du campus.",
+      "d": "La redondance des commutateurs de cœur améliore la disponibilité ; elle n'apporte aucun moyen d'isoler un poste automatiquement."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1)"
+  },
+  {
+    "slug": "security-plus-3.1-rtos-airbag-deadline-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un équipementier automobile conçoit le calculateur qui déclenche les coussins gonflables : il doit réagir à un choc dans un délai garanti de quelques millisecondes, à chaque fois. Quel type de système d'exploitation convient à ce calculateur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un système d'exploitation temps réel (RTOS)"
+        },
+        {
+          "id": "b",
+          "text": "Un système d'exploitation de bureau généraliste"
+        },
+        {
+          "id": "c",
+          "text": "Un hyperviseur de type 2 hébergeant une machine virtuelle"
+        },
+        {
+          "id": "d",
+          "text": "Une plateforme de fonctions serverless chez un fournisseur cloud"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un RTOS (Real-Time Operating System) garantit qu'une tâche s'exécute dans un délai borné et prévisible : c'est le déterminisme, exigé pour les systèmes critiques (freinage, coussins gonflables, dispositifs médicaux, automates). Pour la sécurité, ces systèmes sont souvent embarqués, de durée de vie longue et difficiles à corriger ; une mise à jour doit être validée pour ne pas compromettre le respect des délais. Les protéger passe donc surtout par la conception (code signé, surface d'attaque minimale) et l'isolement des bus et réseaux qui les relient.",
+    "distractorNotes": {
+      "b": "Un système de bureau ordonnance les tâches pour le débit et l'interactivité, sans garantir de délai de réponse borné.",
+      "c": "Un hyperviseur de type 2 tourne au-dessus d'un système hôte généraliste : il ajoute de la latence et ne garantit aucun délai.",
+      "d": "Une fonction serverless s'exécute à distance, à travers un réseau, avec des démarrages à froid : aucune garantie de quelques millisecondes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1)"
+  },
+  {
+    "slug": "security-plus-3.1-ics-modbus-write-office-host-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Dans une usine, les automates sont dans le réseau 172.16.30.0/24 et seules les IHM de supervision (172.16.20.0/24) doivent leur envoyer des commandes. La bureautique utilise 10.20.0.0/16. L'enquête montre que le poste n'est pas compromis : un stagiaire a lancé un outil Modbus trouvé en ligne. Quelle mesure d'architecture empêche LE MIEUX que l'événement se reproduise ?",
+      "exhibit": "[OT-IDS] 2026-11-03 14:22:07 SEVERITY=HIGH\n  Rule     : Modbus write from non-engineering zone\n  Source   : 10.20.4.57 (COMPTA-12)\n  Dest     : 172.16.30.11:502 (PLC-LIGNE2)\n  Function : 16 (Write Multiple Registers), unit 1, 12 registers\n  Firewall : IT-OT-FW1 rule 1 \"any any allow\" matched",
+      "options": [
+        {
+          "id": "a",
+          "text": "Changer l'adresse IP de l'automate PLC-LIGNE2 et la tenir secrète"
+        },
+        {
+          "id": "b",
+          "text": "Activer le chiffrement TLS sur le poste COMPTA-12 avant tout échange Modbus"
+        },
+        {
+          "id": "c",
+          "text": "Filtrer entre IT et OT : seules les IHM atteignent les automates, refus par défaut"
+        },
+        {
+          "id": "d",
+          "text": "Augmenter la fréquence de scrutation de l'automate par l'IHM de supervision"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'alerte montre une écriture Modbus (code fonction 16, Write Multiple Registers) envoyée par un poste bureautique directement à un automate : la séparation entre le réseau d'entreprise et le réseau industriel est défaillante. Modbus/TCP n'authentifie pas l'émetteur ; l'automate exécute toute commande bien formée qui lui parvient. La parade est architecturale : un pare-feu entre zones IT et OT, en refus par défaut, qui n'autorise le trafic Modbus vers les automates que depuis les IHM de supervision, les échanges avec la bureautique passant par une DMZ industrielle. La sonde IDS industrielle reste utile pour détecter les écarts.",
+    "distractorNotes": {
+      "a": "Masquer l'adresse relève de la sécurité par l'obscurité : un balayage du réseau la retrouve, et le chemin réseau ouvert subsiste.",
+      "b": "Le poste bureautique n'a pas à communiquer avec l'automate ; chiffrer cet échange protégerait sa confidentialité sans l'interdire, et le chemin réseau resterait ouvert.",
+      "d": "La fréquence de scrutation de l'IHM n'a aucun effet sur les commandes émises par un autre hôte."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; NIST SP 800-82 Rev. 3"
+  },
+  {
+    "slug": "security-plus-3.1-embedded-firmware-signature-boot-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un fabricant de contrôleurs d'accès à base de RTOS constate que des firmwares modifiés circulent et que des clients les installent. Il veut que ses contrôleurs refusent tout firmware qu'il n'a pas produit lui-même. Quel mécanisme répond LE MIEUX à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La vérification de la signature numérique du firmware au démarrage"
+        },
+        {
+          "id": "b",
+          "text": "Une somme de contrôle CRC32 du firmware publiée sur le site du fabricant"
+        },
+        {
+          "id": "c",
+          "text": "La compression du firmware avant sa diffusion aux clients"
+        },
+        {
+          "id": "d",
+          "text": "L'obscurcissement du code source avant sa compilation"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le fabricant signe chaque firmware avec sa clé privée ; le chargeur d'amorçage sécurisé (secure boot) du contrôleur contient la clé publique correspondante, ancrée dans une mémoire non modifiable, et vérifie la signature avant d'installer ou d'exécuter l'image. Un firmware modifié ou produit par un tiers ne porte pas de signature valide et il est refusé. Seule la cryptographie asymétrique garantit à la fois l'intégrité et l'origine, sans que l'appareil détienne de secret permettant de signer.",
+    "distractorNotes": {
+      "b": "Un CRC détecte les erreurs accidentelles mais n'a aucune clé : celui qui modifie le firmware recalcule le CRC sans difficulté, et rien n'oblige l'appareil à le vérifier.",
+      "c": "La compression réduit la taille de l'image ; n'importe qui peut décompresser, modifier puis recompresser le firmware.",
+      "d": "L'obscurcissement complique l'analyse du code mais n'empêche pas l'appareil d'accepter une image modifiée."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; NIST FIPS 186-5"
+  },
+  {
+    "slug": "security-plus-3.1-ha-active-active-capacity-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une application de paiement repose sur un cluster actif/actif de deux nœuds identiques derrière un répartiteur de charge. Aux heures de pointe, chaque nœud fonctionne à 70 % de sa capacité. Le contrat exige que le service tienne la charge de pointe même si un nœud tombe en panne. Quelle affirmation décrit LE MIEUX la situation ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'exigence est respectée, car chaque nœud conserve 30 % de marge en pointe"
+        },
+        {
+          "id": "b",
+          "text": "L'exigence est respectée, car le répartiteur retire le nœud en panne"
+        },
+        {
+          "id": "c",
+          "text": "Passer en actif/passif sur les deux mêmes nœuds suffirait à respecter l'exigence"
+        },
+        {
+          "id": "d",
+          "text": "L'exigence n'est pas respectée : le nœud survivant devrait fournir 140 % de sa capacité"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "En pointe, la charge totale vaut 2 × 70 % = 140 % de la capacité d'un nœud. Si un nœud tombe, le répartiteur envoie tout le trafic au survivant, qui ne peut fournir que 100 % : le service se dégrade ou s'effondre. Pour qu'un cluster actif/actif à deux nœuds reste disponible après une panne, la charge de chaque nœud doit rester sous 50 % de sa capacité (dimensionnement N+1). Il faut donc ajouter un troisième nœud ou augmenter la capacité des nœuds. La haute disponibilité ne se résume pas à la redondance : elle suppose aussi la capacité de reprendre toute la charge.",
+    "distractorNotes": {
+      "a": "Les 30 % de marge d'un nœud ne suffisent pas à absorber les 70 % de l'autre : il manque 40 % de capacité.",
+      "b": "Le répartiteur retire bien le nœud en panne, mais il reporte alors tout le trafic sur le survivant, qui sature.",
+      "c": "En actif/passif, un seul nœud traite toute la charge : il devrait fournir 140 % de sa capacité dès le fonctionnement normal."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1)"
+  },
+  {
+    "slug": "security-plus-3.1-air-gap-data-diode-historian-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une raffinerie veut copier chaque minute les mesures de son historien industriel vers le réseau de l'entreprise, pour des tableaux de bord. L'exigence de sûreté est stricte : il doit être physiquement impossible qu'une donnée ou une commande remonte de l'entreprise vers le réseau industriel. Quelle solution répond LE MIEUX à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un pare-feu à états qui n'autorise que les connexions sortant du réseau industriel"
+        },
+        {
+          "id": "b",
+          "text": "Un tunnel VPN IPsec site à site entre les deux réseaux"
+        },
+        {
+          "id": "c",
+          "text": "Une diode de données (passerelle unidirectionnelle) entre les deux réseaux"
+        },
+        {
+          "id": "d",
+          "text": "Un VLAN dédié à l'historien sur les commutateurs de l'entreprise"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une diode de données est un dispositif matériel qui ne transmet physiquement que dans un sens (par exemple, une seule fibre émettrice d'un côté et réceptrice de l'autre). Les données de l'historien peuvent sortir, mais aucun signal ne peut revenir vers le réseau industriel, quelle que soit la configuration logicielle ou une éventuelle vulnérabilité. Elle préserve ainsi l'essentiel de l'isolation physique tout en permettant l'export. Les protocoles bidirectionnels sont remplacés par des envois sans accusé de réception, gérés par des serveurs proxy de chaque côté.",
+    "distractorNotes": {
+      "a": "Un pare-feu à états laisse revenir les réponses des connexions autorisées et dépend de sa configuration et de son logiciel : la remontée n'est pas physiquement impossible.",
+      "b": "Un VPN IPsec chiffre un lien bidirectionnel : il ouvre au contraire un chemin dans les deux sens entre les réseaux.",
+      "d": "Un VLAN est une séparation logique sur un matériel partagé, bidirectionnelle par nature ; il n'offre aucune garantie physique."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; NIST SP 800-82 Rev. 3"
+  },
+  {
+    "slug": "security-plus-3.1-air-gap-cellular-modem-bypass-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le réseau de l'atelier ATELIER-USIN est déclaré isolé physiquement (air-gapped) dans le dossier de sécurité, et la politique impose qu'il le reste. L'auditeur relève les constats ci-dessous. Quelle recommandation est LA PLUS appropriée ?",
+      "exhibit": "AUDIT ATELIER-USIN - constats du 2026-10-14\n 1. Poste d'ingénierie ING-03 : modem USB 4G actif, connecté en permanence\n    (installé en 2025 par l'intégrateur pour sa télémaintenance)\n 2. Aucun câble vers le réseau de l'entreprise, aucun point d'accès Wi-Fi\n 3. Station blanche présente, utilisée pour toutes les clés USB entrantes\n 4. Aucune demande de changement enregistrée pour l'installation du modem",
+      "options": [
+        {
+          "id": "a",
+          "text": "Retirer le modem et donner à l'intégrateur un accès VPN IPsec au poste ING-03"
+        },
+        {
+          "id": "b",
+          "text": "Retirer le modem et faire intervenir l'intégrateur sur site, supports en station blanche"
+        },
+        {
+          "id": "c",
+          "text": "Garder le modem et déplacer le poste ING-03 dans un VLAN séparé de l'atelier"
+        },
+        {
+          "id": "d",
+          "text": "Garder le modem, le réseau cellulaire de l'opérateur étant chiffré de bout en bout"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le modem cellulaire crée un lien permanent entre un poste de l'atelier et Internet : le réseau n'est plus isolé physiquement, et ce chemin échappe à tous les contrôles de l'entreprise. Puisque la politique exige l'isolation, la seule recommandation conforme est de supprimer le lien et de traiter la maintenance du prestataire sans connexion externe : intervention sur site, accompagnée, avec des supports analysés par la station blanche. Un tel constat relève aussi d'une revue de la gestion des changements, puisque l'intégrateur a modifié l'architecture sans validation. Les preuves de l'accès distant passé doivent être examinées.",
+    "distractorNotes": {
+      "a": "Un VPN suppose encore un lien entre l'atelier et un réseau extérieur : l'isolation physique imposée par la politique resterait rompue, seul le support du lien changerait.",
+      "c": "Le VLAN agit sur le réseau filaire de l'atelier ; le modem, lui, donne au poste un accès direct à Internet qui contourne toute segmentation.",
+      "d": "Le chiffrement radio protège la liaison contre l'écoute, pas le poste contre les connexions venues d'Internet ; l'isolation reste rompue."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; NIST SP 800-82 Rev. 3"
+  },
+  {
+    "slug": "security-plus-3.1-ics-passive-asset-discovery-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Après cet incident sur la ligne de production, l'usine doit malgré tout établir l'inventaire des équipements et des services de son réseau industriel 172.16.30.0/24 pour un audit, sans arrêter la production. Quelle méthode l'équipe doit-elle retenir ?",
+      "exhibit": "02:14:05 SCAN   10.50.1.20 -> 172.16.30.0/24 TCP ports 1-65535 (discovery)\n02:14:37 PLC    172.16.30.11 PLC-LIGNE2 CPU STOP (fault: comm overload)\n02:14:37 HMI-01 ALARM Communication lost with PLC-LIGNE2\n02:51:10 PLC    172.16.30.11 PLC-LIGNE2 CPU RUN (manual restart)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Analyser passivement une copie du trafic industriel (port miroir ou TAP)"
+        },
+        {
+          "id": "b",
+          "text": "Relancer la même découverte active en heures creuses de production"
+        },
+        {
+          "id": "c",
+          "text": "Relancer la découverte active en désactivant les alarmes de l'IHM"
+        },
+        {
+          "id": "d",
+          "text": "Lancer la découverte active depuis Internet vers l'adresse publique de l'usine"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'exhibit relie la découverte active, lancée à 02:14:05, à l'arrêt de l'automate 32 secondes plus tard pour surcharge de communication : beaucoup d'équipements industriels anciens ont des piles réseau fragiles qu'un balayage de ports suffit à faire tomber. Dans un environnement où la disponibilité et la sûreté priment, l'inventaire se fait de préférence par analyse passive : une sonde reçoit une copie du trafic (port miroir ou TAP) et identifie les équipements, leurs protocoles et leurs échanges sans rien leur envoyer. Toute interrogation active doit être limitée, planifiée et validée avec l'exploitant.",
+    "distractorNotes": {
+      "b": "La découverte qui a arrêté l'automate a été lancée à 02:14, alors que la ligne tournait : l'heure ne change rien à la fragilité de la pile réseau de l'automate, et la production n'est pas interrompue en heures creuses.",
+      "c": "Désactiver les alarmes masquerait un nouvel arrêt aux opérateurs sans l'empêcher, ce qui aggraverait le risque pour la sûreté.",
+      "d": "Le réseau industriel n'est pas censé être joignable depuis Internet ; cette découverte ne verrait pas les équipements, ou révélerait une exposition grave."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; NIST SP 800-82 Rev. 3"
+  },
+  {
+    "slug": "security-plus-3.1-sdn-controller-api-hardening-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise migre son réseau de campus vers un SDN. Le RSSI rappelle que quiconque contrôle le contrôleur contrôle tout le réseau. Quelles deux mesures réduisent LE MIEUX ce risque, sans renoncer à la gestion centralisée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Désactiver la journalisation du contrôleur pour alléger sa charge"
+        },
+        {
+          "id": "b",
+          "text": "Authentifier mutuellement en TLS le contrôleur et les commutateurs (southbound)"
+        },
+        {
+          "id": "c",
+          "text": "Ouvrir l'API REST du contrôleur sans authentification depuis le VLAN utilisateurs"
+        },
+        {
+          "id": "d",
+          "text": "Faire utiliser un compte administrateur partagé par tous les scripts"
+        },
+        {
+          "id": "e",
+          "text": "Exiger authentification forte et RBAC sur l'API northbound du contrôleur"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Deux interfaces du contrôleur sont critiques. Vers le bas (southbound, par exemple OpenFlow), l'authentification mutuelle TLS empêche un faux contrôleur de programmer les commutateurs et un faux commutateur de rejoindre le réseau. Vers le haut (northbound), l'API utilisée par les applications et les scripts doit exiger une authentification forte et un contrôle d'accès par rôles, pour que chaque outil n'ait que les droits nécessaires. S'y ajoutent la redondance du contrôleur, qui évite d'en faire un point unique de défaillance, et la journalisation de toutes les modifications.",
+    "distractorNotes": {
+      "a": "Sans journaux, une modification malveillante de la politique du réseau passerait inaperçue : c'est l'inverse de ce qu'il faut.",
+      "c": "Une API sans authentification accessible aux utilisateurs permettrait à n'importe quel poste de reprogrammer le réseau.",
+      "d": "Un compte partagé empêche l'imputabilité et donne à chaque script tous les droits : c'est contraire au moindre privilège."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; NIST SP 800-53 Rev. 5"
+  },
+  {
+    "slug": "security-plus-3.1-ics-patching-constraints-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le responsable de la sécurité d'une usine de traitement des eaux explique à la direction pourquoi les automates et les postes SCADA ne reçoivent pas les correctifs au même rythme que la bureautique. Quelles deux raisons sont exactes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le procédé fonctionne en continu : redémarrer impose un arrêt planifié"
+        },
+        {
+          "id": "b",
+          "text": "Les automates industriels n'ont aucun firmware susceptible d'être corrigé"
+        },
+        {
+          "id": "c",
+          "text": "Les protocoles industriels chiffrent nativement tout leur trafic"
+        },
+        {
+          "id": "d",
+          "text": "Un correctif doit être qualifié par le fournisseur du système de commande"
+        },
+        {
+          "id": "e",
+          "text": "Les postes SCADA reçoivent chaque nuit des correctifs automatiques"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Dans un système de contrôle industriel, la disponibilité et la sûreté du procédé passent avant tout : un redémarrage d'automate ou de serveur SCADA interrompt la production ou la distribution d'eau, et doit être planifié lors d'un arrêt technique. Par ailleurs, l'intégrateur ou le fournisseur du système de commande doit qualifier chaque correctif, faute de quoi le support peut être perdu et un comportement inattendu du procédé devient possible. D'où des cycles de correctifs longs, et le recours à des contrôles compensatoires (segmentation, liste blanche d'applications, surveillance) entre deux fenêtres.",
+    "distractorNotes": {
+      "b": "Les automates ont un firmware ; les fabricants publient des correctifs de sécurité pour ce firmware, mais leur déploiement est contraint.",
+      "c": "Les protocoles historiques comme Modbus ou DNP3 ne chiffrent pas leur trafic ; et le chiffrement ne remplacerait pas les correctifs.",
+      "e": "Les correctifs automatiques non qualifiés sont justement proscrits sur les postes SCADA, pour ne pas perturber le procédé."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; NIST SP 800-82 Rev. 3 ; NIST SP 800-40 Rev. 4"
+  },
+  {
+    "slug": "security-plus-3.1-iot-procurement-requirements-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une chaîne d'hôtels va acheter 2 000 capteurs connectés (température, présence) pour ses chambres. Le RSSI rédige les exigences de sécurité du cahier des charges. Quelles deux exigences doit-il imposer au fournisseur ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une interface Telnet activée en permanence pour le dépannage"
+        },
+        {
+          "id": "b",
+          "text": "Un compte de maintenance caché que le client ne peut pas modifier"
+        },
+        {
+          "id": "c",
+          "text": "Des mises à jour de firmware signées, sur une durée de support définie"
+        },
+        {
+          "id": "d",
+          "text": "Une connexion sortante vers le cloud du fournisseur, non documentée"
+        },
+        {
+          "id": "e",
+          "text": "Des identifiants uniques par appareil, modifiables par le client"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Les appareils IoT sont nombreux, rarement surveillés et souvent livrés avec une sécurité minimale. Le cahier des charges doit donc garantir qu'ils pourront être corrigés pendant toute leur vie (mises à jour de firmware signées, engagement de durée de support) et qu'ils ne partagent pas un identifiant d'usine commun, cible privilégiée des botnets (identifiants uniques et modifiables). On y ajoute la désactivation des services inutiles, la documentation des flux réseau pour permettre la segmentation, et un processus de signalement des vulnérabilités.",
+    "distractorNotes": {
+      "a": "Telnet transmet les identifiants en clair et offre un service d'administration exposé en permanence ; il doit être désactivé.",
+      "b": "Un compte caché et non modifiable est une porte dérobée : s'il est découvert, tous les appareils sont compromis en même temps.",
+      "d": "Un flux non documenté empêche de segmenter et de filtrer correctement les appareils, et peut faire fuir des données."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1)"
+  },
+  {
+    "slug": "security-plus-3.1-ha-spof-topology-review-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Une boutique en ligne doit rester disponible lors de la panne de n'importe quel équipement. L'architecte relit le schéma de production. Quels deux éléments constituent encore des points uniques de défaillance ? (Choisissez-en deux.)",
+      "exhibit": "Internet\n   |\n[FW1]==[FW2]      pare-feu en paire actif/passif\n   |\n [LB1]            répartiteur de charge unique\n  /   \\\n[WEB1] [WEB2]     serveurs web identiques\n  \\   /\n [DB1]            base unique, sauvegardée chaque nuit sur un NAS",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le répartiteur de charge LB1"
+        },
+        {
+          "id": "b",
+          "text": "Le serveur WEB1"
+        },
+        {
+          "id": "c",
+          "text": "La paire de pare-feu FW1/FW2"
+        },
+        {
+          "id": "d",
+          "text": "La base de données DB1"
+        },
+        {
+          "id": "e",
+          "text": "Le serveur WEB2"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Un point unique de défaillance est un élément dont la panne suffit à interrompre le service. Les pare-feu fonctionnent en paire actif/passif et les deux serveurs web se relaient : la perte de l'un d'eux est absorbée. En revanche, tout le trafic passe par l'unique répartiteur LB1, et toutes les commandes dépendent de l'unique base DB1. La sauvegarde nocturne de DB1 permet de restaurer les données, mais pas de continuer le service pendant la panne : une sauvegarde n'est pas une redondance. Il faut doubler le répartiteur (paire avec adresse virtuelle) et répliquer la base vers un second serveur capable de prendre le relais.",
+    "distractorNotes": {
+      "b": "WEB1 est redondé par WEB2 derrière le répartiteur : sa panne n'interrompt pas le service.",
+      "c": "La paire FW1/FW2 est en actif/passif : le pare-feu passif reprend le trafic si l'actif tombe.",
+      "e": "WEB2 est redondé par WEB1 : le répartiteur retire le serveur défaillant et envoie le trafic à l'autre."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1)"
+  },
+  {
+    "slug": "security-plus-3.1-sdn-planes-functions-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Pour la revue de sécurité d'un réseau défini par logiciel (SDN), un ingénieur classe les fonctions observées selon le plan auquel elles appartiennent. Associez chaque fonction à son plan.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Calculer les chemins et décider de la politique de transfert pour tout le réseau"
+        },
+        {
+          "id": "l2",
+          "text": "Transmettre les paquets selon les entrées installées dans la table de flux"
+        },
+        {
+          "id": "l3",
+          "text": "Ouvrir une session SSH d'administration sur le contrôleur"
+        },
+        {
+          "id": "l4",
+          "text": "Échanger des annonces OSPF avec un routeur voisin hors du domaine SDN"
+        },
+        {
+          "id": "l5",
+          "text": "Exporter les journaux syslog et les compteurs SNMP vers la supervision"
+        }
+      ],
+      "right": [
+        {
+          "id": "ctrl",
+          "text": "Plan de contrôle"
+        },
+        {
+          "id": "data",
+          "text": "Plan de données"
+        },
+        {
+          "id": "mgmt",
+          "text": "Plan de gestion"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "ctrl",
+        "l2": "data",
+        "l3": "mgmt",
+        "l4": "ctrl",
+        "l5": "mgmt"
+      }
+    },
+    "explanation": "Le plan de contrôle décide : il calcule les chemins et la politique de transfert, ce qui inclut les protocoles de routage comme OSPF ; en SDN, il est centralisé dans le contrôleur. Le plan de données exécute : les commutateurs transmettent chaque paquet selon les entrées de leur table de flux. Le plan de gestion sert à administrer et superviser les équipements (SSH, SNMP, syslog). Distinguer les plans permet de protéger chacun : réseau de gestion hors bande et accès restreint pour la gestion, authentification du canal contrôleur-commutateurs pour le contrôle, filtrage au débit de ligne pour les données.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1)"
+  },
+  {
+    "slug": "security-plus-3.1-ics-components-roles-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un nouvel analyste du SOC d'un distributeur d'eau découvre l'architecture SCADA. Associez chaque composant à son rôle.",
+      "left": [
+        {
+          "id": "plc",
+          "text": "Automate programmable (PLC)"
+        },
+        {
+          "id": "rtu",
+          "text": "Unité terminale distante (RTU)"
+        },
+        {
+          "id": "hmi",
+          "text": "Interface homme-machine (IHM)"
+        },
+        {
+          "id": "hist",
+          "text": "Historien"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Exécute en boucle la logique qui pilote vannes et pompes d'une installation"
+        },
+        {
+          "id": "r2",
+          "text": "Collecte les mesures d'un site isolé et les transmet au maître SCADA par radio"
+        },
+        {
+          "id": "r3",
+          "text": "Affiche l'état du procédé aux opérateurs et leur permet d'envoyer des consignes"
+        },
+        {
+          "id": "r4",
+          "text": "Enregistre les valeurs du procédé dans le temps pour analyse et rapports"
+        },
+        {
+          "id": "r5",
+          "text": "Inspecte les requêtes HTTP vers les applications web pour bloquer les attaques"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "plc": "r1",
+        "rtu": "r2",
+        "hmi": "r3",
+        "hist": "r4"
+      }
+    },
+    "explanation": "Dans un système SCADA, l'automate programmable (PLC) exécute cycliquement la logique de commande au plus près des équipements. L'unité terminale distante (RTU) équipe les sites éloignés (stations de pompage, réservoirs) et remonte leurs mesures vers le serveur maître, souvent par radio ou réseau cellulaire. L'IHM présente le procédé aux opérateurs et transmet leurs consignes. L'historien archive les données du procédé. Chacun est une cible différente : une IHM compromise permet d'envoyer des commandes, un historien relié à la bureautique sert souvent de point de passage entre IT et OT.",
+    "distractorNotes": {
+      "r5": "Ce rôle est celui d'un pare-feu applicatif web (WAF), un composant de sécurité informatique et non un composant d'un système SCADA."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; NIST SP 800-82 Rev. 3"
+  },
+  {
+    "slug": "security-plus-3.1-isolation-physical-vs-logical-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un auditeur recense les mesures de séparation des réseaux d'un ministère. Classez chaque mesure selon qu'elle relève de l'isolation physique ou de la séparation logique.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Réseau classifié sans aucun câble ni lien sans fil vers un autre réseau"
+        },
+        {
+          "id": "l2",
+          "text": "VLAN dédié aux caméras de vidéoprotection sur les commutateurs d'étage"
+        },
+        {
+          "id": "l3",
+          "text": "Listes de contrôle d'accès filtrant le trafic entre deux sous-réseaux"
+        },
+        {
+          "id": "l4",
+          "text": "Commutateurs et câblage propres au laboratoire, jamais reliés à la bureautique"
+        },
+        {
+          "id": "l5",
+          "text": "Instance de routage virtuelle (VRF) séparée pour la supervision"
+        }
+      ],
+      "right": [
+        {
+          "id": "phys",
+          "text": "Séparation physique (matériel et câblage distincts)"
+        },
+        {
+          "id": "log",
+          "text": "Séparation logique"
+        },
+        {
+          "id": "det",
+          "text": "Contrôle dissuasif"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "phys",
+        "l2": "log",
+        "l3": "log",
+        "l4": "phys",
+        "l5": "log"
+      }
+    },
+    "explanation": "La séparation physique repose sur un matériel et un câblage distincts, sans lien avec l'autre réseau ; sa forme extrême est l'isolation complète (air gap), sans aucun câble ni lien sans fil vers un autre réseau. La séparation logique partage le même matériel et isole le trafic par configuration : VLAN, ACL, VRF, pare-feu. Elle est plus souple et moins coûteuse, mais une erreur de configuration ou une vulnérabilité de l'équipement partagé peut laisser passer du trafic ; c'est pourquoi les réseaux les plus sensibles exigent une isolation physique.",
+    "distractorNotes": {
+      "det": "Un contrôle dissuasif décourage l'attaquant (panneau, avertissement) ; aucune de ces mesures n'a cette finalité, toutes séparent effectivement des réseaux."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1)"
+  },
+  {
+    "slug": "security-plus-3.1-ics-purdue-model-levels-order-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Pour segmenter le réseau d'une usine, l'équipe sécurité s'appuie sur le modèle Purdue. Ordonnez ces zones du niveau le plus proche du procédé physique au niveau le plus proche du réseau d'entreprise.",
+      "items": [
+        {
+          "id": "dmz",
+          "text": "DMZ industrielle entre l'usine et l'entreprise"
+        },
+        {
+          "id": "plc",
+          "text": "Automates programmables (PLC) de la ligne"
+        },
+        {
+          "id": "erp",
+          "text": "Réseau d'entreprise (ERP, messagerie)"
+        },
+        {
+          "id": "field",
+          "text": "Capteurs et actionneurs du procédé"
+        },
+        {
+          "id": "ops",
+          "text": "Opérations du site (historien, MES)"
+        },
+        {
+          "id": "hmi",
+          "text": "Supervision (IHM, serveurs SCADA)"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "field",
+        "plc",
+        "hmi",
+        "ops",
+        "dmz",
+        "erp"
+      ]
+    },
+    "explanation": "Le modèle Purdue découpe un système industriel en niveaux : niveau 0, le procédé physique (capteurs, actionneurs) ; niveau 1, la commande de base (automates) ; niveau 2, la supervision (IHM, SCADA) ; niveau 3, les opérations du site (historien, MES) ; niveau 3.5, la DMZ industrielle ; niveaux 4 et 5, le réseau et les applications de l'entreprise. Chaque frontière est un point de filtrage, et aucun flux ne devrait traverser la DMZ de part en part : les échanges IT-OT s'y arrêtent sur des serveurs relais.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; NIST SP 800-82 Rev. 3"
+  },
+  {
+    "slug": "security-plus-3.1-sdn-reactive-flow-setup-order-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Dans un réseau SDN OpenFlow en mode réactif, l'entrée table-miss des commutateurs renvoie au contrôleur les paquets inconnus. Un poste envoie le premier paquet d'un nouveau flux. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "flowmod",
+          "text": "Le contrôleur installe une entrée pour ce flux dans la table du commutateur"
+        },
+        {
+          "id": "miss",
+          "text": "Le commutateur ne trouve aucune entrée correspondant au paquet"
+        },
+        {
+          "id": "next",
+          "text": "Le commutateur traite seul les paquets suivants du flux"
+        },
+        {
+          "id": "pktin",
+          "text": "Le commutateur transmet le paquet au contrôleur (packet-in)"
+        },
+        {
+          "id": "policy",
+          "text": "Le contrôleur applique sa politique et décide du traitement"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "miss",
+        "pktin",
+        "policy",
+        "flowmod",
+        "next"
+      ]
+    },
+    "explanation": "Sans entrée correspondante, l'entrée table-miss renvoie le paquet au contrôleur dans un message packet-in. Le contrôleur, qui porte le plan de contrôle centralisé, applique la politique (autoriser, bloquer, rediriger) et programme le commutateur par un message flow-mod. Les paquets suivants correspondent à la nouvelle entrée et sont traités directement par le plan de données. Pour la sécurité, ce fonctionnement fait du contrôleur un point d'application unique de la politique, mais aussi une cible : un afflux de paquets inconnus peut le saturer, d'où la limitation des packet-in.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; Open Networking Foundation, OpenFlow Switch Specification"
+  },
+  {
+    "slug": "security-plus-3.1-ics-modbus-tcp-port-rule-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un ingénieur rédige la règle du pare-feu qui sépare la zone de supervision de la zone des automates d'une usine. Seules les IHM doivent pouvoir interroger les automates, qui communiquent en Modbus/TCP sur le port standard. Quel port de destination la règle doit-elle autoriser ?",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Port TCP de destination (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "502"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Modbus/TCP utilise le port TCP 502, enregistré à l'IANA. La règle autorise donc les IHM de la zone de supervision vers le port 502 des automates, et le reste du trafic vers cette zone est refusé par défaut. Modbus n'authentifie pas l'émetteur et ne chiffre rien : tout hôte qui atteint le port 502 d'un automate peut lire et écrire ses registres. Le filtrage par zone, voire une inspection des codes fonction Modbus (lecture seule pour certains hôtes), est donc la protection principale.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.1) ; Modbus Organization, MODBUS Messaging on TCP/IP Implementation Guide V1.0b"
+  }
+]

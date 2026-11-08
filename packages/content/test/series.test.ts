@@ -9,57 +9,81 @@ import {
   seriesReport,
   type Question,
 } from '@examforge/core';
-import { loadCertification, loadExamSeries, poolOf } from '../src/index.js';
+import { listBankTargetCodes, loadBankTargets, loadCertification, loadExamSeries, poolOf } from '../src/index.js';
 
 /*
- * Cibles du bloc 6 (docs/ARCHITECTURE.md, « Banque complète et série de 100 examens blancs ») :
- * banque CCNA, mélange des types et des difficultés, série de 100 examens figés et ses contraintes.
+ * Cibles chiffrées de la banque et de la série, paramétrées par certification : `data/bank-targets/<code>.json`
+ * donne les chiffres, les tests sont les mêmes pour toutes (docs/ARCHITECTURE.md, « Cibles de la banque »).
  */
 
-const { certification, questions } = loadCertification('ccna');
-const count = (pred: (q: Question) => boolean) => questions.filter(pred).length;
+describe('cibles de banque', () => {
+  it('chaque certification qui a une banque a ses cibles', () => {
+    expect(listBankTargetCodes()).toEqual(expect.arrayContaining(['ccna', 'security-plus']));
+  });
+});
 
-describe('banque CCNA : cibles chiffrées', () => {
-  it('compte au moins 1 500 questions publiées', () => {
-    expect(questions.length).toBeGreaterThanOrEqual(1500);
+describe.each(listBankTargetCodes())('banque %s : cibles chiffrées', (code) => {
+  const targets = loadBankTargets(code)!;
+  const { certification, questions } = loadCertification(code);
+  const count = (pred: (q: Question) => boolean) => questions.filter(pred).length;
+  const { bank } = targets;
+
+  it(`compte au moins ${bank.minQuestions} questions publiées`, () => {
+    expect(questions.length).toBeGreaterThanOrEqual(bank.minQuestions);
   });
 
-  it('suit les pondérations officielles à un point près', () => {
+  it(`suit les pondérations officielles à ${bank.weightTolerance * 100} point(s) près`, () => {
     for (const d of certification.domains) {
       const share = count((q) => q.domain === d.code) / questions.length;
-      expect(Math.abs(share - d.weight), `domaine ${d.code} : ${(share * 100).toFixed(1)} %`).toBeLessThanOrEqual(0.01);
+      expect(Math.abs(share - d.weight), `domaine ${d.code} : ${(share * 100).toFixed(1)} %`).toBeLessThanOrEqual(bank.weightTolerance);
     }
   });
 
-  it('a au moins 15 questions par sous-thème du programme', () => {
+  it(`a au moins ${bank.minPerSubtopic} questions par sous-thème du programme`, () => {
     const thin = certification.domains
       .flatMap((d) => d.subtopics.map((s) => ({ code: s.code, n: count((q) => q.subtopic === s.code) })))
-      .filter((s) => s.n < 15);
+      .filter((s) => s.n < bank.minPerSubtopic);
     expect(thin).toEqual([]);
+    expect(questions.every((q) => q.subtopic !== undefined)).toBe(true);
   });
 
-  it('a les six types dans chaque domaine (au moins 5 de chacun), sauf la CLI en 6.0', () => {
+  it(`a chaque type autorisé dans chaque domaine (au moins ${bank.minPerDomainType} de chacun, hors exceptions déclarées)`, () => {
     const missing: string[] = [];
     for (const d of certification.domains) {
       for (const t of certification.allowedQuestionTypes) {
-        if (t === 'cli' && d.code === '6.0') continue;
+        if (bank.domainTypeExemptions.some((e) => e.domain === d.code && e.type === t)) continue;
         const n = count((q) => q.domain === d.code && q.body.type === t);
-        if (n < 5) missing.push(`${d.code} ${t} : ${n}`);
+        if (n < bank.minPerDomainType) missing.push(`${d.code} ${t} : ${n}`);
       }
     }
     expect(missing).toEqual([]);
   });
 
-  it('dose les difficultés à 30/50/20 sur la banque (3 points) et par domaine (5 points)', () => {
-    const target = { easy: 0.3, medium: 0.5, hard: 0.2 };
+  it('ne contient aucune question d’un type que la certification n’autorise pas', () => {
+    expect(questions.filter((q) => !certification.allowedQuestionTypes.includes(q.body.type)).map((q) => q.slug)).toEqual([]);
+  });
+
+  it('dose les types : QCM multiples en proportion, QCM simples majoritaires', () => {
+    expect(count((q) => q.body.type === 'mcq_multi') / questions.length).toBeGreaterThanOrEqual(bank.minMultiShare);
+    expect(count((q) => q.body.type === 'mcq_single')).toBeGreaterThan(count((q) => q.body.type === 'mcq_multi'));
+  });
+
+  it('dose les difficultés sur la banque et par domaine', () => {
+    const { bankTolerance, domainTolerance } = bank.difficulty;
     for (const diff of DIFFICULTIES) {
-      expect(Math.abs(count((q) => q.difficulty === diff) / questions.length - target[diff]), diff).toBeLessThanOrEqual(0.03);
+      const target = bank.difficulty[diff];
+      expect(Math.abs(count((q) => q.difficulty === diff) / questions.length - target), `banque ${diff}`).toBeLessThanOrEqual(bankTolerance);
       for (const d of certification.domains) {
         const inDomain = count((q) => q.domain === d.code);
         const share = count((q) => q.domain === d.code && q.difficulty === diff) / inDomain;
-        expect(Math.abs(share - target[diff]), `${d.code} ${diff}`).toBeLessThanOrEqual(0.05);
+        expect(Math.abs(share - target), `${d.code} ${diff}`).toBeLessThanOrEqual(domainTolerance);
       }
     }
+  });
+
+  it('cite une référence pour chaque question, explique chaque question', () => {
+    expect(questions.filter((q) => !q.reference?.trim()).map((q) => q.slug)).toEqual([]);
+    expect(questions.filter((q) => q.explanation.trim().length < 100).map((q) => q.slug)).toEqual([]);
   });
 
   it('ne contient aucun quasi-doublon au-dessus du seuil', () => {
@@ -71,29 +95,31 @@ describe('banque CCNA : cibles chiffrées', () => {
   });
 
   it('garde la source de chaque question générée en lot', () => {
-    // Les questions du bloc 6 sont rédigées par une IA puis relues : elles portent `source: "ai"`.
-    expect(count((q) => q.source === 'ai')).toBeGreaterThanOrEqual(1500 - 222);
+    expect(count((q) => q.source === 'ai')).toBeGreaterThanOrEqual(bank.minAiSource);
   });
 });
 
-describe('série de 100 examens blancs figés', () => {
-  const series = loadExamSeries('ccna');
+describe.each(listBankTargetCodes())('série %s : examens blancs figés', (code) => {
+  const { series: target } = loadBankTargets(code)!;
+  const { certification, questions } = loadCertification(code);
+  const series = loadExamSeries(code);
   const exams = series?.exams.map((e) => e.questions) ?? [];
   const pool = poolOf(questions);
   const report = seriesReport(exams, pool, certification);
+  const officialSize = [...allocateByWeight(certification.domains, certification.examFormat.questionCount).values()].reduce((s, n) => s + n, 0);
 
-  it('existe, avec 100 examens numérotés au format officiel', () => {
+  it(`existe, avec ${target.exams} examens numérotés au format officiel`, () => {
     expect(series).not.toBeNull();
-    expect(series!.exams.map((e) => e.number)).toEqual(Array.from({ length: 100 }, (_, i) => i + 1));
-    expect(series!.constraints).toEqual({ maxUses: 8, maxOverlap: 12 });
-    const plan = allocateByWeight(certification.domains, certification.examFormat.questionCount);
-    for (const exam of exams) expect(exam).toHaveLength([...plan.values()].reduce((s, n) => s + n, 0));
+    expect(series!.exams.map((e) => e.number)).toEqual(Array.from({ length: target.exams }, (_, i) => i + 1));
+    expect(series!.constraints).toEqual({ maxUses: target.maxUses, maxOverlap: target.maxOverlap });
+    expect(officialSize).toBe(certification.examFormat.questionCount);
+    for (const exam of exams) expect(exam).toHaveLength(certification.examFormat.questionCount);
   });
 
-  it('respecte les pondérations, sans doublon, avec N = 8 et 12 questions communes au plus', () => {
+  it(`respecte les pondérations, sans doublon, avec N = ${target.maxUses} et ${target.maxOverlap} questions communes au plus`, () => {
     expect(checkSeries(exams, pool, certification, series!.constraints)).toEqual([]);
-    expect(report.uses.max).toBeLessThanOrEqual(8);
-    expect(report.overlap.max).toBeLessThanOrEqual(12);
+    expect(report.uses.max).toBeLessThanOrEqual(target.maxUses);
+    expect(report.overlap.max).toBeLessThanOrEqual(target.maxOverlap);
   });
 
   it('sert chaque question publiée au moins une fois', () => {
@@ -101,18 +127,19 @@ describe('série de 100 examens blancs figés', () => {
     expect(report.uses.min).toBeGreaterThanOrEqual(1);
   });
 
-  it('équilibre chaque examen : difficultés à 5 points de 30/50/20, au moins 45 sous-thèmes sur 53', () => {
-    const q = certification.examFormat.questionCount;
+  it('équilibre chaque examen : difficultés et sous-thèmes couverts', () => {
+    const size = certification.examFormat.questionCount;
+    const bankTargets = loadBankTargets(code)!.bank.difficulty;
     for (const r of report.exams) {
-      expect(Math.abs(r.byDifficulty.easy / q - 0.3), `examen ${r.number}`).toBeLessThanOrEqual(0.05);
-      expect(Math.abs(r.byDifficulty.medium / q - 0.5), `examen ${r.number}`).toBeLessThanOrEqual(0.05);
-      expect(Math.abs(r.byDifficulty.hard / q - 0.2), `examen ${r.number}`).toBeLessThanOrEqual(0.05);
-      expect(r.subtopicsCovered, `examen ${r.number}`).toBeGreaterThanOrEqual(45);
+      for (const diff of DIFFICULTIES) {
+        expect(Math.abs(r.byDifficulty[diff] / size - bankTargets[diff]), `examen ${r.number} ${diff}`).toBeLessThanOrEqual(target.difficultyTolerance);
+      }
+      expect(r.subtopicsCovered, `examen ${r.number}`).toBeGreaterThanOrEqual(target.minSubtopicsPerExam);
     }
   });
 
   it('est exactement ce que l’assembleur produit avec ce seed et cette banque (rejouable)', () => {
-    const again = assembleSeries(pool, certification, { seed: series!.seed, examCount: 100, ...series!.constraints });
+    const again = assembleSeries(pool, certification, { seed: series!.seed, examCount: target.exams, ...series!.constraints });
     expect(again.exams).toEqual(exams);
   });
 });

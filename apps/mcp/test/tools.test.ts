@@ -1,5 +1,6 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { ApiError, createApiClient, type ApiClient } from '../src/api-client.js';
 import { createExamForgeServer } from '../src/tools.js';
@@ -169,6 +170,18 @@ describe('exam-forge-mcp', () => {
     expect(review.checklist.length).toBeGreaterThan(3);
     const done = payload(await client.callTool({ name: 'record_lab_review', arguments: { slug: 'ccna-lab-x', approved: true } }));
     expect(done.status).toBe('published');
+  });
+
+  it.each(['security-plus', 'ccna'])('add_certification transmet le fichier de données « %s » sans rien en perdre', async (code) => {
+    // Le schéma de l'outil retire les champs qu'il ne connaît pas : un champ ajouté au format d'une certification
+    // (modules, nom court, sous-thèmes de module…) doit aussi l'être ici, sinon les deux voies divergent.
+    const file = JSON.parse(readFileSync(new URL(`../../../packages/content/data/certifications/${code}.json`, import.meta.url), 'utf8'));
+    const { api, calls } = fakeApi({ 'POST /admin/certifications': (body) => ({ id: 'x', code: (body as { config: { code: string } }).config.code }) });
+    const client = await connect(api);
+    const res = payload(await client.callTool({ name: 'add_certification', arguments: { config: file } }));
+    expect(res.code).toBe(code);
+    // Mêmes champs que le fichier : l'API reçoit exactement ce que l'import lirait.
+    expect(calls.at(-1)?.body).toEqual({ config: file });
   });
 
   it('le client HTTP envoie le jeton de service et décode les erreurs', async () => {

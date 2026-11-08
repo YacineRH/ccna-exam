@@ -1,0 +1,1243 @@
+[
+  {
+    "slug": "security-plus-5.6-message-suspect-signalement-bouton-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une gestionnaire de paie reçoit un courriel qui lui demande de « confirmer ses identifiants » sur un lien pour débloquer un virement. Le message lui semble suspect. Selon la formation de sensibilisation de l'entreprise, que doit-elle faire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Répondre à l'expéditeur pour lui demander de confirmer sa demande"
+        },
+        {
+          "id": "b",
+          "text": "Transférer le message à ses collègues pour les mettre en garde"
+        },
+        {
+          "id": "c",
+          "text": "Signaler le message avec le bouton de la messagerie, sans cliquer"
+        },
+        {
+          "id": "d",
+          "text": "Ouvrir le lien depuis son téléphone personnel pour vérifier la page"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Face à un message suspect, la conduite enseignée est de ne pas interagir avec lui (ni clic, ni réponse, ni pièce jointe) et de le signaler par le canal officiel, ici le bouton de signalement intégré à la messagerie. Ce signalement transmet le message complet, en-têtes compris, à l'équipe de sécurité, qui peut l'analyser, le retirer des autres boîtes et bloquer le domaine ou l'URL. Un signalement rapide transforme chaque salarié en capteur : c'est souvent le premier indicateur dont dispose le SOC.",
+    "distractorNotes": {
+      "a": "Répondre confirme à l'attaquant que l'adresse est active et ouvre un échange qu'il maîtrise ; une vérification se fait par un canal connu, jamais par le message lui-même.",
+      "b": "Transférer le message le diffuse à d'autres cibles qui risquent de cliquer, et l'équipe de sécurité n'en est pas informée.",
+      "d": "Ouvrir le lien, même sur un autre appareil, expose ce téléphone personnel, non géré, à la page malveillante et ne remplace pas le signalement."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-en-tetes-spf-dmarc-signalement-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un salarié a signalé ce message, qui se présente comme envoyé par le service de paie interne. L'analyste du SOC doit établir s'il a été émis par un serveur autorisé à envoyer pour le domaine example.com. Quel élément de l'exhibit le démontre le mieux ?",
+      "exhibit": "From: \"Service Paie\" <paie@example.com>\nReply-To: paie-urgent@example.net\nTo: c.martin@example.com\nSubject: Votre bulletin de novembre est disponible\nDate: Mon, 2 Nov 2026 07:42:10 +0100\nReceived: from mail.example.net (mail.example.net [203.0.113.45])\n        by mx1.example.com with ESMTP; Mon, 2 Nov 2026 07:42:11 +0100\nAuthentication-Results: mx1.example.com;\n        spf=fail smtp.mailfrom=example.com;\n        dkim=none;\n        dmarc=fail header.from=example.com",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le champ Reply-To, qui renvoie les réponses vers une adresse du domaine example.net"
+        },
+        {
+          "id": "b",
+          "text": "L'heure d'envoi, 07:42, antérieure à l'ouverture des bureaux"
+        },
+        {
+          "id": "c",
+          "text": "Le résultat spf=fail pour example.com, confirmé par dmarc=fail sur l'adresse From"
+        },
+        {
+          "id": "d",
+          "text": "L'objet, qui annonce un bulletin de paie pour inciter à ouvrir le message"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "SPF vérifie que l'adresse IP du serveur émetteur (ici 203.0.113.45, mail.example.net) figure parmi les serveurs que le domaine de l'enveloppe, example.com, déclare autorisés dans son enregistrement DNS. Le résultat spf=fail indique que ce n'est pas le cas. DMARC vérifie ensuite l'alignement avec le domaine de l'en-tête From : sans signature DKIM valide et avec un SPF en échec, dmarc=fail confirme que rien n'authentifie le message au nom d'example.com. C'est la seule preuve technique de l'exhibit ; les autres éléments sont des indices d'hameçonnage, pas une démonstration.",
+    "distractorNotes": {
+      "a": "Un Reply-To différent du From est un indice fréquent d'hameçonnage, mais il est aussi utilisé légitimement (listes, outils d'envoi) et ne dit rien du serveur émetteur.",
+      "b": "L'heure d'envoi ne prouve rien : des envois automatisés légitimes partent à toute heure.",
+      "d": "Un objet incitatif relève de l'ingénierie sociale ; c'est un indice, pas la preuve qu'un serveur non autorisé a émis le message."
+    },
+    "reference": "RFC 7208 (SPF) ; RFC 7489 (DMARC) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-simulation-clic-formation-immediate-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise lance des campagnes de phishing simulé chaque trimestre. Le responsable du programme de sensibilisation doit décider de ce qui se passe lorsqu'un salarié clique sur le lien d'une simulation. Quelle pratique est la plus conforme aux bonnes pratiques d'un programme de sensibilisation ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Désactiver le compte du salarié jusqu'à un entretien avec son manager"
+        },
+        {
+          "id": "b",
+          "text": "Afficher une page qui explique les indices manqués et propose un court module immédiat"
+        },
+        {
+          "id": "c",
+          "text": "Publier sur l'intranet la liste des salariés qui ont cliqué pendant la campagne"
+        },
+        {
+          "id": "d",
+          "text": "Ne rien indiquer au salarié afin de ne pas fausser la campagne suivante"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le moment qui suit le clic est le plus propice à l'apprentissage : une page de « formation juste à temps » montre au salarié les indices qu'il aurait pu repérer (expéditeur, lien, urgence) et lui propose un module de quelques minutes. Le programme vise à changer les comportements et à encourager le signalement, dans un climat de confiance ; une approche punitive pousse au contraire les salariés à cacher leurs erreurs, y compris lors d'une vraie attaque. Les résultats nominatifs restent confidentiels et servent à cibler les formations.",
+    "distractorNotes": {
+      "a": "Bloquer le compte est une sanction disproportionnée pour une simulation : elle perturbe le travail et associe la sensibilisation à la punition.",
+      "c": "La dénonciation publique humilie les salariés, nuit à la culture de signalement et pose un problème de protection des données personnelles.",
+      "d": "Sans retour, le salarié ne sait pas qu'il s'est fait piéger et n'apprend rien : la simulation perd sa finalité pédagogique."
+    },
+    "reference": "NIST SP 800-50 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-identifiants-saisis-signalement-immediat-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un commercial clique sur le lien d'un courriel qui imite la messagerie de l'entreprise et saisit son identifiant et son mot de passe. Quelques secondes plus tard, il remarque que l'adresse de la page n'est pas celle de l'entreprise. Que doit-il faire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Supprimer le message et vider la corbeille pour ne plus risquer de cliquer"
+        },
+        {
+          "id": "b",
+          "text": "Attendre de voir si une activité suspecte apparaît sur son compte"
+        },
+        {
+          "id": "c",
+          "text": "Éteindre son poste et en parler à son manager à son retour de déplacement"
+        },
+        {
+          "id": "d",
+          "text": "Prévenir aussitôt l'équipe de sécurité en précisant qu'il a saisi ses identifiants"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une fois les identifiants saisis, chaque minute compte : l'attaquant peut se connecter, créer des règles de transfert ou envoyer de nouveaux messages depuis le compte. Le signalement immédiat, avec la mention des identifiants saisis, permet à l'équipe de sécurité de réinitialiser le mot de passe, de révoquer les sessions, de vérifier le compte et de retirer le message des autres boîtes. Les formations insistent sur ce point : avouer une erreur rapidement n'est pas une faute, la cacher aggrave l'incident.",
+    "distractorNotes": {
+      "a": "Supprimer le message efface une preuve utile à l'analyse et ne protège pas le compte, dont les identifiants sont déjà entre les mains de l'attaquant.",
+      "b": "Attendre laisse à l'attaquant le temps d'utiliser le compte ; l'absence d'activité visible ne prouve rien.",
+      "c": "Éteindre le poste ne protège pas un compte compromis par une page web, et différer le signalement de plusieurs jours aggrave l'incident."
+    },
+    "reference": "NIST SP 800-61 Rev. 2 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-comportement-inattendu-ueba-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La solution UEBA d'une entreprise signale le compte d'une comptable qui travaille d'habitude de 8 h à 18 h : un dimanche à 2 h 40, il a téléchargé 3 Go de fichiers depuis le partage de la R&D, qu'il n'avait jamais consulté. Dans quelle catégorie de comportement anormal cette alerte se classe-t-elle d'abord ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un comportement non intentionnel"
+        },
+        {
+          "id": "b",
+          "text": "Un comportement inattendu"
+        },
+        {
+          "id": "c",
+          "text": "Un comportement risqué"
+        },
+        {
+          "id": "d",
+          "text": "Un comportement conforme à la référence"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un comportement inattendu est un écart par rapport aux habitudes de l'utilisateur : horaires inhabituels, ressources jamais consultées, volumes anormaux, connexion depuis un lieu nouveau. C'est exactement ce que détecte l'UEBA en comparant l'activité à une référence. L'alerte ne dit pas encore si la comptable agit elle-même ou si son compte est compromis : elle déclenche une analyse, et la formation apprend aussi aux salariés à signaler ce type d'écart lorsqu'ils le constatent chez un collègue ou sur leur propre compte.",
+    "distractorNotes": {
+      "a": "Un comportement non intentionnel est une erreur commise sans le vouloir (mauvais destinataire, clé perdue) ; rien n'indique ici une erreur de manipulation.",
+      "c": "Un comportement risqué est une action délibérée qui contourne une règle connue, comme installer un logiciel interdit ; l'alerte décrit un écart à la norme, dont l'intention reste inconnue.",
+      "d": "L'activité s'écarte justement de la référence (horaires, partage, volume) : c'est ce qui a déclenché l'alerte."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-comportement-risque-envoi-personnel-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un vendredi à 18 h 10, la DLP bloque l'envoi, depuis la messagerie professionnelle d'un comptable vers son adresse personnelle, d'un fichier de 2 300 clients. Interrogé, il explique qu'il voulait avancer le week-end car le VPN est lent ; il connaît la règle qui l'interdit, n'a aucune intention de nuire et l'enquête ne relève aucune autre activité suspecte. Quelle classification et quelle réponse sont les plus adaptées ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Comportement non intentionnel : clore l'alerte sans suite, puisque la DLP a bloqué l'envoi et qu'aucune donnée n'est sortie"
+        },
+        {
+          "id": "b",
+          "text": "Comportement inattendu : ajouter une règle UEBA sur son compte et ne rien lui dire, pour observer la suite de son activité"
+        },
+        {
+          "id": "c",
+          "text": "Menace interne malveillante : suspendre ses accès, engager une procédure disciplinaire et porter plainte pour tentative de vol de données"
+        },
+        {
+          "id": "d",
+          "text": "Comportement risqué : lui rappeler la règle par une formation ciblée et lui fournir un moyen approuvé de travailler à distance"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le comptable a délibérément contourné une règle qu'il connaissait, sans intention malveillante, pour gagner du temps : c'est la définition d'un comportement risqué. La réponse adaptée traite la cause : un rappel ciblé de la politique (pourquoi les données clients ne doivent pas quitter le périmètre géré) et une solution approuvée qui supprime la tentation de contourner, par exemple un accès distant plus performant ou un bureau virtuel. La DLP a joué son rôle de filet, mais un salarié qui contourne les règles par commodité recommencera par un autre canal si rien ne change.",
+    "distractorNotes": {
+      "a": "L'envoi n'était pas une erreur de manipulation : le comptable savait que c'était interdit. Clore sans suite laisse intacte la cause du contournement.",
+      "b": "Le comportement est déjà expliqué par l'enquête ; surveiller en secret sans corriger ni former n'apporte rien et ne réduit pas le risque.",
+      "c": "Aucun élément n'indique une intention de nuire ; une réponse pénale serait disproportionnée et dissuaderait les salariés de reconnaître leurs écarts."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-situation-talonnage-tourniquet-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "À l'entrée du siège, une salariée remarque un inconnu sans badge visible qui s'apprête à franchir la porte sécurisée juste derrière un groupe de collègues. Quelle réaction la formation à la vigilance (situational awareness) lui recommande-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lui tenir la porte par courtoisie, puisqu'il accompagne des salariés badgés"
+        },
+        {
+          "id": "b",
+          "text": "Ne pas le laisser passer, l'orienter vers l'accueil et prévenir la sécurité s'il insiste"
+        },
+        {
+          "id": "c",
+          "text": "L'empêcher physiquement d'entrer et lui confisquer son téléphone"
+        },
+        {
+          "id": "d",
+          "text": "Le laisser entrer, puis envoyer un courriel à la sécurité en fin de journée"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le talonnage (tailgating) exploite la politesse : l'intrus suit des personnes autorisées pour franchir un contrôle d'accès. La vigilance enseignée consiste à repérer ce type de situation et à réagir sans se mettre en danger : refuser poliment le passage, orienter la personne vers l'accueil où elle sera identifiée, et alerter la sécurité si elle insiste. Chaque salarié doit badger pour lui-même, et un visiteur légitime n'a aucune difficulté à passer par l'accueil.",
+    "distractorNotes": {
+      "a": "Tenir la porte est précisément ce que l'intrus espère : être accompagné de salariés badgés ne vaut pas autorisation.",
+      "c": "Une intervention physique expose la salariée et dépasse son rôle ; la gestion d'un intrus revient à la sécurité.",
+      "d": "Un signalement en fin de journée laisse l'intrus circuler librement pendant des heures ; il faut agir avant qu'il n'entre, ou prévenir tout de suite."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-menace-interne-conduite-signalement-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une salariée voit à plusieurs reprises un collègue photographier avec son téléphone des plans confidentiels affichés à l'écran, alors que la politique l'interdit. Quelle conduite la formation sur la menace interne lui recommande-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Interroger le collègue devant l'équipe pour qu'il s'explique"
+        },
+        {
+          "id": "b",
+          "text": "Fouiller elle-même ses dossiers partagés pour réunir des preuves"
+        },
+        {
+          "id": "c",
+          "text": "Publier un message d'alerte sur le réseau social interne de l'entreprise"
+        },
+        {
+          "id": "d",
+          "text": "Signaler les faits par le canal prévu, sécurité ou dispositif d'alerte confidentiel"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Les collègues sont souvent les premiers à remarquer les indicateurs d'une menace interne. La formation leur apprend à reconnaître ces signes et à les signaler par un canal identifié (équipe de sécurité, référent, dispositif d'alerte confidentiel), sans enquêter ni confronter eux-mêmes. L'équipe habilitée peut alors vérifier les faits dans le respect des droits de chacun, préserver les preuves et éviter d'alerter prématurément une personne réellement malveillante.",
+    "distractorNotes": {
+      "a": "Une confrontation publique alerte la personne, qui peut effacer les traces, et expose la salariée sans garantir les droits du collègue.",
+      "b": "Fouiller les dossiers d'un collègue n'est pas son rôle, peut constituer un accès non autorisé et risque de compromettre les preuves.",
+      "c": "Une alerte publique diffuse une accusation non vérifiée, nuit au collègue et compromet l'enquête."
+    },
+    "reference": "NIST SP 800-53 Rev. 5 (famille AT) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-mots-de-passe-gestionnaire-unique-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après une attaque par bourrage d'identifiants (credential stuffing) qui a réussi sur deux comptes, le RSSI fait ajouter un module sur les mots de passe à la formation obligatoire. Quelle recommandation ce module doit-il mettre en avant ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Changer de mot de passe tous les 30 jours en incrémentant le chiffre final"
+        },
+        {
+          "id": "b",
+          "text": "Réutiliser partout un même mot de passe long et complexe, plus facile à retenir"
+        },
+        {
+          "id": "c",
+          "text": "Utiliser le gestionnaire de mots de passe de l'entreprise pour un mot de passe unique par service"
+        },
+        {
+          "id": "d",
+          "text": "Noter son mot de passe sur une étiquette rangée sous le clavier du poste"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le bourrage d'identifiants rejoue des couples identifiant / mot de passe volés sur d'autres sites : il ne réussit que parce que les mots de passe sont réutilisés. Un gestionnaire de mots de passe approuvé permet de générer et de stocker un mot de passe long et unique pour chaque service sans effort de mémoire. NIST SP 800-63B recommande des secrets longs, vérifiés contre les listes de mots de passe compromis, et déconseille les changements périodiques imposés sans indice de compromission.",
+    "distractorNotes": {
+      "a": "Les changements périodiques produisent des variantes prévisibles (Été2026!, Été2027!) que les attaquants testent ; NIST SP 800-63B ne les recommande pas sans indice de compromission.",
+      "b": "La réutilisation est exactement ce qu'exploite le bourrage d'identifiants : une seule fuite suffit à ouvrir tous les comptes, quelle que soit la complexité du mot de passe.",
+      "d": "Une étiquette sous le clavier est lisible par toute personne qui accède au poste : le secret n'en est plus un."
+    },
+    "reference": "NIST SP 800-63B ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-cle-usb-trouvee-parking-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un matin, un technicien trouve sur le parking de l'entreprise une clé USB étiquetée « Salaires 2026 - confidentiel ». Il veut bien faire et se demande comment retrouver son propriétaire. Quelle conduite la formation sur les supports amovibles prescrit-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La brancher sur un poste isolé du réseau pour identifier son propriétaire"
+        },
+        {
+          "id": "b",
+          "text": "La brancher sur la borne de l'accueil, dont l'antivirus est à jour"
+        },
+        {
+          "id": "c",
+          "text": "La remettre à l'équipe de sécurité sans la brancher, en indiquant où elle a été trouvée"
+        },
+        {
+          "id": "d",
+          "text": "La jeter dans une poubelle fermée pour que personne ne la branche"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une clé abandonnée avec une étiquette alléchante est un appât classique (baiting) : elle peut contenir un logiciel malveillant ou se présenter comme un clavier qui tape des commandes dès qu'on la branche. Personne ne doit brancher un support inconnu, quelle que soit la machine. La remettre à l'équipe de sécurité, avec le lieu et l'heure de la découverte, permet de l'analyser dans un environnement prévu à cet effet et de savoir si l'entreprise est visée par une attaque ciblée.",
+    "distractorNotes": {
+      "a": "Un poste « isolé » reste exposé : un implant de type clavier ou un malware peut le compromettre, et il sera ensuite rebranché ou utilisé ailleurs.",
+      "b": "Un antivirus à jour ne détecte ni un maliciel inconnu ni un périphérique qui se déclare clavier ; la borne d'accueil serait compromise.",
+      "d": "Jeter la clé écarte le risque immédiat, mais l'équipe de sécurité perd l'indice d'une possible attaque ciblée et ne peut pas alerter les autres sites."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-cable-offert-salon-implant-hid-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après un salon professionnel, l'EDR d'une entreprise signale sur un poste « nouveau périphérique clavier HID connecté » au moment où un salarié branche un câble de recharge USB-C offert sur un stand. Aucun clavier n'a été branché. Quel message de sensibilisation répond le mieux à cette situation ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Analyser le câble avec l'antivirus du poste avant de s'en servir pour la recharge"
+        },
+        {
+          "id": "b",
+          "text": "Préférer les ports USB des bornes de recharge publiques aux câbles offerts"
+        },
+        {
+          "id": "c",
+          "text": "Accepter les câbles offerts seulement s'ils portent le logo d'un fabricant connu"
+        },
+        {
+          "id": "d",
+          "text": "N'utiliser que les câbles et chargeurs fournis par l'entreprise, un câble pouvant cacher un implant"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un câble USB d'apparence ordinaire peut contenir un microcontrôleur qui se déclare comme clavier (HID) et injecte des frappes dès qu'il est branché : c'est ce que révèle l'alerte de l'EDR. Les objectifs SY0-701 rangent explicitement « supports amovibles et câbles » parmi les thèmes de formation. Le message à retenir est de n'utiliser que du matériel de provenance maîtrisée, fourni par l'entreprise, et de remettre à la sécurité tout câble ou accessoire reçu en cadeau.",
+    "distractorNotes": {
+      "a": "Pour être analysé, le câble doit être branché, ce qui déclenche l'implant ; et un implant HID n'expose aucun fichier que l'antivirus pourrait examiner.",
+      "b": "Les ports de recharge publics peuvent eux aussi être piégés (juice jacking) : ils ne sont pas une alternative sûre.",
+      "c": "Un logo se contrefait facilement : il ne garantit ni la provenance ni le contenu électronique du câble."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-support-reinitialisation-mfa-rappel-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un appelant se présente au support informatique comme le directeur financier, en déplacement. Il dit avoir perdu son téléphone, exige la désactivation immédiate de son authentification multifacteur et menace de se plaindre auprès de la direction générale. Quelle consigne la formation des agents du support doit-elle donner pour ce type d'appel ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Désactiver le MFA dès que l'appelant fournit son matricule et sa date de naissance"
+        },
+        {
+          "id": "b",
+          "text": "Appliquer la procédure de vérification d'identité, quel que soit son rang"
+        },
+        {
+          "id": "c",
+          "text": "Désactiver le MFA pour 24 heures seulement, puis le réactiver automatiquement"
+        },
+        {
+          "id": "d",
+          "text": "Transférer l'appel au responsable du support, autorisé à décider sans vérification"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'urgence, l'autorité invoquée et la menace sont les leviers classiques de l'ingénierie sociale contre un support. La formation apprend aux agents à reconnaître ces leviers et à appliquer sans exception la procédure de vérification d'identité, définie à l'avance : rappel sur un numéro connu de l'annuaire, validation par le manager, présentation d'une pièce d'identité ou réinitialisation en personne. Une procédure qui ne fléchit pas selon le rang protège aussi l'agent, qui n'a pas à juger seul sous pression.",
+    "distractorNotes": {
+      "a": "Le matricule et la date de naissance se trouvent souvent dans des documents ou sur les réseaux sociaux : ce ne sont pas des preuves d'identité fiables.",
+      "c": "Une désactivation, même limitée à 24 heures, suffit à l'attaquant pour se connecter et installer ses propres facteurs.",
+      "d": "Déplacer la décision sans vérification ne supprime pas le risque : le responsable est exposé au même prétexte et doit suivre la même procédure."
+    },
+    "reference": "NIST SP 800-63B ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-rapports-recurrents-taux-signalement-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le tableau de bord du programme de sensibilisation d'une entreprise de 1 500 salariés compare la campagne de référence à la dernière campagne trimestrielle de phishing simulé. Le comité de sécurité doit choisir l'ajustement prioritaire du programme. Lequel est le plus pertinent ?",
+      "exhibit": "Campagne              Envoyés  Clics   Taux de clic  Signalements  Taux sign.\nRéférence (janvier)     1 500     330        22 %            45         3 %\nT3 (octobre)            1 500      90         6 %            60         4 %",
+      "options": [
+        {
+          "id": "a",
+          "text": "Arrêter les simulations, l'objectif d'un taux de clic inférieur à 10 % étant atteint"
+        },
+        {
+          "id": "b",
+          "text": "Renforcer les sanctions envers les salariés qui cliquent pour réduire encore le taux de clic"
+        },
+        {
+          "id": "c",
+          "text": "Faire porter les prochains modules sur le signalement : bouton intégré et retour à chaque alerte"
+        },
+        {
+          "id": "d",
+          "text": "Réserver désormais les simulations au service informatique, jugé le plus exposé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les rapports récurrents servent à mesurer l'évolution par rapport à la référence et à ajuster le programme. Ici, le taux de clic a fortement baissé (22 % à 6 %), mais le taux de signalement reste presque nul (3 % à 4 %) : les salariés évitent le piège sans prévenir personne. Or, lors d'une vraie campagne, il suffit de quelques signalements rapides pour que le SOC retire le message de toutes les boîtes. La priorité est donc de rendre le signalement simple (bouton intégré) et valorisé (retour positif à chaque alerte).",
+    "distractorNotes": {
+      "a": "Le risque n'est pas nul (90 salariés environ cliquent encore) et les comportements s'érodent sans entretien ; le signalement, lui, n'a pas progressé.",
+      "b": "Le taux de clic a déjà fortement baissé ; des sanctions dissuaderaient plutôt les salariés de signaler leurs erreurs, ce qui aggrave la faiblesse observée.",
+      "d": "Tous les salariés reçoivent des courriels d'hameçonnage ; réduire le périmètre priverait le programme de mesure et de formation sur la plupart des cibles."
+    },
+    "reference": "NIST SP 800-50 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-rapport-initial-reference-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avant de déployer son premier programme de sensibilisation, une mutuelle envoie une simulation de phishing à tous ses salariés, sans formation préalable, pour mesurer leur niveau de départ. Quel type de rapport cette campagne produit-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un rapport récurrent, destiné à suivre l'évolution trimestrielle"
+        },
+        {
+          "id": "b",
+          "text": "Un rapport de retour d'expérience établi après un incident réel"
+        },
+        {
+          "id": "c",
+          "text": "Un rapport initial, qui sert de référence pour mesurer les progrès"
+        },
+        {
+          "id": "d",
+          "text": "Un rapport d'audit de conformité remis à un organisme externe"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les objectifs SY0-701 distinguent deux temps dans la surveillance d'un programme de sensibilisation : le rapport initial et les rapports récurrents. La campagne lancée avant toute formation fournit le point de départ (taux de clic, de saisie et de signalement) : sans cette référence, impossible de démontrer l'effet du programme ni de cibler les populations les plus exposées. Les campagnes suivantes, à intervalle régulier, alimentent ensuite des rapports récurrents comparés à cette référence.",
+    "distractorNotes": {
+      "a": "Le rapport récurrent compare des campagnes successives à la référence ; il suppose qu'une première mesure existe déjà.",
+      "b": "Le retour d'expérience suit un incident réel ; ici, il s'agit d'une simulation planifiée.",
+      "d": "Rien n'indique une demande d'un organisme externe : la mesure sert au pilotage interne du programme."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-travail-distance-cafe-consignes-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un consultant travaille régulièrement depuis des cafés et des gares avec son portable professionnel. Quelles deux consignes de la formation sur le travail hybride et à distance doit-il appliquer ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Désactiver le pare-feu du portable lorsque le Wi-Fi du café bloque une application"
+        },
+        {
+          "id": "b",
+          "text": "Accéder aux ressources internes uniquement par le VPN de l'entreprise"
+        },
+        {
+          "id": "c",
+          "text": "Laisser ses proches utiliser le portable professionnel le week-end"
+        },
+        {
+          "id": "d",
+          "text": "Verrouiller sa session dès qu'il s'éloigne et utiliser un filtre de confidentialité"
+        },
+        {
+          "id": "e",
+          "text": "Copier les dossiers clients sur une clé USB personnelle en cas de coupure réseau"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Hors des locaux, le salarié perd la protection du réseau d'entreprise et se retrouve entouré d'inconnus. Le VPN chiffre le trafic sur un Wi-Fi public que l'on ne contrôle pas et fait passer les accès internes par les contrôles de l'entreprise. Le verrouillage systématique de la session et le filtre de confidentialité protègent contre le vol d'informations par regard indiscret (shoulder surfing) et contre l'usage du poste laissé sans surveillance. Ces deux réflexes font partie des consignes types du travail hybride.",
+    "distractorNotes": {
+      "a": "Le pare-feu protège justement le portable sur un réseau public hostile ; le désactiver l'expose aux autres clients du Wi-Fi.",
+      "c": "Un poste professionnel partagé avec des proches échappe à la maîtrise de l'entreprise : téléchargements, comptes ajoutés, accès aux données.",
+      "e": "Une clé personnelle, non chiffrée ni gérée, peut être perdue ou volée et fait sortir les données clients du périmètre contrôlé."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-indices-hameconnage-prime-rh-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Lors d'un atelier de sensibilisation, le formateur projette ce courriel reçu par les salariés d'une entreprise dont le domaine est example.com. Quelles trois caractéristiques sont des indices d'hameçonnage ? (Choisissez-en trois.)",
+      "exhibit": "De      : Direction RH <direction.rh@example-rh.net>\nÀ       : tous-salaries@example.com\nObjet   : URGENT - Validez votre prime de fin d'année avant 17 h\n\nBonjour,\n\nSans validation de votre part avant 17 h aujourd'hui, votre prime de\nfin d'année ne pourra pas être versée. Connectez-vous ici :\nhttps://intranet.example.com/primes\n[destination affichée au survol : http://203.0.113.80/rh/login.php]\n\nLa Direction des ressources humaines",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'absence de pièce jointe dans le message"
+        },
+        {
+          "id": "b",
+          "text": "Le domaine de l'expéditeur, example-rh.net, qui n'est pas celui de l'entreprise"
+        },
+        {
+          "id": "c",
+          "text": "L'envoi du message pendant les heures de bureau"
+        },
+        {
+          "id": "d",
+          "text": "La menace de perdre la prime faute de validation avant 17 h"
+        },
+        {
+          "id": "e",
+          "text": "La formule de politesse placée en tête du message"
+        },
+        {
+          "id": "f",
+          "text": "La destination réelle du lien, une adresse IP, différente de l'adresse affichée"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "f"
+      ]
+    },
+    "explanation": "Trois indices classiques se cumulent. L'expéditeur se présente comme la direction des ressources humaines, mais son domaine (example-rh.net) n'est pas celui de l'entreprise : l'attaquant a enregistré un domaine qui sonne juste. Le message crée une urgence assortie d'une menace (perdre sa prime avant 17 h) pour empêcher la réflexion. Enfin, le texte du lien affiche l'intranet légitime alors que la destination réelle, visible au survol, est une adresse IP en HTTP : c'est le signe d'une page de collecte d'identifiants. La conduite à tenir est de signaler le message sans cliquer.",
+    "distractorNotes": {
+      "a": "L'absence de pièce jointe ne rend pas un message sûr ni suspect : beaucoup d'hameçonnages ne contiennent qu'un lien.",
+      "c": "Les attaquants envoient leurs messages aux heures de bureau pour se fondre dans le flux normal : l'heure n'est pas un indice.",
+      "e": "Une formule de politesse figure dans la plupart des courriels légitimes ; ce n'est pas une caractéristique de l'hameçonnage."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-menace-interne-indicateurs-chronologie-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Lors d'une formation sur la menace interne, le formateur présente la chronologie d'un ingénieur qui a ensuite exfiltré des documents de brevets. Quelles trois observations auraient dû être signalées comme indicateurs de menace interne ? (Choisissez-en trois.)",
+      "exhibit": "01/10  Non retenu pour une promotion, il dit en réunion que l'entreprise\n       « va le regretter »\n06/10  Demande l'accès au dossier « Brevets 2027 », hors de son projet\n09/10  Télétravaille le vendredi, comme le prévoit son avenant\n13/10  Suit la formation obligatoire sur la protection des données\n18/10  Badge à 22 h 40 un dimanche, sans astreinte ni intervention prévue\n23/10  Prend trois jours de congés posés et validés en septembre",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'observation du 1er octobre"
+        },
+        {
+          "id": "b",
+          "text": "L'observation du 6 octobre"
+        },
+        {
+          "id": "c",
+          "text": "L'observation du 9 octobre"
+        },
+        {
+          "id": "d",
+          "text": "L'observation du 13 octobre"
+        },
+        {
+          "id": "e",
+          "text": "L'observation du 18 octobre"
+        },
+        {
+          "id": "f",
+          "text": "L'observation du 23 octobre"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Une menace interne se repère rarement à un seul fait ; c'est la combinaison d'indicateurs comportementaux et techniques qui doit alerter. Le 1er octobre, un grief exprimé avec colère après une déception professionnelle est un facteur de motivation reconnu. Le 6 octobre, une demande d'accès à des données sensibles sans lien avec ses fonctions relève de l'indicateur technique. Le 18 octobre, une présence un dimanche soir, sans astreinte ni besoin connu, s'écarte de ses habitudes. Réunis, ces signaux justifiaient un signalement par le canal prévu, avant l'exfiltration.",
+    "distractorNotes": {
+      "c": "Télétravailler le jour prévu par son avenant est un usage normal et autorisé.",
+      "d": "Suivre une formation obligatoire est un comportement attendu, sans lien avec un risque.",
+      "f": "Prendre des congés posés et validés un mois plus tôt n'a rien d'anormal."
+    },
+    "reference": "NIST SP 800-53 Rev. 5 (famille AT) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-programme-execution-bonnes-pratiques-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le RSSI d'un groupe de distribution de 4 000 salariés refond son programme de sensibilisation, dont les résultats stagnent depuis deux ans. Quelles deux pratiques rendront son exécution plus efficace ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une session unique de trois heures à l'embauche, sans rappel ensuite"
+        },
+        {
+          "id": "b",
+          "text": "La publication de la liste nominative des salariés piégés par les simulations"
+        },
+        {
+          "id": "c",
+          "text": "Des modules courts et récurrents, adaptés aux risques de chaque métier"
+        },
+        {
+          "id": "d",
+          "text": "Une formation réservée au personnel informatique, jugé seul exposé"
+        },
+        {
+          "id": "e",
+          "text": "Le suivi d'indicateurs, comme les taux de clic et de signalement, pour ajuster le contenu"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Un programme efficace est continu et ciblé : des modules courts, répétés au fil de l'année, entretiennent les réflexes mieux qu'une session unique vite oubliée, et des contenus adaptés aux métiers (comptabilité face à la fraude au virement, accueil face au talonnage, support face aux appels piégés) parlent aux risques réels de chacun. Le programme se pilote ensuite par des indicateurs mesurés lors des campagnes, comparés à la référence initiale, qui montrent où concentrer l'effort et permettent de rendre compte à la direction.",
+    "distractorNotes": {
+      "a": "Une session unique est oubliée en quelques mois et ne suit pas l'évolution des menaces : la sensibilisation doit être récurrente.",
+      "b": "La dénonciation publique décourage le signalement et pose un problème de protection des données personnelles.",
+      "d": "Tous les salariés sont ciblés par l'ingénierie sociale, souvent plus que l'équipe informatique ; restreindre le public laisse la majorité des cibles sans formation."
+    },
+    "reference": "NIST SP 800-50 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-identifiants-saisis-actions-soc-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "À 9 h 12, un salarié signale qu'il a saisi à 9 h 02 son mot de passe Microsoft 365 sur une page atteinte depuis un lien reçu par courriel, puis validé une notification MFA. Il n'a téléchargé ni ouvert aucun fichier. Le message a été envoyé à 40 salariés. Quelles deux actions l'équipe de sécurité doit-elle mener en priorité ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Réinstaller entièrement le poste du salarié avant toute autre action"
+        },
+        {
+          "id": "b",
+          "text": "Réinitialiser le mot de passe du compte et révoquer ses sessions et jetons actifs"
+        },
+        {
+          "id": "c",
+          "text": "Clore le ticket après avoir supprimé le message de la seule boîte du salarié"
+        },
+        {
+          "id": "d",
+          "text": "Rechercher les autres destinataires du message et le retirer de toutes les boîtes"
+        },
+        {
+          "id": "e",
+          "text": "Attendre la prochaine campagne de simulation pour former le salarié"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "L'attaquant détient le mot de passe et, grâce à la notification validée, probablement une session ouverte : changer le mot de passe ne suffit pas, il faut aussi révoquer les sessions et jetons actifs pour l'expulser. Le même message a atteint 39 autres personnes : le rechercher et le retirer de toutes les boîtes, puis bloquer le domaine, empêche de nouvelles victimes. Viennent ensuite l'examen du compte (règles de transfert, connexions, envois) et l'identification de ceux qui ont cliqué. Le signalement rapide du salarié est ce qui rend ce confinement possible.",
+    "distractorNotes": {
+      "a": "Aucun fichier n'a été téléchargé : la compromission porte sur le compte, pas sur le poste. Réinstaller le poste prend du temps sans expulser l'attaquant du compte.",
+      "c": "Le message reste dans 39 autres boîtes et le compte compromis n'est pas traité : l'incident n'est pas confiné.",
+      "e": "La formation n'est pas l'urgence ; le compte est compromis maintenant et le salarié a déjà eu le bon réflexe en signalant."
+    },
+    "reference": "NIST SP 800-61 Rev. 2 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-comportements-anormaux-classement-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'équipe de sécurité classe des comportements relevés pendant le trimestre selon les catégories de comportements anormaux des objectifs SY0-701. Associez chaque comportement à sa catégorie.",
+      "left": [
+        {
+          "id": "b1",
+          "text": "Un commercial installe un service de partage de fichiers non approuvé pour envoyer de gros fichiers à un client, tout en sachant que c'est interdit"
+        },
+        {
+          "id": "b2",
+          "text": "Le compte d'une gestionnaire RH, toujours utilisé depuis Lyon en journée, s'authentifie à 3 h 10 depuis un autre pays"
+        },
+        {
+          "id": "b3",
+          "text": "Une assistante envoie le fichier de paie à un homonyme externe que la saisie automatique a proposé"
+        },
+        {
+          "id": "b4",
+          "text": "Un développeur désactive l'EDR de son poste pour accélérer une compilation"
+        },
+        {
+          "id": "b5",
+          "text": "Un compte de service qui interrogeait seulement une base de données se met à parcourir tous les partages de fichiers"
+        }
+      ],
+      "right": [
+        {
+          "id": "risky",
+          "text": "Comportement risqué"
+        },
+        {
+          "id": "unexpected",
+          "text": "Comportement inattendu"
+        },
+        {
+          "id": "unintentional",
+          "text": "Comportement non intentionnel"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "b1": "risky",
+        "b2": "unexpected",
+        "b3": "unintentional",
+        "b4": "risky",
+        "b5": "unexpected"
+      }
+    },
+    "explanation": "Un comportement risqué est une action délibérée qui contourne une règle connue, sans forcément d'intention de nuire : installer un outil non approuvé ou désactiver une protection pour gagner du temps. Un comportement inattendu est un écart par rapport aux habitudes d'un utilisateur ou d'un compte (lieu, horaire, ressources consultées) dont la cause reste à établir : il peut traduire une compromission du compte. Un comportement non intentionnel est une erreur commise sans le vouloir, comme un mauvais destinataire choisi par la saisie automatique. Chaque catégorie appelle une réponse différente : rappel de la règle, investigation, ou formation et garde-fous.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-themes-formation-situations-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le responsable de la sensibilisation relève plusieurs situations pendant un audit interne et veut rattacher chacune au module de formation qui la traite. Associez chaque situation au module correspondant.",
+      "left": [
+        {
+          "id": "s1",
+          "text": "Un ingénieur publie sur un réseau social une photo d'équipe prise devant un tableau blanc où figure le schéma du réseau"
+        },
+        {
+          "id": "s2",
+          "text": "Une acheteuse utilise pour le VPN le même mot de passe que pour ses achats en ligne"
+        },
+        {
+          "id": "s3",
+          "text": "Un technicien recharge son téléphone sur son poste avec un câble offert sur un salon"
+        },
+        {
+          "id": "s4",
+          "text": "Un chef de projet consulte la messagerie de l'entreprise depuis le Wi-Fi ouvert d'un café, sans VPN"
+        },
+        {
+          "id": "s5",
+          "text": "Un salarié démissionnaire copie des dossiers de projets sensibles sur son stockage en ligne personnel"
+        }
+      ],
+      "right": [
+        {
+          "id": "opsec",
+          "text": "Sécurité opérationnelle"
+        },
+        {
+          "id": "pwd",
+          "text": "Gestion des mots de passe"
+        },
+        {
+          "id": "media",
+          "text": "Supports amovibles et câbles"
+        },
+        {
+          "id": "remote",
+          "text": "Travail hybride et à distance"
+        },
+        {
+          "id": "insider",
+          "text": "Menace interne"
+        },
+        {
+          "id": "patch",
+          "text": "Gestion des correctifs"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "opsec",
+        "s2": "pwd",
+        "s3": "media",
+        "s4": "remote",
+        "s5": "insider"
+      }
+    },
+    "explanation": "La sécurité opérationnelle apprend à ne pas divulguer d'informations exploitables (schémas, noms de projets, badges) dans les publications. La gestion des mots de passe traite la réutilisation, première cause de réussite du bourrage d'identifiants. Le module sur les supports amovibles et câbles couvre les clés et câbles de provenance inconnue, qui peuvent cacher un implant. Le travail hybride et à distance couvre l'usage du VPN, des réseaux Wi-Fi publics et la protection du poste hors des locaux. La menace interne traite l'exfiltration par un salarié, notamment à l'approche d'un départ.",
+    "distractorNotes": {
+      "patch": "La gestion des correctifs est un processus technique de l'équipe informatique, pas un thème de formation des utilisateurs ; aucune situation ne relève d'un correctif manquant."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-indicateurs-campagne-mesure-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le RSSI présente au comité de direction les indicateurs du rapport récurrent de sensibilisation. Associez chaque indicateur à la question à laquelle il répond.",
+      "left": [
+        {
+          "id": "k1",
+          "text": "Taux de clic"
+        },
+        {
+          "id": "k2",
+          "text": "Taux de signalement"
+        },
+        {
+          "id": "k3",
+          "text": "Délai médian avant le premier signalement"
+        },
+        {
+          "id": "k4",
+          "text": "Taux de saisie d'identifiants"
+        },
+        {
+          "id": "k5",
+          "text": "Taux de complétion des modules"
+        }
+      ],
+      "right": [
+        {
+          "id": "q1",
+          "text": "Quelle part des destinataires suit le lien du leurre ?"
+        },
+        {
+          "id": "q2",
+          "text": "Quelle part des destinataires alerte l'équipe de sécurité par le canal prévu ?"
+        },
+        {
+          "id": "q3",
+          "text": "En combien de temps l'équipe de sécurité est-elle prévenue ?"
+        },
+        {
+          "id": "q4",
+          "text": "Quelle part des destinataires va jusqu'à livrer de quoi compromettre un compte ?"
+        },
+        {
+          "id": "q5",
+          "text": "Les salariés ont-ils suivi la formation qui leur a été assignée ?"
+        },
+        {
+          "id": "q6",
+          "text": "Combien de vulnérabilités critiques restent sans correctif ?"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "k1": "q1",
+        "k2": "q2",
+        "k3": "q3",
+        "k4": "q4",
+        "k5": "q5"
+      }
+    },
+    "explanation": "Le taux de clic mesure la sensibilité au leurre, et le taux de saisie d'identifiants la part des destinataires qui vont jusqu'à livrer leurs identifiants : c'est l'indicateur le plus proche de l'impact réel. Le taux de signalement et le délai avant le premier signalement mesurent la capacité de l'organisation à se défendre : un signalement rapide permet de retirer le message avant que d'autres ne cliquent. Le taux de complétion mesure la participation au programme, sans dire si les comportements changent. Suivis dans des rapports récurrents, ces indicateurs se comparent à la référence initiale.",
+    "distractorNotes": {
+      "q6": "Le nombre de vulnérabilités non corrigées relève du programme de gestion des vulnérabilités, pas des indicateurs d'une campagne de sensibilisation."
+    },
+    "reference": "NIST SP 800-50 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-programme-cycle-nist-800-50-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une collectivité crée son programme de sensibilisation à la sécurité en suivant le cycle de vie décrit par la version d'origine (2003) de NIST SP 800-50. Ordonnez les phases, de la première à la dernière.",
+      "items": [
+        {
+          "id": "impl",
+          "text": "Communiquer le plan, puis délivrer les sessions et lancer les campagnes"
+        },
+        {
+          "id": "design",
+          "text": "Évaluer les besoins de l'organisation et définir la stratégie du programme"
+        },
+        {
+          "id": "post",
+          "text": "Surveiller, évaluer les résultats et recueillir les retours pour améliorer le programme"
+        },
+        {
+          "id": "dev",
+          "text": "Produire les supports : modules, affiches, scénarios de simulation"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "design",
+        "dev",
+        "impl",
+        "post"
+      ]
+    },
+    "explanation": "La version de 2003 de NIST SP 800-50 décrit quatre phases. La conception (design) part d'une évaluation des besoins : publics, risques, obligations, ressources, pour définir la stratégie. Le développement produit ensuite les supports adaptés à ces besoins. La mise en œuvre (implementation) communique le plan et délivre les formations et campagnes. La post-mise en œuvre (post-implementation) surveille la conformité, évalue l'efficacité et recueille les retours, qui alimentent la révision du programme : le cycle recommence ainsi. Cela correspond au développement puis à l'exécution du programme des objectifs SY0-701.",
+    "reference": "NIST SP 800-50 (2003) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-phishing-signale-phases-nist-800-61-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une entreprise organise le traitement des courriels d'hameçonnage signalés par ses salariés selon le cycle de NIST SP 800-61 Rev. 2. Ordonnez les activités suivantes selon les phases de ce cycle.",
+      "items": [
+        {
+          "id": "analyse",
+          "text": "Examiner le message signalé et identifier les destinataires qui ont cliqué"
+        },
+        {
+          "id": "lessons",
+          "text": "Tenir une réunion de retour d'expérience et intégrer le cas au prochain module de sensibilisation"
+        },
+        {
+          "id": "prep",
+          "text": "Déployer un bouton de signalement dans la messagerie et former les salariés à son usage"
+        },
+        {
+          "id": "contain",
+          "text": "Retirer le message de toutes les boîtes, bloquer le domaine et réinitialiser les comptes touchés"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "prep",
+        "analyse",
+        "contain",
+        "lessons"
+      ]
+    },
+    "explanation": "NIST SP 800-61 Rev. 2 enchaîne quatre phases. La préparation met en place les moyens avant l'incident : ici, le bouton de signalement et la formation qui en fait un réflexe. La détection et l'analyse commencent avec le signalement : examen du message et recherche de ceux qui ont cliqué. Le confinement, l'éradication et la reprise retirent le message, bloquent le domaine et rétablissent des comptes sûrs. L'activité post-incident tire les leçons ; réinjecter le cas réel dans la sensibilisation boucle le cycle avec la préparation.",
+    "reference": "NIST SP 800-61 Rev. 2 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-simulation-taux-clic-signalement-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une campagne de phishing simulé est envoyée à 400 salariés. 52 d'entre eux cliquent sur le lien et 92 signalent le message avec le bouton prévu. Calculez les deux indicateurs du rapport de campagne.",
+      "fields": [
+        {
+          "id": "click",
+          "label": "Taux de clic, en pourcentage (nombre entier, sans le symbole %)"
+        },
+        {
+          "id": "report",
+          "label": "Taux de signalement, en pourcentage (nombre entier, sans le symbole %)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "click": {
+          "accepted": [
+            "13"
+          ],
+          "normalize": "int"
+        },
+        "report": {
+          "accepted": [
+            "23"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Chaque taux rapporte un nombre de salariés au nombre de destinataires : 52 / 400 = 0,13, soit 13 % de clics, et 92 / 400 = 0,23, soit 23 % de signalements. Le rapport suit les deux à la fois : un taux de clic qui baisse montre que les salariés reconnaissent mieux les leurres, et un taux de signalement qui monte montre qu'ils alertent l'équipe de sécurité, ce qui permet de retirer un vrai message des boîtes avant que d'autres ne cliquent.",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-objectif-taux-clic-clics-maximum-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le rapport initial d'un programme de sensibilisation porte sur 850 salariés : 119 ont cliqué sur le lien de la simulation de référence. La direction fixe pour la fin de l'année un taux de clic inférieur ou égal à 4 %, sur le même effectif.",
+      "fields": [
+        {
+          "id": "rate",
+          "label": "Taux de clic initial, en pourcentage (nombre entier, sans le symbole %)"
+        },
+        {
+          "id": "max",
+          "label": "Nombre maximal de salariés qui peuvent cliquer en respectant l'objectif (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "rate": {
+          "accepted": [
+            "14"
+          ],
+          "normalize": "int"
+        },
+        "max": {
+          "accepted": [
+            "34"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le taux initial vaut 119 / 850 = 0,14, soit 14 %. L'objectif de 4 % au plus sur 850 salariés autorise 0,04 × 850 = 34 clics au maximum. Il faut donc passer de 119 à 34 clics au plus, soit 85 salariés piégés en moins. Fixer un objectif chiffré à partir du rapport initial permet aux rapports récurrents de montrer si le programme atteint sa cible et où concentrer les efforts.",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  },
+  {
+    "slug": "security-plus-5.6-politique-utilisation-acceptable-sigle-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le premier jour, chaque nouvel arrivant d'une agence de communication lit et signe le document qui fixe les règles d'usage des équipements, de la messagerie et d'Internet fournis par l'entreprise, ainsi que les usages interdits. Quel est le sigle anglais de ce document ?",
+      "fields": [
+        {
+          "id": "aup",
+          "label": "Sigle anglais de trois lettres, ou son nom complet en anglais"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "aup": {
+          "accepted": [
+            "AUP",
+            "Acceptable Use Policy",
+            "Acceptable Usage Policy"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "La politique d'utilisation acceptable (AUP, Acceptable Use Policy) définit ce que les utilisateurs peuvent et ne peuvent pas faire avec les ressources de l'entreprise : postes, messagerie, Internet, logiciels, supports amovibles. La faire lire et signer à l'arrivée fait partie de la formation par les politiques et manuels : le salarié connaît les règles, et l'entreprise peut s'y référer en cas d'écart. Elle est rappelée lors des sessions de sensibilisation récurrentes.",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.6"
+  }
+]

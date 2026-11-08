@@ -372,6 +372,35 @@ describe('4.5 Syslog', () => {
     expect(shown(d, 'service timestamps log')).toEqual(['service timestamps log datetime msec localtime show-timezone year']);
   });
 
+  it('service timestamps … datetime : mots-clés facultatifs dans un ordre libre, affichés dans l’ordre d’IOS (bloc 7)', () => {
+    const d = router();
+    ok(d, ['service timestamps log datetime localtime msec']);
+    expect(shown(d, 'service timestamps log')).toEqual(['service timestamps log datetime msec localtime']);
+    ok(d, ['service timestamps debug datetime year show-timezone localtime msec']);
+    expect(shown(d, 'service timestamps debug')).toEqual(['service timestamps debug datetime msec localtime show-timezone year']);
+    // Abréviations dans le désordre, et un mot-clé répété refusé.
+    ok(d, ['service timestamps log datetime loc ms']);
+    expect(shown(d, 'service timestamps log')).toEqual(['service timestamps log datetime msec localtime']);
+    expect(conf(d, ['service timestamps log datetime msec msec'])[0]?.status).toBe('error');
+    // Après un mot-clé, l'aide ne propose plus que les autres.
+    expect(d.execute('service timestamps log datetime localtime ?').output).toBe(
+      '  msec           Include milliseconds in timestamp\n  show-timezone  Add time zone information to timestamp\n  year           Include year in timestamp\n  <cr>',
+    );
+  });
+
+  it('no spanning-tree vlan <liste> root : la priorité revient au défaut, quelle que soit la commande qui l’a réglée (bloc 7)', () => {
+    const d = sw();
+    ok(d, ['spanning-tree vlan 10 priority 4096', 'spanning-tree vlan 20 root primary']);
+    expect(shown(d, 'spanning-tree vlan')).toEqual(['spanning-tree vlan 10 priority 4096', 'spanning-tree vlan 20 root primary']);
+    ok(d, ['no spanning-tree vlan 10 root']);
+    expect(shown(d, 'spanning-tree vlan')).toEqual(['spanning-tree vlan 20 root primary']);
+    ok(d, ['no spanning-tree vlan 20 root']);
+    expect(shown(d, 'spanning-tree vlan')).toEqual([]);
+    // Les autres VLAN ne sont pas touchés.
+    ok(d, ['spanning-tree vlan 30 priority 8192', 'no spanning-tree vlan 40 root']);
+    expect(shown(d, 'spanning-tree vlan')).toEqual(['spanning-tree vlan 30 priority 8192']);
+  });
+
   it('terminal monitor : en mode privilégié seulement, rien n’est enregistré', () => {
     const d = router();
     expect(d.execute('terminal monitor').status).toBe('error');

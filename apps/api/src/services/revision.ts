@@ -14,6 +14,7 @@ import {
 import type { Db } from '../db/client.js';
 import { certifications, domains, questions, reviewAnswers, reviewCards, reviewSessions, subtopics, type ReviewSession } from '../db/schema.js';
 import { conflict, forbidden, notFound } from '../errors.js';
+import { requireModule } from './modules.js';
 
 /*
  * Révision espacée (flashcards / QCM rapides). Un paquet = 10 à 20 questions publiées d'un sous-thème,
@@ -31,6 +32,7 @@ const DECK_MIN_AVAILABLE = 3;
 async function certificationByCode(db: Db, code: string) {
   const [cert] = await db.select().from(certifications).where(eq(certifications.code, code));
   if (!cert || !cert.active) throw notFound(`Certification inconnue : ${code}`);
+  requireModule(cert, 'flashcards');
   return cert;
 }
 

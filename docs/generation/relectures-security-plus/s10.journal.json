@@ -1,0 +1,193 @@
+[
+  {
+    "slug": "security-plus-2.4-ransomware-note-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-trojan-free-tool-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-bloatware-new-laptops-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-spyware-browser-extension-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-logic-bomb-payroll-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-rootkit-hidden-connections-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-ssh-brute-force-log-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-password-spraying-4625-001",
+    "verdict": "corrigée",
+    "gravite": "fond",
+    "problemes": [
+      "Note du distracteur d : « six comptes distincts avant un succès » est faux (l'exhibit montre sept comptes distincts, dont cinq avant le succès)."
+    ],
+    "correction": "Note d corrigée : « sept comptes distincts à intervalle régulier, dont un seul avec succès »."
+  },
+  {
+    "slug": "security-plus-2.4-arp-poisoning-on-path-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-md5-collision-contract-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-replay-iot-static-token-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [
+      "Doublon avec s11 api-replay-nonce-hmac-001 : même gabarit (message rejoué accepté), même bonne réponse (nonce + horodatage) et mêmes distracteurs (algorithme plus fort, clé/jeton plus long)."
+    ],
+    "correction": "Retirée. Restaurée par l’orchestrateur : le doublon avait été rejeté des deux côtés (s10 et s11) ; seule la version de s11 est retirée."
+  },
+  {
+    "slug": "security-plus-2.4-dns-cache-poisoning-dig-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-worm-vs-virus-traits-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-dns-tunneling-txt-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-tls-downgrade-mitigation-001",
+    "verdict": "corrigée",
+    "gravite": "fond",
+    "problemes": [
+      "L'énoncé limitait la rétrogradation à la négociation de version TLS : HSTS (bonne réponse d) ne protège pas contre ce cas, seulement contre le retour au HTTP (SSL stripping) ; deuxième réponse mal justifiée par l'énoncé."
+    ],
+    "correction": "Énoncé complété : « … négocier un protocole faible ou à se rabattre sur HTTP en clair »."
+  },
+  {
+    "slug": "security-plus-2.4-ntp-reflection-firewall-log-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-rat-beaconing-proxy-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Option c : « requêtes et réponses » de taille constante, alors que l'exhibit n'a qu'une colonne Octets (indéterminé).",
+      "Même poste 10.20.4.37 et même balisage de 5 min que s11 proxy-denied-beacon-host-001 (aspect différent : indicateurs vs conclusion), risque de ressemblance."
+    ],
+    "correction": "Option c : « Les échanges gardent une taille presque constante » ; poste renommé 10.20.6.52 dans l'énoncé et l'exhibit."
+  },
+  {
+    "slug": "security-plus-2.4-malware-indicator-matching-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-network-attack-indicator-matching-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-crypto-password-attack-matching-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-ransomware-ir-phases-order-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Formulation « selon le processus … de NIST SP 800-61 et des objectifs Security+ » bancale.",
+      "Même gabarit (phases NIST) que s11 ssrf-incident-response-order-001, mais scénario, actions et nombre d'étapes (préparation incluse) différents : gardée ; à surveiller avec les lots 4.8."
+    ],
+    "correction": "Énoncé : « Selon les phases de réponse aux incidents de NIST SP 800-61 Rev. 2, reprises par les objectifs Security+, … »."
+  },
+  {
+    "slug": "security-plus-2.4-rootkit-volatility-order-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [
+      "Doublon quasi exact de s11 privesc-server-volatility-order-001 : mêmes cinq éléments RFC 3227 (registres/cache, RAM, fichiers temporaires, disque, archives) et même ordre."
+    ],
+    "correction": "Retirée. Restaurée par l’orchestrateur : le doublon avait été rejeté des deux côtés (s10 et s11) ; seule la version de s11 est retirée."
+  },
+  {
+    "slug": "security-plus-2.4-dns-amplification-factor-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.4-birthday-truncated-hash-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "L'énoncé donnait la formule 2^(n/2) : simple division, niveau easy et non medium."
+    ],
+    "correction": "Formule retirée de l'énoncé : le candidat doit connaître la borne des anniversaires."
+  },
+  {
+    "slug": "security-plus-2.4-spraying-distinct-accounts-count-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  }
+]

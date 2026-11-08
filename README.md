@@ -1,8 +1,8 @@
 # ExamForge
 
-Plateforme d'entraînement aux certifications IT. Premier produit : un simulateur d'examen **CCNA 200-301** fidèle aux conditions réelles (chrono, pas de retour arrière, notation au barème Cisco), avec un tableau de bord de progression et un serveur MCP qui permet à une IA de produire examens et questions.
+Plateforme d'entraînement aux certifications IT. Premier produit : un simulateur d'examen **CCNA 200-301** fidèle aux conditions réelles (chrono, pas de retour arrière, notation au barème Cisco). Deuxième certification : **CompTIA Security+ SY0-701** (90 questions, 90 minutes, seuil 750 sur 100–900). Un tableau de bord de progression par certification et un serveur MCP qui permet à une IA de produire examens et questions.
 
-Le moteur ne contient rien de propre au CCNA : une certification est une configuration (domaines, pondérations, barème, format). Ajouter Security+ ou AWS est une opération de contenu.
+Le moteur ne contient rien de propre à une certification : une certification est une configuration (domaines, pondérations, barème, format, types de questions, **modules**). La Security+ a été ajoutée par des données et du contenu seulement (un test échoue si `ccna` ou `200-301` apparaît dans le code). Ajouter AWS ou PNPT est une opération de contenu.
 
 ## Fonctionnalités
 
@@ -12,6 +12,9 @@ Le moteur ne contient rien de propre au CCNA : une certification est une configu
 - 6 types de questions : QCM simple et multiple, champs à compléter (subnetting), commandes IOS (abréviations acceptées), remise en ordre, association.
 - Tableau de bord : niveau de préparation face au seuil, maîtrise par domaine, courbe de progression, sous-thèmes à revoir.
 - Banque CCNA de 1 523 questions relues (rédaction et relecture séparées, contrôle d'échantillon), au moins 15 par sous-thème, réparties selon les pondérations officielles, sans quasi-doublon.
+- **CompTIA Security+ SY0-701** : banque de 928 questions de scénario relues (5 types : QCM simple et multiple, association, remise en ordre, champs à compléter ; pas de CLI), réparties selon les pondérations officielles (12 / 22 / 18 / 28 / 20 %), au moins 12 par sous-thème (1.1 à 5.6), difficultés 30/50/20 ; série de 30 examens blancs figés au format officiel (90 questions, au plus 4 examens par question, 13 questions communes au plus) ; examens, entraînement et flashcards.
+- Sélecteur de certification dans l'en-tête : lancement, série, entraînement, flashcards, tableau de bord et historique suivent la certification choisie, avec une progression et des statistiques propres à chacune. Les modules qu'une certification n'a pas (CLI, subnetting, challenges en Security+) disparaissent de l'interface et l'API répond 404.
+- Écran d'administration (rôle admin, lecture seule) : certifications, compteurs de banque, état de la série, date du dernier import.
 - Trainer de subnetting à exercices infinis.
 - Trainer CLI IOS : 24 labs CCNA, au moins un par sous-thème configurable en CLI, sur un routeur ou un commutateur simulé (modes, prompts, abréviations, erreurs et aide `?` comme sur IOS), objectifs vérifiés en direct, trois indices, solution et explication à la fin, meilleur temps et historique.
 - Challenges chronométrés : 17 défis CCNA sans indice (11 de dépannage, des pannes à trouver dans la configuration de départ), échéance contrôlée par le serveur, fin automatique, meilleur temps et courbe des temps.
@@ -84,7 +87,7 @@ La CI GitHub Actions lance tout, avec PostgreSQL, à chaque push : build, typech
 ## Ajouter du contenu
 
 - Une question : un objet JSON dans `packages/content/data/questions/<certification>/`. `pnpm --filter @examforge/content test` vérifie le schéma, la cohérence de la correction, les doublons, et qu'une bonne réponse obtient bien tous les points.
-- Une certification : un fichier dans `packages/content/data/certifications/`, ou l'outil MCP `add_certification`.
+- Une certification : un fichier dans `packages/content/data/certifications/` (domaines, pondérations, sous-thèmes, barème, format, types, `modules`), ses cibles de banque dans `packages/content/data/bank-targets/`, ou l'outil MCP `add_certification` (même résultat). Les tests de banque, de série et de quasi-doublons s'appliquent à chaque certification qui a des cibles.
 - Un lab CLI : un fichier JSON dans `packages/content/data/labs/<certification>/` (format dans `docs/ARCHITECTURE.md`), ou les outils MCP `generate_lab` puis `submit_lab`. Un challenge : même format avec `kind: "challenge"`, dans `packages/content/data/labs/<certification>/challenges/`, ou `generate_challenge` puis `submit_lab`. `pnpm --filter @examforge/content test` joue chaque lab : sa solution et ses variantes doivent réussir, ses pièges échouer.
 
 ## Feuille de route
@@ -99,4 +102,4 @@ La CI GitHub Actions lance tout, avec PostgreSQL, à chaque push : build, typech
 - [x] Bloc 4 : challenges chronométrés et révision espacée (fidélité du simulateur : ordre de `show running-config`, EtherChannel, VTY 0 4 / 5 15, ACL numérotées en mode nommé, HSRP, ports TCP/UDP ; 11 challenges CCNA relus, dont 7 de dépannage ; échéance serveur, classement personnel ; flashcards Leitner ; `generate_challenge`)
 - [x] Bloc 5 : finitions, accessibilité (audit axe WCAG 2.1 AA en CI, titres, zones de 44 px, mouvement réduit), mobile (terminal tactile, 360 à 1280 px, fumée Firefox et WebKit), performance (découpage par route, budget du bundle, polices auto-hébergées, Lighthouse ≥ 90)
 - [x] Bloc 6 : banque complète et 100 examens blancs (banque CCNA portée à 1 523 questions en 45 lots rédigés puis relus par des agents distincts, contrôle d'échantillon ; 11 labs CLI et 6 challenges de plus (4 de dépannage), profil IOS étendu (CDP/LLDP, STP, NTP, SNMP, syslog, AAA) ; assembleur de série déterministe et détection des quasi-doublons dans `packages/core` ; 100 examens figés importés au démarrage, idempotents, jamais modifiés une fois passés ; écran de lancement par numéro et progression dans la série)
-- [ ] Phase 6 : deuxième certification (Security+)
+- [x] Bloc 7 / Phase 6 : deuxième certification, CompTIA Security+ SY0-701 (audit de généricité, `modules` en donnée de la certification, cibles de banque par certification et tests paramétrés ; 928 questions de scénario en 34 lots rédigés puis relus par des agents distincts, échantillon de contrôle ; 30 examens figés assemblés par `assembleSeries` sans modifier le moteur ; `add_certification` et fichier de données équivalents ; écran d'administration ; simulateur : mots-clés facultatifs en ordre libre et `no spanning-tree vlan X root` ; cause du test d'API « mode examen » trouvée ; import idempotent des deux certifications)

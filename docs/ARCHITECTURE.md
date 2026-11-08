@@ -1,6 +1,6 @@
 # Architecture
 
-ExamForge est un moteur générique de certification. Le CCNA 200-301 est sa première configuration, pas une partie du code.
+ExamForge est un moteur générique de certification. Le CCNA 200-301 est sa première configuration et la CompTIA Security+ SY0-701 sa deuxième (bloc 7) : aucune des deux n'est une partie du code.
 
 ## Vue d'ensemble
 
@@ -35,7 +35,7 @@ ExamForge est un moteur générique de certification. Le CCNA 200-301 est sa pre
 
 ## Principes
 
-- **Une certification est une donnée.** `certificationSchema` (packages/core) décrit domaines, pondérations, sous-thèmes, barème, format d'examen et types de questions autorisés. Ajouter Security+ = un fichier JSON ou un appel à `add_certification`.
+- **Une certification est une donnée.** `certificationSchema` (packages/core) décrit domaines, pondérations, sous-thèmes, barème, format d'examen, types de questions autorisés et **modules** proposés. Ajouter une certification = un fichier JSON ou un appel à `add_certification` (voir « Généricité du moteur et modules » : la Security+ l'a prouvé sans une ligne de code propre à elle).
 - **La solution d'un lab ne quitte jamais le serveur avant la fin.** Même règle que `answer_key` : avant `POST /lab-attempts/:id/finish`, l'API n'envoie que l'énoncé, la topologie, la description des objectifs (jamais leur contrôle), les indices déjà demandés et les sorties des commandes saisies. Solution, variantes, explication et référence n'apparaissent que dans `result`, une fois la session terminée. Les tests de l'API le vérifient sur toutes les réponses d'une session.
 - **La correction ne quitte jamais le serveur avant la soumission.** Une question est stockée en deux parties : `body` (public) et `answer_key` (privé). Pendant un examen, l'API n'envoie que `body`, avec l'ordre des options mélangé par tentative. Le post-mortem (`/result`) applique le même mélange, avec le même seed : les lettres A, B, C sont celles que le candidat a vues. La correction référence des identifiants d'options, elle ne dépend pas de l'ordre.
 - **Pas de doublon, garanti à deux niveaux.** Dans un examen, la clé primaire `(exam_id, question_id)` l'interdit. Dans la banque, chaque question a une empreinte d'énoncé normalisé, unique par certification.
@@ -56,7 +56,7 @@ ExamForge est un moteur générique de certification. Le CCNA 200-301 est sa pre
 - **Filtre `subtopics`** : liste de codes de sous-thèmes, sur le modèle de `types` et combinable avec lui. Une question sans sous-thème est écartée, les domaines sans question retenue aussi, et les pondérations des autres sont renormalisées. Un code inconnu ou sans question donne `409 insufficient_questions` avec `domain: "*"`. Les codes de sous-thèmes sont uniques dans une certification (vérifié par `certificationSchema`). C'est ce filtre qu'utilise le bouton « Réviser » de la carte « À revoir » : 10 questions du sous-thème en entraînement, ou toutes s'il en a moins.
 - **`GET /attempts/:id/clock`** : `{ status, deadlineAt, serverNow }`, sans les questions. Le chrono d'examen s'en sert pour un recalage léger toutes les 5 minutes et au retour sur l'onglet (`scheduleClockResync`), en plus du recalage à chaque enregistrement.
 - **`serverNow` et le chrono** : le navigateur estime le décalage entre son horloge et celle du serveur en comparant `serverNow` au milieu de l'aller-retour de la requête, puis décompte en heure serveur (`apps/web/src/lib/clock.ts`). La mesure est faite au chargement de la tentative, puis refaite à chaque enregistrement de réponse ou de marquage (`resyncOffset`) : une horloge de poste qui saute en cours d'examen (veille, NTP, changement manuel) est rattrapée au premier enregistrement suivant. Une réponse sans `serverNow` lisible garde le décalage précédent. L'échéance reste contrôlée côté serveur.
-- **`certification`** : l'écran de passage et les résultats utilisent la certification de la tentative, pas celle choisie dans l'en-tête. Le tableau de bord, le lancement, les statistiques et l'historique suivent le sélecteur de l'en-tête (liste issue de `GET /certifications`, choix gardé dans `localStorage`, repli sur la première certification).
+- **`certification`** : l'écran de passage et les résultats utilisent la certification de la tentative, pas celle choisie dans l'en-tête. Le tableau de bord, le lancement, la série, l'entraînement, les flashcards, les statistiques et l'historique suivent le sélecteur de l'en-tête (liste issue de `GET /certifications`, choix gardé dans `localStorage`, repli sur la première certification). Progression, statistiques, série et numéros d'examen sont propres à chaque certification : un examen CCNA ne compte jamais dans la Security+.
 
 ## Banque : `GET /certifications/:code`
 
@@ -70,6 +70,65 @@ Renvoie la configuration de la certification et les compteurs de la banque publi
 | `bySubtopic` | Par code de sous-thème ; tous les sous-thèmes de la configuration y figurent, à 0 s'ils sont vides. |
 | `byDomainType` | Par domaine puis par type. L'écran de lancement en déduit ce que permet un filtre de types (« la banque permet au plus N questions ») en reproduisant la logique du serveur : domaines sans question de ces types écartés, pondérations renormalisées (`apps/web/src/lib/planning.ts`). |
 | `exams` | Nombre d'examens blancs figés. |
+
+## Généricité du moteur et modules (bloc 7)
+
+Le bloc 7 devait prouver que le moteur est générique : la Security+ s'ajoute par des **données** et du **contenu**, sans code propre à une certification.
+
+### Audit de généricité
+
+Recherche de `ccna`, `200-301`, `825`, `102`, `IOS`, `Cisco`, des domaines 1.0 à 6.0 et des sous-thèmes dans `packages/core`, `apps/api`, `apps/web` et `apps/mcp` (hors tests).
+
+| Trouvé en dur | Devenu |
+| --- | --- |
+| Menu « CLI Cisco IOS », titres et en-têtes « LABS CISCO IOS », méta-description « examens blancs CCNA 200-301 » (web) | « Labs CLI » et textes sans certification ; le menu, le tableau de bord et l'écran de lancement suivent `modules` |
+| Sous-thème `'1.6'` qui ouvre le bouton « Trainer » du tableau de bord (web) | `moduleSubtopics: { subnet: ["1.6"] }` dans `ccna.json` |
+| Navigation, tableau de bord et lancement qui supposaient labs, challenges, subnetting et série | `modules: [...]` de la certification ; API : 404 `module_unavailable` |
+| Libellé du sélecteur construit sur le code en capitales | `shortName` (« CCNA », « Security+ ») dans la configuration |
+| Descriptions des outils MCP : « IOS », « Cisco », « pannes CCNA classiques », `ex. "ccna"` | Textes neutres ; le contenu propre à une certification vit dans les consignes de lot (`docs/generation/`) |
+| Cibles chiffrées (1 500 questions, 15 par sous-thème, 100 examens, N = 8, 12 en commun, 825…) écrites dans les tests | `packages/content/data/bank-targets/<code>.json`, lu par des tests paramétrés |
+| Barème 300–1000, seuil 825, 102 questions, 120 minutes | Déjà en données (`scoring`, `examFormat`) : vérifié sur une échelle 100–900 avec seuil 750 (test d'API) |
+
+Un test (`packages/content/test/genericity.test.ts`) échoue si `ccna`, `200-301` ou `cisco` apparaît dans le code de core, api, web ou mcp, hors tests et commentaires.
+
+### Modules
+
+`modules` est une liste de la configuration de certification : `exam`, `practice`, `flashcards`, `subnet`, `cli`, `challenges`. Valeur par défaut d'une certification déclarée sans liste : `exam`, `practice`, `flashcards` (ceux qui ne demandent que des questions). `challenges` suppose `cli` (même simulateur).
+
+| Module | Ce qu'il ouvre | Routes qui répondent 404 `module_unavailable` sans lui |
+| --- | --- | --- |
+| `exam` | Examens blancs, série figée, chrono officiel | `POST /attempts` en mode `exam` ou avec `examNumber`, `GET /exams` |
+| `practice` | Entraînement libre et ciblé | `POST /attempts` en mode `practice` |
+| `flashcards` | Révision espacée | `/revision/*` |
+| `subnet` | Entraîneur de subnetting (calcul côté navigateur, sans route) | page du navigateur seulement |
+| `cli` | Labs dans le simulateur de terminal | `GET /labs`, `/labs/:slug`, sessions de lab |
+| `challenges` | Challenges chronométrés (`kind: "challenge"`) | `GET /labs?kind=challenge`, leurs sessions |
+
+L'API répond `404 { error: { code: "module_unavailable", details: { certification, module } } }` : une réponse propre, sans effet de bord. Côté navigateur, `ModuleGate` affiche « Module absent pour <certification> » sur un lien direct, et la navigation, le tableau de bord (boutons, « À revoir ») et l'écran de lancement ne proposent que les modes disponibles. La Security+ déclare `["exam", "practice", "flashcards"]`.
+
+### Deux voies pour déclarer une certification, un seul résultat
+
+- **Fichier de données** : `packages/content/data/certifications/<code>.json`, importé au démarrage (`seedContent`).
+- **Outil MCP `add_certification`** : envoie le même objet à `POST /admin/certifications` (validé par `certificationSchema`, comme le fichier).
+
+Le test `apps/api/test/certifications.test.ts` déclare le fichier de la Security+ sous un autre code par l'API et vérifie que la configuration servie, les domaines, les pondérations et les sous-thèmes en base sont identiques ; `apps/mcp/test/tools.test.ts` vérifie que l'outil transmet le fichier sans rien perdre (modules compris). Déclarer deux fois ne crée rien de plus.
+
+### Écran d'administration
+
+`/admin` (rôle administrateur, lecture seule) liste les certifications : format et barème, modules, compteurs de banque par statut (publiées, validées, brouillons, retirées), labs, **état de la série** (examens figés, passés, « déjà passés gardés tels quels » si un import a trouvé un écart) et **date du dernier import** avec son résumé (questions créées et mises à jour). Il lit `GET /admin/certifications`. Une certification déclarée par l'API seulement n'a « jamais été importée » (`certifications.last_imported_at`, `last_import`, migration `0003`).
+
+### Évolutions génériques du simulateur de terminal
+
+Deux limites du bloc 6 sont levées par des champs du **profil**, sans rien d'IOS dans le moteur :
+
+- **Mots-clés facultatifs dans un ordre libre** : `[* [a] [b] [c] *]` dans une syntaxe (`service timestamps log datetime [* [msec] [localtime] [show-timezone] [year] *]`). Chaque option au plus une fois, dans n'importe quel ordre, abréviations comprises ; la configuration affichée les range dans l'ordre de la syntaxe (`canonicalOrder`). L'aide `?` ne propose que les options restantes. Le groupe ne contient que des options de mots-clés (une valeur perdrait son rang).
+- **`negateGroup`** : la forme `no`, même incomplète, remet à son défaut tout le réglage du `keyGroup` qui a la même clé. `no spanning-tree vlan 10 root` retire aussi `spanning-tree vlan 10 priority 4096`.
+
+Tests : `packages/core/test/terminal.test.ts` (syntaxe) et `packages/content/test/profile-fidelity.test.ts` (comportement IOS).
+
+### Test d'API « mode examen » : cause trouvée
+
+Au bloc 6, le test « mode examen : pas de correction avant la fin… » a échoué une fois sans que l'erreur soit conservée. Cause : il cherchait les mots `"key"`, `"correct"`, `"accepted"`… **dans le JSON sérialisé** de l'état de la tentative. Or une question d'association de la banque (`ccna-4.8-commands-roles-001`) a une option dont l'**identifiant** est `key` (`{"id":"key","text":"crypto key generate rsa…"}`) : quand le tirage aléatoire la sélectionnait (environ 1 tirage de 10 questions sur 150 : 3 échecs sur 300 tirages rejoués, tous sur cette question), la recherche de texte la prenait pour une fuite de correction. Le test cherche désormais des **noms de propriétés** (`CORRECTION_FIELDS`) à toute profondeur, et un second test force le tirage de cette question pour que le cas soit joué à chaque passage. Lors de la reproduction, un premier essai de 300 tirages a aussi échoué sur le plafond de requêtes (429), sans rapport : il est relevé dans l'essai. L'échec ne venait donc pas d'une fuite : la garantie « jamais de correction avant la soumission » reste testée, sans faux positif.
 
 ## Banque complète et série de 100 examens blancs (bloc 6)
 
@@ -142,6 +201,59 @@ L'empreinte exacte (`contentKey`, énoncé, exhibit et choix normalisés ; SHA-2
 - **bonne réponse** normalisée, quel que soit le type (texte des options justes, valeurs attendues, commandes, ordre, paires).
 
 `score = texte × (1 si même réponse, 0,6 sinon) × (0,4 + 0,6 × Jaccard des valeurs, ou 1 sans valeurs)`. Un même gabarit sur d'autres valeurs est un autre exercice (score bas), une même question reformulée avec les mêmes valeurs et la même réponse reste haute. **Seuil de doublon : 0,70** (bloquant dans les tests de contenu) ; **seuil de suspicion : 0,50** (liste de paires à relire, `node packages/content/scripts/near-duplicates.mjs`). Les cas de calibrage sont dans `packages/core/test/similarity.test.ts`. Toute la banque (environ 1,2 million de paires) se compare en moins d'une seconde : un filtre sur le recouvrement des racines écarte d'abord les paires sans rapport.
+
+## Banque Security+ et série de 30 examens blancs (bloc 7)
+
+Mêmes principes qu'au bloc 6 (la série est assemblée par `assembleSeries`, sans la moindre modification du moteur) ; les chiffres sont des **données** (`packages/content/data/bank-targets/security-plus.json`) que les tests paramétrés `packages/content/test/series.test.ts` lisent, comme pour le CCNA (`bank-targets/ccna.json`).
+
+### Ce que demande la série
+
+Un examen SY0-701 compte 90 questions en 90 minutes, seuil 750 sur une échelle de 100 à 900. `allocateByWeight` les répartit **11 / 20 / 16 / 25 / 18** pour les domaines 1.0 à 5.0 (10,8 / 19,8 / 16,2 / 25,2 / 18). Trente examens font donc **2 700 places** : 330, 600, 480, 750 et 540 par domaine.
+
+### Cibles de la banque : au moins 900 questions publiées
+
+| Cible | Valeur | Test |
+| --- | --- | --- |
+| Questions publiées | au moins 900 (cible de rédaction : 958 en 33 lots, plus un complément de 20) | `compte au moins 900…` |
+| Pondérations | chaque domaine à moins d'un point de son poids officiel (12 / 22 / 18 / 28 / 20 %) | `suit les pondérations…` |
+| Sous-thèmes | au moins 12 questions par sous-thème (28 sous-thèmes, 1.1 à 5.6) | `a au moins 12 questions par sous-thème…` |
+| Types | les 5 types autorisés (`mcq_single`, `mcq_multi`, `matching`, `ordering`, `fill_blank`) dans chaque domaine, au moins 5 de chacun ; aucun `cli` ; au moins 15 % de QCM multiples | `a chaque type autorisé…`, `dose les types` |
+| Difficultés | 30 % faciles, 50 % moyennes, 20 % difficiles : à 3 points près sur la banque, à 5 points près dans chaque domaine | `dose les difficultés…` |
+| Qualité | une référence et une explication pour chaque question, une note par distracteur, aucun quasi-doublon (score ≥ 0,70) | tests de contenu |
+| Origine | questions `source: "ai"`, rédigées en lots puis relues par un agent distinct | `garde la source…` |
+
+Banque publiée à la fin du bloc 7 : **928 questions** (bilan des relectures dans `docs/generation/journal-bloc-7.md`).
+
+| Domaine | Poids | Questions | Part | mcq_single | mcq_multi | matching | ordering | fill_blank | faciles / moyennes / difficiles |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1.0 General Security Concepts | 12 % | 117 | 12,6 % | 59 | 24 | 14 | 8 | 12 | 30 / 50 / 21 % |
+| 2.0 Threats, Vulnerabilities, and Mitigations | 22 % | 202 | 21,8 % | 103 | 41 | 26 | 11 | 21 | 32 / 51 / 17 % |
+| 3.0 Security Architecture | 18 % | 167 | 18,0 % | 83 | 34 | 20 | 14 | 16 | 30 / 50 / 20 % |
+| 4.0 Security Operations | 28 % | 261 | 28,1 % | 132 | 56 | 33 | 15 | 25 | 30 / 50 / 20 % |
+| 5.0 Security Program Management and Oversight | 20 % | 181 | 19,5 % | 91 | 36 | 22 | 14 | 18 | 29 / 52 / 19 % |
+| **Total** | 100 % | **928** | | 468 | 191 | 115 | 62 | 92 | 30 / 50 / 19 % |
+
+Sous-thèmes (minimum 18, cible 12) : 1.1 : 21, 1.2 : 36, 1.3 : 20, 1.4 : 40 · 2.1 : 29, 2.2 : 42, 2.3 : 45, 2.4 : 47, 2.5 : 39 · 3.1 : 41, 3.2 : 50, 3.3 : 38, 3.4 : 38 · 4.1 : 31, 4.2 : 20, 4.3 : 33, 4.4 : 33, 4.5 : 36, 4.6 : 39, 4.7 : 18, 4.8 : 27, 4.9 : 24 · 5.1 : 36, 5.2 : 40, 5.3 : 24, 5.4 : 29, 5.5 : 25, 5.6 : 27.
+
+**Ordonnancements.** Seules des séquences normées et sans ambiguïté sont admises (phases NIST SP 800-61, ordre de volatilité RFC 3227, cycle de gestion des vulnérabilités, étapes d'un changement…) : la banque en compte 62 (6,7 %, contre 8 % visés), parce que ces séquences sont peu nombreuses et que les relectures ont rejeté plusieurs ordonnancements qui répétaient celui d'un autre lot (mêmes phases NIST SP 800-61, même ordre de volatilité). Chaque domaine en a au moins 8.
+
+### N et recouvrement, calculés
+
+La banque (928 questions) est répartie comme les places : 2 700 / 928 = **2,91 examens par question en moyenne**, donc un plancher de 3.
+
+| Contrainte | Valeur | Justification |
+| --- | --- | --- |
+| Examens | 30, numérotés de 1 à 30, au format officiel (90 questions, pondérations exactes) | Cahier des charges. |
+| **N** : examens par question, au plus | **4** | La moyenne est 2,91, le plancher 3. Le plafond 4 laisse à l'assembleur la latitude d'équilibrer sous-thèmes et difficultés, et absorbe une banque un peu plus mince. |
+| Recouvrement entre deux examens, au plus | **13 questions (14,4 %)** | Deux examens tirés au hasard partagent en moyenne Σ k²/n = 11²/117 + 20²/202 + 16²/167 + 25²/261 + 18²/181 ≈ **8,7 questions** ; le plafond tolère l'écart d'un tirage, sous les 15 % demandés. |
+| Couverture | chaque question publiée sert au moins une fois | Une question jamais servie serait du contenu perdu. |
+| Équilibre par examen | difficultés à 5 points près de 30/50/20 ; au moins 26 des 28 sous-thèmes | Chaque examen ressemble au vrai, pas seulement la série en moyenne. |
+
+**Résultat** (seed 70101, assemblée en 0,2 s) : examens par question min 2, moyenne 2,91, **max 4** (842 questions à 3 examens, 85 à 2, 1 à 4) ; questions jamais servies **0** ; questions communes à deux examens moyenne 6,02 (6,7 %), **max 11** (12,2 %, examens 8 et 27) ; sous-thèmes couverts par examen 28 sur 28 ; difficultés par examen 27–28 / 45–46 / 16–18. `node packages/content/scripts/build-series.mjs --cert security-plus --check` vérifie que le fichier est exactement ce que l'assembleur produit avec la banque actuelle.
+
+### Cycle de rédaction (mêmes règles qu'au bloc 6)
+
+Lots de 20 à 40 questions rédigées (34 lots au total, complément compris), `batch:context`, `batch:check` (schéma, rangement, doublons exacts et sémantiques) et `near-duplicates` ; relecture par un agent **distinct** de celui qui rédige ; échantillon de 5 % relu par une troisième passe (au-delà de 2 % d'erreurs de fond, relecture complète du lot) ; `source: "ai"`, un commit par domaine, journal `docs/generation/journal-bloc-7.md`. Consignes adaptées dans `docs/generation/annexe-security-plus.md` : questions de scénario (« Un analyste constate… »), référentiels NIST SP 800-x, RFC, ISO/IEC 27001 et 27002, CVSS, MITRE ATT&CK, **aucune référence inventée** (un numéro de section ou d'identifiant n'est cité que s'il est sûr), point de vue du défenseur (jamais de charge utile ni de procédure d'attaque).
 
 ## Modèle de données
 

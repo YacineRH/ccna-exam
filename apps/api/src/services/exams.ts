@@ -2,6 +2,7 @@ import { and, asc, count, eq, inArray } from 'drizzle-orm';
 import type { Db } from '../db/client.js';
 import { attempts, certifications, examQuestions, exams } from '../db/schema.js';
 import { notFound } from '../errors.js';
+import { requireModule } from './modules.js';
 
 export interface SeriesExamProgress {
   number: number;
@@ -34,6 +35,7 @@ export interface SeriesProgress {
 export async function seriesProgress(db: Db, userId: string, code: string): Promise<SeriesProgress> {
   const [cert] = await db.select().from(certifications).where(eq(certifications.code, code));
   if (!cert || !cert.active) throw notFound(`Certification inconnue : ${code}`);
+  requireModule(cert, 'exam');
   const rows = await db
     .select({ id: exams.id, number: exams.number, title: exams.title, questionCount: count(examQuestions.questionId) })
     .from(exams)

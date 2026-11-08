@@ -1,0 +1,1136 @@
+[
+  {
+    "slug": "security-plus-3.2-ips-active-attribute-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque installe un IPS qui rejette les paquets correspondant à une signature d'attaque et réinitialise les sessions TCP suspectes, sans intervention humaine. Quel attribut CompTIA décrit ce comportement de l'équipement ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Passif"
+        },
+        {
+          "id": "b",
+          "text": "Actif"
+        },
+        {
+          "id": "c",
+          "text": "Hors bande"
+        },
+        {
+          "id": "d",
+          "text": "Sans état"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "CompTIA distingue, parmi les attributs d'un équipement de sécurité, le comportement actif ou passif. Un équipement actif agit lui-même sur le trafic : il rejette des paquets, réinitialise des connexions ou bloque une source. Un équipement passif se contente d'observer et d'alerter. L'IPS décrit ici supprime les paquets malveillants et coupe les sessions de façon automatique : il est actif. Pour pouvoir supprimer un paquet avant sa livraison, il est en outre placé en ligne (inline), sur le chemin du trafic.",
+    "distractorNotes": {
+      "a": "Un équipement passif observe le trafic et génère des alertes, sans rejeter ni modifier les paquets ; ce n'est pas le cas de cet IPS.",
+      "c": "Hors bande désigne un équipement qui n'est pas sur le chemin du trafic (copie par SPAN ou TAP) ; un tel équipement ne peut pas supprimer un paquet avant sa livraison.",
+      "d": "Sans état (stateless) qualifie un filtrage qui examine chaque paquet isolément, sans suivi de session ; cela ne dit rien de la capacité de l'équipement à agir sur le trafic."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-ids-span-to-inline-ips-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un IDS raccordé au port SPAN du commutateur de cœur a signalé une tentative d'exploitation d'un serveur web, mais les paquets malveillants ont tout de même atteint le serveur. Le RSSI exige que ce type de trafic soit désormais arrêté avant d'atteindre sa cible. Quelle modification répond LE MIEUX à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer le port SPAN par un TAP réseau pour fournir à l'IDS une copie complète du trafic"
+        },
+        {
+          "id": "b",
+          "text": "Envoyer les alertes de l'IDS au SIEM et y créer une règle de corrélation"
+        },
+        {
+          "id": "c",
+          "text": "Placer un IPS en ligne sur le chemin du trafic, en mode prévention"
+        },
+        {
+          "id": "d",
+          "text": "Mettre à jour les signatures de l'IDS toutes les heures au lieu de chaque jour"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un IDS alimenté par un port SPAN reçoit une copie du trafic : il est hors du chemin des paquets et passif, il peut détecter et alerter, mais le paquet d'origine poursuit sa route vers le serveur. Pour arrêter le trafic avant qu'il n'atteigne sa cible, l'équipement doit être placé en ligne (inline) et être actif : c'est le rôle d'un IPS en mode prévention, qui inspecte chaque paquet sur le chemin et rejette ceux qui correspondent à une attaque. La contrepartie est une latence ajoutée et un équipement de plus sur le chemin critique.",
+    "distractorNotes": {
+      "a": "Un TAP fournit une copie plus fidèle qu'un port SPAN, mais l'IDS reste passif et hors du chemin : il ne peut toujours pas arrêter le paquet d'origine.",
+      "b": "La corrélation dans le SIEM améliore la détection et le tri des alertes, mais elle intervient après le passage du trafic et ne bloque rien.",
+      "d": "Des signatures plus récentes détectent davantage d'attaques, mais un IDS sur port SPAN, même à jour, ne peut que signaler le trafic qu'il voit passer."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-span-oversubscription-tap-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une sonde d'analyse réseau est alimentée par un port SPAN 1 Gbit/s qui recopie les deux sens d'une liaison full duplex 1 Gbit/s très chargée. L'équipe constate des paquets manquants dans les captures et l'absence des trames en erreur. Elle veut une copie fidèle du trafic sans que la sonde puisse agir sur la liaison. Quelle solution est LA PLUS adaptée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Insérer la sonde en ligne sur la liaison pour qu'elle voie chaque paquet"
+        },
+        {
+          "id": "b",
+          "text": "Raccorder la sonde à un TAP réseau passif installé sur la liaison"
+        },
+        {
+          "id": "c",
+          "text": "Passer la sonde en mode actif pour qu'elle réinitialise les sessions incomplètes"
+        },
+        {
+          "id": "d",
+          "text": "Augmenter la MTU du port SPAN pour recopier des trames plus grandes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un port SPAN recopie le trafic au moyen du commutateur : quand les deux sens d'une liaison full duplex chargée sont envoyés vers un seul port de même débit, le port de destination est sursouscrit et des paquets sont perdus ; de plus, le commutateur ne recopie généralement pas les trames en erreur. Un TAP passif, inséré physiquement sur la liaison, fournit une copie de chaque sens à la sonde sans dépendre des ressources du commutateur. La sonde reste passive : elle reçoit une copie et ne peut ni retarder ni modifier le trafic de production.",
+    "distractorNotes": {
+      "a": "Une sonde en ligne verrait tout le trafic, mais elle serait alors sur le chemin critique : elle ajouterait de la latence et pourrait agir sur la liaison, ce que l'équipe veut éviter.",
+      "c": "Le mode actif permet d'agir sur le trafic, ce qui va à l'encontre de l'exigence ; il ne règle pas non plus la perte de paquets due à la sursouscription du port SPAN.",
+      "d": "La taille des trames n'est pas en cause : les pertes viennent de la somme des deux sens qui dépasse le débit du port de destination."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-passive-tap-use-cases-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le responsable sécurité d'un opérateur de paiement hésite entre une sonde passive raccordée par TAP et un équipement en ligne. Quelles deux exigences justifient le choix de la sonde passive ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Bloquer en temps réel les connexions vers des serveurs de commande et de contrôle connus"
+        },
+        {
+          "id": "b",
+          "text": "Conserver des captures complètes du trafic pour les analyses forensiques"
+        },
+        {
+          "id": "c",
+          "text": "Rejeter les requêtes contenant une injection SQL avant qu'elles n'atteignent le serveur"
+        },
+        {
+          "id": "d",
+          "text": "Supprimer automatiquement les paquets suspects avant leur livraison"
+        },
+        {
+          "id": "e",
+          "text": "Garantir qu'une panne de la sonde n'interrompe jamais le trafic de production"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Une sonde passive raccordée par TAP reçoit une copie de chaque paquet : elle peut enregistrer l'intégralité du trafic pour l'analyse forensique et la chasse aux menaces, et, n'étant pas sur le chemin des paquets, sa panne ou sa surcharge n'interrompt ni ne ralentit la liaison de production. En revanche, elle ne peut qu'observer et alerter. Toutes les exigences qui imposent d'arrêter un paquet avant sa livraison (blocage, rejet, suppression) demandent un équipement en ligne et actif, comme un IPS, un WAF ou un NGFW.",
+    "distractorNotes": {
+      "a": "Bloquer une connexion en temps réel suppose d'être sur le chemin du trafic et actif ; une sonde passive ne peut que signaler la connexion.",
+      "c": "Rejeter une requête avant le serveur est le rôle d'un équipement en ligne, par exemple un WAF ; la sonde passive ne voit qu'une copie.",
+      "d": "Supprimer un paquet avant sa livraison est impossible pour un équipement qui reçoit une copie : le paquet d'origine continue sa route."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-ips-ids-topology-statements-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Quelles deux affirmations sur cette architecture sont exactes ? (Choisissez-en deux.)",
+      "exhibit": "Internet\n   |\n[R-EDGE] 203.0.113.1\n   |\n[IPS-01]   en coupure, mode prévention\n   |\n[FW-01]\n   |\n[SW-CORE] --port SPAN--> [IDS-01]   alertes vers le SIEM\n   |\nLAN serveurs 10.10.20.0/24",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "IDS-01 peut empêcher un paquet malveillant d'atteindre le LAN 10.10.20.0/24 en le supprimant"
+        },
+        {
+          "id": "b",
+          "text": "IPS-01 n'ajoute aucune latence, car il ne reçoit qu'une copie du trafic"
+        },
+        {
+          "id": "c",
+          "text": "Une panne d'IDS-01 n'interrompt pas le trafic entre FW-01 et les serveurs"
+        },
+        {
+          "id": "d",
+          "text": "IPS-01 inspecte le trafic échangé entre deux serveurs du LAN 10.10.20.0/24"
+        },
+        {
+          "id": "e",
+          "text": "IPS-01 peut rejeter le premier paquet d'une attaque venue d'Internet avant FW-01"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "IPS-01 est en coupure entre R-EDGE et FW-01 : tout le trafic venu d'Internet le traverse, et en mode prévention il peut rejeter dès le premier paquet ce qui correspond à une attaque, avant que le paquet n'atteigne le pare-feu. IDS-01, lui, reçoit une copie par le port SPAN de SW-CORE : il est passif et hors du chemin, donc sa panne n'interrompt pas le trafic, mais il ne peut pas non plus supprimer un paquet. Le trafic entre deux serveurs du même LAN reste commuté par SW-CORE et ne remonte jamais jusqu'à IPS-01.",
+    "distractorNotes": {
+      "a": "IDS-01 reçoit une copie par le port SPAN : le paquet d'origine poursuit sa route, l'IDS ne peut que le signaler au SIEM.",
+      "b": "IPS-01 est en coupure : il reçoit le trafic lui-même et non une copie, et son inspection ajoute une latence à chaque paquet.",
+      "d": "Le trafic entre deux serveurs du LAN est commuté par SW-CORE et ne passe ni par FW-01 ni par IPS-01, placés en bordure."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-deployment-attributes-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "matching",
+      "stem": "Lors de la revue d'architecture d'un hébergeur, l'auditeur classe les équipements de sécurité selon leur mode de déploiement. Associez chaque équipement à la combinaison d'attributs qui le décrit.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "IPS installé entre le routeur de bordure et le pare-feu, qui rejette les paquets correspondant à une signature"
+        },
+        {
+          "id": "l2",
+          "text": "IDS relié au port SPAN du commutateur de cœur, qui envoie ses alertes au SIEM"
+        },
+        {
+          "id": "l3",
+          "text": "Sonde reliée à un TAP optique sur la liaison Internet, qui enregistre les paquets pour l'analyse forensique"
+        },
+        {
+          "id": "l4",
+          "text": "WAF en coupure devant le serveur web, qui bloque les requêtes d'injection SQL"
+        }
+      ],
+      "right": [
+        {
+          "id": "inl",
+          "text": "En ligne (inline) et actif"
+        },
+        {
+          "id": "tap",
+          "text": "Tap ou moniteur et passif"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "inl",
+        "l2": "tap",
+        "l3": "tap",
+        "l4": "inl"
+      }
+    },
+    "explanation": "Un équipement en ligne est placé sur le chemin des paquets : tout le trafic le traverse, ce qui lui permet d'être actif, c'est-à-dire de rejeter ou de bloquer ce qui correspond à sa politique. C'est le cas de l'IPS entre le routeur et le pare-feu et du WAF devant le serveur web. Un équipement en mode tap ou moniteur reçoit une copie du trafic, par un port SPAN ou un TAP : il est passif, il observe, enregistre et alerte, sans pouvoir arrêter un paquet. L'IDS sur port SPAN et la sonde de capture sur TAP relèvent de ce mode.",
+    "distractorNotes": {}
+  },
+  {
+    "slug": "security-plus-3.2-8021x-radius-transport-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "reference": "IEEE 802.1X-2020 ; RFC 2865 (RADIUS) ; RFC 3748 (EAP)",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une université déploie l'authentification 802.1X sur les commutateurs d'accès de ses salles informatiques. Quel protocole transporte les messages EAP entre le commutateur et le serveur d'authentification ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "EAPOL"
+        },
+        {
+          "id": "b",
+          "text": "LDAP"
+        },
+        {
+          "id": "c",
+          "text": "TACACS+"
+        },
+        {
+          "id": "d",
+          "text": "RADIUS"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Dans une architecture 802.1X, le demandeur (supplicant) échange les messages EAP avec l'authentificateur, ici le commutateur, encapsulés dans EAPOL (EAP over LAN) directement dans les trames Ethernet. Le commutateur relaie ensuite ces messages vers le serveur d'authentification dans des paquets RADIUS (attribut EAP-Message), sur UDP 1812. Le serveur RADIUS décide et renvoie un Access-Accept ou un Access-Reject, à la suite de quoi le commutateur autorise ou non le port.",
+    "distractorNotes": {
+      "a": "EAPOL transporte EAP sur le segment local, entre le poste (demandeur) et le commutateur ; il n'est pas routé jusqu'au serveur d'authentification.",
+      "b": "LDAP peut servir au serveur RADIUS pour interroger l'annuaire, mais il ne transporte pas les messages EAP entre le commutateur et le serveur.",
+      "c": "TACACS+ sert surtout à l'administration des équipements (AAA des sessions d'administration) et ne transporte pas EAP pour 802.1X."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-eap-tls-mutual-certificates-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "RFC 3748 (EAP) ; IEEE 802.1X-2020",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un hôpital veut que ses postes s'authentifient au réseau filaire et Wi-Fi par 802.1X sans aucun mot de passe : le poste comme le serveur d'authentification doivent présenter un certificat émis par la PKI interne. Quelle méthode EAP répond à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "PEAP avec MSCHAPv2"
+        },
+        {
+          "id": "b",
+          "text": "EAP-TTLS avec PAP"
+        },
+        {
+          "id": "c",
+          "text": "EAP-TLS"
+        },
+        {
+          "id": "d",
+          "text": "EAP-MD5"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "EAP-TLS réalise une authentification mutuelle par certificats : le serveur d'authentification présente son certificat au poste, et le poste présente le sien au serveur, au cours d'une poignée de main TLS. Aucun mot de passe n'est échangé, ce qui en fait la méthode la plus robuste, au prix d'une PKI capable de délivrer et de révoquer un certificat par poste ou par utilisateur. PEAP et EAP-TTLS n'utilisent qu'un certificat côté serveur pour construire un tunnel, dans lequel l'utilisateur s'authentifie par mot de passe.",
+    "distractorNotes": {
+      "a": "PEAP crée un tunnel TLS avec le seul certificat du serveur, puis authentifie l'utilisateur par MSCHAPv2, donc par mot de passe.",
+      "b": "EAP-TTLS protège lui aussi une authentification interne dans un tunnel ouvert avec le certificat du serveur ; avec PAP, c'est un mot de passe qui est transmis.",
+      "d": "EAP-MD5 repose sur un défi-réponse à partir d'un mot de passe, sans certificat ni authentification du serveur ; il est déconseillé."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-8021x-unauthorized-port-eapol-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "reference": "IEEE 802.1X-2020",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après l'activation de 802.1X sur les commutateurs d'un cabinet d'avocats, un technicien remarque qu'un portable branché sur une prise murale n'obtient aucune adresse DHCP tant que son authentification n'a pas abouti. Quelle est l'explication ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le port contrôlé est à l'état non autorisé et ne laisse passer que les trames EAPOL"
+        },
+        {
+          "id": "b",
+          "text": "Le serveur DHCP attend l'accord du serveur RADIUS avant de répondre au poste"
+        },
+        {
+          "id": "c",
+          "text": "La surveillance DHCP du commutateur rejette les requêtes des postes non authentifiés"
+        },
+        {
+          "id": "d",
+          "text": "Le commutateur désactive le lien physique du port jusqu'à la fin de l'authentification"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Avec 802.1X, chaque port est contrôlé par l'authentificateur. Tant que l'authentification n'a pas réussi, le port est à l'état non autorisé : le lien physique est actif, mais le commutateur ne laisse passer que les trames EAPOL nécessaires au dialogue avec le demandeur. Les requêtes DHCP, ARP ou tout autre trafic du poste sont rejetés. Après un Access-Accept du serveur RADIUS, le port passe à l'état autorisé et le poste peut obtenir son adresse et communiquer, éventuellement dans le VLAN attribué par le serveur.",
+    "distractorNotes": {
+      "b": "Le serveur DHCP ne dialogue pas avec le serveur RADIUS : c'est le commutateur qui bloque la requête DHCP avant qu'elle n'atteigne le réseau.",
+      "c": "La surveillance DHCP (DHCP snooping) filtre les réponses de serveurs DHCP non fiables ; elle ne dépend pas de l'authentification 802.1X du poste.",
+      "d": "Le lien physique reste actif, sinon les trames EAPOL de l'authentification ne pourraient pas circuler ; seul le trafic autre qu'EAPOL est bloqué."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-peap-unknown-ca-diagnosis-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "reference": "RFC 3748 (EAP) ; IEEE 802.1X-2020 ; RFC 5280 (X.509)",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Une entreprise authentifie ses postes en PEAP sur ses commutateurs d'accès. Les anciens portables branchés sur sw-acc-02 se connectent normalement, mais un nouveau lot de portables, préparés à la main, échoue sur ce même commutateur. Quelle action corrige LE MIEUX le problème ?",
+      "exhibit": "Nov  8 08:14:02 radius1 radiusd[812]: (41) eap_peap: ERROR: TLS Alert\n  read:fatal:unknown CA\nNov  8 08:14:02 radius1 radiusd[812]: (41) Login incorrect (eap_peap: TLS\n  Alert read:fatal:unknown CA): [CORP\\ldupont] (from client sw-acc-02\n  port 12 cli 3C-52-82-1A-2B-4F)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Corriger le secret partagé RADIUS configuré entre sw-acc-02 et radius1"
+        },
+        {
+          "id": "b",
+          "text": "Réinitialiser le mot de passe du compte ldupont dans l'annuaire"
+        },
+        {
+          "id": "c",
+          "text": "Renouveler le certificat du serveur radius1, qui a expiré"
+        },
+        {
+          "id": "d",
+          "text": "Installer sur les nouveaux portables le certificat de l'AC qui a signé celui de radius1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La ligne « TLS Alert read:fatal:unknown CA » indique que le serveur a reçu du poste une alerte TLS : le demandeur ne reconnaît pas l'autorité de certification qui a émis le certificat présenté par radius1, et il interrompt la construction du tunnel PEAP. L'échec intervient donc avant même la vérification du mot de passe. Comme les anciens portables réussissent sur le même commutateur avec le même serveur, le secret partagé et le certificat du serveur sont hors de cause : il manque aux nouveaux portables le certificat de l'AC racine dans leur magasin de confiance, à déployer par exemple par stratégie de groupe avec la validation du nom du serveur.",
+    "distractorNotes": {
+      "a": "Un secret partagé erroné ferait échouer tous les postes de sw-acc-02, et le serveur rejetterait les paquets du commutateur au lieu d'engager une session TLS.",
+      "b": "Le mot de passe n'est vérifié qu'à l'intérieur du tunnel PEAP ; ici, le tunnel TLS échoue avant toute authentification de l'utilisateur.",
+      "c": "Un certificat de serveur expiré ferait aussi échouer les anciens portables et produirait une alerte d'expiration, non une AC inconnue."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-peap-ttls-tunneled-methods-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "RFC 3748 (EAP) ; IEEE 802.1X-2020",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une collectivité veut authentifier ses agents en Wi-Fi d'entreprise avec leurs identifiants d'annuaire, sans délivrer de certificat à chaque poste. Seul le serveur RADIUS disposera d'un certificat, qui servira à établir un tunnel TLS protégeant le mot de passe. Quelles deux méthodes EAP fonctionnent ainsi ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "EAP-TLS"
+        },
+        {
+          "id": "b",
+          "text": "PEAP"
+        },
+        {
+          "id": "c",
+          "text": "EAP-MD5"
+        },
+        {
+          "id": "d",
+          "text": "LEAP"
+        },
+        {
+          "id": "e",
+          "text": "EAP-TTLS"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "PEAP et EAP-TTLS suivent le même principe en deux temps : le serveur d'authentification présente son certificat, le poste le valide et un tunnel TLS est construit ; à l'intérieur de ce tunnel, l'utilisateur s'authentifie par une méthode interne fondée sur le mot de passe (MSCHAPv2 pour PEAP ; PAP, CHAP ou MSCHAPv2 pour EAP-TTLS). Aucun certificat n'est nécessaire côté poste. La sécurité dépend alors de la validation stricte du certificat du serveur par le demandeur, sans quoi un faux point d'accès pourrait capturer les identifiants.",
+    "distractorNotes": {
+      "a": "EAP-TLS exige un certificat sur chaque poste pour une authentification mutuelle par certificats, sans mot de passe : c'est précisément ce que la collectivité veut éviter.",
+      "c": "EAP-MD5 est un simple défi-réponse sans tunnel TLS ni authentification du serveur ; il n'est pas adapté au Wi-Fi.",
+      "d": "LEAP, méthode propriétaire ancienne, repose sur MS-CHAP sans tunnel TLS ; elle est vulnérable aux attaques par dictionnaire hors ligne."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-8021x-roles-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "IEEE 802.1X-2020 ; Wi-Fi Alliance WPA3 Specification",
+    "body": {
+      "type": "matching",
+      "stem": "Un intégrateur documente le déploiement de 802.1X et de WPA3-Enterprise sur le campus d'une école d'ingénieurs. Associez chaque composant à son rôle dans l'architecture 802.1X.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Client 802.1X intégré au système de l'ordinateur portable d'un étudiant"
+        },
+        {
+          "id": "l2",
+          "text": "Commutateur d'accès qui ouvre ou ferme chaque port selon le résultat"
+        },
+        {
+          "id": "l3",
+          "text": "Serveur RADIUS qui vérifie les identifiants auprès de l'annuaire"
+        },
+        {
+          "id": "l4",
+          "text": "Point d'accès Wi-Fi qui diffuse le SSID d'entreprise en WPA3-Enterprise"
+        },
+        {
+          "id": "l5",
+          "text": "Smartphone d'un enseignant qui se connecte à ce SSID"
+        }
+      ],
+      "right": [
+        {
+          "id": "sup",
+          "text": "Demandeur (supplicant)"
+        },
+        {
+          "id": "auth",
+          "text": "Authentificateur"
+        },
+        {
+          "id": "as",
+          "text": "Serveur d'authentification"
+        },
+        {
+          "id": "relay",
+          "text": "Relais DHCP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "sup",
+        "l2": "auth",
+        "l3": "as",
+        "l4": "auth",
+        "l5": "sup"
+      }
+    },
+    "explanation": "802.1X définit trois rôles. Le demandeur est l'entité qui veut accéder au réseau : le client 802.1X du portable ou du smartphone. L'authentificateur contrôle l'accès au média : le commutateur pour un port filaire, le point d'accès (ou son contrôleur) pour le Wi-Fi ; il relaie les messages EAP sans juger les identifiants. Le serveur d'authentification, généralement RADIUS, valide les identifiants, éventuellement auprès d'un annuaire, et renvoie la décision. Un même rôle peut donc être tenu par des équipements différents selon le média.",
+    "distractorNotes": {
+      "relay": "Le relais DHCP transmet les requêtes DHCP vers un serveur situé dans un autre réseau ; il ne joue aucun rôle dans l'échange 802.1X."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-8021x-exchange-order-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "IEEE 802.1X-2020 ; RFC 3748 (EAP) ; RFC 2865 (RADIUS)",
+    "body": {
+      "type": "ordering",
+      "stem": "Un administrateur réseau explique à un stagiaire l'authentification 802.1X d'un poste sur un port de commutateur, avec un serveur RADIUS. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "eapmeth",
+          "text": "Le poste et le serveur RADIUS échangent les messages de la méthode EAP, relayés par le commutateur"
+        },
+        {
+          "id": "link",
+          "text": "Le poste se raccorde ; le port, non autorisé, n'accepte que les trames EAPOL"
+        },
+        {
+          "id": "accept",
+          "text": "Le serveur RADIUS renvoie un Access-Accept et le commutateur passe le port à l'état autorisé"
+        },
+        {
+          "id": "reqid",
+          "text": "Le commutateur envoie au poste une requête d'identité EAP (EAP-Request/Identity)"
+        },
+        {
+          "id": "relay",
+          "text": "Le commutateur relaie la réponse d'identité du poste au serveur dans un Access-Request"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "link",
+        "reqid",
+        "relay",
+        "eapmeth",
+        "accept"
+      ]
+    },
+    "explanation": "Au raccordement, le port est non autorisé et ne laisse passer que EAPOL. L'authentificateur sollicite l'identité du demandeur par un EAP-Request/Identity (le poste peut aussi l'y inviter par un EAPOL-Start). La réponse d'identité est encapsulée par le commutateur dans un RADIUS Access-Request. Suivent les échanges propres à la méthode EAP (par exemple la poignée de main TLS d'EAP-TLS), portés par des Access-Challenge et des Access-Request. Enfin, le serveur décide : sur un Access-Accept, le commutateur transmet un EAP-Success au poste et autorise le port.",
+    "distractorNotes": {}
+  },
+  {
+    "slug": "security-plus-3.2-radius-auth-port-fill-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "reference": "RFC 2865 (RADIUS) ; IEEE 802.1X-2020",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un pare-feu interne sépare les commutateurs d'accès du serveur RADIUS qui traite l'authentification 802.1X des postes. L'administrateur doit ouvrir le port UDP standard de l'authentification RADIUS. Quel est ce numéro de port ?",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Numéro de port UDP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "1812"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "RADIUS utilise UDP. Le port 1812 est attribué à l'authentification et à l'autorisation (Access-Request, Access-Challenge, Access-Accept, Access-Reject), et le port 1813 à la comptabilité (accounting). Des équipements anciens utilisent encore les ports historiques 1645 et 1646, mais les ports standard sont 1812 et 1813. Dans un déploiement 802.1X, c'est le commutateur, client RADIUS, qui envoie ces paquets vers le serveur : la règle de pare-feu doit donc autoriser les adresses des commutateurs vers le serveur sur UDP 1812.",
+    "distractorNotes": {}
+  },
+  {
+    "slug": "security-plus-3.2-clientless-tls-vpn-portal-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2 ; RFC 8446 (TLS 1.3)",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un prestataire doit consulter une seule application web interne d'une PME depuis un ordinateur qui ne lui appartient pas, sans rien y installer ni configurer. Quelle solution d'accès distant convient LE MIEUX ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un VPN IPsec site à site entre le prestataire et la PME"
+        },
+        {
+          "id": "b",
+          "text": "Un tunnel GRE entre le poste du prestataire et le siège"
+        },
+        {
+          "id": "c",
+          "text": "Un VPN TLS sans client, accessible par un portail web"
+        },
+        {
+          "id": "d",
+          "text": "Un lien SD-WAN entre le domicile du prestataire et la PME"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un VPN TLS sans client (clientless) s'utilise directement depuis un navigateur : l'utilisateur s'authentifie sur un portail HTTPS, qui publie les applications web autorisées et relaie les échanges dans une session TLS. Rien n'est à installer sur le poste, ce qui convient à un ordinateur non géré, et l'accès peut être limité à une seule application au lieu d'ouvrir tout le réseau. Les VPN à client complet, IPsec ou TLS, exigent au contraire un logiciel ou une configuration sur le poste.",
+    "distractorNotes": {
+      "a": "Un VPN site à site relie deux réseaux par leurs passerelles ; il ne s'applique pas à un poste isolé et exigerait une configuration chez le prestataire.",
+      "b": "GRE encapsule le trafic sans le chiffrer et exige une configuration aux deux extrémités du tunnel.",
+      "d": "Le SD-WAN relie des sites de l'entreprise par des équipements gérés ; il ne fournit pas d'accès ponctuel depuis un poste tiers."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-ipsec-esp-tunnel-nat-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "reference": "RFC 4301 (architecture IPsec) ; RFC 4303 (ESP) ; RFC 3948 (encapsulation UDP d'ESP)",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise relie une agence à son siège par un VPN IPsec entre deux pare-feu. La passerelle de l'agence est placée derrière une traduction d'adresses (NAT) du fournisseur d'accès. Les flux entre les deux réseaux locaux doivent être chiffrés, et leurs adresses internes ne doivent pas apparaître sur Internet. Quelle configuration répond à toutes ces contraintes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "AH en mode tunnel, avec traversée de NAT (NAT-T)"
+        },
+        {
+          "id": "b",
+          "text": "ESP en mode transport, avec traversée de NAT (NAT-T)"
+        },
+        {
+          "id": "c",
+          "text": "AH en mode transport, avec traversée de NAT (NAT-T)"
+        },
+        {
+          "id": "d",
+          "text": "ESP en mode tunnel, avec traversée de NAT (NAT-T)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Trois contraintes s'additionnent. La confidentialité exige ESP, seul protocole IPsec qui chiffre ; AH n'assure qu'intégrité et authentification. Masquer les adresses internes entre deux passerelles exige le mode tunnel, qui encapsule le paquet d'origine complet dans un nouveau paquet adressé d'une passerelle à l'autre. Enfin, le NAT modifie l'en-tête IP extérieur : AH, dont le contrôle d'intégrité couvre les adresses, échouerait, alors qu'ESP fonctionne une fois encapsulé dans UDP grâce à la traversée de NAT (NAT-T), négociée automatiquement par IKE.",
+    "distractorNotes": {
+      "a": "AH ne chiffre pas les données ; de plus, son contrôle d'intégrité couvre les adresses de l'en-tête IP, que le NAT modifie, et NAT-T n'encapsule que ESP : le tunnel échouerait.",
+      "b": "La traversée de NAT fonctionne avec ESP, mais le mode transport conserve l'en-tête IP d'origine : entre deux passerelles, il laisserait visibles les adresses internes.",
+      "c": "AH en mode transport cumule les défauts : aucun chiffrement, adresses d'origine visibles et incompatibilité avec le NAT, que NAT-T ne corrige pas pour AH."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-split-tunnel-proxy-bypass-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. La politique d'une société impose que tout le trafic web des télétravailleurs soit inspecté par le proxy et la DLP du siège. Pourtant, le proxy n'enregistre aucune requête vers Internet en provenance des postes connectés au VPN, alors que l'accès aux applications internes fonctionne. Quelle modification corrige LE MIEUX la situation ?",
+      "exhibit": "Client VPN - état de la connexion\nPasserelle         : vpn.example.com (203.0.113.10)\nProtocole          : TLS\nAdresse attribuée  : 10.20.5.37/24\nRoutes sécurisées  : 10.0.0.0/8\n                     172.16.0.0/12\nServeur DNS        : 10.0.0.53\nÉtat               : connecté depuis 01:42:17",
+      "options": [
+        {
+          "id": "a",
+          "text": "Configurer le profil VPN en tunnel complet, avec une route par défaut vers le siège"
+        },
+        {
+          "id": "b",
+          "text": "Remplacer le serveur DNS 10.0.0.53 par un résolveur public"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer le VPN TLS par un VPN IPsec avec le même profil de routes"
+        },
+        {
+          "id": "d",
+          "text": "Attribuer aux postes une adresse du réseau 172.16.0.0/12"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'exhibit montre que seules les routes 10.0.0.0/8 et 172.16.0.0/12 passent dans le tunnel : c'est un tunnel partagé (split tunneling). Le trafic vers les réseaux internes emprunte le VPN, ce qui explique que les applications internes fonctionnent, mais le trafic vers Internet sort directement par la connexion locale du télétravailleur, sans passer par le proxy ni la DLP. Pour appliquer la politique, le profil doit être en tunnel complet (full tunnel) : une route par défaut 0.0.0.0/0 est poussée vers le siège et tout le trafic web y est inspecté, au prix d'une charge accrue sur le lien du siège.",
+    "distractorNotes": {
+      "b": "Un résolveur public ne changerait pas le chemin du trafic web, qui continuerait de sortir hors du tunnel ; la résolution des noms internes serait même compromise.",
+      "c": "Le protocole du VPN n'est pas en cause : avec le même profil de routes, le trafic Internet resterait hors du tunnel.",
+      "d": "L'adresse attribuée au poste ne détermine pas quelles destinations passent dans le tunnel ; c'est la liste des routes sécurisées qui le fait."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-sd-wan-retail-branches-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une enseigne de 120 magasins veut compléter ses liaisons MPLS coûteuses par des accès Internet fibre et 4G. Elle souhaite gérer tous les sites depuis un contrôleur central et orienter automatiquement chaque application vers le meilleur lien selon sa latence et ses pertes. Quelle technologie répond LE MIEUX à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un réseau étendu à définition logicielle (SD-WAN)"
+        },
+        {
+          "id": "b",
+          "text": "Des VPN IPsec site à site statiques entre chaque magasin et le siège"
+        },
+        {
+          "id": "c",
+          "text": "Un concentrateur VPN TLS d'accès distant au siège"
+        },
+        {
+          "id": "d",
+          "text": "Un répartiteur de charge placé devant les serveurs du siège"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le SD-WAN sépare le plan de contrôle du plan de données : un contrôleur central définit la politique, et les équipements des sites agrègent plusieurs types de liens (MPLS, fibre, 4G) en choisissant dynamiquement, application par application, le chemin le plus adapté selon des mesures de latence, de gigue et de pertes. Le trafic passant sur Internet est en général chiffré par des tunnels IPsec établis automatiquement. Associé à des services de sécurité délivrés par le cloud, le SD-WAN forme la brique réseau d'une architecture SASE.",
+    "distractorNotes": {
+      "d": "Un répartiteur de charge répartit les requêtes entre plusieurs serveurs d'un même service ; il ne choisit pas le lien WAN des magasins.",
+      "b": "Des tunnels IPsec statiques chiffrent les flux, mais sans gestion centralisée ni sélection dynamique du lien selon l'application.",
+      "c": "Un concentrateur VPN d'accès distant sert des utilisateurs nomades, pas l'interconnexion de sites munis de plusieurs liens."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-gre-without-ipsec-audit-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "RFC 2784 (GRE) ; RFC 4301 (IPsec) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un audit relève que deux sites d'une société d'ingénierie échangent des fichiers de conception par un tunnel GRE établi sur Internet. L'auditeur exige que ces flux deviennent confidentiels, sans remettre en cause le tunnel, qui transporte aussi le protocole de routage. Quelle mesure répond à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Activer les messages keepalive sur les deux extrémités du tunnel GRE"
+        },
+        {
+          "id": "b",
+          "text": "Protéger le tunnel GRE par IPsec ESP entre les deux routeurs"
+        },
+        {
+          "id": "c",
+          "text": "Réduire la MTU de l'interface tunnel pour éviter la fragmentation"
+        },
+        {
+          "id": "d",
+          "text": "Ajouter une clé GRE (champ Key) identique aux deux extrémités"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "GRE est un protocole d'encapsulation : il transporte des paquets, y compris du multicast et des protocoles de routage, à travers un autre réseau, mais il n'assure ni chiffrement ni authentification forte. Les données circulent donc en clair sur Internet. La solution classique est GRE sur IPsec : le tunnel GRE est conservé pour sa souplesse, et ses paquets sont chiffrés et authentifiés par ESP entre les deux routeurs. On obtient ainsi la confidentialité exigée sans perdre le transport du protocole de routage.",
+    "distractorNotes": {
+      "a": "Les keepalives détectent la perte du tunnel ; ils n'apportent aucune protection des données transportées.",
+      "c": "Ajuster la MTU évite la fragmentation et améliore les performances, mais les données restent en clair.",
+      "d": "La clé GRE n'est qu'un identifiant transmis en clair pour distinguer des tunnels ; ce n'est pas une clé de chiffrement."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-hotel-tls-vpn-443",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Des commerciaux en déplacement signalent que leur VPN IPsec ne s'établit pas depuis le Wi-Fi de certains hôtels, alors que la navigation web fonctionne. L'analyse montre que ces réseaux n'autorisent en sortie que TCP 80 et TCP 443. Quelle solution rétablit LE MIEUX l'accès distant sécurisé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Passer le VPN en AH plutôt qu'en ESP"
+        },
+        {
+          "id": "b",
+          "text": "Proposer un VPN TLS comme solution de repli"
+        },
+        {
+          "id": "c",
+          "text": "Basculer les profils vers L2TP sur IPsec"
+        },
+        {
+          "id": "d",
+          "text": "Activer le tunnel partagé (split tunneling) sur le profil VPN"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un VPN IPsec a besoin d'UDP 500 pour IKE, puis d'ESP (protocole IP 50) ou d'UDP 4500 quand une traduction d'adresses est détectée. Un réseau qui ne laisse sortir que TCP 80 et 443 bloque donc l'établissement du tunnel. Un VPN TLS transporte le tunnel dans une session TLS sur TCP 443, le même port que la navigation HTTPS : il traverse ces réseaux restrictifs. C'est pourquoi beaucoup de passerelles proposent un repli automatique vers TLS quand IPsec échoue.",
+    "distractorNotes": {
+      "a": "AH est le protocole IP 51, tout aussi bloqué ; il ne chiffre pas les données et ne passe pas la traduction d'adresses.",
+      "d": "Le tunnel partagé modifie le routage une fois le tunnel établi ; il ne résout pas le blocage d'IKE qui empêche l'établissement.",
+      "c": "L2TP sur IPsec repose sur la même négociation IKE en UDP 500 et 4500 : il serait bloqué de la même façon."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-sase-components-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une société de conseil dont les consultants travaillent surtout hors des bureaux sur des applications SaaS adopte une architecture SASE. Quelles deux fonctions font partie de la sécurité délivrée par le cloud dans une offre SASE ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'accès réseau Zero Trust (ZTNA) aux applications privées"
+        },
+        {
+          "id": "b",
+          "text": "L'authentification 802.1X sur les ports des commutateurs du siège"
+        },
+        {
+          "id": "c",
+          "text": "Le TAP de surveillance installé sur la liaison du cœur de réseau"
+        },
+        {
+          "id": "d",
+          "text": "Le proxy web sécurisé (SWG) qui filtre la navigation"
+        },
+        {
+          "id": "e",
+          "text": "La répartition de charge entre les serveurs du centre de données local"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "SASE (Secure Access Service Edge) converge le réseau étendu (SD-WAN) et des services de sécurité délivrés depuis le cloud, au plus près de l'utilisateur où qu'il se trouve : proxy web sécurisé (SWG), courtier de sécurité d'accès au cloud (CASB), pare-feu en tant que service (FWaaS) et accès réseau Zero Trust (ZTNA). La politique suit ainsi l'utilisateur et l'appareil, sans que le trafic doive revenir au siège. ZTNA et SWG figurent donc dans une offre SASE ; les autres fonctions sont des équipements locaux.",
+    "distractorNotes": {
+      "b": "802.1X contrôle l'accès aux ports physiques du réseau local ; c'est une fonction des commutateurs sur site, pas un service SASE.",
+      "c": "Un TAP est un équipement physique de copie du trafic sur une liaison locale ; il n'est pas délivré par le cloud.",
+      "e": "La répartition de charge entre serveurs locaux relève de l'infrastructure du centre de données, pas de l'accès sécurisé SASE."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-vpn-profile-weaknesses-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "reference": "NIST SP 800-57 Part 1 Rev. 5 ; NIST SP 800-131A Rev. 2 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Lors d'un audit, le RSSI fait relire le profil VPN d'accès distant des nomades. Quelles deux faiblesses le relecteur doit-il signaler ? (Choisissez-en deux.)",
+      "exhibit": "Profil VPN : NOMADES\nVersion IKE        : IKEv1, mode agressif\nAuthentification   : clé prépartagée de groupe (tous les nomades)\nGroupe DH          : 14\nChiffrement ESP    : 3DES-CBC\nIntégrité ESP      : HMAC-SHA256\nTunnel             : complet (route par défaut vers le siège)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le groupe Diffie-Hellman 14 est trop faible pour l'échange de clés"
+        },
+        {
+          "id": "b",
+          "text": "Le mode agressif avec une clé de groupe permet de casser la clé hors ligne"
+        },
+        {
+          "id": "c",
+          "text": "L'intégrité par HMAC-SHA256 est insuffisante et doit être remplacée"
+        },
+        {
+          "id": "d",
+          "text": "Le tunnel complet expose le trafic Internet des nomades à l'inspection du siège"
+        },
+        {
+          "id": "e",
+          "text": "Le chiffrement 3DES est obsolète et doit être remplacé par AES"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "En IKEv1, le mode agressif envoie dès les premiers messages, sans protection, l'identité et un condensé calculé à partir de la clé prépartagée : un attaquant qui capte ou provoque cet échange peut tester des clés hors ligne, d'autant plus facilement qu'une clé de groupe est partagée par tous les nomades. Le mode principal, IKEv2 et des certificats ou une MFA sont préférables. Le chiffrement 3DES, avec ses blocs de 64 bits et sa sécurité effective réduite, est retiré par le NIST au profit d'AES. Le groupe 14 (2048 bits), HMAC-SHA256 et le tunnel complet restent des choix acceptables.",
+    "distractorNotes": {
+      "a": "Le groupe 14 correspond à un module de 2048 bits, environ 112 bits de sécurité, le minimum encore admis par le NIST ; ce n'est pas la faiblesse principale du profil.",
+      "c": "HMAC-SHA256 est une fonction d'intégrité robuste et recommandée ; rien ne justifie de la remplacer.",
+      "d": "Le tunnel complet est un choix de sécurité : il permet justement d'inspecter le trafic des nomades au siège, ce n'est pas une faiblesse."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-ipsec-components-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "RFC 4301 (architecture IPsec) ; RFC 4302 (AH) ; RFC 4303 (ESP) ; RFC 7296 (IKEv2)",
+    "body": {
+      "type": "matching",
+      "stem": "Un formateur prépare une fiche de révision sur IPsec pour l'équipe réseau d'un assureur. Associez chaque composant ou mode d'IPsec à sa description.",
+      "left": [
+        {
+          "id": "esp",
+          "text": "ESP"
+        },
+        {
+          "id": "ah",
+          "text": "AH"
+        },
+        {
+          "id": "ike",
+          "text": "IKE"
+        },
+        {
+          "id": "tun",
+          "text": "Mode tunnel"
+        },
+        {
+          "id": "tra",
+          "text": "Mode transport"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Chiffre la charge utile et en assure l'intégrité et l'authentification"
+        },
+        {
+          "id": "r2",
+          "text": "Assure l'intégrité et l'authentification du paquet, en-tête IP compris, sans le chiffrer"
+        },
+        {
+          "id": "r3",
+          "text": "Négocie les associations de sécurité et établit les clés entre les pairs"
+        },
+        {
+          "id": "r4",
+          "text": "Encapsule le paquet IP d'origine complet dans un nouveau paquet IP"
+        },
+        {
+          "id": "r5",
+          "text": "Conserve l'en-tête IP d'origine et ne protège que la charge utile"
+        },
+        {
+          "id": "r6",
+          "text": "Signe les certificats présentés par les passerelles VPN"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "esp": "r1",
+        "ah": "r2",
+        "ike": "r3",
+        "tun": "r4",
+        "tra": "r5"
+      }
+    },
+    "explanation": "ESP (protocole IP 50) assure la confidentialité par le chiffrement, ainsi que l'intégrité et l'authentification de l'origine. AH (protocole IP 51) ne chiffre pas : il protège l'intégrité et l'authenticité du paquet, y compris les champs invariables de l'en-tête IP, ce qui le rend incompatible avec le NAT. IKE négocie les associations de sécurité et dérive les clés. Le mode tunnel encapsule tout le paquet d'origine derrière un nouvel en-tête, typique entre passerelles ; le mode transport garde l'en-tête d'origine, typique entre deux hôtes.",
+    "distractorNotes": {
+      "r6": "La signature des certificats est le rôle d'une autorité de certification de la PKI ; IPsec utilise les certificats pour authentifier les pairs mais ne les signe pas."
+    }
+  },
+  {
+    "slug": "security-plus-3.2-ikev1-ipsec-establishment-order-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "RFC 2409 (IKE) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.2",
+    "body": {
+      "type": "ordering",
+      "stem": "Deux pare-feu établissent un VPN IPsec site à site avec IKEv1 en mode principal (main mode) et une authentification par certificats. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "auth",
+          "text": "Les pairs s'authentifient mutuellement par certificat, sous la protection du canal déjà chiffré"
+        },
+        {
+          "id": "esp",
+          "text": "Le trafic entre les deux réseaux locaux circule chiffré par ESP"
+        },
+        {
+          "id": "prop",
+          "text": "Les pairs s'accordent sur les algorithmes de l'association de sécurité IKE (phase 1)"
+        },
+        {
+          "id": "p2",
+          "text": "Les pairs négocient les associations de sécurité IPsec en mode rapide (phase 2)"
+        },
+        {
+          "id": "dh",
+          "text": "Les pairs réalisent l'échange Diffie-Hellman qui fournit le secret partagé"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "prop",
+        "dh",
+        "auth",
+        "p2",
+        "esp"
+      ]
+    },
+    "explanation": "En IKEv1 mode principal, la phase 1 compte trois paires de messages : la première fixe les algorithmes (chiffrement, intégrité, groupe Diffie-Hellman, méthode d'authentification) ; la deuxième réalise l'échange Diffie-Hellman, d'où sont dérivées les clés du canal IKE ; la troisième, déjà chiffrée, authentifie les pairs, ici par certificat, ce qui protège leur identité. La phase 2 (mode rapide) négocie ensuite, sous la protection de ce canal, les associations de sécurité IPsec utilisées par ESP. Ce n'est qu'alors que le trafic des réseaux locaux circule chiffré.",
+    "distractorNotes": {}
+  },
+  {
+    "slug": "security-plus-3.2-nat-t-port-fill-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "reference": "RFC 3947 (négociation NAT-T dans IKE) ; RFC 3948 (encapsulation UDP d'ESP)",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un administrateur ouvre sur le pare-feu de bordure les flux d'un VPN IPsec dont une passerelle est située derrière une traduction d'adresses. IKE utilise UDP 500 ; une fois le NAT détecté, les pairs basculent IKE et ESP vers un autre port UDP pour la traversée de NAT (NAT-T). Quel est ce numéro de port ?",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Numéro de port UDP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "4500"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "ESP est le protocole IP 50 : il n'a pas de numéro de port, ce qui empêche les équipements de traduction d'adresses et de ports de distinguer les flux. Lorsque IKE détecte la présence d'un NAT entre les pairs, ceux-ci passent sur UDP 4500 : les messages IKE suivants et les paquets ESP sont encapsulés dans UDP sur ce port, ce qui leur permet de traverser le NAT. Le pare-feu doit donc autoriser UDP 500 pour la négociation initiale et UDP 4500 pour la suite des échanges.",
+    "distractorNotes": {}
+  }
+]

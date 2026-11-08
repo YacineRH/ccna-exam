@@ -22,6 +22,7 @@ import {
   type Attempt,
 } from '../db/schema.js';
 import { conflict, forbidden, notFound } from '../errors.js';
+import { requireModule } from './modules.js';
 
 /** Délai de tolérance réseau après la fin du chrono. */
 const GRACE_MS = 30_000;
@@ -62,6 +63,7 @@ const displaySeed = (attempt: Attempt, position: number) => (attempt.seed ^ (pos
 
 export async function startAttempt(db: Db, userId: string, input: StartAttemptInput) {
   const cert = await loadCertification(db, input.certification);
+  requireModule(cert, input.mode === 'exam' || input.examNumber !== undefined ? 'exam' : 'practice');
   const config = cert.config;
   const seed = Math.floor(createRng(Date.now() ^ Math.floor(Math.random() * 2 ** 31))() * 2 ** 31);
 

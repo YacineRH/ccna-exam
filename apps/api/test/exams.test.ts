@@ -118,17 +118,31 @@ describe.skipIf(!DATABASE_URL)('API v1 : série d’examens blancs figés (Postg
     expect(b).toEqual(a);
   });
 
-  it('un nouvel import ne crée ni doublon ni examen et ne change pas un examen passé', async () => {
-    const before = await examQuestionSlugs('ccna', 42);
-    const examsBefore = await countOf(sql`select count(*)::int as n from exams`);
-    const questionsBefore = await countOf(sql`select count(*)::int as n from questions`);
+  it('un nouvel import ne crée ni doublon ni examen et ne change pas un examen passé, pour chaque certification', async () => {
+    // Examen n° 42 (CCNA) et n° 7 (Security+) passés : ils ne changent jamais, quel que soit le nombre d'imports.
+    const taken = (await call('POST', '/attempts', { certification: 'security-plus', mode: 'exam', examNumber: 7 })).json();
+    expect(taken.totalCount).toBe(90);
+    await call('POST', `/attempts/${taken.id}/submit`);
+    const snapshot = async () => ({
+      ccna42: await examQuestionSlugs('ccna', 42),
+      sec7: await examQuestionSlugs('security-plus', 7),
+      exams: await countOf(sql`select count(*)::int as n from exams`),
+      examQuestions: await countOf(sql`select count(*)::int as n from exam_questions`),
+      questions: await countOf(sql`select count(*)::int as n from questions`),
+      byCert: (await db.execute(sql`select c.code, count(*)::int as n from questions q join certifications c on c.id = q.certification_id group by c.code order by c.code`)).rows,
+    });
+    const before = await snapshot();
+    expect(before.sec7).toEqual(loadExamSeries('security-plus')!.exams[6]!.questions);
     await seedContent(db);
-    const examsAfter = await countOf(sql`select count(*)::int as n from exams`);
-    const questionsAfter = await countOf(sql`select count(*)::int as n from questions`);
-    expect(examsAfter).toBe(examsBefore);
-    expect(questionsAfter).toBe(questionsBefore);
-    expect(await examQuestionSlugs('ccna', 42)).toEqual(before);
-  });
+    await seedContent(db);
+    expect(await snapshot()).toEqual(before);
+    // Les deux certifications sont importées, chacune avec sa série ; le dernier import est daté.
+    const imported = (await db.execute(sql`select code, last_imported_at is not null as dated, (last_import->>'created')::int as created from certifications order by code`)).rows;
+    expect(imported).toEqual([
+      { code: 'ccna', dated: true, created: 0 },
+      { code: 'security-plus', dated: true, created: 0 },
+    ]);
+  }, 120_000);
 
   describe('règles d’import d’une série', () => {
     // Une petite certification isolée, pour modifier la série sans toucher à celle du CCNA.

@@ -1,4 +1,4 @@
-import { and, asc, count, eq, max } from 'drizzle-orm';
+import { and, asc, count, countDistinct, eq, isNotNull, max } from 'drizzle-orm';
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import {
@@ -13,10 +13,11 @@ import {
 } from '@examforge/core';
 import { checkLabAgainstCertification, checkQuestionAgainstCertification } from '@examforge/content';
 import type { Db } from '../db/client.js';
-import { certifications, domains, examQuestions, exams, labs, questions, subtopics } from '../db/schema.js';
+import { attempts, certifications, domains, examQuestions, exams, labs, questions, subtopics } from '../db/schema.js';
 import { badRequest, conflict, notFound, parseInput } from '../errors.js';
 import { DuplicateLabError, DuplicateQuestionError, upsertCertification, upsertLab, upsertQuestion } from '../services/content-sync.js';
 import { profileFor } from '../services/labs.js';
+import { modulesOf } from '../services/modules.js';
 
 /*
  * Routes d'administration, utilisées par le serveur MCP (jeton de service) ou un admin.
@@ -70,6 +71,60 @@ export function adminRoutes(db: Db) {
   return async (app: FastifyInstance) => {
     app.addHook('preHandler', async (req) => {
       await app.requireAdmin(req);
+    });
+
+    /*
+     * Vue d'ensemble en lecture seule (écran d'administration) : pour chaque certification, ses modules,
+     * sa banque par statut, ses labs, l'état de sa série d'examens figés et son dernier import.
+     */
+    app.get('/certifications', async () => {
+      const certs = await db.select().from(certifications).orderBy(asc(certifications.code));
+      const qRows = await db
+        .select({ cert: questions.certificationId, status: questions.status, n: count() })
+        .from(questions)
+        .groupBy(questions.certificationId, questions.status);
+      const lRows = await db
+        .select({ cert: labs.certificationId, kind: labs.kind, n: count() })
+        .from(labs)
+        .where(eq(labs.status, 'published'))
+        .groupBy(labs.certificationId, labs.kind);
+      const eRows = await db.select({ cert: exams.certificationId, n: count() }).from(exams).groupBy(exams.certificationId);
+      const tRows = await db
+        .select({ cert: attempts.certificationId, n: countDistinct(attempts.examId) })
+        .from(attempts)
+        .where(isNotNull(attempts.examId))
+        .groupBy(attempts.certificationId);
+      return {
+        certifications: certs.map((c) => {
+          const byStatus = Object.fromEntries(qRows.filter((r) => r.cert === c.id).map((r) => [r.status, r.n]));
+          const examCount = eRows.find((r) => r.cert === c.id)?.n ?? 0;
+          return {
+            code: c.code,
+            name: c.name,
+            vendor: c.vendor,
+            examCode: c.examCode,
+            active: c.active,
+            modules: modulesOf(c.config),
+            domains: c.config.domains.length,
+            subtopics: c.config.domains.reduce((s, d) => s + d.subtopics.length, 0),
+            examFormat: c.config.examFormat,
+            scoring: c.config.scoring,
+            bank: {
+              published: byStatus.published ?? 0,
+              validated: byStatus.validated ?? 0,
+              draft: byStatus.draft ?? 0,
+              retired: byStatus.retired ?? 0,
+            },
+            labs: {
+              lab: lRows.find((r) => r.cert === c.id && r.kind === 'lab')?.n ?? 0,
+              challenge: lRows.find((r) => r.cert === c.id && r.kind === 'challenge')?.n ?? 0,
+            },
+            series: { exams: examCount, taken: tRows.find((r) => r.cert === c.id)?.n ?? 0 },
+            lastImportedAt: c.lastImportedAt?.toISOString() ?? null,
+            lastImport: c.lastImport ?? null,
+          };
+        }),
+      };
     });
 
     app.post('/certifications', async (req, reply) => {

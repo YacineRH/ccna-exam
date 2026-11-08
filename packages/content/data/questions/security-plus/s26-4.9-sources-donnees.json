@@ -1,0 +1,989 @@
+[
+  {
+    "slug": "security-plus-4.9-edr-file-execution-source-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un analyste du SOC enquête sur un ordinateur portable dont l'utilisateur a ouvert une pièce jointe nommée facture.exe. Il doit établir si ce fichier a bien été lancé, sous quel compte et par quel processus parent. Quelle source de données répond le mieux à ces questions ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les journaux du pare-feu périmétrique de l'entreprise"
+        },
+        {
+          "id": "b",
+          "text": "Les résultats de la dernière analyse de vulnérabilités du parc"
+        },
+        {
+          "id": "c",
+          "text": "Les journaux du serveur DNS interne"
+        },
+        {
+          "id": "d",
+          "text": "Les journaux de l'agent EDR du poste"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Les journaux du terminal (agent EDR, antivirus, journalisation des processus) enregistrent ce qui se passe sur le poste lui-même : création de processus, ligne de commande, compte utilisateur, processus parent, fichiers écrits. Ce sont les seuls, parmi les sources proposées, à pouvoir dire si facture.exe a été exécuté et dans quel contexte. Les sources réseau ne voient que du trafic, et une analyse de vulnérabilités décrit des faiblesses, pas des événements.",
+    "distractorNotes": {
+      "a": "Le pare-feu journalise des flux (adresses, ports, action) : il ne voit pas l'exécution d'un fichier sur le poste ni le processus qui l'a lancé.",
+      "b": "Une analyse de vulnérabilités liste les faiblesses connues d'un système à un instant donné ; elle n'enregistre aucune exécution de programme.",
+      "c": "Le serveur DNS montre les noms résolus par le poste, utile pour repérer un contact avec un domaine suspect, mais pas le lancement d'un exécutable ni son processus parent."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  },
+  {
+    "slug": "security-plus-4.9-pcap-cleartext-ftp-session-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un ancien serveur interne accepte encore des connexions FTP. L'équipe de sécurité, qui enregistre en continu le trafic de ce segment, veut savoir quels identifiants et quels fichiers ont transité lors d'une session précise d'hier soir. Quelle source de données fournit ce contenu ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les enregistrements NetFlow du commutateur de cœur"
+        },
+        {
+          "id": "b",
+          "text": "Le journal du pare-feu interne qui filtre ce segment"
+        },
+        {
+          "id": "c",
+          "text": "La capture de paquets du segment du serveur"
+        },
+        {
+          "id": "d",
+          "text": "Le rapport d'analyse de vulnérabilités du serveur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "FTP transmet les commandes, dont USER et PASS, et les données en clair. Une capture de paquets conserve l'intégralité des trames, en-têtes et charge utile : en réassemblant la session, l'analyste lit les identifiants envoyés et les noms et contenus des fichiers transférés. C'est la source la plus complète pour un échange non chiffré, au prix d'un gros volume de stockage.",
+    "distractorNotes": {
+      "a": "NetFlow ne garde que des métadonnées de flux (adresses, ports, volumes, durées) : il montre que la session a eu lieu, pas ce qu'elle contenait.",
+      "b": "Le journal du pare-feu indique la connexion et la décision de filtrage, sans la charge utile des paquets.",
+      "d": "Le rapport signalerait que le service FTP non chiffré est exposé, mais il ne contient aucune trace des sessions réelles."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-4.9-siem-dashboard-management-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La direction d'un hôpital veut voir chaque matin, d'un coup d'œil et sans lire de journaux bruts, le nombre d'alertes par gravité, les incidents encore ouverts et leur tendance sur 30 jours. Quelle source de données répond le mieux à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une capture de paquets continue du réseau du site"
+        },
+        {
+          "id": "b",
+          "text": "Un tableau de bord du SIEM"
+        },
+        {
+          "id": "c",
+          "text": "L'export quotidien des journaux syslog bruts"
+        },
+        {
+          "id": "d",
+          "text": "Le rapport technique détaillé d'analyse de vulnérabilités"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un tableau de bord agrège et visualise des données déjà collectées : compteurs, graphiques de tendance, indicateurs clés. Celui du SIEM présente les alertes corrélées par gravité, l'état des incidents et leur évolution dans le temps, ce qu'attend un public non technique. Les données brutes restent disponibles pour l'analyste qui veut descendre au détail d'une alerte.",
+    "distractorNotes": {
+      "a": "Une capture de paquets est une donnée brute, volumineuse et technique : elle sert à l'analyse fine d'un échange, pas au suivi par la direction.",
+      "c": "Des journaux bruts exigent filtrage et corrélation avant d'en tirer des chiffres : c'est justement ce que la direction ne veut pas faire.",
+      "d": "Le rapport détaillé liste les constatations machine par machine ; il ne dit rien des alertes ni des incidents en cours."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  },
+  {
+    "slug": "security-plus-4.9-firewall-log-port-scan-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyste examine le journal du pare-feu qui protège le serveur web public 198.51.100.10. Quelle conclusion l'extrait permet-il de tirer ?",
+      "exhibit": "Oct 14 03:12:01 fw01 deny tcp src=203.0.113.77 dst=198.51.100.10 dpt=21\nOct 14 03:12:01 fw01 deny tcp src=203.0.113.77 dst=198.51.100.10 dpt=22\nOct 14 03:12:01 fw01 deny tcp src=203.0.113.77 dst=198.51.100.10 dpt=23\nOct 14 03:12:01 fw01 deny tcp src=203.0.113.77 dst=198.51.100.10 dpt=25\nOct 14 03:12:02 fw01 deny tcp src=203.0.113.77 dst=198.51.100.10 dpt=110\nOct 14 03:12:02 fw01 deny tcp src=203.0.113.77 dst=198.51.100.10 dpt=139\nOct 14 03:12:02 fw01 allow tcp src=203.0.113.77 dst=198.51.100.10 dpt=443\nOct 14 03:12:02 fw01 deny tcp src=203.0.113.77 dst=198.51.100.10 dpt=445\nOct 14 03:12:03 fw01 deny tcp src=203.0.113.77 dst=198.51.100.10 dpt=3389",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un hôte externe balaie les ports TCP de ce serveur ; seule la connexion vers le port 443 est autorisée par le pare-feu"
+        },
+        {
+          "id": "b",
+          "text": "Plusieurs hôtes externes inondent ce serveur de connexions dans le cadre d'un déni de service distribué"
+        },
+        {
+          "id": "c",
+          "text": "Le serveur web compromis tente d'ouvrir des connexions sortantes vers 203.0.113.77 sur plusieurs ports"
+        },
+        {
+          "id": "d",
+          "text": "Un hôte externe balaie le port 443 de toutes les adresses de la plage 198.51.100.0/24"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Toutes les lignes ont la même source (203.0.113.77) et la même destination (198.51.100.10), avec un port de destination qui change à chaque tentative en environ deux secondes : c'est la signature d'un balayage de ports vertical sur un seul hôte. Le pare-feu refuse tout sauf le port 443, ouvert pour le service web, comme l'indique la ligne allow. L'analyste peut bloquer la source ou la surveiller et vérifier que seul le service attendu est exposé.",
+    "distractorNotes": {
+      "b": "Une seule adresse source apparaît, et le volume (neuf connexions) n'a rien d'une inondation : ce n'est pas un déni de service distribué.",
+      "c": "Le sens du trafic est inverse : src=203.0.113.77 est l'initiateur et le serveur est la destination ; rien n'indique de connexion sortante.",
+      "d": "La destination est toujours 198.51.100.10 et les ports varient : un balayage horizontal viserait un même port sur de nombreuses adresses."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-4.9-web-log-traversal-blocked-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit (journal d'accès Apache, lignes longues repliées). Le WAF d'une boutique en ligne a levé une alerte sur 203.0.113.45. Quelle conclusion l'extrait permet-il de tirer ?",
+      "exhibit": "203.0.113.45 - - [14/Oct/2026:10:02:11 +0200]\n  \"GET /dl.php?f=../../etc/passwd HTTP/1.1\" 403 199\n203.0.113.45 - - [14/Oct/2026:10:02:12 +0200]\n  \"GET /dl.php?f=..%2f..%2fetc%2fpasswd HTTP/1.1\" 403 199\n203.0.113.45 - - [14/Oct/2026:10:02:13 +0200]\n  \"GET /dl.php?f=....//....//etc/passwd HTTP/1.1\" 404 196\n203.0.113.45 - - [14/Oct/2026:10:02:14 +0200]\n  \"GET /dl.php?f=report.pdf HTTP/1.1\" 200 48211",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une injection SQL a été tentée sur le paramètre f, et la dernière requête a réussi à extraire des données"
+        },
+        {
+          "id": "b",
+          "text": "Des tentatives de traversée de répertoire ont été refusées ou n'ont rien trouvé, puis un fichier légitime a été téléchargé"
+        },
+        {
+          "id": "c",
+          "text": "Une traversée de répertoire a réussi : le contenu de /etc/passwd a été renvoyé au client"
+        },
+        {
+          "id": "d",
+          "text": "Un script a été injecté dans la page pour être exécuté dans le navigateur des autres clients"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Les trois premières requêtes insèrent des séquences ../ (en clair, encodées en %2f, puis doublées) pour sortir du répertoire prévu et lire /etc/passwd : c'est une tentative de traversée de répertoire. Les codes de réponse 403 (interdit) et 404 (introuvable), avec des tailles d'environ 200 octets typiques d'une page d'erreur, montrent qu'elles ont échoué. La dernière requête demande report.pdf et obtient 200 avec 48 211 octets : un téléchargement normal. Il reste à corriger le contrôle des chemins et à vérifier les autres journaux.",
+    "distractorNotes": {
+      "a": "Aucune syntaxe SQL (quote, UNION, OR 1=1) n'apparaît dans le paramètre, et la seule réponse 200 porte sur un fichier PDF ordinaire.",
+      "c": "Les requêtes vers /etc/passwd ont reçu 403 ou 404 avec une page d'erreur d'environ 200 octets : rien n'indique que le fichier a été renvoyé.",
+      "d": "Une attaque XSS insérerait du code de script (balises, gestionnaires d'événements) ; les requêtes visent ici le système de fichiers du serveur."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-4.9-ssh-authlog-bruteforce-success-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Aucun administrateur n'était d'astreinte cette nuit-là et 198.51.100.23 n'appartient pas à l'entreprise. Quelle conclusion est la mieux étayée ?",
+      "exhibit": "Extrait SIEM - source : /var/log/auth.log (hôte web01, sshd)\nHeure     Événement                    Compte    Source\n02:10:01  Failed password invalid user admin     198.51.100.23\n02:10:04  Failed password invalid user test      198.51.100.23\n02:10:07  Failed password                root      198.51.100.23\n02:10:10  Failed password invalid user oracle    198.51.100.23\n   ...    (85 échecs similaires)                198.51.100.23\n02:14:37  Accepted password              deploy    198.51.100.23\n02:14:37  session opened                 deploy    198.51.100.23",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une attaque par dictionnaire a échoué : tous les essais ont été rejetés par sshd"
+        },
+        {
+          "id": "b",
+          "text": "Une attaque distribuée depuis de nombreuses adresses vise le service SSH de web01"
+        },
+        {
+          "id": "c",
+          "text": "Un administrateur s'est trompé plusieurs fois de mot de passe avant de se connecter"
+        },
+        {
+          "id": "d",
+          "text": "Une attaque par essais répétés a abouti : une session SSH est ouverte avec le compte deploy"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Près de quatre-vingt-dix échecs en moins de cinq minutes, sur des comptes inexistants (invalid user) puis existants, depuis une même adresse externe : c'est une attaque automatisée par essais de mots de passe. La ligne Accepted password suivie de session opened montre qu'elle a abouti sur le compte deploy, depuis la même source. L'incident doit être traité comme une compromission : désactiver le compte, examiner la session ouverte et ce qu'elle a fait sur web01.",
+    "distractorNotes": {
+      "a": "La ligne Accepted password à 02:14:37 prouve qu'au moins une tentative a réussi : l'attaque n'a pas échoué.",
+      "b": "Toutes les tentatives viennent d'une seule adresse, 198.51.100.23 : rien n'indique une source distribuée.",
+      "c": "Un humain n'enchaîne pas près de quatre-vingt-dix essais sur des comptes différents, dont des comptes inexistants, toutes les trois secondes, depuis une adresse externe à l'entreprise."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-4.9-email-headers-dmarc-spoof-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un comptable d'example.org reçoit ce courriel qui semble venir de son fournisseur example.com et demande de modifier un IBAN. Quelle conclusion les en-têtes permettent-ils de tirer ?",
+      "exhibit": "Received: from mail.example.net (mail.example.net [203.0.113.9])\n        by mx.example.org with ESMTPS; Wed, 14 Oct 2026 09:41:12 +0000\nReturn-Path: <bounce@example.net>\nFrom: \"Service Comptabilite\" <compta@example.com>\nSubject: Nouvelles coordonnees bancaires\nAuthentication-Results: mx.example.org;\n        spf=pass smtp.mailfrom=example.net;\n        dkim=none;\n        dmarc=fail header.from=example.com",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le message est authentique, puisque le contrôle SPF a réussi pour l'expéditeur"
+        },
+        {
+          "id": "b",
+          "text": "La signature DKIM d'example.com a été altérée pendant le transit du message"
+        },
+        {
+          "id": "c",
+          "text": "Le domaine du champ From est usurpé : aucun mécanisme authentifié n'est aligné sur example.com"
+        },
+        {
+          "id": "d",
+          "text": "Le serveur de réception mx.example.org est mal configuré, car il n'a pas vérifié SPF"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "SPF a été vérifié sur le domaine de l'enveloppe (smtp.mailfrom=example.net), que l'expéditeur contrôle : il passe, mais ce domaine n'est pas celui du champ From affiché (example.com). Le message ne porte aucune signature DKIM (dkim=none). DMARC exige qu'au moins un des deux mécanismes réussisse avec un domaine aligné sur le From : ce n'est pas le cas, d'où dmarc=fail. Les en-têtes, métadonnées du courriel, indiquent donc une usurpation d'example.com, cohérente avec une fraude au changement d'IBAN.",
+    "distractorNotes": {
+      "a": "SPF a réussi pour example.net, domaine de l'enveloppe, et non pour example.com : sans alignement, ce résultat ne prouve rien sur l'expéditeur affiché.",
+      "b": "dkim=none signifie que le message n'est pas signé ; une signature altérée en transit donnerait dkim=fail.",
+      "d": "La ligne spf=pass montre que le serveur a bien vérifié SPF ; il a aussi évalué DMARC."
+    },
+    "reference": "RFC 7489 (DMARC) ; RFC 7208 (SPF) ; RFC 6376 (DKIM) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  },
+  {
+    "slug": "security-plus-4.9-ids-alert-confirm-app-log-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Il y a deux heures, l'IDS passif d'une banque a levé une alerte « tentative d'injection SQL » sur une requête vers le serveur web de l'extranet. L'IDS ne conserve que l'alerte, sans les paquets, et aucune capture n'était en cours. L'analyste doit savoir si la requête a été traitée par l'application et ce qu'elle a renvoyé. Quelle source de données consulter EN PREMIER ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les journaux d'accès et d'application du serveur web"
+        },
+        {
+          "id": "b",
+          "text": "Une capture de paquets lancée dès maintenant sur le segment du serveur web"
+        },
+        {
+          "id": "c",
+          "text": "Le journal du pare-feu qui a laissé passer la connexion vers le serveur"
+        },
+        {
+          "id": "d",
+          "text": "Les résultats de la dernière analyse de vulnérabilités de l'application"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un IDS passif détecte et alerte, mais ne dit pas ce qu'est devenue la requête. Les journaux du serveur web et de l'application enregistrent la requête effectivement reçue, le code de réponse HTTP, la taille de la réponse et les éventuelles erreurs SQL : ils indiquent si la tentative a atteint l'application et si elle a pu renvoyer des données. C'est la source qui répond directement à la question, pour un événement déjà passé.",
+    "distractorNotes": {
+      "b": "Une capture lancée maintenant ne montre que le trafic à venir ; elle ne peut rien dire de la requête d'il y a deux heures.",
+      "c": "Le pare-feu confirme seulement que la connexion a été autorisée (adresses, ports), sans le contenu de la requête ni la réponse de l'application.",
+      "d": "L'analyse indique si l'application est vulnérable à l'injection, pas si cette requête précise a été exploitée."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-4.9-vuln-scan-fp-fn-credentialed-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les deux analyses ont été faites le même jour. L'administrateur prouve que le paquet du serveur web installé intègre le correctif, rétroporté par l'éditeur de la distribution sans changer le numéro de version annoncé. Il confirme aussi que le navigateur n'a pas reçu son correctif. Quelle interprétation est la plus juste ?",
+      "exhibit": "Hôte 10.1.2.30 (srv-intra)\nAnalyse A - non authentifiée (bannières réseau)\n  443/tcp  Serveur web : version annoncée vulnérable     CVSS 9.8\nAnalyse B - authentifiée (inventaire local des paquets)\n  local    Navigateur installé : version non corrigée    CVSS 8.8\n  (aucune constatation sur le serveur web)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le serveur web est un faux négatif de l'analyse B, et le navigateur un faux positif de l'analyse B"
+        },
+        {
+          "id": "b",
+          "text": "Le serveur web est un faux positif de l'analyse A, et le navigateur un faux négatif de l'analyse A"
+        },
+        {
+          "id": "c",
+          "text": "Les deux constatations sont de vrais positifs, à corriger dans le même délai"
+        },
+        {
+          "id": "d",
+          "text": "Le serveur web est un vrai positif que l'analyse B a manqué, et le navigateur un vrai positif"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'analyse A déduit la vulnérabilité du seul numéro de version de la bannière ; or le correctif est présent (rétroportage) : elle signale une faille absente, c'est un faux positif, à documenter après vérification. Le navigateur, logiciel local sans service réseau, est invisible d'une analyse non authentifiée : l'analyse A a manqué une vulnérabilité réelle, c'est un faux négatif. L'analyse authentifiée, qui inventorie les paquets installés, donne ici la vision juste ; elle est à privilégier pour réduire ces deux types d'erreurs.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : l'analyse B ne signale pas le serveur web parce qu'il est corrigé (vrai négatif), et sa constatation sur le navigateur repose sur l'inventaire réel des paquets.",
+      "c": "Le serveur web est corrigé, preuve à l'appui : sa constatation n'est pas un vrai positif et n'appelle pas de correctif.",
+      "d": "Le correctif étant installé, l'absence de constatation dans l'analyse B est juste : il n'y a rien à corriger sur le serveur web."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; NIST SP 800-40 Rev. 4"
+  },
+  {
+    "slug": "security-plus-4.9-beaconing-identify-process-edr-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le trafic vers 203.0.113.50 est chiffré en TLS et l'adresse ne correspond à aucun service utilisé par l'entreprise. L'analyste veut identifier le programme du poste 10.0.5.23 qui génère ces connexions. Quelle source de données consulter ?",
+      "exhibit": "Oct 14 13:00:04 fw allow tcp 10.0.5.23:50112 -> 203.0.113.50:443 out=412 in=1380\nOct 14 13:01:04 fw allow tcp 10.0.5.23:50118 -> 203.0.113.50:443 out=412 in=1380\nOct 14 13:02:05 fw allow tcp 10.0.5.23:50131 -> 203.0.113.50:443 out=412 in=1380\nOct 14 13:03:04 fw allow tcp 10.0.5.23:50140 -> 203.0.113.50:443 out=412 in=1380\n  ...  (même motif toutes les 60 s depuis 3 jours, jour et nuit)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une capture de paquets du lien Internet, pour lire le contenu des sessions"
+        },
+        {
+          "id": "b",
+          "text": "Les journaux du serveur DNS interne, pour connaître le nom résolu par le poste"
+        },
+        {
+          "id": "c",
+          "text": "Les journaux de l'agent EDR du poste, qui relient chaque connexion réseau à un processus"
+        },
+        {
+          "id": "d",
+          "text": "Les résultats d'une analyse de vulnérabilités authentifiée du poste"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Des connexions régulières toutes les 60 secondes, de taille identique, jour et nuit, vers une adresse inconnue : c'est un battement (beaconing) typique d'un logiciel malveillant qui contacte son serveur de commande. Pour savoir quel programme en est l'auteur, il faut une source placée sur le terminal : l'agent EDR enregistre les connexions réseau avec le processus, son chemin, son empreinte et son processus parent. Les sources réseau voient le flux, jamais le processus local qui l'émet.",
+    "distractorNotes": {
+      "a": "Le trafic est chiffré en TLS, et une capture, même déchiffrée, montre des paquets sur le réseau : elle n'indique pas quel processus du poste les a émis.",
+      "b": "Le DNS donnerait au mieux le nom de domaine associé à 203.0.113.50, utile pour le renseignement, mais pas le programme du poste.",
+      "d": "Une analyse de vulnérabilités dresse la liste des faiblesses du poste ; elle ne relie aucune connexion à un processus."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; MITRE ATT&CK"
+  },
+  {
+    "slug": "security-plus-4.9-pcap-vs-firewall-log-fields-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un pare-feu à états journalise pour chaque connexion le quintuplet (adresses, ports, protocole), l'horodatage, l'action et le nombre d'octets. L'équipe se demande s'il faut aussi conserver des captures de paquets. Quelles deux informations une capture de paquets fournit-elle que ce journal ne fournit pas ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les adresses IP source et destination de l'échange"
+        },
+        {
+          "id": "b",
+          "text": "Le contenu des données applicatives échangées en clair"
+        },
+        {
+          "id": "c",
+          "text": "L'horodatage du début de la connexion"
+        },
+        {
+          "id": "d",
+          "text": "Les en-têtes applicatifs, comme le User-Agent d'une requête HTTP non chiffrée"
+        },
+        {
+          "id": "e",
+          "text": "La décision de filtrage (autorisé ou refusé) appliquée par la règle"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Une capture de paquets enregistre les trames entières : en-têtes de chaque couche et charge utile. Pour un protocole en clair, elle donne donc le contenu applicatif et les en-têtes de couche 7, comme le User-Agent ou l'URL d'une requête HTTP, alors que le journal décrit seulement le flux. Les adresses et l'horodatage figurent dans les deux sources, et la décision du pare-feu n'existe que dans son journal.",
+    "distractorNotes": {
+      "a": "Les adresses source et destination font partie du quintuplet que le journal du pare-feu enregistre déjà.",
+      "c": "Le journal horodate chaque connexion ; la capture horodate chaque paquet, mais cette information n'est pas propre à la capture.",
+      "e": "La décision de filtrage est propre au journal du pare-feu ; une capture enregistre les paquets observés, sans la règle qui les a autorisés ou refusés."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-4.9-vuln-report-cvss-sla-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. La politique de l'entreprise impose un correctif sous 15 jours pour toute constatation de gravité élevée ou critique selon l'échelle qualitative de CVSS v3.1. Quelles deux constatations sont soumises à ce délai ?",
+      "exhibit": "Réf.  Hôte        Port      Constatation                         CVSS v3.1\nV1    web02       443/tcp   Exécution de code à distance          9.8\nV2    web02       443/tcp   Suites de chiffrement faibles         6.9\nV3    mail01      25/tcp    Relais ouvert limité                  5.3\nV4    fs01        445/tcp   Divulgation d'informations SMB        7.5\nV5    fs01        -         En-tête de version visible            3.7",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "V1"
+        },
+        {
+          "id": "b",
+          "text": "V2"
+        },
+        {
+          "id": "c",
+          "text": "V3"
+        },
+        {
+          "id": "d",
+          "text": "V4"
+        },
+        {
+          "id": "e",
+          "text": "V5"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "L'échelle qualitative de CVSS v3.1 classe les scores ainsi : 0,0 aucune ; 0,1 à 3,9 faible ; 4,0 à 6,9 moyenne ; 7,0 à 8,9 élevée ; 9,0 à 10,0 critique. V1 (9,8) est critique et V4 (7,5) élevée : ce sont les deux constatations soumises au délai de 15 jours. V2, à 6,9, reste juste sous le seuil de 7,0 et relève de la gravité moyenne.",
+    "distractorNotes": {
+      "b": "6,9 est la borne haute de la gravité moyenne (4,0 à 6,9) : V2 n'atteint pas le seuil de 7,0.",
+      "c": "5,3 se situe dans la plage moyenne (4,0 à 6,9).",
+      "e": "3,7 relève de la gravité faible (0,1 à 3,9)."
+    },
+    "reference": "FIRST CVSS v3.1 Specification ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  },
+  {
+    "slug": "security-plus-4.9-usb-exfiltration-endpoint-sources-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une salariée sur le départ est soupçonnée d'avoir copié des fichiers clients de son poste Windows vers une clé USB. Le poste n'était pas connecté au réseau de l'entreprise au moment des faits. Quelles deux sources de données sont les plus utiles à l'enquête ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les journaux de l'agent DLP ou EDR du poste, qui tracent les copies vers un support amovible"
+        },
+        {
+          "id": "b",
+          "text": "Les journaux du pare-feu périmétrique de l'entreprise"
+        },
+        {
+          "id": "c",
+          "text": "Les journaux du système d'exploitation du poste, qui enregistrent la connexion des périphériques USB"
+        },
+        {
+          "id": "d",
+          "text": "Les alertes de l'IPS installé en coupure sur le lien Internet"
+        },
+        {
+          "id": "e",
+          "text": "Les journaux de requêtes du serveur DNS interne"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Une copie vers une clé USB se déroule entièrement sur le terminal : aucun paquet ne traverse le réseau. Les sources utiles sont donc locales : l'agent DLP ou EDR journalise les opérations sur fichiers et les écritures vers un support amovible, et le système d'exploitation garde la trace de la connexion des périphériques (identifiant du matériel, date). Croisées, elles indiquent quelle clé a été branchée, quand, et quels fichiers ont été copiés.",
+    "distractorNotes": {
+      "b": "Le pare-feu ne voit que le trafic réseau ; une copie locale vers une clé USB ne passe pas par lui.",
+      "d": "L'IPS analyse le trafic du lien Internet : il ne détecte pas une copie de fichiers sur un périphérique local.",
+      "e": "Le serveur DNS n'enregistre que des résolutions de noms ; une copie USB n'en provoque aucune."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  },
+  {
+    "slug": "security-plus-4.9-proxy-log-upload-offhours-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit (journal du proxy web). Les horaires de travail du service de jdupont vont de 8 h à 18 h. Quelles deux conclusions l'extrait permet-il de tirer ?",
+      "exhibit": "Heure     Utilisateur Source     Méthode Destination        Octets émis Action\n02:13:05  jdupont     10.0.12.44 POST    upload.example.net 48213004    allow\n02:19:41  jdupont     10.0.12.44 POST    upload.example.net 51007322    allow\n02:26:10  jdupont     10.0.12.44 POST    upload.example.net 49875118    allow\nCatégorie de upload.example.net : stockage en ligne (non approuvé)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le proxy a bloqué ces transferts vers le service de stockage non approuvé"
+        },
+        {
+          "id": "b",
+          "text": "Le poste 10.0.12.44 a téléchargé environ 150 Mo depuis upload.example.net"
+        },
+        {
+          "id": "c",
+          "text": "Les données envoyées étaient des fichiers de la base clients"
+        },
+        {
+          "id": "d",
+          "text": "Environ 150 Mo ont été envoyés vers un stockage en ligne non approuvé depuis le poste 10.0.12.44"
+        },
+        {
+          "id": "e",
+          "text": "Les transferts ont eu lieu en dehors des horaires de travail de jdupont"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Les trois requêtes POST envoient vers upload.example.net environ 48, 51 et 50 Mo, soit près de 150 Mo, et le proxy les a autorisées (allow). Elles ont lieu entre 2 h 13 et 2 h 26, loin des horaires de 8 h à 18 h. Ces métadonnées justifient une enquête pour exfiltration, mais elles ne disent pas ce que contenaient les fichiers : il faudra le journal du terminal ou de la DLP pour l'établir.",
+    "distractorNotes": {
+      "a": "L'action indiquée est allow : les transferts ont été autorisés, malgré la catégorie non approuvée.",
+      "b": "La colonne concerne les octets envoyés par une méthode POST : les données sont parties du poste vers le site, elles n'ont pas été téléchargées.",
+      "c": "Le journal du proxy ne contient que des métadonnées (volume, destination, heure) ; il ne révèle pas la nature des fichiers transférés."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-4.9-investigation-question-to-source-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Au cours d'une enquête, un analyste junior doit choisir où chercher. Associez chaque question d'enquête à la source de données la plus utile pour y répondre.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Quel processus a créé le fichier suspect sur le poste de la comptable ?"
+        },
+        {
+          "id": "l2",
+          "text": "Quelles commandes ont été tapées dans une session Telnet d'hier soir ?"
+        },
+        {
+          "id": "l3",
+          "text": "Quels serveurs exposent encore une version de service non corrigée ?"
+        },
+        {
+          "id": "l4",
+          "text": "Quelles connexions entrantes vers la DMZ ont été refusées cette nuit ?"
+        },
+        {
+          "id": "l5",
+          "text": "Qui est l'auteur du document Word divulgué, et quand l'a-t-il créé ?"
+        }
+      ],
+      "right": [
+        {
+          "id": "edr",
+          "text": "Journaux de l'agent EDR du terminal"
+        },
+        {
+          "id": "pcap",
+          "text": "Capture de paquets"
+        },
+        {
+          "id": "vuln",
+          "text": "Résultats d'analyse de vulnérabilités"
+        },
+        {
+          "id": "fw",
+          "text": "Journaux du pare-feu"
+        },
+        {
+          "id": "meta",
+          "text": "Métadonnées du fichier"
+        },
+        {
+          "id": "dhcp",
+          "text": "Journaux du serveur DHCP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "edr",
+        "l2": "pcap",
+        "l3": "vuln",
+        "l4": "fw",
+        "l5": "meta"
+      }
+    },
+    "explanation": "Chaque source répond à un type de question. L'EDR voit ce qui se passe sur le terminal (processus, fichiers). Telnet circule en clair : une capture de paquets restitue les commandes tapées. L'analyse de vulnérabilités recense les faiblesses connues, comme une version non corrigée. Le pare-feu journalise les connexions et la décision appliquée, refus compris. Les métadonnées d'un document Office conservent l'auteur, les dates de création et de modification.",
+    "distractorNotes": {
+      "dhcp": "Le serveur DHCP relie une adresse IP à une adresse MAC et à un nom d'hôte sur une période : utile pour retrouver une machine, mais il ne répond à aucune de ces cinq questions."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  },
+  {
+    "slug": "security-plus-4.9-log-line-to-source-type-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le SIEM d'une entreprise reçoit des événements de nombreuses sources. Associez chaque événement à la source qui l'a le plus probablement produit.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "action=drop rule=WAN-IN-12 src=203.0.113.8 dst=198.51.100.20 dpt=3389"
+        },
+        {
+          "id": "l2",
+          "text": "[**] [1:1000101:1] SQL injection attempt [**] [Priority: 1] {TCP} 203.0.113.8:51022 -> 10.0.3.15:80"
+        },
+        {
+          "id": "l3",
+          "text": "EventID 4720 : A user account was created. New Account: tmp-admin"
+        },
+        {
+          "id": "l4",
+          "text": "2026-10-14 09:12:44 ERROR OrderService - payment refused for order 88123: invalid token"
+        },
+        {
+          "id": "l5",
+          "text": "powershell.exe lancé par WINWORD.EXE avec une commande encodée : processus bloqué et poste isolé"
+        }
+      ],
+      "right": [
+        {
+          "id": "fw",
+          "text": "Pare-feu"
+        },
+        {
+          "id": "ids",
+          "text": "IDS/IPS"
+        },
+        {
+          "id": "os",
+          "text": "Journal de sécurité du système d'exploitation"
+        },
+        {
+          "id": "app",
+          "text": "Journal d'application"
+        },
+        {
+          "id": "edr",
+          "text": "Agent EDR du terminal"
+        },
+        {
+          "id": "vuln",
+          "text": "Analyse de vulnérabilités"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "fw",
+        "l2": "ids",
+        "l3": "os",
+        "l4": "app",
+        "l5": "edr"
+      }
+    },
+    "explanation": "La ligne avec action=drop, un nom de règle et le quintuplet est un journal de pare-feu. Le format [**] [gid:sid:rev] avec un nom de signature et une priorité est celui d'une alerte Snort, donc d'un IDS/IPS. L'événement 4720 (création de compte) provient du journal Sécurité de Windows. Le message ERROR d'un service métier sur une commande est un journal d'application. Le lien processus parent-enfant et la réponse automatique (blocage, isolement du poste) sont propres à un agent EDR.",
+    "distractorNotes": {
+      "vuln": "Une analyse de vulnérabilités produit un rapport de constatations (hôte, faiblesse, score) et non des événements horodatés comme ceux-ci."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-4.9-artifact-to-data-category-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un enquêteur classe les éléments recueillis lors d'une fuite d'informations. Associez chaque élément à sa catégorie de données. Une catégorie peut servir plusieurs fois.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Coordonnées GPS et modèle d'appareil enregistrés dans une photo JPEG"
+        },
+        {
+          "id": "l2",
+          "text": "Champs Received et Message-ID d'un courriel transféré"
+        },
+        {
+          "id": "l3",
+          "text": "Fichier .pcap enregistré sur le port miroir d'un commutateur"
+        },
+        {
+          "id": "l4",
+          "text": "Lignes horodatées de /var/log/auth.log d'un serveur Linux"
+        },
+        {
+          "id": "l5",
+          "text": "Nom de l'auteur et date de création d'un tableur Excel"
+        }
+      ],
+      "right": [
+        {
+          "id": "meta",
+          "text": "Métadonnées"
+        },
+        {
+          "id": "pcap",
+          "text": "Capture de paquets"
+        },
+        {
+          "id": "log",
+          "text": "Journal"
+        },
+        {
+          "id": "dash",
+          "text": "Tableau de bord"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "meta",
+        "l2": "meta",
+        "l3": "pcap",
+        "l4": "log",
+        "l5": "meta"
+      }
+    },
+    "explanation": "Les métadonnées sont des données qui décrivent d'autres données : les informations EXIF d'une photo (GPS, appareil), les en-têtes d'un courriel (serveurs traversés, identifiant de message) et les propriétés d'un document (auteur, dates) en sont des exemples types. Un fichier .pcap est une capture de paquets. Les lignes horodatées d'auth.log sont un journal du système, qui consigne les événements d'authentification.",
+    "distractorNotes": {
+      "dash": "Un tableau de bord est une vue agrégée construite à partir d'autres sources ; aucun de ces éléments bruts n'en est un."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  },
+  {
+    "slug": "security-plus-4.9-multi-source-timeline-timezones-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Reportez-vous à l'exhibit. Les cinq sources n'horodatent pas dans le même fuseau (Z = UTC). 10.8.0.14 est l'adresse VPN attribuée à PC-LB. Ordonnez les événements dans l'ordre chronologique réel, du premier au dernier.",
+      "exhibit": "[VPN]   2026-10-14T06:58:12Z      login ok user=lbernard src=198.51.100.71\n[EDR]   2026-10-14T07:04:10Z      PC-LB process start tool.exe user=lbernard\n[FW]    2026-10-14T08:09:02+01:00 allow 10.8.0.14 -> 203.0.113.60:443 out=2.1GB\n[Proxy] 2026-10-14T09:01:30+02:00 10.8.0.14 GET files.example.net/tool.zip 200\n[DC01]  2026-10-14T09:06:55+02:00 EventID 4720 new account support2",
+      "items": [
+        {
+          "id": "fw",
+          "text": "Envoi de 2,1 Go vers 203.0.113.60"
+        },
+        {
+          "id": "vpn",
+          "text": "Connexion VPN de lbernard"
+        },
+        {
+          "id": "dc",
+          "text": "Création du compte support2"
+        },
+        {
+          "id": "edr",
+          "text": "Exécution de tool.exe sur PC-LB"
+        },
+        {
+          "id": "proxy",
+          "text": "Téléchargement de tool.zip"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "vpn",
+        "proxy",
+        "edr",
+        "dc",
+        "fw"
+      ]
+    },
+    "explanation": "Il faut ramener chaque horodatage en UTC avant de comparer : VPN 06:58:12 ; proxy 09:01:30+02:00 = 07:01:30 ; EDR 07:04:10 ; DC01 09:06:55+02:00 = 07:06:55 ; pare-feu 08:09:02+01:00 = 07:09:02. La chronologie réelle est donc : connexion VPN, téléchargement de l'outil, exécution, création d'un compte de persistance, puis exfiltration. Trié sur l'heure affichée, le pare-feu passerait avant le proxy : c'est pourquoi la normalisation des fuseaux (ou la synchronisation NTP en UTC de toutes les sources) est indispensable à la corrélation.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-4.9-windows-failed-logon-event-id-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un analyste soupçonne une attaque par force brute contre les comptes du domaine. Il veut filtrer, dans le journal Sécurité du contrôleur de domaine Windows, les échecs d'ouverture de session. Quel identifiant d'événement doit-il rechercher ?",
+      "fields": [
+        {
+          "id": "id",
+          "label": "Identifiant d'événement (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "id": {
+          "accepted": [
+            "4625"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Dans le journal Sécurité de Windows, l'événement 4625 (« An account failed to log on ») est enregistré à chaque échec d'ouverture de session, avec le compte visé, le type d'ouverture, l'adresse source et un code d'échec. Son pendant 4624 signale une ouverture réussie. Une rafale de 4625 sur un même compte évoque une force brute ; sur de nombreux comptes depuis une même source, une pulvérisation de mots de passe.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  },
+  {
+    "slug": "security-plus-4.9-firewall-log-exfil-source-ip-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit (journal des sessions sortantes du pare-feu, une nuit sans sauvegarde externe prévue). Le SIEM signale une possible exfiltration de données. Quelle adresse interne en est la source la plus probable ?",
+      "exhibit": "Heure  Source      Destination        Port  Octets émis   Octets reçus\n01:12  10.0.7.14   198.51.100.30      443   182 004       2 915 330\n01:47  10.0.7.21   203.0.113.80       443   3 412 880 112 96 210\n02:05  10.0.7.33   198.51.100.45      443   51 228        4 102 557 980\n02:31  10.0.7.48   203.0.113.12       53    1 024         2 048",
+      "fields": [
+        {
+          "id": "ip",
+          "label": "Adresse IPv4 interne en décimal pointé"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "ip": {
+          "accepted": [
+            "10.0.7.21"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Une exfiltration se repère au volume envoyé vers l'extérieur, et non au volume reçu. 10.0.7.21 a envoyé environ 3,4 Go vers 203.0.113.80 en pleine nuit, sans sauvegarde prévue, en ne recevant que 96 Ko : c'est le profil d'un transfert sortant massif. 10.0.7.33 a beaucoup reçu (environ 4,1 Go), ce qui évoque un téléchargement, et les deux autres sessions sont modestes dans les deux sens.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9 ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-4.9-vuln-report-critical-dmz-count-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit (synthèse d'une analyse de vulnérabilités). La politique impose un correctif sous 48 heures pour toute constatation critique, au sens de l'échelle qualitative de CVSS v3.1, sur un hôte de la DMZ. Combien de constatations sont soumises à ce délai, et combien de constatations de gravité élevée l'analyse compte-t-elle, toutes zones confondues ?",
+      "exhibit": "Hôte        Zone  Constatation                               CVSS v3.1\nweb01       DMZ   Exécution de code à distance                9.8\nweb01       DMZ   Élévation de privilèges locale              8.8\nmail01      DMZ   Contournement d'authentification           9.0\nmail01      DMZ   Déni de service                             7.5\nvpn01       DMZ   Exécution de code sans authentification    10.0\ndb01        LAN   Exécution de code à distance                9.8\nfs01        LAN   Divulgation d'informations                  7.2",
+      "fields": [
+        {
+          "id": "crit",
+          "label": "Constatations critiques en DMZ (nombre entier)"
+        },
+        {
+          "id": "high",
+          "label": "Constatations de gravité élevée, toutes zones (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "crit": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        },
+        "high": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "En CVSS v3.1, la gravité critique couvre 9,0 à 10,0 et la gravité élevée 7,0 à 8,9. Critiques en DMZ : web01 à 9,8, mail01 à 9,0 (borne basse incluse) et vpn01 à 10,0, soit 3 ; db01 à 9,8 est critique mais en LAN, hors du périmètre de la règle. Élevées, toutes zones : web01 à 8,8, mail01 à 7,5 et fs01 à 7,2, soit 3 ; les constatations à 9,0 et plus ne comptent pas dans cette catégorie.",
+    "distractorNotes": {},
+    "reference": "FIRST CVSS v3.1 Specification ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  }
+]

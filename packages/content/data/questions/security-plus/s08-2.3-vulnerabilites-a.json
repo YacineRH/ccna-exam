@@ -1,0 +1,1098 @@
+[
+  {
+    "slug": "security-plus-2.3-buffer-overflow-classify-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'une revue de sécurité, un développeur explique qu'un service réseau recopie un champ reçu dans une zone mémoire de taille fixe sans vérifier sa longueur, si bien qu'un champ trop long écrase les données voisines. Quelle classe de vulnérabilité décrit-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une condition de course de type TOC/TOU"
+        },
+        {
+          "id": "b",
+          "text": "Une fuite de mémoire non libérée"
+        },
+        {
+          "id": "c",
+          "text": "Un dépassement de tampon"
+        },
+        {
+          "id": "d",
+          "text": "Un déréférencement de pointeur nul"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Écrire au-delà des limites d'une zone mémoire de taille fixe parce que la longueur de l'entrée n'est pas vérifiée est la définition du dépassement de tampon (CWE-120, « classic buffer overflow », cas particulier de l'écriture hors limites CWE-787). Les données voisines écrasées peuvent être d'autres variables, des métadonnées du tas ou une adresse de retour sur la pile : selon le cas, le résultat va du plantage à l'exécution de code. Les défenses sont le contrôle des longueurs dans le code, des fonctions de copie bornées et les protections du système (ASLR, DEP/NX).",
+    "distractorNotes": {
+      "a": "Une condition de course exploite l'intervalle entre un contrôle et l'utilisation d'une ressource ; elle ne suppose pas d'écriture hors des limites d'une zone mémoire.",
+      "b": "Une fuite de mémoire est de la mémoire allouée et jamais libérée : elle épuise les ressources sans écraser les données voisines.",
+      "d": "Un déréférencement de pointeur nul est un accès par un pointeur qui ne désigne aucune zone valide ; il n'est pas lié à la longueur d'une entrée recopiée."
+    },
+    "reference": "MITRE CWE-120 (Classic Buffer Overflow) ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-toctou-temp-file-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un auditeur relève qu'un utilitaire exécuté avec des privilèges élevés vérifie d'abord les droits d'accès d'un fichier temporaire, puis l'ouvre quelques millisecondes plus tard. Pendant cet intervalle, un utilisateur local peut remplacer le fichier par un autre. Quelle vulnérabilité l'auditeur signale-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un dépassement de tampon sur le tas"
+        },
+        {
+          "id": "b",
+          "text": "Une condition de course de type TOC/TOU"
+        },
+        {
+          "id": "c",
+          "text": "Une injection de code en mémoire"
+        },
+        {
+          "id": "d",
+          "text": "Une réutilisation de ressources"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le programme prend une décision de sécurité (le contrôle des droits, time of check) puis agit plus tard (l'ouverture, time of use) en supposant que la ressource n'a pas changé. Si un tiers peut modifier la ressource dans l'intervalle, c'est une condition de course TOC/TOU (CWE-367). La correction consiste à rendre l'opération atomique : ouvrir d'abord le fichier, puis vérifier les propriétés du descripteur ouvert, ou créer le fichier temporaire de façon exclusive dans un répertoire non accessible aux autres utilisateurs.",
+    "distractorNotes": {
+      "a": "Rien n'indique une écriture hors des limites d'une zone mémoire : le problème est l'ordre et le délai entre deux opérations.",
+      "c": "Une injection en mémoire place du code dans l'espace d'un processus pour l'y faire exécuter ; ici, c'est un fichier qui change entre deux opérations.",
+      "d": "La réutilisation de ressources désigne des données résiduelles laissées dans une ressource réattribuée à un autre utilisateur, ce qui n'est pas décrit ici."
+    },
+    "reference": "MITRE CWE-367 (Time-of-check Time-of-use Race Condition) ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-malicious-update-supply-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un éditeur informe ses clients que des attaquants ont compromis sa chaîne de compilation : la version 5.3 de son agent de supervision, diffusée par le canal de mise à jour officiel et installée automatiquement, contient une porte dérobée. Comment classer cette vulnérabilité ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un dépassement de tampon dans l'agent"
+        },
+        {
+          "id": "b",
+          "text": "Une condition de course lors de l'installation"
+        },
+        {
+          "id": "c",
+          "text": "Une évasion de machine virtuelle"
+        },
+        {
+          "id": "d",
+          "text": "Une mise à jour malveillante"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le mécanisme de mise à jour, normalement digne de confiance, a livré un code piégé : c'est ce que les objectifs SY0-701 appellent une mise à jour malveillante (malicious update), une forme d'attaque de la chaîne d'approvisionnement. La signature de code ne suffit pas toujours dans ce cas, puisque le code piégé peut être signé par l'éditeur lui-même : il faut aussi surveiller le comportement des agents après mise à jour, déployer d'abord sur un groupe pilote et suivre les avis de l'éditeur.",
+    "distractorNotes": {
+      "a": "Un dépassement de tampon est un défaut de gestion de la mémoire dans le code ; ici, le code nuisible a été ajouté volontairement par un tiers.",
+      "b": "Aucun intervalle entre un contrôle et une utilisation n'est exploité : la version installée est piégée dès sa compilation.",
+      "c": "L'évasion de VM permet de passer d'une machine virtuelle à l'hyperviseur ; le scénario ne concerne pas la virtualisation."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3) ; NIST SP 800-161 Rev. 1"
+  },
+  {
+    "slug": "security-plus-2.3-buffer-overflow-patch-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un éditeur de pare-feu publie un avis : un dépassement de tampon dans le portail VPN permet l'exécution de code à distance sans authentification, et la version corrective est disponible. Le portail de l'entreprise est exposé sur Internet. Quelle mesure traite LE MIEUX la vulnérabilité ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Appliquer la version corrective publiée par l'éditeur"
+        },
+        {
+          "id": "b",
+          "text": "Augmenter la durée de conservation des journaux du pare-feu"
+        },
+        {
+          "id": "c",
+          "text": "Imposer l'authentification multifacteur sur le portail"
+        },
+        {
+          "id": "d",
+          "text": "Lancer une nouvelle analyse de vulnérabilités du portail"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Quand l'éditeur fournit un correctif pour un défaut du code, l'appliquer supprime la cause de la vulnérabilité : c'est la remédiation attendue, à planifier en priorité pour un équipement exposé et exploitable sans authentification. Les autres mesures soit améliorent la détection, soit ne touchent pas le défaut. Si le correctif ne pouvait pas être installé tout de suite, il faudrait un contrôle compensatoire temporaire (restreindre l'accès au portail, désactiver la fonction vulnérable) en attendant.",
+    "distractorNotes": {
+      "b": "Des journaux conservés plus longtemps aident l'enquête après coup mais ne corrigent ni ne bloquent l'exploitation.",
+      "c": "La vulnérabilité est exploitable sans authentification : une MFA appliquée à la connexion n'empêche pas le dépassement de tampon en amont.",
+      "d": "Une nouvelle analyse confirmerait la présence de la vulnérabilité déjà annoncée par l'éditeur ; elle sert ensuite à valider la remédiation, pas à la réaliser."
+    },
+    "reference": "NIST SP 800-40 Rev. 4 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-vm-escape-definition-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un hébergeur fait tourner sur le même hyperviseur les machines virtuelles de plusieurs clients. Son RSSI craint qu'un client malveillant exploite un défaut de l'hyperviseur depuis sa VM pour prendre le contrôle de l'hôte et atteindre les VM des autres clients. Comment se nomme ce risque ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La prolifération de machines virtuelles"
+        },
+        {
+          "id": "b",
+          "text": "La réutilisation de ressources"
+        },
+        {
+          "id": "c",
+          "text": "L'évasion de machine virtuelle"
+        },
+        {
+          "id": "d",
+          "text": "L'injection de code en mémoire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'évasion de VM (VM escape) consiste à sortir de l'isolement d'une machine virtuelle invitée pour exécuter du code sur l'hyperviseur ou l'hôte, d'où l'attaquant peut atteindre toutes les autres VM. C'est le risque majeur d'une infrastructure mutualisée. On le réduit en appliquant rapidement les correctifs de l'hyperviseur, en retirant les périphériques virtuels inutiles (dossiers partagés, presse-papiers, USB) et en ne mélangeant pas sur un même hôte des VM de niveaux de confiance différents.",
+    "distractorNotes": {
+      "a": "La prolifération de VM désigne la multiplication de machines virtuelles mal recensées et mal maintenues, pas le franchissement de l'isolement de l'hyperviseur.",
+      "b": "La réutilisation de ressources expose des données résiduelles d'un ancien utilisateur dans une ressource réattribuée ; elle ne donne pas le contrôle de l'hôte.",
+      "d": "L'injection en mémoire place du code dans un autre processus du même système ; elle ne franchit pas la frontière entre une VM et l'hyperviseur."
+    },
+    "reference": "NIST SP 800-125 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-buffer-overflow-crash-log-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le serveur de licences SRV-LIC01 s'est arrêté brutalement dans la nuit. L'analyste rapproche le journal Windows du journal de l'application. Quelle classe de vulnérabilité est LA PLUS probable ?",
+      "exhibit": "Journal : Application   Source : Application Error   ID : 1000\nDate : 2026-10-03 02:14:07   Ordinateur : SRV-LIC01\nNom de l'application défaillante : licsrv.exe, version : 4.2.1.0\nNom du module défaillant : licsrv.exe, version : 4.2.1.0\nCode d'exception : 0xc0000409\n\nlicsrv.log\n2026-10-03 02:14:06 connexion de 203.0.113.45:51544\n2026-10-03 02:14:07 requête ACTIVATE, champ « serial » : 4096 octets\n                    (longueur attendue : 32)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une condition de course entre deux sessions clientes"
+        },
+        {
+          "id": "b",
+          "text": "Un dépassement de tampon sur la pile"
+        },
+        {
+          "id": "c",
+          "text": "Une fuite de mémoire du service de licences"
+        },
+        {
+          "id": "d",
+          "text": "Une mise à jour malveillante du service"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le journal de l'application montre un champ de 4 096 octets là où 32 sont attendus, reçu à la seconde même du plantage. Le code d'exception 0xc0000409 (STATUS_STACK_BUFFER_OVERRUN) est celui que renvoie le contrôle d'intégrité de la pile (cookie /GS) quand il détecte l'écrasement d'une zone de pile ; Windows l'emploie aussi pour d'autres arrêts volontaires, d'où l'intérêt du journal applicatif. Les deux indices pointent vers un dépassement de tampon sur la pile, ici bloqué avant l'exécution de code. L'analyste doit rattacher l'adresse source 203.0.113.45 à l'incident, appliquer le correctif ou demander à l'éditeur un contrôle de longueur.",
+    "distractorNotes": {
+      "a": "Rien n'indique deux requêtes concurrentes : une seule connexion précède le plantage, avec un champ anormalement long.",
+      "c": "Une fuite de mémoire épuise progressivement la mémoire ; elle ne coïncide pas avec un champ surdimensionné et ne produit pas l'exception 0xc0000409.",
+      "d": "La version de l'application est inchangée et le déclencheur est une requête entrante, pas l'installation d'une nouvelle version."
+    },
+    "reference": "MITRE CWE-121 (Stack-based Buffer Overflow) ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-memory-injection-edr-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyste du SOC examine cette alerte de l'EDR sur le poste d'une gestionnaire RH. Quelle classe d'attaque l'alerte décrit-elle ?",
+      "exhibit": "[EDR] 2026-10-21 09:42:18  POSTE-RH07  Gravité : élevée\nRègle  : écriture inter-processus suivie d'un thread distant\nSource : C:\\Users\\lmartin\\AppData\\Local\\Temp\\upd.exe (PID 6120)\nCible  : C:\\Windows\\explorer.exe (PID 3384)\nDétail : zone allouée dans la cible en lecture/écriture/exécution,\n         écriture de 212 Ko puis création d'un thread dans la cible\nNote   : aucun fichier exécutable écrit sur le disque par la cible",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une mise à jour malveillante du système"
+        },
+        {
+          "id": "b",
+          "text": "Une condition de course sur explorer.exe"
+        },
+        {
+          "id": "c",
+          "text": "Un dépassement de tampon dans explorer.exe"
+        },
+        {
+          "id": "d",
+          "text": "Une injection de code en mémoire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un processus (upd.exe) alloue dans un autre processus (explorer.exe) une zone à la fois accessible en écriture et en exécution, y écrit, puis y démarre un thread distant : c'est l'indicateur typique de l'injection en mémoire (process injection, technique T1055 de MITRE ATT&CK). Le code malveillant s'exécute alors sous l'identité d'un processus légitime, sans fichier sur le disque, ce qui trompe les outils fondés sur les fichiers. L'analyste doit isoler le poste et analyser upd.exe et la mémoire d'explorer.exe.",
+    "distractorNotes": {
+      "a": "Le nom upd.exe ne suffit pas : l'exécutable vient du dossier temporaire de l'utilisatrice, pas d'un mécanisme de mise à jour d'éditeur, et l'alerte porte sur une écriture entre processus.",
+      "b": "Aucun intervalle entre un contrôle et une utilisation n'est exploité : l'alerte décrit une écriture délibérée de code dans un autre processus.",
+      "c": "Un dépassement de tampon résulte d'une entrée trop longue traitée par le programme vulnérable ; ici, un processus externe écrit directement dans la mémoire de la cible."
+    },
+    "reference": "MITRE ATT&CK T1055 (Process Injection) ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-parameterized-query-sast-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'outil d'analyse statique a signalé ce constat sur l'API de facturation. Quelle correction traite LE MIEUX la cause du défaut ?",
+      "exhibit": "SAST - rapport du 2026-09-30 - dépôt facturation-api\nRègle    : CWE-89 Improper Neutralization of Special Elements\n           used in an SQL Command\nGravité  : élevée\nFichier  : src/clients/recherche.py, ligne 48\nConstat  : la requête SQL est construite par concaténation du\n           paramètre HTTP « nom » fourni par l'utilisateur",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter une règle au pare-feu applicatif web qui bloque les apostrophes"
+        },
+        {
+          "id": "b",
+          "text": "Masquer les messages d'erreur SQL renvoyés aux utilisateurs"
+        },
+        {
+          "id": "c",
+          "text": "Réécrire la requête avec une requête paramétrée"
+        },
+        {
+          "id": "d",
+          "text": "Filtrer le champ « nom » en JavaScript dans le navigateur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le constat montre que la saisie de l'utilisateur est concaténée dans le texte de la requête SQL : elle peut alors être interprétée comme du code SQL (CWE-89). Une requête paramétrée (instruction préparée) transmet la valeur séparément de la requête, que le moteur ne peut plus réinterpréter : c'est la correction de la cause, recommandée par l'OWASP. Une validation des entrées côté serveur par liste d'autorisation la complète. Le pare-feu applicatif et le masquage des erreurs ne sont que des mesures compensatoires.",
+    "distractorNotes": {
+      "a": "Une règle de WAF est un contrôle compensatoire contournable par d'autres encodages ; elle laisse le défaut dans le code.",
+      "b": "Masquer les erreurs gêne la reconnaissance de l'attaquant mais la requête reste injectable, par exemple à l'aveugle.",
+      "d": "Un contrôle dans le navigateur se contourne en envoyant directement la requête HTTP à l'API ; il n'a aucune valeur de sécurité côté serveur."
+    },
+    "reference": "OWASP Top 10 (2021) — A03 Injection ; MITRE CWE-89"
+  },
+  {
+    "slug": "security-plus-2.3-signed-update-verify-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise distribue elle-même l'agent installé sur ses 2 000 postes. Les postes téléchargent les mises à jour sur un serveur interne. L'équipe sécurité veut qu'un poste refuse un paquet modifié, même si un attaquant prend le contrôle de ce serveur de téléchargement. Quelle mesure répond LE MIEUX à l'exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Publier l'empreinte SHA-256 de chaque paquet sur le serveur de téléchargement"
+        },
+        {
+          "id": "b",
+          "text": "Signer les paquets avec une clé privée hors du serveur, vérifiée par l'agent"
+        },
+        {
+          "id": "c",
+          "text": "Servir les paquets en HTTPS avec un certificat du serveur de téléchargement"
+        },
+        {
+          "id": "d",
+          "text": "Analyser chaque paquet avec l'antivirus du serveur avant sa publication"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Seule une signature numérique dont la clé privée est conservée ailleurs que sur le serveur de téléchargement (machine de signature, HSM) résiste à la compromission de ce serveur : l'agent vérifie la signature avec la clé publique qu'il contient déjà et rejette tout paquet modifié, car l'attaquant ne peut pas produire de signature valide. C'est la réponse au défaut « téléchargement de code sans contrôle d'intégrité » (CWE-494). L'empreinte, le TLS et l'antivirus dépendent tous du serveur compromis.",
+    "distractorNotes": {
+      "a": "Un attaquant qui contrôle le serveur remplace à la fois le paquet et l'empreinte publiée à côté : la vérification réussit sur le paquet modifié.",
+      "c": "HTTPS protège le transfert et authentifie le serveur ; si le serveur lui-même est compromis, il sert le paquet modifié dans une session TLS valide.",
+      "d": "L'analyse se fait sur le serveur que l'attaquant contrôle et ne détecte pas une modification inconnue des signatures antivirus."
+    },
+    "reference": "MITRE CWE-494 ; NIST FIPS 186-5"
+  },
+  {
+    "slug": "security-plus-2.3-resource-reuse-residual-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise loue une instance chez un fournisseur IaaS. En montant un volume de stockage tout juste attribué, son administrateur y retrouve des fichiers non chiffrés appartenant manifestement à une autre société. Quelle vulnérabilité est en cause, et quel contrôle du fournisseur l'aurait évitée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une évasion de VM ; la mise à jour de l'hyperviseur de l'hôte"
+        },
+        {
+          "id": "b",
+          "text": "Une mauvaise configuration du stockage public ; le blocage de l'accès anonyme"
+        },
+        {
+          "id": "c",
+          "text": "Une réutilisation de ressources ; le chiffrement TLS des transferts vers le volume"
+        },
+        {
+          "id": "d",
+          "text": "Une réutilisation de ressources ; l'assainissement des volumes avant réattribution"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un volume réattribué à un nouveau locataire contient les données de l'ancien : c'est la réutilisation de ressources (CWE-226, informations sensibles non effacées avant réutilisation). Le fournisseur doit assainir chaque volume avant de le réattribuer, par réécriture ou, plus souvent, par effacement cryptographique : si chaque volume est chiffré avec une clé propre, détruire la clé rend les anciennes données illisibles (purge au sens de NIST SP 800-88). Le client peut en plus chiffrer lui-même ses volumes.",
+    "distractorNotes": {
+      "a": "L'administrateur n'a franchi aucune frontière d'isolement : il lit un volume qui lui a été attribué normalement, avec des restes de données.",
+      "b": "Le volume n'est pas exposé publiquement : il a été attribué à un seul client, qui y trouve des restes de l'utilisateur précédent.",
+      "c": "La classe est la bonne, mais TLS protège les données en transit ; il n'efface pas les données restées sur le volume avant sa réattribution."
+    },
+    "reference": "MITRE CWE-226 ; NIST SP 800-88 Rev. 1"
+  },
+  {
+    "slug": "security-plus-2.3-vm-escape-scan-report-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyste lit le rapport d'analyse d'un hôte de virtualisation qui héberge des VM de plusieurs services. Quelle constatation expose le plus directement les autres VM de l'hôte à un attaquant qui contrôle déjà une VM invitée ?",
+      "exhibit": "Rapport d'analyse - hôte hv-prod-03 (10.20.0.13) - 2026-10-14\nF-1  VM web-01 (invité)  élévation locale de privilèges noyau\n     CVSS 7.8  AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H\nF-2  VM db-02 (invité)   exécution de code à distance du moteur de base\n     CVSS 9.8  AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H\nF-3  Hyperviseur         écriture hors limites dans l'émulation\n                         de la carte réseau virtuelle des invités\n     CVSS 8.8  AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H\nF-4  VM web-01 (invité)  suites TLS faibles sur l'interface web\n     CVSS 5.3  AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+      "options": [
+        {
+          "id": "a",
+          "text": "F-1"
+        },
+        {
+          "id": "b",
+          "text": "F-2"
+        },
+        {
+          "id": "c",
+          "text": "F-3"
+        },
+        {
+          "id": "d",
+          "text": "F-4"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "F-3 touche un composant d'émulation fourni par l'hyperviseur et exposé à chaque invité : une écriture hors limites dans ce composant permet, depuis une VM (AV:L, PR:L), d'exécuter du code sur l'hôte, c'est-à-dire une évasion de VM. La métrique S:C (Scope: Changed) le confirme : l'impact dépasse le composant vulnérable et atteint l'hôte, donc les autres VM. Les autres constatations restent dans le périmètre d'une seule VM (S:U), même F-2 dont le score (9.8) est le plus élevé : le score mesure la gravité, pas le franchissement de l'isolement.",
+    "distractorNotes": {
+      "a": "L'élévation locale de privilèges dans le noyau de web-01 donne les droits d'administrateur sur cette VM seulement (S:U) ; elle ne franchit pas l'hyperviseur.",
+      "b": "F-2 a le score le plus élevé, mais l'exécution de code reste confinée au moteur de base de db-02 (S:U) : l'attaquant n'en tire aucun accès à l'hyperviseur ni aux autres VM.",
+      "d": "Un chiffrement faible sur l'interface web d'une VM touche la confidentialité de ses échanges, pas l'isolement entre VM."
+    },
+    "reference": "FIRST CVSS v3.1 Specification ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-race-condition-transfer-fix-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque en ligne constate qu'un client a réalisé deux virements de 900 € alors que son compte n'en contenait que 1 000. Les journaux montrent deux requêtes reçues à 3 ms d'intervalle : chacune a contrôlé le solde avant que l'autre ne le débite. Quelle correction traite LE MIEUX la cause ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Limiter chaque client à cinq virements par minute"
+        },
+        {
+          "id": "b",
+          "text": "Vérifier côté serveur que le montant est positif et numérique"
+        },
+        {
+          "id": "c",
+          "text": "Contrôler et débiter le solde dans une même transaction verrouillée"
+        },
+        {
+          "id": "d",
+          "text": "Activer l'ASLR et la DEP sur les serveurs de l'application"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les deux requêtes ont lu le même solde (1 000 €) avant tout débit : c'est une condition de course entre le contrôle et l'utilisation (TOC/TOU). La cause est que le contrôle et le débit ne sont pas atomiques. En les réalisant dans une même transaction avec verrouillage de la ligne du compte (ou par une mise à jour conditionnelle unique « débiter si le solde suffit »), la seconde requête attend la première et voit le solde réel de 100 € : elle est refusée.",
+    "distractorNotes": {
+      "a": "Une limite de débit laisse passer deux requêtes simultanées, ce qui suffit à reproduire le problème : elle réduit l'ampleur sans corriger la cause.",
+      "b": "Les montants étaient valides ; la validation des entrées ne règle pas l'ordre d'exécution de deux requêtes concurrentes.",
+      "d": "L'ASLR et la DEP compliquent l'exploitation des corruptions de mémoire ; elles sont sans effet sur un défaut de logique transactionnelle."
+    },
+    "reference": "MITRE CWE-367 ; MITRE CWE-362 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-memory-protections-legacy-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une usine exploite un service de supervision ancien, écrit en C, dont l'éditeur a disparu ; le code source n'est pas disponible. Un audit y soupçonne des dépassements de tampon. Quelles deux protections du système d'exploitation rendent l'exploitation de ces défauts plus difficile ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "La prévention de l'exécution des données (DEP/NX)"
+        },
+        {
+          "id": "b",
+          "text": "Les requêtes paramétrées pour les accès à la base de données"
+        },
+        {
+          "id": "c",
+          "text": "La distribution aléatoire de l'espace d'adressage (ASLR)"
+        },
+        {
+          "id": "d",
+          "text": "Le chiffrement intégral du disque du serveur (FDE)"
+        },
+        {
+          "id": "e",
+          "text": "L'authentification multifacteur des administrateurs (MFA)"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Exploiter un dépassement de tampon suppose souvent d'exécuter du code placé dans la pile ou le tas, et de connaître l'adresse du code ou des bibliothèques à détourner. La DEP (NX) marque les pages de données comme non exécutables, ce qui bloque l'exécution directe du code injecté ; l'ASLR rend imprévisibles les adresses de la pile, du tas et des bibliothèques. Ces deux protections ne corrigent pas le défaut mais rendent son exploitation bien plus difficile, ce qui en fait des contrôles compensatoires adaptés quand le code ne peut pas être corrigé ; isoler le service sur un segment réseau restreint les compléterait.",
+    "distractorNotes": {
+      "b": "Les requêtes paramétrées corrigent l'injection SQL dans le code d'une application ; elles n'agissent pas sur la gestion de la mémoire et exigent de modifier le code.",
+      "d": "Le chiffrement du disque protège les données au repos contre le vol du support ; il ne joue aucun rôle pendant l'exécution du service.",
+      "e": "La MFA protège les connexions des administrateurs ; un dépassement de tampon s'exploite en envoyant des données au service, sans ouvrir de session."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-public-bucket-controls-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un audit révèle qu'un compartiment de stockage objet contenant des sauvegardes de la base clients est lisible de façon anonyme depuis Internet, à la suite d'une erreur de configuration. Le RSSI veut éviter que cela se reproduise et repérer tout écart de ce type sur l'ensemble des comptes cloud. Quelles deux mesures répondent à cet objectif ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Activer la réplication du compartiment vers une autre région"
+        },
+        {
+          "id": "b",
+          "text": "Activer le blocage de l'accès public au niveau des comptes"
+        },
+        {
+          "id": "c",
+          "text": "Activer le versionnage des objets du compartiment"
+        },
+        {
+          "id": "d",
+          "text": "Déployer un outil CSPM qui signale toute ressource publique"
+        },
+        {
+          "id": "e",
+          "text": "Allonger la conservation des journaux d'accès au stockage"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le blocage de l'accès public au niveau du compte ou de l'organisation empêche qu'une stratégie ou une ACL rende un compartiment public, quelle que soit l'erreur faite sur la ressource : c'est un garde-fou préventif. Un outil de gestion de la posture de sécurité cloud (CSPM) compare en continu les configurations à une référence (par exemple les CIS Benchmarks) et signale tout stockage ouvert, ce qui détecte les écarts sur tous les comptes. Les autres options ne changent pas l'exposition des données.",
+    "distractorNotes": {
+      "a": "La réplication copie les objets dans une autre région pour la disponibilité ; elle ne retire pas l'accès anonyme et peut même dupliquer l'exposition.",
+      "c": "Le versionnage conserve les versions précédentes des objets ; il protège contre l'effacement ou l'écrasement, pas contre la lecture.",
+      "e": "Des journaux plus longs aident à mesurer après coup ce qui a été lu, mais n'empêchent pas l'exposition."
+    },
+    "reference": "CIS Benchmarks ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-vm-escape-hardening-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un hébergeur veut réduire le risque qu'une VM cliente compromise exploite un défaut de l'hyperviseur pour atteindre l'hôte et les autres VM. Quelles trois mesures réduisent ce risque ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Appliquer sans délai les correctifs de sécurité de l'hyperviseur"
+        },
+        {
+          "id": "b",
+          "text": "Prendre un instantané quotidien de chaque VM cliente"
+        },
+        {
+          "id": "c",
+          "text": "Retirer des VM les périphériques virtuels inutiles, comme le presse-papiers partagé"
+        },
+        {
+          "id": "d",
+          "text": "Allouer davantage de mémoire et de processeurs aux VM clientes"
+        },
+        {
+          "id": "e",
+          "text": "Héberger sur des hôtes distincts les VM de niveaux de confiance différents"
+        },
+        {
+          "id": "f",
+          "text": "Activer la migration à chaud des VM entre les hôtes du cluster"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "L'évasion de VM exploite un défaut de l'hyperviseur, souvent dans le code qui émule les périphériques virtuels. Les correctifs suppriment les défauts connus ; retirer les périphériques et les fonctions d'intégration inutiles (presse-papiers, dossiers partagés, USB, accélération 3D) réduit la surface d'attaque exposée à l'invité ; séparer sur des hôtes distincts les VM de niveaux de confiance différents limite ce qu'un attaquant atteint s'il s'échappe. Les instantanés, les ressources et la migration à chaud servent la disponibilité, pas l'isolement.",
+    "distractorNotes": {
+      "b": "Un instantané permet de restaurer une VM après incident ; il ne réduit pas la probabilité qu'un invité s'échappe vers l'hyperviseur.",
+      "d": "Ajouter de la mémoire ou des processeurs améliore les performances sans retirer aucun défaut de l'hyperviseur ni aucune surface d'attaque.",
+      "f": "La migration à chaud déplace une VM d'un hôte à l'autre pour la maintenance ou l'équilibrage ; elle ne renforce pas l'isolement et ajoute même un flux à protéger."
+    },
+    "reference": "NIST SP 800-125 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-static-analysis-review-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une équipe de développement veut repérer, avant toute compilation, les copies de chaînes sans contrôle de taille dans le code C de son micrologiciel. Quelles deux pratiques examinent le code source sans l'exécuter ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le test à données aléatoires (fuzzing) du binaire"
+        },
+        {
+          "id": "b",
+          "text": "L'analyse statique de sécurité du code (SAST)"
+        },
+        {
+          "id": "c",
+          "text": "L'analyse dynamique de l'application en exécution (DAST)"
+        },
+        {
+          "id": "d",
+          "text": "La revue manuelle du code par un développeur pair"
+        },
+        {
+          "id": "e",
+          "text": "Le test d'intrusion de l'équipement en boîte noire"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "L'analyse statique (SAST) parcourt le code source à la recherche de motifs dangereux, comme une copie dans un tampon de taille fixe sans contrôle de longueur, sans exécuter le programme. La revue manuelle par un pair fait de même avec le jugement humain, utile pour les défauts de logique que l'outil manque. Les deux s'intègrent tôt dans le cycle de développement, avant compilation. Le fuzzing, le DAST et le test d'intrusion exigent au contraire un programme qui s'exécute.",
+    "distractorNotes": {
+      "a": "Le fuzzing envoie des entrées aléatoires ou malformées au programme en cours d'exécution ; il trouve des dépassements de tampon, mais après compilation.",
+      "c": "Le DAST teste l'application en fonctionnement, de l'extérieur, sans lire son code source.",
+      "e": "Un test d'intrusion en boîte noire attaque l'équipement en fonctionnement, sans accès au code source."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectifs 2.3 et 4.1)"
+  },
+  {
+    "slug": "security-plus-2.3-app-vuln-classes-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Lors d'une formation des développeurs, le RSSI présente quatre incidents. Associez chaque description à la classe de vulnérabilité qu'elle illustre.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Un service recopie un champ réseau dans une zone de 64 octets sans contrôler sa longueur, et les octets en trop écrasent la mémoire voisine."
+        },
+        {
+          "id": "l2",
+          "text": "Un programme malveillant écrit son code dans l'espace mémoire d'un processus légitime et l'y fait exécuter."
+        },
+        {
+          "id": "l3",
+          "text": "Deux processus modifient en même temps le même fichier de configuration sans verrou, et le fichier se retrouve corrompu."
+        },
+        {
+          "id": "l4",
+          "text": "Le canal de mise à jour officiel d'un logiciel installe une version dans laquelle un tiers a inséré une porte dérobée."
+        }
+      ],
+      "right": [
+        {
+          "id": "bof",
+          "text": "Dépassement de tampon"
+        },
+        {
+          "id": "inj",
+          "text": "Injection en mémoire"
+        },
+        {
+          "id": "race",
+          "text": "Condition de course"
+        },
+        {
+          "id": "upd",
+          "text": "Mise à jour malveillante"
+        },
+        {
+          "id": "leak",
+          "text": "Fuite de mémoire"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "bof",
+        "l2": "inj",
+        "l3": "race",
+        "l4": "upd"
+      }
+    },
+    "explanation": "Écrire au-delà d'une zone de taille fixe faute de contrôle de longueur est un dépassement de tampon. Placer du code dans un autre processus pour qu'il l'exécute sous son identité est une injection en mémoire. Deux accès concurrents non synchronisés à une ressource partagée, dont le résultat dépend de l'ordre d'exécution, forment une condition de course (CWE-362). Un mécanisme de mise à jour légitime qui livre un code piégé est une mise à jour malveillante, forme d'attaque de la chaîne d'approvisionnement.",
+    "distractorNotes": {
+      "leak": "Une fuite de mémoire est de la mémoire allouée et jamais libérée : elle épuise les ressources sans écraser de données, sans exécuter de code étranger ni dépendre de l'ordre de deux accès ; aucun incident ne la décrit."
+    },
+    "reference": "MITRE CWE ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-vuln-mitigation-map-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un plan de remédiation recense quatre vulnérabilités. Associez chacune à la mesure qui la traite le plus directement.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Un attaquant fait exécuter du code qu'il a placé dans la pile grâce à un dépassement de tampon."
+        },
+        {
+          "id": "l2",
+          "text": "Un paquet de mise à jour peut être modifié sur le serveur de téléchargement sans que les clients le remarquent."
+        },
+        {
+          "id": "l3",
+          "text": "Un fichier peut être remplacé entre le contrôle de ses droits et son ouverture."
+        },
+        {
+          "id": "l4",
+          "text": "Un disque virtuel réattribué contient encore les données de son ancien locataire."
+        }
+      ],
+      "right": [
+        {
+          "id": "dep",
+          "text": "Pages de données marquées non exécutables (DEP/NX)"
+        },
+        {
+          "id": "sign",
+          "text": "Vérification par le client de la signature de code"
+        },
+        {
+          "id": "atom",
+          "text": "Opération atomique : ouvrir puis contrôler le fichier ouvert"
+        },
+        {
+          "id": "wipe",
+          "text": "Effacement du volume avant toute réattribution"
+        },
+        {
+          "id": "param",
+          "text": "Requêtes paramétrées pour les accès à la base"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "dep",
+        "l2": "sign",
+        "l3": "atom",
+        "l4": "wipe"
+      }
+    },
+    "explanation": "La DEP (NX) refuse l'exécution dans les pages de données comme la pile : le code injecté ne peut pas s'y exécuter. La signature de code, vérifiée par le client avec une clé publique de confiance, fait rejeter tout paquet modifié. Une condition de course TOC/TOU disparaît quand le contrôle porte sur l'objet réellement utilisé, ouvert une seule fois. Les données résiduelles d'un volume réattribué sont éliminées par un assainissement (réécriture ou effacement cryptographique) avant toute réattribution.",
+    "distractorNotes": {
+      "param": "Les requêtes paramétrées empêchent l'injection SQL ; aucune des quatre vulnérabilités ne porte sur une requête de base de données construite avec une saisie."
+    },
+    "reference": "MITRE CWE ; NIST SP 800-88 Rev. 1 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-cloud-virt-indicators-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'équipe cloud d'une entreprise examine quatre constats remontés par ses outils. Associez chaque constat à la vulnérabilité qu'il révèle.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Les journaux d'accès d'un compartiment de stockage montrent des lectures anonymes depuis des adresses inconnues."
+        },
+        {
+          "id": "l2",
+          "text": "Un instantané de disque contenant une base de test est partagé avec « tous les comptes » du fournisseur."
+        },
+        {
+          "id": "l3",
+          "text": "Un processus lancé dans une VM invitée écrit des fichiers dans le système de fichiers de l'hôte, alors qu'aucun dossier partagé n'est configuré."
+        },
+        {
+          "id": "l4",
+          "text": "Un volume tout juste attribué contient des fichiers d'un autre client du fournisseur."
+        }
+      ],
+      "right": [
+        {
+          "id": "pub",
+          "text": "Mauvaise configuration de stockage public"
+        },
+        {
+          "id": "esc",
+          "text": "Évasion de VM"
+        },
+        {
+          "id": "reuse",
+          "text": "Réutilisation de ressources"
+        },
+        {
+          "id": "race",
+          "text": "Condition de course TOC/TOU"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "pub",
+        "l2": "pub",
+        "l3": "esc",
+        "l4": "reuse"
+      }
+    },
+    "explanation": "Des lectures anonymes d'un compartiment et un instantané partagé avec tous les comptes relèvent de la même erreur : une ressource de stockage rendue publique par sa configuration. Un processus d'une VM invitée qui agit sur le système de fichiers de l'hôte a franchi l'isolement de l'hyperviseur : c'est une évasion de VM. Des données d'un autre client sur un volume nouvellement attribué sont des données résiduelles laissées lors de la réattribution : c'est la réutilisation de ressources.",
+    "distractorNotes": {
+      "race": "Une condition de course exploite l'intervalle entre un contrôle et une utilisation ; aucun des constats ne décrit deux opérations dont l'ordre serait exploité."
+    },
+    "reference": "CIS Benchmarks ; MITRE CWE-226 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-malicious-update-ir-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Des postes ont installé une version piégée d'un logiciel de gestion de flotte, diffusée par le canal de mise à jour de l'éditeur. L'équipe de réponse suit les phases de NIST SP 800-61. Ordonnez ses actions de la première à la dernière.",
+      "items": [
+        {
+          "id": "a",
+          "text": "Réinstaller la version saine signée et surveiller les postes avant leur remise en service"
+        },
+        {
+          "id": "b",
+          "text": "Confirmer l'incident d'après l'avis de l'éditeur et recenser les postes touchés"
+        },
+        {
+          "id": "c",
+          "text": "Tenir le retour d'expérience et ajouter un déploiement pilote au processus de mise à jour"
+        },
+        {
+          "id": "d",
+          "text": "Désinstaller la version piégée et supprimer la persistance qu'elle a créée"
+        },
+        {
+          "id": "e",
+          "text": "Bloquer le domaine contacté par la version piégée et isoler les postes touchés"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "b",
+        "e",
+        "d",
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Après la préparation, NIST SP 800-61 enchaîne détection et analyse (confirmer l'incident et recenser les postes qui ont installé la version piégée), confinement (bloquer le canal de commande et isoler les postes pour stopper la propagation), éradication (retirer la version piégée et sa persistance), reprise (réinstaller une version saine et surveiller avant remise en service) et activité post-incident (retour d'expérience et amélioration du processus). Éradiquer avant de confiner laisserait l'attaquant actif pendant le nettoyage.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-2.3-aslr-acronym-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un analyste compare deux vidages mémoire d'un même serveur pris après deux redémarrages : la pile, le tas et les bibliothèques chargées se trouvent chaque fois à des adresses différentes. Cette protection gêne l'exploitation des dépassements de tampon, car l'attaquant ne peut plus prévoir où se trouve le code qu'il veut détourner. Quel est le sigle anglais de cette protection ?",
+      "fields": [
+        {
+          "id": "f1",
+          "label": "Sigle (lettres majuscules)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "f1": {
+          "accepted": [
+            "ASLR",
+            "Address Space Layout Randomization",
+            "Address Space Layout Randomisation"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "L'ASLR (Address Space Layout Randomization) place aléatoirement, à chaque démarrage ou chargement, les régions mémoire d'un processus : pile, tas, exécutable et bibliothèques. Un exploit qui saute vers une adresse connue à l'avance échoue alors le plus souvent. L'ASLR se combine avec la DEP/NX, qui empêche d'exécuter du code dans les pages de données : ensemble, elles rendent l'exploitation d'une corruption de mémoire bien plus difficile, sans remplacer la correction du code.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-dep-blocked-stack-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur un serveur Windows, l'EDR rapporte qu'une tentative d'exécution de code dans la pile du service d'impression a échoué, car la page mémoire visée n'était pas marquée exécutable. Quel sigle Windows désigne la protection qui a bloqué cette exécution ?",
+      "fields": [
+        {
+          "id": "f1",
+          "label": "Sigle Windows (lettres majuscules)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "f1": {
+          "accepted": [
+            "DEP",
+            "Data Execution Prevention",
+            "Prévention de l'exécution des données"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "La DEP (Data Execution Prevention) est le nom Windows de la protection qui s'appuie sur le bit NX (No-eXecute) du processeur : les pages de données, comme la pile et le tas, sont marquées non exécutables. Le code qu'un attaquant y a placé grâce à un dépassement de tampon ne peut donc pas s'exécuter directement, et le processus est arrêté. Les attaquants tentent de la contourner en réutilisant du code déjà exécutable, d'où l'intérêt de la combiner avec l'ASLR.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-cvss-critical-count-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Le RSSI demande combien de constatations du rapport sont de sévérité critique et combien sont de sévérité élevée, selon l'échelle qualitative de CVSS v3.1.",
+      "exhibit": "Rapport d'analyse de vulnérabilités - périmètre DMZ - 2026-11-02\nID    Constatation                                        CVSS v3.1\nV-01  Dépassement de tampon, portail VPN (pré-auth)       9.8\nV-02  Évasion de VM via périphérique virtuel              8.9\nV-03  Agent de mise à jour sans vérification de signature 9.0\nV-04  Dépassement de tampon, service de gestion distant   10.0\nV-05  Condition de course dans le service de fichiers     7.0\nV-06  Compartiment de stockage lisible publiquement       6.9\nV-07  Bannière de version exposée sur le serveur SSH      3.9",
+      "fields": [
+        {
+          "id": "crit",
+          "label": "Constatations de sévérité critique (nombre entier)"
+        },
+        {
+          "id": "high",
+          "label": "Constatations de sévérité élevée (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "crit": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        },
+        "high": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "L'échelle qualitative de CVSS v3.1 classe les scores ainsi : 0,0 aucune ; 0,1 à 3,9 faible ; 4,0 à 6,9 moyenne ; 7,0 à 8,9 élevée ; 9,0 à 10,0 critique. Sont critiques V-01 (9.8), V-03 (9.0) et V-04 (10.0), soit 3. Sont élevées V-02 (8.9) et V-05 (7.0), soit 2. V-06 (6.9) est moyenne et V-07 (3.9) faible : les valeurs limites 6.9 et 7.0, 8.9 et 9.0 sont les pièges du rapport.",
+    "distractorNotes": {},
+    "reference": "FIRST CVSS v3.1 Specification"
+  },
+  {
+    "slug": "security-plus-2.3-vuln-mgmt-cycle-vpn-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un éditeur annonce un dépassement de tampon dans le portail VPN qu'utilise l'entreprise. L'équipe sécurité suit le cycle de gestion des vulnérabilités des objectifs SY0-701. Ordonnez ses actions de la première à la dernière.",
+      "items": [
+        {
+          "id": "a",
+          "text": "Appliquer le correctif de l'éditeur sur les portails concernés"
+        },
+        {
+          "id": "b",
+          "text": "Lancer une analyse authentifiée qui repère les portails vulnérables"
+        },
+        {
+          "id": "c",
+          "text": "Présenter à la direction l'état final et le délai de traitement"
+        },
+        {
+          "id": "d",
+          "text": "Relancer l'analyse pour vérifier que la vulnérabilité a disparu"
+        },
+        {
+          "id": "e",
+          "text": "Évaluer l'exposition et prioriser à l'aide du score CVSS"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "b",
+        "e",
+        "a",
+        "d",
+        "c"
+      ]
+    },
+    "explanation": "Le cycle suit l'ordre des objectifs SY0-701 (4.3) : identification (l'analyse repère les équipements vulnérables), analyse (confirmation, score CVSS et contexte d'exposition pour prioriser), réponse et remédiation (correctif), validation de la remédiation (nouvelle analyse) et enfin rapport. On ne peut pas prioriser ce qu'on n'a pas identifié, ni valider avant d'avoir corrigé ; le rapport vient en dernier parce qu'il présente le résultat validé.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 4.3) ; NIST SP 800-40 Rev. 4"
+  }
+]

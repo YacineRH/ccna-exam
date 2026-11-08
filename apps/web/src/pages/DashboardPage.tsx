@@ -17,7 +17,8 @@ import {
 } from '../lib/format';
 import { api, ApiError } from '../lib/api';
 import { labForSubtopic } from '../lib/labs';
-import type { AttemptState, AttemptSummary, CertificationDetail, LabSummary, SeriesProgress, Stats } from '../lib/types';
+import { hasModule } from '../lib/certification';
+import type { AttemptState, AttemptSummary, CertificationDetail, CertificationSummary, LabSummary, SeriesProgress, Stats } from '../lib/types';
 import { useApi } from '../lib/useApi';
 
 /** Taille d'une révision rapide lancée depuis « À revoir ». */
@@ -314,7 +315,10 @@ function OfficialDomains({ stats }: { stats: Stats }) {
   );
 }
 
-function ToReview({ stats, bank, labs }: { stats: Stats; bank: CertificationDetail['bank'] | null; labs: LabSummary[] }) {
+function ToReview({ stats, detail, labs, cert }: { stats: Stats; detail: CertificationDetail | null; labs: LabSummary[]; cert: CertificationSummary }) {
+  const bank = detail?.bank ?? null;
+  // Sous-thèmes exercés par l'entraîneur de subnetting : une donnée de la certification, pas un code en dur.
+  const subnetSubtopics = hasModule(cert, 'subnet') ? (detail?.certification.moduleSubtopics?.subnet ?? []) : [];
   const names = new Map(stats.domains.map((d) => [d.code, d.name]));
   return (
     <section aria-labelledby="todo-h" className="panel px-6 py-[22px]">
@@ -333,7 +337,7 @@ function ToReview({ stats, bank, labs }: { stats: Stats; bank: CertificationDeta
           {stats.toReview.map((t, i) => {
             const ratio = t.answered ? t.errors / t.answered : 0;
             const crit = ratio >= 0.5;
-            const isSubnet = t.subtopic === '1.6';
+            const isSubnet = t.subtopic !== undefined && t.subtopic !== null && subnetSubtopics.includes(t.subtopic);
             // Un lab CLI couvre ce sous-thème : on le propose à côté de « Réviser ».
             const lab = t.subtopic ? labForSubtopic(labs, t.subtopic) : null;
             return (
@@ -370,10 +374,10 @@ function ToReview({ stats, bank, labs }: { stats: Stats; bank: CertificationDeta
                       Lab →
                     </Link>
                   )}
-                  {t.subtopic && (bank?.bySubtopic[t.subtopic] ?? 0) >= 3 && (
+                  {t.subtopic && hasModule(cert, 'flashcards') && (bank?.bySubtopic[t.subtopic] ?? 0) >= 3 && (
                     <FlashcardsButton code={stats.certification} subtopic={t.subtopic} label={t.subtopicName ?? t.subtopic} />
                   )}
-                  {t.subtopic && bank ? (
+                  {!hasModule(cert, 'practice') ? null : t.subtopic && bank ? (
                     <ReviseButton
                       code={stats.certification}
                       subtopic={t.subtopic}
@@ -421,16 +425,18 @@ function RecentAttempts({ attempts }: { attempts: AttemptSummary[] }) {
 }
 
 export function DashboardPage() {
-  return <WithCertification>{(c) => <Dashboard key={c.code} code={c.code} />}</WithCertification>;
+  return <WithCertification>{(c) => <Dashboard key={c.code} cert={c} />}</WithCertification>;
 }
 
-function Dashboard({ code }: { code: string }) {
+function Dashboard({ cert }: { cert: CertificationSummary }) {
+  const code = cert.code;
   const { user } = useAuth();
   const stats = useApi<Stats>(`/stats?certification=${encodeURIComponent(code)}`);
   const attempts = useApi<{ attempts: AttemptSummary[] }>(`/attempts?certification=${encodeURIComponent(code)}`);
   const detail = useApi<CertificationDetail>(`/certifications/${encodeURIComponent(code)}`);
-  const labs = useApi<{ labs: LabSummary[] }>(`/labs?certification=${encodeURIComponent(code)}`);
-  const series = useApi<SeriesProgress>(`/exams?certification=${encodeURIComponent(code)}`);
+  // Labs et série seulement si la certification a ces modules (l'API répondrait 404 sinon).
+  const labs = useApi<{ labs: LabSummary[] }>(hasModule(cert, 'cli') ? `/labs?certification=${encodeURIComponent(code)}` : null);
+  const series = useApi<SeriesProgress>(hasModule(cert, 'exam') ? `/exams?certification=${encodeURIComponent(code)}` : null);
   const now = new Date();
   const firstName = user?.displayName.split(/\s+/)[0] ?? '';
 
@@ -453,16 +459,20 @@ function Dashboard({ code }: { code: string }) {
             )}
           </h1>
         </div>
-        <Link
-          to="/examen/nouveau?mode=practice"
-          className="btn-secondary h-[46px] rounded-[10px]"
-          style={{ background: 'rgba(16,24,39,.7)' }}
-        >
-          Entraînement ciblé
-        </Link>
-        <Link to="/examen/nouveau?mode=exam" className="btn-primary h-[46px] rounded-[10px]">
-          <IconPlay /> Lancer un examen blanc
-        </Link>
+        {hasModule(cert, 'practice') && (
+          <Link
+            to="/examen/nouveau?mode=practice"
+            className="btn-secondary h-[46px] rounded-[10px]"
+            style={{ background: 'rgba(16,24,39,.7)' }}
+          >
+            Entraînement ciblé
+          </Link>
+        )}
+        {hasModule(cert, 'exam') && (
+          <Link to="/examen/nouveau?mode=exam" className="btn-primary h-[46px] rounded-[10px]">
+            <IconPlay /> Lancer un examen blanc
+          </Link>
+        )}
       </div>
 
       {stats.loading && !stats.data && <Spinner label="Chargement des statistiques…" />}
@@ -501,7 +511,7 @@ function Dashboard({ code }: { code: string }) {
           </div>
           <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))]">
             <OfficialDomains stats={stats.data} />
-            <ToReview stats={stats.data} bank={detail.data?.bank ?? null} labs={labs.data?.labs ?? []} />
+            <ToReview stats={stats.data} detail={detail.data} labs={labs.data?.labs ?? []} cert={cert} />
           </div>
         </>
       )}

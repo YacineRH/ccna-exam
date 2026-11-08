@@ -4,6 +4,7 @@ import { loadLabProfile } from '@examforge/content';
 import type { Db } from '../db/client.js';
 import { certifications, domains, labAttemptCommands, labAttempts, labs, subtopics, type LabAttempt } from '../db/schema.js';
 import { badRequest, conflict, forbidden, notFound } from '../errors.js';
+import { labModule, requireModule } from './modules.js';
 
 /*
  * Labs CLI. Une session ne garde que les commandes saisies : l'état des équipements est
@@ -63,11 +64,13 @@ async function loadCommands(db: Db, attemptId: string) {
 
 async function labRow(db: Db, where: ReturnType<typeof eq>) {
   const [row] = await db
-    .select({ lab: labs, certification: certifications.code, subtopicName: subtopics.name })
+    .select({ lab: labs, certification: certifications.code, config: certifications.config, subtopicName: subtopics.name })
     .from(labs)
     .innerJoin(certifications, eq(certifications.id, labs.certificationId))
     .innerJoin(subtopics, eq(subtopics.id, labs.subtopicId))
     .where(where);
+  // Une certification qui ne propose pas (ou plus) le module ne sert pas ses labs : 404, comme un lab inconnu.
+  if (row) requireModule({ code: row.certification, config: row.config }, labModule(row.lab.kind));
   return row;
 }
 
@@ -202,6 +205,7 @@ async function userLabStats(db: Db, userId: string, labIds: string[]) {
 
 export async function listLabs(db: Db, userId: string, certCode: string, kind: LabKind = 'lab') {
   const cert = await certificationByCode(db, certCode);
+  requireModule(cert, labModule(kind));
   const rows = await db
     .select({ id: labs.id, definition: labs.definition, domain: domains.code, subtopicName: subtopics.name })
     .from(labs)

@@ -45,6 +45,8 @@ let context: BrowserContext;
 let page: Page;
 let cert: Cert;
 let examAttemptId = '';
+let score42 = 0;
+let secAttemptId = '';
 let practiceAttemptId = '';
 let labSessionId = '';
 let challengeSessionId = '';
@@ -125,7 +127,8 @@ test('sélecteur de certification : liste de l’API, choix mémorisé, repli', 
   await page.reload();
 
   const select = headerSelect();
-  await expect(select.locator('option')).toHaveCount(2);
+  // CCNA, Security+ (fichiers de données) et la certification de démonstration (déclarée à l'instant).
+  await expect(select.locator('option')).toHaveCount(3);
   await expect(select).toHaveValue(cert.code);
 
   await select.selectOption(DEMO.code);
@@ -438,6 +441,7 @@ test('examen n° 42 de la série : choisi au clavier, passé, puis retrouvé dan
   await expect(page.getByText('Score final')).toBeVisible();
   const { scaledScore } = (await (await page.request.get(`/api/v1/attempts/${id}/result`)).json()) as { scaledScore: number };
 
+  score42 = scaledScore;
   // Dans la progression : 1 / 100 passé, l'examen 42 avec son meilleur score, le prochain jamais passé reste le n° 1.
   await page.goto('/examen/nouveau?mode=exam');
   await expect(panel).toContainText(`1 / ${total} passé`);
@@ -454,6 +458,166 @@ test('examen n° 42 de la série : choisi au clavier, passé, puis retrouvé dan
   // Le lien de la ligne rouvre l'écran de lancement sur l'examen 42.
   await row.getByRole('link', { name: 'Examen n° 42' }).click();
   await expect(page.getByLabel('Ou choisir un numéro')).toHaveValue('42');
+});
+
+test('Security+ : basculer, passer l’examen n° 7, voir la progression, puis revenir au CCNA intact', async () => {
+  const SEC = 'security-plus';
+  const secSeries = seriesOf(SEC);
+  const total = secSeries.exams.length;
+  const exam7 = secSeries.exams[6]!;
+  const ccnaTotal = seriesOf(cert.code).exams.length;
+  const nav = page.getByRole('navigation', { name: 'Navigation principale' });
+
+  await page.goto('/');
+  await headerSelect().selectOption(SEC);
+  // Tableau de bord propre à la Security+ : seuil de 750 sur une échelle de 100 à 900, aucune trace du CCNA.
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('on vise 750.');
+  await expect(page.getByText("Pas encore d'estimation.")).toBeVisible();
+  await expect(page.getByText("Aucune session pour l'instant.")).toBeVisible();
+
+  // Modules absents : ni CLI, ni subnetting, ni challenges dans la navigation ; les pages disent pourquoi.
+  for (const name of ['Examens blancs', 'Entraînement libre', 'Révision', 'Historique']) await expect(nav.getByRole('link', { name })).toBeVisible();
+  for (const name of ['Subnetting', 'Labs CLI', 'Challenges']) await expect(nav.getByRole('link', { name })).toHaveCount(0);
+  for (const [path, title] of [['/labs/cli', 'Labs CLI'], ['/labs/subnetting', 'Subnetting trainer'], ['/challenges', 'Challenges chronométrés']] as const) {
+    await page.goto(path);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
+    await expect(page.getByText(/Module absent pour Security\+/)).toBeVisible();
+  }
+  const labs = await page.request.get(`/api/v1/labs?certification=${SEC}`);
+  expect(labs.status()).toBe(404);
+  expect(((await labs.json()) as { error: { code: string } }).error.code).toBe('module_unavailable');
+
+  // Lancement : la série de 30 examens, choisie par son numéro.
+  await page.goto('/examen/nouveau?mode=exam');
+  await expect(headerSelect()).toHaveValue(SEC);
+  const panel = page.getByRole('region', { name: `Série de ${total} examens blancs` });
+  await expect(panel).toContainText(`0 / ${total} passé`);
+  const number = panel.getByLabel('Ou choisir un numéro');
+  await number.fill('7');
+  await expect(panel).toContainText(`Jamais passé · ${exam7.questions.length} questions.`);
+  await number.focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/tentatives\/[0-9a-f-]{36}$/);
+  const id = page.url().split('/').pop()!;
+  secAttemptId = id;
+  await expect(page.getByText(`Question 1 / ${exam7.questions.length}`)).toBeVisible();
+  expect(exam7.questions).toHaveLength(90);
+  expect(await stemText()).toContain(questionBySlug(SEC, exam7.questions[0]!).body.stem.trim().slice(0, 40));
+  // 90 minutes au chrono, et la correction ne part pas avec les questions.
+  const shown = clockSeconds((await page.getByRole('timer').textContent()) ?? '');
+  expect(shown).toBeGreaterThan(90 * 60 - 60);
+  const state = await (await page.request.get(`/api/v1/attempts/${id}`)).text();
+  expect(state).not.toMatch(/"(correct|accepted|order|pairs)"|answerKey/);
+
+  await page.getByRole('button', { name: "Terminer l'examen" }).click();
+  await page.getByRole('dialog', { name: "Terminer l'examen ?" }).getByRole('button', { name: 'Terminer et voir le résultat' }).click();
+  await expect(page).toHaveURL(new RegExp(`/tentatives/${id}/resultat$`));
+  await expect(page.getByText('Score final')).toBeVisible();
+  await expect(page.getByText(/sous le seuil \(750\)/)).toBeVisible();
+  const result = (await (await page.request.get(`/api/v1/attempts/${id}/result`)).json()) as { scaledScore: number; passingScore: number; certification: string };
+  expect(result).toMatchObject({ passingScore: 750, certification: SEC });
+  expect(result.scaledScore).toBeGreaterThanOrEqual(100);
+  expect(result.scaledScore).toBeLessThanOrEqual(900);
+
+  // Progression Security+ : 1 / 30 passé, l'examen n° 7 avec son score ; le tableau de bord la reprend.
+  await page.goto('/examen/nouveau?mode=exam');
+  await expect(panel).toContainText(`1 / ${total} passé`);
+  await expect(panel.getByRole('radio', { name: `Examen n° 7, passé, meilleur score ${result.scaledScore}` })).toBeAttached();
+  await page.goto('/');
+  await expect(page.getByRole('region', { name: "Série d'examens blancs" })).toContainText(`1 / ${total} passé`);
+  const sessions = await (await page.request.get(`/api/v1/attempts?certification=${SEC}`)).json();
+  expect((sessions as { attempts: unknown[] }).attempts).toHaveLength(1);
+
+  // Retour au CCNA : sa progression est intacte (l'examen n° 42, son score, ses 100 examens), rien de la Security+.
+  await headerSelect().selectOption(cert.code);
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('on vise 825.');
+  const card = page.getByRole('region', { name: "Série d'examens blancs" });
+  await expect(card).toContainText(`1 / ${ccnaTotal} passé`);
+  await card.getByText('Meilleur score par examen (1)').click();
+  const row = card.getByRole('row', { name: /n° 42/ });
+  await expect(row).toContainText(String(score42));
+  await expect(card.getByRole('row', { name: /n° 7\b/ })).toHaveCount(0);
+  for (const name of ['Subnetting', 'Labs CLI', 'Challenges']) await expect(nav.getByRole('link', { name })).toBeVisible();
+  await page.goto('/historique');
+  await expect(headerSelect()).toHaveValue(cert.code);
+  const ccnaSessions = (await (await page.request.get(`/api/v1/attempts?certification=${cert.code}`)).json()) as { attempts: { certification: string }[] };
+  expect(ccnaSessions.attempts.every((a) => a.certification === cert.code)).toBe(true);
+  expect(ccnaSessions.attempts.length).toBeGreaterThan(1);
+});
+
+test('Security+ : clavier, accessibilité (axe) et 390 px sur ses écrans', async ({ browser }) => {
+  const SEC = 'security-plus';
+  const total = seriesOf(SEC).exams.length;
+
+  // Clavier : la grille de la série est un groupe de boutons radio, les flèches changent d'examen.
+  await page.goto('/');
+  await headerSelect().selectOption(SEC);
+  await page.goto('/examen/nouveau?mode=exam');
+  const panel = page.getByRole('region', { name: `Série de ${total} examens blancs` });
+  const n9 = panel.getByRole('radio', { name: 'Examen n° 9, jamais passé' });
+  await n9.focus();
+  await page.keyboard.press('Space');
+  await expect(n9).toBeChecked();
+  await page.keyboard.press('ArrowRight');
+  await expect(panel.getByRole('radio', { name: 'Examen n° 10, jamais passé' })).toBeChecked();
+  await expect(panel.getByLabel('Ou choisir un numéro')).toHaveValue('10');
+
+  // Un examen en cours : répondre et passer à la question suivante sans souris.
+  const started = await page.request.post('/api/v1/attempts', { data: { certification: SEC, mode: 'exam', questionCount: 3 } });
+  expect(started.status()).toBe(201);
+  const running = ((await started.json()) as { id: string }).id;
+  await page.goto(`/tentatives/${running}`);
+  await expect(page.locator('#enonce')).toBeVisible();
+  const first = page.getByRole('main').getByRole('radio').or(page.getByRole('main').getByRole('checkbox')).first();
+  if (await first.count()) {
+    await first.focus();
+    await page.keyboard.press('Space');
+    await expect(first).toBeChecked();
+  }
+  await expect(page.getByRole('button', { name: /^Suivant/ })).toBeVisible();
+  await page.getByRole('button', { name: /^Suivant/ }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Question 2 / 3')).toBeVisible();
+
+  // 390 px et axe sur les écrans propres à la Security+ (la certification est mémorisée dans le navigateur).
+  const mobile = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true };
+  const ctx = await newContext(browser, { ...mobile, storageState: await context.storageState() });
+  await ctx.addInitScript(([k, v]) => localStorage.setItem(k as string, v as string), [STORAGE_KEY, SEC]);
+  const p = await ctx.newPage();
+  const screens: { path: string; ready: () => Locator }[] = [
+    { path: '/', ready: () => p.getByText('Indice de préparation') },
+    { path: '/examen/nouveau?mode=exam', ready: () => p.getByRole('heading', { name: 'Nouvelle session' }) },
+    { path: '/examen/nouveau?mode=practice', ready: () => p.getByRole('heading', { name: 'Nouvelle session' }) },
+    { path: `/tentatives/${running}`, ready: () => p.locator('#enonce') },
+    { path: `/tentatives/${secAttemptId}/resultat`, ready: () => p.getByText('Score final') },
+    { path: '/historique', ready: () => p.getByRole('heading', { name: 'Historique' }) },
+    { path: '/revision', ready: () => p.getByRole('heading', { level: 1 }) },
+    { path: '/labs/cli', ready: () => p.getByText(/Module absent pour Security\+/) },
+    { path: '/admin', ready: () => p.getByRole('heading', { name: 'Certifications', level: 1 }) },
+  ];
+  const problems: string[] = [];
+  for (const { path, ready } of screens) {
+    await p.goto(path);
+    await expect(ready().first()).toBeVisible();
+    await p.waitForTimeout(400);
+    const size = await p.evaluate(() => ({ scroll: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth), client: document.documentElement.clientWidth }));
+    if (size.scroll > size.client) problems.push(`${path} : débordement horizontal à 390 px (${size.scroll} > ${size.client})`);
+    const tiny = await p.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLElement>('button, select, input:not([type=checkbox]):not([type=radio]), a.btn-primary, a.btn-secondary, [role=tab]'))
+        .filter((el) => el.offsetParent !== null && !el.closest('.sr-only'))
+        .map((el) => ({ h: el.getBoundingClientRect().height, text: (el.getAttribute('aria-label') ?? el.textContent ?? el.tagName).trim().slice(0, 40) }))
+        .filter((x) => x.h > 0 && x.h < 44),
+    );
+    for (const t of tiny) problems.push(`${path} : zone de moins de 44 px « ${t.text} » (${Math.round(t.h)} px)`);
+    for (const v of await axeViolations(p)) problems.push(`${path}\n${v}`);
+    for (const h of await headingProblems(p)) problems.push(`${path} : titres : ${h}`);
+  }
+  await ctx.close();
+  expect(problems).toEqual([]);
+
+  // On rend le navigateur au CCNA pour la suite du parcours.
+  await page.goto('/');
+  await headerSelect().selectOption(cert.code);
 });
 
 test('lab CLI au clavier : abréviations, erreur IOS, aide, indice, Ctrl+Z, fin avec la solution', async () => {

@@ -19,7 +19,7 @@ import type { AnswerKey, CertificationConfig, Lab, QuestionBody, Response } from
 
 /*
  * Le moteur ne connaît que des certifications, domaines et questions génériques.
- * Toute la spécificité du CCNA vit dans les lignes de ces tables, jamais dans le schéma.
+ * Toute la spécificité d'une certification vit dans les lignes de ces tables, jamais dans le schéma.
  */
 
 export const userRole = pgEnum('user_role', ['user', 'admin']);
@@ -55,6 +55,10 @@ export const certifications = pgTable('certifications', {
   /** Configuration complète validée par le moteur (domaines, barème, format). */
   config: jsonb('config').$type<CertificationConfig>().notNull(),
   active: boolean('active').notNull().default(true),
+  /** Dernier import du paquet de contenu (`seedContent`) ; null pour une certification déclarée par l'API seulement. */
+  lastImportedAt: timestamp('last_imported_at', { withTimezone: true }),
+  /** Résumé du dernier import : questions créées et mises à jour, examens créés, mis à jour, gardés tels quels. */
+  lastImport: jsonb('last_import').$type<Record<string, unknown>>(),
   ...timestamps,
 });
 
