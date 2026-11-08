@@ -9,7 +9,7 @@ Pour essayer ExamForge sur une VM du réseau local, sans le Caddy d'Hydre devant
 ```sh
 git clone https://github.com/YacineRH/ccna-exam.git ~/examforge
 cd ~/examforge
-git switch claude/youthful-noether-h8ry6b    # tant que la PR n'est pas fusionnée dans main
+git switch main                                # le bloc 7 (Security+) est fusionné ; une branche de PR pour tester avant fusion
 cp .env.example .env
 nano .env
 ```
@@ -32,6 +32,44 @@ curl -s http://192.168.1.125:8090/api/v1/health    # {"status":"ok"}
 Ouvrir `http://192.168.1.125:8090` depuis un poste du réseau et créer le compte (le premier devient administrateur).
 
 `COOKIE_SECURE=false` est réservé au réseau local : ne jamais l'utiliser sur un serveur joignable depuis Internet. Si la VM fait aussi tourner Hydre avec la branche `feat/examforge-edge`, on peut à la place passer par son Caddy en HTTPS (`tls internal`) avec un fichier `caddy-sites/ccna.caddy` adapté au nom local, et garder `COOKIE_SECURE=true`.
+
+**Premier démarrage : patientez avant d'ouvrir la page.** L'API n'écoute qu'une fois les migrations appliquées et le contenu importé (banque et série des deux certifications). Mesuré sur un poste de développement : **13 à 16 s**, pour un pic de 167 à 198 Mo de mémoire (limite du conteneur : 384 Mo) ; une VM plus lente peut y mettre plus longtemps. Pendant ce temps, la page de connexion affiche « API injoignable, erreur 502 » : attendez que `docker compose logs api` montre la ligne `security-plus : 30 examens blancs (…)` puis cliquez sur « Réessayer ». Si le 502 dure plus de deux minutes, `docker compose ps` (l'API redémarre-t-elle en boucle ?) et `docker compose logs --tail 80 api` donnent la cause. Les démarrages suivants parcourent les mêmes fichiers mais n'écrivent presque rien.
+
+La mise à niveau d'une base existante (ancienne version vers le bloc 7) a été essayée en local : la migration `0003` s'applique (3 puis 4 migrations), le CCNA et un examen déjà passé restent intacts, la Security+ est importée.
+
+### Joindre la VM par Tailscale
+
+Pour atteindre la VM de test depuis vos appareils sans ouvrir de port ni dépendre du réseau local, un conteneur Tailscale rejoint votre tailnet et publie le service web en HTTPS (`tailscale serve`). **Pas de Funnel** : rien n'est exposé à Internet, seuls les appareils de votre tailnet voient `https://examforge.<nom-du-tailnet>.ts.net`.
+
+Une fois, dans la console d'administration Tailscale :
+
+1. activer **MagicDNS** et **HTTPS Certificates** (page DNS) : sans eux, `serve` ne peut pas obtenir de certificat ;
+2. créer une **clé d'authentification** (Settings, Keys). Une clé à usage unique suffit : l'état de la machine est gardé dans un volume, la clé ne sert qu'au premier démarrage ; avec une clé « éphémère », la machine est retirée automatiquement du tailnet peu après l'arrêt du conteneur.
+
+Sur la VM, dans `.env` (jamais commité) :
+
+```sh
+TS_AUTHKEY=tskey-auth-…
+COMPOSE_FILE=docker-compose.yml:docker-compose.tailscale.yml
+# TS_HOSTNAME=examforge          # nom de la machine dans le tailnet (par défaut : examforge)
+```
+
+Puis, comme d'habitude :
+
+```sh
+docker compose up -d --build
+docker compose logs tailscale | tail            # « Serve: https://examforge.<tailnet>.ts.net »
+```
+
+Ouvrir l'adresse `https://examforge.<tailnet>.ts.net` depuis un appareil du tailnet. L'accès local `http://192.168.1.125:8090` continue de fonctionner. Sans `COMPOSE_FILE`, la commande équivalente est `docker compose -f docker-compose.yml -f docker-compose.tailscale.yml up -d --build`.
+
+Détails à connaître :
+
+- **Fichiers** : `docker-compose.tailscale.yml` (service `tailscale`, réseau en espace utilisateur : ni `/dev/net/tun` ni `NET_ADMIN`, donc aucun privilège sur la VM) et `infra/tailscale/serve.json` (HTTPS 443 vers `http://web:80`, `${TS_CERT_DOMAIN}` remplacé par Tailscale). Sans le deuxième fichier, rien ne change : le compose de base n'a pas de service Tailscale.
+- **Cookie de session** : `COOKIE_SECURE=false` (déjà utilisé pour le réseau local) fonctionne aussi en HTTPS ; on peut le remettre à `true` si la VM n'est plus jointe qu'en HTTPS par Tailscale.
+- **Limite de connexions** : l'API limite les connexions à 5 essais par minute et par adresse ; les requêtes venant de Tailscale lui arrivent du conteneur Tailscale, donc de la même adresse pour tous les appareils (sans effet pour un usage personnel).
+- **Arrêter** : `docker compose stop tailscale`. Pour retirer définitivement la machine : la supprimer dans la console Tailscale, puis `docker compose rm -f tailscale && docker volume rm examforge_tailscale-state` (ce volume contient l'identité de la machine : un nouveau démarrage demandera une nouvelle clé).
+- **Non testé ici** : la validité des fichiers compose et JSON est vérifiée (`docker compose config`), mais le conteneur Tailscale lui-même n'a pas été démarré (pas de clé ni d'accès au tailnet depuis l'environnement où il a été écrit) : premier essai à faire sur la VM.
 
 ## 1. DNS chez OVH
 

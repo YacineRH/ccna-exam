@@ -1,0 +1,30 @@
+# Joindre ExamForge par Tailscale (VM de test) : un conteneur Tailscale rejoint le tailnet et publie
+# le service web en HTTPS (`tailscale serve`, jamais `funnel` : rien n'est ouvert à Internet).
+# Aucun port n'est publié sur la VM : seul le tailnet voit https://<TS_HOSTNAME>.<tailnet>.ts.net.
+#
+# Utilisation (détail dans docs/DEPLOIEMENT.md, « Joindre la VM par Tailscale ») :
+#   dans .env : TS_AUTHKEY=tskey-auth-…   et   COMPOSE_FILE=docker-compose.yml:docker-compose.tailscale.yml
+#   puis      : docker compose up -d --build
+# ou, sans toucher à .env : docker compose -f docker-compose.yml -f docker-compose.tailscale.yml up -d --build
+services:
+  tailscale:
+    image: tailscale/tailscale:stable
+    restart: unless-stopped
+    environment:
+      TS_AUTHKEY: ${TS_AUTHKEY:?définir TS_AUTHKEY dans .env (clé d'authentification Tailscale)}
+      TS_HOSTNAME: ${TS_HOSTNAME:-examforge}
+      TS_STATE_DIR: /var/lib/tailscale
+      # Publie le web en HTTPS sur le tailnet ; ${TS_CERT_DOMAIN} est remplacé par le nom complet de la machine.
+      TS_SERVE_CONFIG: /config/serve.json
+      # Réseau en espace utilisateur : ni /dev/net/tun ni NET_ADMIN, donc aucun privilège sur la VM.
+      TS_USERSPACE: "true"
+      TS_EXTRA_ARGS: ${TS_EXTRA_ARGS:-}
+    volumes:
+      - tailscale-state:/var/lib/tailscale
+      - ./infra/tailscale/serve.json:/config/serve.json:ro
+    depends_on: [web]
+    networks: [internal]
+    mem_limit: 128m
+
+volumes:
+  tailscale-state: {}
