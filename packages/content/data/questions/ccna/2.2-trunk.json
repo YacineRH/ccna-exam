@@ -1,0 +1,1602 @@
+[
+  {
+    "slug": "ccna-2.2-dot1q-tpid-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle valeur contient le champ TPID (Tag Protocol Identifier) d'une étiquette 802.1Q ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "0x0800"
+        },
+        {
+          "id": "b",
+          "text": "0x86DD"
+        },
+        {
+          "id": "c",
+          "text": "0x8100"
+        },
+        {
+          "id": "d",
+          "text": "0x88CC"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le TPID occupe les 2 premiers octets de l'étiquette de 4 octets, à l'endroit où le récepteur attend l'EtherType. La valeur 0x8100 lui indique que la trame est étiquetée 802.1Q : les 2 octets suivants (TCI) portent le PCP (3 bits), le DEI (1 bit) et le VID (12 bits), puis vient l'EtherType d'origine. Un équipement qui ignore 802.1Q lit simplement 0x8100 comme un EtherType inconnu.",
+    "distractorNotes": {
+      "a": "0x0800 est l'EtherType d'IPv4 : dans une trame étiquetée qui transporte de l'IPv4, il suit l'étiquette au lieu de l'ouvrir.",
+      "b": "0x86DD est l'EtherType d'IPv6, pas l'identifiant de l'étiquette 802.1Q.",
+      "d": "0x88CC est l'EtherType de LLDP (802.1AB), sans rapport avec l'étiquetage des VLAN."
+    },
+    "reference": "IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.2-dot1q-pcp-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans l'étiquette 802.1Q, quel champ porte la priorité de classe de service (CoS 802.1p) de la trame ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "TPID"
+        },
+        {
+          "id": "b",
+          "text": "DEI"
+        },
+        {
+          "id": "c",
+          "text": "VID"
+        },
+        {
+          "id": "d",
+          "text": "PCP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le PCP (Priority Code Point), sur 3 bits, code la priorité CoS de 0 à 7 définie à l'origine par 802.1p ; les commutateurs s'en servent pour la QoS de niveau 2 (la voix est couramment marquée CoS 5). Il ouvre le TCI, suivi du bit DEI puis du VID sur 12 bits. Une trame du VLAN natif, émise sans étiquette, ne porte donc aucune valeur CoS.",
+    "distractorNotes": {
+      "a": "Le TPID (16 bits, 0x8100) signale seulement la présence d'une étiquette 802.1Q.",
+      "b": "Le DEI (1 bit, ancien CFI) indique si la trame peut être éliminée en priorité en cas de congestion ; il ne code pas de classe de service.",
+      "c": "Le VID (12 bits) identifie le VLAN de la trame, pas sa priorité."
+    },
+    "reference": "IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.2-dot1q-fcs-recalc-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "SW1 reçoit sur un port d'accès du VLAN 20 une trame Ethernet non étiquetée, qu'il doit transmettre sur un trunk 802.1Q dont le VLAN natif est 1. Que fait SW1 en plus d'insérer l'étiquette ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il remplace l'adresse MAC source par celle de son port trunk."
+        },
+        {
+          "id": "b",
+          "text": "Il recalcule le FCS, puisque le contenu de la trame a changé."
+        },
+        {
+          "id": "c",
+          "text": "Il retire 4 octets de données pour ne pas dépasser 1 518 octets."
+        },
+        {
+          "id": "d",
+          "text": "Il ajoute un en-tête de 26 octets et un second CRC à la trame."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le FCS (CRC-32) est calculé sur tous les champs de la trame, adresses comprises. Insérer les 4 octets de l'étiquette entre l'adresse MAC source et l'EtherType modifie ce contenu : SW1 doit recalculer le FCS, sinon le voisin rejetterait la trame comme corrompue. Le commutateur qui retire l'étiquette à l'autre bout recalcule lui aussi le FCS. La trame étiquetée peut atteindre 1 522 octets, taille admise par 802.3 depuis l'extension 802.3ac.",
+    "distractorNotes": {
+      "a": "Un commutateur ne réécrit pas les adresses MAC : la MAC source reste celle de l'hôte émetteur.",
+      "c": "La charge utile n'est jamais tronquée : la taille maximale d'une trame étiquetée passe simplement à 1 522 octets.",
+      "d": "C'est le principe d'ISL, encapsulation propriétaire Cisco obsolète, pas celui de 802.1Q, qui insère une étiquette de 4 octets."
+    },
+    "reference": "IEEE 802.1Q ; IEEE 802.3 (802.3ac)"
+  },
+  {
+    "slug": "ccna-2.2-native-vlan-untagged-rx-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le port Gi0/1 de SW1 est un trunk 802.1Q dont le VLAN natif a été changé en 99 ; il n'a pas d'autre configuration particulière. Comment SW1 traite-t-il une trame non étiquetée reçue sur ce port ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il associe la trame au VLAN 99, le VLAN natif du port."
+        },
+        {
+          "id": "b",
+          "text": "Il associe la trame au VLAN 1, quel que soit le VLAN natif."
+        },
+        {
+          "id": "c",
+          "text": "Il rejette la trame, car un trunk n'accepte que des trames étiquetées."
+        },
+        {
+          "id": "d",
+          "text": "Il diffuse la trame dans tous les VLAN autorisés sur le trunk."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Sur un trunk 802.1Q, le VLAN natif est le seul dont les trames circulent sans étiquette. Une trame reçue sans étiquette est donc associée au VLAN natif configuré sur le port d'arrivée (« switchport trunk native vlan 99 »), ici le 99 ; c'est aussi sans étiquette que SW1 émet les trames du VLAN 99 sur ce port. D'où l'importance d'un VLAN natif identique des deux côtés : sinon, les trames non étiquetées changeraient de VLAN en traversant le lien.",
+    "distractorNotes": {
+      "b": "Le VLAN 1 n'est le VLAN natif que par défaut ; après « switchport trunk native vlan 99 », c'est le 99 qui reçoit les trames non étiquetées.",
+      "c": "Un trunk 802.1Q accepte les trames non étiquetées : c'est précisément le rôle du VLAN natif.",
+      "d": "Une trame n'appartient qu'à un seul VLAN ; la recopier dans tous les VLAN briserait la séparation des domaines de diffusion."
+    },
+    "reference": "IEEE 802.1Q ; Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-trunk-allowed-overwrite-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le trunk Gi1/0/10 de SW1 autorise les VLAN 100 et 200 (« switchport trunk allowed vlan 100,200 »). Pour ajouter le VLAN 300, un technicien saisit « switchport trunk allowed vlan 300 » sous l'interface. Quels VLAN le trunk autorise-t-il ensuite ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les VLAN 100, 200 et 300"
+        },
+        {
+          "id": "b",
+          "text": "Les VLAN 100 et 200 seulement"
+        },
+        {
+          "id": "c",
+          "text": "Tous les VLAN sauf le 300"
+        },
+        {
+          "id": "d",
+          "text": "Le VLAN 300 seulement"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Sans mot-clé, « switchport trunk allowed vlan <liste> » remplace la liste entière : le trunk n'autorise plus que le VLAN 300 et coupe le trafic des VLAN 100 et 200. Pour compléter une liste, il faut « switchport trunk allowed vlan add 300 » (ou retaper « 100,200,300 ») ; « remove » retire des VLAN de la liste et « except » autorise tous les VLAN sauf ceux indiqués. On vérifie le résultat dans la section « Vlans allowed on trunk » de « show interfaces trunk ».",
+    "distractorNotes": {
+      "a": "C'est le résultat de « switchport trunk allowed vlan add 300 », pas de la commande sans mot-clé.",
+      "b": "La commande est valide et acceptée : elle remplace la liste au lieu d'être ignorée.",
+      "c": "C'est l'effet de « switchport trunk allowed vlan except 300 »."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-dtp-default-mode-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un Catalyst 2960 ou 9300 sans aucune configuration, quel est le mode « switchport » administratif d'un port de commutateur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "access"
+        },
+        {
+          "id": "b",
+          "text": "dynamic auto"
+        },
+        {
+          "id": "c",
+          "text": "dynamic desirable"
+        },
+        {
+          "id": "d",
+          "text": "trunk"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Par défaut, les ports de ces commutateurs sont en « switchport mode dynamic auto » : ils acceptent de devenir trunk si le voisin le demande par DTP, mais ne le demandent pas eux-mêmes. Deux de ces commutateurs neufs reliés entre eux restent donc en accès dans le VLAN 1, puisque aucun ne demande le trunk. On lit le mode configuré et le mode obtenu dans « show interfaces Gi0/1 switchport » (lignes Administrative Mode et Operational Mode).",
+    "distractorNotes": {
+      "a": "Un port n'est en accès permanent qu'après « switchport mode access ».",
+      "c": "dynamic desirable demande activement le trunk ; ce n'est pas le défaut de ces commutateurs, sinon deux commutateurs neufs formeraient un trunk d'eux-mêmes.",
+      "d": "Le trunk statique doit être configuré explicitement avec « switchport mode trunk »."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks (Default Layer 2 Ethernet Interface VLAN Configuration)"
+  },
+  {
+    "slug": "ccna-2.2-dtp-switch-spoofing-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Contre quelle attaque protège-t-on les ports utilisateurs en les configurant avec « switchport mode access » et « switchport nonegotiate » ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Double étiquetage (double tagging)"
+        },
+        {
+          "id": "b",
+          "text": "Inondation de la table MAC (MAC flooding)"
+        },
+        {
+          "id": "c",
+          "text": "Usurpation de commutateur (switch spoofing)"
+        },
+        {
+          "id": "d",
+          "text": "Usurpation de serveur DHCP (DHCP spoofing)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Dans l'usurpation de commutateur, l'attaquant envoie depuis son poste des trames DTP pour négocier un trunk avec un port en dynamic auto ou desirable ; il reçoit alors le trafic de tous les VLAN autorisés et peut en émettre dans chacun. Forcer le port en accès empêche la formation du trunk, et « switchport nonegotiate » supprime en plus l'émission de trames DTP. Le double étiquetage, lui, se combat par le choix du VLAN natif des trunks.",
+    "distractorNotes": {
+      "a": "Le double étiquetage exploite le VLAN natif d'un trunk existant sans aucune négociation DTP ; on s'en protège avec un VLAN natif dédié, attribué à aucun port d'accès.",
+      "b": "L'inondation de la table MAC se combat avec port security, qui limite le nombre d'adresses MAC apprises sur un port.",
+      "d": "L'usurpation de serveur DHCP se combat avec DHCP snooping, qui n'accepte les réponses DHCP que sur les ports de confiance."
+    },
+    "reference": "Cisco Networking Academy, CCNA Switching, Routing, and Wireless Essentials — LAN Security Concepts"
+  },
+  {
+    "slug": "ccna-2.2-dtp-auto-neighbor-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Gi1/0/1 de SW1 est relié à Gi1/0/1 de SW2, un autre Catalyst 9300. Quel mode « switchport » peut être configuré sur ce port de SW2 ?",
+      "exhibit": "SW1# show interfaces trunk\n\nPort        Mode             Encapsulation  Status        Native vlan\nGi1/0/1     auto             802.1q         trunking      1\n\nPort        Vlans allowed on trunk\nGi1/0/1     1-4094\n\nPort        Vlans allowed and active in management domain\nGi1/0/1     1,10,20\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi1/0/1     1,10,20",
+      "options": [
+        {
+          "id": "a",
+          "text": "dynamic auto"
+        },
+        {
+          "id": "b",
+          "text": "access"
+        },
+        {
+          "id": "c",
+          "text": "trunk, avec « switchport nonegotiate »"
+        },
+        {
+          "id": "d",
+          "text": "dynamic desirable"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La colonne Mode affiche « auto » : SW1 est en dynamic auto et ne devient trunk que si son voisin le lui demande par DTP. Le statut « trunking » prouve que cette demande arrive : SW2 est donc en dynamic desirable (ou en trunk sans nonegotiate, choix absent des options). Un port en dynamic auto ne demande rien, un port en access refuse le trunk et un trunk en nonegotiate n'envoie aucune trame DTP. Un port configuré « switchport mode trunk » apparaîtrait, lui, avec le mode « on ».",
+    "distractorNotes": {
+      "a": "Deux ports en dynamic auto attendent chacun la demande de l'autre : le lien resterait en accès et n'apparaîtrait pas dans « show interfaces trunk ».",
+      "b": "Un port en mode access ne forme jamais de trunk : SW1 resterait en accès.",
+      "c": "Avec nonegotiate, SW2 n'envoie aucune trame DTP : SW1, en auto, ne reçoit aucune demande et reste en accès."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-trunk-allowed-missing-vlan-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les hôtes du VLAN 50, raccordés à SW1 et à SW2, ne communiquent pas à travers le trunk Gi1/0/48, alors que les VLAN 10, 20 et 30 fonctionnent. Le VLAN 50 existe sur les deux commutateurs ; le trunk de SW2 autorise tous les VLAN et a lui aussi le VLAN natif 999. Quelle commande sur SW1 rétablit le VLAN 50 sans perturber les autres ?",
+      "exhibit": "SW1# show interfaces trunk\n\nPort        Mode             Encapsulation  Status        Native vlan\nGi1/0/48    on               802.1q         trunking      999\n\nPort        Vlans allowed on trunk\nGi1/0/48    10,20,30,999\n\nPort        Vlans allowed and active in management domain\nGi1/0/48    10,20,30,999\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi1/0/48    10,20,30,999",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sous Gi1/0/48 : « switchport trunk allowed vlan 50 »"
+        },
+        {
+          "id": "b",
+          "text": "Sous Gi1/0/48 : « switchport trunk native vlan 50 »"
+        },
+        {
+          "id": "c",
+          "text": "Sous Gi1/0/48 : « switchport trunk allowed vlan add 50 »"
+        },
+        {
+          "id": "d",
+          "text": "En configuration globale : « vlan 50 »"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La section « Vlans allowed on trunk » ne contient pas le VLAN 50 : SW1 n'émet ni n'accepte ses trames sur Gi1/0/48. « switchport trunk allowed vlan add 50 » l'ajoute à la liste existante ; le VLAN 50, qui existe déjà, apparaît ensuite dans les sections suivantes et passe en forwarding sauf blocage STP. Sans « add », la liste serait remplacée par le seul VLAN 50 et les VLAN 10, 20, 30 et 999 seraient coupés.",
+    "distractorNotes": {
+      "a": "Sans « add », la commande remplace la liste : le VLAN 50 passerait, mais les VLAN 10, 20, 30 et 999 seraient coupés.",
+      "b": "Changer le VLAN natif n'ajoute pas le VLAN 50 à la liste autorisée, et créerait une non-concordance avec le VLAN natif 999 de SW2.",
+      "d": "Le VLAN 50 existe déjà ; le recréer ne modifie pas la liste des VLAN autorisés sur le trunk."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-trunk-transit-vlan-missing-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. SW2 relie SW1 (par Gi1/0/1) à SW3 (par Gi1/0/2) et n'a aucun hôte. Les hôtes du VLAN 30, sur SW1 et SW3, ne communiquent pas entre eux, alors que ceux des VLAN 10 et 20 communiquent. Les trois commutateurs sont en mode VTP transparent. Quelle action rétablit le VLAN 30 ?",
+      "exhibit": "SW2# show interfaces trunk\n\nPort        Mode             Encapsulation  Status        Native vlan\nGi1/0/1     on               802.1q         trunking      999\nGi1/0/2     on               802.1q         trunking      999\n\nPort        Vlans allowed on trunk\nGi1/0/1     10,20,30,999\nGi1/0/2     10,20,30,999\n\nPort        Vlans allowed and active in management domain\nGi1/0/1     10,20,999\nGi1/0/2     10,20,999\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi1/0/1     10,20,999\nGi1/0/2     10,20,999",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter le VLAN 30 aux VLAN autorisés sur les deux trunks de SW2"
+        },
+        {
+          "id": "b",
+          "text": "Créer le VLAN 30 dans la base VLAN de SW2"
+        },
+        {
+          "id": "c",
+          "text": "Désactiver le VTP pruning sur les trunks de SW2"
+        },
+        {
+          "id": "d",
+          "text": "Passer les deux trunks de SW2 en dynamic desirable"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le VLAN 30 figure dans « Vlans allowed on trunk » mais pas dans « Vlans allowed and active in management domain » : il est autorisé, mais n'existe pas (ou n'est pas actif) dans la base VLAN de SW2. Un commutateur ne commute pas les trames d'un VLAN qu'il ne connaît pas : celles du VLAN 30 sont éliminées à leur arrivée sur SW2. En VTP transparent, SW2 n'apprend aucun VLAN de ses voisins : il faut y créer le VLAN 30 (« vlan 30 »), même s'il n'a aucun port d'accès dans ce VLAN.",
+    "distractorNotes": {
+      "a": "Le VLAN 30 est déjà autorisé : il apparaît dans la section « Vlans allowed on trunk » des deux ports.",
+      "c": "Un VLAN élagué resterait dans la section « allowed and active » et ne disparaîtrait que de la dernière ; ici, il manque dès la section « allowed and active », signe qu'il n'existe pas sur SW2.",
+      "d": "Les deux trunks sont déjà établis (mode on, statut trunking) ; le mode DTP ne change rien aux VLAN que SW2 connaît."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-native-vlan-double-tagging-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un attaquant raccordé à un port d'accès du VLAN 1 de SW1 envoie une trame portant deux étiquettes 802.1Q : la première avec le VID 1, la seconde avec le VID 20. Le trunk entre SW1 et SW2 a le VLAN natif 1, valeur par défaut. Pourquoi la trame peut-elle atteindre le VLAN 20 sur SW2 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "SW1 émet la trame sur le trunk sans l'étiquette VID 1 ; SW2 ne voit que l'étiquette 20."
+        },
+        {
+          "id": "b",
+          "text": "Le poste de l'attaquant négocie par DTP un trunk qui lui ouvre le VLAN 20."
+        },
+        {
+          "id": "c",
+          "text": "SW2 garde les deux étiquettes et choisit toujours le VID le plus élevé."
+        },
+        {
+          "id": "d",
+          "text": "SW1 commute la trame dans le VLAN 20 d'après sa seconde étiquette."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "SW1 ne lit que la première étiquette, VID 1. Le VLAN 1 étant natif sur le trunk, SW1 l'émet sans étiquette de VLAN 1 : la trame qui sort ne porte plus que l'étiquette 20. SW2 la lit comme une trame ordinaire du VLAN 20 et la délivre dans ce VLAN. L'attaque est unidirectionnelle (aucune réponse ne revient) et ne fonctionne que si le VLAN de l'attaquant est le VLAN natif du trunk : d'où la bonne pratique d'un VLAN natif dédié, attribué à aucun port d'accès.",
+    "distractorNotes": {
+      "b": "C'est l'usurpation de commutateur (switch spoofing) ; ici aucun trunk n'est négocié, l'attaquant reste sur un port d'accès.",
+      "c": "Un commutateur ne lit que l'étiquette la plus externe ; aucune règle ne lui fait choisir le VID le plus élevé.",
+      "d": "SW1 ne lit que la première étiquette : il traite la trame dans le VLAN 1, et c'est SW2 qui découvre ensuite l'étiquette 20."
+    },
+    "reference": "IEEE 802.1Q ; Cisco Networking Academy, CCNA Switching, Routing, and Wireless Essentials — LAN Security Concepts"
+  },
+  {
+    "slug": "ccna-2.2-vtp-pruning-role-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel est l'effet du VTP pruning sur les trunks d'un domaine VTP ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il efface de la base des voisins les VLAN sans port d'accès actif."
+        },
+        {
+          "id": "b",
+          "text": "Il limite l'inondation d'un VLAN aux trunks menant à des ports de ce VLAN."
+        },
+        {
+          "id": "c",
+          "text": "Il retire l'étiquette 802.1Q des trames pour leur faire gagner 4 octets."
+        },
+        {
+          "id": "d",
+          "text": "Il bloque les BPDU du VLAN natif pour éviter les boucles entre trunks."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Sans pruning, un trunk transporte le trafic inondé (diffusion, multicast, unicast inconnu) de tous les VLAN autorisés, même vers un commutateur qui n'a aucun port actif dans ces VLAN. Avec le VTP pruning, les commutateurs s'annoncent les VLAN dont ils ont besoin, et ce trafic n'est plus envoyé sur les trunks qui n'y mènent pas. Par défaut, les VLAN 2 à 1001 sont éligibles ; le VLAN 1 n'est jamais élagué. Un VLAN élagué disparaît de la section « Vlans in spanning tree forwarding state and not pruned » de « show interfaces trunk ».",
+    "distractorNotes": {
+      "a": "Le pruning ne supprime aucun VLAN : il agit sur le trafic transmis sur les trunks, pas sur la base VLAN.",
+      "c": "Le trafic qui passe reste étiqueté ; seul le VLAN natif circule sans étiquette, et cela ne dépend pas du pruning.",
+      "d": "La prévention des boucles relève de STP ; le pruning ne filtre pas les BPDU, il limite le trafic inondé."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VTP"
+  },
+  {
+    "slug": "ccna-2.2-trunk-encap-negotiate-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "DSW1 est un commutateur multicouche Catalyst 3560, qui gère ISL et 802.1Q ; son voisin ne gère que 802.1Q. Sous l'interface Gi0/1, encore dans sa configuration par défaut, IOS refuse la commande « switchport mode trunk ». Quelle commande faut-il saisir avant de la retaper ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "switchport trunk encapsulation isl"
+        },
+        {
+          "id": "b",
+          "text": "switchport nonegotiate"
+        },
+        {
+          "id": "c",
+          "text": "switchport trunk encapsulation dot1q"
+        },
+        {
+          "id": "d",
+          "text": "switchport trunk native vlan 1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sur un commutateur qui gère les deux encapsulations, le réglage par défaut est « switchport trunk encapsulation negotiate » : DTP choisit l'encapsulation avec le voisin. Un trunk statique ne négocie rien, donc IOS exige que l'encapsulation soit fixée avant d'accepter « switchport mode trunk ». Le voisin ne gérant que 802.1Q, il faut « switchport trunk encapsulation dot1q ». Les Catalyst 2960 ou 9300, qui ne connaissent que 802.1Q, n'ont pas besoin de cette étape.",
+    "distractorNotes": {
+      "a": "ISL est propriétaire, obsolète, et le voisin ne le gère pas : le trunk ne pourrait pas fonctionner.",
+      "b": "nonegotiate est refusé tant que le port est en mode dynamique, et ne fixe pas l'encapsulation, cause du refus.",
+      "d": "Le VLAN natif vaut déjà 1 par défaut ; il ne règle pas l'encapsulation, cause du refus."
+    },
+    "reference": "Cisco Catalyst 3560 Switch Software Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.2-native-vlan-facts-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur le VLAN natif d'un trunk 802.1Q sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Ses trames traversent le trunk sans étiquette 802.1Q."
+        },
+        {
+          "id": "b",
+          "text": "Il vaut toujours 1 et ne peut pas être modifié."
+        },
+        {
+          "id": "c",
+          "text": "Il doit porter le trafic de l'interface de gestion (SVI) du commutateur."
+        },
+        {
+          "id": "d",
+          "text": "Il doit être identique aux deux extrémités du trunk."
+        },
+        {
+          "id": "e",
+          "text": "Il n'existe qu'avec l'encapsulation ISL."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Le VLAN natif est le VLAN dont les trames sont émises sans étiquette sur un trunk 802.1Q, et auquel sont associées les trames non étiquetées reçues. Il vaut 1 par défaut et se change avec « switchport trunk native vlan <id> ». Chaque côté l'interprète localement : s'ils différaient, les trames non étiquetées émises dans un VLAN seraient reçues dans un autre, et CDP signale alors %CDP-4-NATIVE_VLAN_MISMATCH. ISL, qui encapsule toutes les trames, n'a pas de VLAN natif.",
+    "distractorNotes": {
+      "b": "1 n'est que la valeur par défaut ; « switchport trunk native vlan » permet de la changer, ce que recommandent les bonnes pratiques.",
+      "c": "Aucune règle ne lie la SVI de gestion au VLAN natif ; la bonne pratique est même de les séparer.",
+      "e": "C'est l'inverse : ISL encapsule toutes les trames, le VLAN natif est propre à 802.1Q."
+    },
+    "reference": "IEEE 802.1Q ; Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-trunk-hardening-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles trois mesures renforcent la sécurité des trunks entre commutateurs ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Laisser le VLAN natif à 1 pour garantir sa concordance des deux côtés"
+        },
+        {
+          "id": "b",
+          "text": "Choisir comme VLAN natif un VLAN dédié, attribué à aucun port d'accès"
+        },
+        {
+          "id": "c",
+          "text": "Passer les ports utilisateurs en dynamic desirable pour repérer les commutateurs"
+        },
+        {
+          "id": "d",
+          "text": "Configurer les trunks en statique et désactiver DTP avec « switchport nonegotiate »"
+        },
+        {
+          "id": "e",
+          "text": "Limiter la liste des VLAN autorisés aux seuls VLAN utiles sur le lien"
+        },
+        {
+          "id": "f",
+          "text": "Placer les postes d'administration dans le VLAN natif des trunks"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Un VLAN natif dédié, que n'utilise aucun port d'accès, rend le double étiquetage inopérant : aucun attaquant ne peut se trouver dans ce VLAN. Le trunk statique avec nonegotiate supprime la négociation DTP, dont profite l'usurpation de commutateur. Restreindre les VLAN autorisés évite de propager partout des VLAN qui n'ont rien à faire sur le lien, ainsi que leur trafic inondé. Le VLAN 1, natif par défaut, ne devrait porter aucun trafic utilisateur.",
+    "distractorNotes": {
+      "a": "La concordance s'obtient avec n'importe quel VLAN configuré à l'identique ; laisser le natif à 1, VLAN par défaut de tous les ports, expose au double étiquetage.",
+      "c": "dynamic desirable sur un port utilisateur invite un commutateur pirate à former un trunk : c'est l'inverse de la protection voulue.",
+      "f": "Des hôtes dans le VLAN natif sont précisément la condition du double étiquetage ; les postes d'administration y seraient en outre exposés."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks ; Cisco Networking Academy, CCNA Switching, Routing, and Wireless Essentials — LAN Security Concepts"
+  },
+  {
+    "slug": "ccna-2.2-show-trunk-two-ports-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit, relevé sur DSW1, un Catalyst 3560 qui gère ISL et 802.1Q. Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "exhibit": "DSW1# show interfaces trunk\n\nPort        Mode             Encapsulation  Status        Native vlan\nGi0/1       on               802.1q         trunking      999\nGi0/2       desirable        n-802.1q       trunking      1\n\nPort        Vlans allowed on trunk\nGi0/1       10,20,30,999\nGi0/2       1-4094\n\nPort        Vlans allowed and active in management domain\nGi0/1       10,20,30,999\nGi0/2       1,10,20,30,999\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi0/1       10,20,30,999\nGi0/2       1,10,999",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi0/1 émet sans étiquette les trames du VLAN 1."
+        },
+        {
+          "id": "b",
+          "text": "Gi0/2 est devenu trunk par négociation DTP, encapsulation comprise."
+        },
+        {
+          "id": "c",
+          "text": "Gi0/1 utilise l'encapsulation ISL, puisque son mode est on."
+        },
+        {
+          "id": "d",
+          "text": "Le VLAN 30 n'existe pas dans la base VLAN de DSW1."
+        },
+        {
+          "id": "e",
+          "text": "Sur Gi0/2, DSW1 ne transmet pas les VLAN 20 et 30, élagués ou bloqués par STP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "La colonne Mode reprend le mode administratif : on (« switchport mode trunk ») pour Gi0/1, desirable pour Gi0/2. Le préfixe « n- » de n-802.1q signale une encapsulation négociée par DTP (« switchport trunk encapsulation negotiate »). Chaque section filtre la précédente : sur Gi0/2, les VLAN 20 et 30 sont autorisés et actifs, mais absents de la dernière section, donc élagués par VTP ou en état bloquant STP sur ce port. Gi0/1 a le VLAN natif 999 et n'autorise même pas le VLAN 1.",
+    "distractorNotes": {
+      "a": "Le VLAN natif de Gi0/1 est 999, et le VLAN 1 ne figure pas dans sa liste de VLAN autorisés : Gi0/1 ne transporte pas le VLAN 1.",
+      "c": "La colonne Encapsulation indique 802.1q ; le mode on signifie seulement que le trunk est statique.",
+      "d": "Le VLAN 30 apparaît dans la section « allowed and active in management domain » des deux ports : il existe et il est actif."
+    },
+    "reference": "Cisco Catalyst 3560 Switch Software Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.2-dot1q-reserved-vid-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le champ VID de l'étiquette 802.1Q compte 12 bits. Quelles deux valeurs de VID sont réservées et ne peuvent identifier aucun VLAN ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "1"
+        },
+        {
+          "id": "b",
+          "text": "0"
+        },
+        {
+          "id": "c",
+          "text": "1002"
+        },
+        {
+          "id": "d",
+          "text": "4094"
+        },
+        {
+          "id": "e",
+          "text": "4095"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "12 bits donnent 4 096 valeurs, de 0 à 4095. 802.1Q en réserve deux : 0 désigne une trame à priorité seule (priority-tagged), qui ne porte qu'un PCP et appartient au VLAN du port de réception, et 4095 (0xFFF) est réservé à l'usage des implémentations. Il reste 4 094 VLAN utilisables, de 1 à 4094 : sous IOS, la plage normale va de 1 à 1005 et la plage étendue de 1006 à 4094.",
+    "distractorNotes": {
+      "a": "Le VLAN 1 est le VLAN par défaut des commutateurs Cisco : c'est un VID tout à fait valide.",
+      "c": "Les VLAN 1002 à 1005 sont des VLAN par défaut de Cisco (anciens FDDI et Token Ring) qu'on ne peut pas supprimer, mais ce sont des VID valides.",
+      "d": "4094 est le plus grand VID utilisable, dernier VLAN de la plage étendue."
+    },
+    "reference": "IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.2-dtp-nonegotiate-effects-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le port Gi0/1 de SW1, relié au commutateur SW2, est configuré avec « switchport mode trunk » et « switchport nonegotiate ». Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi0/1 repasse en mode access si SW2 ne répond pas."
+        },
+        {
+          "id": "b",
+          "text": "Gi0/1 étiquette désormais aussi les trames du VLAN natif."
+        },
+        {
+          "id": "c",
+          "text": "Gi0/1 n'émet plus aucune trame DTP."
+        },
+        {
+          "id": "d",
+          "text": "Gi0/1 n'autorise plus que les VLAN 1 à 1005."
+        },
+        {
+          "id": "e",
+          "text": "SW2 doit être en trunk statique pour que le lien soit un trunk."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "« switchport nonegotiate » supprime l'émission des trames DTP ; IOS ne l'accepte qu'en mode access ou trunk. Gi0/1 reste trunk quoi qu'il arrive, mais un port de SW2 en dynamic auto ou desirable n'obtient aucune réponse DTP et reste en accès : le lien serait trunk d'un côté et accès de l'autre. Il faut donc un trunk statique en face. On l'emploie vers des équipements qui ne gèrent pas DTP, et pour fermer la porte à la négociation de trunk.",
+    "distractorNotes": {
+      "a": "En mode trunk, le port est trunk sans condition ; nonegotiate ne change pas ce mode.",
+      "b": "nonegotiate ne concerne que DTP : les trames du VLAN natif restent émises sans étiquette.",
+      "d": "La liste des VLAN autorisés n'est pas modifiée : elle reste, par défaut, 1 à 4094."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-native-mismatch-effects-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Gi1/0/1 relie SW1 à SW2 ; les deux commutateurs ont des hôtes dans les VLAN 10 et 20, et CDP est actif avec ses réglages par défaut. Quelles deux affirmations décrivent la situation ? (Choisissez-en deux.)",
+      "exhibit": "SW1# show running-config interface GigabitEthernet1/0/1\n!\ninterface GigabitEthernet1/0/1\n switchport trunk native vlan 999\n switchport mode trunk\nend\n\nSW2# show running-config interface GigabitEthernet1/0/1\n!\ninterface GigabitEthernet1/0/1\n switchport mode trunk\nend",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "DTP refuse de former le trunk tant que les VLAN natifs diffèrent."
+        },
+        {
+          "id": "b",
+          "text": "Le lien est un trunk et le trafic étiqueté des VLAN 10 et 20 le traverse."
+        },
+        {
+          "id": "c",
+          "text": "SW2 range dans le VLAN 999 les trames non étiquetées reçues de SW1."
+        },
+        {
+          "id": "d",
+          "text": "CDP signale la non-concordance par un message %CDP-4-NATIVE_VLAN_MISMATCH."
+        },
+        {
+          "id": "e",
+          "text": "Gi1/0/1 passe en état err-disabled sur les deux commutateurs."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Les deux ports sont en trunk statique : le lien est un trunk, quel que soit le VLAN natif, que DTP ne vérifie pas. Les trames des VLAN 10 et 20 portent leur étiquette et passent normalement. Seul le trafic non étiqueté pose problème : ce que SW1 émet sans étiquette pour le VLAN 999, SW2 le range dans son propre VLAN natif, le 1 ; PVST+ détecte d'ailleurs l'incohérence et bloque le port dans les seuls VLAN natifs concernés. CDP, qui annonce le VLAN natif, journalise %CDP-4-NATIVE_VLAN_MISMATCH sur chaque commutateur. La correction : « switchport trunk native vlan 999 » sur SW2.",
+    "distractorNotes": {
+      "a": "DTP ne compare pas les VLAN natifs, et deux ports en « switchport mode trunk » sont trunk sans négociation.",
+      "c": "SW2 range les trames non étiquetées dans son propre VLAN natif, le 1 (valeur par défaut) : c'est précisément le problème.",
+      "e": "Une non-concordance de VLAN natif ne met pas le port en err-disabled : CDP la signale par un message de journal, et PVST+ ne bloque le port que dans les VLAN natifs concernés."
+    },
+    "reference": "IEEE 802.1Q ; Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-allowed-vlan-sequence-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Ces trois commandes sont saisies dans cet ordre sous l'interface Gi1/0/24 de SW1, configurée en trunk. Répondez d'après la liste des VLAN autorisés obtenue.",
+      "exhibit": "SW1(config-if)# switchport trunk allowed vlan 10-50\nSW1(config-if)# switchport trunk allowed vlan remove 20-29\nSW1(config-if)# switchport trunk allowed vlan add 25,60",
+      "fields": [
+        {
+          "id": "count",
+          "label": "Nombre de VLAN autorisés sur le trunk (nombre entier)"
+        },
+        {
+          "id": "list",
+          "label": "Liste affichée dans la section « Vlans allowed on trunk » de show interfaces trunk (plages avec un tiret, éléments séparés par des virgules, sans espace)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "count": {
+          "accepted": [
+            "33"
+          ],
+          "normalize": "int"
+        },
+        "list": {
+          "accepted": [
+            "10-19,25,30-50,60",
+            "10-19, 25, 30-50, 60"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "« switchport trunk allowed vlan 10-50 » remplace la liste par les 41 VLAN de 10 à 50. « remove 20-29 » en retire dix : il reste 10-19 et 30-50, soit 31 VLAN. « add 25,60 » ajoute le 25, de nouveau autorisé, et le 60 : 33 VLAN au total. IOS affiche la liste triée, en regroupant les VLAN consécutifs en plages : 10-19,25,30-50,60. Les VLAN autorisés n'ont pas besoin d'exister : ceux qui manquent dans la base VLAN sont seulement absents de la section « Vlans allowed and active in management domain ».",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-dot1q-frame-size-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un hôte émet une trame Ethernet non étiquetée de 1 518 octets, FCS compris (charge utile de 1 500 octets). Son commutateur la transmet sur un trunk 802.1Q. Donnez la taille de la trame sur le trunk, en octets, dans chaque cas (nombre entier).",
+      "fields": [
+        {
+          "id": "tagged",
+          "label": "L'hôte est dans le VLAN 20, qui n'est pas le VLAN natif du trunk"
+        },
+        {
+          "id": "native",
+          "label": "L'hôte est dans le VLAN natif du trunk"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "tagged": {
+          "accepted": [
+            "1522"
+          ],
+          "normalize": "int"
+        },
+        "native": {
+          "accepted": [
+            "1518"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Pour un VLAN autre que le natif, le commutateur insère l'étiquette de 4 octets (TPID 0x8100 et TCI) entre l'adresse MAC source et l'EtherType, puis recalcule le FCS : 1 518 + 4 = 1 522 octets, taille maximale qu'admet 802.3 pour une trame étiquetée depuis l'extension 802.3ac. Les trames du VLAN natif circulent sans étiquette et gardent leurs 1 518 octets. La charge utile reste de 1 500 octets dans les deux cas : l'étiquette ne réduit pas la MTU IP.",
+    "reference": "IEEE 802.1Q ; IEEE 802.3 (802.3ac)"
+  },
+  {
+    "slug": "ccna-2.2-dot1q-tci-decode-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Une capture sur un trunk montre, en hexadécimal, les 4 octets de l'étiquette 802.1Q d'une trame. Décodez-les (nombres entiers, en décimal).",
+      "exhibit": "Étiquette 802.1Q (4 octets après l'adresse MAC source) : 81 00 A0 64",
+      "fields": [
+        {
+          "id": "pcp",
+          "label": "Valeur du champ PCP (priorité CoS)"
+        },
+        {
+          "id": "dei",
+          "label": "Valeur du bit DEI"
+        },
+        {
+          "id": "vid",
+          "label": "VLAN ID (VID)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "pcp": {
+          "accepted": [
+            "5"
+          ],
+          "normalize": "int"
+        },
+        "dei": {
+          "accepted": [
+            "0"
+          ],
+          "normalize": "int"
+        },
+        "vid": {
+          "accepted": [
+            "100"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Les deux premiers octets, 0x8100, forment le TPID qui signale une étiquette 802.1Q. Les deux suivants, 0xA064, forment le TCI : 1010 0000 0110 0100 en binaire. Les 3 premiers bits (101) donnent le PCP, 5, la priorité CoS habituelle de la voix ; le bit suivant (0) est le DEI ; les 12 derniers (0000 0110 0100, soit 0x064) donnent le VID, 100. La trame appartient donc au VLAN 100.",
+    "reference": "IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.2-l3-switch-trunk-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "DSW1 est un commutateur multicouche Catalyst 3560 qui gère ISL et 802.1Q. Son port Gi0/1 est actuellement un port routé (« no switchport »). Vous êtes en mode de configuration de cette interface. Repassez-la en port de commutateur, fixez l'encapsulation 802.1Q, puis configurez-la en trunk statique.",
+      "prompt": "DSW1(config-if)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "switchport"
+        ],
+        [
+          "switchport trunk encapsulation dot1q"
+        ],
+        [
+          "switchport mode trunk"
+        ]
+      ]
+    },
+    "explanation": "Sur un port routé, les commandes « switchport … » de niveau 2 sont refusées : « switchport » repasse d'abord le port en port de commutateur. Sur un commutateur qui gère ISL et 802.1Q, l'encapsulation par défaut est « negotiate », incompatible avec un trunk statique : IOS refuse « switchport mode trunk » tant que « switchport trunk encapsulation dot1q » n'a pas été saisi. ISL, propriétaire et obsolète, n'existe plus sur les Catalyst récents (2960, 9300), qui ne connaissent que 802.1Q.",
+    "reference": "Cisco Catalyst 3560 Switch Software Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.2-allowed-vlan-remove-range-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le trunk Gi1/0/1 de SW1 autorise tous les VLAN (valeur par défaut). Vous êtes en mode de configuration de cette interface. En une seule commande, et sans taper la liste des VLAN à garder, retirez les VLAN 100 à 199 des VLAN autorisés.",
+      "prompt": "SW1(config-if)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "switchport trunk allowed vlan remove 100-199",
+          "switchport trunk allowed vlan except 100-199"
+        ]
+      ]
+    },
+    "explanation": "« remove » retire des VLAN de la liste en place : partant de tous les VLAN, « switchport trunk allowed vlan remove 100-199 » laisse 1-99 et 200-4094. « except 100-199 » donne ici le même résultat, car il autorise tous les VLAN sauf ceux indiqués, quelle que soit la liste précédente. En revanche, « switchport trunk allowed vlan 100-199 » remplacerait la liste par les seuls VLAN 100 à 199. La section « Vlans allowed on trunk » de « show interfaces trunk » affiche ensuite 1-99,200-4094.",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-trunk-nonegotiate-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "SW1 est un Catalyst 2960, qui ne gère que 802.1Q. Son port Gi0/1 est dans sa configuration par défaut (dynamic auto) et relié à un équipement configuré en trunk 802.1Q statique, qui ne gère pas DTP. Vous êtes en mode de configuration de l'interface. Configurez Gi0/1 en trunk statique, puis désactivez l'émission des trames DTP.",
+      "prompt": "SW1(config-if)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "switchport mode trunk"
+        ],
+        [
+          "switchport nonegotiate"
+        ]
+      ]
+    },
+    "explanation": "« switchport mode trunk » fait de Gi0/1 un trunk permanent. « switchport nonegotiate » supprime ensuite l'émission des trames DTP, inutiles face à un équipement qui ne les comprend pas. L'ordre compte : tant que le port est en dynamic auto ou desirable, IOS refuse nonegotiate, puisque ces modes reposent sur DTP. « show interfaces Gi0/1 switchport » affiche ensuite « Negotiation of Trunking: Off ».",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-show-interfaces-trunk-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode d'exécution privilégié de SW1, affichez en une commande les ports qui fonctionnent en trunk, avec leur mode, leur encapsulation, leur VLAN natif et leurs VLAN autorisés.",
+      "prompt": "SW1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show interfaces trunk",
+          "show interface trunk"
+        ]
+      ]
+    },
+    "explanation": "« show interfaces trunk » ne liste que les ports en trunk opérationnel. Pour chacun, la première section donne le mode (on, desirable, auto), l'encapsulation, le statut et le VLAN natif ; les suivantes donnent les VLAN autorisés, puis ceux qui sont aussi actifs dans la base VLAN, enfin ceux qui sont en forwarding STP et non élagués. Un port qui devrait être trunk mais n'apparaît pas s'examine avec « show interfaces Gi0/1 switchport » (Administrative Mode, Operational Mode).",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-trunk-secure-config-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "SW1 est un Catalyst 9300, qui ne gère que 802.1Q. Vous êtes en mode de configuration de l'interface Gi1/0/48, reliée à SW2. Passez d'abord le port en trunk statique, puis, dans l'ordre de votre choix : choisissez le VLAN natif 999, n'autorisez que les VLAN 10, 20 et 999, et désactivez DTP.",
+      "prompt": "SW1(config-if)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          3
+        ]
+      ],
+      "commands": [
+        [
+          "switchport mode trunk"
+        ],
+        [
+          "switchport trunk native vlan 999"
+        ],
+        [
+          "switchport trunk allowed vlan 10,20,999",
+          "switchport trunk allowed vlan 10,999,20",
+          "switchport trunk allowed vlan 20,10,999",
+          "switchport trunk allowed vlan 20,999,10",
+          "switchport trunk allowed vlan 999,10,20",
+          "switchport trunk allowed vlan 999,20,10"
+        ],
+        [
+          "switchport nonegotiate"
+        ]
+      ]
+    },
+    "explanation": "« switchport mode trunk » vient en premier, car IOS refuse « switchport nonegotiate » sur un port en mode dynamique. Le VLAN natif 999, dédié et attribué à aucun port d'accès, rend le double étiquetage inopérant ; il doit être identique sur SW2. « switchport trunk allowed vlan 10,20,999 » remplace la liste par défaut (1-4094) par les seuls VLAN utiles. « switchport nonegotiate » supprime DTP, ce qui suppose un trunk statique en face. « show interfaces trunk » permet de vérifier le natif et la liste.",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-dtp-desirable-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Vous êtes en mode de configuration de l'interface Gi0/2 de SW1. Configurez ce port pour qu'il demande activement, par DTP, la formation d'un trunk avec son voisin, tout en restant en accès si le voisin refuse.",
+      "prompt": "SW1(config-if)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "switchport mode dynamic desirable"
+        ]
+      ]
+    },
+    "explanation": "En dynamic desirable, le port envoie des trames DTP qui demandent le trunk : le lien devient trunk si le voisin est en trunk, en dynamic desirable ou en dynamic auto, et reste en accès face à un port en mode access. « switchport mode trunk », lui, impose le trunk sans condition, et « switchport mode dynamic auto » (défaut des Catalyst récents) ne fait qu'accepter une demande. Le mode administratif se lit dans « show interfaces Gi0/2 switchport ».",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-trunk-fix-native-allowed-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Reportez-vous à l'exhibit. Les hôtes du VLAN 30, présents sur SW1 et SW2, ne communiquent pas à travers le trunk, et la politique impose sur ce lien le VLAN natif déjà configuré sur SW2. Le VLAN 30 existe sur les deux commutateurs et la configuration de SW2 est correcte. Vous êtes en mode de configuration de Gi1/0/1 sur SW1. Corrigez sa configuration en deux commandes, sans retaper les VLAN déjà autorisés.",
+      "exhibit": "SW1#\n%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on\nGigabitEthernet1/0/1 (1), with SW2 GigabitEthernet1/0/1 (888).\n\nSW1# show interfaces trunk\n\nPort        Mode             Encapsulation  Status        Native vlan\nGi1/0/1     on               802.1q         trunking      1\n\nPort        Vlans allowed on trunk\nGi1/0/1     10,20\n\nPort        Vlans allowed and active in management domain\nGi1/0/1     10,20\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi1/0/1     10,20",
+      "prompt": "SW1(config-if)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "switchport trunk native vlan 888"
+        ],
+        [
+          "switchport trunk allowed vlan add 30"
+        ]
+      ]
+    },
+    "explanation": "Dans %CDP-4-NATIVE_VLAN_MISMATCH, le premier VLAN entre parenthèses est celui du port local (1 sur SW1), le second celui du voisin (888 sur SW2) : « switchport trunk native vlan 888 » aligne SW1 sur SW2. La section « Vlans allowed on trunk » ne contient que les VLAN 10 et 20 : le VLAN 30 n'est pas autorisé, d'où « switchport trunk allowed vlan add 30 ». Sans « add », la liste serait remplacée et les VLAN 10 et 20 coupés. « show interfaces trunk » affiche ensuite le VLAN natif 888 et les VLAN 10,20,30.",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-dot1q-frame-fields-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Remettez dans l'ordre les champs d'une trame Ethernet étiquetée 802.1Q, du premier transmis au dernier (préambule non compris).",
+      "items": [
+        {
+          "id": "fcs",
+          "text": "FCS"
+        },
+        {
+          "id": "tag",
+          "text": "Étiquette 802.1Q (TPID 0x8100 et TCI)"
+        },
+        {
+          "id": "data",
+          "text": "Données"
+        },
+        {
+          "id": "smac",
+          "text": "Adresse MAC source"
+        },
+        {
+          "id": "etype",
+          "text": "EtherType (ou longueur) de la trame d'origine"
+        },
+        {
+          "id": "dmac",
+          "text": "Adresse MAC de destination"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "dmac",
+        "smac",
+        "tag",
+        "etype",
+        "data",
+        "fcs"
+      ]
+    },
+    "explanation": "L'étiquette de 4 octets s'insère juste après l'adresse MAC source, à l'emplacement de l'EtherType d'origine, qui est repoussé derrière elle. Le récepteur trouve d'abord 0x8100 (TPID) là où il attend un EtherType, sait que les 2 octets suivants (TCI : PCP, DEI, VID) décrivent la priorité et le VLAN, puis lit le véritable EtherType (0x0800 pour IPv4, par exemple). Les adresses ne bougent pas, et le FCS, en fin de trame, est recalculé.",
+    "reference": "IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.2-trunk-frame-path-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "PC-A et PC-B sont dans le VLAN 10, sur des ports d'accès de SW1 et de SW2. Les deux commutateurs sont reliés par un trunk 802.1Q dont le VLAN natif est 999, et leurs tables MAC sont à jour. Remettez dans l'ordre le trajet d'une trame de PC-A vers PC-B.",
+      "items": [
+        {
+          "id": "lookup",
+          "text": "SW2 lit le VID 10 et cherche la MAC de PC-B dans sa table du VLAN 10."
+        },
+        {
+          "id": "emit",
+          "text": "PC-A émet une trame non étiquetée vers l'adresse MAC de PC-B."
+        },
+        {
+          "id": "untag",
+          "text": "SW2 retire l'étiquette, recalcule le FCS et remet la trame à PC-B."
+        },
+        {
+          "id": "assoc",
+          "text": "SW1 associe la trame au VLAN 10, VLAN de son port d'accès."
+        },
+        {
+          "id": "tag",
+          "text": "SW1 insère l'étiquette VID 10, recalcule le FCS et émet la trame sur le trunk."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "emit",
+        "assoc",
+        "tag",
+        "lookup",
+        "untag"
+      ]
+    },
+    "explanation": "PC-A ignore tout des VLAN : il émet une trame ordinaire, sans étiquette. SW1 l'associe au VLAN de son port d'accès, trouve dans sa table du VLAN 10 que PC-B est joignable par le trunk, puis y émet la trame avec l'étiquette VID 10 (le VLAN 10 n'étant pas natif) et un FCS recalculé. SW2 lit le VID pour savoir dans quelle table chercher l'adresse de destination, puis retire l'étiquette en sortant sur le port d'accès de PC-B, qui reçoit de nouveau une trame non étiquetée.",
+    "reference": "IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.2-show-trunk-sections-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Dans la sortie de « show interfaces trunk », chaque liste de VLAN ne garde qu'une partie de la précédente. Remettez les sections dans leur ordre d'affichage.",
+      "items": [
+        {
+          "id": "fwd",
+          "text": "Vlans in spanning tree forwarding state and not pruned"
+        },
+        {
+          "id": "mode",
+          "text": "Port, Mode, Encapsulation, Status, Native vlan"
+        },
+        {
+          "id": "active",
+          "text": "Vlans allowed and active in management domain"
+        },
+        {
+          "id": "allowed",
+          "text": "Vlans allowed on trunk"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "mode",
+        "allowed",
+        "active",
+        "fwd"
+      ]
+    },
+    "explanation": "La première section décrit le trunk : mode administratif, encapsulation, statut et VLAN natif. Viennent ensuite les VLAN autorisés par la configuration (« switchport trunk allowed vlan »), puis ceux d'entre eux qui existent et sont actifs dans la base VLAN locale, enfin ceux de ces derniers que STP laisse en forwarding sur ce port et que VTP n'a pas élagués. La section où un VLAN disparaît indique la cause : liste autorisée, VLAN inexistant, blocage STP ou pruning.",
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-dtp-modes-matching-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque mode « switchport » à son comportement vis-à-vis du trunk.",
+      "left": [
+        {
+          "id": "acc",
+          "text": "switchport mode access"
+        },
+        {
+          "id": "trk",
+          "text": "switchport mode trunk"
+        },
+        {
+          "id": "des",
+          "text": "switchport mode dynamic desirable"
+        },
+        {
+          "id": "aut",
+          "text": "switchport mode dynamic auto"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Ne forme un trunk que si le voisin le demande"
+        },
+        {
+          "id": "r2",
+          "text": "Reste non-trunk, quel que soit le mode du voisin"
+        },
+        {
+          "id": "r3",
+          "text": "Forme un EtherChannel si le voisin est en mode active"
+        },
+        {
+          "id": "r4",
+          "text": "Demande le trunk, formé si le voisin est trunk, desirable ou auto"
+        },
+        {
+          "id": "r5",
+          "text": "Est trunk sans condition et envoie des trames DTP, sauf nonegotiate"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "acc": "r2",
+        "trk": "r5",
+        "des": "r4",
+        "aut": "r1"
+      }
+    },
+    "explanation": "access et trunk sont des modes fixes : le port reste non-trunk, ou trunk, quoi que fasse le voisin ; en trunk, il envoie tout de même des trames DTP, sauf avec « switchport nonegotiate ». Les modes dynamiques reposent sur DTP : desirable demande activement le trunk, auto se contente d'accepter une demande. Deux ports en auto restent donc en accès, alors que desirable–auto, desirable–desirable et trunk–auto forment un trunk.",
+    "distractorNotes": {
+      "r3": "C'est le comportement du mode LACP passive (« channel-group … mode passive ») : les modes DTP ne forment pas d'EtherChannel, même si PAgP emploie aussi les mots auto et desirable."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-allowed-vlan-keywords-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le trunk Gi1/0/2 de SW1 autorise les VLAN 10, 20 et 30. Associez chaque commande, saisie seule sous l'interface à partir de cette configuration, à la liste des VLAN autorisés qui en résulte.",
+      "left": [
+        {
+          "id": "add",
+          "text": "switchport trunk allowed vlan add 40"
+        },
+        {
+          "id": "rem",
+          "text": "switchport trunk allowed vlan remove 20"
+        },
+        {
+          "id": "exc",
+          "text": "switchport trunk allowed vlan except 20"
+        },
+        {
+          "id": "all",
+          "text": "switchport trunk allowed vlan all"
+        },
+        {
+          "id": "non",
+          "text": "switchport trunk allowed vlan none"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "1-19,21-4094"
+        },
+        {
+          "id": "r2",
+          "text": "Aucun VLAN"
+        },
+        {
+          "id": "r3",
+          "text": "10,30"
+        },
+        {
+          "id": "r4",
+          "text": "20"
+        },
+        {
+          "id": "r5",
+          "text": "1-4094"
+        },
+        {
+          "id": "r6",
+          "text": "10,20,30,40"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "add": "r6",
+        "rem": "r3",
+        "exc": "r1",
+        "all": "r5",
+        "non": "r2"
+      }
+    },
+    "explanation": "« add » et « remove » modifient la liste en place : 10,20,30,40 et 10,30. « except » ignore la liste précédente et autorise tous les VLAN sauf ceux indiqués : 1-19,21-4094. « all » rétablit la valeur par défaut, 1-4094, et « none » n'autorise plus aucun VLAN : le lien reste trunk mais ne transporte plus de VLAN. Une liste sans mot-clé remplace la liste entière.",
+    "distractorNotes": {
+      "r4": "C'est le résultat de « switchport trunk allowed vlan 20 », sans mot-clé, qui remplace la liste ; aucune des commandes proposées ne le donne."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-2.2-isl-dot1q-matching-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque caractéristique au protocole qu'elle décrit.",
+      "left": [
+        {
+          "id": "std",
+          "text": "Norme IEEE, prise en charge par tous les constructeurs"
+        },
+        {
+          "id": "encap",
+          "text": "Encapsule la trame d'origine entière derrière un en-tête de 26 octets"
+        },
+        {
+          "id": "crc",
+          "text": "Ajoute en fin de trame un second contrôle (CRC de 4 octets)"
+        },
+        {
+          "id": "native",
+          "text": "Émet les trames d'un VLAN sans aucune marque de VLAN"
+        },
+        {
+          "id": "only",
+          "text": "Seule encapsulation de trunk des Catalyst 2960 et 9300"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "ISL"
+        },
+        {
+          "id": "r2",
+          "text": "802.1Q"
+        },
+        {
+          "id": "r3",
+          "text": "VTP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "std": "r2",
+        "encap": "r1",
+        "crc": "r1",
+        "native": "r2",
+        "only": "r2"
+      }
+    },
+    "explanation": "802.1Q est la norme IEEE : il insère dans la trame une étiquette de 4 octets et recalcule le FCS, sauf pour le VLAN natif, émis sans étiquette. ISL, propriétaire Cisco, encapsule toute la trame d'origine, FCS compris, derrière un en-tête de 26 octets et lui ajoute un CRC de 4 octets, soit 30 octets de plus ; il étiquette toutes les trames et n'a pas de VLAN natif. ISL est obsolète : les Catalyst 2960 et 9300 ne gèrent que 802.1Q.",
+    "distractorNotes": {
+      "r3": "VTP n'est pas une encapsulation de trunk : il propage la base VLAN entre commutateurs, par-dessus les trunks."
+    },
+    "reference": "IEEE 802.1Q ; Cisco Catalyst 3560 Switch Software Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.2-trunk-verify-commands-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le trunk Gi1/0/1 entre SW1 et SW2 pose problème. Pour chaque information à obtenir sur SW1, choisissez la commande show qui la fournit.",
+      "left": [
+        {
+          "id": "cdp",
+          "text": "Connaître le VLAN natif configuré sur le port du voisin direct"
+        },
+        {
+          "id": "vlan",
+          "text": "Vérifier qu'un VLAN existe dans la base VLAN et voir ses ports d'accès"
+        },
+        {
+          "id": "fwd",
+          "text": "Voir, pour chaque trunk, les VLAN en forwarding STP et non élagués"
+        },
+        {
+          "id": "neg",
+          "text": "Voir si DTP est actif sur Gi1/0/1 (ligne Negotiation of Trunking)"
+        },
+        {
+          "id": "log",
+          "text": "Retrouver un message %CDP-4-NATIVE_VLAN_MISMATCH déjà journalisé"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "show interfaces GigabitEthernet1/0/1 switchport"
+        },
+        {
+          "id": "r2",
+          "text": "show ip interface brief"
+        },
+        {
+          "id": "r3",
+          "text": "show vlan brief"
+        },
+        {
+          "id": "r4",
+          "text": "show logging"
+        },
+        {
+          "id": "r5",
+          "text": "show cdp neighbors detail"
+        },
+        {
+          "id": "r6",
+          "text": "show interfaces trunk"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "cdp": "r5",
+        "vlan": "r3",
+        "fwd": "r6",
+        "neg": "r1",
+        "log": "r4"
+      }
+    },
+    "explanation": "« show cdp neighbors detail » donne, pour chaque voisin, sa plateforme, son port et son VLAN natif. « show vlan brief » liste les VLAN de la base et leurs ports d'accès (pas les trunks). « show interfaces trunk » détaille chaque trunk jusqu'aux VLAN en forwarding et non élagués. « show interfaces … switchport » donne les modes administratif et opérationnel et la ligne « Negotiation of Trunking ». « show logging » affiche les messages conservés dans le tampon du journal.",
+    "distractorNotes": {
+      "r2": "« show ip interface brief » n'affiche que l'état et l'adresse IP des interfaces : rien sur les VLAN, DTP ou CDP."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks ; Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  }
+]
