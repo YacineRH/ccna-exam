@@ -90,7 +90,8 @@ describe.skipIf(!DATABASE_URL)('API v1 : plusieurs certifications (PostgreSQL)',
     expect(sB).toMatchObject({ certification: second, passingScore: 750, scale: { min: 100, max: 900 }, exams: { taken: 1 } });
     expect(sA).toMatchObject({ certification: first, passingScore: 825, scale: { min: 300, max: 1000 }, exams: { taken: 1 } });
     expect(sB.domains.map((d: { code: string }) => d.code)).toEqual(['1.0', '2.0', '3.0', '4.0', '5.0']);
-    expect(sB.questions.answered).toBe(0);
+    // Un examen soumis sans réponse note ses 90 questions fausses ; rien du CCNA (une séance de 5 questions en cours) n'y figure.
+    expect(sB.questions).toEqual({ answered: 90, correct: 0 });
     expect(sB.recentScores).toHaveLength(1);
     expect(sB.recentScores[0].scaledScore).toBeGreaterThanOrEqual(100);
     expect(sB.recentScores[0].scaledScore).toBeLessThanOrEqual(900);

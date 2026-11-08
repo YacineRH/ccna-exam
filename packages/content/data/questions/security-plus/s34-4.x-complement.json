@@ -1,0 +1,759 @@
+[
+  {
+    "slug": "security-plus-4.1-mdm-geofencing-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une société de logistique remet des tablettes d'entreprise à ses préparateurs de commandes. Elle veut que l'accès aux applications internes soit refusé dès qu'une tablette sort du périmètre de l'entrepôt. Quelle fonction de gestion des mobiles répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le conteneur chiffré qui sépare les données professionnelles des données personnelles"
+        },
+        {
+          "id": "b",
+          "text": "L'effacement à distance, déclenché manuellement par l'administrateur"
+        },
+        {
+          "id": "c",
+          "text": "Le géorepérage (geofencing), qui applique une politique selon la position de l'appareil"
+        },
+        {
+          "id": "d",
+          "text": "Le verrouillage de l'écran par un code PIN d'au moins six chiffres"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le géorepérage (geofencing) définit une limite géographique virtuelle et déclenche une action quand l'appareil la franchit : refuser l'accès aux applications, verrouiller la tablette ou envoyer une alerte. Il s'appuie sur la position fournie par le GPS, le Wi-Fi ou le réseau cellulaire et se configure dans la solution de gestion des mobiles (MDM). C'est le seul mécanisme proposé qui réagit automatiquement à la position.",
+    "distractorNotes": {
+      "a": "Le conteneur protège les données de l'entreprise sur un appareil mixte, mais il ne dépend pas de l'endroit où se trouve la tablette.",
+      "b": "L'effacement à distance est une réponse à la perte ou au vol, décidée par une personne ; il ne se déclenche pas de lui-même à la sortie du site.",
+      "d": "Le code PIN protège l'appareil verrouillé contre une personne non autorisée, quel que soit le lieu ; il ne conditionne pas l'accès aux applications à la position."
+    },
+    "reference": "NIST SP 800-124 Rev. 2 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-sandbox-installer-behavior-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un éditeur tiers envoie au service informatique d'une PME le programme d'installation d'un utilitaire de paie, sans le code source. Avant tout déploiement, le technicien veut observer ce que le programme fait réellement (processus créés, fichiers et clés de registre modifiés, connexions sortantes) sans exposer le réseau de production. Que doit-il faire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vérifier la signature numérique du programme d'installation"
+        },
+        {
+          "id": "b",
+          "text": "Lancer une analyse statique du code source du programme"
+        },
+        {
+          "id": "c",
+          "text": "Exécuter le programme dans un bac à sable isolé du réseau interne et observer son comportement"
+        },
+        {
+          "id": "d",
+          "text": "Lancer une analyse de vulnérabilités sur le poste qui recevra l'utilitaire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le bac à sable (sandbox) exécute un programme dans un environnement isolé, par exemple une machine virtuelle sans accès au réseau interne et restaurée après chaque essai. L'analyste observe alors le comportement réel : processus lancés, modifications du système de fichiers et du registre, tentatives de connexion. C'est la seule option qui répond à la question « que fait ce programme ? » sans risque pour la production. La signature et l'analyse statique n'apportent pas cette réponse.",
+    "distractorNotes": {
+      "a": "La signature numérique atteste l'origine et l'intégrité du fichier, pas l'innocuité de son comportement : un éditeur compromis peut signer un programme malveillant.",
+      "b": "L'analyse statique examine du code sans l'exécuter, et le technicien n'a justement pas le code source de ce programme.",
+      "d": "Une analyse de vulnérabilités recherche des failles connues dans les logiciels déjà installés ; elle ne montre pas ce qu'un programme non installé fera à l'exécution."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-wifi-survey-ap-placement-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. À partir de la carte thermique de l'étude de site, le responsable réseau veut à la fois respecter l'exigence de couverture et limiter la diffusion du signal hors du bâtiment. Quelles deux mesures doit-il retenir ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Régler toutes les bornes sur la puissance d'émission maximale"
+        },
+        {
+          "id": "b",
+          "text": "Masquer le SSID pour qu'il ne soit plus visible depuis le parking"
+        },
+        {
+          "id": "c",
+          "text": "Ajouter une borne, ou déplacer une borne existante, pour couvrir l'atelier"
+        },
+        {
+          "id": "d",
+          "text": "Réduire la puissance d'émission de la borne proche du parking"
+        },
+        {
+          "id": "e",
+          "text": "Abaisser l'exigence de couverture de -70 dBm à -85 dBm"
+        }
+      ],
+      "exhibit": "Étude de site Wi-Fi - entrepôt - SSID ENTREPRISE (2,4 GHz)\nExigence : signal >= -70 dBm dans toutes les zones de travail\nZone      Signal mesuré  Remarque\nQuai A    -55 dBm        conforme\nBureaux   -48 dBm        conforme\nAtelier   -82 dBm        non conforme (une seule borne, en bout de bâtiment)\nParking   -61 dBm        hors bâtiment : SSID capté à 40 m du mur"
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "La carte thermique révèle deux défauts de nature différente. L'atelier est mal couvert (-82 dBm pour une exigence de -70 dBm) : on corrige en ajoutant une borne ou en repositionnant celle qui existe, de préférence au centre de la zone à servir. Le signal déborde sur le parking : on réduit la puissance d'émission de la borne concernée (et on la place à l'écart des murs extérieurs) pour que le réseau ne soit pas exploitable depuis l'extérieur.",
+    "distractorNotes": {
+      "a": "Une puissance maximale partout aggrave la fuite vers l'extérieur et ne règle pas la liaison montante : les appareils des utilisateurs émettent moins fort que les bornes.",
+      "b": "Masquer le SSID ne protège rien : le nom reste visible dans les trames de gestion échangées par les clients, et le signal déborde toujours.",
+      "e": "Abaisser l'exigence fait disparaître l'écart sur le papier sans améliorer l'expérience des utilisateurs de l'atelier."
+    },
+    "reference": "NIST SP 800-153 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-baseline-drift-approved-change-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyste du service d'exploitation examine ce rapport de dérive de configuration. Quelle suite donner aux écarts est la plus adaptée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Rétablir les paramètres de la baseline sur les quatre serveurs, sans distinction"
+        },
+        {
+          "id": "b",
+          "text": "Réviser la baseline pour le port 8443, puis rétablir PermitRootLogin sur srv-web04 et en rechercher la cause"
+        },
+        {
+          "id": "c",
+          "text": "Accorder une exception permanente pour les quatre écarts constatés"
+        },
+        {
+          "id": "d",
+          "text": "Réviser la baseline pour le port 8443 et pour PermitRootLogin, puisque les deux existent en production"
+        }
+      ],
+      "exhibit": "Écarts constatés le 2026-11-05 - rôle LNX-WEB, baseline v2.1\nServeur    Paramètre : baseline -> constaté       Demande de changement\nsrv-web01  Port 8443 : fermé -> ouvert            CHG-3318 approuvée\nsrv-web02  Port 8443 : fermé -> ouvert            CHG-3318 approuvée\nsrv-web03  Port 8443 : fermé -> ouvert            CHG-3318 approuvée\nsrv-web04  PermitRootLogin : no -> yes            aucune\nCHG-3318 (approuvée le 2026-10-28, tous les serveurs LNX-WEB) : ouverture du\nport 8443 pour la nouvelle API d'administration, après revue du risque."
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une dérive est un écart entre l'état réel et la baseline. Il faut distinguer l'écart autorisé de l'écart non autorisé. L'ouverture du port 8443 découle d'un changement approuvé après revue du risque et appliqué à tout le rôle : la baseline doit être révisée pour le refléter, sinon chaque analyse signalera de faux écarts. Sur srv-web04, la connexion directe du compte root n'a aucune demande de changement : on rétablit le paramètre et on cherche qui l'a modifié et pourquoi, car cela peut signaler une compromission.",
+    "distractorNotes": {
+      "a": "Rétablir le port 8443 annulerait un changement légitime et casserait la nouvelle API, tandis que la baseline resterait obsolète.",
+      "c": "Une exception documente un écart temporaire et limité, avec contrôles compensatoires ; elle ne légitime pas un paramètre non autorisé comme PermitRootLogin sur srv-web04.",
+      "d": "Réviser la baseline pour PermitRootLogin entérinerait un écart que personne n'a demandé ni évalué, et affaiblirait le durcissement de tout le rôle."
+    },
+    "reference": "CIS Critical Security Controls v8 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-baseline-compliance-rate-exceptions-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le rapport mensuel de conformité à la baseline porte sur 250 serveurs. Quarante serveurs présentent au moins un écart ; quinze d'entre eux sont couverts par une exception approuvée et encore valide, et la politique de l'entreprise compte ces quinze serveurs comme conformes. Quel est le taux de conformité du parc ?",
+      "fields": [
+        {
+          "id": "taux",
+          "label": "Taux de conformité en pourcentage (nombre entier, sans le symbole %)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "taux": {
+          "accepted": [
+            "90"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Sur 40 serveurs écartés, 15 sont couverts par une exception valide et comptent comme conformes : il reste 40 - 15 = 25 serveurs non conformes. Le parc compte donc 250 - 25 = 225 serveurs conformes, soit 225 / 250 = 0,90, c'est-à-dire 90 %. Mesurer ce taux à chaque analyse permet de suivre la dérive dans le temps ; une exception expirée doit faire repasser le serveur parmi les non conformes.",
+    "distractorNotes": {},
+    "reference": "CIS Critical Security Controls v8 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.1-application-security-logging-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une application web de réservation d'une mairie ne garde aucune trace des échecs d'authentification ni des accès refusés. Après une intrusion, l'équipe ne peut pas reconstituer les actions de l'attaquant. Quelle pratique de sécurité applicative aurait permis cette reconstitution ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Valider côté serveur toutes les données saisies par les utilisateurs"
+        },
+        {
+          "id": "b",
+          "text": "Signer numériquement chaque version du code avant sa livraison"
+        },
+        {
+          "id": "c",
+          "text": "Ajouter l'attribut Secure au cookie de session de l'application"
+        },
+        {
+          "id": "d",
+          "text": "Journaliser les événements de sécurité de l'application et les centraliser pour les surveiller"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La surveillance applicative repose sur une journalisation des événements de sécurité (authentifications réussies et échouées, accès refusés, actions sensibles, erreurs de validation) envoyés à un point central tel qu'un SIEM. Sans ces traces, on ne peut ni détecter une attaque en cours ni la reconstituer après coup. L'insuffisance de journalisation et de surveillance figure au Top 10 OWASP 2021 (A09). Les trois autres pratiques sont préventives et ne laissent aucune trace exploitable.",
+    "distractorNotes": {
+      "a": "La validation côté serveur réduit le risque d'injection, mais elle ne produit pas d'historique des actions d'un attaquant.",
+      "b": "La signature du code garantit l'origine et l'intégrité d'une version ; elle n'enregistre pas ce qui se passe quand l'application s'exécute.",
+      "c": "L'attribut Secure empêche l'envoi du cookie en clair ; c'est une protection de session, pas une source de journaux."
+    },
+    "reference": "OWASP Top 10 (2021), A09 Security Logging and Monitoring Failures ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.1"
+  },
+  {
+    "slug": "security-plus-4.3-responsible-disclosure-no-program-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une chercheuse en sécurité découvre qu'une page d'administration du site d'une association est accessible sans authentification. L'association n'a ni programme de prime aux bogues ni politique de divulgation. Quelle conduite correspond à la divulgation responsable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Publier la faille sur un forum public pour obtenir une correction rapide de l'association"
+        },
+        {
+          "id": "b",
+          "text": "Signaler la faille en privé à l'association et lui laisser un délai avant toute publication"
+        },
+        {
+          "id": "c",
+          "text": "Télécharger les données accessibles pour prouver la gravité de la faille à l'association"
+        },
+        {
+          "id": "d",
+          "text": "Vendre les détails de la faille à un courtier en vulnérabilités"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La divulgation responsable consiste à informer en privé l'organisation concernée, avec assez de détails pour reproduire et corriger la faille, puis à lui laisser un délai raisonnable avant d'en parler publiquement. Même sans programme formel, on cherche un contact de sécurité ou une adresse générique. On n'exploite pas la faille au-delà de ce qui est nécessaire pour la constater, et on ne copie pas de données. La norme ISO/IEC 29147 décrit le processus du point de vue de celui qui reçoit le signalement.",
+    "distractorNotes": {
+      "a": "Une publication immédiate expose l'association et ses utilisateurs aux attaquants avant toute correction.",
+      "c": "Récupérer des données dépasse ce qui est nécessaire pour signaler la faille et peut constituer une infraction ; il suffit de décrire comment la constater.",
+      "d": "Vendre la faille à un courtier la met entre des mains dont l'objectif n'est pas la correction, ce qui est l'inverse de la divulgation responsable."
+    },
+    "reference": "ISO/IEC 29147 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-kernel-patch-pending-reboot-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'administrateur affirme que la constatation est un faux positif, puisque le paquet du noyau corrigé est installé. Quelle conclusion de l'analyste est la bonne ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "C'est un faux positif : la base RPM montre que le noyau corrigé est présent sur le serveur"
+        },
+        {
+          "id": "b",
+          "text": "C'est un faux négatif de l'analyse précédente, qui n'avait pas signalé le noyau installé"
+        },
+        {
+          "id": "c",
+          "text": "La remédiation est à refaire : le paquet du noyau corrigé doit être réinstallé"
+        },
+        {
+          "id": "d",
+          "text": "La constatation est confirmée : le noyau corrigé n'est pas chargé, il faut redémarrer puis relancer l'analyse"
+        }
+      ],
+      "exhibit": "Ticket VULN-2291 - srv-db07 (RHEL 9) - correctif noyau déployé le 2026-11-03\nAnalyse du 2026-11-05 (avec identifiants) : constatation toujours présente\n  Noyau 5.14.0-427.13.1.el9_4 : élévation de privilèges locale (< 427.28.1)\n$ rpm -q kernel\nkernel-5.14.0-427.13.1.el9_4.x86_64\nkernel-5.14.0-427.28.1.el9_4.x86_64\n$ uname -r\n5.14.0-427.13.1.el9_4.x86_64\n$ uptime\n 09:12:44 up 41 days,  3:05,  1 user,  load average: 0.12, 0.10, 0.09"
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le paquet du noyau corrigé (427.28.1) est bien installé, mais `uname -r` indique que le serveur tourne toujours avec le noyau vulnérable (427.13.1) : il n'a pas redémarré depuis 41 jours. Une analyse authentifiée contrôle le noyau en cours d'exécution, et la constatation est donc un vrai positif. Il faut planifier un redémarrage, ce qui charge le nouveau noyau, puis relancer l'analyse pour valider la remédiation.",
+    "distractorNotes": {
+      "a": "La base RPM prouve l'installation du paquet, pas son exécution : seul le noyau chargé détermine l'exposition.",
+      "b": "Un faux négatif est une faille réelle que l'analyse n'a pas détectée ; ici, le scanner a au contraire signalé une faille bien présente.",
+      "c": "Le paquet est déjà installé et intact ; le réinstaller ne change pas le noyau en cours d'exécution."
+    },
+    "reference": "NIST SP 800-40 Rev. 4 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-cvss-metric-groups-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'analyste d'un SOC explique à de nouveaux collègues la structure de CVSS v3.1. Associez chaque métrique de CVSS v3.1 à son groupe de métriques.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Attack Vector (AV), le vecteur d'attaque"
+        },
+        {
+          "id": "l2",
+          "text": "Exploit Code Maturity (E), la maturité du code d'exploitation"
+        },
+        {
+          "id": "l3",
+          "text": "Confidentiality Requirement (CR), l'exigence de confidentialité de l'actif"
+        },
+        {
+          "id": "l4",
+          "text": "Remediation Level (RL), le niveau de remédiation disponible"
+        },
+        {
+          "id": "l5",
+          "text": "Scope (S), le périmètre d'impact"
+        }
+      ],
+      "right": [
+        {
+          "id": "base",
+          "text": "Groupe de base (Base)"
+        },
+        {
+          "id": "temp",
+          "text": "Groupe temporel (Temporal)"
+        },
+        {
+          "id": "env",
+          "text": "Groupe environnemental (Environmental)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "base",
+        "l2": "temp",
+        "l3": "env",
+        "l4": "temp",
+        "l5": "base"
+      }
+    },
+    "explanation": "CVSS v3.1 compte trois groupes. Le groupe de base décrit les caractéristiques intrinsèques de la faille, stables dans le temps et d'un environnement à l'autre : Attack Vector, Scope, complexité, privilèges, impact sur la confidentialité, l'intégrité et la disponibilité. Le groupe temporel reflète l'évolution de la menace : maturité du code d'exploitation, niveau de remédiation, confiance dans le rapport. Le groupe environnemental adapte le score à l'organisation, par exemple par les exigences de confidentialité, d'intégrité et de disponibilité des actifs.",
+    "distractorNotes": {},
+    "reference": "FIRST CVSS v3.1 Specification ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-exception-expiry-date-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "La politique d'une banque limite toute exception de sécurité à 90 jours calendaires après sa date d'approbation ; passé ce délai, l'exception doit être renouvelée ou la faille corrigée. Le comité approuve le 2 novembre 2026 une exception pour un serveur dont le correctif est bloqué par l'éditeur. À quelle date l'exception expire-t-elle ?",
+      "fields": [
+        {
+          "id": "date",
+          "label": "Date d'expiration au format AAAA-MM-JJ"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "date": {
+          "accepted": [
+            "2027-01-31",
+            "31/01/2027",
+            "31-01-2027",
+            "31.01.2027",
+            "31/1/2027",
+            "31 janvier 2027"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Il faut ajouter 90 jours au 2 novembre 2026. Novembre compte 30 jours : il reste 28 jours après le 2 novembre. Décembre en ajoute 31, soit 59 jours au 31 décembre. Les 31 jours restants mènent au 31 janvier 2027. Une exception documentée a toujours une date de fin : à l'échéance, le comité réexamine le risque, les contrôles compensatoires et l'avancement de la correction, et ne la renouvelle que s'il le justifie.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.4-alert-threshold-baseline-tuning-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le SIEM d'une mairie lève plusieurs centaines d'alertes par semaine avec la règle « 3 échecs d'authentification en 5 minutes sur un même compte ». Presque toutes sont dues à des fautes de frappe d'agents, et les analystes commencent à ignorer cette règle. Quelle démarche réduit le bruit tout en conservant la détection des attaques ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Désactiver la règle et s'en remettre au verrouillage automatique des comptes"
+        },
+        {
+          "id": "b",
+          "text": "Ne traiter que les alertes reçues pendant les heures ouvrées de la mairie, le reste étant archivé"
+        },
+        {
+          "id": "c",
+          "text": "Fixer seuil et fenêtre d'après le comportement normal mesuré, puis les réévaluer"
+        },
+        {
+          "id": "d",
+          "text": "Doubler le nombre d'analystes affectés à la file des alertes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'ajustement (tuning) vise à retirer le bruit sans créer d'angle mort. On mesure le comportement normal (nombre d'échecs par compte et par source sur plusieurs semaines), on fixe un seuil et une fenêtre qui séparent les fautes de frappe d'une attaque par force brute, puis on réévalue régulièrement, car les usages évoluent. La fatigue d'alerte est un risque réel : une règle ignorée ne détecte plus rien. Désactiver la règle ou filtrer par horaire laisse des attaques passer.",
+    "distractorNotes": {
+      "a": "Sans la règle, plus aucun SIEM ne détecte la force brute ni la pulvérisation de mots de passe répartie sur plusieurs comptes ; le verrouillage seul n'alerte personne.",
+      "b": "Les attaques n'attendent pas les heures ouvrées : filtrer ainsi laisse un angle mort la nuit et le week-end.",
+      "d": "Plus d'analystes absorbent le volume mais ne suppriment pas le bruit ; la règle reste mal calibrée et coûte plus cher."
+    },
+    "reference": "NIST SP 800-137 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-syslog-over-tls-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un hôpital envoie les journaux de ses pare-feu au collecteur du SIEM en syslog sur UDP 514. L'audit relève que des messages se perdent lors des pics de trafic et que les journaux transitent en clair entre deux sites. Quelle évolution corrige les deux défauts ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Passer à syslog sur TLS (TCP 6514), qui apporte une livraison fiable et le chiffrement"
+        },
+        {
+          "id": "b",
+          "text": "Garder UDP 514 en envoyant chaque message vers deux collecteurs distincts"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer syslog par des traps SNMPv2c envoyés vers le collecteur"
+        },
+        {
+          "id": "d",
+          "text": "Compresser les journaux avant leur envoi sur UDP 514"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Syslog sur UDP n'offre ni accusé de réception ni chiffrement : un message perdu ne sera jamais renvoyé et le contenu circule en clair. Syslog sur TLS (RFC 5425, TCP 6514) s'appuie sur TCP pour la livraison fiable et sur TLS pour la confidentialité, l'intégrité et, avec des certificats, l'authentification du collecteur et de l'émetteur. C'est le seul changement proposé qui traite les deux défauts relevés par l'audit.",
+    "distractorNotes": {
+      "b": "Un second collecteur double les messages, mais UDP reste sans accusé de réception ni chiffrement : les pertes et l'exposition en clair subsistent.",
+      "c": "SNMPv2c reste sur UDP et envoie sa chaîne de communauté en clair ; ce n'est pas un transport de journaux fiable ni confidentiel.",
+      "d": "La compression réduit le volume mais ne garantit pas la livraison, et elle ne chiffre rien : les données restent lisibles par qui les capture."
+    },
+    "reference": "RFC 5425 ; NIST SP 800-92 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-monitoring-management-report-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le RSSI d'une entreprise de transport prépare le rapport mensuel de surveillance destiné au comité de direction. Quelles deux informations ce rapport doit-il contenir en priorité ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les tendances du nombre d'incidents par gravité, avec les délais moyens de détection et de traitement"
+        },
+        {
+          "id": "b",
+          "text": "La liste complète des événements bruts du mois, ligne à ligne, tels qu'ils sont enregistrés dans le SIEM"
+        },
+        {
+          "id": "c",
+          "text": "Le texte détaillé de chaque règle de corrélation du SIEM, avec ses seuils et ses exceptions"
+        },
+        {
+          "id": "d",
+          "text": "Les adresses IP et les noms de tous les postes de travail surveillés par les agents du SOC"
+        },
+        {
+          "id": "e",
+          "text": "Les risques résiduels et les décisions attendues de la direction, comme le budget ou les priorités"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Un rapport destiné à la direction est synthétique et orienté décision. Il présente des indicateurs agrégés : volume et gravité des incidents, évolution dans le temps, délais de détection et de traitement. Il précise aussi les risques résiduels et les décisions attendues : arbitrage budgétaire, acceptation d'un risque, priorités. Les événements bruts, les règles détaillées et les listes d'adresses relèvent du travail des analystes.",
+    "distractorNotes": {
+      "b": "Des milliers de lignes brutes n'aident pas un comité à décider ; elles restent disponibles dans le SIEM pour les analystes.",
+      "c": "Le détail des règles de corrélation est un sujet technique pour l'équipe du SOC, sans utilité pour un arbitrage de direction.",
+      "d": "Une liste d'adresses de postes ne dit rien du niveau de risque ni de l'efficacité de la surveillance."
+    },
+    "reference": "NIST SP 800-137 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-alert-dedup-asset-criticality-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le SOC veut réduire le bruit de cette règle sans créer d'angle mort. Quelles deux modifications retenir ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Désactiver la règle pendant les week-ends"
+        },
+        {
+          "id": "b",
+          "text": "Regrouper les alertes répétées (même signature, même hôte) en une seule alerte avec un compteur"
+        },
+        {
+          "id": "c",
+          "text": "Moduler la gravité d'après la criticité de l'actif concerné, production ou test"
+        },
+        {
+          "id": "d",
+          "text": "Ne plus alerter au-delà de trois détections par jour et par hôte"
+        },
+        {
+          "id": "e",
+          "text": "Réduire à 7 jours la durée de conservation des alertes"
+        }
+      ],
+      "exhibit": "Bilan à 30 jours - règle MALWARE-DET (antivirus, via SIEM)\nAlertes générées                       : 3 200\nHôtes concernés                        : 85\nAlertes répétées (même signature, même hôte) : 2 900\nGravité : « élevée » pour tous les hôtes (production, test, bureautique)\nIncidents confirmés                    : 14, tous sur des serveurs de production"
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "Sur 3 200 alertes, 2 900 sont des répétitions : le dédoublonnage en une alerte avec compteur supprime ce bruit sans perdre l'information. La gravité identique pour tous les hôtes noie les 14 incidents réels, tous sur des serveurs de production : la pondérer par la criticité de l'actif fait remonter ce qui compte. Ces deux mesures réduisent la charge de l'analyste et conservent la détection.",
+    "distractorNotes": {
+      "a": "Des attaques surviennent aussi le week-end, où la surveillance humaine est réduite : désactiver la règle crée un angle mort.",
+      "d": "Des détections répétées sur un même hôte peuvent signaler une infection persistante : cesser d'alerter après trois les masquerait.",
+      "e": "La durée de conservation n'influe pas sur le nombre d'alertes à traiter ; la réduire gênerait seulement les enquêtes et les obligations de conservation."
+    },
+    "reference": "NIST SP 800-137 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.9-pcap-encrypted-visibility-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un analyste du SOC dispose d'une capture de paquets complète d'un segment réseau. Le trafic HTTPS et SSH y est chiffré et aucune clé de déchiffrement n'est disponible. Associez chaque information à ce que la capture permet d'en faire.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "L'URL demandée dans une requête HTTP non chiffrée"
+        },
+        {
+          "id": "l2",
+          "text": "Le contenu d'une page consultée en HTTPS"
+        },
+        {
+          "id": "l3",
+          "text": "L'adresse IP de destination d'une session TLS"
+        },
+        {
+          "id": "l4",
+          "text": "Le volume d'octets échangés pendant une session SSH"
+        },
+        {
+          "id": "l5",
+          "text": "Les commandes saisies pendant une session SSH"
+        }
+      ],
+      "right": [
+        {
+          "id": "vis",
+          "text": "Exploitable directement dans la capture"
+        },
+        {
+          "id": "opaque",
+          "text": "Illisible sans clé de déchiffrement"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "vis",
+        "l2": "opaque",
+        "l3": "vis",
+        "l4": "vis",
+        "l5": "opaque"
+      }
+    },
+    "explanation": "Une capture de paquets conserve les en-têtes et la charge utile de chaque trame. En clair (HTTP), l'URL se lit directement. Pour le trafic chiffré, les en-têtes IP et TCP restent lisibles : adresses, ports, horodatage, volumes et durée des échanges sont donc exploitables, par exemple pour repérer une exfiltration. En revanche, le contenu des pages HTTPS et les commandes saisies en SSH sont chiffrés : sans clé, ils sont illisibles.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-86 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  },
+  {
+    "slug": "security-plus-4.9-vuln-report-investigation-limits-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un enquêteur doit établir si srv-web03 a été compromis le 7 novembre. Quelle conclusion le rapport d'analyse de vulnérabilités permet-il de tirer ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le serveur a été compromis le 7 novembre, puisque la faille décrite dans le rapport a servi à l'attaque détectée par l'IDS"
+        },
+        {
+          "id": "b",
+          "text": "La faille existait déjà le 3 novembre et rend l'exploitation plausible, mais elle ne la prouve pas : il faut vérifier les journaux du serveur"
+        },
+        {
+          "id": "c",
+          "text": "La compromission est exclue, puisque l'analyse date du 3 novembre, avant l'alerte du 7 novembre émise par l'IDS"
+        },
+        {
+          "id": "d",
+          "text": "L'alerte de l'IDS est un faux positif, car le rapport d'analyse ne mentionne aucune tentative d'attaque sur le serveur"
+        }
+      ],
+      "exhibit": "Rapport d'analyse de vulnérabilités - 2026-11-03 (avec identifiants)\nHôte        Logiciel                Gravité   Constatation\nsrv-web03   portail-rh 4.2.1        Critique  Exécution de code à distance\n            (203.0.113.30)                    correctif publié le 2026-10-20\nJournal IDS\n2026-11-07 02:14:09 ALERTE 198.51.100.77 -> 203.0.113.30:443\n            tentative d'exploitation de l'exécution de code (portail-rh)"
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un rapport d'analyse de vulnérabilités décrit l'état d'exposition à une date : il établit que la faille était présente le 3 novembre et qu'elle fournit un vecteur plausible pour l'alerte du 7. Il ne dit rien de ce qui s'est passé ensuite : seuls les journaux du serveur, ceux du pare-feu et les artefacts de l'hôte peuvent confirmer ou infirmer l'exploitation. L'analyste traite donc la compromission comme une hypothèse à vérifier.",
+    "distractorNotes": {
+      "a": "Le rapport montre une exposition, pas une exploitation : une tentative détectée par l'IDS peut avoir échoué.",
+      "c": "Une faille corrigée plus tard ou jamais corrigée reste exploitable après l'analyse ; la date antérieure du rapport n'écarte rien.",
+      "d": "Un rapport de vulnérabilités ne recense pas les attaques : son silence sur la tentative ne dit rien de la validité de l'alerte, et il confirme même que la faille ciblée existait."
+    },
+    "reference": "NIST SP 800-61 Rev. 2 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  },
+  {
+    "slug": "security-plus-4.9-sso-and-application-logs-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le compte d'une comptable est soupçonné d'avoir été utilisé depuis l'étranger sur l'application de facturation de l'entreprise, protégée par une authentification unique (SSO). L'analyste veut reconstituer qui s'est connecté, d'où, et ce qui a été modifié dans l'application. Quelles deux sources de données lui sont les plus utiles ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les journaux d'authentification du SSO : heures, adresses IP sources et résultats"
+        },
+        {
+          "id": "b",
+          "text": "Les enregistrements NetFlow du cœur de réseau"
+        },
+        {
+          "id": "c",
+          "text": "Une capture de paquets du trafic HTTPS de l'application, sans clé de déchiffrement"
+        },
+        {
+          "id": "d",
+          "text": "Les journaux de l'application de facturation : actions effectuées par compte"
+        },
+        {
+          "id": "e",
+          "text": "L'inventaire matériel du parc de postes de travail"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Deux questions se posent : qui s'est connecté et d'où, puis qu'a-t-il fait. Les journaux d'authentification du SSO répondent à la première : identité, adresse IP source, heure, réussite ou échec, parfois géolocalisation. Les journaux de l'application répondent à la seconde : factures consultées ou modifiées, par quel compte et à quel moment. Croisés, ils permettent de dater l'usage frauduleux et d'en mesurer l'étendue. Les autres sources ne relient ni une identité ni une action au compte.",
+    "distractorNotes": {
+      "b": "NetFlow décrit des flux (adresses, ports, volumes) sans identité d'utilisateur ni contenu : il ne dit pas quelles factures ont été modifiées.",
+      "c": "Sans clé de déchiffrement, le contenu HTTPS est illisible : la capture ne montre ni le compte, ni les actions effectuées dans l'application.",
+      "e": "L'inventaire matériel recense les postes ; il ne renseigne ni les connexions ni les modifications effectuées dans l'application."
+    },
+    "reference": "NIST SP 800-92 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.9"
+  }
+]

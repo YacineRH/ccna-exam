@@ -727,38 +727,6 @@
     "reference": "OASIS SAML V2.0 Profiles (Web Browser SSO Profile)"
   },
   {
-    "slug": "security-plus-4.6-ldaps-port-001",
-    "certification": "security-plus",
-    "domain": "4.0",
-    "subtopic": "4.6",
-    "difficulty": "easy",
-    "source": "ai",
-    "body": {
-      "type": "fill_blank",
-      "stem": "Une PME migre l'authentification de son application métier vers LDAPS (LDAP protégé par TLS dès l'ouverture de la connexion). L'administrateur doit autoriser ce flux sur le pare-feu interne. Quel port TCP doit-il ouvrir vers le serveur d'annuaire ?",
-      "fields": [
-        {
-          "id": "port",
-          "label": "Numéro de port TCP (nombre entier)"
-        }
-      ]
-    },
-    "key": {
-      "type": "fill_blank",
-      "fields": {
-        "port": {
-          "accepted": [
-            "636"
-          ],
-          "normalize": "int"
-        }
-      }
-    },
-    "explanation": "LDAPS utilise le port TCP 636 : la session TLS est négociée avant tout échange LDAP, si bien que les liaisons et les requêtes sont chiffrées. Le port 389 est celui de LDAP sans chiffrement, qui peut toutefois passer en TLS par l'opération StartTLS. Sur un contrôleur de domaine Active Directory, le catalogue global utilise de même 3268 en clair et 3269 en TLS. Ouvrir 636 et fermer les liaisons simples en clair sur 389 évite que des identifiants circulent lisibles.",
-    "distractorNotes": {},
-    "reference": "IANA Service Name and Transport Protocol Port Number Registry (ldaps, 636/tcp) ; RFC 4513"
-  },
-  {
     "slug": "security-plus-4.6-abac-treasury-portal-001",
     "certification": "security-plus",
     "domain": "4.0",

@@ -220,7 +220,7 @@ describe.skipIf(!DATABASE_URL)('API v1 (PostgreSQL)', () => {
     const raw = JSON.stringify(state);
     expect(raw).toContain('"id":"key"');
     expect(propertyNames(state).filter((k) => CORRECTION_FIELDS.includes(k))).toEqual([]);
-    await call('POST', `/api/v1/attempts/${state.id}/submit`);
+    // Laissée en cours : soumise, elle compterait dans les statistiques du test suivant.
   });
 
   it('mode entraînement : correction immédiate', async () => {

@@ -1600,48 +1600,6 @@
     "reference": "NIST SP 800-40 Rev. 4"
   },
   {
-    "slug": "security-plus-2.5-server-decommission-steps",
-    "certification": "security-plus",
-    "domain": "2.0",
-    "subtopic": "2.5",
-    "difficulty": "medium",
-    "source": "ai",
-    "body": {
-      "type": "ordering",
-      "stem": "Une entreprise retire du service un serveur de fichiers en fin de vie, dont les disques seront confiés à un recycleur. Ordonnez les étapes du décommissionnement, de la première à la dernière.",
-      "items": [
-        {
-          "id": "sanitize",
-          "text": "Purger les disques selon NIST SP 800-88"
-        },
-        {
-          "id": "approve",
-          "text": "Faire approuver la demande de changement pour le retrait du serveur"
-        },
-        {
-          "id": "inventory",
-          "text": "Remettre le matériel au recycleur avec le certificat d'effacement et mettre à jour l'inventaire"
-        },
-        {
-          "id": "archive",
-          "text": "Archiver les données soumises à la politique de conservation"
-        }
-      ]
-    },
-    "key": {
-      "type": "ordering",
-      "order": [
-        "approve",
-        "archive",
-        "sanitize",
-        "inventory"
-      ]
-    },
-    "explanation": "Le retrait d'un système est un changement : il commence par une demande approuvée, qui vérifie qu'aucun service ne dépend encore du serveur. Les données à conserver sont ensuite archivées selon la politique de conservation, car l'effacement les détruira. Vient la purge des disques, adaptée à des supports qui quittent l'organisation selon NIST SP 800-88 Rev. 1. Enfin, le matériel part avec la preuve d'effacement et l'inventaire des actifs est mis à jour.",
-    "distractorNotes": {},
-    "reference": "NIST SP 800-88 Rev. 1 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5)"
-  },
-  {
     "slug": "security-plus-2.5-compensating-control-cycle",
     "certification": "security-plus",
     "domain": "2.0",

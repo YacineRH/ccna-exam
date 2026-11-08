@@ -13,7 +13,7 @@ Il permet à une IA (Claude ou tout client MCP) de produire du contenu sans reto
 | `record_review` | Publie la question, ou la renvoie en brouillon avec les problèmes relevés. |
 | `generate_exam` | Assemble un examen blanc figé et numéroté (pondération officielle, aucun doublon, priorité aux questions jamais utilisées). S'il manque des questions, dit combien générer et dans quel domaine. |
 | `analyze_weakness` | Niveau de préparation, domaines triés par priorité (poids × lacune) et sous-thèmes à revoir. |
-| `add_certification` | Déclare ou met à jour une certification par simple configuration. |
+| `add_certification` | Déclare ou met à jour une certification par simple configuration : domaines, pondérations, sous-thèmes, barème, format d'examen, types autorisés et **modules** (`exam`, `practice`, `flashcards`, `subnet`, `cli`, `challenges` ; par défaut les trois premiers). L'objet est exactement celui de `packages/content/data/certifications/<code>.json` et passe par la même validation : déclarer la Security+ par cet outil ou par son fichier donne la même certification (testé). Sans module `cli`, les routes de labs répondent 404 `module_unavailable`. |
 | `list_labs` | Labs CLI d'une certification (slug, titre, difficulté, sous-thème, statut) et nombre de labs publiés par sous-thème. |
 | `generate_lab` | Consigne de génération d'un lab : format exact, types d'objectifs, commandes que le simulateur connaît (par mode et type d'équipement), règles de qualité, labs existants du sous-thème, slug suggéré. |
 | `submit_lab` | Validation automatique : schéma, rangement, puis l'API joue le lab dans le simulateur (état de départ, solution, variantes, pièges). Le lab passe à l'état `validated`. |
@@ -85,3 +85,7 @@ Le jeton de service agit au nom du premier compte administrateur. Il se change d
 > Pour le CCNA, appelle `generate_challenge` avec le thème « dépannage OSPF entre deux routeurs » et une durée cible de 8 minutes, rédige un challenge de dépannage (pannes réalistes dans la configuration de départ, objectifs qui décrivent le service rétabli), soumets-le avec `submit_lab` jusqu'à ce qu'il passe le simulateur, relis-le avec `validate_lab` en cherchant un moyen de gagner sans vraiment corriger, puis publie-le ou rejette-le avec `record_lab_review`.
 
 > Pour le CCNA, appelle `list_labs` : pour un sous-thème sans lab, appelle `generate_lab`, rédige un lab avec uniquement les commandes listées, soumets-le avec `submit_lab` et corrige-le jusqu'à ce qu'il passe le simulateur. Relis-le avec `validate_lab` de façon critique, puis publie-le ou rejette-le avec `record_lab_review`.
+
+## Génération en lots pour une autre certification
+
+Les consignes de `docs/generation/` valent pour toute certification : elles passent `--cert <code>` à `batch:context`, `batch:check`, `batch:merge` et `near-duplicates`, et une annexe par certification les complète (`annexe-security-plus.md` : scénarios, référentiels NIST/RFC/ISO/CVSS/ATT&CK, pas de type `cli`, point de vue du défenseur). Les outils `generate_question` et `validate_question` ne présument d'aucun référentiel : leur consigne demande une référence réelle de l'éditeur, de la RFC ou de la norme du sujet. `sample-batch.mjs` tire l'échantillon de contrôle (5 % de chaque lot, au moins une question) de façon déterministe.

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   CERTIFICATION_STORAGE_KEY,
   certificationLabel,
+  hasModule,
   pickCertification,
   readStoredCertification,
   storeCertification,
@@ -58,5 +59,28 @@ describe('stockage du choix', () => {
 describe('certificationLabel', () => {
   it('assemble code et code d’examen', () => {
     expect(certificationLabel({ code: 'demo', examCode: 'D-101' })).toBe('DEMO D-101');
+  });
+});
+
+describe('hasModule', () => {
+  const secPlus = { modules: ['exam', 'practice', 'flashcards'] as const };
+  it('suit la liste de modules de la certification', () => {
+    expect(hasModule({ modules: [...secPlus.modules] }, 'exam')).toBe(true);
+    expect(hasModule({ modules: [...secPlus.modules] }, 'cli')).toBe(false);
+    expect(hasModule({ modules: [...secPlus.modules] }, 'subnet')).toBe(false);
+    expect(hasModule({ modules: ['exam', 'cli', 'challenges'] }, 'challenges')).toBe(true);
+  });
+  it('sans liste (ancienne API) ou sans certification, seuls les modules par défaut', () => {
+    expect(hasModule({}, 'practice')).toBe(true);
+    expect(hasModule({}, 'cli')).toBe(false);
+    expect(hasModule(null, 'flashcards')).toBe(true);
+    expect(hasModule(undefined, 'challenges')).toBe(false);
+  });
+});
+
+describe('certificationLabel avec nom court', () => {
+  it('préfère le nom court au code en capitales', () => {
+    expect(certificationLabel({ code: 'security-plus', examCode: 'SY0-701', shortName: 'Security+' })).toBe('Security+ SY0-701');
+    expect(certificationLabel({ code: 'ccna', examCode: '200-301' })).toBe('CCNA 200-301');
   });
 });

@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest';
 
 const ROOT = join(import.meta.dirname, '..', '..', '..');
 const SOURCES = ['packages/core/src', 'apps/api/src', 'apps/web/src', 'apps/mcp/src', 'apps/web/index.html'];
-const FORBIDDEN = [/ccna/i, /200-301/];
+const FORBIDDEN = [/ccna/i, /200-301/, /\bcisco\b/i];
 
 function files(path: string): string[] {
   if (statSync(path).isFile()) return [path];
