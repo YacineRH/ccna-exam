@@ -1,0 +1,1760 @@
+[
+  {
+    "slug": "security-plus-3.3-stolen-laptop-fde-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un commercial se fait voler dans le train son ordinateur portable, éteint, qui contient les fichiers clients de l'agence. Quel contrôle, s'il avait été en place, aurait le mieux protégé ces données ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un tunnel VPN imposé pour toutes les connexions sortantes"
+        },
+        {
+          "id": "b",
+          "text": "Le chiffrement intégral du disque avec authentification au démarrage"
+        },
+        {
+          "id": "c",
+          "text": "Le masquage des numéros de téléphone dans l'application CRM"
+        },
+        {
+          "id": "d",
+          "text": "La segmentation du réseau de l'agence en plusieurs VLAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un portable volé éteint expose des données au repos : les fichiers dorment sur le disque. Le chiffrement intégral du disque (BitLocker, FileVault, LUKS) rend le contenu illisible sans la clé, libérée seulement après authentification au démarrage (PIN, mot de passe). Le voleur qui extrait le disque ou démarre un autre système ne lit que des données chiffrées. C'est le contrôle de référence pour les données au repos sur un terminal mobile.",
+    "distractorNotes": {
+      "a": "Un VPN protège les données en transit sur le réseau ; il n'empêche pas de lire les fichiers stockés sur le disque d'un appareil volé.",
+      "c": "Le masquage agit sur l'affichage dans une application ; les fichiers clients restent lisibles en clair sur le disque.",
+      "d": "La segmentation limite les flux réseau internes ; elle n'a aucun effet sur un appareil sorti des locaux."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-call-center-card-masking-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les conseillers d'un centre d'appels doivent confirmer l'identité d'un client en lui faisant citer les quatre derniers chiffres de sa carte bancaire, sans jamais voir le numéro complet à l'écran. Quelle méthode répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le hachage du numéro de carte"
+        },
+        {
+          "id": "b",
+          "text": "Le chiffrement du disque des postes"
+        },
+        {
+          "id": "c",
+          "text": "Le masquage du numéro de carte"
+        },
+        {
+          "id": "d",
+          "text": "La segmentation du réseau du centre"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le masquage remplace une partie de la valeur par des caractères neutres à l'affichage (par exemple **** **** **** 4821) tout en laissant visible ce qui est utile au métier. Le conseiller peut vérifier les quatre derniers chiffres sans connaître le reste du numéro, ce qui réduit l'exposition en cas de capture d'écran, d'indiscrétion ou de malveillance interne. PCI DSS impose d'ailleurs de masquer le PAN affiché pour les personnes qui n'ont pas besoin de le voir en entier.",
+    "distractorNotes": {
+      "a": "Une empreinte ne laisse apparaître aucun chiffre lisible : le conseiller ne pourrait plus comparer les quatre derniers chiffres annoncés par le client.",
+      "b": "Le chiffrement du disque protège les données stockées sur le poste ; il ne change rien à ce qui s'affiche à l'écran d'un utilisateur connecté.",
+      "d": "La segmentation cloisonne les flux réseau ; le numéro complet resterait visible dans l'application."
+    },
+    "reference": "PCI DSS v4.0 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-test-db-static-masking-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une mutuelle copie sa base de production vers un environnement de recette pour une équipe de développeurs prestataires. Les données doivent garder un format réaliste (noms, dates, numéros de sécurité sociale plausibles), et personne dans cet environnement ne doit pouvoir retrouver, par aucun moyen, les valeurs réelles. Quelle méthode convient LE MIEUX ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le masquage statique des données lors de la copie"
+        },
+        {
+          "id": "b",
+          "text": "La tokenisation avec un coffre à jetons accessible à la recette"
+        },
+        {
+          "id": "c",
+          "text": "Le chiffrement transparent des fichiers de la base de recette"
+        },
+        {
+          "id": "d",
+          "text": "La segmentation réseau de l'environnement de recette"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le masquage statique transforme définitivement les données dans la copie : chaque valeur sensible est remplacée par une valeur fictive de même format, sans lien conservé avec l'original. Les développeurs disposent de données réalistes pour tester, mais aucune table de correspondance ni clé ne permet de revenir aux vraies valeurs. C'est la méthode adaptée aux environnements hors production, où l'exigence est d'éliminer la donnée réelle plutôt que de la protéger.",
+    "distractorNotes": {
+      "b": "La tokenisation est réversible par le coffre : si la recette peut y accéder, les valeurs réelles restent récupérables, ce que l'exigence interdit.",
+      "c": "Le chiffrement transparent déchiffre les données pour toute session authentifiée : les développeurs verraient les vraies valeurs en clair.",
+      "d": "La segmentation limite qui atteint l'environnement, mais les prestataires autorisés y verraient toujours les données réelles."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-disk-image-hash-integrity-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un analyste réalise l'image du disque d'un poste compromis. Il devra démontrer plusieurs mois plus tard, devant un tribunal, que cette image n'a pas été modifiée depuis son acquisition. Quelle méthode lui permet de le faire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Masquer les fichiers personnels présents dans l'image"
+        },
+        {
+          "id": "b",
+          "text": "Tokeniser les identifiants contenus dans l'image"
+        },
+        {
+          "id": "c",
+          "text": "Chiffrer l'image avec une clé AES-256 conservée par le SOC"
+        },
+        {
+          "id": "d",
+          "text": "Calculer l'empreinte SHA-256 de l'image à l'acquisition"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le hachage produit une empreinte de taille fixe qui change dès qu'un seul bit de l'image change. L'analyste calcule l'empreinte SHA-256 au moment de l'acquisition et la consigne dans la chaîne de traçabilité ; plus tard, un nouveau calcul identique prouve l'intégrité de la preuve. Le hachage répond à l'intégrité, pas à la confidentialité, et c'est précisément ce que l'analyste doit démontrer ici.",
+    "distractorNotes": {
+      "a": "Masquer des fichiers modifierait l'image elle-même et détruirait sa valeur probante.",
+      "b": "Remplacer des identifiants par des jetons altère le contenu de la preuve au lieu d'en prouver l'intégrité.",
+      "c": "Le chiffrement protège la confidentialité de l'image ; à lui seul, il ne prouve pas que son contenu est resté identique depuis l'acquisition."
+    },
+    "reference": "FIPS 180-4 ; RFC 3227"
+  },
+  {
+    "slug": "security-plus-3.3-health-bucket-sovereignty-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un éditeur de logiciels de santé s'est engagé par contrat à ce que toutes les copies des dossiers patients, sauvegardes comprises, restent sur le territoire de l'Union européenne. Quel élément de la configuration de stockage contrevient à cet engagement ?",
+      "exhibit": "stockage: dossiers-patients\nregion_principale: fr-paris-1\nchiffrement: AES-256, cle geree par l'hebergeur (KMS fr-paris-1)\nversionnage: active\nreplication:\n  - destination: archives-reprise\n    region: us-east-2\njournaux_acces:\n  destination: logs-dossiers\n  region: fr-paris-1",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le chiffrement avec une clé gérée par l'hébergeur"
+        },
+        {
+          "id": "b",
+          "text": "Le versionnage activé sur le stockage principal"
+        },
+        {
+          "id": "c",
+          "text": "La règle de réplication vers la région de reprise"
+        },
+        {
+          "id": "d",
+          "text": "L'envoi des journaux d'accès vers logs-dossiers"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La souveraineté des données veut qu'elles relèvent des lois du pays où elles sont stockées ; un engagement de localisation impose donc de connaître l'emplacement de toutes les copies. Le stockage principal (fr-paris-1) et les journaux sont en France, mais la règle de réplication envoie une copie complète des dossiers vers us-east-2, une région hors de l'UE. Cette copie de reprise, souvent oubliée, suffit à violer l'engagement et soumet les données à une autre juridiction.",
+    "distractorNotes": {
+      "a": "La clé est gérée dans le KMS de la région fr-paris-1 : son mode de gestion ne déplace aucune donnée hors de l'UE.",
+      "b": "Le versionnage conserve les versions antérieures dans le même stockage, donc dans la même région.",
+      "d": "Le stockage des journaux logs-dossiers est lui aussi en région fr-paris-1."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-hr-saas-geoblocking-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les journaux d'une application RH en SaaS montrent des tentatives de connexion répétées depuis des adresses IP situées en Asie et en Amérique du Sud. Tous les salariés de l'entreprise travaillent en France et ne se déplacent jamais à l'étranger. Quelle mesure réduit LE MIEUX cette surface d'attaque ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tokeniser les identifiants des salariés dans l'application"
+        },
+        {
+          "id": "b",
+          "text": "Masquer les salaires affichés aux gestionnaires RH"
+        },
+        {
+          "id": "c",
+          "text": "Placer l'application dans un VLAN dédié du siège"
+        },
+        {
+          "id": "d",
+          "text": "Bloquer les connexions géolocalisées hors de France"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une restriction géographique, appliquée par une politique d'accès conditionnel ou par le fournisseur SaaS, refuse les connexions dont la géolocalisation (adresse IP publique en général) tombe hors des pays autorisés. Comme aucun utilisateur légitime ne se connecte depuis l'étranger, la mesure élimine d'un coup les tentatives venues d'Asie et d'Amérique du Sud sans gêner les salariés. Elle se contourne par un VPN ou un proxy local, d'où l'intérêt de la combiner avec l'authentification multifacteur.",
+    "distractorNotes": {
+      "a": "Remplacer les identifiants par des jetons dans les données ne change rien à qui peut tenter de se connecter au portail.",
+      "b": "Le masquage limite ce que voient les utilisateurs connectés ; il ne bloque aucune tentative de connexion.",
+      "c": "Une application SaaS est hébergée chez le fournisseur : elle ne se place pas dans un VLAN du siège, et ses utilisateurs s'y connectent par Internet."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-press-release-public-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le service communication d'un industriel a fait valider par la direction un communiqué annonçant l'ouverture d'une usine ; il sera diffusé demain sur le site web et aux journalistes. Quel niveau de classification convient à ce document une fois validé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Restreint"
+        },
+        {
+          "id": "b",
+          "text": "Public"
+        },
+        {
+          "id": "c",
+          "text": "Privé"
+        },
+        {
+          "id": "d",
+          "text": "Confidentiel"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le niveau public s'applique aux informations dont la divulgation ne cause aucun préjudice, parce qu'elles sont destinées à être diffusées sans restriction. Un communiqué de presse validé par la direction et prévu pour le site web et les journalistes en est l'exemple type. Classer trop haut une information publique alourdit inutilement les contrôles et gêne sa diffusion ; la classification doit refléter l'impact réel d'une divulgation.",
+    "distractorNotes": {
+      "a": "Le niveau restreint vise les informations les plus sensibles, accessibles nominativement ; un document destiné à la presse ne l'est pas.",
+      "c": "Le niveau privé concerne les informations personnelles relatives à un individu (salarié, client) ; un communiqué d'entreprise n'en contient pas.",
+      "d": "Le niveau confidentiel vise des informations dont la divulgation nuirait à l'organisation, ce qui n'est pas le cas d'une annonce publique."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-identical-hashes-salt-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'un audit, un consultant remarque dans la table des comptes d'une application web que plusieurs utilisateurs partagent exactement la même empreinte SHA-256 de mot de passe. Il en déduit qu'un attaquant ayant volé la table pourrait casser ces comptes d'un coup à l'aide de tables précalculées. Quelle mesure supprime ce problème ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter un sel aléatoire unique à chaque mot de passe avant le hachage"
+        },
+        {
+          "id": "b",
+          "text": "Remplacer SHA-256 par SHA-512 sans autre changement"
+        },
+        {
+          "id": "c",
+          "text": "Encoder les empreintes en Base64 avant leur stockage"
+        },
+        {
+          "id": "d",
+          "text": "Chiffrer les mots de passe en AES avec une clé commune à tous les comptes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Sans sel, deux mots de passe identiques donnent la même empreinte, et une table arc-en-ciel précalculée permet de retrouver d'un coup tous les comptes concernés. Un sel aléatoire unique, stocké avec l'empreinte, rend chaque calcul différent : les empreintes ne se ressemblent plus et les tables précalculées deviennent inutiles. NIST SP 800-63B demande un sel d'au moins 32 bits et une fonction de dérivation lente (PBKDF2, bcrypt, Argon2) pour freiner aussi les attaques par force brute.",
+    "distractorNotes": {
+      "b": "SHA-512 sans sel reste déterministe : deux mots de passe identiques ont toujours la même empreinte et restent exposés aux tables précalculées.",
+      "c": "Base64 est un simple encodage réversible ; il ne fait que changer l'écriture d'empreintes toujours identiques.",
+      "d": "Un chiffrement avec une clé commune reste réversible pour qui vole la clé, et deux mots de passe identiques donnent le même texte chiffré si le mode est déterministe."
+    },
+    "reference": "NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-3.3-token-vault-breach-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La base clients d'un site marchand a été exfiltrée. Elle contenait, à la place des numéros de carte, des jetons émis par le prestataire de paiement, qui conserve seul les vrais numéros dans son coffre. Pourquoi les numéros de carte des clients ne sont-ils pas compromis ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les jetons sont chiffrés avec une clé AES que l'attaquant ne possède pas"
+        },
+        {
+          "id": "b",
+          "text": "Les jetons sont des empreintes salées que l'on ne peut pas inverser"
+        },
+        {
+          "id": "c",
+          "text": "Les jetons n'ont aucun lien mathématique avec les numéros réels"
+        },
+        {
+          "id": "d",
+          "text": "Les jetons sont masqués à l'affichage dans l'interface du site"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un jeton est une valeur de substitution, souvent aléatoire, qui n'est dérivée du numéro de carte par aucun calcul. La correspondance jeton-numéro n'existe que dans le coffre du prestataire. Voler les jetons ne donne donc rien à casser : sans accès au coffre, aucun algorithme ni aucune clé ne permet de retrouver le PAN. C'est pourquoi la tokenisation réduit aussi le périmètre PCI DSS du commerçant, qui ne stocke plus de numéros de carte.",
+    "distractorNotes": {
+      "a": "Un jeton n'est pas un texte chiffré : s'il l'était, le vol de la clé suffirait à retrouver les numéros.",
+      "b": "Un jeton n'est pas une empreinte ; à la différence d'un hachage, il peut être converti en numéro réel par le coffre.",
+      "d": "Le masquage à l'affichage ne protège pas les données dans une base exfiltrée ; ici, ce sont des jetons qui sont stockés."
+    },
+    "reference": "PCI DSS v4.0 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-pos-ram-scraper-state-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un logiciel malveillant installé sur les terminaux de caisse d'une enseigne lit la mémoire du processus de paiement pour récupérer les numéros de carte juste après la lecture de la puce, avant qu'ils ne soient chiffrés pour l'envoi à la banque. Quel état des données cette attaque vise-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Au repos"
+        },
+        {
+          "id": "b",
+          "text": "En transit"
+        },
+        {
+          "id": "c",
+          "text": "En cours d'utilisation"
+        },
+        {
+          "id": "d",
+          "text": "En sauvegarde"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une donnée est en cours d'utilisation quand une application la traite en mémoire vive ou dans le processeur. Pour être manipulés, les numéros de carte doivent apparaître en clair dans la RAM du processus de paiement : c'est cette fenêtre, entre la lecture et le chiffrement, que vise un « RAM scraper ». Les protections des données au repos et en transit ne couvrent pas cet état ; il faut par exemple un chiffrement de bout en bout dès le lecteur (P2PE) ou des enclaves sécurisées.",
+    "distractorNotes": {
+      "a": "Au repos désigne des données stockées sur un support (disque, base) ; ici, les numéros ne sont lus que dans la mémoire du processus.",
+      "b": "L'attaque intervient avant l'envoi à la banque : les numéros ne circulent pas encore sur le réseau.",
+      "d": "Ce n'est pas un état des données de la classification au repos, en transit, en cours d'utilisation, et aucune sauvegarde n'est en jeu ici."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-payroll-upload-http-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Lors d'une revue des journaux du proxy, l'équipe sécurité relève le transfert mensuel du fichier de virements de salaires vers le prestataire de paie. Le prestataire a besoin des IBAN complets pour exécuter les virements. Quelle mesure protège LE MIEUX ce transfert ?",
+      "exhibit": "2026-11-08 09:14:02 src=10.20.4.17 user=rh.martin method=POST\n  url=http://paie.example.net/upload/virements-novembre.csv\n  dst=198.51.100.40:80 bytes_out=1843220 status=200",
+      "options": [
+        {
+          "id": "a",
+          "text": "Hacher le fichier en SHA-256 avant son envoi"
+        },
+        {
+          "id": "b",
+          "text": "Masquer les IBAN dans le fichier avant son envoi"
+        },
+        {
+          "id": "c",
+          "text": "Chiffrer le disque du poste de l'utilisatrice RH"
+        },
+        {
+          "id": "d",
+          "text": "Imposer l'envoi par HTTPS (TLS) vers le prestataire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le journal montre un POST en HTTP sur le port 80 : le fichier de virements, avec les IBAN et les montants, traverse Internet en clair et peut être lu ou modifié par tout intermédiaire. Pour des données en transit, la mesure adaptée est le chiffrement du canal, ici HTTPS avec TLS 1.2 ou 1.3, qui garantit confidentialité et intégrité entre le poste et le serveur authentifié du prestataire. Le contenu du fichier reste exploitable par le destinataire.",
+    "distractorNotes": {
+      "a": "Une empreinte permet de vérifier l'intégrité à l'arrivée, mais le fichier circulerait toujours en clair, lisible par un tiers.",
+      "b": "Le prestataire a besoin des IBAN complets : des IBAN masqués rendraient les virements impossibles.",
+      "c": "Le chiffrement du disque protège le fichier au repos sur le poste, pas pendant son trajet sur le réseau."
+    },
+    "reference": "RFC 8446 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-mobile-app-code-obfuscation-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque publie une application mobile. Pour compliquer l'analyse de l'application par rétro-ingénierie, l'équipe de développement renomme automatiquement les classes et variables en noms dépourvus de sens et brouille le flux de contrôle, sans changer le comportement du programme. Quelle méthode applique-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La tokenisation"
+        },
+        {
+          "id": "b",
+          "text": "Le hachage"
+        },
+        {
+          "id": "c",
+          "text": "L'obfuscation"
+        },
+        {
+          "id": "d",
+          "text": "Le masquage"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'obfuscation rend une information ou un code difficile à comprendre tout en le laissant fonctionnel : renommage des identifiants, brouillage du flux de contrôle, chaînes encodées. Elle ne repose sur aucun secret cryptographique et ne fait que ralentir l'analyste ; c'est une mesure de défense en profondeur, jamais un substitut au chiffrement des données sensibles ni à la protection des clés embarquées dans l'application.",
+    "distractorNotes": {
+      "a": "La tokenisation remplace une donnée sensible par un jeton conservé dans un coffre ; elle ne transforme pas du code exécutable.",
+      "b": "Un hachage produit une empreinte irréversible : un code haché ne pourrait plus s'exécuter.",
+      "d": "Le masquage cache une partie d'une valeur affichée (comme un numéro de carte), il ne s'applique pas à la structure d'un programme."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-patient-records-segmentation-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après une attaque par rançongiciel chez un confrère, un hôpital veut empêcher qu'un poste bureautique compromis puisse atteindre le serveur de dossiers patients. Seuls les serveurs d'application du logiciel de soins doivent pouvoir s'y connecter. Quelle méthode répond LE MIEUX à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le masquage des données affichées dans le logiciel de soins"
+        },
+        {
+          "id": "b",
+          "text": "Le placement du serveur dans un segment réseau dédié filtré par pare-feu"
+        },
+        {
+          "id": "c",
+          "text": "Le hachage des dossiers patients stockés sur le serveur"
+        },
+        {
+          "id": "d",
+          "text": "L'obfuscation du code du logiciel de soins"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La segmentation place les données sensibles dans une zone réseau distincte (VLAN, sous-réseau, microsegmentation) dont les flux entrants sont filtrés. En n'autorisant vers le serveur de dossiers que les serveurs d'application du logiciel de soins, l'hôpital empêche un poste bureautique compromis de l'atteindre et freine les déplacements latéraux d'un rançongiciel. La mesure répond exactement à l'exigence, qui porte sur qui peut se connecter au serveur.",
+    "distractorNotes": {
+      "a": "Le masquage agit sur l'affichage pour des utilisateurs légitimes ; il ne bloque aucune connexion réseau vers le serveur.",
+      "c": "Des dossiers hachés deviendraient illisibles pour les soignants, et le serveur resterait joignable depuis les postes.",
+      "d": "L'obfuscation complique l'analyse du code ; elle ne limite pas les flux réseau vers le serveur."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-finance-share-acl-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un audit révèle que des salariés étrangers au service financier ont pu modifier des fichiers budgétaires sur ce partage. Le partage doit rester accessible aux seuls membres du groupe CORP\\GG_Finance et aux administrateurs. Quelle mesure corrige LE MIEUX la situation ?",
+      "exhibit": "C:\\>icacls D:\\Partages\\Finance\nD:\\Partages\\Finance BUILTIN\\Administrateurs:(OI)(CI)(F)\n                    Tout le monde:(OI)(CI)(M)\n                    CORP\\GG_Finance:(OI)(CI)(M)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Activer l'audit des accès aux objets sur le dossier"
+        },
+        {
+          "id": "b",
+          "text": "Chiffrer le volume D: avec BitLocker"
+        },
+        {
+          "id": "c",
+          "text": "Tokeniser les montants contenus dans les fichiers budgétaires"
+        },
+        {
+          "id": "d",
+          "text": "Retirer l'entrée « Tout le monde » de la liste de contrôle d'accès"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La sortie icacls montre une entrée « Tout le monde » avec le droit Modification (M), héritée par les sous-dossiers (CI) et les fichiers (OI) : tout utilisateur peut donc modifier les fichiers. Retirer cette entrée laisse l'accès aux seuls administrateurs et au groupe GG_Finance, ce qui applique le moindre privilège. C'est une restriction par permissions, qui corrige la cause au lieu d'en observer les effets.",
+    "distractorNotes": {
+      "a": "L'audit consigne les accès (contrôle détectif) mais n'empêche pas les modifications non autorisées.",
+      "b": "BitLocker protège le volume au repos contre le vol du disque ; les utilisateurs du partage continuent de lire et modifier les fichiers en clair.",
+      "c": "Tokeniser les montants rendrait les fichiers inexploitables pour les financiers sans retirer aux autres salariés le droit de les modifier."
+    },
+    "reference": "NIST SP 800-53 Rev. 5 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-email-join-deterministic-token-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une enseigne veut croiser deux jeux de données (achats en magasin et navigation web) identifiés par l'adresse électronique du client. Les analystes doivent pouvoir joindre les deux jeux, mais ne doivent jamais pouvoir retrouver une adresse, même en testant des listes d'adresses connues. Sur réquisition judiciaire, l'équipe du DPO doit pouvoir retrouver l'adresse d'origine. Quelle méthode remplit toutes ces conditions ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La tokenisation déterministe des adresses par un coffre à accès restreint"
+        },
+        {
+          "id": "b",
+          "text": "Le hachage SHA-256 sans sel des adresses"
+        },
+        {
+          "id": "c",
+          "text": "Le chiffrement AES-256-GCM des adresses avec un vecteur d'initialisation aléatoire"
+        },
+        {
+          "id": "d",
+          "text": "Le masquage statique des adresses (j***@example.com)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Trois contraintes sont à concilier. La jointure exige qu'une même adresse donne toujours la même valeur : il faut une méthode déterministe. La résistance aux listes d'adresses exclut toute transformation que l'analyste peut recalculer lui-même. Le retour à l'adresse exige la réversibilité pour le seul DPO. La tokenisation déterministe produit le même jeton pour la même adresse, sans lien calculable avec elle, et seul le coffre, dont l'accès est réservé à l'équipe du DPO, détient la correspondance.",
+    "distractorNotes": {
+      "b": "Une empreinte sans sel se recalcule : l'analyste hache une liste d'adresses connues et retrouve les correspondances ; et le DPO ne peut pas inverser un hachage.",
+      "c": "Avec un vecteur d'initialisation aléatoire, une même adresse donne un chiffré différent à chaque fois : la jointure entre les deux jeux devient impossible.",
+      "d": "Le masquage statique est irréversible et crée des collisions (plusieurs adresses donnent j***@example.com) : ni jointure fiable ni retour à l'original."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-cloud-compelled-disclosure-hyok-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise française héberge une application chez un fournisseur cloud soumis à une législation étrangère qui peut l'obliger à remettre les données de ses clients aux autorités de son pays. Le RSSI veut que les données restent inexploitables même dans ce cas, tout en laissant l'application les relire normalement. Quelle mesure répond LE MIEUX à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Limiter le stockage et les sauvegardes aux régions européennes du fournisseur"
+        },
+        {
+          "id": "b",
+          "text": "Chiffrer avec des clés gérées par le fournisseur dans son service KMS"
+        },
+        {
+          "id": "c",
+          "text": "Chiffrer côté client avec des clés conservées dans un HSM de l'entreprise"
+        },
+        {
+          "id": "d",
+          "text": "Hacher toutes les données en SHA-256 avant leur envoi au fournisseur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le risque tient à la juridiction du fournisseur, pas à l'emplacement des serveurs : une loi extraterritoriale peut viser des données stockées en Europe. La seule parade technique est que le fournisseur ne détienne jamais les clés. Avec un chiffrement côté client et des clés gardées dans un HSM de l'entreprise (approche « hold your own key »), le fournisseur ne stocke que du texte chiffré : contraint de le remettre, il livre des données inexploitables, alors que l'application, qui accède au HSM, les déchiffre normalement.",
+    "distractorNotes": {
+      "a": "La localisation en Europe ne soustrait pas le fournisseur à la loi de son pays d'origine : il peut être contraint de remettre des données stockées dans l'UE.",
+      "b": "Si le fournisseur gère les clés, il peut déchiffrer les données et serait contraint de les remettre en clair.",
+      "d": "Un hachage est irréversible : l'application ne pourrait plus relire les données, ce que l'exigence impose."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-data-inventory-weakest-control-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le RSSI d'un cabinet comptable revoit l'inventaire des données et des protections en place. Quel élément présente la protection la moins adaptée à son état et à sa classification ?",
+      "exhibit": "Element              Classification  Etat        Protection actuelle\n-------------------  --------------  ----------  --------------------------\nFichier clients      Confidentiel    Au repos    BitLocker (AES-256)\nBilans annuels       Confidentiel    En transit  FTP vers les clients\nCatalogue des offres Public          En transit  HTTPS (TLS 1.3)\nMots de passe        Restreint       Au repos    PBKDF2-SHA-256, sel unique",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le fichier clients"
+        },
+        {
+          "id": "b",
+          "text": "Les bilans annuels"
+        },
+        {
+          "id": "c",
+          "text": "Le catalogue des offres"
+        },
+        {
+          "id": "d",
+          "text": "Les mots de passe"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Les bilans annuels sont confidentiels et circulent en transit, mais ils sont transférés par FTP, un protocole qui transmet identifiants et contenu en clair : tout intermédiaire peut lire les comptes des clients du cabinet. Il faut un protocole chiffré (SFTP, FTPS ou HTTPS). Les autres éléments ont une protection cohérente : chiffrement du disque pour des données au repos, HTTPS pour un catalogue public dont seule l'intégrité importe, et empreintes salées obtenues par une fonction lente pour les mots de passe.",
+    "distractorNotes": {
+      "a": "Un fichier confidentiel au repos chiffré en AES-256 par BitLocker bénéficie d'une protection adaptée à son état.",
+      "c": "Un catalogue public n'exige pas de confidentialité ; HTTPS en garantit au surplus l'intégrité et l'authenticité.",
+      "d": "PBKDF2 avec un sel unique est une méthode recommandée par NIST SP 800-63B pour stocker des mots de passe."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-dlp-qr-code-exfiltration-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un salarié sur le départ a exfiltré la liste des clients de son employeur en la convertissant en une série d'images de codes QR, envoyées en pièces jointes vers une messagerie personnelle. La DLP réseau de l'entreprise, qui déchiffre le trafic TLS et bloque d'habitude les exports de cette liste en CSV, n'a déclenché aucune alerte. Quelle caractéristique des données explique LE MIEUX ce silence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les données étaient sous une forme non lisible par l'humain"
+        },
+        {
+          "id": "b",
+          "text": "Les données étaient en transit sur le réseau"
+        },
+        {
+          "id": "c",
+          "text": "Les données appartenaient à la catégorie des données réglementées"
+        },
+        {
+          "id": "d",
+          "text": "Les données avaient été classées au niveau public"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Les règles de DLP par contenu reposent sur des motifs textuels (expressions régulières, mots-clés, empreintes de documents). Une liste convertie en codes QR devient une donnée non lisible par l'humain : il faut un décodage par une machine pour la comprendre, et l'outil qui inspecte du texte n'y voit qu'une image. Les codes-barres, les fichiers binaires ou les données chiffrées posent le même problème ; la DLP doit alors s'appuyer sur la reconnaissance optique, le blocage de types de fichiers ou le contrôle du poste.",
+    "distractorNotes": {
+      "b": "La DLP réseau inspecte justement les données en transit, et elle déchiffre TLS : cet état n'explique pas l'absence d'alerte.",
+      "c": "Une liste de clients réglementée devrait au contraire être mieux surveillée ; sa catégorie n'empêche pas la détection.",
+      "d": "Rien n'indique un changement de classification : la DLP bloque d'habitude cette même liste en CSV, ce qui montre qu'elle la considère comme sensible."
+    },
+    "reference": "NIST SP 800-53 Rev. 5 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-tde-authenticated-query-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une base SQL qui contient les données de carte d'un commerçant utilise le chiffrement transparent des données (TDE). Un attaquant vole les identifiants du compte de service de l'application, se connecte au moteur et extrait la table des clients en clair par une simple requête SELECT. Le directeur technique s'étonne que le chiffrement n'ait servi à rien. Quelle explication est correcte ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le TDE chiffre seulement les flux entre l'application et le moteur de base de données"
+        },
+        {
+          "id": "b",
+          "text": "Le TDE chiffre les fichiers sur disque, et le moteur déchiffre pour toute session authentifiée"
+        },
+        {
+          "id": "c",
+          "text": "Le TDE repose sur un algorithme obsolète que l'attaquant a cassé pendant l'extraction"
+        },
+        {
+          "id": "d",
+          "text": "Le TDE n'agit que sur les sauvegardes et laisse les fichiers de données en clair"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le TDE protège les données au repos : fichiers de données, journaux de transactions et sauvegardes sont chiffrés sur le disque, ce qui neutralise le vol d'un disque ou d'une sauvegarde. En revanche, le moteur déchiffre de façon transparente les pages qu'il lit pour toute session authentifiée : l'attaquant connecté avec un compte légitime voit les données en clair. Contre ce scénario, il faut restreindre les permissions du compte, chiffrer au niveau des colonnes ou tokeniser les numéros de carte.",
+    "distractorNotes": {
+      "a": "Le TDE ne chiffre pas le trafic réseau ; la protection des données en transit vers le moteur relève de TLS.",
+      "c": "Le TDE utilise des algorithmes robustes comme AES-256 ; l'attaquant n'a rien cassé, il a lu les données par un accès authentifié.",
+      "d": "Le TDE chiffre bien les fichiers de données et les journaux, pas seulement les sauvegardes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-consulting-regulated-data-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un cabinet de conseil recense les données qu'il détient avant un audit de conformité. Quelles deux catégories sont des données réglementées ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les dossiers médicaux des patients d'une clinique cliente"
+        },
+        {
+          "id": "b",
+          "text": "Le catalogue tarifaire publié sur le site du cabinet"
+        },
+        {
+          "id": "c",
+          "text": "Les données personnelles des clients résidant dans l'UE"
+        },
+        {
+          "id": "d",
+          "text": "La présentation commerciale interne de l'offre de conseil"
+        },
+        {
+          "id": "e",
+          "text": "La méthode d'audit propriétaire développée par les associés"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Les données réglementées sont celles dont la protection est imposée par une loi ou un règlement, avec des sanctions en cas de manquement. Les données de santé relèvent de régimes spécifiques (HIPAA aux États-Unis, catégorie particulière du RGPD et hébergement de données de santé en France), et les données personnelles des résidents de l'UE relèvent du RGPD. Les autres données ont de la valeur pour le cabinet, mais aucune réglementation n'en impose la protection.",
+    "distractorNotes": {
+      "b": "Un catalogue publié est une donnée publique ; aucune réglementation n'en encadre la protection.",
+      "d": "Une présentation commerciale interne est une donnée confidentielle de l'entreprise, sans obligation légale de protection.",
+      "e": "Une méthode propriétaire gardée secrète relève du secret commercial : aucune réglementation n'en impose la protection, c'est à l'entreprise de la préserver si elle veut conserver ce statut."
+    },
+    "reference": "RGPD (règlement (UE) 2016/679) ; HIPAA Security Rule ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-reversible-protection-methods-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un assureur cherche à protéger le numéro de contrat de ses clients dans ses applications. Le service sinistres, seul habilité, doit pouvoir retrouver la valeur d'origine à partir de la valeur protégée. Quelles deux méthodes le permettent ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le hachage SHA-256 du numéro"
+        },
+        {
+          "id": "b",
+          "text": "Le masquage statique du numéro dans la base"
+        },
+        {
+          "id": "c",
+          "text": "Le chiffrement AES-256 du numéro"
+        },
+        {
+          "id": "d",
+          "text": "La troncature du numéro à ses quatre derniers chiffres"
+        },
+        {
+          "id": "e",
+          "text": "La tokenisation du numéro avec un coffre à jetons"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Le chiffrement est réversible par construction : le service sinistres, qui détient la clé, déchiffre le numéro. La tokenisation l'est aussi, mais d'une autre manière : le jeton n'a pas de lien mathématique avec le numéro, et c'est le coffre qui restitue la valeur d'origine aux seuls demandeurs autorisés. Les autres méthodes détruisent l'information d'origine et conviennent quand personne n'a besoin de la retrouver.",
+    "distractorNotes": {
+      "a": "Le hachage est une fonction à sens unique : aucune clé ne permet de revenir de l'empreinte au numéro.",
+      "b": "Le masquage statique remplace définitivement la valeur dans la base ; l'original n'y est plus.",
+      "d": "La troncature supprime une partie des chiffres : la valeur complète ne peut pas être reconstituée."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-data-in-transit-controls-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une PME de 60 salariés relie son siège à une agence et expose un portail client sur Internet. Le RSSI veut protéger les données en transit. Quelles deux mesures y répondent ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le chiffrement BitLocker des disques des serveurs du siège"
+        },
+        {
+          "id": "b",
+          "text": "Le tunnel IPsec entre les routeurs du siège et de l'agence"
+        },
+        {
+          "id": "c",
+          "text": "Le hachage avec sel des mots de passe du portail"
+        },
+        {
+          "id": "d",
+          "text": "TLS 1.3 sur le portail client exposé sur Internet"
+        },
+        {
+          "id": "e",
+          "text": "Le masquage des numéros de téléphone dans les rapports"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Les données en transit sont celles qui circulent sur un réseau. IPsec chiffre et authentifie les paquets échangés entre les deux sites, et TLS 1.3 chiffre les sessions entre les navigateurs des clients et le portail. Ces deux protocoles garantissent confidentialité et intégrité le long du trajet. Les autres mesures portent sur les données au repos ou sur leur affichage.",
+    "distractorNotes": {
+      "a": "BitLocker chiffre les données au repos sur les disques ; il ne protège pas ce qui circule entre les sites.",
+      "c": "Le hachage des mots de passe protège leur stockage, donc des données au repos.",
+      "e": "Le masquage limite ce qui s'affiche dans un rapport ; il ne chiffre aucun flux réseau."
+    },
+    "reference": "RFC 8446 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-password-storage-practices-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le développeur d'une plateforme de réservation refond le stockage des mots de passe des utilisateurs après un audit. Quelles deux pratiques doit-il retenir ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Encoder les mots de passe en Base64 dans la base"
+        },
+        {
+          "id": "b",
+          "text": "Ajouter un sel aléatoire unique à chaque compte"
+        },
+        {
+          "id": "c",
+          "text": "Chiffrer les mots de passe en AES-256 avec une clé stockée sur le serveur"
+        },
+        {
+          "id": "d",
+          "text": "Utiliser MD5, plus rapide, pour réduire la charge des serveurs"
+        },
+        {
+          "id": "e",
+          "text": "Employer une fonction lente de dérivation comme Argon2, bcrypt ou PBKDF2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Un mot de passe doit être stocké sous une forme irréversible et coûteuse à attaquer. Le sel unique par compte empêche deux mots de passe identiques de produire la même empreinte et rend inutiles les tables précalculées. La fonction de dérivation lente (Argon2, bcrypt, PBKDF2 avec un grand nombre d'itérations) multiplie le coût de chaque essai et freine la force brute hors ligne. NIST SP 800-63B demande ces deux mesures pour les secrets mémorisés.",
+    "distractorNotes": {
+      "a": "Base64 est un encodage réversible sans clé : quiconque lit la base retrouve les mots de passe.",
+      "c": "Un chiffrement est réversible : l'attaquant qui compromet le serveur récupère la clé et tous les mots de passe.",
+      "d": "MD5 est rapide, donc favorable à l'attaquant qui teste des milliards de candidats ; la lenteur est ici une qualité."
+    },
+    "reference": "NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-3.3-pci-scope-reduction-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un site de commerce en ligne stocke aujourd'hui les numéros de carte dans sa base clients, sur un réseau plat où tous les serveurs communiquent librement. Le RSSI veut réduire le nombre de systèmes compris dans le périmètre d'évaluation PCI DSS. Quelles deux mesures y contribuent ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Masquer les numéros de carte dans l'interface du back-office"
+        },
+        {
+          "id": "b",
+          "text": "Imposer l'authentification multifacteur aux administrateurs des serveurs"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer les numéros stockés par des jetons du prestataire de paiement"
+        },
+        {
+          "id": "d",
+          "text": "Chiffrer par TLS les flux internes entre l'application et la base"
+        },
+        {
+          "id": "e",
+          "text": "Isoler par segmentation les systèmes qui traitent encore des numéros de carte"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Le périmètre PCI DSS couvre les systèmes qui stockent, traitent ou transmettent des données de titulaires, et ceux qui y sont connectés. Remplacer les numéros par des jetons dont le prestataire garde la correspondance sort la base clients et ses dépendances du périmètre, puisqu'elles ne détiennent plus de PAN. Sur un réseau plat, tous les serveurs sont dans le périmètre ; la segmentation isole les systèmes restants et en sort le reste du réseau. Les autres mesures renforcent la sécurité sans réduire le périmètre.",
+    "distractorNotes": {
+      "a": "Le masquage ne change que l'affichage : la base stocke toujours les numéros complets et reste dans le périmètre.",
+      "b": "L'authentification multifacteur est une exigence pour les accès au périmètre, mais elle ne retire aucun système de celui-ci.",
+      "d": "Des flux chiffrés transmettent toujours des numéros de carte : l'application et la base restent dans le périmètre."
+    },
+    "reference": "PCI DSS v4.0"
+  },
+  {
+    "slug": "security-plus-3.3-conditional-access-geolocation-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une collectivité configure une politique d'accès conditionnel qui n'autorise la messagerie que depuis la France. Quelles deux informations permettent à cette politique de géolocaliser une connexion ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'adresse IP publique d'où provient la connexion"
+        },
+        {
+          "id": "b",
+          "text": "L'adresse MAC de la carte réseau du poste"
+        },
+        {
+          "id": "c",
+          "text": "La version du navigateur utilisé"
+        },
+        {
+          "id": "d",
+          "text": "Les coordonnées GPS remontées par le smartphone géré"
+        },
+        {
+          "id": "e",
+          "text": "La longueur du mot de passe saisi"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "La géolocalisation déduit la position d'un utilisateur à partir de signaux techniques. L'adresse IP publique est rapprochée de bases de géolocalisation qui associent les plages d'adresses à des pays et à des villes ; les appareils mobiles gérés peuvent en outre remonter leur position GPS. Ces signaux restent imparfaits (un VPN déplace l'adresse IP apparente), d'où l'intérêt de les combiner avec d'autres conditions comme la conformité de l'appareil et l'authentification multifacteur.",
+    "distractorNotes": {
+      "b": "L'adresse MAC ne sort pas du réseau local et ne dit rien de la position géographique du poste.",
+      "c": "La version du navigateur caractérise le logiciel client, pas sa localisation.",
+      "e": "La longueur du mot de passe n'a aucun rapport avec la position de l'utilisateur."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-trade-secret-vs-patent-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une PME agroalimentaire hésite entre breveter la formule de sa sauce vedette ou la protéger comme secret commercial. Quelles deux caractéristiques s'appliquent au secret commercial ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Sa protection dure tant que l'information reste secrète"
+        },
+        {
+          "id": "b",
+          "text": "Il est publié par un office de propriété industrielle"
+        },
+        {
+          "id": "c",
+          "text": "Sa protection expire vingt ans après le dépôt"
+        },
+        {
+          "id": "d",
+          "text": "Il suppose des mesures raisonnables pour préserver la confidentialité"
+        },
+        {
+          "id": "e",
+          "text": "Il doit être enregistré auprès d'une autorité publique"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Un secret commercial est une information qui tire sa valeur du fait qu'elle n'est pas connue des concurrents. Il n'est ni déposé ni publié, et sa protection ne connaît pas de durée fixe : elle dure tant que le secret est gardé, à condition que l'entreprise prenne des mesures raisonnables pour le préserver (accords de confidentialité, restrictions d'accès, classification). Le brevet, autre forme de propriété intellectuelle, offre au contraire un monopole temporaire en échange de la publication de l'invention.",
+    "distractorNotes": {
+      "b": "La publication caractérise le brevet : l'invention est divulguée en échange du monopole d'exploitation.",
+      "c": "La durée de vingt ans à compter du dépôt est celle du brevet ; le secret commercial n'a pas de terme fixe.",
+      "e": "Aucun enregistrement n'est requis pour un secret commercial ; c'est le brevet ou la marque qui exigent un dépôt."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-data-types-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le responsable de la conformité d'une PME non cotée classe ses données par type pour définir les contrôles adaptés. Associez chaque donnée à son type.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Les dossiers médicaux des patients du centre de santé de l'entreprise"
+        },
+        {
+          "id": "l2",
+          "text": "La formule d'un arôme, jamais brevetée, connue de trois chimistes"
+        },
+        {
+          "id": "l3",
+          "text": "Le brevet déposé pour un nouveau capteur et la marque enregistrée"
+        },
+        {
+          "id": "l4",
+          "text": "Les conclusions des avocats dans un litige commercial en cours"
+        },
+        {
+          "id": "l5",
+          "text": "Les grands livres comptables et les relevés bancaires de l'entreprise"
+        }
+      ],
+      "right": [
+        {
+          "id": "reg",
+          "text": "Données réglementées"
+        },
+        {
+          "id": "ts",
+          "text": "Secret commercial"
+        },
+        {
+          "id": "ip",
+          "text": "Propriété intellectuelle"
+        },
+        {
+          "id": "leg",
+          "text": "Données juridiques"
+        },
+        {
+          "id": "fin",
+          "text": "Données financières"
+        },
+        {
+          "id": "pub",
+          "text": "Données publiques"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "reg",
+        "l2": "ts",
+        "l3": "ip",
+        "l4": "leg",
+        "l5": "fin"
+      }
+    },
+    "explanation": "Les dossiers médicaux relèvent de réglementations dédiées aux données de santé : ce sont des données réglementées. La formule tenue secrète tire sa valeur de sa confidentialité : secret commercial. Le brevet et la marque enregistrée sont des titres de propriété intellectuelle, publics mais protégés par un droit exclusif. Les écritures d'avocats dans un litige sont des données juridiques, souvent couvertes par le secret professionnel. Les comptes et relevés bancaires sont des données financières.",
+    "distractorNotes": {
+      "pub": "Aucune de ces données n'est destinée à une diffusion libre : même le brevet, publié, est d'abord un titre de propriété intellectuelle."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-data-states-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le RSSI d'un groupe de distribution cartographie les traitements de paie pour choisir les protections adaptées. Associez chaque situation à l'état des données concerné.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Les fiches de paie archivées sur le NAS du service RH"
+        },
+        {
+          "id": "l2",
+          "text": "Le fichier de virements envoyé par SFTP à la banque"
+        },
+        {
+          "id": "l3",
+          "text": "Un tableur de salaires ouvert et modifié par un gestionnaire"
+        },
+        {
+          "id": "l4",
+          "text": "Les bandes de sauvegarde entreposées dans un coffre hors site"
+        },
+        {
+          "id": "l5",
+          "text": "Un appel d'API qui transmet un dossier salarié entre deux microservices"
+        }
+      ],
+      "right": [
+        {
+          "id": "rest",
+          "text": "Au repos"
+        },
+        {
+          "id": "transit",
+          "text": "En transit"
+        },
+        {
+          "id": "use",
+          "text": "En cours d'utilisation"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "rest",
+        "l2": "transit",
+        "l3": "use",
+        "l4": "rest",
+        "l5": "transit"
+      }
+    },
+    "explanation": "Les données au repos sont stockées sur un support : NAS, disques, bandes de sauvegarde. Elles se protègent par le chiffrement du stockage et les permissions. Les données en transit circulent sur un réseau : transfert SFTP, appels d'API entre services ; on les protège par des protocoles chiffrés (SSH, TLS, IPsec). Les données en cours d'utilisation sont chargées en mémoire et traitées par une application, comme un tableur ouvert ; c'est l'état le plus difficile à protéger, car la donnée doit être en clair pour être traitée.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-requirement-to-method-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une banque en ligne formalise les exigences de protection de ses données clients. Associez chaque exigence à la méthode qui la met en œuvre.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Les agents du support ne voient que les quatre derniers chiffres du numéro de carte"
+        },
+        {
+          "id": "l2",
+          "text": "Le site conserve les mots de passe sous une forme irréversible"
+        },
+        {
+          "id": "l3",
+          "text": "La facturation stocke un substitut sans lien calculable avec le numéro de carte, conservé dans un coffre"
+        },
+        {
+          "id": "l4",
+          "text": "L'application de gestion refuse les connexions provenant de pays hors de l'UE"
+        },
+        {
+          "id": "l5",
+          "text": "Les serveurs de cartes sont isolés dans une zone réseau dédiée, filtrée par pare-feu"
+        }
+      ],
+      "right": [
+        {
+          "id": "mask",
+          "text": "Masquage"
+        },
+        {
+          "id": "hash",
+          "text": "Hachage"
+        },
+        {
+          "id": "tok",
+          "text": "Tokenisation"
+        },
+        {
+          "id": "geo",
+          "text": "Restriction géographique"
+        },
+        {
+          "id": "seg",
+          "text": "Segmentation"
+        },
+        {
+          "id": "obf",
+          "text": "Obfuscation"
+        },
+        {
+          "id": "enc",
+          "text": "Chiffrement"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "mask",
+        "l2": "hash",
+        "l3": "tok",
+        "l4": "geo",
+        "l5": "seg"
+      }
+    },
+    "explanation": "Afficher seulement une partie d'une valeur, c'est du masquage. Une forme irréversible et de taille fixe pour vérifier un mot de passe, c'est le hachage (avec sel et fonction lente). Un substitut sans relation mathématique avec l'original, dont la correspondance est gardée dans un coffre, définit la tokenisation. Refuser des connexions selon le pays d'origine est une restriction géographique fondée sur la géolocalisation. Isoler des serveurs dans une zone filtrée relève de la segmentation.",
+    "distractorNotes": {
+      "obf": "L'obfuscation rend un code ou une donnée difficile à comprendre sans secret cryptographique ; aucune exigence de la liste ne la décrit.",
+      "enc": "Le chiffrement est réversible avec la clé et le chiffré dérive mathématiquement de l'original : il ne correspond ni à la forme irréversible des mots de passe ni au substitut sans lien calculable."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-classification-policy-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Reportez-vous à l'exhibit. Un groupe industriel applique cette politique de classification. Associez chaque information au niveau que la politique lui attribue.",
+      "exhibit": "POL-CLASS-01 - Niveaux de classification\nPublic       : diffusion libre, aucun impact en cas de divulgation\nPrive        : donnees personnelles relatives a un salarie ou un client\nConfidentiel : information interne dont la divulgation nuirait au groupe\nRestreint    : acces nominatif, impact grave (fusions, contentieux)\nCritique     : indispensable a la continuite des operations",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Le projet de fusion avec un concurrent, en cours de négociation"
+        },
+        {
+          "id": "l2",
+          "text": "L'adresse personnelle et la date de naissance d'un salarié"
+        },
+        {
+          "id": "l3",
+          "text": "La grille tarifaire publiée sur le site commercial"
+        },
+        {
+          "id": "l4",
+          "text": "Le compte rendu d'une réunion ordinaire du service achats"
+        },
+        {
+          "id": "l5",
+          "text": "La base de recettes de fabrication sans laquelle les lignes s'arrêtent"
+        }
+      ],
+      "right": [
+        {
+          "id": "pub",
+          "text": "Public"
+        },
+        {
+          "id": "priv",
+          "text": "Privé"
+        },
+        {
+          "id": "conf",
+          "text": "Confidentiel"
+        },
+        {
+          "id": "restr",
+          "text": "Restreint"
+        },
+        {
+          "id": "crit",
+          "text": "Critique"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "restr",
+        "l2": "priv",
+        "l3": "pub",
+        "l4": "conf",
+        "l5": "crit"
+      }
+    },
+    "explanation": "La politique classe selon la nature de l'information et l'impact de sa perte. Le projet de fusion, cité en exemple au niveau restreint, n'est accessible qu'à des personnes nommément désignées. L'adresse et la date de naissance d'un salarié sont des données personnelles : niveau privé. La grille publiée est publique. Un compte rendu interne ordinaire nuirait à l'entreprise s'il était divulgué, sans impact grave : confidentiel. La base sans laquelle la production s'arrête est critique, parce que sa disponibilité conditionne l'activité.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-human-readable-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un éditeur paramètre son outil de prévention des fuites de données et recense les formats que l'outil devra savoir analyser. Associez chaque donnée à sa forme.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Un contrat imprimé laissé sur une imprimante partagée"
+        },
+        {
+          "id": "l2",
+          "text": "Le code-barres imprimé sur une étiquette de colis"
+        },
+        {
+          "id": "l3",
+          "text": "Un fichier client chiffré en AES-256"
+        },
+        {
+          "id": "l4",
+          "text": "Une note manuscrite listant des noms de clients"
+        },
+        {
+          "id": "l5",
+          "text": "Un exécutable binaire compilé"
+        }
+      ],
+      "right": [
+        {
+          "id": "hr",
+          "text": "Lisible par l'humain"
+        },
+        {
+          "id": "nhr",
+          "text": "Non lisible par l'humain"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "hr",
+        "l2": "nhr",
+        "l3": "nhr",
+        "l4": "hr",
+        "l5": "nhr"
+      }
+    },
+    "explanation": "Une donnée lisible par l'humain se comprend directement, sans outil : un contrat imprimé ou une note manuscrite. Une donnée non lisible par l'humain exige une machine pour être interprétée : un code-barres doit être décodé par un lecteur, un fichier chiffré déchiffré, un exécutable désassemblé. La distinction compte pour la protection : les données non lisibles échappent aux contrôles fondés sur la lecture humaine ou sur des motifs textuels, et les données lisibles exposent leur contenu au premier regard.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-tls13-handshake-order-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un analyste explique à une équipe de développeurs comment TLS 1.3 protège les données en transit vers leur portail. Ordonnez les étapes d'une poignée de main complète, sans reprise de session, de la première à la dernière.",
+      "items": [
+        {
+          "id": "cfin",
+          "text": "Le client vérifie le certificat puis envoie son message Finished"
+        },
+        {
+          "id": "ch",
+          "text": "Le client envoie ClientHello avec ses suites de chiffrement et une part de clé (key_share)"
+        },
+        {
+          "id": "app",
+          "text": "Le client envoie sa requête HTTP chiffrée avec les clés de trafic applicatif"
+        },
+        {
+          "id": "sh",
+          "text": "Le serveur répond par ServerHello avec sa propre part de clé"
+        },
+        {
+          "id": "cert",
+          "text": "Le serveur envoie, déjà chiffrés, ses messages Certificate et CertificateVerify"
+        },
+        {
+          "id": "sfin",
+          "text": "Le serveur envoie son message Finished"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "ch",
+        "sh",
+        "cert",
+        "sfin",
+        "cfin",
+        "app"
+      ]
+    },
+    "explanation": "En TLS 1.3, le client ouvre par ClientHello avec une part de clé Diffie-Hellman. Le serveur répond par ServerHello avec la sienne : les deux parties dérivent alors les clés de poignée de main, et tout ce qui suit est chiffré. Le serveur envoie EncryptedExtensions, Certificate, CertificateVerify (preuve de possession de la clé privée), puis Finished. Le client vérifie le certificat et la signature, envoie son Finished, puis seulement ses données applicatives avec les clés de trafic.",
+    "distractorNotes": {},
+    "reference": "RFC 8446"
+  },
+  {
+    "slug": "security-plus-3.3-card-tokenization-flow-order-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un commerçant en ligne confie la tokenisation des cartes à son prestataire de paiement. Ordonnez les étapes, du premier achat d'un client à un paiement récurrent ultérieur.",
+      "items": [
+        {
+          "id": "store",
+          "text": "Le commerçant enregistre le jeton dans sa base clients à la place du numéro"
+        },
+        {
+          "id": "capture",
+          "text": "La page de paiement transmet le numéro de carte saisi au prestataire, par TLS"
+        },
+        {
+          "id": "detok",
+          "text": "Le prestataire retrouve dans son coffre le numéro associé au jeton reçu et l'envoie au réseau de cartes"
+        },
+        {
+          "id": "vault",
+          "text": "Le prestataire stocke le numéro dans son coffre et génère un jeton aléatoire"
+        },
+        {
+          "id": "reuse",
+          "text": "Pour un paiement récurrent, le commerçant transmet le jeton au prestataire"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "capture",
+        "vault",
+        "store",
+        "reuse",
+        "detok"
+      ]
+    },
+    "explanation": "Le numéro de carte n'est jamais stocké par le commerçant. Il est d'abord saisi et envoyé chiffré au prestataire, qui le range dans son coffre et génère un jeton sans lien mathématique avec lui. Le commerçant reçoit ce jeton et le conserve à la place du numéro. Au paiement suivant, il ne présente que le jeton ; le prestataire effectue la détokenisation dans son coffre et transmet le vrai numéro au réseau de cartes pour l'autorisation.",
+    "distractorNotes": {},
+    "reference": "PCI DSS v4.0 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-envelope-encryption-order-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une application chiffre ses fichiers au repos par chiffrement d'enveloppe : une clé de chiffrement des données (DEK) chiffre chaque fichier, et une clé maîtresse (KEK), qui ne quitte jamais le service de gestion de clés, protège la DEK. Ordonnez les étapes, de l'écriture d'un fichier à sa relecture.",
+      "items": [
+        {
+          "id": "unwrap",
+          "text": "Envoyer la DEK chiffrée au service de gestion de clés pour qu'il la déchiffre avec la KEK"
+        },
+        {
+          "id": "gen",
+          "text": "Générer une DEK aléatoire pour le fichier"
+        },
+        {
+          "id": "wrap",
+          "text": "Faire chiffrer la DEK par la KEK, stocker la DEK chiffrée avec le fichier et effacer la DEK en clair"
+        },
+        {
+          "id": "decrypt",
+          "text": "Déchiffrer le fichier avec la DEK récupérée"
+        },
+        {
+          "id": "enc",
+          "text": "Chiffrer le fichier avec la DEK"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "gen",
+        "enc",
+        "wrap",
+        "unwrap",
+        "decrypt"
+      ]
+    },
+    "explanation": "La DEK est générée d'abord, puis sert à chiffrer le fichier. Seulement ensuite elle est chiffrée par la KEK et la version en clair est effacée : l'effacer plus tôt empêcherait de chiffrer le fichier. À la relecture, l'application transmet la DEK chiffrée au service de gestion de clés, qui la déchiffre avec la KEK sans jamais exposer celle-ci, puis l'application déchiffre le fichier. Ce schéma limite l'exposition de la KEK et facilite sa rotation.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-57"
+  },
+  {
+    "slug": "security-plus-3.3-payment-token-term-fill-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un site marchand ne conserve plus les numéros de carte de ses clients : il stocke à la place des valeurs aléatoires fournies par son prestataire de paiement, qui garde seul la correspondance avec les vrais numéros dans un coffre sécurisé. Quel est le nom de cette méthode de protection des données ?",
+      "fields": [
+        {
+          "id": "r",
+          "label": "Méthode (un mot)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "r": {
+          "accepted": [
+            "tokenisation",
+            "tokénisation",
+            "tokenization",
+            "la tokenisation",
+            "la tokénisation",
+            "tokenisation des données"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "La tokenisation remplace une donnée sensible par un jeton, valeur de substitution sans lien mathématique avec l'original. Seul le coffre du prestataire, appelé aussi coffre à jetons, détient la correspondance et peut restituer le vrai numéro à un demandeur autorisé. Contrairement au chiffrement, il n'existe aucune clé qui permettrait de retrouver le numéro à partir du jeton, ce qui rend une base de jetons volée sans valeur et réduit le périmètre PCI DSS du commerçant.",
+    "distractorNotes": {},
+    "reference": "PCI DSS v4.0 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-sha256-hex-length-fill-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un analyste forensique calcule l'empreinte SHA-256 d'une image disque et la consigne sur le formulaire de chaîne de traçabilité. L'outil affiche l'empreinte en hexadécimal. Combien de caractères hexadécimaux compte cette empreinte ?",
+      "fields": [
+        {
+          "id": "r",
+          "label": "Nombre de caractères (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "r": {
+          "accepted": [
+            "64"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "SHA-256 produit une empreinte de 256 bits quelle que soit la taille des données hachées, même une image disque de plusieurs centaines de gigaoctets. Un caractère hexadécimal code 4 bits : 256 / 4 = 64 caractères (soit 32 octets). Cette taille fixe est une propriété des fonctions de hachage ; la moindre modification de l'image produirait une empreinte complètement différente, ce qui permet de prouver l'intégrité de la preuve.",
+    "distractorNotes": {},
+    "reference": "FIPS 180-4"
+  },
+  {
+    "slug": "security-plus-3.3-iban-masking-count-fill-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une banque masque les IBAN affichés dans son espace client. Pour un IBAN français de 27 caractères, seuls les quatre premiers caractères (code pays et clé de contrôle) et les quatre derniers restent visibles ; tous les autres sont remplacés par des astérisques. Combien de caractères sont masqués ?",
+      "fields": [
+        {
+          "id": "r",
+          "label": "Nombre de caractères masqués (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "r": {
+          "accepted": [
+            "19"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le calcul est direct : 27 caractères au total, moins 4 visibles au début et 4 visibles à la fin, soit 27 − 8 = 19 caractères masqués. Le masquage conserve la partie utile au client, qui reconnaît son compte, tout en cachant l'essentiel de l'identifiant. Il agit seulement sur l'affichage : la valeur complète reste stockée et doit être protégée par ailleurs (chiffrement, permissions).",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  },
+  {
+    "slug": "security-plus-3.3-tee-data-in-use-fill-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une banque exécute ses calculs de score de crédit dans des enclaves matérielles sécurisées (TEE) : les données clients restent chiffrées en mémoire et ne sont accessibles qu'au code de l'enclave, même pour l'administrateur du serveur. Quel état des données cette technologie protège-t-elle ? (Réponse en français ou en anglais.)",
+      "fields": [
+        {
+          "id": "r",
+          "label": "État des données"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "r": {
+          "accepted": [
+            "en cours d'utilisation",
+            "en cours d’utilisation",
+            "en utilisation",
+            "en cours d'usage",
+            "en usage",
+            "utilisation",
+            "données en cours d'utilisation",
+            "donnees en cours d'utilisation",
+            "in use",
+            "data in use",
+            "in-use"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Les enclaves matérielles (environnements d'exécution de confiance, ou TEE) protègent les données en cours d'utilisation, c'est-à-dire pendant leur traitement en mémoire par le processeur. C'est l'état le plus difficile à protéger, puisque les données doivent normalement être en clair pour être calculées. L'enclave chiffre sa zone mémoire et en interdit l'accès au système d'exploitation et à l'hyperviseur, ce qui complète le chiffrement au repos et en transit.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 3.3"
+  }
+]

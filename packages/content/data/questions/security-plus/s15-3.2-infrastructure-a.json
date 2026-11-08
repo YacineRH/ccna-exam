@@ -1,0 +1,1154 @@
+[
+  {
+    "slug": "security-plus-3.2-jump-server-admin-zone-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque interdit d'administrer les serveurs de production directement depuis les postes bureautiques. Les administrateurs ouvrent d'abord une session sur un hôte durci placé dans une zone d'administration ; seul cet hôte est autorisé par le pare-feu à joindre les serveurs en SSH et en RDP. Comment nomme-t-on l'hôte durci utilisé dans cette architecture ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un proxy de transfert"
+        },
+        {
+          "id": "b",
+          "text": "Un répartiteur de charge"
+        },
+        {
+          "id": "c",
+          "text": "Un serveur de rebond"
+        },
+        {
+          "id": "d",
+          "text": "Un pot de miel"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un serveur de rebond (jump server, ou bastion) est un hôte durci et très surveillé qui sert de point d'entrée unique vers une zone sécurisée. Les administrateurs s'y connectent, s'y authentifient (idéalement avec MFA), puis rebondissent vers les serveurs cibles. Le pare-feu n'autorise les protocoles d'administration que depuis cet hôte : la surface d'attaque des serveurs se réduit à un seul point, où l'on concentre le durcissement, la journalisation et l'enregistrement des sessions.",
+    "distractorNotes": {
+      "a": "Un proxy de transfert relaie les requêtes des utilisateurs vers Internet (filtrage web, cache) ; il ne sert pas de point d'entrée pour administrer des serveurs internes.",
+      "b": "Un répartiteur de charge distribue les connexions des clients entre plusieurs serveurs d'un même service ; il n'est pas une station d'administration durcie.",
+      "d": "Un pot de miel est un leurre destiné à attirer et observer les attaquants ; les administrateurs ne l'utilisent pas pour gérer la production."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-forward-proxy-web-filtering-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME de 60 salariés veut que toutes les connexions web des postes vers Internet passent par un équipement qui filtre les sites par catégorie, journalise les URL consultées et garde en cache les contenus souvent demandés. Quel équipement répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un proxy inverse"
+        },
+        {
+          "id": "b",
+          "text": "Un proxy de transfert"
+        },
+        {
+          "id": "c",
+          "text": "Un pare-feu applicatif web"
+        },
+        {
+          "id": "d",
+          "text": "Un serveur de rebond"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un proxy de transfert (forward proxy) se place entre les clients internes et Internet : les postes lui confient leurs requêtes, qu'il émet en leur nom. Il peut ainsi appliquer un filtrage par catégorie d'URL, authentifier les utilisateurs, journaliser la navigation et mettre en cache les contenus fréquents pour économiser la bande passante. Pour qu'il soit incontournable, le pare-feu de sortie doit refuser la navigation directe des postes.",
+    "distractorNotes": {
+      "a": "Un proxy inverse se place devant des serveurs internes et reçoit les requêtes des clients externes ; il protège les serveurs publiés, pas la navigation sortante des salariés.",
+      "c": "Un WAF protège une application web contre les attaques contenues dans les requêtes entrantes (injection SQL, XSS) ; il ne filtre pas la navigation des salariés.",
+      "d": "Un serveur de rebond sert à administrer une zone sécurisée depuis un point d'entrée durci ; il n'a pas de rôle de filtrage web."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-waf-injection-protection-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'équipe d'une boutique en ligne repère dans les journaux du serveur web des tentatives d'injection SQL et de cross-site scripting dans les paramètres des formulaires. Elle veut un équipement qui analyse le contenu des requêtes HTTP entrantes et bloque ces attaques avant qu'elles n'atteignent l'application. Quel équipement choisir ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un pare-feu à états de couche 4"
+        },
+        {
+          "id": "b",
+          "text": "Un proxy de transfert"
+        },
+        {
+          "id": "c",
+          "text": "Un serveur de rebond"
+        },
+        {
+          "id": "d",
+          "text": "Un pare-feu applicatif web"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un pare-feu applicatif web (WAF) inspecte les requêtes HTTP et HTTPS (après déchiffrement TLS) au niveau de la couche 7 : URI, paramètres, en-têtes, corps. Ses règles détectent les motifs d'injection SQL, de XSS et d'autres attaques du Top 10 OWASP et bloquent la requête avant le serveur. Il complète la correction du code de l'application, qui reste la mesure de fond (requêtes paramétrées, encodage des sorties).",
+    "distractorNotes": {
+      "a": "Un pare-feu de couche 4 ne voit que les adresses, les ports et l'état des connexions : une injection SQL arrive sur le port 443 autorisé et passe sans être remarquée.",
+      "b": "Un proxy de transfert relaie la navigation sortante des utilisateurs internes ; il n'est pas placé devant le serveur web pour filtrer les requêtes des clients.",
+      "c": "Un serveur de rebond est un point d'entrée durci pour les administrateurs ; il n'inspecte pas le trafic des clients de la boutique."
+    },
+    "reference": "OWASP Top 10 (2021) ; CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-utm-small-office-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une agence immobilière de 15 salariés, sans équipe informatique, veut un seul boîtier administré depuis une console unique qui regroupe le pare-feu, l'antivirus de passerelle, le filtrage web, l'antispam et la prévention d'intrusion. Quelle solution correspond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une appliance UTM"
+        },
+        {
+          "id": "b",
+          "text": "Un pare-feu applicatif web"
+        },
+        {
+          "id": "c",
+          "text": "Un répartiteur de charge"
+        },
+        {
+          "id": "d",
+          "text": "Un serveur de rebond"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un équipement UTM (Unified Threat Management) regroupe dans une même appliance plusieurs fonctions de sécurité : pare-feu, IPS, antivirus et antispam de passerelle, filtrage d'URL, souvent VPN. Il convient bien aux petites structures qui veulent une administration simple. Sa contrepartie : il concentre tout en un point unique de défaillance et ses performances baissent quand toutes les fonctions sont actives, ce qui le rend moins adapté aux gros débits.",
+    "distractorNotes": {
+      "b": "Un WAF ne protège que des applications web contre les attaques applicatives ; il ne fournit ni antispam, ni filtrage de la navigation, ni pare-feu périmétrique complet.",
+      "c": "Un répartiteur de charge distribue le trafic entre des serveurs ; il n'apporte pas les fonctions de filtrage et d'antivirus demandées.",
+      "d": "Un serveur de rebond sert à administrer des serveurs depuis un point durci ; il ne protège pas le périmètre de l'agence."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-ips-fail-closed-payment-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une plateforme de paiement a placé un IPS en ligne entre Internet et ses serveurs de traitement des cartes. La politique de sécurité exige qu'en cas de panne de l'IPS, aucun flux ne puisse atteindre ces serveurs sans avoir été inspecté, quitte à interrompre le service. Quel comportement en cas de défaillance faut-il configurer ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Fail-open, pour laisser passer le trafic pendant la panne"
+        },
+        {
+          "id": "b",
+          "text": "Fail-closed, pour bloquer tout le trafic pendant la panne"
+        },
+        {
+          "id": "c",
+          "text": "Un mode détection seule, pour alerter sans bloquer"
+        },
+        {
+          "id": "d",
+          "text": "Un contournement matériel qui relie directement les deux ports"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un équipement en fail-closed (fail-secure) bloque tout le trafic lorsqu'il tombe en panne : la confidentialité et l'intégrité priment sur la disponibilité. C'est le choix imposé ici, puisque la politique interdit tout flux non inspecté vers les serveurs de cartes, même au prix d'une interruption. Le fail-open privilégie au contraire la disponibilité. Pour limiter l'impact du fail-closed, on déploie en général deux IPS en haute disponibilité.",
+    "distractorNotes": {
+      "a": "Le fail-open laisse passer le trafic sans inspection pendant la panne : c'est précisément ce que la politique interdit.",
+      "c": "En mode détection seule, l'équipement ne bloque rien même quand il fonctionne ; le trafic atteindrait les serveurs sans contrôle effectif.",
+      "d": "Un contournement matériel (bypass) relie les ports quand l'équipement tombe : c'est une mise en œuvre du fail-open, donc contraire à l'exigence."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-layer7-http-method-rule-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le RSSI d'un éditeur veut bloquer, vers le portail 203.0.113.20 en HTTPS, les requêtes qui utilisent la méthode PUT ou qui visent le chemin /admin, tout en laissant passer les autres requêtes vers la même adresse et le même port 443. Le pare-feu à états actuel filtre en couche 4. Pourquoi ne peut-il pas appliquer cette règle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il ne peut pas filtrer les connexions vers le port TCP 443"
+        },
+        {
+          "id": "b",
+          "text": "Il ne suit pas l'état des connexions TCP établies"
+        },
+        {
+          "id": "c",
+          "text": "Il n'inspecte pas le contenu applicatif des requêtes"
+        },
+        {
+          "id": "d",
+          "text": "Il ne filtre que le trafic sortant du réseau de l'entreprise"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un pare-feu de couche 4 décide selon les adresses IP, le protocole de transport, les ports et l'état de la connexion. La méthode HTTP et le chemin demandé se trouvent dans la charge applicative, chiffrée par TLS : pour les filtrer, il faut un équipement de couche 7, comme un WAF ou un NGFW, qui termine ou déchiffre la session TLS puis analyse la requête HTTP. Toutes les requêtes visées partagent l'adresse et le port des requêtes légitimes.",
+    "distractorNotes": {
+      "a": "Un pare-feu de couche 4 filtre sans difficulté le port 443 ; le problème est de distinguer des requêtes qui utilisent toutes ce même port.",
+      "b": "Un pare-feu à états suit justement l'état des connexions ; ce suivi ne lui donne pas pour autant accès à la méthode ou au chemin HTTP.",
+      "d": "Un pare-feu à états filtre le trafic dans les deux sens selon ses règles ; la direction n'est pas la limite en cause."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-waf-placement-dmz-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'entreprise veut ajouter un WAF pour protéger les applications publiées sur WEB1 et WEB2. Où doit-il être placé ?",
+      "exhibit": "                Internet\n                    |\n               [FW-EXT]\n                    |\n  +---- Zone filtrée 203.0.113.0/27 -------------+\n  |   WEB1 203.0.113.10      WEB2 203.0.113.11   |\n  +----------------------+-----------------------+\n                         |\n                     [FW-INT]\n                         |\n  +---- Zone interne 10.20.0.0/16 ---------------+\n  |   APP1 10.20.1.10        DB1 10.20.2.10      |\n  |   Postes 10.20.100.0/24                      |\n  +----------------------------------------------+",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dans la zone interne, entre FW-INT et APP1"
+        },
+        {
+          "id": "b",
+          "text": "Dans la zone filtrée, entre FW-EXT et WEB1/WEB2"
+        },
+        {
+          "id": "c",
+          "text": "Sur le segment des postes de la zone interne"
+        },
+        {
+          "id": "d",
+          "text": "Dans la zone interne, entre FW-INT et DB1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un WAF se place dans le chemin des requêtes des clients, juste en amont des serveurs web qu'il protège : ici, dans la zone filtrée, derrière FW-EXT et devant WEB1 et WEB2. Il reçoit alors toutes les requêtes HTTP(S) venues d'Internet, les inspecte (après terminaison TLS) et ne relaie que celles qui sont conformes. Placé derrière FW-INT, il ne verrait pas le trafic des clients Internet, qui s'arrête aux serveurs de la zone filtrée.",
+    "distractorNotes": {
+      "a": "Entre FW-INT et APP1, le WAF ne verrait pas les requêtes des clients Internet, qui atteignent WEB1 et WEB2 dans la zone filtrée sans franchir FW-INT.",
+      "c": "Le segment des postes ne porte que le trafic des utilisateurs internes ; les requêtes des clients externes vers WEB1 et WEB2 n'y passent pas.",
+      "d": "Devant DB1, l'équipement ne verrait que les requêtes SQL des serveurs, pas le trafic HTTP des clients qu'un WAF doit inspecter."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-ids-signature-alert-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyste du SOC examine une alerte remontée par le capteur IDS de la zone filtrée. Quelle méthode de détection a produit cette alerte ?",
+      "exhibit": "Capteur IDS-DMZ - alerte n° 48213\nDate     : 2026-10-14 03:12:44\nRègle    : URI HTTP contenant le motif \"../../etc/passwd\"\nFlux     : 198.51.100.23:51544 -> 203.0.113.10:80 (TCP)\nRequête  : GET /download.php?file=../../etc/passwd HTTP/1.1\nAction   : alerte journalisée, aucun blocage",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une détection par anomalie, fondée sur un écart à une référence de trafic"
+        },
+        {
+          "id": "b",
+          "text": "Une détection par réputation de l'adresse source"
+        },
+        {
+          "id": "c",
+          "text": "Une détection par leurre, fondée sur l'accès à un pot de miel"
+        },
+        {
+          "id": "d",
+          "text": "Une détection par signature, fondée sur un motif connu"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'alerte se déclenche parce que l'URI contient un motif précis et connu (« ../../etc/passwd »), caractéristique d'une tentative de traversée de répertoire : c'est une détection par signature. Ce type de détection est fiable pour les attaques connues et produit peu de faux positifs, mais il ne repère pas une attaque dont aucune signature n'existe. La détection par anomalie, elle, compare le trafic à une référence de comportement normal et peut signaler l'inconnu, au prix de davantage de faux positifs.",
+    "distractorNotes": {
+      "a": "La règle ne mesure aucun écart à un comportement habituel (volume, horaires, protocoles) ; elle recherche une chaîne précise dans l'URI.",
+      "b": "Une détection par réputation s'appuie sur des listes d'adresses ou de domaines malveillants ; la règle citée porte sur le contenu de la requête, pas sur la source.",
+      "c": "Aucun pot de miel n'est en jeu : la cible 203.0.113.10 est le serveur web réel et l'alerte vient d'un motif dans la requête."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-load-balancer-session-persistence-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un site marchand est servi par trois serveurs web derrière un répartiteur de charge en mode round-robin. Les clients perdent leur panier en cours d'achat : leurs requêtes successives arrivent sur des serveurs différents, qui ne partagent pas les sessions. Quel réglage du répartiteur corrige le problème ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Augmenter la fréquence des sondes de santé"
+        },
+        {
+          "id": "b",
+          "text": "Passer à l'algorithme du moins de connexions"
+        },
+        {
+          "id": "c",
+          "text": "Activer la persistance de session (affinité)"
+        },
+        {
+          "id": "d",
+          "text": "Activer le déchargement TLS sur le répartiteur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La persistance de session (affinité, ou sticky sessions) fait en sorte que toutes les requêtes d'un même client soient envoyées au même serveur, en s'appuyant par exemple sur un cookie inséré par le répartiteur ou sur l'adresse source. Le serveur qui détient la session du client continue donc à traiter ses requêtes et le panier n'est plus perdu. Une solution plus robuste consiste à partager l'état des sessions entre serveurs, mais c'est un changement applicatif, pas un réglage du répartiteur.",
+    "distractorNotes": {
+      "a": "Les sondes de santé servent à retirer un serveur en panne du groupe ; elles ne ramènent pas un client vers le serveur qui détient sa session.",
+      "b": "L'algorithme du moins de connexions choisit le serveur le moins chargé à chaque nouvelle connexion : les requêtes d'un même client continueraient d'arriver sur des serveurs différents.",
+      "d": "Le déchargement TLS fait chiffrer et déchiffrer les sessions par le répartiteur ; il ne change pas la répartition des requêtes entre les serveurs."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-firewall-shadowed-deny-rule-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. La politique impose que seul le réseau d'administration 10.20.50.0/24 puisse joindre les serveurs de la zone filtrée 203.0.113.0/27 en SSH ; le reste de la zone interne 10.20.0.0/16 doit garder ses autres accès à cette zone. Le pare-feu FW-INT applique la première règle qui correspond. Quelle modification corrige le problème relevé dans le journal sans couper d'autre flux ?",
+      "exhibit": "Politique FW-INT (évaluée de haut en bas)\nRègle Source          Destination      Service   Action\n1     10.20.0.0/16    203.0.113.0/27   any       allow\n2     any             203.0.113.10     tcp/443   allow\n3     10.20.50.0/24   203.0.113.0/27   tcp/22    allow\n4     10.20.0.0/16    203.0.113.0/27   tcp/22    deny\n5     any             any              any       deny\n\nJournal FW-INT\n2026-10-14 09:41:07 allow rule=1 tcp 10.20.100.37:50122 -> 203.0.113.11:22",
+      "options": [
+        {
+          "id": "a",
+          "text": "Placer les règles 3 et 4, dans cet ordre, au-dessus de la règle 1"
+        },
+        {
+          "id": "b",
+          "text": "Déplacer la règle 4 en dernière position, après la règle 5"
+        },
+        {
+          "id": "c",
+          "text": "Supprimer la règle 3, devenue inutile"
+        },
+        {
+          "id": "d",
+          "text": "Remplacer l'action de la règle 1 par deny"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le poste 10.20.100.37 appartient à 10.20.0.0/16 : sa connexion SSH correspond d'abord à la règle 1, qui autorise tout service vers la zone filtrée. Les règles 3 et 4, plus spécifiques, ne sont jamais atteintes pour ce trafic : elles sont masquées (shadowed). En les plaçant au-dessus de la règle 1, dans l'ordre 3 puis 4, l'administration conserve SSH (règle 3), le reste de la zone interne se voit refuser SSH (règle 4) et garde ses autres accès par la règle 1. Les règles les plus spécifiques doivent précéder les plus générales.",
+    "distractorNotes": {
+      "b": "Après la règle 5 (refus de tout), la règle 4 ne serait jamais évaluée, et la règle 1 continuerait d'autoriser SSH depuis toute la zone interne.",
+      "c": "Supprimer la règle 3 ne change rien au trafic en cause : la règle 1 autoriserait toujours SSH depuis tout 10.20.0.0/16, puisqu'elle est évaluée la première.",
+      "d": "Refuser la règle 1 bloquerait aussi tous les autres accès légitimes de la zone interne vers la zone filtrée, ce que la politique exclut."
+    },
+    "reference": "NIST SP 800-53 Rev. 5 (SC-7 Boundary Protection) ; CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-proxy-bypass-egress-rule-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. La politique d'un groupe industriel impose que toute la navigation web des postes du VLAN 10.30.0.0/24 passe par le proxy de transfert 10.30.250.10, qui applique le filtrage d'URL. Un audit révèle qu'une partie des connexions échappe au proxy. Quelle mesure applique LE MIEUX la politique ?",
+      "exhibit": "Journal du pare-feu de sortie FW-EDGE (2026-10-15)\n14:02:11 allow rule=users-web-out 10.30.0.57:51310 -> 203.0.113.80:443\n14:02:12 allow rule=proxy-out    10.30.250.10:40112 -> 198.51.100.7:443\n14:02:19 allow rule=users-web-out 10.30.0.57:51318 -> 203.0.113.80:443\n\nJournal du proxy 10.30.250.10\nAucune entrée pour le client 10.30.0.57 entre 14:00 et 14:05",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter des catégories d'URL bloquées sur le proxy de transfert"
+        },
+        {
+          "id": "b",
+          "text": "Déployer un WAF devant le proxy de transfert du groupe"
+        },
+        {
+          "id": "c",
+          "text": "Créer une signature IDS qui alerte sur la navigation directe"
+        },
+        {
+          "id": "d",
+          "text": "Réserver au seul proxy la sortie TCP 80/443 sur FW-EDGE"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le journal montre que la règle users-web-out laisse le poste 10.30.0.57 joindre directement 203.0.113.80 en 443, et le proxy n'a aucune trace de ce poste : la navigation contourne le proxy. Tant que le pare-feu de sortie autorise ce flux, le filtrage du proxy reste facultatif. La mesure efficace est technique et imposée au périmètre : sur FW-EDGE, seul le proxy peut sortir en 80/443 et la règle users-web-out est retirée, ce qui bloque la sortie directe de 10.30.0.0/24. Les utilisateurs n'ont alors plus d'autre chemin que le proxy.",
+    "distractorNotes": {
+      "a": "Les nouvelles catégories ne s'appliqueraient qu'au trafic qui passe par le proxy ; les connexions directes, celles qui posent problème, n'y passent pas.",
+      "b": "Un WAF protège une application web contre des requêtes entrantes ; il ne force pas les postes à passer par le proxy pour sortir.",
+      "c": "Une signature IDS signalerait le contournement sans l'empêcher : la navigation directe continuerait, ce qui ne fait pas respecter la politique."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-pos-flat-network-segmentation-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Après l'incident décrit, le RSSI d'une chaîne de magasins veut empêcher les postes de bureau et les appareils invités de joindre les terminaux de paiement et réduire le périmètre soumis à PCI DSS. Quel contrôle répond LE MIEUX à ce besoin ?",
+      "exhibit": "Magasin de Lyon - réseau local\nVLAN unique 10.40.0.0/22, aucun filtrage interne\n  10.40.0.10-29   caisses et terminaux de paiement\n  10.40.1.0/24    postes de bureau\n  10.40.2.0/24    Wi-Fi invité (clients du magasin)\nRouteur Internet : NAT sortant pour tout le VLAN\n\nIncident du 2026-09-30\nPoste 10.40.1.44 infecté : scan des ports 22, 445 et 3389\nde 10.40.0.10 à 10.40.0.29 détecté par l'EDR",
+      "options": [
+        {
+          "id": "a",
+          "text": "Installer un capteur IDS sur le VLAN unique du magasin"
+        },
+        {
+          "id": "b",
+          "text": "Isoler les caisses dans un segment filtré par un pare-feu dédié"
+        },
+        {
+          "id": "c",
+          "text": "Placer un WAF devant les terminaux de paiement des caisses"
+        },
+        {
+          "id": "d",
+          "text": "Faire passer la navigation des postes par un proxy de transfert"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le réseau est plat : rien ne sépare les postes de bureau, le Wi-Fi invité et les caisses, ce qui a permis au poste infecté de scanner les terminaux et place tout le magasin dans le périmètre PCI DSS. La segmentation des systèmes de paiement dans une zone dédiée, filtrée par un pare-feu qui n'autorise que les flux nécessaires (vers le prestataire de paiement), bloque ce mouvement latéral et réduit le périmètre à cette zone. Le Wi-Fi invité devrait lui aussi être isolé dans sa propre zone.",
+    "distractorNotes": {
+      "a": "Un capteur IDS détecterait de nouveaux scans mais ne les bloquerait pas, et le réseau resterait plat, donc entièrement dans le périmètre PCI DSS.",
+      "c": "Un WAF protège des applications web contre des requêtes HTTP ; il ne sépare pas des segments réseau et ne bloque pas un scan de ports.",
+      "d": "Un proxy de transfert filtre la navigation web vers Internet ; il n'empêche pas un poste de joindre une caisse sur le même réseau local."
+    },
+    "reference": "PCI DSS v4.0 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-ngfw-vs-stateful-capabilities-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise remplace son pare-feu à états classique, qui filtre en couche 4, par un pare-feu de nouvelle génération (NGFW). Quelles deux capacités le NGFW apporte-t-il que l'ancien pare-feu n'avait pas ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Filtrer selon les adresses source et destination et les ports"
+        },
+        {
+          "id": "b",
+          "text": "Identifier l'application quel que soit le port qu'elle utilise"
+        },
+        {
+          "id": "c",
+          "text": "Suivre l'état des connexions TCP établies"
+        },
+        {
+          "id": "d",
+          "text": "Appliquer des règles selon l'identité de l'utilisateur"
+        },
+        {
+          "id": "e",
+          "text": "Traduire les adresses privées en adresse publique (NAT)"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Un NGFW ajoute au filtrage à états une inspection applicative (couche 7) : il reconnaît l'application réelle (un service de partage de fichiers, une messagerie instantanée) même si elle emprunte le port 443 ou un port inhabituel. Il s'intègre aussi à l'annuaire pour écrire des règles par utilisateur ou par groupe plutôt que par adresse IP. Il intègre souvent un IPS et l'inspection du trafic TLS. Le filtrage par adresses et ports, le suivi d'état et la NAT existaient déjà sur le pare-feu à états.",
+    "distractorNotes": {
+      "a": "Le filtrage par adresses et ports est la fonction de base de tout pare-feu, y compris celui qui est remplacé.",
+      "c": "Le suivi de l'état des connexions est justement ce qui définit le pare-feu à états ; le NGFW le conserve mais ne l'apporte pas.",
+      "e": "La NAT est une fonction courante des pare-feu à états classiques ; elle n'est pas propre au NGFW."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-jump-server-hardening-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un hôpital met en place un serveur de rebond pour administrer les serveurs de sa zone sécurisée. Quelles trois mesures renforcent la sécurité de ce serveur ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Exiger une authentification multifacteur pour ouvrir une session"
+        },
+        {
+          "id": "b",
+          "text": "Autoriser la navigation web et la messagerie pour télécharger les outils"
+        },
+        {
+          "id": "c",
+          "text": "N'accepter les connexions que depuis le réseau des administrateurs"
+        },
+        {
+          "id": "d",
+          "text": "Faire partager aux administrateurs un même compte local privilégié"
+        },
+        {
+          "id": "e",
+          "text": "Publier son port RDP sur Internet pour le travail à distance"
+        },
+        {
+          "id": "f",
+          "text": "Enregistrer et journaliser les sessions d'administration"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "f"
+      ]
+    },
+    "explanation": "Le serveur de rebond concentre les accès à la zone sécurisée : sa compromission ouvrirait toutes les portes. On exige donc une authentification multifacteur, on restreint par pare-feu les sources autorisées (réseau ou postes des administrateurs) et les destinations (protocoles d'administration vers les seuls serveurs cibles), et on enregistre les sessions pour garder une trace de chaque action. On y installe le strict nécessaire, avec des comptes nominatifs, pour garantir la traçabilité et réduire la surface d'attaque.",
+    "distractorNotes": {
+      "b": "La navigation et la messagerie exposent le serveur au hameçonnage et aux téléchargements piégés ; un serveur de rebond n'offre que les outils d'administration.",
+      "d": "Un compte partagé supprime la traçabilité (impossible de savoir qui a agi) ; chaque administrateur doit avoir un compte nominatif.",
+      "e": "Exposer RDP sur Internet ouvre le serveur aux attaques par force brute et à l'exploitation de failles ; l'accès distant doit passer par une connexion sécurisée et authentifiée en amont."
+    },
+    "reference": "NIST SP 800-53 Rev. 5 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-dmz-server-attack-surface-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le serveur WEB1 de la zone filtrée ne doit offrir au public que son site en HTTPS. Quelles deux mesures réduisent sa surface d'attaque sans interrompre ce service ? (Choisissez-en deux.)",
+      "exhibit": "$ nmap -Pn -p- 203.0.113.10   (balayage depuis Internet)\nNmap scan report for www.example.com (203.0.113.10)\nNot shown: 65532 filtered tcp ports (no-response)\nPORT     STATE  SERVICE\n22/tcp   open   ssh\n443/tcp  open   https\n3306/tcp open   mysql",
+      "options": [
+        {
+          "id": "a",
+          "text": "Déplacer SSH sur le port TCP 2222"
+        },
+        {
+          "id": "b",
+          "text": "Arrêter MySQL sur WEB1 et héberger la base dans la zone interne"
+        },
+        {
+          "id": "c",
+          "text": "Fermer le port TCP 443 en dehors des heures ouvrées"
+        },
+        {
+          "id": "d",
+          "text": "Limiter SSH aux connexions venant du serveur de rebond"
+        },
+        {
+          "id": "e",
+          "text": "Ouvrir le port TCP 80 pour rediriger les visiteurs vers HTTPS"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le balayage depuis Internet montre trois services joignables : 443 (le seul attendu), 22 (administration) et 3306 (MySQL). Une base de données exposée à Internet est une cible directe ; elle n'a rien à faire sur le serveur web public et doit être déplacée dans la zone interne, joignable seulement depuis WEB1 à travers le pare-feu interne. SSH reste utile pour l'administration mais doit être limité, par pare-feu, au serveur de rebond. Il ne reste alors exposé que le service public, en HTTPS.",
+    "distractorNotes": {
+      "a": "Changer de port ne retire pas le service d'Internet : un balayage de tous les ports le retrouve. C'est de la sécurité par l'obscurité.",
+      "c": "Fermer 443 interromprait le seul service que le serveur doit offrir, ce que la question exclut.",
+      "e": "Ouvrir un port supplémentaire agrandit la surface d'attaque ; la redirection n'est pas demandée et le site doit rester en HTTPS seul."
+    },
+    "reference": "CIS Critical Security Controls v8 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-reverse-proxy-benefits-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une collectivité publie son portail citoyen hébergé sur des serveurs internes. Elle place devant eux un proxy inverse, seul équipement joignable depuis Internet. Quels deux bénéfices de sécurité en retire-t-elle ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les adresses et la structure des serveurs internes ne sont pas exposées aux clients"
+        },
+        {
+          "id": "b",
+          "text": "Les agents municipaux voient leur navigation vers Internet filtrée"
+        },
+        {
+          "id": "c",
+          "text": "Le chiffrement TLS peut être terminé et inspecté en un point unique"
+        },
+        {
+          "id": "d",
+          "text": "Les données stockées sur les serveurs sont chiffrées au repos"
+        },
+        {
+          "id": "e",
+          "text": "Les serveurs web internes n'ont plus besoin de correctifs"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Le proxy inverse reçoit les requêtes des clients à la place des serveurs : ceux-ci ne sont jamais joints directement, et leurs adresses, leurs noms et leur nombre restent masqués. Le proxy peut aussi terminer les sessions TLS, ce qui centralise la gestion des certificats et permet d'inspecter les requêtes en clair (filtrage, WAF intégré) avant de les relayer. Les serveurs restent toutefois vulnérables aux attaques que le proxy laisse passer.",
+    "distractorNotes": {
+      "b": "Filtrer la navigation sortante des agents est le rôle d'un proxy de transfert, pas d'un proxy inverse placé devant des serveurs publiés.",
+      "d": "Le proxy inverse agit sur le trafic en transit ; le chiffrement des données au repos se fait sur les serveurs ou le stockage eux-mêmes.",
+      "e": "Les requêtes légitimes atteignent toujours l'application : une faille non corrigée reste exploitable à travers le proxy. La gestion des correctifs demeure nécessaire."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-ids-sensor-placement-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le SOC dispose de deux capteurs IDS et a deux exigences : (1) analyser le trafic venu d'Internet vers les serveurs web après son filtrage par FW-EXT, sans être noyé sous le trafic que ce pare-feu rejette ; (2) analyser tout le trafic qui atteint APP1 et DB1, qu'il vienne des postes ou de la zone filtrée. Quels deux points d'observation retenir ? (Choisissez-en deux.)",
+      "exhibit": "Points d'observation possibles\nP1 : lien entre le routeur Internet et FW-EXT (côté extérieur)\nP2 : segment de la zone filtrée derrière FW-EXT (WEB1, WEB2)\nP3 : lien entre FW-INT et le cœur de réseau\nP4 : lien entre le cœur de réseau et le VLAN serveurs (APP1, DB1)\nP5 : lien entre le cœur de réseau et le VLAN postes\n\nChemins : Internet > FW-EXT > zone filtrée > FW-INT > cœur\n          cœur > VLAN serveurs ; cœur > VLAN postes",
+      "options": [
+        {
+          "id": "a",
+          "text": "P1"
+        },
+        {
+          "id": "b",
+          "text": "P2"
+        },
+        {
+          "id": "c",
+          "text": "P3"
+        },
+        {
+          "id": "d",
+          "text": "P4"
+        },
+        {
+          "id": "e",
+          "text": "P5"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Exigence 1 : P2, le segment de la zone filtrée derrière FW-EXT, ne voit que le trafic que le pare-feu a laissé passer vers WEB1 et WEB2 ; P1, devant FW-EXT, verrait aussi tout le trafic bloqué, d'où beaucoup d'alertes inutiles. Exigence 2 : tout trafic vers APP1 et DB1 emprunte le lien P4 entre le cœur de réseau et le VLAN serveurs, qu'il arrive de la zone filtrée par FW-INT ou des postes. P3 et P5 ne voient chacun qu'une seule de ces deux origines.",
+    "distractorNotes": {
+      "a": "P1 se trouve devant FW-EXT : il voit tout le trafic Internet, y compris celui que le pare-feu rejette, ce que l'exigence 1 veut justement éviter.",
+      "c": "P3 ne voit que le trafic qui franchit FW-INT (échanges avec la zone filtrée et Internet) ; le trafic des postes vers les serveurs reste dans le cœur de réseau et ne l'emprunte pas.",
+      "e": "P5 ne voit que le trafic des postes ; le trafic de la zone filtrée vers APP1 et DB1 n'y passe pas."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-need-to-device-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'architecte d'une entreprise de logistique dresse la liste des besoins de sécurité de son infrastructure. Associez chaque besoin à l'équipement qui y répond.",
+      "left": [
+        {
+          "id": "n1",
+          "text": "Répartir les connexions des clients entre quatre serveurs web identiques et écarter automatiquement un serveur en panne"
+        },
+        {
+          "id": "n2",
+          "text": "Offrir aux administrateurs un point d'entrée unique et durci vers les serveurs de la zone sécurisée"
+        },
+        {
+          "id": "n3",
+          "text": "Filtrer par catégorie et journaliser la navigation web des salariés vers Internet"
+        },
+        {
+          "id": "n4",
+          "text": "Recueillir une copie du trafic d'un segment et la transmettre à l'outil d'analyse, sans agir sur le flux"
+        },
+        {
+          "id": "n5",
+          "text": "Bloquer en temps réel, dans le chemin du trafic, les flux qui correspondent à des signatures d'attaques"
+        }
+      ],
+      "right": [
+        {
+          "id": "lb",
+          "text": "Répartiteur de charge"
+        },
+        {
+          "id": "jump",
+          "text": "Serveur de rebond"
+        },
+        {
+          "id": "fwd",
+          "text": "Proxy de transfert"
+        },
+        {
+          "id": "sensor",
+          "text": "Capteur réseau"
+        },
+        {
+          "id": "ips",
+          "text": "IPS"
+        },
+        {
+          "id": "honey",
+          "text": "Pot de miel"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "n1": "lb",
+        "n2": "jump",
+        "n3": "fwd",
+        "n4": "sensor",
+        "n5": "ips"
+      }
+    },
+    "explanation": "Le répartiteur de charge distribue les connexions et retire du groupe les serveurs qui échouent aux sondes de santé. Le serveur de rebond est l'unique point d'entrée durci des administrateurs vers une zone sécurisée. Le proxy de transfert relaie et filtre la navigation sortante des utilisateurs. Le capteur collecte le trafic d'un segment pour l'IDS ou le SIEM sans le modifier. L'IPS, placé dans le chemin du trafic, bloque ce qui correspond à ses signatures.",
+    "distractorNotes": {
+      "honey": "Un pot de miel est un système leurre destiné à attirer et observer les attaquants ; il ne répond à aucun des besoins listés, qui portent sur des flux de production."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-firewall-type-capability-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un consultant compare les pare-feu proposés à plusieurs clients. Associez chaque capacité au type de pare-feu qui la caractérise.",
+      "left": [
+        {
+          "id": "c1",
+          "text": "Analyser les paramètres des requêtes HTTP d'une application web et bloquer une injection SQL"
+        },
+        {
+          "id": "c2",
+          "text": "Réunir dans un boîtier pour petite structure pare-feu, antivirus de passerelle, antispam et filtrage web"
+        },
+        {
+          "id": "c3",
+          "text": "Reconnaître une application quel que soit son port et appliquer des règles par utilisateur de l'annuaire"
+        },
+        {
+          "id": "c4",
+          "text": "Décider seulement selon adresses, ports et état, en laissant passer sans règle de retour les réponses des connexions établies"
+        }
+      ],
+      "right": [
+        {
+          "id": "waf",
+          "text": "Pare-feu applicatif web (WAF)"
+        },
+        {
+          "id": "utm",
+          "text": "UTM"
+        },
+        {
+          "id": "ngfw",
+          "text": "NGFW"
+        },
+        {
+          "id": "l4",
+          "text": "Pare-feu à états de couche 4"
+        },
+        {
+          "id": "stateless",
+          "text": "Filtre de paquets sans état"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "c1": "waf",
+        "c2": "utm",
+        "c3": "ngfw",
+        "c4": "l4"
+      }
+    },
+    "explanation": "Le WAF est spécialisé dans la couche 7 des applications web : il inspecte URI, paramètres et corps des requêtes. L'UTM regroupe de nombreuses fonctions de sécurité dans une appliance simple à administrer, adaptée aux petites structures. Le NGFW ajoute au filtrage à états l'identification des applications et des utilisateurs. Le pare-feu à états de couche 4 mémorise les connexions établies et laisse passer leurs réponses sans règle explicite, en décidant selon adresses, ports et état.",
+    "distractorNotes": {
+      "stateless": "Un filtre sans état évalue chaque paquet isolément : il ne sait pas qu'un paquet est la réponse d'une connexion établie et exige une règle explicite pour le retour. Il ne correspond donc à aucune capacité listée."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-asset-to-security-zone-matching-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une enseigne de distribution répartit ses systèmes en zones de sécurité. Associez chaque système à la zone où il doit être placé.",
+      "left": [
+        {
+          "id": "a1",
+          "text": "Serveur web public de la boutique en ligne"
+        },
+        {
+          "id": "a2",
+          "text": "Relais de messagerie qui reçoit le courrier venant d'Internet"
+        },
+        {
+          "id": "a3",
+          "text": "Base de données des salaires du service RH"
+        },
+        {
+          "id": "a4",
+          "text": "Ordinateurs portables des visiteurs dans les salles de réunion"
+        },
+        {
+          "id": "a5",
+          "text": "Interfaces d'administration des commutateurs et des pare-feu"
+        }
+      ],
+      "right": [
+        {
+          "id": "dmz",
+          "text": "Zone filtrée (screened subnet)"
+        },
+        {
+          "id": "internal",
+          "text": "Zone interne restreinte"
+        },
+        {
+          "id": "guest",
+          "text": "Réseau invité"
+        },
+        {
+          "id": "mgmt",
+          "text": "Réseau d'administration dédié"
+        },
+        {
+          "id": "outside",
+          "text": "Zone Internet non fiable"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "a1": "dmz",
+        "a2": "dmz",
+        "a3": "internal",
+        "a4": "guest",
+        "a5": "mgmt"
+      }
+    },
+    "explanation": "Les services qui doivent être joignables depuis Internet (site web public, relais de messagerie entrant) vont dans la zone filtrée, entre deux niveaux de filtrage, pour qu'une compromission ne donne pas accès au réseau interne. Les données sensibles comme la paie restent dans une zone interne restreinte. Les appareils non maîtrisés des visiteurs vont dans un réseau invité isolé, qui ne donne accès qu'à Internet. Les interfaces d'administration des équipements sont réservées à un réseau d'administration dédié.",
+    "distractorNotes": {
+      "outside": "La zone Internet regroupe ce que l'entreprise ne contrôle pas ; on n'y place aucun de ses systèmes, même publics, sans la protection d'un pare-feu."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-https-request-path-order-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Reportez-vous à l'exhibit. Un client Internet ouvre la page d'accueil de www.example.com, ce qui conduit le serveur web qui la traite à interroger la base de données. LB-1 envoie cette requête à WEB1. Ordonnez les équipements atteints, du premier au dernier.",
+      "exhibit": "DNS public : www.example.com -> 203.0.113.5\nFW-EXT : NAT 203.0.113.5:443 -> 172.16.10.5:443 (WAF-1)\nWAF-1  : relaie les requêtes conformes vers 172.16.20.5:443 (VIP LB-1)\nLB-1   : répartit vers WEB1 172.16.30.11 et WEB2 172.16.30.12\nWEB1/2 : lisent les données sur DB1 10.20.2.10:5432 (zone interne)\nFW-INT : allow 172.16.30.0/24 -> 10.20.2.10 tcp/5432",
+      "items": [
+        {
+          "id": "web1",
+          "text": "WEB1"
+        },
+        {
+          "id": "fwint",
+          "text": "FW-INT"
+        },
+        {
+          "id": "lb",
+          "text": "LB-1"
+        },
+        {
+          "id": "db",
+          "text": "DB1"
+        },
+        {
+          "id": "fwext",
+          "text": "FW-EXT"
+        },
+        {
+          "id": "waf",
+          "text": "WAF-1"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "fwext",
+        "waf",
+        "lb",
+        "web1",
+        "fwint",
+        "db"
+      ]
+    },
+    "explanation": "Le nom www.example.com se résout en 203.0.113.5, adresse publiée par FW-EXT, qui la traduit vers WAF-1. Le WAF inspecte la requête et relaie celles qui sont conformes vers l'adresse virtuelle de LB-1, qui la confie à WEB1. Pour construire la page, WEB1 ouvre une connexion vers DB1 ; DB1 est dans la zone interne, et ce flux traverse FW-INT, qui l'autorise par sa règle tcp/5432. Cette chaîne place chaque contrôle au plus près de ce qu'il protège : pare-feu périmétrique, inspection applicative, répartition, puis pare-feu interne devant les données.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-firewall-rule-order-first-match-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un pare-feu applique la première règle qui correspond. Le VLAN des prestataires 10.10.5.0/24 comprend le poste 10.10.5.20, celui du prestataire chargé de la base. Exigences : (1) 10.10.5.20 joint la base 10.20.0.10 en tcp/1433 ; (2) aucun autre flux de 10.10.5.0/24 n'atteint 10.20.0.0/24 ; (3) le reste de 10.10.0.0/16 joint les serveurs 10.20.0.0/24 en tcp/443 uniquement ; (4) tout autre trafic est refusé. Ordonnez les règles, de la première évaluée à la dernière.",
+      "items": [
+        {
+          "id": "r3",
+          "text": "allow 10.10.0.0/16 -> 10.20.0.0/24 tcp/443"
+        },
+        {
+          "id": "r1",
+          "text": "allow 10.10.5.20 -> 10.20.0.10 tcp/1433"
+        },
+        {
+          "id": "r4",
+          "text": "deny any -> any"
+        },
+        {
+          "id": "r2",
+          "text": "deny 10.10.5.0/24 -> 10.20.0.0/24 any"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "r1",
+        "r2",
+        "r3",
+        "r4"
+      ]
+    },
+    "explanation": "Avec une évaluation à la première correspondance, les règles vont du plus spécifique au plus général. L'autorisation de 10.10.5.20 vers 1433 doit précéder le refus de tout 10.10.5.0/24, sinon le poste du prestataire serait bloqué. Ce refus doit à son tour précéder l'autorisation de 10.10.0.0/16 en 443, sinon les prestataires, inclus dans 10.10.0.0/16, joindraient les serveurs en HTTPS. Le refus général vient en dernier : placé plus haut, il bloquerait les flux autorisés qui le suivent.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-53 Rev. 5 (SC-7 Boundary Protection) ; CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-jump-server-rdp-port-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le pare-feu interne d'une mutuelle ne doit autoriser, depuis le serveur de rebond 10.50.0.10 vers les serveurs Windows de production, que le protocole de bureau à distance (RDP) sur son port par défaut. Quel port TCP la règle doit-elle autoriser ?",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Port TCP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "3389"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "RDP écoute par défaut sur le port TCP 3389. La règle autorise donc 10.50.0.10 vers les serveurs Windows en tcp/3389, et rien d'autre : les postes de travail n'ont aucun accès direct aux serveurs, les administrateurs passent obligatoirement par le serveur de rebond, où l'authentification multifacteur et l'enregistrement des sessions s'appliquent. Restreindre à la fois la source, la destination et le port limite la surface d'attaque des serveurs.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-load-balancer-n-plus-one-sizing-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un service de billetterie place ses serveurs web derrière un répartiteur de charge en mode actif/actif. Chaque serveur supporte au plus 2 500 sessions simultanées et le pic attendu est de 11 000 sessions. L'architecte exige une redondance N+1 : le pic doit rester absorbé même si un serveur tombe en panne. Combien de serveurs faut-il au minimum ?",
+      "fields": [
+        {
+          "id": "servers",
+          "label": "Nombre de serveurs (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "servers": {
+          "accepted": [
+            "6"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Pour absorber le pic, il faut N serveurs tels que N × 2 500 ≥ 11 000, soit N ≥ 4,4, donc N = 5 (5 × 2 500 = 12 500 sessions). La redondance N+1 ajoute un serveur : 6. Vérification : avec 6 serveurs et une panne, il en reste 5, qui offrent 12 500 sessions ; avec 5 serveurs et une panne, il n'en resterait que 4, soit 10 000 sessions, en dessous du pic. Le répartiteur détecte le serveur en panne par ses sondes de santé et répartit la charge sur les autres.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  },
+  {
+    "slug": "security-plus-3.2-sensor-syslog-udp-port-001",
+    "certification": "security-plus",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Les capteurs IDS du datacenter d'un assureur envoient leurs alertes au collecteur du SIEM en syslog classique, sans TLS, sur le port par défaut. Quel port UDP le pare-feu doit-il autoriser vers le collecteur ?",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Port UDP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "514"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le syslog classique utilise par défaut le port UDP 514. La règle autorise donc les adresses des capteurs vers le collecteur en udp/514, et seulement elles. Ce transport n'offre ni chiffrement ni garantie de livraison : pour des alertes sensibles qui traversent des zones moins sûres, on lui préfère syslog sur TLS (port TCP 6514) ou un réseau d'administration dédié qui isole les flux de supervision.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-92 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 3.2)"
+  }
+]
