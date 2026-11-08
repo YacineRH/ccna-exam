@@ -1,0 +1,890 @@
+[
+  {
+    "slug": "ccna-2.5-rapid-pvst-mode-command-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un commutateur Catalyst, quelle commande de configuration globale fait fonctionner le Spanning Tree en Rapid PVST+, c'est-à-dire une instance RSTP (802.1w) par VLAN ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "spanning-tree mode pvst"
+        },
+        {
+          "id": "b",
+          "text": "spanning-tree mode mst"
+        },
+        {
+          "id": "c",
+          "text": "spanning-tree mode rapid-pvst"
+        },
+        {
+          "id": "d",
+          "text": "spanning-tree mode rstp"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "« spanning-tree mode rapid-pvst » bascule le commutateur en Rapid PVST+ : chaque VLAN a sa propre instance 802.1w, avec ses rôles (root, designated, alternate, backup), ses états (discarding, learning, forwarding) et la négociation proposition/accord. Le changement de mode relance le calcul de toutes les instances, ce qui interrompt brièvement le trafic : on le fait dans une fenêtre de maintenance. « show spanning-tree » affiche ensuite « Spanning tree enabled protocol rstp » pour chaque VLAN.",
+    "distractorNotes": {
+      "a": "« pvst » active PVST+, une instance 802.1D classique par VLAN, avec les états listening et learning et une convergence de 30 à 50 secondes.",
+      "b": "« mst » active MST (802.1s), qui regroupe les VLAN dans quelques instances au lieu d'une instance par VLAN.",
+      "d": "« rstp » n'est pas un mot-clé de « spanning-tree mode » sur Catalyst : les choix sont pvst, rapid-pvst et mst ; IOS refuse la commande."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-l2-loop-no-ttl-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux commutateurs sont reliés par deux câbles et le Spanning Tree est désactivé. Une trame de diffusion émise par un poste tourne alors dans la boucle sans jamais disparaître. Pourquoi ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les commutateurs recalculent le FCS à chaque passage, ce qui rend la trame toujours valide."
+        },
+        {
+          "id": "b",
+          "text": "L'en-tête Ethernet n'a pas de champ TTL : aucun commutateur ne peut limiter le nombre de passages."
+        },
+        {
+          "id": "c",
+          "text": "Les commutateurs apprennent l'adresse de diffusion dans leur table MAC et la renvoient sur le même port."
+        },
+        {
+          "id": "d",
+          "text": "Le poste émetteur retransmet la trame tant qu'il ne reçoit pas d'accusé de réception."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un routeur décrémente le TTL de l'en-tête IP et détruit le paquet quand il atteint 0, ce qui borne la durée de vie d'un paquet pris dans une boucle de routage. L'en-tête Ethernet n'a aucun champ équivalent : un commutateur retransmet une trame de diffusion sur tous ses ports du VLAN sauf celui d'arrivée, et rien ne l'arrête dans une boucle. Les copies se multiplient à chaque tour (tempête de diffusion), d'où le rôle du Spanning Tree, qui place les liens redondants en discarding.",
+    "distractorNotes": {
+      "a": "Le FCS sert seulement à détecter les erreurs de transmission ; qu'il soit recalculé ou non, il ne limite en rien le nombre de passages d'une trame.",
+      "c": "ffff.ffff.ffff n'est jamais apprise : un commutateur n'apprend que les adresses source, et une adresse de diffusion n'est jamais une source.",
+      "d": "Ethernet n'a pas d'accusé de réception ; la trame tourne parce que les commutateurs la recopient, pas parce que le poste la renvoie."
+    },
+    "reference": "IEEE 802.1D-2004 ; IEEE 802.3"
+  },
+  {
+    "slug": "ccna-2.5-rstp-backup-port-hub-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "SW1 fonctionne en Rapid PVST+ avec les priorités de port par défaut. Ses ports Gi1/0/1 et Gi1/0/2 sont tous deux raccordés au même concentrateur (hub), sur lequel aucun autre commutateur n'est branché. Une fois la topologie convergée, quel rôle a Gi1/0/2 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Alternate"
+        },
+        {
+          "id": "b",
+          "text": "Root"
+        },
+        {
+          "id": "c",
+          "text": "Designated"
+        },
+        {
+          "id": "d",
+          "text": "Backup"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Sur le segment du hub, les deux ports de SW1 émettent des BPDU avec le même root ID, le même coût et le même bridge ID : le départage se fait sur le port ID de l'émetteur (priorité 128 puis numéro). Gi1/0/1 (128.1) l'emporte et devient designated. Gi1/0/2 reçoit ainsi une BPDU meilleure que la sienne, émise par son propre commutateur : c'est la définition du port backup, qui reste en discarding et prend le relais si Gi1/0/1 tombe. Ce rôle n'apparaît que lorsque deux ports d'un même commutateur sont sur le même segment : segment partagé, comme ici, ou câble reliant deux de ses ports.",
+    "distractorNotes": {
+      "a": "Un port alternate reçoit une BPDU meilleure émise par un autre commutateur ; ici, la BPDU qui l'emporte vient de SW1 lui-même.",
+      "b": "Le root port est le meilleur chemin de SW1 vers la racine ; le hub ne mène à aucun autre commutateur, donc à aucune racine.",
+      "c": "Un seul port designated par segment : sur le hub, c'est Gi1/0/1, dont le port ID (128.1) est plus bas que celui de Gi1/0/2 (128.2)."
+    },
+    "reference": "IEEE 802.1w ; Cisco — Understanding Rapid Spanning Tree Protocol (802.1w)"
+  },
+  {
+    "slug": "ccna-2.5-rstp-link-type-half-duplex-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un port de commutateur en Rapid PVST+, non configuré en PortFast, fonctionne en half-duplex. Quel type de lien RSTP lui est attribué par défaut, et quelle en est la conséquence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Point à point : il négocie son passage en forwarding par proposition et accord."
+        },
+        {
+          "id": "b",
+          "text": "Edge : il passe en forwarding dès que le lien monte, sans négociation."
+        },
+        {
+          "id": "c",
+          "text": "Partagé : il passe en forwarding dès que le lien monte, sans négociation."
+        },
+        {
+          "id": "d",
+          "text": "Partagé : il ne négocie pas et passe en forwarding au rythme du forward delay."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "RSTP déduit le type de lien du mode duplex : full-duplex donne un lien point à point (P2p), half-duplex un lien partagé (Shr), car plusieurs équipements peuvent se trouver sur le segment. La négociation proposition/accord suppose un seul voisin : elle n'est utilisée que sur les liens point à point. Sur un lien partagé, un port designated revient au fonctionnement de 802.1D et passe par discarding puis learning, 15 secondes chacun, avant forwarding. On peut forcer le type avec « spanning-tree link-type point-to-point » si l'on est sûr qu'il n'y a qu'un voisin.",
+    "distractorNotes": {
+      "a": "Le point à point est déduit du full-duplex ; un port en half-duplex est considéré comme partagé.",
+      "b": "Le statut edge vient de la configuration PortFast, exclue par l'énoncé, et non du mode duplex.",
+      "c": "Seul un port edge passe en forwarding sans attendre ; un port partagé non edge doit attendre deux fois le forward delay."
+    },
+    "reference": "IEEE 802.1w ; Cisco — Understanding Rapid Spanning Tree Protocol (802.1w)"
+  },
+  {
+    "slug": "ccna-2.5-rstp-alternate-failover-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le câble de Gi1/0/1 est débranché et le lien tombe. Que devient Gi1/0/2 dans le VLAN 10 ?",
+      "exhibit": "SW3# show spanning-tree vlan 10\n\nVLAN0010\n  Spanning tree enabled protocol rstp\n  Root ID    Priority    24586\n             Address     5c71.0d2a.0100\n             Cost        4\n             Port        1 (GigabitEthernet1/0/1)\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n\n  Bridge ID  Priority    32778  (priority 32768 sys-id-ext 10)\n             Address     5c71.0d2a.0300\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n             Aging Time  300 sec\n\nInterface           Role Sts Cost      Prio.Nbr Type\n------------------- ---- --- --------- -------- --------------------------------\nGi1/0/1             Root FWD 4         128.1    P2p\nGi1/0/2             Altn BLK 4         128.2    P2p\nGi1/0/10            Desg FWD 4         128.10   P2p Edge",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il devient root port et passe par listening puis learning, 15 secondes chacun, avant forwarding."
+        },
+        {
+          "id": "b",
+          "text": "Il attend l'expiration du max age (20 secondes), puis devient root port et passe en learning."
+        },
+        {
+          "id": "c",
+          "text": "Il devient root port et passe en forwarding presque immédiatement, sans attendre de timer."
+        },
+        {
+          "id": "d",
+          "text": "Il devient designated et envoie une proposition pour passer en forwarding."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Dans l'exhibit, Gi1/0/2 est alternate (Altn BLK) : il reçoit les BPDU d'un autre commutateur et offre un second chemin vers la racine. RSTP a calculé ce chemin à l'avance : quand le root port perd son lien, l'alternate est promu root port et passe aussitôt en forwarding, sans listening ni learning. La perte du lien étant détectée localement, il n'y a pas non plus de max age à attendre. Avec PVST+ (802.1D), le port bloqué aurait mis 30 secondes à transmettre.",
+    "distractorNotes": {
+      "a": "Listening n'existe pas en RSTP, et la promotion d'un port alternate en root port ne passe pas par les timers de forward delay.",
+      "b": "En 802.1D, l'attente du max age ne concerne que les pannes indirectes ; ici le lien tombe, SW3 le constate immédiatement et promeut l'alternate sans attendre.",
+      "d": "Le voisin de Gi1/0/2 annonce un meilleur chemin vers la racine que SW3 : Gi1/0/2 ne peut pas être designated sur ce segment, il devient le nouveau root port."
+    },
+    "reference": "IEEE 802.1w ; Cisco — Understanding Rapid Spanning Tree Protocol (802.1w)"
+  },
+  {
+    "slug": "ccna-2.5-root-guard-inconsistent-recovery-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. DSW1 est le root bridge du VLAN 20, et son port Gi1/0/5 dessert le commutateur d'accès ASW5. Quelle affirmation décrit l'état de Gi1/0/5 et la façon dont il retrouvera son fonctionnement normal ?",
+      "exhibit": "DSW1#\n*Nov  8 09:14:27.311: %SPANTREE-2-ROOTGUARD_BLOCK: Root guard blocking port\nGigabitEthernet1/0/5 on VLAN0020.",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi1/0/5 est en err-disabled pour tous les VLAN ; il faudra un shutdown puis un no shutdown une fois ASW5 corrigé."
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/5 est root-inconsistent dans le VLAN 20 ; il se rétablit seul quand ASW5 cesse d'annoncer un meilleur bridge ID."
+        },
+        {
+          "id": "c",
+          "text": "Gi1/0/5 est devenu le root port de DSW1, car ASW5 est désormais le root bridge du VLAN 20."
+        },
+        {
+          "id": "d",
+          "text": "Gi1/0/5 est loop-inconsistent dans le VLAN 20 ; il se rétablit seul quand ASW5 recommence à envoyer des BPDU."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le message ROOTGUARD_BLOCK montre que Root Guard (« spanning-tree guard root ») est actif sur Gi1/0/5 et qu'une BPDU supérieure, annonçant une meilleure racine que DSW1, y est arrivée pour le VLAN 20 : ASW5 a sans doute reçu une priorité trop basse. Root Guard refuse que ce port devienne root port : il le place en root-inconsistent, équivalent à discarding, pour ce VLAN seulement. DSW1 reste racine. Dès que les BPDU supérieures cessent, le port est débloqué automatiquement (message ROOTGUARD_UNBLOCK), sans intervention.",
+    "distractorNotes": {
+      "a": "C'est le comportement de BPDU Guard ; Root Guard bloque le port dans le seul VLAN concerné et le libère automatiquement.",
+      "c": "Root Guard empêche justement ce scénario : le port est bloqué au lieu de devenir root port, et DSW1 reste le root bridge.",
+      "d": "L'état loop-inconsistent vient de Loop Guard, qui réagit à l'absence de BPDU ; ici, c'est l'arrivée d'une BPDU supérieure qui bloque le port."
+    },
+    "reference": "Cisco — Spanning Tree Protocol Root Guard Enhancement ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Optional Spanning-Tree Features"
+  },
+  {
+    "slug": "ccna-2.5-loop-guard-unidirectional-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "SW3 est relié à SW2 par une fibre ; le port Gi1/0/2 de SW3 est alternate (discarding) dans le VLAN 10, et le port de SW2 en face est designated. À la suite d'une panne, SW3 ne reçoit plus aucune BPDU sur Gi1/0/2, mais le lien reste up et SW2 reçoit toujours ce qu'envoie SW3. « spanning-tree guard loop » est configuré sur Gi1/0/2. Que se passe-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi1/0/2 devient designated et passe en forwarding une fois l'information de SW2 expirée."
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/2 passe en err-disabled et doit être réactivé manuellement."
+        },
+        {
+          "id": "c",
+          "text": "Gi1/0/2 devient root port de SW3, car il ne reçoit plus de meilleure BPDU."
+        },
+        {
+          "id": "d",
+          "text": "Gi1/0/2 reste bloqué en loop-inconsistent jusqu'au retour des BPDU, puis se rétablit seul."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Sans Loop Guard, l'information reçue sur Gi1/0/2 expire au bout de trois hellos manqués : le port ne voit plus de meilleure BPDU, devient designated et peut passer en forwarding, alors que le port de SW2 transmet aussi : une boucle risque de se former. Loop Guard part du principe qu'un port root ou alternate qui cesse de recevoir des BPDU subit une panne (liaison unidirectionnelle, voisin défaillant) : il le place en loop-inconsistent, l'équivalent de discarding, dans le VLAN concerné. Dès que les BPDU reviennent, le port reprend son rôle automatiquement.",
+    "distractorNotes": {
+      "a": "C'est ce qui risquerait d'arriver sans Loop Guard, avec à la clé une boucle ; Loop Guard empêche précisément cette transition.",
+      "b": "Loop Guard ne met pas le port en err-disabled : il le bloque (loop-inconsistent) dans le VLAN concerné et le rétablit automatiquement au retour des BPDU.",
+      "c": "Un root port doit recevoir le meilleur chemin vers la racine ; un port qui ne reçoit plus aucune BPDU ne peut pas le devenir."
+    },
+    "reference": "Cisco — Spanning-Tree Protocol Enhancements using Loop Guard and BPDU Skew Detection Features ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Optional Spanning-Tree Features"
+  },
+  {
+    "slug": "ccna-2.5-edge-port-behaviour-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur un port configuré en PortFast (port edge) en Rapid PVST+, sans autre fonction de protection, sont vraies ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il passe en forwarding dès que le lien monte, sans passer par learning."
+        },
+        {
+          "id": "b",
+          "text": "Il n'envoie jamais de BPDU, ce qui évite de perturber le poste raccordé."
+        },
+        {
+          "id": "c",
+          "text": "Il passe en err-disabled dès qu'il reçoit une BPDU."
+        },
+        {
+          "id": "d",
+          "text": "Il perd son statut edge s'il reçoit une BPDU et redevient un port Spanning Tree normal."
+        },
+        {
+          "id": "e",
+          "text": "Il est recommandé sur les liens entre commutateurs pour accélérer la convergence."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "PortFast fait d'un port un port edge : on affirme qu'il mène à un poste final, donc qu'il ne peut pas créer de boucle. Il passe en forwarding dès que le lien monte, ce qui évite par exemple l'échec du DHCP au démarrage, et ses changements d'état ne déclenchent pas de notification de changement de topologie. Il continue d'envoyer des BPDU. S'il en reçoit une, il perd aussitôt son statut edge et participe normalement au Spanning Tree. Pour désactiver le port dans ce cas, il faut ajouter BPDU Guard.",
+    "distractorNotes": {
+      "b": "Un port PortFast envoie des BPDU comme tout port designated ; c'est BPDU Filter qui supprime leur envoi.",
+      "c": "La mise en err-disabled à la réception d'une BPDU est le rôle de BPDU Guard, qui doit être activé en plus de PortFast.",
+      "e": "Sur un lien entre commutateurs, PortFast ferait passer le port en forwarding sans vérifier l'absence de boucle ; RSTP y converge déjà vite par proposition et accord."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Optional Spanning-Tree Features"
+  },
+  {
+    "slug": "ccna-2.5-root-loop-guard-placement-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Dans un réseau à deux niveaux, distribution (où se trouvent les root bridges) et accès, quelles deux recommandations de placement de Root Guard et de Loop Guard sont correctes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Activer Root Guard sur les ports des commutateurs de distribution qui desservent les commutateurs d'accès."
+        },
+        {
+          "id": "b",
+          "text": "Activer Root Guard sur le root port de chaque commutateur d'accès."
+        },
+        {
+          "id": "c",
+          "text": "Activer Loop Guard sur les ports PortFast qui desservent les postes de travail."
+        },
+        {
+          "id": "d",
+          "text": "Activer Root Guard et Loop Guard ensemble sur chaque uplink pour cumuler les deux protections."
+        },
+        {
+          "id": "e",
+          "text": "Activer Loop Guard sur les ports root et alternate des commutateurs d'accès."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Root Guard protège l'emplacement de la racine : on l'active sur les ports designated par lesquels aucune meilleure racine ne doit jamais arriver, typiquement les ports de distribution vers l'accès. Si une BPDU supérieure y arrive, le port est bloqué (root-inconsistent). Loop Guard protège contre la disparition des BPDU sur un port qui doit en recevoir : on l'active sur les ports root et alternate, soit les uplinks des commutateurs d'accès, ou globalement par « spanning-tree loopguard default ». Les deux fonctions s'excluent sur un même port.",
+    "distractorNotes": {
+      "b": "Le root port reçoit par définition les BPDU du meilleur chemin vers la racine : Root Guard le bloquerait et couperait le commutateur d'accès de la racine.",
+      "c": "Un port edge vers un poste ne reçoit pas de BPDU ; Loop Guard n'y apporte rien. Sur ces ports, la protection adaptée est BPDU Guard.",
+      "d": "« spanning-tree guard » accepte root ou loop, pas les deux : Root Guard et Loop Guard ne peuvent pas être actifs en même temps sur un port."
+    },
+    "reference": "Cisco — Spanning Tree Protocol Root Guard Enhancement ; Cisco — Spanning-Tree Protocol Enhancements using Loop Guard and BPDU Skew Detection Features"
+  },
+  {
+    "slug": "ccna-2.5-portfast-bpduguard-default-scope-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Gi1/0/24 est relié au commutateur de distribution DSW1. Quelles deux affirmations sont vraies ?",
+      "exhibit": "Extrait de la configuration de SW1 (Rapid PVST+) :\n\nspanning-tree mode rapid-pvst\nspanning-tree portfast default\nspanning-tree portfast bpduguard default\n!\ninterface GigabitEthernet1/0/5\n switchport mode access\n switchport access vlan 10\n!\ninterface GigabitEthernet1/0/6\n switchport mode access\n switchport access vlan 10\n spanning-tree portfast disable\n!\ninterface GigabitEthernet1/0/24\n switchport mode trunk",
+      "options": [
+        {
+          "id": "a",
+          "text": "Si un commutateur branché sur Gi1/0/5 envoie des BPDU, Gi1/0/5 passe en err-disabled."
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/24 passe en err-disabled dès qu'il reçoit une BPDU de DSW1."
+        },
+        {
+          "id": "c",
+          "text": "Gi1/0/6 passe en err-disabled s'il reçoit une BPDU."
+        },
+        {
+          "id": "d",
+          "text": "Gi1/0/6 passe par l'état learning avant d'atteindre forwarding quand un poste s'y raccorde."
+        },
+        {
+          "id": "e",
+          "text": "Les commandes globales activent PortFast sur tous les ports de SW1, trunks compris."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "« spanning-tree portfast default » active PortFast sur tous les ports d'accès, pas sur les trunks : Gi1/0/5 est edge, Gi1/0/24 non, et Gi1/0/6 en est exclu par « spanning-tree portfast disable ». « spanning-tree portfast bpduguard default » applique BPDU Guard aux seuls ports en PortFast : Gi1/0/5 passe en err-disabled s'il reçoit une BPDU, Gi1/0/24 et Gi1/0/6 participent normalement au Spanning Tree. Faute de voisin pour répondre à la proposition, Gi1/0/6 passe par discarding puis learning, 15 secondes chacun, avant forwarding.",
+    "distractorNotes": {
+      "b": "Un trunk n'est pas concerné par « portfast default » ; n'étant pas en PortFast, il échappe aussi à « bpduguard default » et traite normalement les BPDU de DSW1.",
+      "c": "Le BPDU Guard global ne vise que les ports en PortFast ; Gi1/0/6 l'a désactivé, il n'est donc pas protégé.",
+      "e": "Le PortFast global ne s'applique qu'aux ports d'accès ; un trunk demande « spanning-tree portfast trunk » en configuration d'interface."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Optional Spanning-Tree Features"
+  },
+  {
+    "slug": "ccna-2.5-l2-loop-symptoms-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un câble branché par erreur crée une boucle dans le VLAN 10, et le Spanning Tree est désactivé dans ce VLAN. Quels trois symptômes peut-on observer ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les trames de diffusion sont recopiées sans fin et saturent les liens et les processeurs des commutateurs."
+        },
+        {
+          "id": "b",
+          "text": "Les commutateurs détectent la boucle et placent d'eux-mêmes les ports concernés en err-disabled."
+        },
+        {
+          "id": "c",
+          "text": "Une même adresse MAC source est apprise tour à tour sur des ports différents."
+        },
+        {
+          "id": "d",
+          "text": "Les routeurs du réseau propagent la tempête de diffusion vers les autres sous-réseaux."
+        },
+        {
+          "id": "e",
+          "text": "Un hôte peut recevoir plusieurs copies d'une même trame unicast."
+        },
+        {
+          "id": "f",
+          "text": "Seul le trafic unicast est touché, car les commutateurs filtrent les diffusions en boucle."
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Sans Spanning Tree, chaque diffusion repart sur tous les ports du VLAN et revient par l'autre chemin : c'est la tempête de diffusion, qui sature liens et processeurs. Comme les copies d'une trame arrivent par plusieurs ports, le commutateur réapprend sans cesse la même adresse source ailleurs : la table MAC est instable (messages MACFLAP sur un Catalyst). Une trame unicast vers une destination inconnue est inondée et peut arriver plusieurs fois au destinataire. Le problème reste confiné au VLAN : les routeurs ne relaient pas les diffusions.",
+    "distractorNotes": {
+      "b": "Sans Spanning Tree ni fonction dédiée configurée (storm control avec l'action shutdown, par exemple), un commutateur ne détecte pas la boucle et ne désactive aucun port de lui-même.",
+      "d": "Un routeur ne retransmet pas les diffusions de couche 2 : la tempête reste dans le domaine de diffusion du VLAN 10.",
+      "f": "Les diffusions sont justement la première victime de la boucle : un commutateur les retransmet sur tous les ports du VLAN, sans aucun filtre."
+    },
+    "reference": "IEEE 802.1D-2004 ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-stp-8021d-convergence-times-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un réseau fonctionne en PVST+ (802.1D), avec les timers par défaut (hello 2 s, max age 20 s, forward delay 15 s). Répondez par des nombres entiers de secondes.",
+      "fields": [
+        {
+          "id": "newport",
+          "label": "Délai entre la montée du lien d'un port d'accès sans PortFast et son passage en forwarding (secondes, nombre entier)"
+        },
+        {
+          "id": "indirect",
+          "label": "Délai maximal pour qu'un port bloqué passe en forwarding après une panne indirecte, quand le commutateur cesse de recevoir les BPDU de la racine sans que son lien tombe (secondes, nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "newport": {
+          "accepted": [
+            "30"
+          ],
+          "normalize": "int"
+        },
+        "indirect": {
+          "accepted": [
+            "50"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "En 802.1D, un port qui doit transmettre passe par listening puis learning, chacun pendant un forward delay : 15 + 15 = 30 secondes, d'où les échecs DHCP sur les postes sans PortFast. Après une panne indirecte, le commutateur garde l'ancienne information jusqu'à l'expiration du max age (20 s), puis le port bloqué refait listening et learning : 20 + 15 + 15 = 50 secondes. RSTP réduit ces délais : un port edge transmet aussitôt, un port alternate est promu sans timer, et l'information expire après trois hellos manqués (6 s).",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1D-1998 ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-port-role-count-mesh-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Quatre commutateurs, SW1 à SW4, sont reliés deux à deux par des trunks 802.1Q point à point (six liens), tous up et transportant le VLAN 10. Chaque commutateur dessert en outre deux postes du VLAN 10 sur des ports PortFast. Le réseau fonctionne en Rapid PVST+. Une fois la topologie du VLAN 10 convergée, combien compte-t-on de ports de chaque catégorie dans le VLAN 10, sur l'ensemble des quatre commutateurs ? Répondez par des nombres entiers.",
+      "fields": [
+        {
+          "id": "desg",
+          "label": "Nombre de ports designated (nombre entier)"
+        },
+        {
+          "id": "disc",
+          "label": "Nombre de ports en état discarding (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "desg": {
+          "accepted": [
+            "14"
+          ],
+          "normalize": "int"
+        },
+        "disc": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Chaque segment point à point a exactement un port designated : six pour les liens entre commutateurs, plus huit pour les ports vers les postes, qui sont designated (Desg FWD … Edge), soit 14. Les trois commutateurs non racine ont chacun un root port, soit trois. Restent 12 − 6 − 3 = 3 ports entre commutateurs, alternate et donc en discarding. On le vérifie autrement : un arbre qui relie quatre commutateurs n'utilise que trois liens ; chacun des trois liens restants a un port bloqué. Le résultat ne dépend pas de l'emplacement de la racine.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1w ; IEEE 802.1D-2004"
+  },
+  {
+    "slug": "ccna-2.5-loopguard-default-global-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, en mode de configuration globale, activez Loop Guard par défaut sur tous les ports point à point, sans le configurer interface par interface.",
+      "prompt": "SW1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "spanning-tree loopguard default"
+        ]
+      ]
+    },
+    "explanation": "« spanning-tree loopguard default » active Loop Guard sur tous les ports point à point du commutateur. Il ne joue que sur les ports root et alternate : si l'un d'eux cesse de recevoir des BPDU, il passe en loop-inconsistent au lieu de devenir designated et de transmettre, ce qui évite une boucle en cas de liaison unidirectionnelle. Le port se rétablit seul au retour des BPDU. L'équivalent par interface est « spanning-tree guard loop » ; « show spanning-tree summary » indique si Loop Guard est activé par défaut.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Optional Spanning-Tree Features"
+  },
+  {
+    "slug": "ccna-2.5-root-guard-interface-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "DSW1 est le root bridge prévu pour tous les VLAN, et son port Gi1/0/5 dessert le commutateur d'accès ASW5. En partant du mode de configuration globale, faites en sorte que ce port soit bloqué, sans passer en err-disabled, si ASW5 annonce un jour un meilleur bridge ID que DSW1, et qu'il se débloque seul dès que ces annonces cessent.",
+      "prompt": "DSW1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet1/0/5"
+        ],
+        [
+          "spanning-tree guard root"
+        ]
+      ]
+    },
+    "explanation": "Root Guard (« spanning-tree guard root », en configuration d'interface) interdit au port de devenir root port. S'il reçoit une BPDU supérieure, il passe en root-inconsistent, équivalent à discarding, dans le VLAN concerné, et DSW1 reste racine. Le déblocage est automatique dès que les BPDU supérieures cessent. BPDU Guard ne conviendrait pas : il mettrait le port en err-disabled à la première BPDU, même normale, alors qu'ASW5 doit pouvoir en envoyer. « show spanning-tree inconsistentports » liste les ports bloqués.",
+    "distractorNotes": {},
+    "reference": "Cisco — Spanning Tree Protocol Root Guard Enhancement ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Optional Spanning-Tree Features"
+  },
+  {
+    "slug": "ccna-2.5-portfast-trunk-hypervisor-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le port Gi1/0/20 de SW2 est un trunk 802.1Q qui dessert un hyperviseur ; aucun commutateur n'y est raccordé. Vous êtes dans la configuration de cette interface. Faites passer ce trunk directement en forwarding quand le lien monte, sans attendre le Spanning Tree.",
+      "prompt": "SW2(config-if)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "spanning-tree portfast trunk",
+          "spanning-tree portfast edge trunk"
+        ]
+      ]
+    },
+    "explanation": "« spanning-tree portfast » seul n'a d'effet que sur un port d'accès : sur un trunk, IOS ne l'applique pas. Pour un trunk vers un hôte qui ne fait pas de Spanning Tree, comme un hyperviseur ou un serveur avec des sous-interfaces VLAN, il faut « spanning-tree portfast trunk » (« spanning-tree portfast edge trunk » sur certaines versions). Le port devient edge dans tous les VLAN du trunk et transmet dès la montée du lien. Comme pour un port d'accès, cette commande suppose qu'aucun commutateur n'est branché : on l'associe souvent à BPDU Guard.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Optional Spanning-Tree Features"
+  },
+  {
+    "slug": "ccna-2.5-proposal-agreement-sequence-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "En Rapid PVST+, SW1 (plus proche de la racine) et SW2 sont reliés par un nouveau lien point à point, qui vient de monter et devient le meilleur chemin de SW2 vers la racine. Ordonnez les étapes de la négociation qui fait passer le port de SW1 en forwarding, de la première à la dernière.",
+      "items": [
+        {
+          "id": "agree",
+          "text": "SW2 répond par une BPDU qui porte le drapeau agreement."
+        },
+        {
+          "id": "fwd",
+          "text": "SW1 fait passer aussitôt son port designated en forwarding."
+        },
+        {
+          "id": "up",
+          "text": "Les deux ports démarrent comme designated, en état discarding."
+        },
+        {
+          "id": "sync",
+          "text": "SW2 fait de ce port son root port et met en discarding ses ports designated non edge."
+        },
+        {
+          "id": "prop",
+          "text": "SW1 envoie une BPDU qui porte le drapeau proposal."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "up",
+        "prop",
+        "sync",
+        "agree",
+        "fwd"
+      ]
+    },
+    "explanation": "Un port non edge qui monte commence designated et discarding, et propose de passer en forwarding (drapeau proposal). SW2, qui reçoit une BPDU supérieure, fait de ce port son root port. Avant d'accepter, il se synchronise : il place ses ports designated non edge en discarding, pour qu'aucune boucle ne puisse se former par le nouveau chemin. Il renvoie alors l'agreement, et SW1 passe son port en forwarding sans attendre le forward delay. SW2 reprend ensuite la même négociation vers l'aval, ce qui propage la convergence de proche en proche.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1w ; Cisco — Understanding Rapid Spanning Tree Protocol (802.1w)"
+  },
+  {
+    "slug": "ccna-2.5-stp-8021d-port-states-order-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "En 802.1D (STP classique, utilisé par PVST+), un port sans PortFast vient de s'activer et sera designated. Ordonnez les états par lesquels il passe, du premier au dernier.",
+      "items": [
+        {
+          "id": "lrn",
+          "text": "Learning"
+        },
+        {
+          "id": "fwd",
+          "text": "Forwarding"
+        },
+        {
+          "id": "blk",
+          "text": "Blocking"
+        },
+        {
+          "id": "lis",
+          "text": "Listening"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "blk",
+        "lis",
+        "lrn",
+        "fwd"
+      ]
+    },
+    "explanation": "Un port 802.1D démarre en blocking : il reçoit les BPDU mais ne transmet aucune trame. Choisi comme designated, il passe en listening, où il échange des BPDU sans apprendre d'adresses, puis en learning, où il remplit la table MAC sans encore transmettre ; chaque étape dure un forward delay (15 s). Il atteint enfin forwarding. RSTP fusionne blocking et listening (ainsi que disabled) dans un seul état, discarding, et ne conserve que discarding, learning et forwarding.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1D-1998 ; IEEE 802.1w"
+  },
+  {
+    "slug": "ccna-2.5-stp-rstp-state-mapping-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque état de port 802.1D à l'état RSTP (802.1w) qui lui correspond.",
+      "left": [
+        {
+          "id": "dis",
+          "text": "Disabled"
+        },
+        {
+          "id": "blk",
+          "text": "Blocking"
+        },
+        {
+          "id": "lis",
+          "text": "Listening"
+        },
+        {
+          "id": "lrn",
+          "text": "Learning"
+        },
+        {
+          "id": "fwd",
+          "text": "Forwarding"
+        }
+      ],
+      "right": [
+        {
+          "id": "discard",
+          "text": "Discarding"
+        },
+        {
+          "id": "learn",
+          "text": "Learning"
+        },
+        {
+          "id": "forward",
+          "text": "Forwarding"
+        },
+        {
+          "id": "listen",
+          "text": "Listening"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "dis": "discard",
+        "blk": "discard",
+        "lis": "discard",
+        "lrn": "learn",
+        "fwd": "forward"
+      }
+    },
+    "explanation": "802.1D distingue cinq états, dont trois où le port ne transmet aucune trame et n'apprend aucune adresse : disabled, blocking et listening. Comme ils ont le même effet sur le trafic, 802.1w les regroupe dans un seul état, discarding ; c'est le rôle (alternate, backup, designated en attente…) qui dit pourquoi le port ne transmet pas. Learning et forwarding gardent leur sens. Dans « show spanning-tree », un port discarding apparaît avec le statut BLK.",
+    "distractorNotes": {
+      "listen": "Listening n'existe plus en RSTP : la négociation proposition/accord remplace la phase d'écoute temporisée de 802.1D."
+    },
+    "reference": "IEEE 802.1w ; IEEE 802.1D-1998"
+  },
+  {
+    "slug": "ccna-2.5-stp-protection-features-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque fonction Spanning Tree d'un commutateur Catalyst à son effet.",
+      "left": [
+        {
+          "id": "pf",
+          "text": "PortFast"
+        },
+        {
+          "id": "bg",
+          "text": "BPDU Guard"
+        },
+        {
+          "id": "bf",
+          "text": "BPDU Filter (activé sur l'interface)"
+        },
+        {
+          "id": "rg",
+          "text": "Root Guard"
+        },
+        {
+          "id": "lg",
+          "text": "Loop Guard"
+        }
+      ],
+      "right": [
+        {
+          "id": "fast",
+          "text": "Passe le port en forwarding dès que le lien monte"
+        },
+        {
+          "id": "errdis",
+          "text": "Met le port en err-disabled à la réception d'une BPDU"
+        },
+        {
+          "id": "nobpdu",
+          "text": "Empêche le port d'envoyer des BPDU et ignore celles qu'il reçoit"
+        },
+        {
+          "id": "superior",
+          "text": "Bloque le port s'il reçoit une BPDU annonçant une meilleure racine"
+        },
+        {
+          "id": "silence",
+          "text": "Bloque un port root ou alternate qui cesse de recevoir des BPDU"
+        },
+        {
+          "id": "storm",
+          "text": "Bloque le port quand le trafic de diffusion dépasse un seuil"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "pf": "fast",
+        "bg": "errdis",
+        "bf": "nobpdu",
+        "rg": "superior",
+        "lg": "silence"
+      }
+    },
+    "explanation": "PortFast fait d'un port un port edge, qui transmet aussitôt. BPDU Guard protège ces ports : une BPDU reçue les met en err-disabled. BPDU Filter, activé sur l'interface (« spanning-tree bpdufilter enable »), supprime l'envoi et le traitement des BPDU, ce qui revient à retirer le port du Spanning Tree : à manier avec prudence. Root Guard bloque le port (root-inconsistent) sur une BPDU supérieure, Loop Guard bloque (loop-inconsistent) un port root ou alternate privé de BPDU ; tous deux se rétablissent seuls.",
+    "distractorNotes": {
+      "storm": "C'est le rôle de storm control (« storm-control broadcast level »), une fonction de l'interface indépendante du Spanning Tree."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Optional Spanning-Tree Features"
+  }
+]
