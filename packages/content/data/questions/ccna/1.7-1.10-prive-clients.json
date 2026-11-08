@@ -1,0 +1,1373 @@
+[
+  {
+    "slug": "ccna-1.7-rfc1918-172-block-range-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La RFC 1918 réserve à l'usage privé le bloc 172.16.0.0/12. Quelle plage d'adresses ce bloc couvre-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "De 172.16.0.0 à 172.16.255.255"
+        },
+        {
+          "id": "b",
+          "text": "De 172.16.0.0 à 172.32.255.255"
+        },
+        {
+          "id": "c",
+          "text": "De 172.16.0.0 à 172.31.255.255"
+        },
+        {
+          "id": "d",
+          "text": "De 172.0.0.0 à 172.31.255.255"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un préfixe /12 fixe les 12 premiers bits : les 8 bits du premier octet (172) et les 4 bits de poids fort du deuxième. 16 s'écrit 0001 0000 : seuls les 4 bits de poids faible du deuxième octet varient, de 16 (0001 0000) à 31 (0001 1111). Le bloc va donc de 172.16.0.0 à 172.31.255.255, soit seize /16 consécutifs et 2²⁰ = 1 048 576 adresses ; son masque est 255.240.0.0. 172.15.255.255 et 172.32.0.0, de part et d'autre du bloc, sont des adresses publiques.",
+    "distractorNotes": {
+      "a": "172.16.0.0 à 172.16.255.255 est un /16 : ce n'est que la première des seize tranches /16 du bloc, qui va jusqu'à 172.31.255.255.",
+      "b": "Avec 4 bits variables, le deuxième octet va de 16 à 31 : 172.32.0.0 est la première adresse après le bloc, et c'est une adresse publique.",
+      "d": "Le deuxième octet commence à 16, pas à 0 : les adresses de 172.0.0.0 à 172.15.255.255 sont publiques."
+    },
+    "reference": "RFC 1918, section 3"
+  },
+  {
+    "slug": "ccna-1.7-nat-required-internet-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les postes d'un LAN numéroté en 10.1.1.0/24 doivent accéder à des serveurs web sur Internet. Pourquoi le routeur de bordure doit-il traduire leurs adresses par NAT ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le NAT chiffre les adresses internes pour les protéger des attaques venues d'Internet."
+        },
+        {
+          "id": "b",
+          "text": "Les serveurs web refusent les connexions dont l'adresse source appartient à la classe A."
+        },
+        {
+          "id": "c",
+          "text": "Le bloc 10.0.0.0/8 est réservé aux liaisons entre FAI et ne peut pas servir de source."
+        },
+        {
+          "id": "d",
+          "text": "Les adresses RFC 1918 ne sont pas uniques au niveau mondial et Internet ne les achemine pas."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Les plages de la RFC 1918 peuvent être réutilisées par n'importe quelle organisation : une adresse comme 10.1.1.25 existe dans des milliers de réseaux. Elle n'a donc aucune signification globale, et la RFC 1918 interdit d'annoncer et d'acheminer ces plages entre organisations : les FAI les filtrent. Même si le paquet sortait, le serveur ne pourrait pas répondre à une adresse privée. Le routeur de bordure remplace donc l'adresse source par une adresse publique (en général la sienne, avec PAT) et mémorise la correspondance pour traduire les réponses au retour.",
+    "distractorNotes": {
+      "a": "Le NAT ne chiffre rien : il réécrit les adresses (et les ports avec PAT). Masquer les adresses internes en est un effet de bord, pas un chiffrement.",
+      "b": "Les classes n'ont plus cours depuis le CIDR, et les adresses publiques de l'ancienne classe A sont acheminées normalement sur Internet.",
+      "c": "10.0.0.0/8 est l'une des trois plages privées de la RFC 1918, librement utilisable dans tout réseau interne ; elle n'est pas réservée aux FAI."
+    },
+    "reference": "RFC 1918, section 3 ; RFC 3022 (NAT traditionnel)"
+  },
+  {
+    "slug": "ccna-1.7-non-rfc1918-traps-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un auditeur relève ces adresses dans la configuration d'un réseau d'entreprise. Quelles trois adresses n'appartiennent à aucune des plages privées de la RFC 1918 ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "172.24.8.1"
+        },
+        {
+          "id": "b",
+          "text": "172.15.250.1"
+        },
+        {
+          "id": "c",
+          "text": "10.255.0.1"
+        },
+        {
+          "id": "d",
+          "text": "192.169.200.7"
+        },
+        {
+          "id": "e",
+          "text": "100.127.3.3"
+        },
+        {
+          "id": "f",
+          "text": "192.168.255.7"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Les plages de la RFC 1918 sont 10.0.0.0/8 (10.0.0.0 à 10.255.255.255), 172.16.0.0/12 (172.16.0.0 à 172.31.255.255) et 192.168.0.0/16 (192.168.0.0 à 192.168.255.255). 172.15.250.1 se trouve juste sous la borne basse de 172.16.0.0/12 et 192.169.200.7 juste après la fin de 192.168.0.0/16 : ce sont des adresses publiques. 100.127.3.3 appartient à 100.64.0.0/10 (100.64.0.0 à 100.127.255.255), l'espace partagé que la RFC 6598 réserve au CGN des FAI : elle n'est pas routable sur Internet, mais elle ne fait pas partie de la RFC 1918.",
+    "distractorNotes": {
+      "a": "172.24.8.1 est dans 172.16.0.0/12, qui couvre les deuxièmes octets 16 à 31 : c'est une adresse privée.",
+      "c": "10.255.0.1 est dans 10.0.0.0/8, qui couvre tout le premier octet 10 : c'est une adresse privée.",
+      "f": "192.168.255.7 est dans 192.168.0.0/16, qui va jusqu'à 192.168.255.255 inclus : c'est une adresse privée."
+    },
+    "reference": "RFC 1918, section 3 ; RFC 6598"
+  },
+  {
+    "slug": "ccna-1.7-documentation-block-choice-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un formateur rédige un support de cours public. Pour ses schémas, il veut un réseau IPv4 /24 qui ne corresponde à aucun réseau réel, ni sur Internet ni dans les réseaux internes de ses lecteurs. Quel bloc doit-il choisir ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "198.51.100.0/24"
+        },
+        {
+          "id": "b",
+          "text": "192.168.100.0/24"
+        },
+        {
+          "id": "c",
+          "text": "100.64.100.0/24"
+        },
+        {
+          "id": "d",
+          "text": "169.254.100.0/24"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La RFC 5737 réserve trois blocs /24 à la documentation : 192.0.2.0/24 (TEST-NET-1), 198.51.100.0/24 (TEST-NET-2) et 203.0.113.0/24 (TEST-NET-3). Ils ne sont attribués à personne, ne doivent jamais apparaître sur Internet et ne servent dans aucun réseau en production : un lecteur qui recopie l'exemple ne risque pas d'entrer en conflit avec un réseau existant. Les plages privées, l'espace partagé des FAI et le lien local, eux, sont utilisés tous les jours dans de vrais réseaux.",
+    "distractorNotes": {
+      "b": "192.168.100.0/24 est une plage privée RFC 1918, très répandue dans les réseaux d'entreprise et domestiques : elle risque d'exister chez le lecteur.",
+      "c": "100.64.100.0/24 appartient à l'espace partagé de la RFC 6598, que les FAI utilisent entre leur CGN et les routeurs de leurs abonnés.",
+      "d": "169.254.100.0/24 fait partie du bloc de lien local (RFC 3927) que les postes s'attribuent eux-mêmes en l'absence de DHCP (APIPA)."
+    },
+    "reference": "RFC 5737"
+  },
+  {
+    "slug": "ccna-1.7-rfc1918-properties-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les adresses privées de la RFC 1918 sont vraies ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Elles doivent être enregistrées auprès d'un registre régional, comme le RIPE NCC, avant usage."
+        },
+        {
+          "id": "b",
+          "text": "Toute organisation peut les utiliser dans son réseau interne sans demander d'attribution."
+        },
+        {
+          "id": "c",
+          "text": "Un routeur refuse d'acheminer entre deux de ses interfaces un paquet dont la source est privée."
+        },
+        {
+          "id": "d",
+          "text": "Elles ne peuvent être attribuées aux postes que par un serveur DHCP, jamais statiquement."
+        },
+        {
+          "id": "e",
+          "text": "Un paquet dont la source ou la destination est privée ne doit pas être acheminé sur Internet."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "La RFC 1918 met de côté 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16 pour les réseaux internes : n'importe quelle organisation peut s'en servir sans rien demander à l'IANA ni à un registre régional. En contrepartie, ces adresses n'ont pas de signification globale : les routes vers ces plages ne doivent pas être annoncées entre organisations, et les paquets qui les portent en source ou en destination ne doivent pas franchir ces liaisons. À l'intérieur du réseau, elles se routent comme n'importe quelle adresse et s'attribuent statiquement ou par DHCP.",
+    "distractorNotes": {
+      "a": "Les adresses privées n'ont justement pas à être demandées : seules les adresses publiques sont attribuées par l'IANA et les registres régionaux.",
+      "c": "Dans un réseau interne, un routeur achemine les adresses privées comme les autres ; seul leur passage sur Internet est proscrit.",
+      "d": "Le mode d'attribution est sans rapport avec la plage : une adresse privée se configure aussi bien statiquement que par DHCP."
+    },
+    "reference": "RFC 1918, section 3"
+  },
+  {
+    "slug": "ccna-1.7-address-category-match-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque adresse IPv4 à la catégorie à laquelle elle appartient.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "172.31.255.254"
+        },
+        {
+          "id": "l2",
+          "text": "100.80.3.7"
+        },
+        {
+          "id": "l3",
+          "text": "203.0.113.9"
+        },
+        {
+          "id": "l4",
+          "text": "169.254.77.20"
+        },
+        {
+          "id": "l5",
+          "text": "172.32.0.9"
+        }
+      ],
+      "right": [
+        {
+          "id": "priv",
+          "text": "Privée (RFC 1918)"
+        },
+        {
+          "id": "cgn",
+          "text": "Espace partagé du CGN (RFC 6598)"
+        },
+        {
+          "id": "doc",
+          "text": "Réservée à la documentation (RFC 5737)"
+        },
+        {
+          "id": "ll",
+          "text": "Lien local, utilisée par APIPA (RFC 3927)"
+        },
+        {
+          "id": "pub",
+          "text": "Publique, routable sur Internet"
+        },
+        {
+          "id": "lo",
+          "text": "Bouclage de l'hôte (RFC 1122)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "priv",
+        "l2": "cgn",
+        "l3": "doc",
+        "l4": "ll",
+        "l5": "pub"
+      }
+    },
+    "explanation": "172.31.255.254 est proche de la borne haute de 172.16.0.0/12 (172.16.0.0 à 172.31.255.255) : elle est privée, alors que 172.32.0.9 sort du bloc et est publique. 100.80.3.7 appartient à 100.64.0.0/10 (100.64.0.0 à 100.127.255.255), l'espace partagé que les FAI emploient entre leur CGN et les routeurs des abonnés. 203.0.113.9 fait partie de TEST-NET-3, l'un des trois /24 réservés à la documentation avec 192.0.2.0/24 et 198.51.100.0/24. 169.254.77.20 est une adresse de lien local, celle qu'un poste s'attribue faute de réponse DHCP. Seule l'adresse publique est routée sur Internet.",
+    "distractorNotes": {
+      "lo": "Le bloc de bouclage est 127.0.0.0/8 (127.0.0.1 en pratique) : aucune des adresses proposées n'en fait partie."
+    },
+    "reference": "RFC 1918, section 3 ; RFC 6598 ; RFC 5737 ; RFC 3927 ; RFC 1122, section 3.2.1.3"
+  },
+  {
+    "slug": "ccna-1.7-reserved-block-masks-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque bloc d'adresses réservé au masque qui le délimite.",
+      "left": [
+        {
+          "id": "b10",
+          "text": "Bloc privé qui commence à 10.0.0.0"
+        },
+        {
+          "id": "b172",
+          "text": "Bloc privé qui commence à 172.16.0.0"
+        },
+        {
+          "id": "b192",
+          "text": "Bloc privé qui commence à 192.168.0.0"
+        },
+        {
+          "id": "bll",
+          "text": "Bloc de lien local (APIPA) qui commence à 169.254.0.0"
+        },
+        {
+          "id": "bdoc",
+          "text": "Bloc de documentation TEST-NET-1, qui commence à 192.0.2.0"
+        }
+      ],
+      "right": [
+        {
+          "id": "m8",
+          "text": "255.0.0.0"
+        },
+        {
+          "id": "m12",
+          "text": "255.240.0.0"
+        },
+        {
+          "id": "m16",
+          "text": "255.255.0.0"
+        },
+        {
+          "id": "m20",
+          "text": "255.255.240.0"
+        },
+        {
+          "id": "m24",
+          "text": "255.255.255.0"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "b10": "m8",
+        "b172": "m12",
+        "b192": "m16",
+        "bll": "m16",
+        "bdoc": "m24"
+      }
+    },
+    "explanation": "Les trois blocs de la RFC 1918 sont 10.0.0.0/8 (masque 255.0.0.0), 172.16.0.0/12 (255.240.0.0 : les 4 bits de poids fort du deuxième octet font partie du préfixe, 11110000 = 240) et 192.168.0.0/16 (255.255.0.0). Le bloc de lien local 169.254.0.0/16 de la RFC 3927 a le même masque que 192.168.0.0/16, d'où le masque 255.255.0.0 qui accompagne toute adresse APIPA. Les trois blocs de documentation de la RFC 5737 sont des /24, de masque 255.255.255.0.",
+    "distractorNotes": {
+      "m20": "255.255.240.0 est un /20. Le masque du bloc 172.16.0.0/12 contient bien 240, mais dans le deuxième octet : 255.240.0.0."
+    },
+    "reference": "RFC 1918, section 3 ; RFC 3927 ; RFC 5737"
+  },
+  {
+    "slug": "ccna-1.7-cgn-shared-block-bounds-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "La RFC 6598 réserve le bloc 100.64.0.0/10 au Carrier-Grade NAT des fournisseurs d'accès. Donnez le masque de ce bloc et sa dernière adresse.",
+      "fields": [
+        {
+          "id": "mask",
+          "label": "Masque en décimal pointé"
+        },
+        {
+          "id": "last",
+          "label": "Dernière adresse du bloc, en décimal pointé"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "mask": {
+          "accepted": [
+            "255.192.0.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "last": {
+          "accepted": [
+            "100.127.255.255"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Un /10 garde les 8 bits du premier octet et les 2 bits de poids fort du deuxième : 11000000 = 192, d'où le masque 255.192.0.0. 64 s'écrit 01000000 : les 6 bits de poids faible du deuxième octet varient, de 64 (01000000) à 127 (01111111). Le bloc va donc de 100.64.0.0 à 100.127.255.255, soit 2²² = 4 194 304 adresses. Une adresse de ce bloc sur l'interface WAN d'un routeur d'abonné signale un CGN : l'abonné ne dispose pas d'une adresse publique propre et son trafic est traduit une seconde fois chez le fournisseur.",
+    "distractorNotes": {},
+    "reference": "RFC 6598"
+  },
+  {
+    "slug": "ccna-1.7-private-block-sizing-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une entreprise veut attribuer un sous-réseau /24 privé distinct à chacune de ses 3000 agences. Pour choisir son bloc RFC 1918, calculez combien de /24 contient chacun des blocs 192.168.0.0/16 et 172.16.0.0/12. Les /24 de 172.16.0.0/12 sont ensuite attribués dans l'ordre, l'agence 1 recevant 172.16.0.0/24 : donnez l'adresse réseau du /24 de l'agence 3000.",
+      "fields": [
+        {
+          "id": "n192",
+          "label": "Nombre de /24 dans 192.168.0.0/16 (nombre entier)"
+        },
+        {
+          "id": "n172",
+          "label": "Nombre de /24 dans 172.16.0.0/12 (nombre entier)"
+        },
+        {
+          "id": "net",
+          "label": "Adresse réseau du /24 de l'agence 3000, en décimal pointé"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "n192": {
+          "accepted": [
+            "256"
+          ],
+          "normalize": "int"
+        },
+        "n172": {
+          "accepted": [
+            "4096"
+          ],
+          "normalize": "int"
+        },
+        "net": {
+          "accepted": [
+            "172.27.183.0"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Un /24 taillé dans un /16 laisse 24 − 16 = 8 bits de sous-réseau : 2⁸ = 256 /24, insuffisant pour 3000 agences. Dans un /12, il en reste 24 − 12 = 12 : 2¹² = 4096 /24, ce qui suffit. L'agence 3000 reçoit le /24 d'indice 2999 (l'agence 1 a l'indice 0) ; or 2999 = 11 × 256 + 183. Le deuxième octet vaut donc 16 + 11 = 27 et le troisième 183 : 172.27.183.0/24. Le bloc 10.0.0.0/8, avec 65 536 /24, aurait aussi convenu, mais 172.16.0.0/12 suffit déjà.",
+    "distractorNotes": {},
+    "reference": "RFC 1918, section 3 ; RFC 4632 (CIDR)"
+  },
+  {
+    "slug": "ccna-1.7-pat-outbound-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Le poste 192.168.1.10 ouvre une connexion vers un serveur web public. Son routeur de bordure fait du PAT avec l'adresse publique de son interface outside. Ordonnez les étapes, de l'émission du paquet au retour de la réponse vers le poste.",
+      "items": [
+        {
+          "id": "srv",
+          "text": "Le serveur répond en prenant pour destination l'adresse publique et le port choisis par le routeur"
+        },
+        {
+          "id": "send",
+          "text": "Le poste émet le paquet vers sa passerelle par défaut, avec 192.168.1.10 comme adresse source"
+        },
+        {
+          "id": "back",
+          "text": "Le routeur retrouve la correspondance et remet 192.168.1.10 et le port d'origine en destination"
+        },
+        {
+          "id": "inet",
+          "text": "Les routeurs d'Internet acheminent le paquet d'après son adresse de destination publique"
+        },
+        {
+          "id": "xlate",
+          "text": "Le routeur remplace l'adresse et le port source par son adresse publique et un port, et note la correspondance"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "send",
+        "xlate",
+        "inet",
+        "srv",
+        "back"
+      ]
+    },
+    "explanation": "Le paquet porte l'adresse privée du poste jusqu'au routeur de bordure. Celui-ci, en PAT (NAT overload), remplace l'adresse source par son adresse publique et, au besoin, le port source, puis enregistre la correspondance entre adresse et port internes et adresse et port publics. Le paquet traverse Internet avec une source publique, à laquelle le serveur peut répondre. Au retour, le routeur consulte sa table de traduction pour retrouver l'adresse et le port internes et les remet en destination. Sans cette traduction, la réponse viserait une adresse privée qu'Internet n'achemine pas.",
+    "distractorNotes": {},
+    "reference": "RFC 3022 (NAT traditionnel et NAPT)"
+  },
+  {
+    "slug": "ccna-1.7-cgn-inbound-port-forward-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 relie le LAN d'une petite agence (G0/1) à son fournisseur d'accès (G0/0). Les postes du LAN naviguent normalement sur Internet, mais le serveur web 192.168.1.20 reste injoignable depuis Internet malgré la redirection de port configurée. Quelle est la cause la plus probable ?",
+      "exhibit": "R1# show ip interface brief\nInterface              IP-Address      OK? Method Status                Protocol\nGigabitEthernet0/0     100.71.18.42    YES DHCP   up                    up\nGigabitEthernet0/1     192.168.1.1     YES manual up                    up\n\nR1# show running-config | include ip nat inside source\nip nat inside source list 1 interface GigabitEthernet0/0 overload\nip nat inside source static tcp 192.168.1.20 80 interface GigabitEthernet0/0 80",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une redirection de port ne peut pas désigner un serveur dont l'adresse est privée (RFC 1918)."
+        },
+        {
+          "id": "b",
+          "text": "G0/0 a une adresse de l'espace partagé du CGN : les connexions entrantes s'arrêtent au NAT du fournisseur."
+        },
+        {
+          "id": "c",
+          "text": "La redirection doit désigner 192.168.1.1, l'adresse inside de R1, et non celle du serveur."
+        },
+        {
+          "id": "d",
+          "text": "L'adresse de G0/0 est une adresse APIPA : R1 n'a obtenu aucun bail DHCP du fournisseur d'accès."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "100.71.18.42 appartient à 100.64.0.0/10 (100.64.0.0 à 100.127.255.255), l'espace partagé que la RFC 6598 réserve au Carrier-Grade NAT. R1 n'a donc pas d'adresse publique : le trafic sortant est traduit une première fois par R1 (PAT), puis une seconde fois par le CGN du fournisseur, et la navigation fonctionne. En entrée, en revanche, un client Internet ne peut viser que l'adresse publique du CGN, qui n'a aucune correspondance vers R1 : la traduction statique de R1 n'est jamais sollicitée. Il faut obtenir une adresse publique du fournisseur, ou une redirection configurée sur son CGN.",
+    "distractorNotes": {
+      "a": "C'est au contraire l'usage normal de la NAT statique : publier un serveur interne d'adresse privée derrière l'adresse publique du routeur.",
+      "c": "La traduction statique désigne l'adresse locale du serveur qui rend le service : 192.168.1.20 est correct, 192.168.1.1 est le routeur lui-même.",
+      "d": "Une adresse APIPA est en 169.254.0.0/16 ; 100.71.18.42 a bien été obtenue par DHCP, et la navigation des postes le confirme."
+    },
+    "reference": "RFC 6598 ; Cisco IOS XE, guide de configuration NAT (traduction statique avec ports)"
+  },
+  {
+    "slug": "ccna-1.7-bogon-acl-gap-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 a une adresse publique sur son interface reliée à Internet, où cette ACL est appliquée en entrée pour rejeter les paquets dont la source ne devrait jamais apparaître sur Internet. Parmi ces adresses sources, laquelle ne devrait jamais arriver d'Internet et franchit pourtant le filtre ?",
+      "exhibit": "R1# show access-lists FROM-INTERNET\nExtended IP access list FROM-INTERNET\n    10 deny ip 10.0.0.0 0.255.255.255 any\n    20 deny ip 172.16.0.0 0.15.255.255 any\n    30 deny ip 192.168.0.0 0.0.255.255 any\n    40 deny ip 169.254.0.0 0.0.255.255 any\n    50 permit ip any any",
+      "options": [
+        {
+          "id": "a",
+          "text": "100.100.7.9"
+        },
+        {
+          "id": "b",
+          "text": "172.31.0.9"
+        },
+        {
+          "id": "c",
+          "text": "172.32.0.9"
+        },
+        {
+          "id": "d",
+          "text": "169.254.7.9"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le masque générique 0.15.255.255 de la ligne 20 laisse varier les 4 bits de poids faible du deuxième octet : elle couvre 172.16.0.0 à 172.31.255.255, tout le bloc RFC 1918, et rejette 172.31.0.9. La ligne 40 rejette le lien local 169.254.0.0/16. 172.32.0.9 est publique et passe, à juste titre. 100.100.7.9 appartient à 100.64.0.0/10, l'espace partagé du CGN : la RFC 6598 interdit de l'acheminer hors du réseau d'un fournisseur, mais aucune ligne ne la rejette et elle atteint le permit de la ligne 50. Il faudrait ajouter « deny ip 100.64.0.0 0.63.255.255 any » avant cette ligne.",
+    "distractorNotes": {
+      "b": "172.31.0.9 est dans 172.16.0.0/12 : la ligne 20 (172.16.0.0 0.15.255.255) la rejette.",
+      "c": "172.32.0.9 est une adresse publique : elle peut légitimement arriver d'Internet, et la ligne 50 la laisse passer à raison.",
+      "d": "169.254.7.9 est une adresse de lien local : la ligne 40 (169.254.0.0 0.0.255.255) la rejette."
+    },
+    "reference": "RFC 6598 ; RFC 1918, section 3 ; RFC 3927"
+  },
+  {
+    "slug": "ccna-1.7-cgn-why-not-rfc1918-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un fournisseur d'accès déploie un Carrier-Grade NAT et doit numéroter les liaisons entre son CGN et les routeurs de ses abonnés. Pourquoi la RFC 6598 lui réserve-t-elle 100.64.0.0/10 au lieu de le laisser puiser dans les plages de la RFC 1918 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les plages RFC 1918 sont réservées aux entreprises : un fournisseur d'accès n'a pas le droit de s'en servir."
+        },
+        {
+          "id": "b",
+          "text": "Les abonnés utilisent déjà la RFC 1918 sur leurs LAN : la même plage côté WAN créerait des chevauchements."
+        },
+        {
+          "id": "c",
+          "text": "Les adresses de 100.64.0.0/10 sont routables sur Internet : l'abonné évite ainsi une seconde traduction."
+        },
+        {
+          "id": "d",
+          "text": "Une adresse RFC 1918 ne peut être traduite qu'une seule fois, alors que le CGN impose une double traduction."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Les routeurs des abonnés numérotent leurs LAN dans la RFC 1918 (192.168.1.0/24, 10.0.0.0/24…) et le fournisseur ne maîtrise pas ces choix. S'il utilisait lui aussi la RFC 1918 entre son CGN et ces routeurs, l'adresse WAN d'un abonné pourrait tomber dans le même réseau que son LAN : le routeur ne saurait plus vers quelle interface acheminer, et son NAT échouerait. Un bloc distinct, que les abonnés n'emploient pas, évite ces chevauchements. 100.64.0.0/10 reste non routable sur Internet : le trafic subit bien deux traductions, chez l'abonné puis dans le CGN.",
+    "distractorNotes": {
+      "a": "Toute organisation, fournisseur d'accès compris, peut utiliser la RFC 1918 en interne ; le problème est le risque de chevauchement avec les LAN des abonnés.",
+      "c": "100.64.0.0/10 n'est pas routable sur Internet : la RFC 6598 interdit de l'acheminer hors du réseau du fournisseur, et le CGN traduit le trafic une seconde fois.",
+      "d": "Rien n'empêche de traduire successivement des adresses RFC 1918 : le double NAT fonctionne, le vrai problème est celui des chevauchements."
+    },
+    "reference": "RFC 6598"
+  },
+  {
+    "slug": "ccna-1.7-merger-overlap-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Deux entreprises qui fusionnent doivent relier leurs réseaux, mais toutes deux numérotent leurs postes dans 192.168.1.0/24. Quelles deux solutions permettent aux hôtes des deux sites de communiquer entre eux ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Renuméroter l'un des sites dans un bloc privé encore inutilisé, par exemple 10.20.1.0/24."
+        },
+        {
+          "id": "b",
+          "text": "Annoncer les deux réseaux 192.168.1.0/24 en OSPF, qui choisit automatiquement le bon site."
+        },
+        {
+          "id": "c",
+          "text": "Renuméroter l'un des sites dans 172.32.1.0/24, car toute la plage 172.0.0.0/8 est privée."
+        },
+        {
+          "id": "d",
+          "text": "Traduire par NAT les adresses des deux sites, pour que chacun voie l'autre sous un autre préfixe."
+        },
+        {
+          "id": "e",
+          "text": "Interconnecter les deux sites en 169.254.0.0/16, la plage prévue pour relier des réseaux privés."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Deux réseaux qui utilisent le même préfixe ne peuvent pas être routés l'un vers l'autre : pour un routeur, 192.168.1.0/24 désigne une seule destination. Il faut soit renuméroter l'un des sites dans un bloc privé libre, soit masquer le chevauchement par une double traduction : à la frontière, les adresses de chaque site sont traduites, et chacun voit l'autre sous un préfixe distinct. Traduire un seul site ne suffit pas : ses hôtes verraient toujours arriver des sources en 192.168.1.0/24, qu'ils croiraient locales, et leurs réponses resteraient sur leur propre segment. C'est un inconvénient connu des adresses privées : la RFC 1918 recommande de choisir ses sous-réseaux au hasard dans les plages privées, plutôt que les plus courants, pour réduire ce risque lors d'une interconnexion future.",
+    "distractorNotes": {
+      "b": "OSPF ne distingue pas deux préfixes identiques : chaque routeur garde sa route connectée vers 192.168.1.0/24, et les hôtes de l'autre site restent injoignables.",
+      "c": "Le bloc privé est 172.16.0.0/12 (172.16.0.0 à 172.31.255.255) : 172.32.1.0/24 est un réseau public, attribué à une autre organisation.",
+      "e": "169.254.0.0/16 est le bloc de lien local (RFC 3927) : les routeurs ne transmettent pas ces adresses, qui ne servent que sur un seul lien."
+    },
+    "reference": "RFC 1918 ; Cisco, note technique « Using NAT in Overlapping Networks »"
+  },
+  {
+    "slug": "ccna-1.10-default-gateway-role-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel rôle joue la passerelle par défaut configurée sur un poste client IPv4 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle traduit pour le poste les noms d'hôtes en adresses IP."
+        },
+        {
+          "id": "b",
+          "text": "Elle attribue au poste son adresse IP, son masque et ses serveurs DNS."
+        },
+        {
+          "id": "c",
+          "text": "Elle reçoit tous les paquets du poste, y compris ceux destinés à son propre sous-réseau."
+        },
+        {
+          "id": "d",
+          "text": "Elle reçoit les paquets que le poste destine à des hôtes situés hors de son sous-réseau."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Avant d'émettre, le poste applique son masque à l'adresse de destination. Si la destination est dans son sous-réseau, il la joint directement, en obtenant par ARP l'adresse MAC de l'hôte. Sinon, il envoie la trame à l'adresse MAC de sa passerelle par défaut, l'interface du routeur sur le segment, en laissant l'adresse IP de destination inchangée ; le routeur se charge de la suite. Sans passerelle, ou avec une passerelle erronée, le poste ne joint que les hôtes de son propre sous-réseau.",
+    "distractorNotes": {
+      "a": "La résolution des noms est le rôle du serveur DNS, configuré séparément sur le poste.",
+      "b": "L'attribution de l'adresse, du masque, de la passerelle et des serveurs DNS est le rôle du serveur DHCP.",
+      "c": "Le trafic destiné au sous-réseau local est remis directement à l'hôte destinataire, sans passer par la passerelle."
+    },
+    "reference": "RFC 1122, section 3.3.1"
+  },
+  {
+    "slug": "ccna-1.10-macos-dns-servers-cmd-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un Mac, un technicien a saisi manuellement deux serveurs DNS pour le service réseau Wi-Fi. Quelle commande du Terminal affiche les serveurs DNS ainsi configurés ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "networksetup -getsearchdomains Wi-Fi"
+        },
+        {
+          "id": "b",
+          "text": "networksetup -getdnsservers Wi-Fi"
+        },
+        {
+          "id": "c",
+          "text": "networksetup -listallnetworkservices"
+        },
+        {
+          "id": "d",
+          "text": "ifconfig en0"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Sous macOS, networksetup pilote en ligne de commande les réglages des services réseau (Wi-Fi, Ethernet…) que l'on retrouve dans les réglages Réseau. « networksetup -getdnsservers Wi-Fi » liste les serveurs DNS saisis manuellement pour ce service ; s'il n'y en a aucun, la commande l'indique, même si le poste reçoit des serveurs par DHCP. Pour voir les serveurs réellement utilisés, DHCP compris, on lance « scutil --dns ». De son côté, « networksetup -getinfo Wi-Fi » affiche l'adresse, le masque et le routeur du service.",
+    "distractorNotes": {
+      "a": "-getsearchdomains affiche les domaines de recherche, ajoutés aux noms courts, et non les serveurs DNS.",
+      "c": "-listallnetworkservices liste les noms des services réseau (Wi-Fi, Ethernet…), sans leurs paramètres.",
+      "d": "ifconfig en0 affiche l'adresse MAC, l'adresse IP et le masque de l'interface, mais aucun serveur DNS."
+    },
+    "reference": "Apple, page de manuel networksetup(8)"
+  },
+  {
+    "slug": "ccna-1.10-windows-release-renew-cmd-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un poste Windows client DHCP a reçu une configuration erronée. Donnez la commande qui rend au serveur le bail de ses cartes, puis celle qui demande un nouveau bail.",
+      "fields": [
+        {
+          "id": "rel",
+          "label": "Commande complète qui libère le bail"
+        },
+        {
+          "id": "ren",
+          "label": "Commande complète qui demande un nouveau bail"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "rel": {
+          "accepted": [
+            "ipconfig /release",
+            "ipconfig/release",
+            "ipconfig -release"
+          ],
+          "normalize": "text"
+        },
+        "ren": {
+          "accepted": [
+            "ipconfig /renew",
+            "ipconfig/renew",
+            "ipconfig -renew"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "« ipconfig /release » envoie un DHCPRELEASE au serveur pour chaque carte configurée en DHCP et retire l'adresse IPv4 obtenue. « ipconfig /renew » demande ensuite un nouveau bail, qui apporte l'adresse, le masque, la passerelle et les serveurs DNS. On vérifie le résultat avec « ipconfig /all », qui affiche le serveur DHCP ainsi que les dates d'obtention et d'expiration du bail. Pour ne viser qu'une carte, on ajoute son nom, par exemple « ipconfig /renew Ethernet ».",
+    "distractorNotes": {},
+    "reference": "Microsoft, documentation de la commande ipconfig"
+  },
+  {
+    "slug": "ccna-1.10-client-commands-match-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque besoin à la commande qui y répond.",
+      "left": [
+        {
+          "id": "win",
+          "text": "Windows : afficher l'adresse MAC, les serveurs DNS et le bail DHCP de chaque carte"
+        },
+        {
+          "id": "lnxa",
+          "text": "Linux : afficher les adresses IPv4 et IPv6 des interfaces"
+        },
+        {
+          "id": "lnxr",
+          "text": "Linux : afficher la passerelle par défaut"
+        },
+        {
+          "id": "lnxd",
+          "text": "Linux : consulter la liste des serveurs DNS du poste"
+        },
+        {
+          "id": "mac",
+          "text": "macOS : afficher l'adresse, le masque et le routeur du service Wi-Fi"
+        }
+      ],
+      "right": [
+        {
+          "id": "ipc",
+          "text": "ipconfig /all"
+        },
+        {
+          "id": "ipa",
+          "text": "ip address show"
+        },
+        {
+          "id": "ipr",
+          "text": "ip route show"
+        },
+        {
+          "id": "resolv",
+          "text": "cat /etc/resolv.conf"
+        },
+        {
+          "id": "ns",
+          "text": "networksetup -getinfo Wi-Fi"
+        },
+        {
+          "id": "dns",
+          "text": "ipconfig /displaydns"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "win": "ipc",
+        "lnxa": "ipa",
+        "lnxr": "ipr",
+        "lnxd": "resolv",
+        "mac": "ns"
+      }
+    },
+    "explanation": "Sous Windows, ipconfig seul se limite aux adresses IPv4 et IPv6, au masque et à la passerelle ; /all ajoute l'adresse physique (MAC), les serveurs DNS, le serveur DHCP et les dates du bail. Sous Linux, la commande ip d'iproute2 remplace ifconfig et route : « ip address show » liste les adresses des interfaces, « ip route show » la table de routage, où la passerelle figure sur la ligne « default via ». Les serveurs DNS interrogés par le résolveur sont listés dans /etc/resolv.conf (lignes nameserver). Sous macOS, networksetup interroge les services réseau, ici le service Wi-Fi.",
+    "distractorNotes": {
+      "dns": "ipconfig /displaydns affiche le cache DNS du poste Windows, c'est-à-dire les noms déjà résolus, et non sa configuration IP."
+    },
+    "reference": "Microsoft, documentation d'ipconfig ; pages de manuel ip-address(8), ip-route(8), resolv.conf(5) et networksetup(8)"
+  },
+  {
+    "slug": "ccna-1.10-windows-dns-misconfig-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les serveurs DNS de l'entreprise sont 10.10.10.53 et 10.10.10.54 ; 10.10.10.80 est un serveur de fichiers. Ce poste joint les serveurs par leur adresse IP, mais aucun nom ne se résout. Quelle correction faut-il apporter ?",
+      "exhibit": "C:\\>ipconfig /all\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Description . . . . . . . . . . . : Intel(R) Ethernet Connection I219-V\n   Physical Address. . . . . . . . . : 8C-16-45-2E-90-B7\n   DHCP Enabled. . . . . . . . . . . : No\n   Autoconfiguration Enabled . . . . : Yes\n   IPv4 Address. . . . . . . . . . . : 10.10.20.57(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Default Gateway . . . . . . . . . : 10.10.20.1\n   DNS Servers . . . . . . . . . . . : 10.10.20.53\n   NetBIOS over Tcpip. . . . . . . . : Enabled\n\nC:\\>ping -n 2 10.10.10.80\n\nPinging 10.10.10.80 with 32 bytes of data:\nReply from 10.10.10.80: bytes=32 time=1ms TTL=127\nReply from 10.10.10.80: bytes=32 time=1ms TTL=127\n\nC:\\>ping -n 2 cisco.com\nPing request could not find host cisco.com. Please check the name and try again.",
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer le serveur DNS 10.10.20.53 par 10.10.10.53, puis ajouter 10.10.10.54 en secondaire."
+        },
+        {
+          "id": "b",
+          "text": "Remplacer la passerelle par défaut par 10.10.10.1, l'adresse du routeur côté serveurs."
+        },
+        {
+          "id": "c",
+          "text": "Passer le masque à 255.255.0.0 pour que les serveurs DNS soient dans le sous-réseau du poste."
+        },
+        {
+          "id": "d",
+          "text": "Lancer ipconfig /renew pour obtenir du serveur DHCP les bonnes adresses de serveurs DNS."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le ping vers 10.10.10.80, situé hors du sous-réseau 10.10.20.0/24, réussit : l'adresse, le masque et la passerelle permettent déjà de sortir du sous-réseau. Seule la résolution de noms échoue (« could not find host »), et ipconfig /all montre que le poste interroge 10.10.20.53 : ce n'est pas l'un des serveurs DNS de l'entreprise. La configuration étant statique (DHCP Enabled : No), il faut corriger à la main les serveurs DNS de la carte : 10.10.10.53 en préféré et 10.10.10.54 en auxiliaire. Un serveur DNS n'a pas besoin d'être dans le sous-réseau du poste : il se joint par la passerelle.",
+    "distractorNotes": {
+      "b": "La passerelle 10.10.20.1 fonctionne : le ping vers 10.10.10.80, situé dans un autre réseau, reçoit des réponses. Une passerelle doit en outre appartenir au sous-réseau du poste.",
+      "c": "Le masque n'est pas en cause : les serveurs distants se joignent déjà par la passerelle, et l'élargir ne changerait pas le serveur interrogé, qui resterait 10.10.20.53.",
+      "d": "La carte est configurée statiquement (DHCP Enabled : No) : ipconfig /renew échoue sur cette carte et ne change rien aux serveurs DNS saisis à la main."
+    },
+    "reference": "Microsoft, documentation des commandes ipconfig et ping"
+  },
+  {
+    "slug": "ccna-1.10-linux-default-route-metric-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Ce portable Linux est connecté à la fois en Ethernet (enp3s0) et en Wi-Fi (wlp2s0). Il envoie un paquet au serveur Internet 203.0.113.80. Par quelle passerelle ce paquet part-il ?",
+      "exhibit": "user@laptop:~$ ip route show\ndefault via 10.20.0.1 dev enp3s0 proto dhcp src 10.20.0.57 metric 100\ndefault via 192.168.8.1 dev wlp2s0 proto dhcp src 192.168.8.143 metric 600\n10.20.0.0/22 dev enp3s0 proto kernel scope link src 10.20.0.57 metric 100\n192.168.8.0/24 dev wlp2s0 proto kernel scope link src 192.168.8.143 metric 600",
+      "options": [
+        {
+          "id": "a",
+          "text": "192.168.8.1 par wlp2s0, car la métrique la plus élevée désigne la route préférée."
+        },
+        {
+          "id": "b",
+          "text": "Les deux passerelles en alternance, car les deux routes par défaut ont le même préfixe."
+        },
+        {
+          "id": "c",
+          "text": "10.20.0.1 par enp3s0, car sa route par défaut a la métrique la plus basse."
+        },
+        {
+          "id": "d",
+          "text": "192.168.8.1 par wlp2s0, car la dernière route par défaut apprise remplace la précédente."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Aucune route ne correspond plus précisément à 203.0.113.80 que les deux routes par défaut (0.0.0.0/0). À préfixe égal, Linux retient la route de plus petite métrique : 100 pour enp3s0 contre 600 pour wlp2s0. Le paquet part donc vers 10.20.0.1 par l'Ethernet, avec 10.20.0.57 pour adresse source. La mention « proto dhcp » indique que les deux passerelles ont été apprises par DHCP. La route Wi-Fi reste dans la table et prendrait le relais si la route Ethernet disparaissait, par exemple au débranchement du câble.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : à préfixe égal, la route de plus petite métrique est préférée ; 600 est la moins prioritaire des deux.",
+      "b": "Deux routes distinctes de métriques différentes ne se partagent pas la charge : il faudrait une seule route à plusieurs next hops (multipath).",
+      "d": "Les deux routes par défaut coexistent dans la table, comme le montre la sortie : l'ordre d'apprentissage ne compte pas, seule la métrique les départage."
+    },
+    "reference": "Page de manuel ip-route(8) (iproute2)"
+  },
+  {
+    "slug": "ccna-1.10-linux-ip-addr-resolv-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit, relevé sur un serveur Linux (la première ligne de la sortie d'ip est repliée). Quelles deux affirmations sont vraies ?",
+      "exhibit": "user@srv:~$ ip address show dev eth0\n2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP\ngroup default qlen 1000\n    link/ether 52:54:00:3a:91:c2 brd ff:ff:ff:ff:ff:ff\n    inet 10.30.4.25/20 brd 10.30.15.255 scope global dynamic noprefixroute eth0\n       valid_lft 3542sec preferred_lft 3542sec\n    inet6 fe80::7c3e:5a1f:2b9d:4e60/64 scope link noprefixroute\n       valid_lft forever preferred_lft forever\nuser@srv:~$ cat /etc/resolv.conf\n# Generated by NetworkManager\nsearch corp.example.com\nnameserver 10.30.0.53\nnameserver 10.30.0.54",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'adresse MAC de eth0 est 52:54:00:3a:91:c2."
+        },
+        {
+          "id": "b",
+          "text": "L'adresse MAC de eth0 est ff:ff:ff:ff:ff:ff."
+        },
+        {
+          "id": "c",
+          "text": "Le masque de sous-réseau de eth0 est 255.255.255.0."
+        },
+        {
+          "id": "d",
+          "text": "Le résolveur interroge d'abord le serveur DNS 10.30.0.53."
+        },
+        {
+          "id": "e",
+          "text": "L'adresse 10.30.4.25 a été configurée statiquement, sans durée de validité."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Sur la ligne link/ether, la première valeur (52:54:00:3a:91:c2) est l'adresse MAC de la carte ; celle qui suit brd est l'adresse de diffusion Ethernet. La ligne inet donne 10.30.4.25/20, soit le masque 255.255.240.0, cohérent avec la diffusion 10.30.15.255. Le drapeau dynamic et le valid_lft de 3542 secondes montrent une adresse obtenue par DHCP, dont le bail expire dans une heure environ s'il n'est pas renouvelé. Dans /etc/resolv.conf, le résolveur interroge les serveurs nameserver dans l'ordre : 10.30.0.53 d'abord, puis 10.30.0.54 s'il ne répond pas.",
+    "distractorNotes": {
+      "b": "ff:ff:ff:ff:ff:ff, après brd, est l'adresse de diffusion Ethernet, commune à toutes les cartes : ce n'est pas l'adresse de eth0.",
+      "c": "Le préfixe /20 correspond au masque 255.255.240.0 ; avec un /24, la diffusion serait 10.30.4.255 et non 10.30.15.255.",
+      "e": "Le drapeau dynamic et le valid_lft de 3542 s signalent une adresse à durée limitée, obtenue par DHCP ; une adresse statique afficherait valid_lft forever."
+    },
+    "reference": "Pages de manuel ip-address(8) et resolv.conf(5)"
+  },
+  {
+    "slug": "ccna-1.10-dhcp-lease-renewal-timers-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Le serveur DHCP n'envoie pas les options 58 et 59 (T1 et T2) : le client applique les valeurs par défaut de la RFC 2131. Donnez la durée du bail, puis le délai, compté depuis l'obtention du bail, au bout duquel le poste tente de le renouveler auprès de son serveur (T1), et celui au bout duquel il s'adresse à n'importe quel serveur (T2).",
+      "exhibit": "C:\\>ipconfig /all\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . : corp.example.com\n   Description . . . . . . . . . . . : Intel(R) Ethernet Connection I219-LM\n   Physical Address. . . . . . . . . : 3C-52-82-1A-77-E0\n   DHCP Enabled. . . . . . . . . . . : Yes\n   Autoconfiguration Enabled . . . . : Yes\n   IPv4 Address. . . . . . . . . . . : 192.168.40.23(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\n   Lease Obtained. . . . . . . . . . : Monday, November 2, 2026 8:00:00 AM\n   Lease Expires . . . . . . . . . . : Monday, November 2, 2026 4:00:00 PM\n   Default Gateway . . . . . . . . . : 192.168.40.1\n   DHCP Server . . . . . . . . . . . : 192.168.40.5\n   DNS Servers . . . . . . . . . . . : 192.168.40.5\n   NetBIOS over Tcpip. . . . . . . . : Enabled",
+      "fields": [
+        {
+          "id": "lease",
+          "label": "Durée du bail, en heures (nombre entier)"
+        },
+        {
+          "id": "t1",
+          "label": "T1, en heures après l'obtention du bail (nombre entier)"
+        },
+        {
+          "id": "t2",
+          "label": "T2, en heures après l'obtention du bail (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "lease": {
+          "accepted": [
+            "8"
+          ],
+          "normalize": "int"
+        },
+        "t1": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        },
+        "t2": {
+          "accepted": [
+            "7"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le bail a été obtenu à 8 h et expire à 16 h : il dure 8 heures. Par défaut, la RFC 2131 fixe T1 à 50 % de la durée du bail et T2 à 87,5 %. À T1, soit 4 heures plus tard (12 h), le client envoie en unicast un DHCPREQUEST au serveur qui lui a attribué le bail, ici 192.168.40.5. Sans réponse, il réessaie jusqu'à T2, soit 7 heures (15 h), puis diffuse sa demande à tous les serveurs (rebinding). Si le bail expire sans avoir été renouvelé, le poste abandonne son adresse et repart d'un DHCPDISCOVER.",
+    "distractorNotes": {},
+    "reference": "RFC 2131, section 4.4.5"
+  },
+  {
+    "slug": "ccna-1.10-host-remote-send-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Le poste 192.168.5.20/24, dont la passerelle par défaut est 192.168.5.1, doit envoyer un paquet à 10.8.1.50. Il connaît déjà cette adresse IP et son cache ARP est vide. Ordonnez les étapes, de la décision d'acheminement à l'émission de la trame.",
+      "items": [
+        {
+          "id": "arpreq",
+          "text": "Ne trouvant pas 192.168.5.1 dans son cache ARP, le poste diffuse une requête ARP"
+        },
+        {
+          "id": "frame",
+          "text": "Le poste émet la trame : MAC de destination de la passerelle, IP de destination 10.8.1.50"
+        },
+        {
+          "id": "mask",
+          "text": "Le poste applique son masque à 10.8.1.50 et constate que l'adresse est hors de son sous-réseau"
+        },
+        {
+          "id": "arprep",
+          "text": "La passerelle renvoie une réponse ARP qui contient son adresse MAC"
+        },
+        {
+          "id": "gw",
+          "text": "Le poste retient sa passerelle par défaut, 192.168.5.1, comme prochain saut"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "mask",
+        "gw",
+        "arpreq",
+        "arprep",
+        "frame"
+      ]
+    },
+    "explanation": "Le poste compare d'abord le réseau de la destination au sien : 10.8.1.50 ET 255.255.255.0 donne 10.8.1.0, différent de 192.168.5.0. La destination étant distante, le prochain saut est la passerelle par défaut. Il lui faut alors l'adresse MAC de la passerelle, et non celle de 10.8.1.50 : faute d'entrée dans son cache, il diffuse une requête ARP pour 192.168.5.1, qui lui répond en unicast. La trame part enfin vers la MAC de la passerelle, tandis que le paquet garde 10.8.1.50 comme adresse IP de destination.",
+    "distractorNotes": {},
+    "reference": "RFC 1122, section 3.3.1 ; RFC 826 (ARP)"
+  },
+  {
+    "slug": "ccna-1.10-ping-test-sequence-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un poste n'accède à aucun site web. Le technicien suit la démarche classique : partir de la pile TCP/IP du poste, s'en éloigner progressivement, et ne tester la résolution de noms qu'en dernier. Ordonnez les tests.",
+      "items": [
+        {
+          "id": "remote",
+          "text": "ping d'un serveur distant par son adresse IP, pour vérifier le routage au-delà du réseau local"
+        },
+        {
+          "id": "lo",
+          "text": "ping 127.0.0.1, pour vérifier la pile TCP/IP du poste"
+        },
+        {
+          "id": "name",
+          "text": "ping du même serveur par son nom, pour vérifier la résolution DNS"
+        },
+        {
+          "id": "gw",
+          "text": "ping de la passerelle par défaut, pour vérifier l'accès au réseau local"
+        },
+        {
+          "id": "self",
+          "text": "ping de l'adresse IPv4 du poste, pour vérifier la configuration de sa carte"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "lo",
+        "self",
+        "gw",
+        "remote",
+        "name"
+      ]
+    },
+    "explanation": "Chaque test ajoute un seul élément au précédent, ce qui localise la panne au premier échec. Le ping de 127.0.0.1 (bouclage) ne vérifie que la pile TCP/IP. Le ping de sa propre adresse confirme que l'adresse est bien configurée sur la carte. La passerelle valide le lien et l'accès au segment local. Un serveur distant joint par son adresse IP valide le routage au-delà de la passerelle. Enfin, le même serveur joint par son nom ajoute la résolution DNS : si seul ce dernier test échoue, la panne vient du DNS.",
+    "distractorNotes": {},
+    "reference": "RFC 792 (ICMP Echo) ; RFC 1122, section 3.2.1.3 (bouclage 127.0.0.0/8)"
+  },
+  {
+    "slug": "ccna-1.10-symptom-cause-match-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque symptôme observé sur un poste Windows à sa cause la plus probable.",
+      "left": [
+        {
+          "id": "s1",
+          "text": "ipconfig affiche 169.254.31.7, masque 255.255.0.0, sans passerelle"
+        },
+        {
+          "id": "s2",
+          "text": "ping 203.0.113.80 répond, mais ping www.example.com renvoie « could not find host »"
+        },
+        {
+          "id": "s3",
+          "text": "Les hôtes du sous-réseau répondent au ping, mais aucun hôte d'un autre réseau, même par IP"
+        },
+        {
+          "id": "s4",
+          "text": "Au démarrage, Windows signale un conflit d'adresse IP sur le réseau"
+        }
+      ],
+      "right": [
+        {
+          "id": "nodhcp",
+          "text": "Aucun serveur DHCP n'a répondu au poste"
+        },
+        {
+          "id": "dns",
+          "text": "Serveur DNS erroné ou injoignable"
+        },
+        {
+          "id": "gw",
+          "text": "Passerelle par défaut absente ou erronée"
+        },
+        {
+          "id": "dup",
+          "text": "Adresse IPv4 déjà employée par un autre hôte du segment"
+        },
+        {
+          "id": "cable",
+          "text": "Câble réseau débranché"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "nodhcp",
+        "s2": "dns",
+        "s3": "gw",
+        "s4": "dup"
+      }
+    },
+    "explanation": "Une adresse 169.254.x.x en /16 sans passerelle est une adresse APIPA : le poste n'a obtenu aucun bail et s'est configuré seul. Si un serveur répond par son adresse IP mais pas par son nom, la connectivité IP est bonne et seule la résolution DNS échoue. Si seuls les hôtes du sous-réseau répondent, le poste ne sait pas quitter son réseau : sa passerelle manque ou est fausse. Enfin, Windows vérifie par ARP que son adresse est libre avant de l'utiliser et signale un conflit quand un autre hôte l'emploie déjà.",
+    "distractorNotes": {
+      "cable": "Sans lien, ipconfig affiche « Media disconnected » sans aucune adresse IPv4 et aucun autre hôte ne répond : cela ne correspond à aucun des symptômes."
+    },
+    "reference": "RFC 3927 ; RFC 5227 (détection de conflit d'adresse IPv4) ; RFC 1122, section 3.3.1"
+  },
+  {
+    "slug": "ccna-1.10-apipa-missing-relay-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le serveur DHCP 10.1.99.10 possède une étendue pour le VLAN 10 et une pour le VLAN 20. Les trunks entre les commutateurs et R1 transportent les VLAN 10, 20 et 99. Les postes du VLAN 10 obtiennent leur adresse, mais ceux du VLAN 20 affichent tous une sortie semblable à celle-ci. Quelle est la cause la plus probable ?",
+      "exhibit": "C:\\>ipconfig /all\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Description . . . . . . . . . . . : Realtek PCIe GbE Family Controller\n   Physical Address. . . . . . . . . : 00-E0-4C-68-1A-2B\n   DHCP Enabled. . . . . . . . . . . : Yes\n   Autoconfiguration Enabled . . . . : Yes\n   Autoconfiguration IPv4 Address. . : 169.254.88.140(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.0.0\n   Default Gateway . . . . . . . . . :\n   NetBIOS over Tcpip. . . . . . . . : Enabled\n\nR1# show running-config | section interface GigabitEthernet0/0.\ninterface GigabitEthernet0/0.10\n encapsulation dot1Q 10\n ip address 10.1.10.1 255.255.255.0\n ip helper-address 10.1.99.10\ninterface GigabitEthernet0/0.20\n encapsulation dot1Q 20\n ip address 10.1.20.1 255.255.255.0\ninterface GigabitEthernet0/0.99\n encapsulation dot1Q 99\n ip address 10.1.99.1 255.255.255.0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le poste a obtenu un bail, mais le serveur ne lui a pas fourni l'option routeur (option 3)."
+        },
+        {
+          "id": "b",
+          "text": "La commande ip helper-address doit être déplacée sur G0/0.99, la sous-interface du serveur."
+        },
+        {
+          "id": "c",
+          "text": "Le masque 255.255.0.0 du poste est incompatible avec le /24 du VLAN 20 et bloque le DHCP."
+        },
+        {
+          "id": "d",
+          "text": "G0/0.20 n'a pas d'ip helper-address : les DHCPDISCOVER du VLAN 20 ne dépassent pas R1."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'adresse 169.254.88.140/16, affichée comme « Autoconfiguration IPv4 Address », est une adresse APIPA : le poste n'a reçu aucune réponse DHCP. Le DHCPDISCOVER est diffusé en broadcast, et un routeur ne relaie pas les broadcasts : pour joindre un serveur situé dans un autre réseau, l'interface qui reçoit les clients doit porter « ip helper-address ». G0/0.10 la porte, ce qui explique que le VLAN 10 fonctionne, mais pas G0/0.20. Il faut ajouter « ip helper-address 10.1.99.10 » sur G0/0.20 : R1 relaiera alors en unicast les messages du VLAN 20 en inscrivant 10.1.20.1 dans giaddr, ce qui permet au serveur de choisir la bonne étendue.",
+    "distractorNotes": {
+      "a": "Sans option 3, le poste aurait une adresse de l'étendue sans passerelle. Une adresse 169.254.x.x montre qu'aucun bail n'a été obtenu.",
+      "b": "L'agent relais se configure sur l'interface qui reçoit les broadcasts des clients ; le VLAN 99 du serveur n'a pas besoin de relais, et le VLAN 10 perdrait le sien.",
+      "c": "Le masque 255.255.0.0 accompagne toute adresse APIPA : c'est une conséquence de l'échec DHCP, pas sa cause."
+    },
+    "reference": "RFC 3927 ; RFC 2131 ; RFC 1542 (agents relais) ; Cisco IOS XE, guide de configuration DHCP (agent relais)"
+  },
+  {
+    "slug": "ccna-1.10-netsh-two-errors-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. D'après le plan d'adressage, ce poste appartient au segment 10.4.12.128/26, où l'interface du routeur a l'adresse 10.4.12.129, et les serveurs DNS de l'entreprise sont 10.4.0.53 et 10.4.0.54. Quelles deux erreurs la configuration du poste comporte-t-elle ?",
+      "exhibit": "C:\\>netsh interface ipv4 show config name=\"Ethernet\"\n\nConfiguration for interface \"Ethernet\"\n    DHCP enabled:                         No\n    IP Address:                           10.4.12.190\n    Subnet Prefix:                        10.4.12.128/25 (mask 255.255.255.128)\n    Default Gateway:                      10.4.12.129\n    Gateway Metric:                       0\n    InterfaceMetric:                      25\n    Statically Configured DNS Servers:    10.4.0.53\n                                          10.4.12.54\n    Register with which suffix:           Primary only\n    Statically Configured WINS Servers:   None",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le masque est faux : il doit valoir 255.255.255.192."
+        },
+        {
+          "id": "b",
+          "text": "L'adresse 10.4.12.190 est l'adresse de diffusion du segment et ne peut pas être attribuée."
+        },
+        {
+          "id": "c",
+          "text": "La passerelle est fausse : elle doit être la première adresse du bloc, 10.4.12.128."
+        },
+        {
+          "id": "d",
+          "text": "L'adresse 10.4.12.190 est hors du segment : il faut une adresse entre .129 et .254."
+        },
+        {
+          "id": "e",
+          "text": "Le second serveur DNS est faux : il doit valoir 10.4.0.54."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Un /26 compte 64 adresses : 10.4.12.128/26 va de .128 (réseau) à .191 (diffusion), avec .129 à .190 pour les hôtes. 10.4.12.190 est donc la dernière adresse utilisable, et elle est valide. Le masque saisi, 255.255.255.128 (/25), ne correspond pas au /26 du plan : il faut 255.255.255.192. La passerelle 10.4.12.129 est bien l'interface du routeur. Enfin, le second serveur DNS a été saisi 10.4.12.54 au lieu de 10.4.0.54 : le jour où 10.4.0.53 tombera en panne, la résolution de noms échouera. Comme ipconfig /all, netsh affiche les serveurs DNS statiques de la carte.",
+    "distractorNotes": {
+      "b": "La diffusion de 10.4.12.128/26 est 10.4.12.191 ; .190 est la dernière adresse d'hôte utilisable.",
+      "c": "10.4.12.128 est l'adresse réseau du segment, inutilisable par un hôte ; la passerelle 10.4.12.129 est conforme au plan.",
+      "d": "Le /26 couvre 10.4.12.128 à 10.4.12.191 : .190 en fait partie, alors que .192 à .254 appartiennent à d'autres sous-réseaux."
+    },
+    "reference": "Microsoft, documentation de netsh interface ipv4 ; RFC 950 (masques de sous-réseau)"
+  },
+  {
+    "slug": "ccna-1.10-arp-local-slash22-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.10",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit (extrait d'ipconfig /all). Ce poste Windows envoie un paquet IPv4 à 10.10.7.200. Quelle adresse MAC de destination porte la trame qu'il émet ?",
+      "exhibit": "C:\\>ipconfig /all\n\nEthernet adapter Ethernet:\n\n   Physical Address. . . . . . . . . : A4-BB-6D-77-10-9C\n   DHCP Enabled. . . . . . . . . . . : Yes\n   IPv4 Address. . . . . . . . . . . : 10.10.4.25(Preferred)\n   Subnet Mask . . . . . . . . . . . : 255.255.252.0\n   Default Gateway . . . . . . . . . : 10.10.4.1\n\nC:\\>arp -a\n\nInterface: 10.10.4.25 --- 0x5\n  Internet Address      Physical Address      Type\n  10.10.4.1             00-1b-54-c2-7a-01     dynamic\n  10.10.7.200           d4-be-d9-10-3e-55     dynamic\n  10.10.7.255           ff-ff-ff-ff-ff-ff     static\n  224.0.0.22            01-00-5e-00-00-16     static",
+      "options": [
+        {
+          "id": "a",
+          "text": "00-1b-54-c2-7a-01"
+        },
+        {
+          "id": "b",
+          "text": "a4-bb-6d-77-10-9c"
+        },
+        {
+          "id": "c",
+          "text": "ff-ff-ff-ff-ff-ff"
+        },
+        {
+          "id": "d",
+          "text": "d4-be-d9-10-3e-55"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le masque 255.255.252.0 (/22) place le poste dans 10.10.4.0/22, qui va de 10.10.4.0 à 10.10.7.255 : l'entrée statique 10.10.7.255 de la table ARP, adresse de diffusion de ce sous-réseau, le confirme. 10.10.7.200 est donc dans le même sous-réseau que le poste, malgré un troisième octet différent : la trame lui est remise directement, sans passer par la passerelle. Son adresse MAC figurant déjà dans le cache ARP, le poste l'utilise aussitôt comme destination : d4-be-d9-10-3e-55.",
+    "distractorNotes": {
+      "a": "00-1b-54-c2-7a-01 est l'adresse MAC de la passerelle 10.10.4.1 : elle ne sert que pour une destination hors de 10.10.4.0/22, ce qui n'est pas le cas ici.",
+      "b": "a4-bb-6d-77-10-9c est l'adresse physique du poste lui-même : elle figure dans la trame comme adresse MAC source, pas comme destination.",
+      "c": "ff-ff-ff-ff-ff-ff ne sert qu'aux diffusions, par exemple une requête ARP ; or l'adresse MAC de 10.10.7.200 est déjà dans le cache ARP."
+    },
+    "reference": "RFC 1122, section 3.3.1 ; RFC 826 (ARP)"
+  }
+]
