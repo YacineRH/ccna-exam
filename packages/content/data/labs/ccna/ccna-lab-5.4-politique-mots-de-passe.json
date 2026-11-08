@@ -1,0 +1,216 @@
+{
+  "slug": "ccna-lab-5.4-politique-mots-de-passe",
+  "certification": "ccna",
+  "domain": "5.0",
+  "subtopic": "5.4",
+  "difficulty": "medium",
+  "title": "Appliquer une politique de mots de passe et bloquer les attaques par force brute",
+  "statement": "La nouvelle politique de sécurité s'applique au routeur R1 : mots de passe d'au moins 10 caractères, comptes stockés sous forme hachée, aucun compte inutile, et blocage des connexions après des échecs répétés. Aujourd'hui, le secret du mode privilégié fait 5 caractères, le compte admin est en password et un compte de stagiaire traîne encore.\n\nConfigurez R1 :\n1. Imposez une longueur minimale de 10 caractères à tous les mots de passe configurés désormais.\n2. Remplacez le secret du mode privilégié par R1-Enable#2026.\n3. Gardez le compte admin, de niveau de privilège 15, mais stockez son mot de passe sous forme de secret haché : Adm1n-R1-Siege.\n4. Supprimez le compte stagiaire.\n5. Après 3 échecs de connexion en 60 secondes, refusez toute nouvelle connexion pendant 120 secondes.",
+  "topology": "  Poste d'administration 192.168.1.50\n               |\n        G0/0/0 192.168.1.1/24\n               |\n             [R1]\n\n  Configuration actuelle :\n    enable secret cisco\n    username admin privilege 15 password admin\n    username stagiaire password stage2024\n    line vty 0 4 : login local, transport input ssh",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\nip domain-name siege.lan\nenable secret cisco\nusername admin privilege 15 password admin\nusername stagiaire password stage2024\ninterface GigabitEthernet0/0/0\n description LAN administration\n ip address 192.168.1.1 255.255.255.0\n no shutdown\nline vty 0 4\n login local\n transport input ssh"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "min-length",
+      "description": "Tout nouveau mot de passe doit compter au moins 10 caractères.",
+      "check": { "type": "line", "line": "security passwords min-length 10" }
+    },
+    {
+      "id": "enable-secret",
+      "description": "Le secret du mode privilégié est R1-Enable#2026.",
+      "check": { "type": "regex", "pattern": "^enable secret (0 )?R1-Enable#2026$", "caseSensitive": true }
+    },
+    {
+      "id": "admin-secret",
+      "description": "Le compte admin, de niveau 15, a pour secret haché Adm1n-R1-Siege, et plus aucun password.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "pattern": "^username admin privilege 15 secret (0 )?Adm1n-R1-Siege$", "caseSensitive": true },
+          { "type": "regex", "pattern": "^username admin .*password ", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "no-stagiaire",
+      "description": "Le compte stagiaire n'existe plus.",
+      "check": { "type": "regex", "pattern": "^username stagiaire ", "absent": true }
+    },
+    {
+      "id": "block-for",
+      "description": "Après 3 échecs en 60 secondes, les connexions sont refusées pendant 120 secondes.",
+      "check": { "type": "line", "line": "login block-for 120 attempts 3 within 60" }
+    }
+  ],
+  "hints": [
+    "IOS sait imposer une longueur minimale aux mots de passe et bloquer temporairement les connexions après une série d'échecs. Pour le compte admin, regardez ce qu'IOS répond quand on donne un secret à un compte qui a déjà un password.",
+    "La longueur minimale se règle en configuration globale sous security passwords ; le blocage se règle avec login block-for, dans l'ordre : durée du blocage, nombre d'échecs, fenêtre d'observation. Un compte ne peut pas avoir à la fois un password et un secret : supprimez-le, puis recréez-le.",
+    "security passwords min-length 10 ; enable secret … ; no username admin puis username admin privilege 15 secret … ; no username stagiaire ; login block-for … attempts … within …."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "security passwords min-length 10",
+        "enable secret R1-Enable#2026",
+        "no username admin",
+        "username admin privilege 15 secret Adm1n-R1-Siege",
+        "no username stagiaire",
+        "login block-for 120 attempts 3 within 60",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations, ordre différent, secret de type 0 explicite",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "no username stagiaire",
+            "login block-for 120 att 3 wi 60",
+            "sec pass min 10",
+            "no username admin",
+            "username admin priv 15 secret 0 Adm1n-R1-Siege",
+            "enable secret 0 R1-Enable#2026",
+            "\u001a"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Secret donné au compte admin sans le supprimer d'abord : IOS refuse (« Can not have both a user password and a user secret »)",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "security passwords min-length 10",
+            "enable secret R1-Enable#2026",
+            "username admin privilege 15 secret Adm1n-R1-Siege",
+            "no username stagiaire",
+            "login block-for 120 attempts 3 within 60",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["admin-secret"]
+    },
+    {
+      "description": "Nouveau mot de passe admin donné en password : il reste stocké en clair",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "security passwords min-length 10",
+            "enable secret R1-Enable#2026",
+            "username admin privilege 15 password Adm1n-R1-Siege",
+            "no username stagiaire",
+            "login block-for 120 attempts 3 within 60",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["admin-secret"]
+    },
+    {
+      "description": "Compte admin recréé sans privilege 15 : l'administrateur arrive au niveau 1",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "security passwords min-length 10",
+            "enable secret R1-Enable#2026",
+            "no username admin",
+            "username admin secret Adm1n-R1-Siege",
+            "no username stagiaire",
+            "login block-for 120 attempts 3 within 60",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["admin-secret"]
+    },
+    {
+      "description": "Secret du mode privilégié de 9 caractères (Cisco2026) : IOS le refuse une fois min-length 10 en place, et ce n'est pas la valeur demandée",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "security passwords min-length 10",
+            "enable secret Cisco2026",
+            "no username admin",
+            "username admin privilege 15 secret Adm1n-R1-Siege",
+            "no username stagiaire",
+            "login block-for 120 attempts 3 within 60",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["enable-secret"]
+    },
+    {
+      "description": "Valeurs de login block-for inversées : blocage de 60 secondes après 3 échecs en 120 secondes",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "security passwords min-length 10",
+            "enable secret R1-Enable#2026",
+            "no username admin",
+            "username admin privilege 15 secret Adm1n-R1-Siege",
+            "no username stagiaire",
+            "login block-for 60 attempts 3 within 120",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["block-for"]
+    },
+    {
+      "description": "Longueur minimale de 8 caractères et compte stagiaire oublié",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "security passwords min-length 8",
+            "enable secret R1-Enable#2026",
+            "no username admin",
+            "username admin privilege 15 secret Adm1n-R1-Siege",
+            "login block-for 120 attempts 3 within 60",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["min-length", "no-stagiaire"]
+    }
+  ],
+  "explanation": "security passwords min-length 10 impose 10 caractères aux mots de passe configurés après la commande (comptes, enable password et secret, mots de passe de ligne) : un mot de passe trop court est refusé (« Password too short »), mais les mots de passe existants ne sont pas revérifiés, d'où l'intérêt de les remplacer ensuite. enable secret remplace le secret précédent et le stocke haché. Un compte local ne peut pas porter à la fois un password et un secret : IOS refuse username admin … secret tant que username admin … password existe (« ERROR: Can not have both a user password and a user secret »). Il faut donc supprimer le compte par no username admin puis le recréer, sans oublier privilege 15, sinon l'administrateur arrive au niveau 1. Sur les versions récentes, username … algorithm-type scrypt secret … force le hachage de type 9. no username stagiaire retire un compte qui n'a plus lieu d'être. login block-for 120 attempts 3 within 60 passe le routeur en mode silencieux (quiet mode) pendant 120 secondes dès que 3 échecs surviennent en 60 secondes : toute nouvelle connexion Telnet, SSH ou HTTP est alors refusée (la console n'est pas concernée) ; login quiet-mode access-class permet d'épargner les postes d'administration.",
+  "reference": "Cisco IOS Security Configuration Guide: Securing User Services, « Cisco IOS Login Enhancements (Login Block) » et « Configuring Security with Passwords, Privilege Levels, and Login Usernames for CLI Sessions on Networking Devices » ; Cisco IOS Security Command Reference (security passwords min-length, login block-for, username secret)",
+  "estimatedMinutes": 10
+}
