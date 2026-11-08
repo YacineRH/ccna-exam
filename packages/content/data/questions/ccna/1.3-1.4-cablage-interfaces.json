@@ -1,0 +1,1796 @@
+[
+  {
+    "slug": "ccna-1.3-10gbase-lr-naming-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans le nom de la norme 10GBASE-LR, que désigne la lettre « L » ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une liaison sur cuivre à paires torsadées (« link »)"
+        },
+        {
+          "id": "b",
+          "text": "Une source LED, utilisée sur fibre multimode"
+        },
+        {
+          "id": "c",
+          "text": "Une grande longueur d'onde (1310 nm), utilisée sur fibre monomode"
+        },
+        {
+          "id": "d",
+          "text": "Un usage limité au réseau local d'un bâtiment (« LAN »)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Dans les noms des normes Ethernet optiques, la lettre qui suit BASE indique la longueur d'onde : S (short, 850 nm, fibre multimode), L (long, 1310 nm) et E (extra long, 1550 nm), ces deux dernières sur fibre monomode. 10GBASE-LR utilise ainsi un laser à 1310 nm et porte jusqu'à 10 km. La dernière lettre désigne le codage : R pour le codage 64B/66B de la variante LAN, W pour la variante WAN, X pour le codage 8B/10B (1000BASE-SX, 1000BASE-LX). Le T de 1000BASE-T ou de 10GBASE-T désigne les paires torsadées.",
+    "distractorNotes": {
+      "a": "Les normes sur paires torsadées portent la lettre T (1000BASE-T, 10GBASE-T) ; L ne désigne pas un support cuivre.",
+      "b": "Les LED équipaient d'anciennes normes multimode comme 100BASE-FX (1300 nm) ; 10GBASE-LR utilise un laser à 1310 nm sur fibre monomode.",
+      "d": "L ne désigne pas un usage : 10GBASE-LR porte jusqu'à 10 km, bien au-delà d'un bâtiment. C'est le R final qui correspond à la variante LAN (codage 64B/66B), par opposition à la variante WAN (W)."
+    },
+    "reference": "IEEE 802.3, clause 52 (10GBASE-S, 10GBASE-L et 10GBASE-E)"
+  },
+  {
+    "slug": "ccna-1.3-cat6a-10gbase-t-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle est la catégorie de câble à paires torsadées minimale pour un lien 10GBASE-T de 100 m ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Catégorie 5"
+        },
+        {
+          "id": "b",
+          "text": "Catégorie 5e"
+        },
+        {
+          "id": "c",
+          "text": "Catégorie 6"
+        },
+        {
+          "id": "d",
+          "text": "Catégorie 6a"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "10GBASE-T (IEEE 802.3an) exige un câble de catégorie 6a, spécifié jusqu'à 500 MHz, pour atteindre la distance maximale de 100 m. Sur un câble de catégorie 6 (250 MHz), la portée en 10GBASE-T est limitée à 55 m environ, car la diaphonie exogène, entre câbles voisins, devient trop forte. La catégorie 5e, spécifiée à 100 MHz, est la référence pour 1000BASE-T sur 100 m. Quelle que soit la catégorie, un segment Ethernet en paires torsadées ne dépasse pas 100 m.",
+    "distractorNotes": {
+      "a": "La catégorie 5 (100 MHz) convient à 100BASE-TX, mais pas à 10GBASE-T.",
+      "b": "La catégorie 5e est la référence pour 1000BASE-T ; elle n'est pas spécifiée pour 10GBASE-T.",
+      "c": "En catégorie 6, 10GBASE-T est limité à 55 m environ ; les 100 m exigent la catégorie 6a."
+    },
+    "reference": "IEEE 802.3an (10GBASE-T) ; ANSI/TIA-568.2-D"
+  },
+  {
+    "slug": "ccna-1.3-twisted-pair-purpose-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un câble UTP, pourquoi les deux conducteurs de chaque paire sont-ils torsadés l'un autour de l'autre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Pour augmenter la résistance du câble à la traction lors de la pose"
+        },
+        {
+          "id": "b",
+          "text": "Pour limiter la diaphonie et l'effet des interférences électromagnétiques"
+        },
+        {
+          "id": "c",
+          "text": "Pour permettre l'alimentation électrique des équipements par PoE"
+        },
+        {
+          "id": "d",
+          "text": "Pour distinguer les paires les unes des autres lors du sertissage"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Les deux conducteurs d'une paire transportent le signal en mode différentiel, avec des tensions opposées. Torsadés, ils sont exposés de la même façon aux perturbations extérieures, qui s'annulent quand le récepteur fait la différence entre les deux signaux. La torsade limite aussi la diaphonie, c'est-à-dire le couplage entre paires voisines ; chaque paire a d'ailleurs un pas de torsade différent. Un câble UTP n'a pas de blindage : c'est la torsade seule qui le protège. Les couleurs, elles, servent à identifier les paires.",
+    "distractorNotes": {
+      "a": "La résistance à la traction vient de la gaine et des conducteurs ; la torsade n'a pas ce rôle.",
+      "c": "Le PoE fait passer le courant par les paires du câble ; ce n'est pas la raison d'être de la torsade, antérieure au PoE.",
+      "d": "Les paires se distinguent par leurs couleurs (orange, vert, bleu, marron), pas par leur torsade."
+    },
+    "reference": "ANSI/TIA-568.2-D ; IEEE 802.3, clause 40 (1000BASE-T)"
+  },
+  {
+    "slug": "ccna-1.3-fiber-tx-rx-polarity-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "SW1 et SW2 sont reliés par une liaison 10GBASE-LR : un module SFP+ de chaque côté et une jarretière monomode LC duplex. Le lien reste down. Le technicien constate que la fibre qui part de l'émetteur (Tx) du module de SW1 arrive sur l'émetteur (Tx) du module de SW2. Que faut-il faire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Inverser les deux connecteurs LC à une extrémité, pour relier chaque Tx au Rx d'en face"
+        },
+        {
+          "id": "b",
+          "text": "Activer Auto-MDIX sur les deux ports, pour que les modules croisent eux-mêmes les fibres"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer la jarretière par une jarretière multimode, seule compatible avec les connecteurs LC"
+        },
+        {
+          "id": "d",
+          "text": "Débrancher une des deux fibres, car 10GBASE-LR émet et reçoit sur une seule fibre"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Une liaison optique duplex utilise deux fibres, une par sens : l'émetteur (Tx) de chaque module doit aboutir au récepteur (Rx) du module d'en face. Si les deux Tx se font face, aucun module ne reçoit de lumière et le lien reste down. On rétablit la polarité en croisant les deux connecteurs LC du duplex à une extrémité, ou en utilisant une jarretière de polarité A-B, qui fait ce croisement. Auto-MDIX n'existe que sur les ports cuivre à paires torsadées : il ne peut rien pour une fibre.",
+    "distractorNotes": {
+      "b": "Auto-MDIX croise les paires d'un câble cuivre à paires torsadées ; il n'existe pas sur les ports optiques.",
+      "c": "Les connecteurs LC existent en monomode comme en multimode ; 10GBASE-LR exige justement une fibre monomode.",
+      "d": "10GBASE-LR utilise deux fibres, une par sens ; seuls des modules BiDi, conçus pour cela, émettent et reçoivent sur une seule fibre, avec deux longueurs d'onde."
+    },
+    "reference": "ANSI/TIA-568.3-D (polarité des liaisons duplex) ; IEEE 802.3, clause 52"
+  },
+  {
+    "slug": "ccna-1.3-crossover-pinout-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux commutateurs sans Auto-MDIX sont reliés par un câble croisé pour un lien 100BASE-TX. À quelles broches de l'autre extrémité aboutissent les broches 3 et 6 d'une extrémité ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aux broches 3 et 6"
+        },
+        {
+          "id": "b",
+          "text": "Aux broches 4 et 5"
+        },
+        {
+          "id": "c",
+          "text": "Aux broches 1 et 2"
+        },
+        {
+          "id": "d",
+          "text": "Aux broches 7 et 8"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "En 10BASE-T et 100BASE-TX, seules deux paires servent : un équipement MDI (PC, routeur) émet sur les broches 1-2 et reçoit sur 3-6, un équipement MDI-X (commutateur) fait l'inverse. Entre deux commutateurs, il faut relier l'émission (3-6) de l'un à la réception (1-2) de l'autre : c'est le rôle du câble croisé, câblé en T568A à une extrémité et en T568B à l'autre, qui relie 1 à 3, 2 à 6, 3 à 1 et 6 à 2. Avec Auto-MDIX sur l'un des ports, un câble droit suffirait.",
+    "distractorNotes": {
+      "a": "Relier 3-6 à 3-6, c'est le câblage d'un câble droit : l'émission d'un commutateur arriverait sur l'émission de l'autre.",
+      "b": "La paire 4-5 n'est pas utilisée en 100BASE-TX ; elle ne sert qu'en 1000BASE-T, qui utilise les quatre paires.",
+      "d": "La paire 7-8 n'est pas utilisée en 100BASE-TX ; le croisement relie l'émission 3-6 à la réception 1-2."
+    },
+    "reference": "IEEE 802.3, clauses 14 et 25 (MDI et MDI-X) ; ANSI/TIA-568.2-D (T568A et T568B)"
+  },
+  {
+    "slug": "ccna-1.3-hub-normal-collisions-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le port Gi1/0/16 de SW2, en configuration par défaut (speed auto, duplex auto), est relié par un cordon de 2 m à un concentrateur (hub) 10BASE-T auquel sont raccordés quatre PC, tous à moins de 30 m. Quelle conclusion tirer de ces compteurs ?",
+      "exhibit": "SW2#show interfaces GigabitEthernet1/0/16\nGigabitEthernet1/0/16 is up, line protocol is up (connected)\n  Hardware is Gigabit Ethernet, address is 7c21.0e4d.9a90 (bia 7c21.0e4d.9a90)\n  MTU 1500 bytes, BW 10000 Kbit/sec, DLY 1000 usec,\n     reliability 255/255, txload 12/255, rxload 18/255\n  Encapsulation ARPA, loopback not set\n  Keepalive set (10 sec)\n  Half-duplex, 10Mb/s, media type is 10/100/1000BaseTX\n  input flow-control is off, output flow-control is unsupported\n  ARP type: ARPA, ARP Timeout 04:00:00\n  Last input 00:00:00, output 00:00:00, output hang never\n  Last clearing of \"show interface\" counters 02:10:37\n  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0\n  Queueing strategy: fifo\n  Output queue: 0/40 (size/max)\n  5 minute input rate 712000 bits/sec, 118 packets/sec\n  5 minute output rate 481000 bits/sec, 86 packets/sec\n     915204 packets input, 512388761 bytes, 0 no buffer\n     Received 20417 broadcasts (11872 multicasts)\n     0 runts, 0 giants, 0 throttles\n     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored\n     0 watchdog, 11872 multicast, 0 pause input\n     0 input packets with dribble condition detected\n     668391 packets output, 389204417 bytes, 0 underruns\n     0 output errors, 2896 collisions, 0 interface resets\n     0 unknown protocol drops\n     0 babbles, 0 late collision, 4127 deferred\n     0 lost carrier, 0 no carrier, 0 PAUSE output\n     0 output buffer failures, 0 output buffers swapped out",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un duplex mismatch : Gi1/0/16 a négocié le half duplex, alors que le concentrateur est en full duplex"
+        },
+        {
+          "id": "b",
+          "text": "Rien d'anormal : ces collisions font partie du fonctionnement de CSMA/CD sur un média partagé"
+        },
+        {
+          "id": "c",
+          "text": "Un câble du segment dépasse la longueur maximale, si bien que les collisions sont détectées trop tard"
+        },
+        {
+          "id": "d",
+          "text": "Des interférences électromagnétiques perturbent le segment et provoquent ces collisions"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un concentrateur répète chaque bit sur tous ses ports : ses quatre PC et Gi1/0/16 partagent le support et fonctionnent en half duplex, avec CSMA/CD. Le port a d'ailleurs adopté 10 Mbit/s en half duplex, faute d'autonégociation avec le hub. Sur un tel segment, des collisions détectées dans les 64 premiers octets sont normales : l'émetteur envoie un signal de brouillage, attend un délai aléatoire et réémet. Le compteur deferred compte, lui, les trames dont l'émission a attendu que le support se libère. Un problème se traduirait par des late collisions, des erreurs CRC ou des runts, tous à 0 ici.",
+    "distractorNotes": {
+      "a": "Un concentrateur ne fonctionne qu'en half duplex : Gi1/0/16 est dans le bon mode. Un duplex mismatch ferait d'ailleurs apparaître des late collisions, à 0 ici.",
+      "c": "Un segment trop long se traduit par des late collisions, détectées après les 64 premiers octets ; ce compteur est à 0, et les câbles font moins de 30 m.",
+      "d": "Des interférences corrompent les trames et font monter les erreurs CRC en entrée, à 0 ici ; elles ne créent pas de collisions."
+    },
+    "reference": "IEEE 802.3, clause 4 (CSMA/CD) ; Cisco — Troubleshoot Switch Port and Interface Problems"
+  },
+  {
+    "slug": "ccna-1.3-cabling-plan-reach-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un architecte a préparé ce plan de câblage pour un campus. Quel lien ne fonctionnera pas avec la solution prévue ?",
+      "exhibit": "Lien  Extrémités              Distance  Débit      Solution prévue\nL1    SW-CORE - SW-ETAGE3        70 m   10 Gbit/s  10GBASE-T, Cat 6a\nL2    SW-CORE - SW-BAT-B        250 m   10 Gbit/s  10GBASE-SR, fibre OM3\nL3    SW-CORE - SW-SITE-C        25 km  10 Gbit/s  10GBASE-LR, monomode\nL4    SW-ETAGE3 - poste          45 m    1 Gbit/s  1000BASE-T, Cat 5e",
+      "options": [
+        {
+          "id": "a",
+          "text": "L1"
+        },
+        {
+          "id": "b",
+          "text": "L2"
+        },
+        {
+          "id": "c",
+          "text": "L3"
+        },
+        {
+          "id": "d",
+          "text": "L4"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Il faut confronter chaque distance à la portée de la norme prévue. L1 : 10GBASE-T porte jusqu'à 100 m sur Cat 6a, 70 m conviennent. L2 : 10GBASE-SR atteint 300 m sur fibre multimode OM3, 250 m conviennent. L3 : 10GBASE-LR est limité à 10 km sur fibre monomode ; pour 25 km, il faut 10GBASE-ER (laser 1550 nm, 30 km, voire 40 km en liaison « engineered »). L4 : 1000BASE-T fonctionne sur 100 m de Cat 5e. Seul L3 est hors spécification.",
+    "distractorNotes": {
+      "a": "10GBASE-T porte jusqu'à 100 m sur Cat 6a : les 70 m de L1 sont dans la norme.",
+      "b": "10GBASE-SR atteint 300 m sur fibre multimode OM3 : les 250 m de L2 conviennent.",
+      "d": "1000BASE-T est spécifié sur 100 m de Cat 5e : les 45 m de L4 conviennent."
+    },
+    "reference": "IEEE 802.3, clauses 40 (1000BASE-T), 52 (10GBASE-SR, LR et ER) et 55 (10GBASE-T)"
+  },
+  {
+    "slug": "ccna-1.3-full-duplex-point-to-point-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur une liaison Ethernet en full duplex sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le compteur collisions y augmente normalement, mais sans late collisions"
+        },
+        {
+          "id": "b",
+          "text": "Elle exige une liaison point à point, sans concentrateur, entre deux équipements compatibles"
+        },
+        {
+          "id": "c",
+          "text": "Le débit est partagé entre les deux sens : 500 Mbit/s par sens sur un lien à 1 Gbit/s"
+        },
+        {
+          "id": "d",
+          "text": "CSMA/CD y est désactivé : chaque extrémité émet sans écouter si le support est libre"
+        },
+        {
+          "id": "e",
+          "text": "Un concentrateur peut fonctionner en full duplex si ses ports sont forcés en full"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "En full duplex, chaque extrémité émet et reçoit en même temps sur des paires (ou des fibres) distinctes : aucune collision n'est possible, et CSMA/CD est désactivé. Cela suppose une liaison point à point entre deux équipements qui prennent en charge le full duplex, comme un PC et un port de commutateur. Chaque sens dispose alors de tout le débit : 1 Gbit/s en émission et 1 Gbit/s en réception sur un lien Gigabit. Un concentrateur, qui répète les bits sur un support partagé, impose au contraire le half duplex.",
+    "distractorNotes": {
+      "a": "En full duplex, aucune collision n'est possible : un compteur collisions qui augmente signale un port en half duplex, par exemple d'un côté d'un duplex mismatch.",
+      "c": "Chaque sens dispose de tout le débit : 1 Gbit/s en émission et 1 Gbit/s en réception, en même temps.",
+      "e": "Un concentrateur répète les bits sur un support partagé ; il ne fonctionne qu'en half duplex, et ses ports ne se configurent pas."
+    },
+    "reference": "IEEE 802.3, clause 4 (modes half duplex et full duplex)"
+  },
+  {
+    "slug": "ccna-1.3-fiber-vs-copper-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise relie deux bâtiments distants de 800 m. Quelles deux raisons font choisir la fibre optique plutôt que le cuivre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La fibre est insensible aux interférences électromagnétiques"
+        },
+        {
+          "id": "b",
+          "text": "La fibre coûte moins cher à acheter et à raccorder que le cuivre"
+        },
+        {
+          "id": "c",
+          "text": "La fibre porte bien au-delà des 100 m d'un segment en paires torsadées"
+        },
+        {
+          "id": "d",
+          "text": "La fibre peut alimenter les équipements distants par PoE"
+        },
+        {
+          "id": "e",
+          "text": "Une seule fibre suffit aux deux sens d'une liaison 1000BASE-SX"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Un segment Ethernet en paires torsadées est limité à 100 m : 800 m imposent la fibre, qui porte de quelques centaines de mètres (multimode) à plusieurs dizaines de kilomètres (monomode). La fibre transporte de la lumière et non un courant : elle est insensible aux interférences électromagnétiques et isole électriquement les deux bâtiments, ce qui évite les problèmes de différence de potentiel de terre et de foudre. En contrepartie, les modules optiques et le raccordement coûtent plus cher, et la fibre ne transporte pas d'énergie.",
+    "distractorNotes": {
+      "b": "C'est l'inverse : modules optiques, connecteurs et raccordement de la fibre coûtent plus cher que le cuivre.",
+      "d": "Le PoE fait passer un courant électrique dans les paires d'un câble cuivre ; une fibre ne transporte pas d'énergie.",
+      "e": "1000BASE-SX utilise deux fibres, une par sens ; seuls des modules BiDi, conçus pour cela, émettent et reçoivent sur une seule fibre."
+    },
+    "reference": "IEEE 802.3, clauses 38 (1000BASE-SX et 1000BASE-LX) et 40 (1000BASE-T)"
+  },
+  {
+    "slug": "ccna-1.3-sfp-modules-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les modules SFP et SFP+ d'un commutateur Catalyst sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ils se raccordent à la fibre par des connecteurs SC"
+        },
+        {
+          "id": "b",
+          "text": "Un module SFP+ est plus volumineux qu'un SFP, ce qui réduit le nombre de ports par carte"
+        },
+        {
+          "id": "c",
+          "text": "Ils sont échangeables à chaud : on les insère ou on les retire sans éteindre le commutateur"
+        },
+        {
+          "id": "d",
+          "text": "Un module 1000BASE-SX peut être raccordé à 10 km de fibre monomode"
+        },
+        {
+          "id": "e",
+          "text": "Selon le module inséré, un même port SFP peut fonctionner en 1000BASE-SX, LX ou T"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Un port SFP n'impose pas de support : c'est le module (transceiver) inséré qui détermine la norme, par exemple 1000BASE-SX pour la fibre multimode, 1000BASE-LX pour la monomode ou 1000BASE-T avec une prise RJ-45. Les modules sont échangeables à chaud, ce qui permet d'adapter ou de remplacer un lien sans arrêter le commutateur. Le SFP+ a le même format que le SFP, mais fonctionne à 10 Gbit/s. Les modules optiques SFP et SFP+ utilisent des connecteurs LC duplex.",
+    "distractorNotes": {
+      "a": "Les modules SFP et SFP+ utilisent des connecteurs LC, plus compacts ; le SC équipait les anciens modules GBIC.",
+      "b": "Le SFP+ a le même format que le SFP ; il s'en distingue par son débit de 10 Gbit/s.",
+      "d": "1000BASE-SX est une norme multimode à 850 nm, spécifiée par l'IEEE jusqu'à 550 m environ ; sur 10 km de monomode, il faut une optique à 1310 nm, comme les modules 1000BASE-LX/LH de Cisco."
+    },
+    "reference": "INF-8074i (SFP) et SFF-8431 (SFP+) ; Cisco 1000BASE SFP Transceiver Modules Data Sheet"
+  },
+  {
+    "slug": "ccna-1.3-cut-pair-standards-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Dans un câble de catégorie 5e raccordé selon T568B, la paire bleue (broches 4 et 5) a été sectionnée ; les trois autres paires sont intactes. Quelles deux affirmations sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un lien 10BASE-T ne peut plus fonctionner, car il utilise la paire 4-5"
+        },
+        {
+          "id": "b",
+          "text": "Un lien 1000BASE-T fonctionne encore, à 750 Mbit/s sur les trois paires restantes"
+        },
+        {
+          "id": "c",
+          "text": "Auto-MDIX peut faire passer le trafic de la paire coupée sur une paire libre"
+        },
+        {
+          "id": "d",
+          "text": "Un lien 100BASE-TX peut encore fonctionner, car il utilise les paires 1-2 et 3-6"
+        },
+        {
+          "id": "e",
+          "text": "Un lien 1000BASE-T ne peut plus fonctionner, car il utilise les quatre paires"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "10BASE-T et 100BASE-TX n'utilisent que deux paires : broches 1-2 pour un sens et 3-6 pour l'autre. Les paires 4-5 et 7-8 ne servent pas, si bien qu'un câble dont la paire bleue est coupée peut encore porter un lien à 10 ou 100 Mbit/s. 1000BASE-T, lui, transmet sur les quatre paires à la fois, dans les deux sens, à 250 Mbit/s par paire : il ne fonctionne pas avec trois paires. Un tel câble est donc défectueux, même s'il semble marcher à 100 Mbit/s ; un testeur de câble le révèle.",
+    "distractorNotes": {
+      "a": "10BASE-T n'utilise que les paires 1-2 et 3-6 ; la paire 4-5 ne lui sert pas.",
+      "b": "1000BASE-T a besoin des quatre paires ; la norme ne prévoit pas de fonctionnement sur trois paires.",
+      "c": "Auto-MDIX intervertit les paires d'émission et de réception ; il ne peut pas remplacer une paire coupée."
+    },
+    "reference": "IEEE 802.3, clauses 14 (10BASE-T), 25 (100BASE-TX) et 40 (1000BASE-T)"
+  },
+  {
+    "slug": "ccna-1.3-twisted-pair-channel-length-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un poste est relié en 1000BASE-T à un commutateur par un câblage structuré en catégorie 6 : cordon, prise murale, câble horizontal fixe, panneau de brassage, puis cordon de brassage. Complétez les longueurs maximales.",
+      "fields": [
+        {
+          "id": "channel",
+          "label": "Longueur maximale du lien complet, cordons compris, en mètres (nombre entier)"
+        },
+        {
+          "id": "horizontal",
+          "label": "Longueur maximale du câble horizontal fixe selon ANSI/TIA-568, en mètres (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "channel": {
+          "accepted": [
+            "100"
+          ],
+          "normalize": "int"
+        },
+        "horizontal": {
+          "accepted": [
+            "90"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Un segment Ethernet en paires torsadées (10BASE-T, 100BASE-TX, 1000BASE-T, ou 10GBASE-T en catégorie 6a) est limité à 100 m d'un équipement actif à l'autre. Le câblage structuré ANSI/TIA-568 répartit ce budget en 90 m au plus de câble horizontal fixe, entre la prise murale et le panneau de brassage, et 10 m au plus de cordons au total, aux deux extrémités. Au-delà, l'atténuation et la diaphonie ne sont plus garanties : erreurs CRC, lien instable, voire pas de lien du tout.",
+    "reference": "ANSI/TIA-568.2-D ; IEEE 802.3, clause 40 (1000BASE-T)"
+  },
+  {
+    "slug": "ccna-1.3-auto-mdix-restore-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le port GigabitEthernet1/0/12 de SW1 avait été configuré avec speed 100, duplex full et no mdix auto. Un nouveau poste en autonégociation doit y être raccordé, avec un câble dont on ignore s'il est droit ou croisé. En partant du mode de configuration globale, entrez dans l'interface, remettez la vitesse et le duplex en autonégociation, puis réactivez Auto-MDIX.",
+      "prompt": "SW1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          3
+        ]
+      ],
+      "commands": [
+        [
+          "interface GigabitEthernet1/0/12"
+        ],
+        [
+          "speed auto",
+          "no speed"
+        ],
+        [
+          "duplex auto",
+          "no duplex"
+        ],
+        [
+          "mdix auto"
+        ]
+      ]
+    },
+    "explanation": "« speed auto » et « duplex auto » (ou « no speed » et « no duplex », qui rétablissent la valeur par défaut) remettent le port en autonégociation ; « mdix auto » réactive Auto-MDIX, qui détecte un câble droit ou croisé et inverse au besoin les paires d'émission et de réception. Sur Catalyst, Auto-MDIX ne fonctionne correctement que si la vitesse et le duplex sont tous deux en auto : laisser une valeur forcée peut l'empêcher d'opérer. Auto-MDIX est activé par défaut sur les commutateurs Catalyst actuels.",
+    "reference": "Catalyst 9300 Interface and Hardware Components Configuration Guide (Auto-MDIX, vitesse et duplex)"
+  },
+  {
+    "slug": "ccna-1.3-hub-port-speed-duplex-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Un ancien concentrateur (hub) 10BASE-T, qui ne prend pas en charge l'autonégociation, est raccordé au port GigabitEthernet1/0/3 de SW3. La politique de l'entreprise impose de fixer la vitesse et le duplex des ports reliés à des équipements qui ne négocient pas. En partant du mode de configuration globale, entrez dans l'interface, puis fixez la vitesse et le duplex qui conviennent à ce concentrateur.",
+      "prompt": "SW3(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "interface GigabitEthernet1/0/3"
+        ],
+        [
+          "speed 10"
+        ],
+        [
+          "duplex half"
+        ]
+      ]
+    },
+    "explanation": "Un concentrateur 10BASE-T fonctionne à 10 Mbit/s et, comme tout support partagé, uniquement en half duplex avec CSMA/CD. On fixe donc « speed 10 » et « duplex half », dans n'importe quel ordre, dans la configuration de l'interface. Forcer « duplex full » créerait un duplex mismatch : le port émettrait sans écouter le support, et les PC du concentrateur compteraient des late collisions. En auto, le port aurait détecté 10 Mbit/s par parallel detection et choisi le half duplex ; fixer les valeurs rend ce choix explicite.",
+    "reference": "Catalyst 9300 Interface and Hardware Components Configuration Guide (vitesse et duplex) ; IEEE 802.3, clause 4"
+  },
+  {
+    "slug": "ccna-1.3-csma-cd-steps-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une station Ethernet en half duplex, sur un support partagé, doit émettre une trame et subit une collision. Ordonnez les étapes de CSMA/CD, de la première à la dernière.",
+      "items": [
+        {
+          "id": "backoff",
+          "text": "Elle attend un délai aléatoire, calculé par l'algorithme de backoff"
+        },
+        {
+          "id": "listen",
+          "text": "Elle écoute le support jusqu'à ce qu'il soit libre"
+        },
+        {
+          "id": "jam",
+          "text": "Elle cesse d'émettre la trame et envoie un signal de brouillage (jam)"
+        },
+        {
+          "id": "retry",
+          "text": "Elle reprend la procédure pour tenter de réémettre la trame"
+        },
+        {
+          "id": "send",
+          "text": "Elle émet la trame tout en surveillant le support"
+        },
+        {
+          "id": "detect",
+          "text": "Elle détecte une collision pendant son émission"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "listen",
+        "send",
+        "detect",
+        "jam",
+        "backoff",
+        "retry"
+      ]
+    },
+    "explanation": "CSMA/CD (Carrier Sense Multiple Access with Collision Detection) régit l'accès à un support partagé en half duplex. La station écoute d'abord le support (carrier sense) et n'émet que s'il est libre. Pendant l'émission, si elle reçoit un signal alors qu'elle émet, c'est qu'une autre station émet en même temps : elle détecte la collision, interrompt sa trame et envoie un signal de brouillage de 32 bits pour que toutes les stations la constatent. Elle attend ensuite un délai aléatoire (backoff exponentiel binaire) avant de recommencer, et abandonne la trame après 16 tentatives.",
+    "reference": "IEEE 802.3, clause 4 (CSMA/CD)"
+  },
+  {
+    "slug": "ccna-1.3-ethernet-reach-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Ordonnez ces liens Ethernet selon leur portée maximale normalisée, de la plus courte à la plus longue.",
+      "items": [
+        {
+          "id": "er",
+          "text": "10GBASE-ER sur fibre monomode"
+        },
+        {
+          "id": "t",
+          "text": "1000BASE-T sur câble de catégorie 5e"
+        },
+        {
+          "id": "sx",
+          "text": "1000BASE-SX sur fibre multimode OM2 (50 µm)"
+        },
+        {
+          "id": "lr",
+          "text": "10GBASE-LR sur fibre monomode"
+        },
+        {
+          "id": "sr",
+          "text": "10GBASE-SR sur fibre multimode OM3"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "t",
+        "sr",
+        "sx",
+        "lr",
+        "er"
+      ]
+    },
+    "explanation": "1000BASE-T est limité, comme tout Ethernet en paires torsadées, à 100 m. Sur fibre multimode, la portée baisse quand le débit augmente : 10GBASE-SR atteint 300 m sur OM3, alors que 1000BASE-SX va jusqu'à 550 m sur OM2. La fibre monomode, sans dispersion modale, porte bien plus loin : 10 km pour 10GBASE-LR (1310 nm) et 30 km pour 10GBASE-ER (1550 nm), voire 40 km en liaison « engineered ».",
+    "reference": "IEEE 802.3, clauses 38 (1000BASE-SX), 40 (1000BASE-T) et 52 (10GBASE-SR, LR et ER)"
+  },
+  {
+    "slug": "ccna-1.3-fiber-cable-structure-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Ordonnez les éléments d'un câble à fibre optique, du centre vers l'extérieur.",
+      "items": [
+        {
+          "id": "jacket",
+          "text": "Gaine extérieure (jacket)"
+        },
+        {
+          "id": "core",
+          "text": "Cœur en verre, où se propage la lumière"
+        },
+        {
+          "id": "strength",
+          "text": "Renfort en fibres d'aramide (Kevlar)"
+        },
+        {
+          "id": "cladding",
+          "text": "Gaine optique (cladding), d'indice de réfraction plus faible"
+        },
+        {
+          "id": "buffer",
+          "text": "Revêtement de protection (buffer)"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "core",
+        "cladding",
+        "buffer",
+        "strength",
+        "jacket"
+      ]
+    },
+    "explanation": "Au centre, le cœur en verre transporte la lumière. Il est entouré de la gaine optique (cladding), un verre d'indice de réfraction plus faible : la lumière qui l'atteint est renvoyée vers le cœur par réflexion totale, ce qui la confine. Le revêtement (buffer) protège la fibre des chocs et de l'humidité, le renfort en fibres d'aramide encaisse la traction lors de la pose, et la gaine extérieure protège l'ensemble. Sa couleur est souvent normalisée : orange ou aqua pour le multimode, jaune pour le monomode.",
+    "reference": "ANSI/TIA-568.3-D ; TIA-598-D (code couleur des câbles optiques)"
+  },
+  {
+    "slug": "ccna-1.3-transceiver-form-factors-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque format de module (transceiver) à son débit Ethernet nominal.",
+      "left": [
+        {
+          "id": "sfp",
+          "text": "SFP"
+        },
+        {
+          "id": "sfpp",
+          "text": "SFP+"
+        },
+        {
+          "id": "sfp28",
+          "text": "SFP28"
+        },
+        {
+          "id": "qsfpp",
+          "text": "QSFP+"
+        },
+        {
+          "id": "qsfp28",
+          "text": "QSFP28"
+        }
+      ],
+      "right": [
+        {
+          "id": "g1",
+          "text": "1 Gbit/s"
+        },
+        {
+          "id": "g10",
+          "text": "10 Gbit/s"
+        },
+        {
+          "id": "g25",
+          "text": "25 Gbit/s"
+        },
+        {
+          "id": "g40",
+          "text": "40 Gbit/s"
+        },
+        {
+          "id": "g100",
+          "text": "100 Gbit/s"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "sfp": "g1",
+        "sfpp": "g10",
+        "sfp28": "g25",
+        "qsfpp": "g40",
+        "qsfp28": "g100"
+      }
+    },
+    "explanation": "Les SFP (Small Form-factor Pluggable) ont tous le même format compact et une seule voie : SFP à 1 Gbit/s, SFP+ à 10 Gbit/s, SFP28 à 25 Gbit/s. Les QSFP (Quad SFP) regroupent quatre voies dans un module plus large : QSFP+ à 4 × 10 = 40 Gbit/s et QSFP28 à 4 × 25 = 100 Gbit/s. Le « 28 » rappelle le débit maximal d'environ 28 Gbit/s par voie, qui laisse place au codage et à la correction d'erreurs. Beaucoup de ports SFP+ acceptent aussi des modules SFP à 1 Gbit/s.",
+    "reference": "SFF-8431 (SFP+) et SFF-8665 (QSFP28) ; IEEE 802.3by (25GBASE-R) et 802.3bm (100GBASE-SR4)"
+  },
+  {
+    "slug": "ccna-1.3-connector-types-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque connecteur à sa description.",
+      "left": [
+        {
+          "id": "lc",
+          "text": "LC"
+        },
+        {
+          "id": "sc",
+          "text": "SC"
+        },
+        {
+          "id": "st",
+          "text": "ST"
+        },
+        {
+          "id": "mpo",
+          "text": "MPO"
+        },
+        {
+          "id": "rj45",
+          "text": "RJ-45"
+        }
+      ],
+      "right": [
+        {
+          "id": "small",
+          "text": "Petit connecteur optique à loquet, utilisé sur les modules SFP et SFP+"
+        },
+        {
+          "id": "square",
+          "text": "Connecteur optique carré à encliquetage (push-pull), utilisé sur les anciens GBIC"
+        },
+        {
+          "id": "bayonet",
+          "text": "Connecteur optique rond à baïonnette, verrouillé d'un quart de tour"
+        },
+        {
+          "id": "multi",
+          "text": "Connecteur optique multifibre, utilisé par les optiques parallèles 40 et 100 Gbit/s"
+        },
+        {
+          "id": "eight",
+          "text": "Connecteur à 8 broches des câbles cuivre à paires torsadées"
+        },
+        {
+          "id": "bnc",
+          "text": "Connecteur coaxial à baïonnette des anciens réseaux 10BASE2"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "lc": "small",
+        "sc": "square",
+        "st": "bayonet",
+        "mpo": "multi",
+        "rj45": "eight"
+      }
+    },
+    "explanation": "Le LC (Lucent Connector), deux fois plus petit que le SC, est le connecteur des modules SFP et SFP+ ; son loquet rappelle celui du RJ-45. Le SC, carré et à encliquetage, équipait les modules GBIC et de nombreux tiroirs optiques. Le ST, rond, se verrouille d'un quart de tour comme une baïonnette ; on le trouve sur d'anciennes installations multimode. Le MPO aligne plusieurs fibres (souvent 12) dans une même férule, pour les optiques parallèles comme 40GBASE-SR4 et 100GBASE-SR4. Le RJ-45 (8P8C) termine les câbles à paires torsadées.",
+    "distractorNotes": {
+      "bnc": "Cette description est celle du BNC, monté sur le câble coaxial fin des réseaux 10BASE2 ; aucun connecteur de la liste n'y correspond."
+    },
+    "reference": "IEC 61754 (interfaces des connecteurs optiques LC, SC, ST et MPO) ; ANSI/TIA-568.3-D"
+  },
+  {
+    "slug": "ccna-1.4-cdp-duplex-mismatch-log-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Ce message apparaît sur la console de SW1. Que signale-t-il ?",
+      "exhibit": "%CDP-4-DUPLEX_MISMATCH: duplex mismatch discovered on GigabitEthernet1/0/1 (not\n half duplex), with SW2 GigabitEthernet1/0/2 (half duplex).",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi1/0/1 de SW1 est en half duplex, alors que Gi1/0/2 de SW2 est en full duplex"
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/1 de SW1 n'est pas en half duplex, alors que Gi1/0/2 de SW2 l'est"
+        },
+        {
+          "id": "c",
+          "text": "Gi1/0/1 de SW1 et Gi1/0/2 de SW2 sont tous deux en half duplex"
+        },
+        {
+          "id": "d",
+          "text": "Gi1/0/1 de SW1 et Gi1/0/2 de SW2 fonctionnent à des vitesses différentes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "CDP annonce le duplex de chaque port ; quand SW1 reçoit d'un voisin un duplex différent du sien, il émet ce message. La partie « on GigabitEthernet1/0/1 (not half duplex) » décrit le port local de SW1, en full duplex, et « with SW2 GigabitEthernet1/0/2 (half duplex) » le port du voisin. Le lien fonctionne, mais mal : late collisions côté SW2, runts et erreurs CRC côté SW1. On corrige en configurant les deux extrémités de la même façon, de préférence toutes deux en autonégociation.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : « not half duplex » qualifie le port local Gi1/0/1 de SW1, et « (half duplex) » le port Gi1/0/2 du voisin SW2.",
+      "c": "Deux ports en half duplex fonctionnent dans le même mode : il n'y a pas de mismatch, et CDP ne signalerait rien.",
+      "d": "Avec des vitesses différentes, le lien ne monterait pas et CDP ne pourrait rien échanger ; le message porte d'ailleurs sur le duplex."
+    },
+    "reference": "Cisco IOS System Message Guide (CDP-4-DUPLEX_MISMATCH) ; Cisco — Troubleshoot Switch Port and Interface Problems"
+  },
+  {
+    "slug": "ccna-1.4-runts-full-duplex-side-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le port Gi1/0/8 de SW2 est configuré avec speed 100 et duplex full. Il est relié par un cordon de 12 m à un serveur dont la carte réseau est restée en autonégociation. Les utilisateurs du serveur se plaignent de lenteurs. Quelle est la cause la plus probable des erreurs relevées ?",
+      "exhibit": "SW2#show interfaces GigabitEthernet1/0/8\nGigabitEthernet1/0/8 is up, line protocol is up (connected)\n  Hardware is Gigabit Ethernet, address is 7c21.0e4d.9a88 (bia 7c21.0e4d.9a88)\n  MTU 1500 bytes, BW 100000 Kbit/sec, DLY 100 usec,\n     reliability 249/255, txload 9/255, rxload 4/255\n  Encapsulation ARPA, loopback not set\n  Keepalive set (10 sec)\n  Full-duplex, 100Mb/s, media type is 10/100/1000BaseTX\n  input flow-control is off, output flow-control is unsupported\n  ARP type: ARPA, ARP Timeout 04:00:00\n  Last input 00:00:00, output 00:00:00, output hang never\n  Last clearing of \"show interface\" counters 00:42:18\n  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0\n  Queueing strategy: fifo\n  Output queue: 0/40 (size/max)\n  5 minute input rate 1641000 bits/sec, 402 packets/sec\n  5 minute output rate 3528000 bits/sec, 517 packets/sec\n     1012457 packets input, 503812664 bytes, 0 no buffer\n     Received 6213 broadcasts (4018 multicasts)\n     1187 runts, 0 giants, 0 throttles\n     3581 input errors, 2394 CRC, 0 frame, 0 overrun, 0 ignored\n     0 watchdog, 4018 multicast, 0 pause input\n     0 input packets with dribble condition detected\n     1306218 packets output, 1121540873 bytes, 0 underruns\n     0 output errors, 0 collisions, 0 interface resets\n     0 unknown protocol drops\n     0 babbles, 0 late collision, 0 deferred\n     0 lost carrier, 0 no carrier, 0 PAUSE output\n     0 output buffer failures, 0 output buffers swapped out",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un duplex mismatch : la carte du serveur est passée en half duplex"
+        },
+        {
+          "id": "b",
+          "text": "Une vitesse différente aux deux extrémités du lien"
+        },
+        {
+          "id": "c",
+          "text": "Des trames jumbo émises par le serveur, plus grandes que le MTU du port"
+        },
+        {
+          "id": "d",
+          "text": "Un cordon trop long, qui provoque des collisions tardives sur Gi1/0/8"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Forcé en 100 Mbit/s full duplex, Gi1/0/8 n'envoie plus d'annonces d'autonégociation. La carte du serveur détecte la vitesse par parallel detection, mais pas le duplex, et retombe en half duplex. Le serveur, qui applique CSMA/CD, interrompt ses trames dès que SW2 émet en même temps : SW2, côté full duplex, reçoit ces trames tronquées et compte des runts et des erreurs CRC, sans aucune collision. Côté serveur, on relèverait des late collisions. On configure les deux extrémités de la même façon, toutes deux en auto ou toutes deux en 100 Mbit/s full duplex.",
+    "distractorNotes": {
+      "b": "Une vitesse différente empêcherait le lien de monter ; Gi1/0/8 est up/up à 100 Mbit/s, vitesse que la carte du serveur a détectée.",
+      "c": "Des trames trop grandes seraient comptées dans giants, qui reste à 0 ; les runts sont au contraire des trames trop courtes.",
+      "d": "Un cordon de 12 m est loin des 100 m autorisés, et un port en full duplex ne compte aucune collision : collisions et late collision sont à 0."
+    },
+    "reference": "IEEE 802.3, clause 28 (autonégociation, parallel detection) ; Cisco — Troubleshoot Switch Port and Interface Problems"
+  },
+  {
+    "slug": "ccna-1.4-giants-jumbo-frames-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le port Gi1/0/9 de SW1, au MTU par défaut de 1 500 octets, est relié à un serveur de stockage dont la configuration réseau vient d'être modifiée. Quelle est la cause la plus probable de ces erreurs ?",
+      "exhibit": "SW1#show interfaces GigabitEthernet1/0/9 | include duplex|giants|input errors\n  Full-duplex, 1000Mb/s, media type is 10/100/1000BaseTX\n     0 runts, 18342 giants, 0 throttles\n     18342 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un duplex mismatch entre le port et la carte du serveur"
+        },
+        {
+          "id": "b",
+          "text": "Un câble endommagé, qui corrompt les trames reçues"
+        },
+        {
+          "id": "c",
+          "text": "Une congestion qui fait déborder la file d'attente du port"
+        },
+        {
+          "id": "d",
+          "text": "Des trames jumbo émises par le serveur, trop longues pour le port"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le compteur giants compte les trames reçues plus longues que la taille maximale admise sur le port : 1 518 octets pour une trame Ethernet sans étiquette au MTU de 1 500. Ici, toutes les input errors sont des giants, sans CRC ni runts : les trames sont intactes, mais trop grandes. La cause typique est un MTU différent aux deux extrémités, par exemple un serveur passé aux trames jumbo (MTU de 9 000 octets). On aligne le MTU des deux côtés : on remet celui du serveur à 1 500, ou on autorise les trames jumbo sur le commutateur.",
+    "distractorNotes": {
+      "a": "Un duplex mismatch produirait des runts et des erreurs CRC du côté full duplex, à 0 ici ; il ne crée pas de trames trop longues.",
+      "b": "Un câble endommagé corrompt les trames : elles seraient comptées en erreurs CRC, à 0 ici.",
+      "c": "Une congestion fait monter les output drops, en sortie ; elle n'explique pas des trames reçues trop longues."
+    },
+    "reference": "Cisco — Troubleshoot Switch Port and Interface Problems ; Cisco IOS Interface and Hardware Component Command Reference (show interfaces)"
+  },
+  {
+    "slug": "ccna-1.4-output-drops-congestion-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le port Gi1/0/30 de SW1 dessert un serveur de sauvegarde dont la carte réseau ne dépasse pas 100 Mbit/s. Chaque nuit, plusieurs serveurs y copient leurs données, et les sauvegardes sont très lentes. Quelle est la cause la plus probable ?",
+      "exhibit": "SW1#show interfaces Gi1/0/30 | include duplex|load|drops|errors\n     reliability 255/255, txload 249/255, rxload 6/255\n  Full-duplex, 100Mb/s, media type is 10/100/1000BaseTX\n  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 48291\n     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored\n     0 output errors, 0 collisions, 0 interface resets\n     0 unknown protocol drops",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un duplex mismatch entre Gi1/0/30 et la carte du serveur"
+        },
+        {
+          "id": "b",
+          "text": "Un câble défectueux, qui oblige à réémettre les trames corrompues"
+        },
+        {
+          "id": "c",
+          "text": "La saturation du port, qui fait déborder sa file d'attente de sortie"
+        },
+        {
+          "id": "d",
+          "text": "Des collisions répétées sur le lien, qui fonctionne en half duplex"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "txload 249/255 indique que le port émet à près de 100 % de ses 100 Mbit/s, et Total output drops compte les trames abandonnées parce que la file d'attente de sortie était pleine. Plusieurs serveurs, souvent raccordés en 1 Gbit/s, envoient vers un port à 100 Mbit/s : le trafic à émettre dépasse ce que le port peut écouler. Aucune erreur, aucune collision : le lien est sain, il est simplement saturé. On passe le serveur à une carte plus rapide ou on étale les sauvegardes ; la QoS peut protéger les autres flux.",
+    "distractorNotes": {
+      "a": "Le port est en full duplex sans runts, CRC ni collisions : rien n'indique un duplex mismatch.",
+      "b": "Un câble défectueux ferait monter les erreurs CRC en entrée, à 0 ici ; les output drops ne viennent pas du câble.",
+      "d": "Le port est en full duplex et le compteur collisions est à 0 : il n'y a pas de collisions."
+    },
+    "reference": "Cisco — Troubleshoot Switch Port and Interface Problems ; Cisco IOS Interface and Hardware Component Command Reference (show interfaces)"
+  },
+  {
+    "slug": "ccna-1.4-speed-mismatch-notconnect-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. SW1 et SW2 sont reliés par un câble croisé de 2 m en bon état, entre leurs ports Gi1/0/24. Le lien ne monte pas. Quelle en est la cause ?",
+      "exhibit": "SW1#show running-config interface GigabitEthernet1/0/24\nBuilding configuration...\n\nCurrent configuration : 94 bytes\n!\ninterface GigabitEthernet1/0/24\n description Lien vers SW2\n speed 100\n duplex full\nend\n\nSW2#show running-config interface GigabitEthernet1/0/24\nBuilding configuration...\n\nCurrent configuration : 93 bytes\n!\ninterface GigabitEthernet1/0/24\n description Lien vers SW1\n speed 10\n duplex full\nend\n\nSW1#show interfaces status | include Gi1/0/24\nGi1/0/24  Lien vers SW2 notconnect   1      full    100 10/100/1000BaseTX",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des vitesses différentes, fixées à 100 et à 10 Mbit/s sans autonégociation"
+        },
+        {
+          "id": "b",
+          "text": "Un duplex mismatch, car les deux ports sont forcés en full duplex"
+        },
+        {
+          "id": "c",
+          "text": "Le câble croisé, qui ne convient pas entre deux commutateurs"
+        },
+        {
+          "id": "d",
+          "text": "Les deux ports Gi1/0/24, désactivés par la commande shutdown"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Les deux ports ont une vitesse et un duplex fixés : l'autonégociation est désactivée des deux côtés. SW1 émet en 100BASE-TX et SW2 en 10BASE-T, deux signalisations incompatibles : aucun ne reconnaît le signal de l'autre, et le lien reste down/down, affiché notconnect. Avec un côté en auto, celui-ci aurait détecté la vitesse de l'autre par parallel detection. On configure donc la même vitesse des deux côtés, ou on remet les deux ports en auto. Le câble croisé est le bon choix entre deux commutateurs, avec ou sans Auto-MDIX.",
+    "distractorNotes": {
+      "b": "Les deux ports sont en full duplex : leurs duplex concordent. Et un duplex mismatch n'empêche pas le lien de monter, il provoque des erreurs.",
+      "c": "Sans Auto-MDIX, c'est justement un câble croisé qu'il faut entre deux commutateurs ; avec Auto-MDIX, il fonctionne aussi.",
+      "d": "Un port en shutdown serait affiché disabled, et la configuration ne contient aucun shutdown ; notconnect signale l'absence de signal reconnu."
+    },
+    "reference": "IEEE 802.3, clause 28 (autonégociation) ; Cisco — Troubleshoot Switch Port and Interface Problems"
+  },
+  {
+    "slug": "ccna-1.4-link-flap-errdisable-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Depuis ce matin, le poste du bureau 214 perdait la connexion par intermittence ; il n'a désormais plus de réseau du tout. Quelle est la cause la plus probable, et que faut-il faire ?",
+      "exhibit": "SW1#show interfaces status err-disabled\n\nPort      Name         Status       Reason               Err-disabled Vlans\nGi1/0/14  Bureau-214   err-disabled link-flap",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une BPDU reçue sur le port : retirer le commutateur raccordé, puis entrer no shutdown"
+        },
+        {
+          "id": "b",
+          "text": "Un lien physique instable : réparer le câblage, puis entrer shutdown et no shutdown"
+        },
+        {
+          "id": "c",
+          "text": "Une violation de port-security : effacer les adresses MAC sécurisées du port"
+        },
+        {
+          "id": "d",
+          "text": "Une désactivation par l'administrateur : entrer no shutdown sur l'interface"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La raison link-flap indique que le lien est passé trop souvent de up à down en peu de temps (par défaut 5 fois en 10 secondes) : IOS a alors placé Gi1/0/14 en err-disabled pour protéger le commutateur. La cause est physique : cordon ou prise murale défectueux, connecteur mal serti, carte réseau défaillante. Après la réparation, le port ne remonte pas seul, sauf si errdisable recovery est configuré pour cette cause : il faut entrer shutdown, puis no shutdown, sur l'interface.",
+    "distractorNotes": {
+      "a": "Une BPDU reçue sur un port protégé par BPDU guard donnerait la raison bpduguard, et non link-flap.",
+      "c": "Une violation de port-security en mode shutdown donnerait la raison psecure-violation, pas link-flap.",
+      "d": "Un port désactivé par l'administrateur serait affiché disabled, et non err-disabled avec une raison."
+    },
+    "reference": "Cisco — Errdisable Port State Recovery on the Cisco IOS Platforms"
+  },
+  {
+    "slug": "ccna-1.4-autoneg-prefix-status-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Que signifie le préfixe « a- » des colonnes Duplex et Speed ?",
+      "exhibit": "SW1#show interfaces GigabitEthernet1/0/6 status\n\nPort      Name         Status       Vlan  Duplex  Speed Type\nGi1/0/6   Compta-06    connected    10    a-full a-1000 10/100/1000BaseTX",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les valeurs ont été obtenues par autonégociation avec le poste"
+        },
+        {
+          "id": "b",
+          "text": "Les valeurs ont été fixées par l'administrateur avec speed et duplex"
+        },
+        {
+          "id": "c",
+          "text": "Le port a croisé ses paires grâce à Auto-MDIX"
+        },
+        {
+          "id": "d",
+          "text": "Le port est un port d'accès (access) du VLAN 10"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Dans show interfaces status, le préfixe « a- » signale une valeur déterminée automatiquement : le port est en speed auto et duplex auto, et il fonctionne ici à 1000 Mbit/s en full duplex à l'issue de l'autonégociation. Une valeur fixée par l'administrateur s'affiche sans préfixe, par exemple « full » et « 100 ». Un « a-half » face à un poste censé être en full duplex est un bon indice de duplex mismatch : le port n'a pas reçu d'annonce et s'est replié sur le half duplex.",
+    "distractorNotes": {
+      "b": "Des valeurs fixées par speed et duplex s'affichent sans préfixe, comme « full » et « 100 ».",
+      "c": "Auto-MDIX n'apparaît pas dans show interfaces status ; le préfixe porte sur la vitesse et le duplex.",
+      "d": "Le VLAN se lit dans la colonne Vlan ; les colonnes Duplex et Speed décrivent le mode de fonctionnement du lien."
+    },
+    "reference": "Cisco IOS Interface and Hardware Component Command Reference (show interfaces status)"
+  },
+  {
+    "slug": "ccna-1.4-cable-too-long-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un technicien a tiré un câble de catégorie 6 de 140 m, d'un seul tenant, pour relier un poste à un port 10/100/1000BASE-T. Que faut-il en attendre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Rien de particulier : la limite de 100 m ne vaut que pour les liens en half duplex"
+        },
+        {
+          "id": "b",
+          "text": "Un lien à 1 Gbit/s sans erreur, la catégorie 6 étant prévue pour 10 Gbit/s"
+        },
+        {
+          "id": "c",
+          "text": "Un lien qui ne monte qu'avec un câble croisé, nécessaire au-delà de 100 m"
+        },
+        {
+          "id": "d",
+          "text": "Un lien hors norme, exposé aux erreurs CRC, voire qui ne monte pas du tout"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Quelle que soit la catégorie (5e, 6 ou 6a), un segment Ethernet en paires torsadées est limité à 100 m, cordons compris. Au-delà, l'atténuation et la diaphonie dégradent le signal : le lien peut monter mais accumuler des erreurs CRC, devenir instable, ou ne pas monter du tout. Sur un port en half duplex, un câble trop long provoque aussi des late collisions, car la collision n'est plus détectée à temps. Pour 140 m, il faut un équipement actif intermédiaire, comme un commutateur, ou une liaison en fibre optique.",
+    "distractorNotes": {
+      "a": "La limite de 100 m vient de l'atténuation du signal : elle vaut en full comme en half duplex.",
+      "b": "La catégorie ne lève pas la limite de 100 m ; en catégorie 6, 10GBASE-T est même limité à 55 m environ.",
+      "c": "Le choix entre câble droit et croisé dépend du brochage des équipements, pas de la longueur ; il ne compense pas un câble trop long."
+    },
+    "reference": "IEEE 802.3, clause 40 (1000BASE-T) ; ANSI/TIA-568.2-D"
+  },
+  {
+    "slug": "ccna-1.4-late-collision-causes-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux causes peuvent faire augmenter le compteur late collision d'un port de commutateur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un câble plus long que la longueur maximale du segment"
+        },
+        {
+          "id": "b",
+          "text": "Des vitesses différentes, forcées aux deux extrémités du lien"
+        },
+        {
+          "id": "c",
+          "text": "Des trames jumbo reçues sur un port au MTU de 1 500 octets"
+        },
+        {
+          "id": "d",
+          "text": "Un duplex mismatch, le port étant du côté half duplex"
+        },
+        {
+          "id": "e",
+          "text": "Une file d'attente de sortie saturée par un trafic trop important"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Une late collision est une collision détectée après la fenêtre où CSMA/CD est censé la percevoir, soit après les 64 premiers octets (512 bits) émis à 10 ou 100 Mbit/s. Elle n'existe qu'en half duplex. Deux causes classiques : un duplex mismatch, où l'autre extrémité, en full duplex, émet sans écouter le support et percute à tout moment les trames du port en half duplex ; et un segment trop long, dont le délai de propagation empêche de percevoir la collision à temps. Une carte réseau défaillante peut aussi en provoquer.",
+    "distractorNotes": {
+      "b": "Des vitesses différentes empêchent le lien de monter : aucune trame n'est échangée, donc aucune collision.",
+      "c": "Des trames trop longues sont comptées dans giants, en entrée ; elles ne provoquent pas de collision.",
+      "e": "Une file de sortie saturée fait monter les output drops ; ce n'est pas une collision."
+    },
+    "reference": "IEEE 802.3, clause 4 (CSMA/CD, slot time) ; Cisco — Troubleshoot Switch Port and Interface Problems"
+  },
+  {
+    "slug": "ccna-1.4-notconnect-causes-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur SW1, la commande show interfaces status affiche notconnect pour le port Gi1/0/10, relié à un poste de travail. Quelles trois causes peuvent l'expliquer ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La commande shutdown est configurée sur Gi1/0/10"
+        },
+        {
+          "id": "b",
+          "text": "Le câble entre le poste et Gi1/0/10 est débranché ou coupé"
+        },
+        {
+          "id": "c",
+          "text": "Un duplex mismatch existe entre Gi1/0/10 et le poste"
+        },
+        {
+          "id": "d",
+          "text": "Le poste est éteint, ou sa carte réseau est désactivée"
+        },
+        {
+          "id": "e",
+          "text": "BPDU guard a désactivé Gi1/0/10 après réception d'une BPDU"
+        },
+        {
+          "id": "f",
+          "text": "Gi1/0/10 est forcé en 100 Mbit/s et la carte du poste en 10 Mbit/s"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "f"
+      ]
+    },
+    "explanation": "notconnect correspond à l'état down/down d'un port qui ne reçoit aucun signal de liaison reconnu : c'est un problème de couche 1. Les causes typiques sont un câble absent, coupé ou mal serti, un équipement distant éteint ou dont le port est désactivé, et des vitesses forcées différentes aux deux extrémités, dont les signalisations sont incompatibles. Un port en shutdown s'affiche disabled, un port coupé par une fonction de protection (BPDU guard, port-security, link-flap) err-disabled, et un duplex mismatch laisse le lien connected, mais avec des erreurs.",
+    "distractorNotes": {
+      "a": "Un port en shutdown est affiché disabled (administratively down), et non notconnect.",
+      "c": "Un duplex mismatch n'empêche pas le lien de monter : le port reste connected, mais accumule des erreurs.",
+      "e": "Un port désactivé par BPDU guard est affiché err-disabled, avec la raison bpduguard."
+    },
+    "reference": "Cisco — Troubleshoot Switch Port and Interface Problems ; Cisco IOS Interface and Hardware Component Command Reference (show interfaces status)"
+  },
+  {
+    "slug": "ccna-1.4-show-interfaces-vs-brief-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux informations la commande show interfaces GigabitEthernet1/0/3 fournit-elle, mais pas la commande show ip interface brief ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le duplex et la vitesse de fonctionnement du port"
+        },
+        {
+          "id": "b",
+          "text": "L'état de l'interface et celui de son protocole de ligne"
+        },
+        {
+          "id": "c",
+          "text": "L'adresse IP configurée sur l'interface"
+        },
+        {
+          "id": "d",
+          "text": "Le nom et la plateforme du voisin découvert par CDP"
+        },
+        {
+          "id": "e",
+          "text": "Les compteurs d'erreurs, comme CRC, runts ou late collision"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "show ip interface brief donne une ligne par interface : nom, adresse IP, méthode d'attribution, état de l'interface (Status) et du protocole de ligne (Protocol). Elle suffit pour repérer une interface down ou administratively down, mais ne dit rien du duplex, de la vitesse ni des erreurs. show interfaces détaille une interface : état, duplex et vitesse effectifs, MTU, charge, et tous les compteurs (input errors, CRC, runts, giants, collisions, late collision, output drops), indispensables pour diagnostiquer un problème de câble ou de duplex.",
+    "distractorNotes": {
+      "b": "Les deux commandes affichent l'état de l'interface et du protocole de ligne : ce sont les colonnes Status et Protocol de show ip interface brief.",
+      "c": "L'adresse IP est justement la colonne IP-Address de show ip interface brief.",
+      "d": "Aucune des deux commandes n'affiche les voisins CDP : il faut show cdp neighbors."
+    },
+    "reference": "Cisco IOS Interface and Hardware Component Command Reference (show interfaces) ; Cisco — Troubleshoot Switch Port and Interface Problems"
+  },
+  {
+    "slug": "ccna-1.4-duplex-mismatch-status-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Toutes les cartes réseau raccordées à SW1 sont en autonégociation, sauf celle de PC-02, forcée en 100 Mbit/s full duplex. L'imprimante IMP-05 ne dépasse pas 100 Mbit/s. Quels deux ports subissent actuellement un duplex mismatch ?",
+      "exhibit": "SW1#show interfaces status\n\nPort      Name         Status       Vlan  Duplex  Speed Type\nGi1/0/1   PC-01        connected    10    a-full a-1000 10/100/1000BaseTX\nGi1/0/2   PC-02        connected    10    a-half  a-100 10/100/1000BaseTX\nGi1/0/3   SRV-03       connected    30      full    100 10/100/1000BaseTX\nGi1/0/4   PC-04        notconnect   10      full    100 10/100/1000BaseTX\nGi1/0/5   IMP-05       connected    20    a-full  a-100 10/100/1000BaseTX",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi1/0/1"
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/2"
+        },
+        {
+          "id": "c",
+          "text": "Gi1/0/3"
+        },
+        {
+          "id": "d",
+          "text": "Gi1/0/4"
+        },
+        {
+          "id": "e",
+          "text": "Gi1/0/5"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "Gi1/0/2 est en auto face à une carte forcée qui n'envoie pas d'annonces : il détecte 100 Mbit/s par parallel detection mais, faute de connaître le duplex, retombe en half duplex (a-half), alors que PC-02 est en full. Gi1/0/3 présente le cas inverse : forcé en 100 full, il n'envoie pas d'annonces, et la carte du serveur, en auto, retombe en half duplex. Gi1/0/1 et Gi1/0/5 ont négocié avec un équipement lui aussi en auto : l'imprimante plafonne à 100 Mbit/s, mais en full duplex. Gi1/0/4, notconnect, n'a pas de lien.",
+    "distractorNotes": {
+      "a": "Gi1/0/1 et PC-01 sont tous deux en auto : ils ont négocié 1000 Mbit/s en full duplex.",
+      "d": "Gi1/0/4 est notconnect : sans lien, il n'échange aucune trame. Sa configuration forcée provoquera un mismatch une fois PC-04 raccordé, mais pas tant que le lien est down.",
+      "e": "Gi1/0/5 et l'imprimante sont en auto : ils ont négocié leur meilleur mode commun, 100 Mbit/s en full duplex."
+    },
+    "reference": "IEEE 802.3, clause 28 (autonégociation, parallel detection) ; Cisco — Configuring and Troubleshooting Ethernet 10/100/1000Mb Half/Full Duplex Auto-Negotiation"
+  },
+  {
+    "slug": "ccna-1.4-runt-giant-thresholds-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Complétez les seuils sur lesquels reposent plusieurs compteurs de show interfaces, pour un port Ethernet à 10 ou 100 Mbit/s au MTU de 1 500 octets.",
+      "fields": [
+        {
+          "id": "runt",
+          "label": "Taille minimale d'une trame Ethernet valide, en octets ; en dessous, elle est comptée en runt (nombre entier)"
+        },
+        {
+          "id": "giant",
+          "label": "Taille maximale d'une trame sans étiquette 802.1Q, en octets ; au-delà, elle est comptée en giant (nombre entier)"
+        },
+        {
+          "id": "late",
+          "label": "Nombre de bits émis au-delà duquel une collision est comptée en late collision (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "runt": {
+          "accepted": [
+            "64"
+          ],
+          "normalize": "int"
+        },
+        "giant": {
+          "accepted": [
+            "1518"
+          ],
+          "normalize": "int"
+        },
+        "late": {
+          "accepted": [
+            "512"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Une trame Ethernet mesure de 64 à 1 518 octets, de l'adresse MAC de destination au FCS inclus (1 522 avec une étiquette 802.1Q). Une trame reçue plus courte est un runt, souvent un fragment de collision ; plus longue, un giant, typiquement dû à un MTU différent à l'autre extrémité. Les 64 octets minimaux, soit 512 bits, correspondent au slot time de CSMA/CD à 10 et 100 Mbit/s : une station en half duplex doit percevoir toute collision avant d'avoir émis 512 bits. Une collision perçue plus tard est une late collision, signe d'un duplex mismatch ou d'un câble trop long.",
+    "reference": "IEEE 802.3, clauses 3 (format de la trame) et 4 (paramètres slotTime et minFrameSize)"
+  },
+  {
+    "slug": "ccna-1.4-autoneg-fallback-two-pcs-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Deux PC sont raccordés à des ports 10/100/1000BASE-T de SW1 laissés en configuration par défaut (speed auto, duplex auto). La carte de PC-A est forcée en 10 Mbit/s full duplex, sans autonégociation. Celle de PC-B est en autonégociation, mais ne prend en charge que 10 et 100 Mbit/s, en half comme en full duplex. Indiquez la vitesse et le duplex qu'adopte chaque port de SW1.",
+      "fields": [
+        {
+          "id": "a_speed",
+          "label": "Port de PC-A : vitesse, en Mbit/s (nombre entier)"
+        },
+        {
+          "id": "a_duplex",
+          "label": "Port de PC-A : duplex (half ou full)"
+        },
+        {
+          "id": "b_speed",
+          "label": "Port de PC-B : vitesse, en Mbit/s (nombre entier)"
+        },
+        {
+          "id": "b_duplex",
+          "label": "Port de PC-B : duplex (half ou full)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "a_speed": {
+          "accepted": [
+            "10"
+          ],
+          "normalize": "int"
+        },
+        "a_duplex": {
+          "accepted": [
+            "half",
+            "half duplex",
+            "half-duplex",
+            "a-half"
+          ],
+          "normalize": "text"
+        },
+        "b_speed": {
+          "accepted": [
+            "100"
+          ],
+          "normalize": "int"
+        },
+        "b_duplex": {
+          "accepted": [
+            "full",
+            "full duplex",
+            "full-duplex",
+            "a-full"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "PC-A ne négocie pas : le port de SW1 détecte sa vitesse, 10 Mbit/s, à la forme du signal reçu (parallel detection), mais ne peut pas connaître son duplex. Il applique alors la règle par défaut : half duplex à 10 ou 100 Mbit/s, full duplex à 1000 Mbit/s. D'où un duplex mismatch avec PC-A, forcé en full. PC-B négocie : les deux extrémités retiennent le meilleur mode qu'elles ont en commun, 100 Mbit/s en full duplex. La bonne pratique est de laisser les deux côtés en auto, ou de les forcer tous les deux à l'identique.",
+    "reference": "IEEE 802.3, clause 28 et annexe 28B (autonégociation, parallel detection) ; Cisco — Configuring and Troubleshooting Ethernet 10/100/1000Mb Half/Full Duplex Auto-Negotiation"
+  },
+  {
+    "slug": "ccna-1.4-errdisable-manual-recovery-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le port GigabitEthernet1/0/5 de SW1 est passé en err-disabled, pour cause de bpduguard, quand un utilisateur y a branché un petit commutateur. Le commutateur a été retiré, et errdisable recovery n'est pas configuré. En partant du mode de configuration globale, entrez dans l'interface et réactivez-la manuellement.",
+      "prompt": "SW1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet1/0/5"
+        ],
+        [
+          "shutdown"
+        ],
+        [
+          "no shutdown"
+        ]
+      ]
+    },
+    "explanation": "Un port err-disabled a été désactivé par IOS, et non par l'administrateur : il ne figure pas en shutdown dans la configuration. La procédure documentée par Cisco consiste à le désactiver administrativement avec « shutdown », puis à le réactiver avec « no shutdown », dans cet ordre. Supprimer la cause avant est indispensable : si le commutateur était encore branché, la première BPDU reçue remettrait aussitôt le port en err-disabled. On vérifie ensuite avec « show interfaces status » que le port est repassé à connected.",
+    "reference": "Cisco — Errdisable Port State Recovery on the Cisco IOS Platforms"
+  },
+  {
+    "slug": "ccna-1.4-errdisable-recovery-link-flap-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, des ports de l'étage 2, au câblage ancien, passent parfois en err-disabled pour cause de link-flap. Configurez SW1 pour qu'il réactive automatiquement les ports désactivés pour cette seule cause, et ramenez l'intervalle de réactivation de 300 à 120 secondes. Partez du mode de configuration globale.",
+      "prompt": "SW1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "errdisable recovery cause link-flap"
+        ],
+        [
+          "errdisable recovery interval 120"
+        ]
+      ]
+    },
+    "explanation": "Par défaut, IOS ne réactive pas automatiquement un port err-disabled pour cause de link-flap. « errdisable recovery cause link-flap » l'active pour la seule cause link-flap (« cause all » l'activerait pour toutes), et « errdisable recovery interval 120 » fixe le délai au bout duquel IOS tente de réactiver le port, 300 secondes par défaut. L'intervalle est global : il vaut pour toutes les causes activées. Si le câblage reste défectueux, le port repassera en err-disabled : la reprise automatique ne dispense pas de réparer. « show errdisable recovery » affiche les causes activées et les ports en attente.",
+    "reference": "Cisco — Errdisable Port State Recovery on the Cisco IOS Platforms"
+  },
+  {
+    "slug": "ccna-1.4-autoneg-priority-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Deux cartes réseau en autonégociation (IEEE 802.3, clause 28) retiennent le mode le plus prioritaire qu'elles ont en commun. Ordonnez ces modes, du plus prioritaire au moins prioritaire.",
+      "items": [
+        {
+          "id": "h10",
+          "text": "10BASE-T en half duplex"
+        },
+        {
+          "id": "f100",
+          "text": "100BASE-TX en full duplex"
+        },
+        {
+          "id": "f1000",
+          "text": "1000BASE-T en full duplex"
+        },
+        {
+          "id": "f10",
+          "text": "10BASE-T en full duplex"
+        },
+        {
+          "id": "h100",
+          "text": "100BASE-TX en half duplex"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "f1000",
+        "f100",
+        "h100",
+        "f10",
+        "h10"
+      ]
+    },
+    "explanation": "L'autonégociation compare les modes annoncés par les deux extrémités et retient le plus prioritaire de ceux qu'elles ont en commun, selon l'ordre fixé par l'annexe 28B de la norme. La vitesse passe avant le duplex : 100BASE-TX en half duplex l'emporte sur 10BASE-T en full duplex. À vitesse égale, le full duplex l'emporte sur le half duplex. Ainsi, une carte qui annonce 10 et 100 Mbit/s, en half et en full duplex, négocie 100 Mbit/s en full duplex avec un port 10/100/1000.",
+    "reference": "IEEE 802.3, clause 28 et annexe 28B (priorité de résolution)"
+  },
+  {
+    "slug": "ccna-1.4-error-counter-definitions-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque compteur de show interfaces à ce qu'il compte.",
+      "left": [
+        {
+          "id": "runts",
+          "text": "runts"
+        },
+        {
+          "id": "giants",
+          "text": "giants"
+        },
+        {
+          "id": "crc",
+          "text": "CRC"
+        },
+        {
+          "id": "late",
+          "text": "late collision"
+        },
+        {
+          "id": "drops",
+          "text": "Total output drops"
+        }
+      ],
+      "right": [
+        {
+          "id": "short",
+          "text": "Trames reçues plus courtes que la taille minimale d'une trame Ethernet"
+        },
+        {
+          "id": "long",
+          "text": "Trames reçues plus longues que la taille maximale admise sur le port"
+        },
+        {
+          "id": "fcs",
+          "text": "Trames reçues dont le FCS recalculé ne correspond pas à celui de la trame"
+        },
+        {
+          "id": "latecoll",
+          "text": "Collisions détectées après la fenêtre normale de détection des collisions"
+        },
+        {
+          "id": "queue",
+          "text": "Trames abandonnées parce que la file d'attente de sortie était pleine"
+        },
+        {
+          "id": "align",
+          "text": "Trames reçues avec un nombre non entier d'octets et un FCS incorrect"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "runts": "short",
+        "giants": "long",
+        "crc": "fcs",
+        "late": "latecoll",
+        "drops": "queue"
+      }
+    },
+    "explanation": "Les runts sont des trames de moins de 64 octets, souvent des fragments de collision ; les giants dépassent la taille maximale (1 518 octets sans étiquette au MTU de 1 500), signe d'un MTU différent à l'autre extrémité. Le compteur CRC relève les trames altérées en transit : câble, connecteur, interférences, ou côté full duplex d'un duplex mismatch. Une late collision survient après les 512 premiers bits émis (à 10 ou 100 Mbit/s) : duplex mismatch côté half duplex, ou câble trop long. Les output drops traduisent une congestion en sortie, sans erreur de transmission.",
+    "distractorNotes": {
+      "align": "C'est la définition du compteur frame (erreurs d'alignement), qui ne figure pas à gauche."
+    },
+    "reference": "Cisco — Troubleshoot Switch Port and Interface Problems ; Cisco IOS Interface and Hardware Component Command Reference (show interfaces)"
+  },
+  {
+    "slug": "ccna-1.4-interface-state-lines-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque première ligne de show interfaces à sa signification.",
+      "left": [
+        {
+          "id": "upup",
+          "text": "GigabitEthernet1/0/1 is up, line protocol is up (connected)"
+        },
+        {
+          "id": "admin",
+          "text": "GigabitEthernet1/0/2 is administratively down, line protocol is down (disabled)"
+        },
+        {
+          "id": "notc",
+          "text": "GigabitEthernet1/0/3 is down, line protocol is down (notconnect)"
+        },
+        {
+          "id": "errd",
+          "text": "GigabitEthernet1/0/4 is down, line protocol is down (err-disabled)"
+        },
+        {
+          "id": "l2",
+          "text": "Serial0/1/0 is up, line protocol is down"
+        }
+      ],
+      "right": [
+        {
+          "id": "ok",
+          "text": "Couches 1 et 2 opérationnelles : l'interface transmet"
+        },
+        {
+          "id": "shut",
+          "text": "La commande shutdown est configurée sur l'interface"
+        },
+        {
+          "id": "phys",
+          "text": "Aucun signal reconnu : câble, équipement distant ou vitesses incompatibles"
+        },
+        {
+          "id": "prot",
+          "text": "Désactivée par IOS après la détection d'une erreur ou d'une violation"
+        },
+        {
+          "id": "l2fail",
+          "text": "Couche 1 opérationnelle, mais échec de la couche 2 : encapsulation, keepalives"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "upup": "ok",
+        "admin": "shut",
+        "notc": "phys",
+        "errd": "prot",
+        "l2": "l2fail"
+      }
+    },
+    "explanation": "Le premier état décrit la couche 1 (signal sur le support), le second le protocole de ligne, c'est-à-dire la couche 2. administratively down signale un shutdown configuré : no shutdown suffit. down/down (notconnect) traduit un problème physique : câble, équipement distant éteint, vitesses forcées différentes. err-disabled indique qu'une fonction comme BPDU guard, port-security ou la détection de link-flap a coupé le port : on supprime la cause, puis shutdown et no shutdown. up/down signale un problème de couche 2, par exemple des encapsulations différentes (HDLC et PPP) aux deux extrémités d'une liaison série.",
+    "reference": "Cisco — Troubleshoot Switch Port and Interface Problems ; Cisco IOS Interface and Hardware Component Command Reference (show interfaces)"
+  }
+]
