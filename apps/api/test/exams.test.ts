@@ -24,6 +24,9 @@ describe.skipIf(!DATABASE_URL)('API v1 : série d’examens blancs figés (Postg
   const call = async (method: 'GET' | 'POST', url: string, body?: unknown, as = cookie) =>
     app.inject({ method, url: `/api/v1${url}`, payload: body as object, headers: as ? { cookie: as } : {} });
 
+  /** Un compte (`select count(*)::int as n …`) lu en base. */
+  const countOf = async (query: ReturnType<typeof sql>) => ((await db.execute(query)).rows[0] as { n: number }).n;
+
   /** Questions d'un examen figé, dans l'ordre, lues en base. */
   const examQuestionSlugs = async (certCode: string, number: number) => {
     const rows = await db
@@ -117,11 +120,11 @@ describe.skipIf(!DATABASE_URL)('API v1 : série d’examens blancs figés (Postg
 
   it('un nouvel import ne crée ni doublon ni examen et ne change pas un examen passé', async () => {
     const before = await examQuestionSlugs('ccna', 42);
-    const [{ n: examsBefore }] = (await db.execute(sql`select count(*)::int as n from exams`)).rows as { n: number }[];
-    const [{ n: questionsBefore }] = (await db.execute(sql`select count(*)::int as n from questions`)).rows as { n: number }[];
+    const examsBefore = await countOf(sql`select count(*)::int as n from exams`);
+    const questionsBefore = await countOf(sql`select count(*)::int as n from questions`);
     await seedContent(db);
-    const [{ n: examsAfter }] = (await db.execute(sql`select count(*)::int as n from exams`)).rows as { n: number }[];
-    const [{ n: questionsAfter }] = (await db.execute(sql`select count(*)::int as n from questions`)).rows as { n: number }[];
+    const examsAfter = await countOf(sql`select count(*)::int as n from exams`);
+    const questionsAfter = await countOf(sql`select count(*)::int as n from questions`);
     expect(examsAfter).toBe(examsBefore);
     expect(questionsAfter).toBe(questionsBefore);
     expect(await examQuestionSlugs('ccna', 42)).toEqual(before);
@@ -197,7 +200,7 @@ describe.skipIf(!DATABASE_URL)('API v1 : série d’examens blancs figés (Postg
   it('la banque importée porte la source de chaque question', async () => {
     const { questions: bank } = loadCertification('ccna');
     const ai = bank.filter((q) => q.source === 'ai').length;
-    const [{ n }] = (await db.execute(sql`select count(*)::int as n from questions q join certifications c on c.id = q.certification_id where c.code = 'ccna' and q.source = 'ai'`)).rows as { n: number }[];
+    const n = await countOf(sql`select count(*)::int as n from questions q join certifications c on c.id = q.certification_id where c.code = 'ccna' and q.source = 'ai'`);
     expect(n).toBe(ai);
   });
 });
