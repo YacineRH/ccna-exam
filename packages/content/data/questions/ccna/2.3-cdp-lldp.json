@@ -1,0 +1,1048 @@
+[
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-multicast-mac-001",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle adresse MAC de destination un commutateur Cisco utilise-t-il pour envoyer ses annonces CDP ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "01:80:C2:00:00:0E"
+        },
+        {
+          "id": "b",
+          "text": "FF:FF:FF:FF:FF:FF"
+        },
+        {
+          "id": "c",
+          "text": "01:00:0C:CC:CC:CC"
+        },
+        {
+          "id": "d",
+          "text": "01:00:0C:CC:CC:CD"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "CDP est encapsulé directement en couche 2 : trame 802.3 avec en-tête LLC/SNAP (OUI Cisco 00000C, type 0x2000), envoyée à l'adresse multicast 01:00:0C:CC:CC:CC. Un commutateur Cisco où CDP est actif traite lui-même ces trames au lieu de les relayer : chaque équipement ne voit ainsi que ses voisins directs. La même adresse sert à d'autres protocoles Cisco (VTP, DTP, PAgP, UDLD), que le commutateur distingue grâce au type SNAP.",
+    "distractorNotes": {
+      "a": "01:80:C2:00:00:0E est l'adresse multicast de LLDP (IEEE 802.1AB), pas celle de CDP.",
+      "b": "CDP n'utilise pas le broadcast : ses trames visent une adresse multicast réservée par Cisco.",
+      "d": "01:00:0C:CC:CC:CD est l'adresse des BPDU PVST+ et Rapid PVST+ de Cisco ; elle ne diffère de celle de CDP que par le dernier octet."
+    },
+    "reference": "Cisco Discovery Protocol Configuration Guide, Cisco IOS Release 15M&T"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-layer2-no-ip-001",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux commutateurs Catalyst neufs, en configuration d'usine, sont reliés par un câble. Aucune adresse IP n'est configurée sur l'un ni sur l'autre. Que montre « show cdp neighbors » sur le premier commutateur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une entrée pour l'autre commutateur, car CDP fonctionne en couche 2 sans adresse IP"
+        },
+        {
+          "id": "b",
+          "text": "Aucune entrée, car CDP a besoin d'une adresse IP sur l'interface pour s'annoncer"
+        },
+        {
+          "id": "c",
+          "text": "Aucune entrée, car CDP reste désactivé tant que « cdp run » n'est pas saisi"
+        },
+        {
+          "id": "d",
+          "text": "Une entrée, mais seulement une fois LLDP activé par « lldp run » des deux côtés"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Sur les commutateurs Catalyst, CDP est actif par défaut, globalement et sur chaque interface. Ses annonces sont des trames de couche 2 envoyées en multicast : elles ne dépendent ni d'IP ni d'aucun autre protocole de couche 3. Chaque commutateur apprend donc l'autre dès que le lien est up : nom (ici « Switch », le nom d'usine), interfaces locale et distante, plateforme et capacités. Seule l'adresse manquera dans « show cdp neighbors detail », puisqu'il n'y en a aucune à annoncer. C'est ce qui rend CDP utile pour dépanner un réseau encore mal configuré.",
+    "distractorNotes": {
+      "b": "CDP est indépendant de la couche 3 : il s'annonce en couche 2 même sans adresse IP ; l'adresse n'est qu'une information transportée quand elle existe.",
+      "c": "CDP est actif par défaut sur les commutateurs Catalyst ; « cdp run » ne sert qu'à le réactiver après un « no cdp run ».",
+      "d": "CDP et LLDP sont indépendants : CDP n'a pas besoin de LLDP, qui est d'ailleurs désactivé par défaut sous IOS."
+    },
+    "reference": "Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-phone-local-port-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sur quel port de SW1 le téléphone IP est-il raccordé ?",
+      "exhibit": "SW1# show cdp neighbors\nCapability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge\n                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone,\n                  D - Remote, C - CVTA, M - Two-port Mac Relay\n\nDevice ID        Local Intrfce     Holdtme    Capability  Platform  Port ID\nDSW1             Gig 1/0/24        158             R S I  C9300-48P Gig 1/0/3\nSEP6C710D1F33A2  Gig 1/0/7         142              H P M  IP Phone  Port 1\nSW5              Gig 1/0/23        176              S I    C9200L-24 Gig 1/0/1\n\nTotal cdp entries displayed : 3",
+      "options": [
+        {
+          "id": "a",
+          "text": "Port 1"
+        },
+        {
+          "id": "b",
+          "text": "Gig 1/0/3"
+        },
+        {
+          "id": "c",
+          "text": "Gig 1/0/23"
+        },
+        {
+          "id": "d",
+          "text": "Gig 1/0/7"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Dans « show cdp neighbors », chaque ligne décrit un voisin vu depuis l'équipement où l'on tape la commande. Local Intrfce donne l'interface de SW1 par laquelle l'annonce est arrivée, Port ID l'interface du voisin qui l'a émise. Le téléphone se reconnaît à ses capacités (H - Host, P - Phone), à sa plateforme « IP Phone » et à son nom SEP suivi de son adresse MAC : il est branché sur Gig 1/0/7 de SW1, et c'est son propre port réseau, « Port 1 », qui est relié au commutateur.",
+    "distractorNotes": {
+      "a": "« Port 1 » figure dans la colonne Port ID : c'est le port réseau du téléphone lui-même, pas une interface de SW1.",
+      "b": "Gig 1/0/3 est le Port ID de DSW1, c'est-à-dire l'interface de DSW1 reliée à SW1 ; elle n'a rien à voir avec le téléphone.",
+      "c": "Gig 1/0/23 est l'interface locale qui mène à SW5, un commutateur (capacités S I), pas au téléphone."
+    },
+    "reference": "Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-lldp-transmit-receive-001",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. SW1 et SW2 n'ont pas d'autre configuration LLDP que celle montrée. Quel résultat donne « show lldp neighbors » sur chacun des deux commutateurs ?",
+      "exhibit": "SW1 Gi1/0/1 ------------------------------------------ Gi1/0/1 SW2\n\nConfiguration LLDP de SW1          Configuration LLDP de SW2\nlldp run                           lldp run\n!                                  !\ninterface GigabitEthernet1/0/1     interface GigabitEthernet1/0/1\n no lldp receive                    no lldp transmit",
+      "options": [
+        {
+          "id": "a",
+          "text": "SW1 affiche SW2, mais SW2 n'affiche pas SW1"
+        },
+        {
+          "id": "b",
+          "text": "SW2 affiche SW1, mais SW1 n'affiche pas SW2"
+        },
+        {
+          "id": "c",
+          "text": "Aucun des deux commutateurs n'affiche l'autre"
+        },
+        {
+          "id": "d",
+          "text": "Chacun affiche l'autre, car « lldp run » prime sur l'interface"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une entrée de voisin LLDP se crée chez celui qui reçoit l'annonce. SW1 envoie toujours ses LLDPDU sur Gi1/0/1 (seule la réception y est coupée) et SW2, qui reçoit encore, apprend donc SW1. En sens inverse, SW2 n'émet plus rien (« no lldp transmit ») et SW1 ignorerait de toute façon ce qu'il reçoit (« no lldp receive ») : SW1 n'a aucun voisin sur Gi1/0/1. LLDP ne fait pas de poignée de main : chaque sens est indépendant, et il suffit que l'émission manque chez l'un ou la réception chez l'autre pour que la découverte échoue dans ce sens.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : SW1 ne traite plus les LLDPDU reçues et SW2 n'en émet plus ; c'est SW1 qui reste sans voisin.",
+      "c": "SW1 émet encore ses LLDPDU et SW2 les reçoit encore : la découverte fonctionne dans le sens de SW1 vers SW2.",
+      "d": "« lldp run » active LLDP globalement, mais « no lldp transmit » et « no lldp receive » s'appliquent ensuite à l'interface et l'emportent sur ce réglage."
+    },
+    "reference": "IEEE 802.1AB ; Cisco Catalyst 9300 Configuration Guide — Configuring LLDP, LLDP-MED, and Wired Location Service"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-lldp-capability-codes-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. D'après les codes de capacité, quel voisin de SW1 est un commutateur ?",
+      "exhibit": "SW1# show lldp neighbors\nCapability codes:\n    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device\n    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other\n\nDevice ID           Local Intf     Hold-time  Capability      Port ID\nedge-01             Gi1/0/1        120        R               ge-0/0/0\nsrv-backup          Gi1/0/2        120        S               eth0\nacc-07              Gi1/0/3        120        B               1/1/48\nap-hall             Gi1/0/4        120        W               eth0\n\nTotal entries displayed: 4",
+      "options": [
+        {
+          "id": "a",
+          "text": "srv-backup"
+        },
+        {
+          "id": "b",
+          "text": "edge-01"
+        },
+        {
+          "id": "c",
+          "text": "acc-07"
+        },
+        {
+          "id": "d",
+          "text": "ap-hall"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "LLDP reprend les capacités système de l'IEEE 802.1AB, dont les codes diffèrent de ceux de CDP : un commutateur s'annonce comme pont (B, Bridge), un routeur avec R, un point d'accès avec W et un simple terminal avec S (Station). acc-07 est donc le commutateur. Piège classique : sous CDP, S signifie Switch et B Source Route Bridge. Un commutateur multicouche qui route annoncerait B,R, et un téléphone IP, qui contient un petit commutateur, B,T.",
+    "distractorNotes": {
+      "a": "Sous LLDP, S signifie Station : un terminal (ici un serveur), et non un commutateur comme le S de CDP.",
+      "b": "R désigne un routeur : edge-01 n'annonce que la capacité de routage.",
+      "d": "W désigne un point d'accès sans fil (WLAN Access Point)."
+    },
+    "reference": "IEEE 802.1AB ; Cisco Catalyst 9300 Configuration Guide — Configuring LLDP, LLDP-MED, and Wired Location Service"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-access-port-leak-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un audit révèle qu'un PC branché sur une prise murale a capturé des trames CDP indiquant le nom, l'adresse IP et la version d'IOS XE du commutateur d'accès SW4. Les prises murales ne desservent que des PC ; les liaisons montantes vers les autres commutateurs Cisco doivent garder CDP. Quelle mesure supprime cette fuite d'informations ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "« no cdp run » en configuration globale de SW4"
+        },
+        {
+          "id": "b",
+          "text": "« cdp timer 254 » en configuration globale de SW4"
+        },
+        {
+          "id": "c",
+          "text": "« switchport nonegotiate » sur les ports d'accès de SW4"
+        },
+        {
+          "id": "d",
+          "text": "« no cdp enable » sur les ports d'accès de SW4"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "CDP est actif par défaut sur toutes les interfaces : SW4 envoie donc ses annonces jusque sur les prises des utilisateurs, où n'importe quel analyseur les lit en clair. « no cdp enable » sous les ports d'accès (par exemple avec « interface range ») coupe CDP sur ces seuls ports, tandis que les liaisons montantes continuent de l'échanger. C'est la recommandation des guides de durcissement : désactiver CDP et LLDP là où ils ne servent pas, en particulier vers les utilisateurs et vers l'extérieur. Attention aux ports qui servent des téléphones IP Cisco : ils ont besoin de CDP pour apprendre leur VLAN voix.",
+    "distractorNotes": {
+      "a": "« no cdp run » coupe CDP sur tout SW4, y compris sur les liaisons montantes qui doivent le garder.",
+      "b": "Espacer les annonces ne les supprime pas : SW4 enverrait toujours ses informations sur les prises, seulement moins souvent.",
+      "c": "« switchport nonegotiate » désactive DTP, un autre protocole Cisco ; CDP continue d'être émis sur le port."
+    },
+    "reference": "Cisco Guide to Harden Cisco IOS Devices ; Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-native-vlan-mismatch-001",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Ce message apparaît régulièrement sur la console de SW1. La politique de l'entreprise impose le VLAN natif 99 sur tous les trunks. Quelle action corrige la cause du message en respectant cette politique ?",
+      "exhibit": "SW1#\n*Nov  8 09:14:07.312: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch\ndiscovered on GigabitEthernet1/0/24 (99), with SW2 GigabitEthernet1/0/1 (1).",
+      "options": [
+        {
+          "id": "a",
+          "text": "Saisir « switchport trunk native vlan 99 » sous Gi1/0/24 de SW1"
+        },
+        {
+          "id": "b",
+          "text": "Saisir « switchport trunk native vlan 99 » sous Gi1/0/1 de SW2"
+        },
+        {
+          "id": "c",
+          "text": "Saisir « switchport trunk native vlan 1 » sous Gi1/0/24 de SW1"
+        },
+        {
+          "id": "d",
+          "text": "Saisir « no cdp enable » sous Gi1/0/24 de SW1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Ce message vient de CDPv2, qui annonce le VLAN natif de l'interface émettrice. Il se lit depuis le commutateur qui l'affiche : d'abord l'interface locale et son VLAN natif (Gi1/0/24 de SW1, VLAN 99), puis le voisin, son interface et le VLAN natif qu'il annonce (Gi1/0/1 de SW2, VLAN 1). C'est donc SW2 qui s'écarte de la politique : « switchport trunk native vlan 99 » sous son interface Gi1/0/1 aligne les deux extrémités et le message cesse. Tant que le désaccord dure, les trames non étiquetées passent d'un VLAN à l'autre, ce qui casse la connectivité et pose un problème de sécurité.",
+    "distractorNotes": {
+      "a": "Gi1/0/24 de SW1 utilise déjà le VLAN natif 99 : c'est le nombre entre parenthèses qui suit l'interface locale.",
+      "c": "Passer SW1 en VLAN natif 1 supprimerait bien le désaccord, mais en violant la politique, qui impose le VLAN 99.",
+      "d": "Couper CDP masque le message sans corriger le désaccord : les trames non étiquetées continueraient de changer de VLAN."
+    },
+    "reference": "Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-lldp-med-network-policy-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un téléphone IP d'un autre constructeur, qui ne gère pas CDP, est branché sur un port de SW2 configuré avec un VLAN voix. LLDP est actif sur SW2. Grâce à quelle TLV le téléphone apprend-il l'identifiant de ce VLAN voix ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La TLV Network Policy (LLDP-MED)"
+        },
+        {
+          "id": "b",
+          "text": "La TLV Port VLAN ID (IEEE 802.1)"
+        },
+        {
+          "id": "c",
+          "text": "La TLV Management Address (LLDP de base)"
+        },
+        {
+          "id": "d",
+          "text": "La TLV System Capabilities (LLDP de base)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "LLDP-MED (Media Endpoint Discovery, ANSI/TIA-1057) étend LLDP pour les terminaux comme les téléphones IP. Sa TLV Network Policy annonce au téléphone le VLAN à utiliser pour la voix, avec la priorité de couche 2 (CoS) et la valeur DSCP à appliquer : c'est l'équivalent standard du VLAN voix que CDP transmet aux téléphones Cisco. LLDP-MED apporte aussi la gestion fine de l'alimentation PoE, la localisation (appels d'urgence) et l'inventaire. Le commutateur n'envoie ces TLV qu'après avoir reçu des TLV LLDP-MED du téléphone.",
+    "distractorNotes": {
+      "b": "La TLV Port VLAN ID annonce le VLAN non étiqueté du port (le VLAN de données d'un port d'accès), pas le VLAN voix étiqueté.",
+      "c": "La TLV Management Address donne l'adresse d'administration de l'émetteur (par exemple l'IP de SW2), pas un VLAN.",
+      "d": "La TLV System Capabilities indique les fonctions de l'équipement (pont, routeur, téléphone…), pas un VLAN."
+    },
+    "reference": "ANSI/TIA-1057 (LLDP-MED) ; Cisco Catalyst 9300 Configuration Guide — Configuring LLDP, LLDP-MED, and Wired Location Service"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-holdtime-advertised-001",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R2, voisin direct de SW1, tombe en panne juste après avoir envoyé une annonce CDP. Combien de temps, au plus, l'entrée R2 reste-t-elle dans la table des voisins CDP de SW1 ?",
+      "exhibit": "SW1# show cdp\nGlobal CDP information:\n        Sending CDP packets every 60 seconds\n        Sending a holdtime value of 180 seconds\n        Sending CDPv2 advertisements is  enabled\n\nR2# show cdp\nGlobal CDP information:\n        Sending CDP packets every 20 seconds\n        Sending a holdtime value of 60 seconds\n        Sending CDPv2 advertisements is  enabled",
+      "options": [
+        {
+          "id": "a",
+          "text": "20 secondes"
+        },
+        {
+          "id": "b",
+          "text": "180 secondes"
+        },
+        {
+          "id": "c",
+          "text": "60 secondes"
+        },
+        {
+          "id": "d",
+          "text": "80 secondes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La durée de rétention (holdtime) voyage dans chaque annonce CDP : c'est l'émetteur qui indique à ses voisins combien de temps garder ses informations, d'où le libellé « Sending a holdtime value ». SW1 conserve donc l'entrée R2 pendant les 60 s annoncées par R2 ; ses propres 180 s ne concernent que la façon dont ses voisins gardent les informations de SW1. Le compteur Holdtme de « show cdp neighbors » repart de 60 à chaque annonce de R2 (toutes les 20 s) ; sans nouvelle annonce, il atteint 0 au bout de 60 s et l'entrée disparaît. Les timers n'ont pas à être identiques entre voisins.",
+    "distractorNotes": {
+      "a": "20 s est l'intervalle d'envoi de R2 : une annonce manquée ne suffit pas à supprimer l'entrée, il faut que le holdtime expire.",
+      "b": "180 s est le holdtime que SW1 annonce à ses voisins ; pour l'entrée R2, SW1 applique le holdtime reçu de R2.",
+      "d": "Le holdtime court dès la dernière annonce reçue, et non à partir de l'annonce suivante manquée : il n'y a pas d'intervalle à y ajouter."
+    },
+    "reference": "Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-disclosed-info-001",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "SW3 a une adresse IP de gestion et CDP y est resté actif sur tous les ports. Un attaquant branché sur un port d'accès capture les trames CDP envoyées par SW3. Quelles trois informations peut-il y lire ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le hash du mot de passe enable secret"
+        },
+        {
+          "id": "b",
+          "text": "Le nom d'hôte de SW3"
+        },
+        {
+          "id": "c",
+          "text": "La communauté SNMP en lecture seule"
+        },
+        {
+          "id": "d",
+          "text": "La version d'IOS XE exécutée par SW3"
+        },
+        {
+          "id": "e",
+          "text": "L'adresse IP de gestion de SW3"
+        },
+        {
+          "id": "f",
+          "text": "La table des adresses MAC apprises"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Une annonce CDP circule en clair et contient notamment le nom de l'équipement (Device ID), ses adresses, la version complète du logiciel, la plateforme matérielle, les capacités, l'interface d'émission et, avec CDPv2, le VLAN natif, le duplex et le domaine VTP. Pour un attaquant, c'est une reconnaissance gratuite : il sait quel modèle viser, avec quelle version et donc quelles vulnérabilités connues, et à quelle adresse. CDP ne transporte en revanche ni mot de passe, ni communauté SNMP, ni table d'adresses MAC. D'où la recommandation de couper CDP (« no cdp enable ») sur les ports d'accès et vers l'extérieur.",
+    "distractorNotes": {
+      "a": "CDP ne transporte aucun mot de passe, pas même sous forme de hash : celui-ci ne figure que dans la configuration.",
+      "c": "Les communautés SNMP ne figurent pas dans les annonces CDP ; on les vole plutôt en écoutant du SNMPv1 ou v2c, qui circule en clair.",
+      "f": "CDP décrit l'équipement émetteur, pas les adresses qu'il a apprises : sa table d'adresses MAC n'est pas annoncée."
+    },
+    "reference": "Cisco Guide to Harden Cisco IOS Devices ; Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-lldp-mandatory-tlv-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une LLDPDU se compose de TLV, dont la plupart sont facultatives. Parmi les TLV suivantes, lesquelles figurent obligatoirement dans chaque LLDPDU ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Chassis ID"
+        },
+        {
+          "id": "b",
+          "text": "System Name"
+        },
+        {
+          "id": "c",
+          "text": "Time To Live"
+        },
+        {
+          "id": "d",
+          "text": "Management Address"
+        },
+        {
+          "id": "e",
+          "text": "Port ID"
+        },
+        {
+          "id": "f",
+          "text": "Port Description"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "L'IEEE 802.1AB impose en tête de chaque LLDPDU trois TLV, dans cet ordre : Chassis ID, qui identifie l'équipement (souvent par une adresse MAC), Port ID, qui identifie le port émetteur, et Time To Live, la durée pendant laquelle le récepteur doit garder ces informations (le holdtime, 120 s par défaut sous IOS). Le couple Chassis ID et Port ID identifie l'entrée chez le voisin. La TLV End Of LLDPDU, qui clôt la trame, était aussi obligatoire avant la révision 2016 de la norme. Les autres TLV de base (Port Description, System Name, System Description, System Capabilities, Management Address), les TLV IEEE 802.1 et 802.3 et celles de LLDP-MED sont facultatives ; sous IOS, « lldp tlv-select » choisit celles qui sont envoyées.",
+    "distractorNotes": {
+      "b": "System Name est une TLV de base facultative : IOS l'envoie par défaut, mais la norme ne l'impose pas.",
+      "d": "Management Address est facultative : un équipement sans adresse d'administration peut s'annoncer sans elle.",
+      "f": "Port Description est facultative : elle décrit le port en texte libre, en plus de son identifiant Port ID."
+    },
+    "reference": "IEEE 802.1AB"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-detail-analysis-001",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Quelles deux affirmations sont vraies ? (Choisissez-en deux.)",
+      "exhibit": "SW1# show cdp neighbors detail\n-------------------------\nDevice ID: DSW2\nEntry address(es):\n  IP address: 10.0.99.2\nPlatform: cisco C9300-48P,  Capabilities: Router Switch IGMP\nInterface: GigabitEthernet1/0/48,  Port ID (outgoing port): GigabitEthernet1/0/1\nHoldtime : 131 sec\n\nVersion :\nCisco IOS Software [Cupertino], Catalyst L3 Switch Software (CAT9K_IOSXE),\nVersion 17.9.4, RELEASE SOFTWARE (fc5)\n\nadvertisement version: 2\nVTP Management Domain: ''\nNative VLAN: 99\nDuplex: full\nManagement address(es):\n  IP address: 10.0.99.2\n\nTotal cdp entries displayed : 1",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "SW1 est relié à DSW2 par son interface Gi1/0/1."
+        },
+        {
+          "id": "b",
+          "text": "DSW2 est un commutateur multicouche, capable de router."
+        },
+        {
+          "id": "c",
+          "text": "La dernière annonce de DSW2 a été reçue il y a 131 secondes."
+        },
+        {
+          "id": "d",
+          "text": "SW1 est relié à DSW2 par son interface Gi1/0/48."
+        },
+        {
+          "id": "e",
+          "text": "Le champ Native VLAN indique le VLAN natif de Gi1/0/48 de SW1."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Dans « show cdp neighbors detail », Interface désigne l'interface locale de SW1 (Gi1/0/48) et Port ID (outgoing port) l'interface de DSW2 qui a émis l'annonce (Gi1/0/1). Les capacités Router et Switch signalent un commutateur de couche 3 sur lequel le routage est actif. Holdtime est un compte à rebours : il reste 131 s avant la suppression de l'entrée, soit 49 s écoulées depuis la dernière annonce si DSW2 annonce le holdtime par défaut de 180 s. Native VLAN et Duplex, ajoutés par CDPv2 (advertisement version: 2), décrivent le port de DSW2 : on les compare à la configuration locale pour détecter un désaccord.",
+    "distractorNotes": {
+      "a": "Gi1/0/1 est le Port ID, c'est-à-dire l'interface de DSW2 ; l'interface de SW1 est celle du champ Interface, Gi1/0/48.",
+      "c": "Holdtime indique le temps restant avant la suppression de l'entrée, et non le temps écoulé depuis la dernière annonce.",
+      "e": "Le champ Native VLAN donne le VLAN natif annoncé par le port émetteur, Gi1/0/1 de DSW2 ; celui de Gi1/0/48 de SW1 n'apparaît pas dans cette sortie."
+    },
+    "reference": "Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-missing-neighbor-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur SW1, l'interface Gi1/0/5, reliée à un routeur, est up/up, mais « show cdp neighbors » n'affiche aucun voisin sur Gi1/0/5. Quelles deux causes peuvent expliquer cette absence ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi1/0/5 est un port d'accès du VLAN 30, et non un trunk"
+        },
+        {
+          "id": "b",
+          "text": "Le routeur envoie ses annonces CDP toutes les 30 s au lieu de 60 s"
+        },
+        {
+          "id": "c",
+          "text": "« no cdp enable » est configuré sous Gi1/0/5 de SW1"
+        },
+        {
+          "id": "d",
+          "text": "Aucune adresse IP n'est configurée sur Gi1/0/5 de SW1"
+        },
+        {
+          "id": "e",
+          "text": "Le routeur est d'un autre constructeur et ne gère que LLDP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Pour qu'une entrée apparaisse, il faut que le voisin émette des annonces CDP et que SW1 les traite sur cette interface. « no cdp enable » coupe CDP sur Gi1/0/5 dans les deux sens : SW1 n'émet plus rien et ignore ce qu'il reçoit. Un équipement qui ne parle pas CDP, comme un routeur d'un autre constructeur limité à LLDP, n'envoie aucune annonce CDP : il faut alors activer LLDP (« lldp run ») sur SW1 et utiliser « show lldp neighbors ». En revanche, CDP ne dépend ni d'IP, ni du mode du port, ni de timers identiques entre voisins. « show cdp interface » liste les interfaces où CDP est actif.",
+    "distractorNotes": {
+      "a": "CDP fonctionne aussi bien sur un port d'accès que sur un trunk : le VLAN d'accès n'empêche pas la découverte du voisin.",
+      "b": "Les timers CDP ne se négocient pas et n'ont pas à être identiques : SW1 accepte sans problème une annonce toutes les 30 s.",
+      "d": "CDP fonctionne en couche 2 : il découvre le voisin même sans adresse IP sur l'interface."
+    },
+    "reference": "Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-holdtme-countdown-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. R3 et SW4 utilisent les timers CDP par défaut. Depuis combien de secondes SW2 n'a-t-il reçu aucune annonce de R3, et combien d'annonces attendues de R3 ne sont pas arrivées depuis ?",
+      "exhibit": "SW2# show cdp neighbors\nCapability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge\n                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone,\n                  D - Remote, C - CVTA, M - Two-port Mac Relay\n\nDevice ID        Local Intrfce     Holdtme    Capability  Platform  Port ID\nR3               Gig 1/0/2         47              R B S I ISR4321/K Gig 0/0/0\nSW4              Gig 1/0/24        162              S I    C9200L-48 Gig 1/0/48\n\nTotal cdp entries displayed : 2",
+      "fields": [
+        {
+          "id": "elapsed",
+          "label": "Secondes écoulées depuis la dernière annonce reçue de R3 (nombre entier)"
+        },
+        {
+          "id": "missed",
+          "label": "Annonces attendues de R3 et non reçues depuis (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "elapsed": {
+          "accepted": [
+            "133"
+          ],
+          "normalize": "int"
+        },
+        "missed": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Holdtme est un compte à rebours : à chaque annonce reçue, il repart du holdtime annoncé par le voisin, 180 s par défaut, puis décroît d'une unité par seconde. Avec 47 s restantes, la dernière annonce de R3 date de 180 − 47 = 133 s. R3 émettant toutes les 60 s, ses annonces étaient attendues 60 s et 120 s après la dernière : deux ne sont pas arrivées. Avec les timers par défaut, la valeur d'un voisin sain reste entre 120 et 180 (comme les 162 s de SW4) ; une valeur inférieure à 120 signale des annonces perdues. Si rien n'arrive dans les 47 s, l'entrée R3 disparaît.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-lldp-detail-reading-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. L'administrateur documente la liaison entre SW1 et son voisin LLDP. Relevez l'interface du voisin qui est reliée à SW1, puis l'adresse à laquelle l'administrateur peut joindre ce voisin pour le gérer.",
+      "exhibit": "SW1# show lldp neighbors detail\n------------------------------------------------\nLocal Intf: Gi1/0/47\nChassis id: 9c8c.d8a1.4f00\nPort id: 1/1/52\nPort Description: uplink SW1 Gi1/0/47\nSystem Name: core-a\n\nSystem Description:\nMultilayer switch, firmware 10.13\n\nTime remaining: 104 seconds\nSystem Capabilities: B,R\nEnabled Capabilities: B,R\nManagement Addresses:\n    IP: 10.20.0.1\n\nTotal entries displayed: 1",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Interface du voisin reliée à SW1, telle que la sortie l'affiche"
+        },
+        {
+          "id": "ip",
+          "label": "Adresse IP de gestion du voisin, en décimal pointé"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "1/1/52"
+          ],
+          "normalize": "text"
+        },
+        "ip": {
+          "accepted": [
+            "10.20.0.1"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Dans le détail LLDP, Local Intf est l'interface de SW1 (Gi1/0/47) et Port id l'identifiant du port du voisin qui a émis la LLDPDU, ici 1/1/52 : c'est lui qu'il faut documenter. Port Description n'est qu'un texte libre configuré sur le voisin ; il décrit ici l'autre extrémité, d'où le piège. La TLV Management Address, affichée sous Management Addresses, donne l'adresse d'administration du voisin, 10.20.0.1. Le Chassis id identifie l'équipement, Time remaining indique le temps restant avant la suppression de l'entrée et les capacités B,R signalent un commutateur qui route.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1AB ; Cisco Catalyst 9300 Configuration Guide — Configuring LLDP, LLDP-MED, and Wired Location Service"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-no-cdp-run-cli-001",
+    "difficulty": "easy",
+    "body": {
+      "type": "cli",
+      "stem": "Le routeur R5 dessert un réseau de test isolé et ne doit plus envoyer ni traiter d'annonces CDP, sur aucune de ses interfaces. Depuis le mode de configuration globale, désactivez CDP sur tout le routeur en une seule commande.",
+      "prompt": "R5(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "no cdp run"
+        ]
+      ]
+    },
+    "explanation": "« cdp run » est la commande globale qui active CDP sur l'équipement ; sa forme négative « no cdp run » le désactive d'un coup sur toutes les interfaces, en émission comme en réception. « show cdp » répond alors « % CDP is not enabled ». Pour ne couper CDP que sur certaines interfaces, on le laisse actif globalement et on saisit « no cdp enable » sous chacune d'elles. « cdp run » le réactive globalement.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-lldp-run-cli-001",
+    "difficulty": "easy",
+    "body": {
+      "type": "cli",
+      "stem": "SW3 a la configuration LLDP par défaut et doit découvrir un serveur et un commutateur d'un autre constructeur, qui ne gèrent que LLDP. Depuis le mode de configuration globale, activez LLDP sur l'ensemble de SW3.",
+      "prompt": "SW3(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "lldp run"
+        ]
+      ]
+    },
+    "explanation": "Sous IOS et IOS XE, LLDP (IEEE 802.1AB) est désactivé par défaut, contrairement à CDP. « lldp run » l'active globalement : toutes les interfaces qui le prennent en charge émettent et reçoivent alors des LLDPDU, toutes les 30 s par défaut. On affine ensuite interface par interface avec « no lldp transmit » ou « no lldp receive », et on vérifie avec « show lldp » puis « show lldp neighbors ». CDP reste actif en parallèle : les deux protocoles coexistent sans conflit.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1AB ; Cisco Catalyst 9300 Configuration Guide — Configuring LLDP, LLDP-MED, and Wired Location Service"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-timer-holdtime-cli-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R4, CDP doit envoyer une annonce toutes les 30 secondes et demander aux voisins de conserver ses informations pendant 90 secondes. Depuis le mode de configuration globale, saisissez les deux commandes nécessaires.",
+      "prompt": "R4(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "cdp timer 30"
+        ],
+        [
+          "cdp holdtime 90"
+        ]
+      ]
+    },
+    "explanation": "« cdp timer » fixe l'intervalle d'envoi des annonces (60 s par défaut, de 5 à 254 s) et « cdp holdtime » la durée de rétention annoncée aux voisins (180 s par défaut, de 10 à 255 s). Ces deux commandes globales sont indépendantes et se saisissent dans n'importe quel ordre. Le holdtime est transporté dans chaque annonce : ce sont les voisins de R4 qui l'appliquent pour décider quand supprimer l'entrée R4. On garde un holdtime d'au moins trois intervalles, comme ici, pour qu'une annonce perdue ne fasse pas disparaître le voisin. « show cdp » affiche les valeurs en vigueur.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-lldp-timer-holdtime-cli-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "LLDP est déjà actif sur SW6. Pour que ses voisins détectent plus vite sa disparition, SW6 doit envoyer ses LLDPDU toutes les 15 secondes et annoncer une durée de rétention de 60 secondes. Depuis le mode de configuration globale, saisissez les deux commandes nécessaires.",
+      "prompt": "SW6(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "lldp timer 15"
+        ],
+        [
+          "lldp holdtime 60"
+        ]
+      ]
+    },
+    "explanation": "« lldp timer » règle l'intervalle d'envoi des LLDPDU (30 s par défaut) et « lldp holdtime » la valeur de la TLV Time To Live, c'est-à-dire la durée pendant laquelle les voisins doivent conserver les informations de SW6 (120 s par défaut). Comme pour CDP, la rétention est imposée par l'émetteur : avec ces réglages, un voisin oublie SW6 au plus tard 60 s après sa dernière LLDPDU, au lieu de 120 s. Le rapport de quatre intervalles par durée de rétention est conservé, ce qui tolère quelques LLDPDU perdues. « show lldp » affiche les nouvelles valeurs.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1AB ; Cisco Catalyst 9300 Configuration Guide — Configuring LLDP, LLDP-MED, and Wired Location Service"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-isp-interface-cdp-lldp-cli-001",
+    "difficulty": "hard",
+    "body": {
+      "type": "cli",
+      "stem": "Reportez-vous à l'exhibit. LLDP est activé globalement sur R1 (« lldp run »). R1 ne doit plus rien annoncer au routeur du FAI, ni en CDP ni en LLDP, mais il doit continuer à apprendre ce voisin par LLDP. Les autres interfaces ne doivent pas changer. Depuis le mode de configuration globale, saisissez les commandes nécessaires.",
+      "exhibit": "R1# show cdp neighbors\nCapability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge\n                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone,\n                  D - Remote, C - CVTA, M - Two-port Mac Relay\n\nDevice ID        Local Intrfce     Holdtme    Capability  Platform  Port ID\nPE-FAI           Gig 0/0/1         144              R I   ASR1001-X Gig 0/0/3\nSW1              Gig 0/0/0         127              S I   C9200L-24 Gig 1/0/24\n\nTotal cdp entries displayed : 2",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "interface GigabitEthernet0/0/1"
+        ],
+        [
+          "no cdp enable"
+        ],
+        [
+          "no lldp transmit"
+        ]
+      ]
+    },
+    "explanation": "Le FAI est vu sur Gig 0/0/1, dans la colonne Local Intrfce : c'est l'interface de R1 à modifier, Gig 0/0/3 (Port ID) étant celle du routeur du FAI. Sous l'interface, « no cdp enable » coupe CDP sur ce seul lien : CDP ne se règle pas séparément en émission et en réception, contrairement à LLDP. « no lldp transmit » arrête l'envoi des LLDPDU tout en laissant la réception active : R1 continue d'apprendre PE-FAI. « no cdp run » et « no lldp run » seraient trop larges, puisqu'ils toucheraient aussi la liaison vers SW1. Ce durcissement évite de livrer au FAI le nom, les adresses et la version logicielle de R1.",
+    "distractorNotes": {},
+    "reference": "Cisco Guide to Harden Cisco IOS Devices ; IEEE 802.1AB ; Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol, Configuring LLDP, LLDP-MED, and Wired Location Service"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-hop-by-hop-map-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Connecté en console à SW1, vous devez trouver l'adresse IP du commutateur situé deux sauts plus loin, sans connaître au départ ni les noms ni les adresses des équipements. Ordonnez les étapes.",
+      "items": [
+        {
+          "id": "ssh",
+          "text": "« ssh -l admin 10.1.99.12 » depuis SW1 : une session s'ouvre sur SW2"
+        },
+        {
+          "id": "entry3",
+          "text": "« show cdp entry SW3 » sur SW2 : SW3 annonce l'adresse 10.1.99.13"
+        },
+        {
+          "id": "nei1",
+          "text": "« show cdp neighbors » sur SW1 : SW2 apparaît derrière Gi1/0/24"
+        },
+        {
+          "id": "nei2",
+          "text": "« show cdp neighbors » sur SW2 : SW3 apparaît derrière Gi1/0/1"
+        },
+        {
+          "id": "entry2",
+          "text": "« show cdp entry SW2 » sur SW1 : SW2 annonce l'adresse 10.1.99.12"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "nei1",
+        "entry2",
+        "ssh",
+        "nei2",
+        "entry3"
+      ]
+    },
+    "explanation": "CDP ne montre que les voisins directs : pour cartographier plus loin, on progresse saut par saut. « show cdp neighbors » donne le nom du voisin et l'interface qui y mène, mais pas son adresse ; « show cdp entry SW2 » (ou « show cdp neighbors detail ») fournit l'adresse annoncée. On ouvre alors une session SSH sur SW2 depuis SW1, puis on recommence depuis SW2 : sa table des voisins révèle SW3, dont « show cdp entry SW3 » donne l'adresse. Chaque étape a besoin du résultat de la précédente (un nom, une adresse, une session), d'où un seul ordre possible.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-lldp-med-phone-boot-001",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Un téléphone IP d'un autre constructeur, alimenté par un port PoE de SW2, est réglé pour apprendre son VLAN voix par LLDP-MED avant de demander une adresse. Le port de SW2 annonce le VLAN voix 110. Ordonnez les étapes, de la mise sous tension à l'enregistrement du téléphone.",
+      "items": [
+        {
+          "id": "dhcp",
+          "text": "Le téléphone envoie un DHCP Discover étiqueté dans le VLAN 110"
+        },
+        {
+          "id": "poe",
+          "text": "SW2 détecte le téléphone et l'alimente en PoE"
+        },
+        {
+          "id": "pol",
+          "text": "SW2 envoie une LLDPDU contenant la TLV Network Policy (VLAN 110)"
+        },
+        {
+          "id": "reg",
+          "text": "Le téléphone obtient son adresse et contacte son serveur d'appels"
+        },
+        {
+          "id": "cap",
+          "text": "Le téléphone envoie une LLDPDU contenant la TLV LLDP-MED Capabilities"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "poe",
+        "cap",
+        "pol",
+        "dhcp",
+        "reg"
+      ]
+    },
+    "explanation": "Le téléphone ne peut rien émettre avant d'être alimenté : SW2 le détecte et le classe en PoE (IEEE 802.3af/at), puis le téléphone démarre. Un commutateur n'envoie de TLV LLDP-MED qu'après avoir détecté un terminal LLDP-MED : le téléphone s'annonce donc d'abord avec la TLV LLDP-MED Capabilities, et SW2 lui répond avec la TLV Network Policy, qui porte le VLAN voix 110, la CoS et le DSCP à utiliser. Le téléphone étiquette alors son trafic dans le VLAN 110 et lance DHCP dans le sous-réseau voix, avant de joindre son serveur d'appels.",
+    "distractorNotes": {},
+    "reference": "ANSI/TIA-1057 (LLDP-MED) ; Cisco Catalyst 9300 Configuration Guide — Configuring LLDP, LLDP-MED, and Wired Location Service"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-lldp-compare-001",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque caractéristique selon le protocole de découverte auquel elle s'applique.",
+      "left": [
+        {
+          "id": "ieee",
+          "text": "Défini par la norme IEEE 802.1AB"
+        },
+        {
+          "id": "prop",
+          "text": "Protocole propriétaire Cisco"
+        },
+        {
+          "id": "vtp",
+          "text": "Annonce le nom du domaine VTP du commutateur"
+        },
+        {
+          "id": "med",
+          "text": "Étendu par MED pour les téléphones IP d'autres constructeurs"
+        },
+        {
+          "id": "tlv",
+          "text": "Informations codées en TLV, dans des trames de couche 2 sans IP"
+        }
+      ],
+      "right": [
+        {
+          "id": "cdp",
+          "text": "CDP seulement"
+        },
+        {
+          "id": "lldp",
+          "text": "LLDP seulement"
+        },
+        {
+          "id": "both",
+          "text": "CDP et LLDP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "ieee": "lldp",
+        "prop": "cdp",
+        "vtp": "cdp",
+        "med": "lldp",
+        "tlv": "both"
+      }
+    },
+    "explanation": "LLDP est le standard IEEE 802.1AB, utilisable entre constructeurs, et son extension LLDP-MED (ANSI/TIA-1057) sert notamment à configurer les téléphones IP d'autres marques (VLAN voix, PoE). CDP est propriétaire Cisco ; sa version 2 annonce en plus le domaine VTP, le VLAN natif et le duplex. Les deux protocoles se ressemblent pourtant beaucoup : chacun transporte ses informations sous forme de TLV, dans des trames multicast envoyées directement en couche 2. Ils fonctionnent donc sans adresse IP et ne découvrent que les voisins directs.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1AB ; Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol, Configuring LLDP, LLDP-MED, and Wired Location Service"
+  },
+  {
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "source": "ai",
+    "slug": "ccna-2.3-cdp-lldp-commands-effect-001",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque commande de configuration de CDP ou de LLDP à son effet sur le routeur ou le commutateur.",
+      "left": [
+        {
+          "id": "k1",
+          "text": "« no cdp run », en configuration globale"
+        },
+        {
+          "id": "k2",
+          "text": "« no cdp enable », en configuration d'interface"
+        },
+        {
+          "id": "k3",
+          "text": "« lldp run », en configuration globale"
+        },
+        {
+          "id": "k4",
+          "text": "« no lldp transmit », en configuration d'interface"
+        },
+        {
+          "id": "k5",
+          "text": "« no lldp receive », en configuration d'interface"
+        }
+      ],
+      "right": [
+        {
+          "id": "lldp-on",
+          "text": "Active LLDP sur toutes les interfaces, en émission et en réception"
+        },
+        {
+          "id": "clear",
+          "text": "Vide la table des voisins CDP sans désactiver CDP"
+        },
+        {
+          "id": "cdp-off",
+          "text": "Désactive CDP sur toutes les interfaces de l'équipement"
+        },
+        {
+          "id": "rx-off",
+          "text": "Ignore les LLDPDU reçues sur l'interface, sans cesser d'en envoyer"
+        },
+        {
+          "id": "cdp-if",
+          "text": "Désactive CDP sur cette seule interface"
+        },
+        {
+          "id": "tx-off",
+          "text": "Cesse d'envoyer des LLDPDU sur l'interface, sans cesser d'en recevoir"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "k1": "cdp-off",
+        "k2": "cdp-if",
+        "k3": "lldp-on",
+        "k4": "tx-off",
+        "k5": "rx-off"
+      }
+    },
+    "explanation": "CDP, actif par défaut, se coupe globalement avec « no cdp run » ou interface par interface avec « no cdp enable ». LLDP, désactivé par défaut sous IOS, s'active globalement avec « lldp run » : chaque interface émet et reçoit alors des LLDPDU. LLDP permet en plus de séparer les deux sens sur une interface : « no lldp transmit » arrête l'émission (le voisin ne voit plus l'équipement) et « no lldp receive » la réception (l'équipement ne voit plus le voisin). CDP n'a pas cet équivalent : sur une interface, il est actif ou non dans les deux sens.",
+    "distractorNotes": {
+      "clear": "C'est l'effet de « clear cdp table », en mode privilégié : la table se remplit de nouveau aux annonces suivantes. Aucune des commandes proposées ne fait cela."
+    },
+    "reference": "IEEE 802.1AB ; Cisco Catalyst 9300 Configuration Guide — Configuring Cisco Discovery Protocol, Configuring LLDP, LLDP-MED, and Wired Location Service"
+  }
+]
