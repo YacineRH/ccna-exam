@@ -436,7 +436,7 @@ test('examen n° 42 de la série : choisi au clavier, passé, puis retrouvé dan
   await page.getByRole('dialog', { name: "Terminer l'examen ?" }).getByRole('button', { name: 'Terminer et voir le résultat' }).click();
   await expect(page).toHaveURL(new RegExp(`/tentatives/${id}/resultat$`));
   await expect(page.getByText('Score final')).toBeVisible();
-  const { scaledScore } = (await (await page.request.get(`/api/v1/attempts/${id}`)).json()) as { scaledScore: number };
+  const { scaledScore } = (await (await page.request.get(`/api/v1/attempts/${id}/result`)).json()) as { scaledScore: number };
 
   // Dans la progression : 1 / 100 passé, l'examen 42 avec son meilleur score, le prochain jamais passé reste le n° 1.
   await page.goto('/examen/nouveau?mode=exam');
