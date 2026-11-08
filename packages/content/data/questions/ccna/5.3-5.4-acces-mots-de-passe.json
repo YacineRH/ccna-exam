@@ -1,0 +1,1568 @@
+[
+  {
+    "slug": "ccna-5.3-vty-line-password-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, depuis le mode de configuration globale, configurez les lignes VTY 0 à 4 pour qu'elles demandent le mot de passe de ligne Vty-Acc3s à chaque connexion à distance.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "line vty 0 4"
+        ],
+        [
+          "password Vty-Acc3s",
+          "password 0 Vty-Acc3s"
+        ],
+        [
+          "login"
+        ]
+      ]
+    },
+    "explanation": "« line vty 0 4 » sélectionne les cinq premières lignes virtuelles, utilisées par Telnet et SSH. « password » définit le mot de passe de ligne et « login » demande à IOS de le vérifier : un mot de passe sans « login » n'est jamais demandé, et « login » sans mot de passe fait refuser la connexion (« Password required, but none set »). Ce mot de passe est stocké en clair dans la configuration, sauf si service password-encryption le masque en type 7. Pour demander aussi un nom d'utilisateur, il faudrait « login local » et des comptes username.",
+    "reference": "Cisco IOS Security Configuration Guide — Configuring Security with Passwords, Privilege Levels, and Login Usernames"
+  },
+  {
+    "slug": "ccna-5.3-banner-motd-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, depuis le mode de configuration globale, configurez la bannière MOTD « Acces reserve au personnel autorise », en utilisant le caractère # comme délimiteur.",
+      "prompt": "R1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "banner motd #Acces reserve au personnel autorise#"
+        ]
+      ]
+    },
+    "explanation": "« banner motd » est suivie d'un caractère délimiteur, du texte puis du même délimiteur : IOS prend tout ce qui se trouve entre les deux, d'où l'obligation de choisir un caractère absent du message. La bannière MOTD (message of the day) s'affiche sur tout terminal qui se connecte, console ou VTY, avant l'invite d'authentification. Elle sert d'avertissement juridique : elle doit signaler que l'accès est réservé et ne jamais souhaiter la bienvenue ni révéler d'informations sur l'équipement.",
+    "reference": "Cisco IOS Configuration Fundamentals Command Reference — banner motd"
+  },
+  {
+    "slug": "ccna-5.3-enable-scrypt-encryption-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, depuis le mode de configuration globale, définissez le mot de passe du mode privilégié En4ble-R1 en demandant explicitement un hachage scrypt (type 9), puis faites masquer les mots de passe encore stockés en clair dans la configuration.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "enable algorithm-type scrypt secret En4ble-R1"
+        ],
+        [
+          "service password-encryption"
+        ]
+      ]
+    },
+    "explanation": "« enable algorithm-type scrypt secret » choisit explicitement l'algorithme : la configuration affiche alors « enable secret 9 $9$… ». Sans algorithm-type, le type produit dépend de la version (type 5 MD5 sur beaucoup de versions d'IOS 15). service password-encryption est une commande globale distincte : elle masque en type 7 les mots de passe en clair (lignes, enable password, username … password), mais ce type 7 est réversible et ne remplace pas un hachage. Elle ne modifie pas enable secret, déjà haché.",
+    "reference": "Cisco IOS Security Command Reference — enable secret ; service password-encryption"
+  },
+  {
+    "slug": "ccna-5.3-remove-enable-password-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "La configuration de R1 contient encore un ancien enable password. Depuis le mode de configuration globale et dans l'ordre de votre choix, supprimez-le et protégez le mode privilégié par le mot de passe Pr1v-R1x, stocké sous forme de hachage.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "no enable password"
+        ],
+        [
+          "enable secret Pr1v-R1x",
+          "enable secret 0 Pr1v-R1x",
+          "enable algorithm-type scrypt secret Pr1v-R1x",
+          "enable algorithm-type sha256 secret Pr1v-R1x",
+          "enable algorithm-type md5 secret Pr1v-R1x"
+        ]
+      ]
+    },
+    "explanation": "« no enable password » retire l'ancien mot de passe, stocké en clair ou en type 7 réversible : même ignoré dès qu'un enable secret existe, il resterait lisible dans la configuration et pourrait être réutilisé ailleurs. « enable secret » enregistre un hachage irréversible (type 5, 8 ou 9 selon la version, ou selon « algorithm-type » s'il est précisé). Ajouter d'abord le secret évite un instant sans aucune protection du mode privilégié ; à terme, seul l'enable secret doit subsister.",
+    "reference": "Cisco IOS Security Command Reference — enable password ; enable secret"
+  },
+  {
+    "slug": "ccna-5.3-vty-access-class-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, depuis le mode de configuration globale, créez l'ACL standard numérotée 10 qui n'autorise que le réseau d'administration 192.168.50.0/24, puis appliquez-la en entrée aux lignes VTY 0 à 4 pour limiter les postes qui peuvent ouvrir une session à distance.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "access-list 10 permit 192.168.50.0 0.0.0.255"
+        ],
+        [
+          "line vty 0 4"
+        ],
+        [
+          "access-class 10 in"
+        ]
+      ]
+    },
+    "explanation": "Sur une ligne, l'ACL s'applique avec « access-class », et non avec « ip access-group », réservée aux interfaces. « access-class 10 in » filtre les connexions Telnet ou SSH entrantes vers le routeur, quelle que soit l'interface par laquelle elles arrivent, sans toucher au trafic qui le traverse. Le masque générique d'un /24 est 0.0.0.255. Le refus implicite final de l'ACL bloque toutes les autres sources : seules les adresses 192.168.50.0 à 192.168.50.255 peuvent encore ouvrir une session.",
+    "reference": "Cisco IOS Security Command Reference — access-class"
+  },
+  {
+    "slug": "ccna-5.3-exec-timeout-seconds-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sous line console 0, la configuration de R1 contient la commande « exec-timeout 2 30 ». Au bout de combien de secondes d'inactivité IOS ferme-t-il la session console ?",
+      "fields": [
+        {
+          "id": "sec",
+          "label": "Durée d'inactivité (en secondes, nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "sec": {
+          "accepted": [
+            "150"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "exec-timeout prend deux arguments : des minutes, puis des secondes. « exec-timeout 2 30 » vaut donc 2 × 60 + 30 = 150 secondes d'inactivité avant la fermeture de la session EXEC. Sans la commande, le délai est de 10 minutes ; « exec-timeout 0 0 » désactive la déconnexion, ce qui est déconseillé : une session laissée ouverte sur la console reste utilisable par n'importe qui. Le délai se règle ligne par ligne (console, VTY), pas globalement.",
+    "reference": "Cisco IOS Configuration Fundamentals Command Reference — exec-timeout"
+  },
+  {
+    "slug": "ccna-5.3-privilege-15-local-user-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Les lignes VTY de R1 utilisent login local. Un administrateur crée le compte « username tech privilege N secret T3ch-Pa55 ». Quelle valeur de N fait arriver tech directement en mode EXEC privilégié (invite R1#), sans taper enable ?",
+      "fields": [
+        {
+          "id": "lvl",
+          "label": "Niveau de privilège (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "lvl": {
+          "accepted": [
+            "15"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "IOS définit 16 niveaux de privilège, de 0 à 15. Le mode EXEC utilisateur (invite R1>) correspond au niveau 1, celui d'un compte créé sans le mot-clé privilege, et le mode EXEC privilégié complet (invite R1#) au niveau 15. Un compte local de niveau 15 arrive donc directement en R1# après l'authentification, sans saisir l'enable secret. Les niveaux 2 à 14 peuvent recevoir des commandes choisies avec « privilege exec level ».",
+    "reference": "Cisco IOS Security Configuration Guide — Configuring Security with Passwords, Privilege Levels, and Login Usernames"
+  },
+  {
+    "slug": "ccna-5.3-password-types-match-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque type de mot de passe affiché dans une configuration IOS à la façon dont le mot de passe est stocké.",
+      "left": [
+        {
+          "id": "t0",
+          "text": "Type 0"
+        },
+        {
+          "id": "t5",
+          "text": "Type 5"
+        },
+        {
+          "id": "t7",
+          "text": "Type 7"
+        },
+        {
+          "id": "t8",
+          "text": "Type 8"
+        },
+        {
+          "id": "t9",
+          "text": "Type 9"
+        }
+      ],
+      "right": [
+        {
+          "id": "rscr",
+          "text": "Hachage scrypt"
+        },
+        {
+          "id": "rclr",
+          "text": "Texte en clair"
+        },
+        {
+          "id": "raes",
+          "text": "Chiffrement AES réversible à l'aide d'une clé principale"
+        },
+        {
+          "id": "rvig",
+          "text": "Chiffrement réversible fondé sur un algorithme public (Vigenère)"
+        },
+        {
+          "id": "rpbk",
+          "text": "Hachage PBKDF2 avec SHA-256"
+        },
+        {
+          "id": "rmd5",
+          "text": "Hachage MD5 salé"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "t0": "rclr",
+        "t5": "rmd5",
+        "t7": "rvig",
+        "t8": "rpbk",
+        "t9": "rscr"
+      }
+    },
+    "explanation": "Le chiffre qui suit password ou secret indique la forme stockée. Type 0 : texte en clair. Type 7 : produit par service password-encryption, un masquage de type Vigenère avec une clé connue, déchiffrable instantanément. Type 5 : hachage MD5 salé (préfixe $1$), longtemps le défaut d'enable secret. Type 8 : PBKDF2 avec SHA-256 (préfixe $8$). Type 9 : scrypt (préfixe $9$), coûteux en mémoire et donc le plus résistant aux attaques par force brute. Cisco recommande les types 8 et 9.",
+    "distractorNotes": {
+      "raes": "Le chiffrement AES réversible correspond au type 6, utilisé pour certaines clés (avec « password encryption aes »), et non à l'un des types proposés."
+    },
+    "reference": "Cisco IOS Security Command Reference — enable secret ; username (algorithm-type)"
+  },
+  {
+    "slug": "ccna-5.3-line-commands-match-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque commande de configuration de ligne à son effet.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "login"
+        },
+        {
+          "id": "l2",
+          "text": "login local"
+        },
+        {
+          "id": "l3",
+          "text": "no login"
+        },
+        {
+          "id": "l4",
+          "text": "exec-timeout 0 0"
+        },
+        {
+          "id": "l5",
+          "text": "transport input ssh"
+        }
+      ],
+      "right": [
+        {
+          "id": "rnone",
+          "text": "Ouvre la session EXEC sans aucune authentification"
+        },
+        {
+          "id": "rfil",
+          "text": "Limite les adresses sources autorisées à ouvrir une session"
+        },
+        {
+          "id": "rloc",
+          "text": "Demande un nom d'utilisateur et un mot de passe définis par username"
+        },
+        {
+          "id": "rssh",
+          "text": "Refuse tout protocole d'accès à distance autre que SSH"
+        },
+        {
+          "id": "rpw",
+          "text": "Demande le mot de passe défini sur la ligne par la commande password"
+        },
+        {
+          "id": "rtim",
+          "text": "Désactive la déconnexion automatique pour inactivité"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "rpw",
+        "l2": "rloc",
+        "l3": "rnone",
+        "l4": "rtim",
+        "l5": "rssh"
+      }
+    },
+    "explanation": "« login » vérifie le seul mot de passe de ligne (commande password) ; « login local » demande un nom d'utilisateur et vérifie la base locale des comptes username, en ignorant le mot de passe de ligne. « no login » supprime toute vérification : la session s'ouvre directement en EXEC utilisateur. « exec-timeout 0 0 » met le délai d'inactivité à zéro minute et zéro seconde, c'est-à-dire jamais. « transport input ssh » n'accepte que SSH en entrée sur les lignes VTY, ce qui exclut Telnet.",
+    "distractorNotes": {
+      "rfil": "Le filtrage des adresses sources sur une ligne se fait avec « access-class <ACL> in », absente de la liste."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — Configuring Security with Passwords, Privilege Levels, and Login Usernames"
+  },
+  {
+    "slug": "ccna-5.3-banner-display-order-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Sur R1, la ligne console est configurée avec login local, et les bannières MOTD, login et exec sont toutes définies. Ordonnez ce qu'un utilisateur de niveau de privilège 1 voit en se connectant à la console, du premier au dernier élément.",
+      "items": [
+        {
+          "id": "x1",
+          "text": "La bannière exec"
+        },
+        {
+          "id": "x2",
+          "text": "L'invite Username:, puis Password:"
+        },
+        {
+          "id": "x3",
+          "text": "La bannière MOTD"
+        },
+        {
+          "id": "x4",
+          "text": "L'invite R1>"
+        },
+        {
+          "id": "x5",
+          "text": "La bannière login"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "x3",
+        "x5",
+        "x2",
+        "x1",
+        "x4"
+      ]
+    },
+    "explanation": "IOS affiche d'abord la bannière MOTD, montrée à tout terminal qui se connecte, puis la bannière login, affichée après la MOTD et juste avant les invites d'authentification. Viennent ensuite Username: et Password:, demandés par login local. Une fois l'utilisateur authentifié, IOS crée le processus EXEC et affiche la bannière exec, puis l'invite. L'utilisateur étant de niveau 1, il arrive en mode EXEC utilisateur, d'où l'invite R1> et non R1#.",
+    "reference": "Cisco IOS Configuration Fundamentals Command Reference — banner motd ; banner login ; banner exec"
+  },
+  {
+    "slug": "ccna-5.3-physical-access-password-recovery-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pourquoi l'accès physique à un routeur Cisco doit-il rester protégé, même si tous ses mots de passe sont longs et hachés en type 9 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les secrets de type 9 ne sont vérifiés que sur les lignes VTY, jamais sur la ligne console du routeur."
+        },
+        {
+          "id": "b",
+          "text": "Le port console contourne enable secret et donne toujours un accès direct au mode EXEC privilégié."
+        },
+        {
+          "id": "c",
+          "text": "Un câble console permet d'afficher les secrets de type 9 en clair avec la commande show running-config."
+        },
+        {
+          "id": "d",
+          "text": "Depuis la console, on peut interrompre le démarrage et passer le registre à 0x2142 pour ignorer la startup-config."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La procédure de récupération des mots de passe suppose seulement un accès à la console et un redémarrage : on envoie un Break pendant le démarrage pour entrer en ROMMON, on règle le registre de configuration à 0x2142, et le routeur démarre sans charger la startup-config. On copie alors celle-ci en mémoire vive et on remplace les mots de passe. Quiconque touche l'équipement peut donc en prendre le contrôle, d'où les locaux fermés. « no service password-recovery » rend la procédure plus contraignante.",
+    "distractorNotes": {
+      "a": "Un secret de type 9 est vérifié de la même façon quelle que soit la ligne : console comme VTY.",
+      "b": "Avec un enable secret configuré, la commande enable le demande aussi depuis la console.",
+      "c": "Un hachage scrypt est irréversible : show running-config n'affiche que le hachage, quelle que soit la ligne utilisée."
+    },
+    "reference": "Cisco — Password Recovery Procedure for Cisco Routers (note technique)"
+  },
+  {
+    "slug": "ccna-5.3-service-password-encryption-effect-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel est l'effet de la commande globale service password-encryption ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle hache en scrypt tous les mots de passe de la configuration, enable secret compris."
+        },
+        {
+          "id": "b",
+          "text": "Elle masque en type 7, un chiffrement réversible, les mots de passe stockés en clair."
+        },
+        {
+          "id": "c",
+          "text": "Elle chiffre les sessions Telnet, qui deviennent alors aussi sûres que les sessions SSH."
+        },
+        {
+          "id": "d",
+          "text": "Elle impose une longueur minimale de huit caractères à tous les nouveaux mots de passe."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "service password-encryption transforme en type 7 les mots de passe qui seraient sinon en clair dans la configuration : mots de passe de ligne, enable password et comptes créés avec « username … password ». Elle évite qu'un mot de passe soit lu par-dessus l'épaule ou dans une copie de la configuration, mais le type 7 utilise un algorithme et une clé publics : n'importe quel outil le déchiffre en un instant. Pour une vraie protection, il faut des secrets hachés (enable secret, username … secret).",
+    "distractorNotes": {
+      "a": "Elle ne hache rien et ne touche pas à enable secret, déjà haché ; le type 9 (scrypt) s'obtient avec « algorithm-type scrypt ».",
+      "c": "Elle ne concerne que le stockage dans la configuration ; Telnet transmet toujours tout en clair sur le réseau.",
+      "d": "La longueur minimale se règle avec « security passwords min-length », une autre commande."
+    },
+    "reference": "Cisco IOS Security Command Reference — service password-encryption"
+  },
+  {
+    "slug": "ccna-5.3-ssh-users-privilege-exhibit-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Quelle affirmation sur l'accès à R1 est exacte ?",
+      "exhibit": "R1# show running-config\n!\nhostname R1\n!\nenable secret 5 $1$Gh7j$e.xDzt0rw5YD6aTvBfIM/0\n!\nusername admin privilege 15 secret 5 $1$Xk3p$NTnUfnzh05QpgX3Q/07H0/\nusername support secret 5 $1$bN4w$xeKFzQMJj8riyZEnYJf1x0\n!\n<output omitted>\n!\nline con 0\n password Ops-L1ne7\n login\nline aux 0\nline vty 0 4\n password Vty-Acc3s\n login local\n transport input ssh\n!\nend",
+      "options": [
+        {
+          "id": "a",
+          "text": "En SSH, admin s'authentifie avec son secret, puis doit saisir l'enable secret pour obtenir l'invite R1#."
+        },
+        {
+          "id": "b",
+          "text": "En SSH, chaque compte doit saisir le mot de passe de ligne Vty-Acc3s après son propre secret."
+        },
+        {
+          "id": "c",
+          "text": "En SSH, support s'authentifie avec son propre secret et arrive en mode EXEC utilisateur, à l'invite R1>."
+        },
+        {
+          "id": "d",
+          "text": "Sur la console, R1 demande un nom d'utilisateur, puis le secret du compte admin ou du compte support."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les lignes VTY utilisent « login local » et n'acceptent que SSH : chaque administrateur saisit son nom d'utilisateur et son secret, et le mot de passe de ligne Vty-Acc3s est ignoré. Le niveau d'arrivée dépend du compte : support, créé sans privilege, est au niveau 1 et arrive en R1> ; il lui faudra l'enable secret pour passer en R1#. admin, de niveau 15, arrive directement en R1#. La console, elle, utilise « login » : elle ne demande que le mot de passe de ligne Ops-L1ne7, sans nom d'utilisateur.",
+    "distractorNotes": {
+      "a": "admin est de niveau de privilège 15 : il arrive directement en mode EXEC privilégié, sans passer par enable.",
+      "b": "Avec « login local », seul le compte local est vérifié ; le mot de passe défini sur la ligne n'est pas utilisé.",
+      "d": "La console est configurée avec « login » : seul le mot de passe de ligne Ops-L1ne7 est demandé, sans nom d'utilisateur."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — Configuring Security with Passwords, Privilege Levels, and Login Usernames"
+  },
+  {
+    "slug": "ccna-5.3-vty-privilege-level-exhibit-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un administrateur ouvre une session Telnet vers R2 depuis le poste 10.1.1.20 et saisit Vty-R2acc lorsque le mot de passe lui est demandé. Quel est le résultat ?",
+      "exhibit": "R2# show running-config\n!\nhostname R2\n!\nenable secret 5 $1$mERr$pNO9CXNVt/Vtg8fQXND6r1\n!\naccess-list 5 permit 10.1.1.0 0.0.0.255\n!\n<output omitted>\n!\nline con 0\n password C0ns0le-R2\n login\nline aux 0\nline vty 0 4\n access-class 5 in\n privilege level 15\n password Vty-R2acc\n login\n transport input telnet\n!\nend",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il arrive en mode EXEC utilisateur, à l'invite R2>, et doit saisir l'enable secret pour obtenir R2#."
+        },
+        {
+          "id": "b",
+          "text": "R2 lui demande d'abord un nom d'utilisateur, puis vérifie le mot de passe de ligne Vty-R2acc."
+        },
+        {
+          "id": "c",
+          "text": "Il arrive directement en mode EXEC privilégié, à l'invite R2#, sans saisir l'enable secret."
+        },
+        {
+          "id": "d",
+          "text": "La connexion est refusée avant toute invite, car l'ACL 5 ne s'applique qu'aux sessions SSH."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Trois commandes des lignes VTY s'enchaînent. « access-class 5 in » n'accepte que les sources autorisées par l'ACL 5, soit 10.1.1.0 à 10.1.1.255 : le poste 10.1.1.20 passe. « login » demande alors le seul mot de passe de ligne, sans nom d'utilisateur. Enfin, « privilege level 15 » fixe le niveau attribué aux sessions de ces lignes : l'administrateur arrive directement en R2#, sans enable. C'est risqué, puisque le mot de passe de ligne, stocké ici en clair, suffit à prendre le contrôle de R2.",
+    "distractorNotes": {
+      "a": "Sans « privilege level 15 », la session serait de niveau 1 ; cette commande la place d'emblée au niveau 15.",
+      "b": "« login » ne vérifie que le mot de passe de ligne ; un nom d'utilisateur ne serait demandé qu'avec « login local » ou AAA.",
+      "d": "access-class filtre Telnet comme SSH ; ici, la source 10.1.1.20 appartient au réseau autorisé par l'ACL 5."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — Configuring Security with Passwords, Privilege Levels, and Login Usernames"
+  },
+  {
+    "slug": "ccna-5.3-disable-command-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un administrateur se trouve en mode EXEC privilégié sur R1, à l'invite R1#. Quelle commande le ramène au mode EXEC utilisateur (R1>) sans fermer sa session ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "exit"
+        },
+        {
+          "id": "b",
+          "text": "end"
+        },
+        {
+          "id": "c",
+          "text": "logout"
+        },
+        {
+          "id": "d",
+          "text": "disable"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "disable quitte le niveau de privilège 15 et revient au mode EXEC utilisateur, de niveau 1 : la session reste ouverte, et il faudra de nouveau la commande enable et l'enable secret pour repasser en R1#. C'est une bonne habitude avant de s'éloigner d'une console ou de laisser une session à un collègue moins habilité. Depuis l'invite R1#, exit et logout ferment la session EXEC, tandis que end ne sert qu'à sortir des modes de configuration.",
+    "distractorNotes": {
+      "a": "En mode EXEC privilégié, exit ferme la session EXEC au lieu de revenir à R1>.",
+      "b": "end ramène des modes de configuration au mode EXEC privilégié ; il ne fait pas descendre au mode utilisateur.",
+      "c": "logout ferme la session EXEC : il faudrait se reconnecter."
+    },
+    "reference": "Cisco IOS Configuration Fundamentals Command Reference — disable ; enable"
+  },
+  {
+    "slug": "ccna-5.3-banner-legal-warning-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel contenu convient à la bannière MOTD d'un routeur d'entreprise ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un avertissement indiquant que l'accès est réservé aux personnes autorisées et peut être surveillé."
+        },
+        {
+          "id": "b",
+          "text": "Un message de bienvenue qui invite les visiteurs à se connecter au réseau de l'entreprise."
+        },
+        {
+          "id": "c",
+          "text": "Le nom d'utilisateur et le mot de passe du compte de secours, pour les interventions urgentes."
+        },
+        {
+          "id": "d",
+          "text": "Le modèle exact du routeur et sa version d'IOS, pour faciliter le travail du support à distance."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La bannière MOTD s'affiche avant toute authentification, donc à n'importe qui, y compris un intrus. Elle sert à prévenir que l'accès est réservé aux personnes autorisées et que les connexions peuvent être journalisées : cet avertissement aide l'entreprise à faire valoir ses droits en cas d'intrusion. Elle ne doit contenir ni formule d'accueil, ni information utile à un attaquant (modèle, version, adresses, identifiants).",
+    "distractorNotes": {
+      "b": "Une invitation à se connecter est à proscrire : elle pourrait être opposée à l'entreprise par un intrus qui dirait avoir été invité.",
+      "c": "La bannière est lue avant l'authentification : y écrire des identifiants les livre à n'importe qui.",
+      "d": "Le modèle et la version d'IOS aident un attaquant à chercher des vulnérabilités connues."
+    },
+    "reference": "Cisco IOS Configuration Fundamentals Command Reference — banner motd ; Cisco Guide to Harden Cisco IOS Devices"
+  },
+  {
+    "slug": "ccna-5.3-hashed-password-commands-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux commandes stockent le mot de passe sous forme de hachage dans la configuration ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "enable password Ad-2025x"
+        },
+        {
+          "id": "b",
+          "text": "username ops secret Ad-2025x"
+        },
+        {
+          "id": "c",
+          "text": "username ops password Ad-2025x"
+        },
+        {
+          "id": "d",
+          "text": "password Ad-2025x, sous line vty 0 4, avec service password-encryption actif"
+        },
+        {
+          "id": "e",
+          "text": "enable secret Ad-2025x"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Le mot-clé secret produit toujours un hachage (type 5, 8 ou 9 selon la version et l'algorithme choisi), irréversible : « enable secret » et « username … secret » sont donc à privilégier. Le mot-clé password stocke le mot de passe en clair (type 0), ou en type 7 si service password-encryption est actif. Le type 7 n'est qu'un chiffrement réversible avec une clé publique, pas un hachage : il protège seulement d'une lecture par-dessus l'épaule.",
+    "distractorNotes": {
+      "a": "enable password est stocké en clair, ou en type 7 réversible avec service password-encryption.",
+      "c": "« username … password » est stocké en clair ou en type 7 ; seul « username … secret » produit un hachage.",
+      "d": "service password-encryption masque le mot de passe de ligne en type 7, un chiffrement réversible et non un hachage."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — Configuring Security with Passwords, Privilege Levels, and Login Usernames"
+  },
+  {
+    "slug": "ccna-5.3-no-enable-password-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur R3, ni enable secret ni enable password ne sont configurés. Les lignes VTY ont un mot de passe et la commande login ; la console n'a aucune authentification. Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Depuis une session Telnet, la commande enable demande le mot de passe des lignes VTY."
+        },
+        {
+          "id": "b",
+          "text": "Depuis la console, la commande enable est refusée tant qu'aucun enable secret n'est défini."
+        },
+        {
+          "id": "c",
+          "text": "Depuis la console, la commande enable donne accès au mode EXEC privilégié sans mot de passe."
+        },
+        {
+          "id": "d",
+          "text": "Les connexions Telnet sont refusées tant qu'aucun enable secret n'est défini sur R3."
+        },
+        {
+          "id": "e",
+          "text": "Depuis une session Telnet, la commande enable est refusée avec le message « % No password set »."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Sans enable secret ni enable password, IOS traite différemment les lignes. Sur la console, enable fait passer directement en mode privilégié, sans mot de passe. Sur une ligne VTY, IOS refuse l'élévation et affiche « % No password set » : un utilisateur distant ne peut donc jamais devenir privilégié sur un équipement sans mot de passe enable. La connexion Telnet elle-même fonctionne, car elle ne dépend que du mot de passe de ligne et de login.",
+    "distractorNotes": {
+      "a": "Le mot de passe de ligne sert à ouvrir la session, pas à passer en mode privilégié ; enable ne l'utilise jamais.",
+      "b": "Sur la console, l'absence de mot de passe enable laisse au contraire passer en mode privilégié sans rien demander.",
+      "d": "L'ouverture de la session Telnet ne dépend que de la configuration des lignes VTY (password et login), pas d'enable secret."
+    },
+    "reference": "Cisco IOS Security Command Reference — enable password ; enable secret"
+  },
+  {
+    "slug": "ccna-5.3-mixed-access-exhibit-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Quelles deux affirmations sur R4 sont exactes ? (Choisissez-en deux.)",
+      "exhibit": "R4# show running-config\n!\nservice password-encryption\n!\nhostname R4\n!\nenable secret 5 $1$Lq2z$DKFt2dULas.6VhTBeD2kS/\n!\nusername backup password 7 02291448462A5E2F4919\n!\n<output omitted>\n!\nline con 0\n exec-timeout 5 0\n login local\nline aux 0\nline vty 0 4\n exec-timeout 0 0\n password 7 113F0D1C5A33080F5739\n login\n transport input telnet ssh\n!\nend",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Une session Telnet demande le nom d'utilisateur backup, puis son mot de passe."
+        },
+        {
+          "id": "b",
+          "text": "Le mot de passe de backup peut être retrouvé en clair à partir de la configuration."
+        },
+        {
+          "id": "c",
+          "text": "Une session Telnet inactive est fermée au bout de 10 minutes, valeur par défaut."
+        },
+        {
+          "id": "d",
+          "text": "Le mot de passe de backup est haché avec le même algorithme que l'enable secret."
+        },
+        {
+          "id": "e",
+          "text": "Sur la console, backup se connecte et sa session expire après 5 minutes d'inactivité."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Le compte backup est créé avec « password » : service password-encryption l'a seulement masqué en type 7, que n'importe quel outil déchiffre. Sur la console, « login local » demande nom d'utilisateur et mot de passe de la base locale, et « exec-timeout 5 0 » ferme la session après 5 minutes d'inactivité. Sur les VTY, « login » ne demande que le mot de passe de ligne, sans nom d'utilisateur, et « exec-timeout 0 0 » désactive toute déconnexion pour inactivité.",
+    "distractorNotes": {
+      "a": "Les VTY utilisent « login » : seul le mot de passe de ligne est demandé ; il faudrait « login local » pour demander un nom d'utilisateur.",
+      "c": "« exec-timeout 0 0 » est configuré sur les VTY : les sessions ne sont jamais fermées pour inactivité.",
+      "d": "« password 7 » désigne un chiffrement réversible ; l'enable secret, de type 5, est un hachage MD5 irréversible."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — Configuring Security with Passwords, Privilege Levels, and Login Usernames"
+  },
+  {
+    "slug": "ccna-5.4-min-length-login-logging-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, depuis le mode de configuration globale, imposez une longueur minimale de 12 caractères à tous les mots de passe configurés désormais, puis faites journaliser les échecs et les réussites de connexion.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "security passwords min-length 12"
+        ],
+        [
+          "login on-failure log"
+        ],
+        [
+          "login on-success log"
+        ]
+      ]
+    },
+    "explanation": "« security passwords min-length 12 » fait refuser tout nouveau mot de passe ou secret de moins de 12 caractères : enable, comptes username et mots de passe de ligne. Les mots de passe déjà configurés ne sont pas vérifiés. « login on-failure log » génère un message syslog à chaque échec d'authentification, et « login on-success log » à chaque connexion réussie : l'administrateur repère ainsi les essais répétés d'un attaquant et sait qui s'est connecté. Les trois commandes sont indépendantes et se saisissent dans n'importe quel ordre.",
+    "reference": "Cisco IOS Security Configuration Guide — Cisco IOS Login Enhancements (Login Block)"
+  },
+  {
+    "slug": "ccna-5.4-login-block-quiet-mode-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, l'ACL standard nommée ADMIN-NET existe déjà et autorise les postes d'administration. Depuis le mode de configuration globale, faites refuser toute nouvelle connexion pendant 300 secondes dès que 5 tentatives échouent en moins de 120 secondes, puis permettez aux postes autorisés par ADMIN-NET de se connecter pendant ce blocage.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "login block-for 300 attempts 5 within 120"
+        ],
+        [
+          "login quiet-mode access-class ADMIN-NET"
+        ]
+      ]
+    },
+    "explanation": "« login block-for » prend dans l'ordre la durée du blocage, le nombre d'échecs et la fenêtre d'observation, toutes deux en secondes : ici 300 secondes de blocage après 5 échecs en 120 secondes. Pendant cette période, appelée quiet mode, R1 refuse toutes les nouvelles connexions Telnet, SSH et HTTP, y compris celles des administrateurs. « login quiet-mode access-class ADMIN-NET » remplace alors le filtrage par l'ACL : les postes qu'elle autorise peuvent toujours se connecter, ce qui évite qu'un attaquant bloque l'administration. L'ordre est imposé : login block-for doit être configurée avant login quiet-mode access-class.",
+    "reference": "Cisco IOS Security Configuration Guide — Cisco IOS Login Enhancements (Login Block)"
+  },
+  {
+    "slug": "ccna-5.4-totp-time-step-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une application d'authentification installée sur un smartphone génère des codes TOTP (RFC 6238) avec les paramètres par défaut. Au bout de combien de secondes affiche-t-elle un nouveau code ?",
+      "fields": [
+        {
+          "id": "step",
+          "label": "Pas de temps (en secondes, nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "step": {
+          "accepted": [
+            "30"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "TOTP (Time-based One-Time Password) dérive de HOTP (RFC 4226) en remplaçant le compteur par le temps : le compteur est le nombre de pas de temps écoulés depuis l'époque Unix. La RFC 6238 recommande un pas de 30 secondes, la valeur utilisée par les applications courantes : le code change toutes les 30 secondes. Le smartphone représente ce que l'on possède, car il détient la clé secrète partagée lors de l'enrôlement ; associé à un mot de passe, il fournit un second facteur.",
+    "reference": "RFC 6238, section 4.1 (TOTP) ; RFC 4226 (HOTP)"
+  },
+  {
+    "slug": "ccna-5.4-auth-factor-categories-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque élément d'authentification à la catégorie de facteur à laquelle il appartient.",
+      "left": [
+        {
+          "id": "k1",
+          "text": "Code PIN à 6 chiffres"
+        },
+        {
+          "id": "k2",
+          "text": "Clé de sécurité matérielle FIDO2 (USB)"
+        },
+        {
+          "id": "k3",
+          "text": "Empreinte digitale"
+        },
+        {
+          "id": "k4",
+          "text": "Phrase de passe"
+        },
+        {
+          "id": "k5",
+          "text": "Smartphone équipé d'une application TOTP"
+        }
+      ],
+      "right": [
+        {
+          "id": "fpos",
+          "text": "Ce que l'on possède"
+        },
+        {
+          "id": "floc",
+          "text": "L'endroit où l'on se trouve"
+        },
+        {
+          "id": "fsav",
+          "text": "Ce que l'on sait"
+        },
+        {
+          "id": "fest",
+          "text": "Ce que l'on est"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "k1": "fsav",
+        "k2": "fpos",
+        "k3": "fest",
+        "k4": "fsav",
+        "k5": "fpos"
+      }
+    },
+    "explanation": "Les trois catégories classiques de facteurs sont : ce que l'on sait (mot de passe, phrase de passe, PIN), ce que l'on possède (clé matérielle, carte à puce, smartphone qui détient une clé secrète) et ce que l'on est (biométrie : empreinte, visage, iris). Une authentification multifacteur combine au moins deux catégories différentes ; deux éléments de la même catégorie, comme un PIN et une phrase de passe, ne forment qu'un seul facteur.",
+    "distractorNotes": {
+      "floc": "La localisation peut servir de critère contextuel, mais aucun des éléments proposés n'en relève : chacun appartient à l'une des trois catégories classiques."
+    },
+    "reference": "NIST SP 800-63B (Digital Identity Guidelines — Authentication and Lifecycle Management)"
+  },
+  {
+    "slug": "ccna-5.4-login-enhancement-commands-match-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Pour protéger R1 contre les attaques par force brute, un administrateur saisit plusieurs commandes en configuration globale. Associez chaque commande au comportement qu'elle produit.",
+      "left": [
+        {
+          "id": "m1",
+          "text": "login block-for 120 attempts 3 within 60"
+        },
+        {
+          "id": "m2",
+          "text": "login quiet-mode access-class 10"
+        },
+        {
+          "id": "m3",
+          "text": "login delay 2"
+        },
+        {
+          "id": "m4",
+          "text": "security passwords min-length 10"
+        },
+        {
+          "id": "m5",
+          "text": "login on-failure log"
+        }
+      ],
+      "right": [
+        {
+          "id": "rlog",
+          "text": "Génère un message syslog lors d'un échec de connexion"
+        },
+        {
+          "id": "rlock",
+          "text": "Verrouille un compte local après plusieurs échecs, jusqu'à son déblocage manuel"
+        },
+        {
+          "id": "rblk",
+          "text": "Refuse toute nouvelle connexion pendant une période donnée après trop d'échecs"
+        },
+        {
+          "id": "rlen",
+          "text": "Refuse tout nouveau mot de passe trop court"
+        },
+        {
+          "id": "rexm",
+          "text": "Exempte certains hôtes du blocage des connexions"
+        },
+        {
+          "id": "rdel",
+          "text": "Impose un temps d'attente entre deux tentatives de connexion successives"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "m1": "rblk",
+        "m2": "rexm",
+        "m3": "rdel",
+        "m4": "rlen",
+        "m5": "rlog"
+      }
+    },
+    "explanation": "Ces commandes freinent les attaques par force brute. « login block-for 120 attempts 3 within 60 » bloque toutes les nouvelles connexions pendant 120 secondes après 3 échecs en 60 secondes ; « login quiet-mode access-class 10 » laisse les hôtes autorisés par l'ACL 10 se connecter pendant ce blocage. « login delay 2 » impose 2 secondes entre deux tentatives, ce qui ralentit les essais automatisés. « security passwords min-length 10 » refuse les nouveaux mots de passe de moins de 10 caractères, et « login on-failure log » journalise chaque échec.",
+    "distractorNotes": {
+      "rlock": "Le verrouillage d'un compte local après N échecs relève d'AAA (« aaa local authentication attempts max-fail »), pas des commandes proposées : login block-for bloque les connexions pour une durée fixe, sans verrouiller de compte."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — Cisco IOS Login Enhancements (Login Block)"
+  },
+  {
+    "slug": "ccna-5.4-brute-force-search-space-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un attaquant teste toutes les combinaisons possibles (force brute exhaustive). Ordonnez ces mots de passe, formés de caractères tirés au hasard, du plus petit au plus grand nombre de combinaisons à tester.",
+      "items": [
+        {
+          "id": "p1",
+          "text": "8 caractères parmi les 94 caractères ASCII imprimables"
+        },
+        {
+          "id": "p2",
+          "text": "6 chiffres"
+        },
+        {
+          "id": "p3",
+          "text": "12 lettres minuscules"
+        },
+        {
+          "id": "p4",
+          "text": "8 caractères parmi les minuscules, les majuscules et les chiffres"
+        },
+        {
+          "id": "p5",
+          "text": "8 lettres minuscules"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "p2",
+        "p5",
+        "p4",
+        "p1",
+        "p3"
+      ]
+    },
+    "explanation": "Le nombre de combinaisons vaut (taille de l'alphabet) puissance (longueur). 6 chiffres : 10^6 = 1 million. 8 minuscules : 26^8 ≈ 2,1 × 10^11. 8 caractères parmi 62 (minuscules, majuscules, chiffres) : 62^8 ≈ 2,2 × 10^14. 8 caractères parmi 94 : 94^8 ≈ 6,1 × 10^15. 12 minuscules : 26^12 ≈ 9,5 × 10^16, davantage que les 8 caractères les plus variés. La longueur, en exposant, pèse plus que la taille de l'alphabet : d'où l'intérêt de longueurs minimales élevées et des phrases de passe.",
+    "reference": "NIST SP 800-63B (Digital Identity Guidelines — Authentication and Lifecycle Management)"
+  },
+  {
+    "slug": "ccna-5.4-totp-code-steps-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Ordonnez les étapes d'une authentification par code TOTP (RFC 6238), de l'enrôlement jusqu'à la vérification par le serveur.",
+      "items": [
+        {
+          "id": "s1",
+          "text": "L'application calcule un HMAC du compteur à l'aide de la clé secrète."
+        },
+        {
+          "id": "s2",
+          "text": "Le serveur refait le même calcul avec sa copie de la clé et compare les deux codes."
+        },
+        {
+          "id": "s3",
+          "text": "Le serveur et l'application partagent une clé secrète, souvent transmise par un QR code."
+        },
+        {
+          "id": "s4",
+          "text": "L'application tronque le HMAC en un code, généralement de 6 chiffres, que l'utilisateur saisit."
+        },
+        {
+          "id": "s5",
+          "text": "L'application divise l'heure Unix actuelle par le pas de 30 secondes pour obtenir un compteur."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "s3",
+        "s5",
+        "s1",
+        "s4",
+        "s2"
+      ]
+    },
+    "explanation": "TOTP applique l'algorithme HOTP (RFC 4226) à un compteur tiré de l'heure. À l'enrôlement, une clé secrète est partagée entre le serveur et l'application, souvent par un QR code. Ensuite, à chaque authentification, l'application calcule T, la partie entière de l'heure Unix divisée par le pas (30 secondes), puis le HMAC (SHA-1 par défaut) de T avec la clé, et le tronque en un code de quelques chiffres. Le serveur, qui connaît la clé et l'heure, recalcule le code et le compare, en tolérant souvent un pas d'écart d'horloge.",
+    "reference": "RFC 6238, section 4 ; RFC 4226, section 5"
+  },
+  {
+    "slug": "ccna-5.4-certificate-revocation-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les postes d'une entreprise s'authentifient sur le réseau avec un certificat numérique au lieu d'un mot de passe. Un ordinateur portable est volé. Comment empêcher qu'il soit encore accepté, sans toucher aux autres postes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Renouveler le certificat de l'autorité de certification racine pour invalider le certificat du portable."
+        },
+        {
+          "id": "b",
+          "text": "Révoquer son certificat, que l'autorité de certification publie alors dans sa CRL ou par OCSP."
+        },
+        {
+          "id": "c",
+          "text": "Changer le mot de passe enable secret de tous les commutateurs d'accès auxquels le portable se relie."
+        },
+        {
+          "id": "d",
+          "text": "Attendre l'expiration de son certificat, car un certificat encore valide ne peut pas être invalidé."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un certificat volé reste cryptographiquement valide jusqu'à son expiration : il faut donc le révoquer. L'autorité de certification ajoute son numéro de série à sa liste de révocation (CRL) ou répond « révoqué » aux requêtes OCSP ; le serveur d'authentification qui vérifie cet état refuse alors le portable. Les autres postes gardent leur certificat, signé par la même autorité, et continuent de s'authentifier.",
+    "distractorNotes": {
+      "a": "Remplacer la racine invaliderait tous les certificats qu'elle a émis : tous les postes devraient être réenrôlés.",
+      "c": "L'enable secret protège l'accès à l'administration des commutateurs ; il n'intervient pas dans l'authentification des postes par certificat.",
+      "d": "La révocation sert justement à invalider un certificat avant son expiration."
+    },
+    "reference": "RFC 5280, section 3.3 (révocation, CRL) ; RFC 6960 (OCSP)"
+  },
+  {
+    "slug": "ccna-5.4-strongest-password-choice-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lequel de ces mots de passe résiste le mieux à une attaque par force brute ou par dictionnaire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cisco2024!Admin"
+        },
+        {
+          "id": "b",
+          "text": "P@ssw0rd!2024"
+        },
+        {
+          "id": "c",
+          "text": "riviere-lampe-cactus-orbite-velours"
+        },
+        {
+          "id": "d",
+          "text": "Adm1n!Adm1n!2024"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une phrase de passe de cinq mots tirés au hasard compte ici 35 caractères : sa longueur rend la force brute irréaliste, et la combinaison de mots sans lien ne figure dans aucune liste. Les trois autres, malgré majuscules, chiffres et symboles, suivent des schémas que les outils d'attaque testent en premier : nom de marque ou mot courant, substitutions prévisibles (@ pour a, 0 pour o, 1 pour i), mot répété, année et point d'exclamation ajoutés. La longueur compte davantage que les caractères spéciaux.",
+    "distractorNotes": {
+      "a": "Un nom de marque, une année, un symbole et un mot courant : une simple combinaison de mots du dictionnaire et de règles connues.",
+      "b": "Les substitutions @ et 0 dans « password », suivies d'une année, sont des règles appliquées automatiquement par les outils de cassage.",
+      "d": "Un mot courant avec une substitution prévisible, répété puis suivi d'une année : la répétition n'ajoute presque rien pour un outil de cassage."
+    },
+    "reference": "NIST SP 800-63B (Digital Identity Guidelines — Authentication and Lifecycle Management)"
+  },
+  {
+    "slug": "ccna-5.4-password-reuse-risk-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un administrateur utilise le même mot de passe pour sa messagerie personnelle et pour son compte sur les équipements réseau de l'entreprise. Quel risque cette réutilisation crée-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "IOS détecte qu'un mot de passe est déjà employé ailleurs et désactive le compte local."
+        },
+        {
+          "id": "b",
+          "text": "Le mot de passe est transmis en clair à chaque connexion SSH vers les équipements."
+        },
+        {
+          "id": "c",
+          "text": "Le hachage scrypt du mot de passe devient réversible dès qu'il est réutilisé."
+        },
+        {
+          "id": "d",
+          "text": "Une fuite de la messagerie permet d'essayer ce mot de passe sur les équipements."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Les bases de mots de passe dérobées à un service sont revendues et testées automatiquement sur d'autres services : c'est le credential stuffing. Un mot de passe réutilisé expose donc tous les comptes dès que le moins protégé est compromis. La parade consiste à utiliser un mot de passe unique par compte, ce qu'un gestionnaire de mots de passe rend praticable, et à ajouter un second facteur sur les comptes d'administration.",
+    "distractorNotes": {
+      "a": "IOS ne peut pas savoir où un mot de passe est utilisé par ailleurs ; il ne vérifie que la longueur minimale si elle est configurée.",
+      "b": "SSH chiffre toute la session, mot de passe compris ; la réutilisation ne change rien au transport.",
+      "c": "Un hachage scrypt reste irréversible ; le danger vient de la fuite du mot de passe en clair sur un autre service."
+    },
+    "reference": "NIST SP 800-63B (Digital Identity Guidelines — Authentication and Lifecycle Management)"
+  },
+  {
+    "slug": "ccna-5.4-nist-password-guidance-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Selon les recommandations du NIST (SP 800-63B), quelle pratique faut-il appliquer aux mots de passe choisis par les utilisateurs ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Imposer un changement de mot de passe tous les 90 jours, même sans signe de compromission."
+        },
+        {
+          "id": "b",
+          "text": "Exiger au moins une majuscule, un chiffre et un caractère spécial dans chaque mot de passe."
+        },
+        {
+          "id": "c",
+          "text": "Proposer un indice de mot de passe que l'utilisateur peut consulter avant de se connecter."
+        },
+        {
+          "id": "d",
+          "text": "Comparer chaque nouveau mot de passe à une liste de mots de passe courants ou compromis."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le NIST demande de refuser les mots de passe qui figurent dans une liste de mots de passe courants, prévisibles ou issus de fuites, car ce sont les premiers testés par les attaquants. Il privilégie la longueur et déconseille les règles de composition, qui poussent à des variantes prévisibles comme « Motdepasse1! », ainsi que le changement périodique imposé, qui produit des mots de passe à peine modifiés : un changement n'est exigé qu'en cas de compromission. Les indices sont interdits.",
+    "distractorNotes": {
+      "a": "Le NIST déconseille les changements périodiques arbitraires ; il ne les impose qu'en cas de signe de compromission.",
+      "b": "Les règles de composition sont déconseillées par le NIST : elles produisent des mots de passe prévisibles sans gain réel.",
+      "c": "Le NIST interdit les indices, lisibles par quiconque tente de se connecter."
+    },
+    "reference": "NIST SP 800-63B (Digital Identity Guidelines — Authentication and Lifecycle Management)"
+  },
+  {
+    "slug": "ccna-5.4-sms-otp-weakness-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise hésite entre un code envoyé par SMS et une application TOTP sur smartphone comme second facteur. Quelle faiblesse propre au SMS justifie de préférer l'application ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le code SMS relève de ce que l'on sait, alors que l'application relève de ce que l'on possède."
+        },
+        {
+          "id": "b",
+          "text": "Le code SMS peut être détourné, par exemple par un transfert frauduleux du numéro (SIM swapping)."
+        },
+        {
+          "id": "c",
+          "text": "Le code SMS reste valable indéfiniment, alors qu'un code TOTP change toutes les 30 secondes."
+        },
+        {
+          "id": "d",
+          "text": "Le code SMS exige un mot de passe supplémentaire, ce qui fait trois facteurs au lieu de deux."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le SMS dépend du réseau de l'opérateur : un attaquant qui convainc l'opérateur de transférer le numéro sur sa propre carte SIM (SIM swapping), ou qui intercepte les messages, reçoit le code à la place de l'utilisateur. Le NIST classe pour cette raison le SMS parmi les authentificateurs « restreints ». Une application TOTP calcule le code localement à partir d'une clé stockée sur l'appareil, sans rien recevoir du réseau. Les deux restent des facteurs de possession.",
+    "distractorNotes": {
+      "a": "Le code SMS prouve la possession du téléphone associé au numéro : c'est aussi un facteur de possession.",
+      "c": "Le serveur fixe une durée de validité au code SMS, généralement de quelques minutes : il n'est pas valable indéfiniment.",
+      "d": "Le SMS ne demande aucun mot de passe en plus ; associé au mot de passe initial, il forme deux facteurs, comme l'application."
+    },
+    "reference": "NIST SP 800-63B (Digital Identity Guidelines — Authentication and Lifecycle Management)"
+  },
+  {
+    "slug": "ccna-5.4-fido2-phishing-resistance-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un faux site imite le portail de l'entreprise et relaie en temps réel au vrai portail tout ce que l'utilisateur y saisit. Pourquoi une clé de sécurité FIDO2 protège-t-elle l'utilisateur, alors qu'un code TOTP saisi à la main ne le protège pas ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La clé FIDO2 envoie au portail un mot de passe très long, que le faux site ne peut pas deviner."
+        },
+        {
+          "id": "b",
+          "text": "La clé FIDO2 transmet l'empreinte digitale de l'utilisateur, que le faux site ne peut pas reproduire."
+        },
+        {
+          "id": "c",
+          "text": "La clé FIDO2 chiffre la connexion avec SSH, ce qui empêche le faux site de relayer la session."
+        },
+        {
+          "id": "d",
+          "text": "La clé FIDO2 ne signe que pour le domaine enregistré, et le faux site n'obtient aucune signature valable."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Avec FIDO2 (WebAuthn), la clé crée à l'enrôlement une paire de clés propre au domaine du portail. Lors de la connexion, le navigateur indique le domaine réellement visité : sur le faux domaine, la clé ne trouve aucun identifiant et ne signe rien, et une signature obtenue ailleurs ne serait pas valable pour le vrai portail. La clé privée ne quitte jamais l'appareil. Un code TOTP, au contraire, est un simple nombre que l'utilisateur tape où on le lui demande : le faux site le relaie avant qu'il expire.",
+    "distractorNotes": {
+      "a": "FIDO2 n'envoie aucun mot de passe : il répond à un défi par une signature à clé publique.",
+      "b": "La biométrie éventuelle ne sert qu'à déverrouiller la clé en local ; l'empreinte n'est jamais transmise au site.",
+      "c": "FIDO2 ne repose pas sur SSH ; la connexion web reste en HTTPS, et la protection vient du lien entre l'identifiant et le domaine."
+    },
+    "reference": "W3C Web Authentication (WebAuthn) Level 2 ; FIDO Alliance — CTAP2 ; NIST SP 800-63B (authentification résistante à l'hameçonnage)"
+  },
+  {
+    "slug": "ccna-5.4-dictionary-attack-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Qu'est-ce qu'une attaque par dictionnaire contre un mot de passe ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tester toutes les combinaisons possibles de caractères, de la plus courte à la plus longue."
+        },
+        {
+          "id": "b",
+          "text": "Intercepter le mot de passe sur le réseau pendant qu'il circule en clair, par exemple en Telnet."
+        },
+        {
+          "id": "c",
+          "text": "Tester une liste de mots courants, de mots de passe divulgués et de leurs variantes prévisibles."
+        },
+        {
+          "id": "d",
+          "text": "Inciter l'utilisateur à saisir son mot de passe sur un faux site qui imite un service connu."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une attaque par dictionnaire essaie des candidats probables plutôt que toutes les combinaisons : mots du dictionnaire, prénoms, mots de passe issus de fuites, complétés par des règles de variation (majuscule initiale, chiffres ajoutés, @ pour a). Elle est très efficace contre les mots de passe choisis par des humains. Les parades : refuser les mots de passe présents dans ces listes, imposer une longueur suffisante, limiter les tentatives (login block-for) et stocker des hachages lents comme scrypt.",
+    "distractorNotes": {
+      "a": "Tester toutes les combinaisons est l'attaque par force brute exhaustive, sans liste de candidats.",
+      "b": "L'interception sur le réseau est une écoute passive (sniffing), pas une attaque par dictionnaire.",
+      "d": "Le faux site qui recueille le mot de passe relève de l'hameçonnage (phishing)."
+    },
+    "reference": "NIST SP 800-63B (Digital Identity Guidelines — Authentication and Lifecycle Management)"
+  },
+  {
+    "slug": "ccna-5.4-x509-certificate-contents-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux informations un certificat X.509 contient-il ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La clé privée du titulaire du certificat"
+        },
+        {
+          "id": "b",
+          "text": "La signature numérique de l'autorité de certification émettrice"
+        },
+        {
+          "id": "c",
+          "text": "La clé privée de l'autorité de certification émettrice"
+        },
+        {
+          "id": "d",
+          "text": "La clé publique du titulaire du certificat"
+        },
+        {
+          "id": "e",
+          "text": "Le hachage du mot de passe du titulaire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Un certificat X.509 lie une identité (le sujet) à sa clé publique, avec l'émetteur, un numéro de série et une période de validité ; l'autorité de certification signe le tout avec sa clé privée. Quiconque fait confiance à cette autorité vérifie la signature avec la clé publique de l'autorité et peut alors utiliser la clé publique du titulaire. Le certificat est public : il ne contient aucune clé privée ni aucun secret. Le titulaire prouve son identité en signant un défi avec sa clé privée, conservée à part.",
+    "distractorNotes": {
+      "a": "La clé privée du titulaire reste secrète sur son appareil ; le certificat, public, ne contient que la clé publique.",
+      "c": "La clé privée de l'autorité sert à signer les certificats et ne doit jamais être diffusée.",
+      "e": "L'authentification par certificat ne repose sur aucun mot de passe : aucun hachage n'y figure."
+    },
+    "reference": "RFC 5280, section 4.1"
+  },
+  {
+    "slug": "ccna-5.4-biometrics-properties-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur l'authentification biométrique sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle relève du facteur « ce que l'on possède », comme une carte à puce."
+        },
+        {
+          "id": "b",
+          "text": "Une caractéristique biométrique compromise ne peut pas être changée comme un mot de passe."
+        },
+        {
+          "id": "c",
+          "text": "Un système bien réglé atteint des taux de fausse acceptation et de faux rejet nuls."
+        },
+        {
+          "id": "d",
+          "text": "Une seule caractéristique biométrique suffit à constituer une authentification multifacteur."
+        },
+        {
+          "id": "e",
+          "text": "Le seuil de reconnaissance fait varier en sens inverse les taux de fausse acceptation et de faux rejet."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "La biométrie relève de ce que l'on est. Sa reconnaissance est statistique : un seuil strict réduit les fausses acceptations (FAR) mais rejette plus souvent l'utilisateur légitime (FRR), et inversement ; aucun réglage n'annule les deux. Autre limite : on ne change pas d'empreinte ni d'iris, d'où l'intérêt de garder le modèle biométrique en local, sur l'appareil, et de combiner la biométrie avec un autre facteur, comme une clé ou un smartphone.",
+    "distractorNotes": {
+      "a": "La biométrie relève de « ce que l'on est » ; la carte à puce relève de « ce que l'on possède ».",
+      "c": "La reconnaissance biométrique est statistique : il reste toujours un compromis entre fausse acceptation et faux rejet.",
+      "d": "Une caractéristique biométrique n'est qu'un seul facteur ; la MFA exige au moins deux catégories différentes."
+    },
+    "reference": "NIST SP 800-63B (Digital Identity Guidelines — Authentication and Lifecycle Management)"
+  },
+  {
+    "slug": "ccna-5.4-block-for-min-length-scenario-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 contient les commandes « security passwords min-length 12 » et « login block-for 90 attempts 4 within 45 », sans login quiet-mode access-class. Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Après 4 échecs, seule l'adresse IP source à l'origine des échecs est bloquée pendant 90 secondes."
+        },
+        {
+          "id": "b",
+          "text": "Les mots de passe de ligne échappent à la longueur minimale, qui ne vise que les comptes locaux."
+        },
+        {
+          "id": "c",
+          "text": "La commande « username guest secret Guest-2025 » est refusée, car son mot de passe compte 10 caractères."
+        },
+        {
+          "id": "d",
+          "text": "Après 4 échecs en 45 secondes, toutes les sources sont refusées pendant 90 secondes."
+        },
+        {
+          "id": "e",
+          "text": "Après 4 échecs, R1 refuse les connexions pendant 45 secondes, puis remet le compteur à zéro."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "« login block-for 90 attempts 4 within 45 » se lit : bloquer pendant 90 secondes si 4 tentatives échouent en 45 secondes. Le blocage (quiet mode) vise toutes les nouvelles connexions Telnet, SSH et HTTP, quelle que soit leur source ; sans « login quiet-mode access-class », même les administrateurs sont refusés. « security passwords min-length 12 » s'applique à tout nouveau mot de passe ou secret, enable, compte local ou ligne : Guest-2025, de 10 caractères, est refusé.",
+    "distractorNotes": {
+      "a": "Le blocage est global : toutes les sources sont refusées, et non la seule adresse fautive.",
+      "b": "La longueur minimale vaut aussi pour les mots de passe de ligne et les mots de passe ou secrets enable.",
+      "e": "45 secondes est la fenêtre d'observation des échecs ; le blocage dure 90 secondes, le premier nombre de la commande."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — Cisco IOS Login Enhancements (Login Block)"
+  }
+]
