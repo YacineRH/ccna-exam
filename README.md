@@ -6,12 +6,12 @@ Le moteur ne contient rien de propre au CCNA : une certification est une configu
 
 ## Fonctionnalités
 
-- Examens blancs chronométrés, tirés selon la pondération officielle des 6 domaines, sans doublon.
+- Série de 100 examens blancs figés et numérotés (102 questions, pondération officielle, deux examens ont au plus 12 questions en commun), avec la progression dans la série et le meilleur score par examen ; ou un tirage pondéré à la demande.
 - Entraînement libre par domaine et par type de question, avec correction immédiate et explication des distracteurs.
 - Révision en un clic d'un sous-thème raté, depuis la carte « À revoir » du tableau de bord.
 - 6 types de questions : QCM simple et multiple, champs à compléter (subnetting), commandes IOS (abréviations acceptées), remise en ordre, association.
 - Tableau de bord : niveau de préparation face au seuil, maîtrise par domaine, courbe de progression, sous-thèmes à revoir.
-- Banque CCNA de plus de 210 questions relues : deux examens blancs complets sans répétition, chaque sous-thème du programme couvert.
+- Banque CCNA de 1 530 questions relues (rédaction et relecture séparées, contrôle d'échantillon), au moins 15 par sous-thème, réparties selon les pondérations officielles, sans quasi-doublon.
 - Trainer de subnetting à exercices infinis.
 - Trainer CLI IOS : 13 labs CCNA sur un routeur ou un commutateur simulé (modes, prompts, abréviations, erreurs et aide `?` comme sur IOS), objectifs vérifiés en direct, trois indices, solution et explication à la fin, meilleur temps et historique.
 - Challenges chronométrés : 11 défis CCNA sans indice (7 de dépannage, des pannes à trouver dans la configuration de départ), échéance contrôlée par le serveur, fin automatique, meilleur temps et courbe des temps.
@@ -96,7 +96,7 @@ La CI GitHub Actions lance tout, avec PostgreSQL, à chaque push : build, typech
 - [x] Bloc 1 : corrections v0.1 (mêmes lettres d'options dans les résultats, certification choisie dans l'en-tête, chrono corrigé du décalage d'horloge, filtre par type de question, tests navigateur Playwright en CI)
 - [x] Bloc 2 : banque complète et entraînement ciblé (banque CCNA portée à plus de 210 questions relues, deux examens complets sans doublon ; filtre `subtopics` ; compteurs de la banque par type et sous-thème ; choix des types en entraînement ; bouton « Réviser » ; chrono recalé à chaque réponse)
 - [x] Bloc 3 : trainer CLI IOS (simulateur de terminal générique, profil IOS en données, 13 labs CCNA relus, routes `/labs` et `/lab-attempts`, écran `/labs/cli`, labs dans le tableau de bord et l'historique, outils MCP `list_labs` et `generate_lab`) ; chrono d'examen recalé toutes les 5 min ; balayage à 390 px de toute la banque (`pnpm e2e:sweep`)
-- [ ] Remplir la banque : ~100 examens blancs générés via le MCP
 - [x] Bloc 4 : challenges chronométrés et révision espacée (fidélité du simulateur : ordre de `show running-config`, EtherChannel, VTY 0 4 / 5 15, ACL numérotées en mode nommé, HSRP, ports TCP/UDP ; 11 challenges CCNA relus, dont 7 de dépannage ; échéance serveur, classement personnel ; flashcards Leitner ; `generate_challenge`)
 - [x] Bloc 5 : finitions, accessibilité (audit axe WCAG 2.1 AA en CI, titres, zones de 44 px, mouvement réduit), mobile (terminal tactile, 360 à 1280 px, fumée Firefox et WebKit), performance (découpage par route, budget du bundle, polices auto-hébergées, Lighthouse ≥ 90)
+- [x] Bloc 6 : banque complète et 100 examens blancs (banque CCNA portée à 1 530 questions en 43 lots rédigés puis relus par des agents distincts, contrôle d'échantillon ; assembleur de série déterministe et détection des quasi-doublons dans `packages/core` ; 100 examens figés importés au démarrage, idempotents, jamais modifiés une fois passés ; écran de lancement par numéro et progression dans la série)
 - [ ] Phase 6 : deuxième certification (Security+)
