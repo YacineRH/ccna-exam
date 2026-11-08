@@ -1,0 +1,1220 @@
+[
+  {
+    "slug": "ccna-5.7-port-security-default-violation-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un port d'accès, l'administrateur saisit seulement « switchport port-security », sans autre commande port-security. Quel mode de violation s'applique ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "protect"
+        },
+        {
+          "id": "b",
+          "text": "restrict"
+        },
+        {
+          "id": "c",
+          "text": "shutdown"
+        },
+        {
+          "id": "d",
+          "text": "shutdown vlan"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sans commande « switchport port-security violation », port security applique le mode shutdown, et autorise par défaut une seule adresse MAC. À la première violation, le port passe en err-disabled : il ne transmet plus rien, un message syslog est émis et le compteur de violations s'incrémente. Les modes protect et restrict, moins radicaux, ne s'appliquent que s'ils sont configurés explicitement.",
+    "distractorNotes": {
+      "a": "protect doit être configuré explicitement ; il supprime les trames fautives en silence, sans compteur ni syslog.",
+      "b": "restrict doit être configuré explicitement ; il supprime les trames fautives, journalise et incrémente le compteur.",
+      "d": "shutdown vlan est une option à configurer explicitement, utile surtout avec plusieurs VLAN par port ; ce n'est pas le défaut."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-dhcp-snooping-attack-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle attaque DHCP snooping vise-t-il principalement à bloquer ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'empoisonnement des caches ARP des hôtes du VLAN"
+        },
+        {
+          "id": "b",
+          "text": "Un serveur DHCP pirate qui distribue une fausse passerelle"
+        },
+        {
+          "id": "c",
+          "text": "L'inondation de la table d'adresses MAC du commutateur"
+        },
+        {
+          "id": "d",
+          "text": "La négociation d'un trunk par un poste au moyen de DTP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "DHCP snooping classe les ports en trusted et untrusted. Sur un port untrusted, il rejette les messages de serveur DHCP (DHCPOFFER, DHCPACK, DHCPNAK) : un serveur pirate branché sur un port d'accès ne peut donc pas répondre aux clients et leur imposer une fausse passerelle ou un faux DNS, base d'une attaque de l'homme du milieu. La fonction construit au passage la table de liaisons utilisée par DAI et IP Source Guard.",
+    "distractorNotes": {
+      "a": "L'empoisonnement ARP est bloqué par Dynamic ARP Inspection, qui s'appuie sur la table de DHCP snooping sans s'y réduire.",
+      "c": "L'inondation de la table MAC se combat avec port security, qui limite le nombre d'adresses apprises par port.",
+      "d": "La négociation DTP se bloque avec « switchport mode access » et « switchport nonegotiate »."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring DHCP Features (DHCP Snooping)"
+  },
+  {
+    "slug": "ccna-5.7-dai-attack-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle attaque Dynamic ARP Inspection (DAI) empêche-t-il sur un VLAN ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un serveur DHCP pirate qui répond aux clients du VLAN"
+        },
+        {
+          "id": "b",
+          "text": "L'épuisement du pool DHCP par de fausses requêtes"
+        },
+        {
+          "id": "c",
+          "text": "L'empoisonnement ARP pour détourner le trafic vers un attaquant"
+        },
+        {
+          "id": "d",
+          "text": "Le saut de VLAN par double étiquetage 802.1Q"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Dans un empoisonnement ARP (ARP spoofing), l'attaquant envoie des réponses ARP gratuites qui associent l'adresse IP de la passerelle à sa propre adresse MAC ; les victimes lui envoient alors leur trafic. DAI intercepte les messages ARP reçus sur les ports untrusted et les compare à la table de liaisons de DHCP snooping (ou à une ACL ARP) : un couple IP/MAC inconnu est rejeté et journalisé.",
+    "distractorNotes": {
+      "a": "Un serveur DHCP pirate est bloqué par DHCP snooping, qui rejette les messages de serveur sur les ports untrusted.",
+      "b": "L'épuisement du pool (DHCP starvation) se combat par port security ou par la limite de débit de DHCP snooping, pas par DAI.",
+      "d": "Le double étiquetage se combat par le choix d'un VLAN natif inutilisé sur les trunks."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Dynamic ARP Inspection"
+  },
+  {
+    "slug": "ccna-5.7-protect-mode-behaviour-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le port Gi1/0/8 de SW1 est configuré avec port security, « maximum 1 » et « violation protect ». L'adresse du poste autorisé est déjà apprise. Un utilisateur branche un second poste derrière un petit commutateur sur ce port. Que se passe-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le port reste actif, les trames du second poste sont supprimées et le compteur de violations ne change pas."
+        },
+        {
+          "id": "b",
+          "text": "Le port reste actif, les trames du second poste sont supprimées et le compteur de violations augmente."
+        },
+        {
+          "id": "c",
+          "text": "Le port passe en err-disabled et un message syslog est émis pour signaler la violation."
+        },
+        {
+          "id": "d",
+          "text": "Le port reste actif et l'adresse du second poste remplace celle du poste déjà appris."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "En mode protect, le commutateur supprime simplement les trames dont l'adresse source dépasse le maximum autorisé, sans aucune notification : pas de syslog, pas de trap SNMP et le compteur de violations n'est pas incrémenté. Le poste autorisé continue de fonctionner. C'est le mode le plus discret, mais aussi le plus difficile à diagnostiquer, puisque rien n'indique la violation.",
+    "distractorNotes": {
+      "b": "C'est le comportement de restrict : protect, lui, n'incrémente pas le compteur.",
+      "c": "C'est le comportement de shutdown, le mode par défaut, qui n'est pas celui configuré ici.",
+      "d": "Port security ne remplace pas une adresse sécurisée par une nouvelle : la nouvelle adresse est en violation."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-sticky-running-config-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur SW1, « switchport port-security mac-address sticky » est configuré sur Gi1/0/3, et l'adresse du poste vient d'y être apprise. Personne n'a saisi « copy running-config startup-config ». Que devient cette adresse si SW1 redémarre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle est conservée, car les adresses sticky sont écrites directement dans la startup-config."
+        },
+        {
+          "id": "b",
+          "text": "Elle est perdue, car elle n'a été ajoutée qu'à la running-config."
+        },
+        {
+          "id": "c",
+          "text": "Elle est conservée, car elle est stockée dans le fichier vlan.dat de la flash."
+        },
+        {
+          "id": "d",
+          "text": "Elle est perdue, car les adresses sticky expirent au bout de 300 secondes d'inactivité."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Avec sticky, les adresses apprises dynamiquement sont converties en adresses sécurisées sticky et ajoutées à la running-config, sous la forme « switchport port-security mac-address sticky 0050.xxxx.xxxx ». Tant que la configuration n'est pas enregistrée dans la startup-config, un redémarrage les efface et le port les réapprend. Une fois enregistrées, elles se comportent comme des adresses configurées statiquement.",
+    "distractorNotes": {
+      "a": "IOS n'écrit jamais lui-même dans la startup-config : seule une sauvegarde explicite le fait.",
+      "c": "vlan.dat contient la base des VLAN, pas les adresses de port security.",
+      "d": "Les adresses sécurisées n'ont pas de vieillissement par défaut (aging time 0) ; elles ne sont donc pas perdues par expiration."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-show-port-security-diagnosis-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le poste de Gi1/0/12 n'a plus de réseau depuis qu'un stagiaire y a branché un moment son portable personnel, retiré depuis. Quelle affirmation est exacte ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le port est en err-disabled ; il faut « shutdown » puis « no shutdown » pour le réactiver."
+        },
+        {
+          "id": "b",
+          "text": "Le port bloque seulement 0050.7966.6804 ; le poste habituel communique encore normalement."
+        },
+        {
+          "id": "c",
+          "text": "Le port reviendra seul au bout de la durée d'aging, car le portable a été retiré du port."
+        },
+        {
+          "id": "d",
+          "text": "Le port est en err-disabled ; « clear port-security sticky » suffit pour le réactiver."
+        }
+      ],
+      "exhibit": "SW1#show port-security interface GigabitEthernet1/0/12\nPort Security              : Enabled\nPort Status                : Secure-shutdown\nViolation Mode             : Shutdown\nAging Time                 : 0 mins\nAging Type                 : Absolute\nSecureStatic Address Aging : Disabled\nMaximum MAC Addresses      : 1\nTotal MAC Addresses        : 1\nConfigured MAC Addresses   : 0\nSticky MAC Addresses       : 1\nLast Source Address:Vlan   : 0050.7966.6804:10\nSecurity Violation Count   : 1"
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Port Status « Secure-shutdown » et Violation Mode « Shutdown » indiquent que le port a été placé en err-disabled par une violation : le maximum est 1, l'adresse sticky du poste habituel est déjà apprise, et l'adresse 0050.7966.6804 du portable a déclenché la violation (compteur à 1). Retirer l'appareil ne suffit pas : sans errdisable recovery, il faut « shutdown » puis « no shutdown » sur l'interface. L'aging est à 0, donc désactivé.",
+    "distractorNotes": {
+      "b": "Ce serait le cas en protect ou restrict ; en mode Shutdown, tout le port est désactivé.",
+      "c": "L'aging (0 min, donc désactivé) concerne les adresses sécurisées, pas la réactivation d'un port err-disabled.",
+      "d": "Effacer les adresses sécurisées ne réactive pas un port err-disabled : il faut le désactiver puis le réactiver, ou errdisable recovery."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-snooping-missing-trust-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit (extrait). Le serveur DHCP légitime du VLAN 10 est joignable par le trunk Gi1/0/24 de SW1 ; Gi1/0/1 est un port d'accès. Depuis l'ajout de cette configuration, plus aucun client du VLAN 10 n'obtient d'adresse. Quelle est la cause ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les messages DHCPDISCOVER des clients sont rejetés, car leurs ports d'accès sont untrusted."
+        },
+        {
+          "id": "b",
+          "text": "Les messages DHCPOFFER du serveur sont rejetés, car ils arrivent par un port untrusted."
+        },
+        {
+          "id": "c",
+          "text": "Le serveur légitime n'est pas encore inscrit dans la table de liaisons DHCP snooping."
+        },
+        {
+          "id": "d",
+          "text": "Les clients dépassent la limite de débit DHCP appliquée par défaut aux ports untrusted."
+        }
+      ],
+      "exhibit": "SW1#show running-config | include snooping|interface Gi\nip dhcp snooping vlan 10\nip dhcp snooping\ninterface GigabitEthernet1/0/1\n ip dhcp snooping trust\ninterface GigabitEthernet1/0/24"
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une fois DHCP snooping actif sur le VLAN 10, tous les ports sont untrusted sauf ceux déclarés trusted. Ici, « ip dhcp snooping trust » a été placé sur Gi1/0/1, un port d'accès, et non sur le trunk Gi1/0/24 qui mène au serveur. Les DHCPOFFER et DHCPACK du serveur légitime arrivent donc sur un port untrusted et sont rejetés comme s'ils venaient d'un serveur pirate. Il faut déplacer la commande trust sur Gi1/0/24 (et la retirer de Gi1/0/1).",
+    "distractorNotes": {
+      "a": "Un port untrusted accepte les messages de client (Discover, Request) ; seuls les messages de serveur y sont rejetés.",
+      "c": "La table de liaisons enregistre les clients qui obtiennent un bail sur un port untrusted, pas le serveur ; elle n'autorise pas les serveurs.",
+      "d": "Aucune limite de débit DHCP n'est appliquée par défaut : il faut « ip dhcp snooping limit rate » pour en fixer une."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring DHCP Features (DHCP Snooping)"
+  },
+  {
+    "slug": "ccna-5.7-dai-inter-switch-trust-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "SW1 et SW2, reliés par un trunk, font tous deux DHCP snooping et DAI sur le VLAN 10. Le trunk est trusted pour DHCP snooping des deux côtés, mais aucune interface n'a « ip arp inspection trust ». Chaque poste obtient son adresse par DHCP. Les postes d'un même commutateur communiquent, mais un poste de SW1 ne joint pas un poste de SW2. Pourquoi ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque commutateur ne crée de liaisons que pour ses ports untrusted : les ARP reçus par le trunk sont rejetés."
+        },
+        {
+          "id": "b",
+          "text": "DAI rejette tous les ARP reçus par un trunk, quelle que soit la configuration de confiance de ce trunk."
+        },
+        {
+          "id": "c",
+          "text": "Le trunk dépasse la limite de 15 paquets ARP par seconde et passe en err-disabled dès l'activation."
+        },
+        {
+          "id": "d",
+          "text": "DHCP snooping trust sur le trunk désactive DAI sur ce port, ce qui bloque tout le trafic IP qui le traverse."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "DHCP snooping n'inscrit une liaison que pour un client vu sur un port untrusted : SW1 connaît ses propres postes, SW2 les siens. Le trunk étant untrusted pour DAI, chaque commutateur vérifie les ARP qui en arrivent et n'y trouve aucune liaison pour les postes de l'autre commutateur : il les rejette. Cisco recommande de déclarer « ip arp inspection trust » sur les liens entre commutateurs qui font tous deux DAI, chacun ayant déjà contrôlé les ARP de ses ports d'accès.",
+    "distractorNotes": {
+      "b": "Un trunk déclaré « ip arp inspection trust » laisse passer les ARP sans contrôle ; il n'y a pas de rejet systématique.",
+      "c": "Un poste de chaque côté ne génère pas 15 ARP par seconde ; rien n'indique un port err-disabled, et les postes locaux fonctionnent.",
+      "d": "La confiance DHCP snooping et la confiance DAI sont indépendantes ; DAI ne filtre d'ailleurs que l'ARP."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Dynamic ARP Inspection"
+  },
+  {
+    "slug": "ccna-5.7-dhcp-snooping-limit-rate-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur SW1, le port d'accès Gi1/0/6 est configuré avec « ip dhcp snooping limit rate 10 ». Un attaquant y lance un outil qui envoie 200 DHCPDISCOVER par seconde pour épuiser le pool. Que fait SW1 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il transmet les 10 premiers messages de chaque seconde et supprime les suivants, le port restant actif."
+        },
+        {
+          "id": "b",
+          "text": "Il place Gi1/0/6 en err-disabled dès que le débit dépasse 10 messages DHCP par seconde."
+        },
+        {
+          "id": "c",
+          "text": "Il déclare Gi1/0/6 untrusted, ce qui suffit à rejeter les DHCPDISCOVER qu'il reçoit."
+        },
+        {
+          "id": "d",
+          "text": "Il transmet tous les messages, la limite ne s'appliquant qu'aux messages de serveur DHCP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« ip dhcp snooping limit rate » fixe le nombre maximal de paquets DHCP par seconde qu'une interface peut recevoir. Si ce débit est dépassé, le commutateur place l'interface en err-disabled (cause dhcp-rate-limit), ce qui coupe l'attaque par épuisement (DHCP starvation). Aucune limite n'existe par défaut. On réactive ensuite le port à la main ou avec « errdisable recovery cause dhcp-rate-limit ».",
+    "distractorNotes": {
+      "a": "La limite de DHCP snooping ne lisse pas le trafic : son dépassement désactive l'interface.",
+      "c": "Un port untrusted accepte les messages de client comme DHCPDISCOVER ; c'est justement pourquoi il faut une limite de débit.",
+      "d": "La limite porte sur tous les paquets DHCP reçus par l'interface, et vise surtout les messages de client des ports d'accès."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring DHCP Features (DHCP Snooping)"
+  },
+  {
+    "slug": "ccna-5.7-mac-flooding-mitigation-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle fonction d'un commutateur Catalyst protège contre l'inondation de la table d'adresses MAC (MAC flooding) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dynamic ARP Inspection"
+        },
+        {
+          "id": "b",
+          "text": "DHCP snooping"
+        },
+        {
+          "id": "c",
+          "text": "BPDU Guard"
+        },
+        {
+          "id": "d",
+          "text": "Port security"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'attaquant envoie des milliers de trames avec des adresses MAC source aléatoires ; une fois la table MAC pleine, le commutateur inonde les trames unicast vers des destinations inconnues sur tous les ports du VLAN, comme un concentrateur, et l'attaquant les capture. Port security limite le nombre d'adresses apprises sur chaque port (1 par défaut) : les adresses en excès déclenchent une violation au lieu de remplir la table.",
+    "distractorNotes": {
+      "a": "DAI vérifie les messages ARP ; il ne limite pas le nombre d'adresses MAC apprises par port.",
+      "b": "DHCP snooping filtre les messages DHCP ; les trames de l'attaque n'ont pas besoin d'être du DHCP.",
+      "c": "BPDU Guard désactive un port PortFast qui reçoit une BPDU ; il ne limite pas l'apprentissage MAC."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-dot1x-authenticator-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une authentification 802.1X sur un port d'accès, quel rôle joue le commutateur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Supplicant"
+        },
+        {
+          "id": "b",
+          "text": "Authenticator"
+        },
+        {
+          "id": "c",
+          "text": "Authentication server"
+        },
+        {
+          "id": "d",
+          "text": "Policy enforcement client"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "802.1X définit trois rôles : le supplicant, logiciel du poste qui fournit ses identifiants ; l'authenticator, le commutateur (ou le WLC) qui contrôle l'accès au port et relaie les échanges EAP ; l'authentication server, en général un serveur RADIUS comme Cisco ISE, qui valide les identifiants. Tant que l'authentification n'a pas réussi, le port n'accepte que le trafic EAPoL.",
+    "distractorNotes": {
+      "a": "Le supplicant est le poste client qui demande l'accès.",
+      "c": "Le serveur d'authentification est le serveur RADIUS, auquel le commutateur relaie les échanges EAP.",
+      "d": "Ce rôle n'existe pas dans 802.1X, qui n'en définit que trois."
+    },
+    "reference": "IEEE 802.1X-2020"
+  },
+  {
+    "slug": "ccna-5.7-unused-ports-best-practice-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux mesures sont recommandées pour les ports inutilisés d'un commutateur d'accès ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les désactiver administrativement avec « shutdown »."
+        },
+        {
+          "id": "b",
+          "text": "Les laisser dans le VLAN 1, le VLAN par défaut."
+        },
+        {
+          "id": "c",
+          "text": "Les placer dans un VLAN inutilisé, sans accès aux autres VLAN."
+        },
+        {
+          "id": "d",
+          "text": "Les configurer en « switchport mode dynamic desirable »."
+        },
+        {
+          "id": "e",
+          "text": "Les configurer comme ports trusted pour DHCP snooping."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Un port inutilisé ne doit offrir aucun accès à qui y brancherait un appareil : on le désactive avec « shutdown » et on l'affecte à un VLAN inutilisé (souvent appelé « parking » ou « black hole »), sans interface SVI ni route, pour qu'une réactivation par erreur ne donne accès à aucun réseau de production. On le force aussi en mode access pour empêcher la négociation d'un trunk.",
+    "distractorNotes": {
+      "b": "Le VLAN 1 est le VLAN par défaut de tous les ports et sert souvent au trafic de contrôle : y laisser des ports facilite l'accès d'un intrus.",
+      "d": "dynamic desirable propose activement un trunk par DTP : un intrus pourrait obtenir l'accès à tous les VLAN.",
+      "e": "Un port trusted accepte les messages de serveur DHCP : ce serait ouvrir la porte à un serveur pirate."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide"
+  },
+  {
+    "slug": "ccna-5.7-snooping-binding-fields-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles trois informations une entrée de la table de liaisons DHCP snooping contient-elle ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'adresse MAC du client"
+        },
+        {
+          "id": "b",
+          "text": "L'adresse de la passerelle par défaut du client"
+        },
+        {
+          "id": "c",
+          "text": "L'adresse IP attribuée au client"
+        },
+        {
+          "id": "d",
+          "text": "Le nom d'hôte du client"
+        },
+        {
+          "id": "e",
+          "text": "L'interface du commutateur où se trouve le client"
+        },
+        {
+          "id": "f",
+          "text": "L'adresse IP du serveur DNS fourni au client"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Quand un client obtient un bail sur un port untrusted, DHCP snooping enregistre son adresse MAC, l'adresse IP attribuée, la durée du bail, le type de liaison, le VLAN et l'interface. « show ip dhcp snooping binding » affiche ces colonnes. DAI et IP Source Guard s'en servent pour vérifier qu'un hôte utilise bien l'adresse IP reçue, avec sa propre adresse MAC, sur son port.",
+    "distractorNotes": {
+      "b": "La passerelle est une option DHCP transmise au client ; elle n'est pas enregistrée dans la table de liaisons.",
+      "d": "Le nom d'hôte ne figure pas dans la table de liaisons.",
+      "f": "Le serveur DNS est une option DHCP transmise au client ; la table de liaisons ne la conserve pas."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring DHCP Features (DHCP Snooping)"
+  },
+  {
+    "slug": "ccna-5.7-binding-table-consumers-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux fonctions d'un commutateur Catalyst s'appuient sur la table de liaisons construite par DHCP snooping ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Port security"
+        },
+        {
+          "id": "b",
+          "text": "Dynamic ARP Inspection"
+        },
+        {
+          "id": "c",
+          "text": "BPDU Guard"
+        },
+        {
+          "id": "d",
+          "text": "IP Source Guard"
+        },
+        {
+          "id": "e",
+          "text": "802.1X"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La table de liaisons associe adresse MAC, adresse IP, VLAN et interface de chaque client DHCP. DAI l'utilise pour valider les messages ARP reçus sur les ports untrusted, IP Source Guard pour filtrer le trafic IP dont l'adresse source (et éventuellement MAC) ne correspond pas à la liaison du port. Sans DHCP snooping, ces deux fonctions n'ont pas de référence, sauf entrées ou ACL configurées à la main.",
+    "distractorNotes": {
+      "a": "Port security apprend ou reçoit ses adresses MAC sécurisées indépendamment de DHCP snooping.",
+      "c": "BPDU Guard réagit à la réception d'une BPDU sur un port PortFast ; il n'utilise aucune table d'adresses.",
+      "e": "802.1X authentifie le poste auprès d'un serveur RADIUS, sans recourir à la table de DHCP snooping."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring DHCP Features (DHCP Snooping)"
+  },
+  {
+    "slug": "ccna-5.7-psecure-errdisable-recovery-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le port Gi1/0/9 de SW1 est en err-disabled à la suite d'une violation de port security, et l'appareil fautif a été retiré. Quelles deux actions permettent de remettre le port en service ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Saisir « shutdown » puis « no shutdown » sous l'interface Gi1/0/9."
+        },
+        {
+          "id": "b",
+          "text": "Saisir « clear mac address-table dynamic interface Gi1/0/9 »."
+        },
+        {
+          "id": "c",
+          "text": "Configurer « errdisable recovery cause psecure-violation » en configuration globale."
+        },
+        {
+          "id": "d",
+          "text": "Configurer « spanning-tree portfast » sous l'interface Gi1/0/9."
+        },
+        {
+          "id": "e",
+          "text": "Configurer « ip dhcp snooping trust » sous l'interface Gi1/0/9."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Un port err-disabled est désactivé par IOS. On le réactive manuellement par « shutdown » puis « no shutdown », ou automatiquement avec errdisable recovery : « errdisable recovery cause psecure-violation » fait réactiver le port à l'issue de l'intervalle de reprise, 300 secondes par défaut. Dans les deux cas, la cause doit avoir disparu, sinon une nouvelle violation remet le port en err-disabled.",
+    "distractorNotes": {
+      "b": "Vider la table MAC n'agit pas sur l'état err-disabled de l'interface.",
+      "d": "PortFast accélère le passage en forwarding d'un port d'accès ; il ne réactive pas un port err-disabled.",
+      "e": "La confiance DHCP snooping n'a aucun lien avec port security et ne réactive pas le port."
+    },
+    "reference": "Cisco — Errdisable Port State Recovery on the Cisco IOS Platforms"
+  },
+  {
+    "slug": "ccna-5.7-port-security-default-maximum-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur un port d'accès où l'on a seulement saisi « switchport port-security », combien d'adresses MAC sécurisées sont autorisées par défaut ?",
+      "fields": [
+        {
+          "id": "max",
+          "label": "Nombre d'adresses MAC (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "max": {
+          "accepted": [
+            "1"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Par défaut, port security n'autorise qu'une adresse MAC sécurisée par port, avec le mode de violation shutdown. La première adresse apprise devient l'adresse sécurisée ; toute autre adresse source déclenche une violation. Pour un poste derrière un téléphone IP ou plusieurs appareils, on relève la limite avec « switchport port-security maximum <n> ».",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-dai-default-rate-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une fois Dynamic ARP Inspection activé sur un VLAN, quel débit ARP maximal, en paquets par seconde, un port untrusted accepte-t-il par défaut avant de passer en err-disabled ?",
+      "fields": [
+        {
+          "id": "pps",
+          "label": "Paquets ARP par seconde (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "pps": {
+          "accepted": [
+            "15"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "DAI limite par défaut à 15 paquets ARP par seconde le débit accepté sur chaque port untrusted ; les ports trusted ne sont pas limités. Au-delà, le port passe en err-disabled (cause arp-inspection), ce qui protège le processeur du commutateur, qui doit inspecter chaque ARP. On ajuste la valeur avec « ip arp inspection limit rate <pps> » sous l'interface.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Dynamic ARP Inspection"
+  },
+  {
+    "slug": "ccna-5.7-port-security-enable-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Vous êtes dans la configuration de l'interface GigabitEthernet1/0/3 de SW1, qui dessert un seul poste. Passez le port en mode access, puis activez port security avec ses valeurs par défaut.",
+      "prompt": "SW1(config-if)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "switchport mode access"
+        ],
+        [
+          "switchport port-security"
+        ]
+      ]
+    },
+    "explanation": "Port security n'est accepté que sur un port configuré statiquement en access (ou en trunk) : sur un port en dynamic, IOS refuse « switchport port-security ». Il faut donc d'abord « switchport mode access ». La commande seule active la fonction avec ses valeurs par défaut : une adresse MAC autorisée, apprise dynamiquement, et le mode de violation shutdown.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-dhcp-snooping-limit-config-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, en partant du mode de configuration globale : activez DHCP snooping, globalement puis pour le VLAN 20 ; déclarez trusted l'interface GigabitEthernet1/0/48, qui mène au serveur DHCP ; limitez à 10 paquets DHCP par seconde le port d'accès GigabitEthernet1/0/1.",
+      "prompt": "SW1(config)#",
+      "lines": 6
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ip dhcp snooping"
+        ],
+        [
+          "ip dhcp snooping vlan 20"
+        ],
+        [
+          "interface GigabitEthernet1/0/48"
+        ],
+        [
+          "ip dhcp snooping trust"
+        ],
+        [
+          "interface GigabitEthernet1/0/1"
+        ],
+        [
+          "ip dhcp snooping limit rate 10"
+        ]
+      ],
+      "freeOrder": [
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    "explanation": "DHCP snooping exige l'activation globale et l'activation par VLAN, dans n'importe quel ordre. Tous les ports deviennent untrusted : le port vers le serveur légitime doit être déclaré « ip dhcp snooping trust » pour que ses Offer et Ack passent. « ip dhcp snooping limit rate 10 » place le port d'accès en err-disabled s'il reçoit plus de 10 paquets DHCP par seconde, contre l'épuisement du pool. Les ports trusted ne sont en général pas limités.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring DHCP Features (DHCP Snooping)"
+  },
+  {
+    "slug": "ccna-5.7-dai-vlan-trust-config-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, DHCP snooping est déjà actif sur le VLAN 30. En partant du mode de configuration globale, activez Dynamic ARP Inspection sur ce VLAN, puis déclarez trusted pour DAI le trunk GigabitEthernet1/0/24 vers le commutateur de distribution.",
+      "prompt": "SW1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ip arp inspection vlan 30"
+        ],
+        [
+          "interface GigabitEthernet1/0/24"
+        ],
+        [
+          "ip arp inspection trust"
+        ]
+      ]
+    },
+    "explanation": "« ip arp inspection vlan 30 » active DAI sur le VLAN : les ARP reçus sur les ports untrusted sont comparés à la table de liaisons de DHCP snooping. Le trunk vers la distribution est déclaré « ip arp inspection trust » : les ARP qui en viennent ne sont pas contrôlés ni limités en débit. Cette confiance DAI est distincte de « ip dhcp snooping trust », qu'il faut configurer séparément.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Dynamic ARP Inspection"
+  },
+  {
+    "slug": "ccna-5.7-port-security-static-protect-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le port GigabitEthernet1/0/15 de SW1 est en mode access et dessert une imprimante d'adresse MAC 0050.7966.6810. Vous êtes dans la configuration de cette interface. Activez port security, déclarez cette adresse comme adresse sécurisée statique et choisissez le mode de violation protect.",
+      "prompt": "SW1(config-if)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "switchport port-security"
+        ],
+        [
+          "switchport port-security mac-address 0050.7966.6810"
+        ],
+        [
+          "switchport port-security violation protect"
+        ]
+      ]
+    },
+    "explanation": "« switchport port-security mac-address <mac> » déclare une adresse sécurisée statique, enregistrée dans la configuration : avec le maximum par défaut de 1, seule l'imprimante peut utiliser le port. Le mode protect supprime en silence les trames des autres adresses, sans syslog ni compteur, et laisse le port actif. Ces sous-commandes peuvent être saisies dans n'importe quel ordre, mais aucune ne filtre tant que « switchport port-security » n'est pas présente.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-unused-ports-parking-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, les ports GigabitEthernet1/0/40 à GigabitEthernet1/0/48 ne sont pas utilisés. En partant du mode de configuration globale, sélectionnez-les en une seule commande, forcez-les en mode access, placez-les dans le VLAN inutilisé 999 et désactivez-les.",
+      "prompt": "SW1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface range GigabitEthernet1/0/40 - 48",
+          "interface range GigabitEthernet1/0/40-48"
+        ],
+        [
+          "switchport mode access"
+        ],
+        [
+          "switchport access vlan 999"
+        ],
+        [
+          "shutdown"
+        ]
+      ],
+      "freeOrder": [
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "explanation": "« interface range » applique les commandes suivantes à tous les ports de la plage. Forcer le mode access empêche un appareil branché de négocier un trunk par DTP ; le VLAN 999, sans SVI ni route, n'offre aucun accès aux réseaux de production si un port est réactivé par erreur ; « shutdown » désactive enfin les ports. Les trois sous-commandes peuvent être saisies dans n'importe quel ordre.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide"
+  },
+  {
+    "slug": "ccna-5.7-psecure-raise-max-recover-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le port GigabitEthernet1/0/7 de SW1 (port security, maximum 1, violation shutdown) est passé en err-disabled : un poste supplémentaire, désormais autorisé, a été branché à côté du premier par un petit concentrateur. En partant du mode de configuration globale, entrez dans l'interface, autorisez 2 adresses MAC, puis réactivez manuellement le port.",
+      "prompt": "SW1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet1/0/7"
+        ],
+        [
+          "switchport port-security maximum 2"
+        ],
+        [
+          "shutdown"
+        ],
+        [
+          "no shutdown"
+        ]
+      ],
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    "explanation": "Il faut relever le maximum avant de réactiver le port : sinon, la deuxième adresse déclencherait aussitôt une nouvelle violation et un nouvel err-disabled. Le maximum peut être modifié avant ou après « shutdown », mais avant « no shutdown ». La réactivation manuelle d'un port err-disabled se fait par « shutdown » puis « no shutdown ». « show port-security interface Gi1/0/7 » doit ensuite afficher Secure-up.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-dhcp-snooping-binding-order-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Sur SW1, DHCP snooping et DAI sont actifs sur le VLAN 10 ; PC1 est sur un port d'accès untrusted et le serveur DHCP derrière un port trusted. Ordonnez les événements, de PC1 démarrant sans adresse jusqu'à sa première résolution ARP réussie.",
+      "items": [
+        {
+          "id": "ack",
+          "text": "SW1 relaie le DHCPACK reçu sur le port trusted et crée la liaison de PC1"
+        },
+        {
+          "id": "disc",
+          "text": "SW1 accepte le DHCPDISCOVER de PC1, un message de client, sur le port untrusted"
+        },
+        {
+          "id": "arp",
+          "text": "SW1 valide l'ARP de PC1, dont le couple IP/MAC figure dans la table de liaisons"
+        },
+        {
+          "id": "req",
+          "text": "PC1 envoie son DHCPREQUEST, que SW1 relaie vers le serveur"
+        },
+        {
+          "id": "offer",
+          "text": "SW1 relaie le DHCPOFFER reçu sur le port trusted"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "disc",
+        "offer",
+        "req",
+        "ack",
+        "arp"
+      ]
+    },
+    "explanation": "L'échange DHCP suit l'ordre Discover, Offer, Request, Ack. Les messages de client sont acceptés sur le port untrusted de PC1 ; les messages de serveur ne sont acceptés que parce qu'ils arrivent sur le port trusted. C'est le DHCPACK qui confirme le bail : DHCP snooping crée alors la liaison MAC, IP, VLAN, interface. Ensuite seulement, les ARP de PC1 sont validés par DAI ; avant le bail, PC1 n'a d'ailleurs pas d'adresse à annoncer.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring DHCP Features (DHCP Snooping)"
+  },
+  {
+    "slug": "ccna-5.7-mac-flooding-steps-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Ordonnez les étapes d'une attaque par inondation de la table MAC (MAC flooding) sur un commutateur sans port security.",
+      "items": [
+        {
+          "id": "full",
+          "text": "La table d'adresses MAC du commutateur atteint sa capacité maximale"
+        },
+        {
+          "id": "send",
+          "text": "L'attaquant émet des milliers de trames aux adresses MAC source aléatoires"
+        },
+        {
+          "id": "capture",
+          "text": "L'attaquant capture le trafic d'autres hôtes du VLAN"
+        },
+        {
+          "id": "flood",
+          "text": "Le commutateur inonde les trames unicast de destination inconnue sur tout le VLAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "send",
+        "full",
+        "flood",
+        "capture"
+      ]
+    },
+    "explanation": "Le commutateur apprend l'adresse source de chaque trame : des milliers d'adresses aléatoires remplissent la table MAC. Il ne peut plus apprendre les adresses légitimes qui expirent ou apparaissent, et inonde donc les trames destinées à ces adresses inconnues sur tous les ports du VLAN, comme un concentrateur. L'attaquant reçoit alors ce trafic. Port security, en limitant le nombre d'adresses par port, coupe l'attaque dès la première étape.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-l2-attack-mitigation-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque menace à la fonction d'un commutateur Catalyst qui la combat.",
+      "left": [
+        {
+          "id": "rogue",
+          "text": "Serveur DHCP pirate branché sur un port d'accès"
+        },
+        {
+          "id": "arp",
+          "text": "Empoisonnement des caches ARP pour détourner le trafic"
+        },
+        {
+          "id": "flood",
+          "text": "Inondation de la table d'adresses MAC"
+        },
+        {
+          "id": "auth",
+          "text": "Poste inconnu branché sur une prise libre sans s'identifier"
+        }
+      ],
+      "right": [
+        {
+          "id": "snoop",
+          "text": "DHCP snooping"
+        },
+        {
+          "id": "dai",
+          "text": "Dynamic ARP Inspection"
+        },
+        {
+          "id": "ps",
+          "text": "Port security"
+        },
+        {
+          "id": "dot1x",
+          "text": "802.1X"
+        },
+        {
+          "id": "rootg",
+          "text": "Root Guard"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "rogue": "snoop",
+        "arp": "dai",
+        "flood": "ps",
+        "auth": "dot1x"
+      }
+    },
+    "explanation": "DHCP snooping rejette les messages de serveur DHCP sur les ports untrusted. DAI rejette les ARP dont le couple IP/MAC n'est pas dans la table de liaisons. Port security limite le nombre d'adresses MAC apprises par port. 802.1X n'ouvre le port qu'après authentification du poste auprès d'un serveur RADIUS ; d'ici là, seul le trafic EAPoL passe.",
+    "distractorNotes": {
+      "rootg": "Root Guard empêche un port de devenir root port quand il reçoit une BPDU supérieure ; il protège la topologie STP, pas contre ces menaces."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide"
+  },
+  {
+    "slug": "ccna-5.7-violation-mode-effects-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque comportement de port security au mode de violation qui le produit.",
+      "left": [
+        {
+          "id": "err",
+          "text": "Le port passe en err-disabled à la première violation"
+        },
+        {
+          "id": "silent",
+          "text": "Les trames fautives sont supprimées sans syslog ni hausse du compteur"
+        },
+        {
+          "id": "log",
+          "text": "Les trames fautives sont supprimées, un syslog est émis et le port reste actif"
+        },
+        {
+          "id": "def",
+          "text": "Le mode appliqué quand aucune commande violation n'est configurée"
+        }
+      ],
+      "right": [
+        {
+          "id": "protect",
+          "text": "protect"
+        },
+        {
+          "id": "restrict",
+          "text": "restrict"
+        },
+        {
+          "id": "shutdown",
+          "text": "shutdown"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "err": "shutdown",
+        "silent": "protect",
+        "log": "restrict",
+        "def": "shutdown"
+      }
+    },
+    "explanation": "shutdown, le mode par défaut, place le port en err-disabled, émet un syslog et incrémente le compteur. restrict supprime le trafic des adresses non autorisées, incrémente le compteur et envoie syslog et trap SNMP, sans couper le port. protect supprime le même trafic en silence : aucun message, compteur inchangé, ce qui rend le problème difficile à détecter.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.7-snooping-dai-terms-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque élément de DHCP snooping à sa description.",
+      "left": [
+        {
+          "id": "trust",
+          "text": "Port trusted pour DHCP snooping"
+        },
+        {
+          "id": "bind",
+          "text": "Table de liaisons DHCP snooping"
+        },
+        {
+          "id": "opt82",
+          "text": "Option 82"
+        },
+        {
+          "id": "rate",
+          "text": "ip dhcp snooping limit rate"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Port dont les messages de serveur DHCP sont acceptés"
+        },
+        {
+          "id": "r2",
+          "text": "Liste des couples MAC/IP des clients, avec VLAN et interface"
+        },
+        {
+          "id": "r3",
+          "text": "Informations sur l'agent relais, insérées par le commutateur"
+        },
+        {
+          "id": "r4",
+          "text": "Débit DHCP maximal d'un port avant son err-disabled"
+        },
+        {
+          "id": "r5",
+          "text": "Délai d'expiration des entrées de la table ARP du commutateur"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "trust": "r1",
+        "bind": "r2",
+        "opt82": "r3",
+        "rate": "r4"
+      }
+    },
+    "explanation": "Un port trusted accepte tous les messages DHCP, y compris Offer et Ack ; les autres ne laissent passer que les messages de client. La table de liaisons, remplie à chaque bail obtenu sur un port untrusted, sert de référence à DAI et IP Source Guard. L'option 82 (Relay Agent Information, RFC 3046) est insérée par défaut par DHCP snooping et identifie le commutateur et le port du client. limit rate fixe le nombre de paquets DHCP par seconde au-delà duquel le port passe en err-disabled.",
+    "distractorNotes": {
+      "r5": "Ni DHCP snooping ni DAI ne gèrent l'expiration du cache ARP ; elle se règle par « arp timeout » sur l'interface de niveau 3."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — DHCP Snooping ; RFC 3046"
+  }
+]
