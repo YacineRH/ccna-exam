@@ -163,7 +163,7 @@ export function readParam(ctx: ParamContext, elem: Param, tokens: readonly strin
     case 'word':
       return { canon: token, consumed: 1 };
     case 'number': {
-      if (!isInt(token)) return null;
+      if (!isInt(token) && !(elem.min !== undefined && elem.min < 0 && /^-\d+$/.test(token))) return null;
       const n = Number(token);
       if (elem.min !== undefined && n < elem.min) return null;
       if (elem.max !== undefined && n > elem.max) return null;

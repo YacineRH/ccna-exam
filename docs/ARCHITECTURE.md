@@ -203,6 +203,15 @@ Toujours sans rien d'IOS dans le moteur : chaque comportement est un champ du pr
 | `<port:tcp>`, `<port:udp>`, `portNames.{tcp,udp}` | Noms de ports par protocole. | `www` en TCP, `tftp` en UDP |
 | `keyGroup` + `key` sur les formes `no` | La forme `no` est partagée par deux orthographes. | `ip domain-lookup` / `ip domain lookup` |
 | `clears` | Lignes devenues inutiles effacées. | `passive-interface default` |
+| `<-23-23>` (bornes signées), mots-clés avec `+` | Entier négatif accepté si la borne basse l'est ; mot-clé `tacacs+`. | `clock timezone EST -5` ; `group tacacs+` |
+| `rewrite` en liste | Plusieurs règles, la première qui correspond s'applique (forme `no` comprise). | `logging trap 4` → `logging trap warnings` ; `address ipv4 …` complétée des ports 1645/1646 ; `clock timezone CET 1` → `… 1 0` |
+| `defaults` | Forme canonique égale au défaut : le réglage est retiré au lieu d'être affiché. | `cdp timer 60`, `spanning-tree port-priority 128`, `logging trap informational`, `login authentication default` |
+| `negate: "disable"` | Réglage actif par défaut et à valeur : `no …` garde « no » + la clé, une forme positive l'efface. | `no logging console`, `logging console warnings` |
+| `negateKey` | La forme `no` peut s'arrêter après la clé alors que la syntaxe exige encore un mot-clé. | `no spanning-tree guard`, `no aaa authentication login default` |
+| `requires[].invalidAtWord` | Refus présenté comme une saisie invalide, marqueur sous un mot-clé. | `aaa authentication …` et `login authentication …` sans `aaa new-model` |
+| `display` | Un mot facultatif absent ne laisse pas d'espace final. | `snmp-server community public RO [10]` |
+
+Pour la vitesse, la lecture d'une ligne ne suit que les formes dont le premier mot-clé peut commencer comme le premier mot saisi (les quatre méthodes de `aaa authentication login` font à elles seules 9 360 formes linéaires).
 
 `TerminalDevice.complete(line)` complète le dernier mot (touche Tab d'IOS) sans rien exécuter ni enregistrer ; l'API l'expose en `POST /lab-attempts/:id/complete` pour la barre tactile du terminal.
 

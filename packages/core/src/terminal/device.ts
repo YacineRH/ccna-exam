@@ -72,6 +72,8 @@ interface Cand {
   values: string[];
   /** Indice du mot de la ligne qui porte chaque valeur. */
   at: number[];
+  /** Indice du mot de la ligne qui porte chaque mot de la forme canonique. */
+  wordAt: number[];
   targets?: string[];
 }
 
@@ -272,7 +274,14 @@ export class TerminalDevice {
   }
 
   private walk(seqs: Seq[], tokens: Token[], line: string, from: number, pseudo: Seq[] = []): Walk {
-    let alive: Cand[] = [...pseudo, ...seqs].map((seq) => ({ seq, pos: 0, canon: [], values: [], at: [] }));
+    // Seules les formes dont le premier mot-clé peut commencer ainsi sont suivies (le catalogue en compte des milliers).
+    const head = tokens[from]?.text.toLowerCase();
+    const starts = (seq: Seq) => {
+      const e = seq.elems[0];
+      return head === undefined || e?.kind !== 'kw' || e.word.startsWith(head);
+    };
+    let alive: Cand[] = [];
+    for (const seq of [...pseudo, ...seqs]) if (starts(seq)) alive.push({ seq, pos: 0, canon: [], values: [], at: [], wordAt: [] });
     let ti = from;
     while (ti < tokens.length) {
       const token = tokens[ti] as Token;
@@ -297,7 +306,9 @@ export class TerminalDevice {
       const exact = words.find((w) => w === word);
       const chosen = exact ?? (words.length === 1 ? words[0] : undefined);
       if (chosen !== undefined) {
-        next = kwHits.filter((h) => h.word === chosen).map((h) => ({ ...h.cand, pos: h.cand.pos + 1, canon: [...h.cand.canon, chosen] }));
+        next = kwHits
+          .filter((h) => h.word === chosen)
+          .map((h) => ({ ...h.cand, pos: h.cand.pos + 1, canon: [...h.cand.canon, chosen], wordAt: [...h.cand.wordAt, ti] }));
       } else if (paramHits.length) {
         consumed = Math.max(...paramHits.map((h) => h.consumed));
         next = paramHits
@@ -308,6 +319,7 @@ export class TerminalDevice {
             canon: [...h.cand.canon, h.canon],
             values: [...h.cand.values, h.canon],
             at: [...h.cand.at, ti],
+            wordAt: [...h.cand.wordAt, ti],
             ...(h.targets ? { targets: h.targets } : {}),
           }));
       } else if (words.length > 1) {
@@ -379,7 +391,9 @@ export class TerminalDevice {
       if (done) {
         return { kind: 'ok', r: { cand: done, cmd: this.profile.commands[done.seq.cmd] as TerminalCommand, negated: true, viaDo: false, mode, partial: false, partialCmds: [] } };
       }
-      const ok = rest.alive.filter((c) => c.pos >= c.seq.lead && c.pos > 0);
+      // Forme partielle : au moins les mots-clés de tête, ou la clé entière si le profil le permet (`no spanning-tree guard`).
+      const keyLen = (cmd: TerminalCommand) => (cmd.negateKey && cmd.key?.every((i) => i >= 0) ? Math.max(...cmd.key) + 1 : Number.POSITIVE_INFINITY);
+      const ok = rest.alive.filter((c) => (c.pos >= c.seq.lead || c.pos >= keyLen(this.profile.commands[c.seq.cmd] as TerminalCommand)) && c.pos > 0);
       const first = ok[0];
       if (!first) return { kind: 'incomplete', at: tokens.length };
       return {
@@ -459,8 +473,9 @@ export class TerminalDevice {
       }
       const problem = this.requirementProblem(req, targets, values);
       if (problem === null) continue;
-      if (req.invalidAt !== undefined) {
-        const token = this.current?.tokens[cand.at[req.invalidAt - 1] ?? -1];
+      if (req.invalidAt !== undefined || req.invalidAtWord !== undefined) {
+        const ti = req.invalidAt !== undefined ? cand.at[req.invalidAt - 1] : cand.wordAt[(req.invalidAtWord as number) - 1];
+        const token = this.current?.tokens[ti ?? -1];
         const col = (this.current?.promptLen ?? 0) + (token?.start ?? 0);
         return `${' '.repeat(col)}^\n${this.profile.messages.invalid}`;
       }
@@ -538,6 +553,11 @@ export class TerminalDevice {
     const other = this.profile.commands[e.cmd];
     if (key === null || !other) return same(e.text, `no ${canon.join(' ')}`);
     return this.keyOf(other, e.text.slice(3).split(' ')) === key;
+  }
+
+  /** Mots de la clé, dans la casse saisie (`logging console`). */
+  private keyWords(cmd: TerminalCommand, canon: string[]): string {
+    return (cmd.key ?? []).map((i) => canon[i < 0 ? canon.length + i : i] ?? '').join(' ');
   }
 
   private entryKey(e: ConfigEntry): string | null {
@@ -673,10 +693,12 @@ export class TerminalDevice {
       const cmd = this.profile.commands[e.cmd];
       if (!cmd?.display || e.text.startsWith('no ')) return e.text;
       const tokens = e.text.split(' ');
-      return cmd.display.replace(/\{(mask:)?\$(\d+)\}/g, (_all, mask: string | undefined, n: string) => {
-        const v = tokens[Number(n)] ?? '';
-        return mask ? maskSecret(tokens.slice(Number(n)).join(' ')) : v;
-      });
+      return cmd.display
+        .replace(/\{(mask:)?\$(\d+)\}/g, (_all, mask: string | undefined, n: string) => {
+          const v = tokens[Number(n)] ?? '';
+          return mask ? maskSecret(tokens.slice(Number(n)).join(' ')) : v;
+        })
+        .trimEnd();
     };
     let lastFlat: string | null = null;
     for (const e of this.ordered(this.config)) {
@@ -763,7 +785,11 @@ export class TerminalDevice {
         const had = list.some(positive);
         for (let i = list.length - 1; i >= 0; i--) if (positive(list[i] as ConfigEntry)) list.splice(i, 1);
         const mode = cmd.negate ?? 'remove';
-        if (mode === 'store' || (mode === 'toggle' && !had)) {
+        if (mode === 'disable') {
+          // `no logging console warnings` : « no » suivi de la seule clé (`no logging console`).
+          for (let i = list.length - 1; i >= 0; i--) if (this.sameNegation(list[i] as ConfigEntry, cmdIndex, cmd, cand.canon)) list.splice(i, 1);
+          list.push({ text: `no ${this.keyWords(cmd, cand.canon)}`, cmd: cmdIndex });
+        } else if (mode === 'store' || (mode === 'toggle' && !had)) {
           // `no ip domain-lookup` puis `no ip domain lookup` : une seule ligne, la dernière forme saisie.
           for (let i = list.length - 1; i >= 0; i--) if (this.sameNegation(list[i] as ConfigEntry, cmdIndex, cmd, cand.canon)) list.splice(i, 1);
           list.push({ text: `no ${canonText}`, cmd: cmdIndex });
@@ -805,6 +831,7 @@ export class TerminalDevice {
       this.targets = headers;
     } else if (config && cmd.store !== false && !cmd.goto && !cmd.exit && !cmd.end) {
       const { lists } = this.scopes(this.targets);
+      const isDefault = (cmd.defaults ?? []).some((p) => new RegExp(p, 'i').test(canonText));
       for (const list of lists) {
         if (cmd.list) {
           this.applyList(list, cmdIndex, cmd, cand.values);
@@ -822,6 +849,16 @@ export class TerminalDevice {
         const negIdx = list.findIndex((e) => this.sameNegation(e, cmdIndex, cmd, cand.canon));
         if (negIdx >= 0) list.splice(negIdx, 1);
         if (cmd.negate === 'store' || (cmd.negate === 'toggle' && negIdx >= 0)) continue;
+        if (isDefault) {
+          // Valeur par défaut : le réglage disparaît de la configuration, comme dans IOS.
+          const key = this.keyOf(cmd, cand.canon);
+          for (let i = list.length - 1; i >= 0; i--) {
+            const e = list[i] as ConfigEntry;
+            if (e.text.startsWith('no ') || !this.sameSetting(e.cmd, cmdIndex)) continue;
+            if (key !== null ? this.entryKey(e) === key : same(e.text, canonText)) list.splice(i, 1);
+          }
+          continue;
+        }
         this.store(list, { text: canonText, cmd: cmdIndex }, cmd, cand.canon);
       }
     }
@@ -1105,7 +1142,7 @@ export class TerminalDevice {
     const seqs = this.seqsHere(this.mode);
     let pool: Cand[];
     if (prefixTokens.length === 0) {
-      pool = [...this.pseudoSeqs(this.mode), ...seqs].map((seq) => ({ seq, pos: 0, canon: [], values: [], at: [] }));
+      pool = [...this.pseudoSeqs(this.mode), ...seqs].map((seq) => ({ seq, pos: 0, canon: [], values: [], at: [], wordAt: [] }));
     } else {
       const first = prefixTokens[0]?.text.toLowerCase() ?? '';
       const negating = this.isConfig() && 'no'.startsWith(first) && first.length >= 2;
@@ -1176,7 +1213,7 @@ export class TerminalDevice {
     const partial = last.text.toLowerCase();
     let pool: Cand[];
     if (!prefixTokens.length) {
-      pool = [...this.pseudoSeqs(this.mode), ...this.seqsHere(this.mode)].map((seq) => ({ seq, pos: 0, canon: [], values: [], at: [] }));
+      pool = [...this.pseudoSeqs(this.mode), ...this.seqsHere(this.mode)].map((seq) => ({ seq, pos: 0, canon: [], values: [], at: [], wordAt: [] }));
     } else {
       const first = prefixTokens[0]?.text.toLowerCase() ?? '';
       const negating = this.isConfig() && 'no'.startsWith(first) && first.length >= 2;
@@ -1248,11 +1285,11 @@ export class TerminalDevice {
     let tokens = tokenize(commandPart);
     let r = this.resolve(tokens, commandPart);
     if (r.kind === 'ok' && r.r.cmd.rewrite && !r.r.partial) {
-      // `standby 0 ip …` est relue comme `standby ip …`.
-      const re = new RegExp(r.r.cmd.rewrite.pattern, 'i');
+      // `standby 0 ip …` est relue comme `standby ip …` ; d'une liste de règles, la première qui correspond.
       const canon = r.r.cand.canon.join(' ');
-      if (re.test(canon)) {
-        const text = `${r.r.negated ? 'no ' : ''}${canon.replace(re, r.r.cmd.rewrite.replace)}`;
+      const rule = [r.r.cmd.rewrite].flat().find((x) => new RegExp(x.pattern, 'i').test(canon));
+      if (rule) {
+        const text = `${r.r.negated ? 'no ' : ''}${canon.replace(new RegExp(rule.pattern, 'i'), rule.replace)}`;
         const t2 = tokenize(text);
         const r2 = this.resolveIn(r.r.mode, t2, text);
         if (r2.kind === 'ok') {

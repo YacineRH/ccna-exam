@@ -40,13 +40,20 @@ const requirementSchema = z
     when: z.object({ param: z.number().int().min(1), min: z.number().optional(), max: z.number().optional() }).optional(),
     /** Refus présenté comme une saisie invalide, le marqueur `^` sous le paramètre n° `invalidAt`. */
     invalidAt: z.number().int().min(1).optional(),
+    /**
+     * Idem, le marqueur sous le mot n° `invalidAtWord` (à partir de 1, mots-clés compris) : une commande
+     * cachée tant qu'un réglage manque (`aaa authentication` sans `aaa new-model`).
+     */
+    invalidAtWord: z.number().int().min(1).optional(),
     /** Message affiché si la condition n'est pas remplie. `{target}` : section visée. */
     message: z.string().min(1).optional(),
   })
   .refine((r) => r.var !== undefined || r.config !== undefined || r.section !== undefined || r.notConfig !== undefined || r.ipv4Host !== undefined || r.notInSections !== undefined || (r.param !== undefined && r.notMatch !== undefined), {
     message: 'une condition porte sur var, config, section ou param + notMatch',
   })
-  .refine((r) => r.message !== undefined || r.invalidAt !== undefined, { message: 'message ou invalidAt attendu' });
+  .refine((r) => r.message !== undefined || r.invalidAt !== undefined || r.invalidAtWord !== undefined, { message: 'message, invalidAt ou invalidAtWord attendu' });
+
+const rewriteSchema = z.object({ pattern: z.string().min(1), replace: z.string() });
 
 export const terminalCommandSchema = z.object({
   /**
@@ -73,9 +80,16 @@ export const terminalCommandSchema = z.object({
   rank: z.number().optional(),
   /**
    * Réécriture de la forme canonique (`standby 0 ip …` → `standby ip …`) : la ligne réécrite est relue
-   * comme si elle avait été saisie. `replace` accepte `$1`…
+   * comme si elle avait été saisie. `replace` accepte `$1`… Une liste de règles : la première qui
+   * correspond s'applique (`logging trap 4` → `logging trap warnings`).
    */
-  rewrite: z.object({ pattern: z.string().min(1), replace: z.string() }).optional(),
+  rewrite: z.union([rewriteSchema, z.array(rewriteSchema).min(1)]).optional(),
+  /**
+   * Formes canoniques égales au réglage par défaut (expressions, insensibles à la casse) : saisies, elles
+   * retirent le réglage au lieu de s'afficher, comme IOS qui n'affiche pas les valeurs par défaut
+   * (`cdp timer 60`).
+   */
+  defaults: z.array(z.string().min(1)).optional(),
   /**
    * Entrées rangées dans une section (`access-list 10 permit …` dans `ip access-list standard 10`) :
    * la ligne, privée de ses `skip` premiers mots, y est exécutée. Sa forme `no` retire toute la section.
@@ -117,8 +131,16 @@ export const terminalCommandSchema = z.object({
   /**
    * Forme `no` : `remove` retire la ligne (défaut), `store` garde « no … » (la forme positive est le
    * défaut, comme `ip domain-lookup`), `toggle` retire la forme positive ou garde « no … », `none` l'interdit.
+   * `disable` : réglage actif par défaut qui a aussi des formes positives à valeur (`logging console
+   * warnings`) ; `no …` retire la forme positive et garde « no » suivi des mots de la clé (`no logging
+   * console`), une forme positive retire ce « no ». Exige `key`.
    */
-  negate: z.enum(['remove', 'store', 'toggle', 'none']).optional(),
+  negate: z.enum(['remove', 'store', 'toggle', 'none', 'disable']).optional(),
+  /**
+   * La forme `no` peut s'arrêter après les mots de la clé, même si la syntaxe exige encore un mot-clé
+   * (`no spanning-tree guard` pour `spanning-tree guard {root|loop|none}`). Exige `key` sans indice négatif.
+   */
+  negateKey: z.boolean().optional(),
   /** Entre dans un sous-mode ; la section porte la forme canonique de la commande. */
   enter: z.object({ mode: z.string().min(1), range: z.boolean().optional() }).optional(),
   /** Passe dans un autre mode (`enable`, `configure terminal`, `disable`). */
@@ -144,7 +166,10 @@ export const terminalCommandSchema = z.object({
     .object({ op: z.enum(['set', 'add', 'remove', 'except', 'all', 'none']), prefix: z.string().min(1), max: z.number().int().positive() })
     .optional(),
   requires: z.array(requirementSchema).optional(),
-  /** Affichage dans la configuration, si différent de la forme canonique. `{mask:$2}` masque un secret. */
+  /**
+   * Affichage dans la configuration, si différent de la forme canonique. `{$2}` : mot n° 2 de la forme
+   * canonique (à partir de 0), `{mask:$2}` masque un secret ; un mot absent ne laisse pas d'espace final.
+   */
   display: z.string().optional(),
 });
 
@@ -255,6 +280,15 @@ export const terminalProfileSchema = z
         }
       }
       if (c.blocks && !c.enter) ctx.addIssue({ code: 'custom', message: `${c.syntax} : blocks sans enter` });
+      if (c.negate === 'disable' && !c.key) ctx.addIssue({ code: 'custom', message: `${c.syntax} : negate disable sans key` });
+      if (c.negateKey && !(c.key?.length && c.key.every((i) => i >= 0))) ctx.addIssue({ code: 'custom', message: `${c.syntax} : negateKey sans key positive` });
+      for (const re of [...(c.defaults ?? []), ...[c.rewrite ?? []].flat().map((r) => r.pattern)]) {
+        try {
+          new RegExp(re, 'i');
+        } catch {
+          ctx.addIssue({ code: 'custom', message: `${c.syntax} : expression invalide ${re}` });
+        }
+      }
     }
   });
 
