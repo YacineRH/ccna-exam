@@ -1,0 +1,1180 @@
+[
+  {
+    "slug": "ccna-6.2-data-plane-function-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Laquelle de ces actions d'un commutateur appartient au plan de données ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Calculer l'arbre STP à partir des BPDU reçues des voisins."
+        },
+        {
+          "id": "b",
+          "text": "Transmettre une trame vers le port associé à l'adresse MAC de destination."
+        },
+        {
+          "id": "c",
+          "text": "Accepter une session SSH ouverte par un administrateur."
+        },
+        {
+          "id": "d",
+          "text": "Échanger des messages LACP pour former un EtherChannel avec un voisin."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le plan de données (data plane, ou forwarding plane) regroupe le traitement de chaque trame ou paquet en transit : lecture de l'en-tête, consultation de la table (table MAC, FIB), éventuel filtrage ou réécriture, puis émission sur le port de sortie. La transmission d'une trame selon la table d'adresses MAC en est l'exemple type. Le plan de contrôle, lui, construit les informations utilisées par le plan de données (STP, LACP, protocoles de routage), et le plan de gestion sert à administrer l'équipement (SSH, SNMP, syslog).",
+    "distractorNotes": {
+      "a": "Le calcul STP à partir des BPDU est une fonction du plan de contrôle : il décide de l'état des ports, il ne transmet pas les trames des utilisateurs.",
+      "c": "Une session SSH vers l'équipement lui-même sert à l'administrer : c'est le plan de gestion.",
+      "d": "LACP négocie l'agrégation des liens avec le voisin : c'est une fonction du plan de contrôle, qui ne transmet pas les trames des utilisateurs."
+    },
+    "reference": "Cisco, CCNA 200-301 Official Cert Guide, Volume 2 : Introduction to Controller-Based Networking"
+  },
+  {
+    "slug": "ccna-6.2-centralized-plane-openflow-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une architecture SDN de type OpenFlow, quel plan est retiré des commutateurs pour être centralisé dans le contrôleur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le plan de données"
+        },
+        {
+          "id": "b",
+          "text": "Le plan de contrôle"
+        },
+        {
+          "id": "c",
+          "text": "Le plan de gestion seul"
+        },
+        {
+          "id": "d",
+          "text": "Le plan de transmission matériel (ASIC)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Dans le modèle SDN « pur » décrit par l'ONF avec OpenFlow, le contrôleur concentre l'intelligence du plan de contrôle : il connaît la topologie, calcule les chemins et programme les tables de flux de chaque commutateur par l'interface southbound. Les commutateurs conservent le plan de données : ils comparent chaque paquet à leurs entrées de flux et le transmettent en conséquence, sans calculer eux-mêmes les chemins. Ce découplage du contrôle et de la transmission est l'idée centrale du SDN.",
+    "distractorNotes": {
+      "a": "Le plan de données reste dans les commutateurs : ce sont eux qui transmettent les paquets, selon les entrées de flux installées par le contrôleur.",
+      "c": "Le contrôleur gère bien les équipements, mais ce qui caractérise OpenFlow est la centralisation du calcul des chemins, c'est-à-dire du plan de contrôle.",
+      "d": "Le matériel de transmission (ASIC) reste dans les commutateurs : c'est le plan de données, qui n'est pas déplacé vers le contrôleur."
+    },
+    "reference": "ONF, OpenFlow Switch Specification ; Cisco, CCNA 200-301 Official Cert Guide, Volume 2 : Introduction to Controller-Based Networking"
+  },
+  {
+    "slug": "ccna-6.2-catalyst-assurance-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel est le rôle de la fonction Assurance de Cisco Catalyst Center ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chiffrer le trafic des utilisateurs entre les sites de l'entreprise."
+        },
+        {
+          "id": "b",
+          "text": "Attribuer les adresses IP aux terminaux à la place d'un serveur DHCP."
+        },
+        {
+          "id": "c",
+          "text": "Analyser la télémétrie du réseau pour en mesurer l'état et proposer des corrections."
+        },
+        {
+          "id": "d",
+          "text": "Remplacer les protocoles de routage en calculant chaque route à la place des routeurs."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Assurance est la partie surveillance de Catalyst Center : elle collecte des données des équipements et des clients (télémétrie en continu, SNMP, syslog, NetFlow…), les corrèle et attribue des scores de santé au réseau, aux équipements, aux clients et aux applications. Elle détecte les problèmes, en donne la cause probable et propose des actions correctives, avec un historique qui permet de revenir sur un incident passé. Elle boucle l'approche intent-based networking : vérifier que le réseau se comporte comme l'intention le demande.",
+    "distractorNotes": {
+      "a": "Catalyst Center ne chiffre pas le trafic des utilisateurs : il gère et supervise le réseau, sans se placer sur le chemin des données.",
+      "b": "Catalyst Center définit des pools d'adresses et peut configurer les équipements, mais l'attribution aux terminaux reste le rôle d'un serveur DHCP ; ce n'est pas la fonction Assurance.",
+      "d": "Les équipements gérés par Catalyst Center conservent leurs protocoles de routage ; Assurance observe le réseau, elle ne calcule pas les routes."
+    },
+    "reference": "Cisco Catalyst Center User Guide"
+  },
+  {
+    "slug": "ccna-6.2-intent-based-networking-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Que signifie l'approche « intent-based networking » (IBN) mise en œuvre par Cisco Catalyst Center ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'administrateur décrit le résultat attendu et le contrôleur le traduit en configuration."
+        },
+        {
+          "id": "b",
+          "text": "L'administrateur saisit chaque commande sur chaque équipement par une session SSH."
+        },
+        {
+          "id": "c",
+          "text": "Les équipements choisissent eux-mêmes leur configuration sans aucune politique centrale."
+        },
+        {
+          "id": "d",
+          "text": "Le contrôleur transmet lui-même tout le trafic des utilisateurs entre les sites."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Dans l'intent-based networking, l'administrateur exprime une intention métier (par exemple « les invités n'accèdent qu'à Internet » ou « la voix est prioritaire »). Le contrôleur traduit cette intention en configurations concrètes, les déploie sur les équipements concernés, puis vérifie en continu, grâce à la télémétrie et à la fonction Assurance, que le réseau respecte bien l'intention. On passe ainsi d'une gestion commande par commande à une gestion par objectifs, cohérente sur tout le réseau.",
+    "distractorNotes": {
+      "b": "La configuration équipement par équipement en CLI décrit la gestion traditionnelle, précisément ce que l'IBN cherche à remplacer.",
+      "c": "L'IBN repose au contraire sur une politique centrale définie dans le contrôleur et déployée de façon cohérente.",
+      "d": "Le contrôleur n'est pas sur le chemin des données : le trafic des utilisateurs reste transmis par les équipements."
+    },
+    "reference": "Cisco Catalyst Center User Guide"
+  },
+  {
+    "slug": "ccna-6.2-traditional-drawback-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel inconvénient caractérise la gestion traditionnelle d'un grand réseau, sans contrôleur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le trafic des utilisateurs doit passer par un serveur central avant d'être transmis."
+        },
+        {
+          "id": "b",
+          "text": "Les équipements ne peuvent plus échanger de routes entre eux par un protocole dynamique."
+        },
+        {
+          "id": "c",
+          "text": "Chaque équipement se configure à part, ce qui favorise les erreurs et les écarts de configuration."
+        },
+        {
+          "id": "d",
+          "text": "Toute modification doit obligatoirement passer par une API REST northbound."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sans contrôleur, chaque routeur et chaque commutateur est configuré individuellement, généralement en CLI par SSH. Un changement qui touche des centaines d'équipements demande autant de sessions, prend du temps et multiplie les risques de faute de frappe, d'oubli et d'écart entre équipements censés être configurés à l'identique (configuration drift). Aucun point central ne donne non plus une vue globale de l'état du réseau. Les contrôleurs répondent à ce problème en centralisant la politique et en automatisant le déploiement.",
+    "distractorNotes": {
+      "a": "Dans un réseau traditionnel, chaque équipement transmet le trafic lui-même ; aucun serveur central n'est sur le chemin des données.",
+      "b": "Le réseau traditionnel repose justement sur des protocoles de routage dynamiques distribués (OSPF, EIGRP, BGP) échangés entre équipements.",
+      "d": "Une API REST northbound est un attribut des contrôleurs ; dans le modèle traditionnel on configure en CLI sur chaque équipement."
+    },
+    "reference": "Cisco, CCNA 200-301 Official Cert Guide, Volume 2 : Introduction to Controller-Based Networking"
+  },
+  {
+    "slug": "ccna-6.2-control-plane-overload-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un commutateur multicouche transmet le trafic en matériel (ASIC). Une tempête de paquets destinés au commutateur lui-même sature son processeur. Les adjacences OSPF tombent faute de hellos traités, mais les flux déjà programmés en matériel continuent d'être transmis. Quel plan est principalement touché ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le plan de données"
+        },
+        {
+          "id": "b",
+          "text": "Le plan de gestion"
+        },
+        {
+          "id": "c",
+          "text": "Le plan de contrôle"
+        },
+        {
+          "id": "d",
+          "text": "Le plan utilisateur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les paquets destinés à l'équipement lui-même (hellos OSPF, BPDU…) sont traités par le processeur, où s'exécute le plan de contrôle. Quand le CPU est saturé, les hellos ne sont plus traités, le dead interval expire et les adjacences tombent : c'est le symptôme d'un plan de contrôle surchargé. Le plan de données, implémenté dans les ASIC, continue à transmettre les flux selon les tables déjà programmées, jusqu'à ce que la perte des routes les modifie. C'est pour protéger ce plan que l'on utilise des mécanismes comme CoPP (Control Plane Policing).",
+    "distractorNotes": {
+      "a": "Le plan de données fonctionne encore : les flux programmés en matériel continuent d'être transmis, ce que dit l'énoncé.",
+      "b": "Les sessions de gestion peuvent aussi souffrir du CPU saturé, mais le symptôme décrit, la chute des adjacences OSPF, est celui du plan de contrôle.",
+      "d": "« Plan utilisateur » désigne le trafic des utilisateurs, c'est-à-dire le plan de données, qui fonctionne toujours ici."
+    },
+    "reference": "Cisco, CCNA 200-301 Official Cert Guide, Volume 2 : Introduction to Controller-Based Networking"
+  },
+  {
+    "slug": "ccna-6.2-catalyst-local-control-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un campus est géré par Cisco Catalyst Center, qui configure les commutateurs par NETCONF et SSH. Que font les commutateurs de distribution vis-à-vis du routage OSPF ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ils délèguent le calcul des routes à Catalyst Center, qui leur envoie chaque entrée de table."
+        },
+        {
+          "id": "b",
+          "text": "Ils exécutent OSPF eux-mêmes et calculent localement leurs routes."
+        },
+        {
+          "id": "c",
+          "text": "Ils désactivent OSPF, Catalyst Center installant des routes statiques à la place."
+        },
+        {
+          "id": "d",
+          "text": "Ils transmettent chaque paquet à Catalyst Center, qui décide du port de sortie."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Catalyst Center est un contrôleur de gestion et d'automatisation : il centralise la politique, génère et déploie les configurations et supervise le réseau. Il n'adopte pas le modèle OpenFlow où le contrôleur calcule les chemins. Les commutateurs conservent leur plan de contrôle : ils exécutent OSPF, échangent des LSA avec leurs voisins et calculent leurs routes localement. Le contrôleur a configuré OSPF (processus, aires, interfaces) via les interfaces southbound comme NETCONF ou CLI par SSH.",
+    "distractorNotes": {
+      "a": "Catalyst Center ne calcule pas les routes des commutateurs : le plan de contrôle reste distribué sur les équipements.",
+      "c": "Rien n'impose de remplacer le routage dynamique par des routes statiques ; Catalyst Center configure des protocoles comme OSPF ou IS-IS.",
+      "d": "Catalyst Center n'est jamais sur le chemin des données ; les commutateurs transmettent les paquets eux-mêmes."
+    },
+    "reference": "Cisco Catalyst Center User Guide"
+  },
+  {
+    "slug": "ccna-6.2-ssh-transit-planes-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'administrateur ouvre une session SSH vers R3 ; ses paquets traversent R1 puis R2. Comment R1 et R3 classent-ils ces paquets ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Plan de gestion pour R1 comme pour R3."
+        },
+        {
+          "id": "b",
+          "text": "Plan de données pour R1 comme pour R3."
+        },
+        {
+          "id": "c",
+          "text": "Plan de contrôle pour R1, plan de gestion pour R3."
+        },
+        {
+          "id": "d",
+          "text": "Plan de données pour R1, plan de gestion pour R3."
+        }
+      ],
+      "exhibit": "PC-Admin --- R1 --- R2 --- R3\n10.0.0.10            (SSH vers 192.168.3.3, loopback0 de R3)"
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le plan auquel appartient un paquet dépend de l'équipement qui l'examine. Pour R1 (comme pour R2), le paquet SSH n'est pas destiné à lui : il le route comme n'importe quel paquet en transit, en consultant sa FIB. C'est donc du plan de données. Pour R3, destination de la session, le paquet est remis à son processus SSH qui sert à l'administrer : c'est le plan de gestion. Le même raisonnement s'applique aux hellos OSPF, qui relèvent du plan de contrôle pour le voisin qui les reçoit.",
+    "distractorNotes": {
+      "a": "R1 ne termine pas la session SSH ; il se contente de router les paquets, ce qui relève de son plan de données.",
+      "b": "Pour R3, le paquet est destiné à son propre service SSH, utilisé pour l'administrer : c'est le plan de gestion, pas une transmission en transit.",
+      "c": "R1 ne fait aucun calcul de routes avec ces paquets ; il les transmet selon sa table, ce qui est du plan de données."
+    },
+    "reference": "Cisco, CCNA 200-301 Official Cert Guide, Volume 2 : Introduction to Controller-Based Networking"
+  },
+  {
+    "slug": "ccna-6.2-dna-center-name-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sous quel ancien nom le contrôleur Cisco Catalyst Center était-il commercialisé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cisco APIC-EM Plus"
+        },
+        {
+          "id": "b",
+          "text": "Cisco Prime Infrastructure"
+        },
+        {
+          "id": "c",
+          "text": "Cisco DNA Center"
+        },
+        {
+          "id": "d",
+          "text": "Cisco vManage"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Cisco Catalyst Center est le nouveau nom de Cisco DNA Center (Digital Network Architecture Center), renommé en 2023. Il s'agit du contrôleur des réseaux d'entreprise (campus, agences, sans-fil) : conception, politique, provisionnement et assurance, avec la fabric SD-Access. Ne pas le confondre avec vManage, devenu SD-WAN Manager, qui gère le SD-WAN, ni avec Prime Infrastructure, ancien outil de gestion.",
+    "distractorNotes": {
+      "a": "APIC-EM était un contrôleur d'entreprise plus ancien, auquel DNA Center a succédé ; « APIC-EM Plus » n'est pas l'ancien nom de Catalyst Center.",
+      "b": "Prime Infrastructure est un outil de gestion distinct et plus ancien, pas l'ancien nom de Catalyst Center.",
+      "d": "vManage (aujourd'hui SD-WAN Manager) est le composant de gestion du SD-WAN Cisco, un autre produit."
+    },
+    "reference": "Cisco Catalyst Center User Guide"
+  },
+  {
+    "slug": "ccna-6.2-management-plane-items-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux fonctions d'un routeur relèvent du plan de gestion ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Envoyer des messages syslog vers un serveur de journalisation."
+        },
+        {
+          "id": "b",
+          "text": "Échanger des hellos OSPF avec les routeurs voisins."
+        },
+        {
+          "id": "c",
+          "text": "Répondre aux requêtes SNMP d'une station de supervision."
+        },
+        {
+          "id": "d",
+          "text": "Transmettre un paquet en transit selon l'entrée trouvée dans la FIB."
+        },
+        {
+          "id": "e",
+          "text": "Résoudre l'adresse MAC du prochain saut par ARP."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Le plan de gestion comprend les fonctions qui servent à administrer, superviser et journaliser l'équipement : accès CLI (SSH, Telnet, console), SNMP, syslog, NTP, NETCONF ou RESTCONF. L'envoi de messages syslog et la réponse aux requêtes SNMP en font partie. Les hellos OSPF et ARP construisent les informations nécessaires à la transmission (plan de contrôle) ; la transmission d'un paquet selon la FIB est le plan de données.",
+    "distractorNotes": {
+      "b": "Les hellos OSPF établissent et maintiennent les adjacences de routage : plan de contrôle.",
+      "d": "Transmettre un paquet en transit selon la FIB est la définition même du plan de données.",
+      "e": "ARP alimente la table d'adjacence utilisée pour transmettre les paquets ; c'est une fonction du plan de contrôle."
+    },
+    "reference": "Cisco, CCNA 200-301 Official Cert Guide, Volume 2 : Introduction to Controller-Based Networking"
+  },
+  {
+    "slug": "ccna-6.2-controller-benefits-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux avantages apporte une gestion du réseau par un contrôleur, par rapport à une gestion équipement par équipement ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une politique définie une seule fois et déployée de façon cohérente sur tous les équipements."
+        },
+        {
+          "id": "b",
+          "text": "La suppression du plan de données des équipements, repris par le contrôleur."
+        },
+        {
+          "id": "c",
+          "text": "Une vue d'ensemble de la topologie et de l'état du réseau en un point unique."
+        },
+        {
+          "id": "d",
+          "text": "La fin de tout besoin de réseau IP physique entre les équipements."
+        },
+        {
+          "id": "e",
+          "text": "Le passage de tout le trafic des utilisateurs par le contrôleur, qui le filtre."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Le contrôleur centralise la définition des politiques et automatise leur déploiement : une modification décrite une fois est appliquée de manière identique partout, ce qui réduit les erreurs et les écarts de configuration. Il collecte aussi l'inventaire, la topologie et la télémétrie, ce qui donne une vue globale du réseau et facilite le dépannage. Il expose enfin des API northbound pour l'automatisation. Les équipements, eux, continuent de transmettre le trafic.",
+    "distractorNotes": {
+      "b": "Le plan de données reste toujours dans les équipements ; même avec OpenFlow, seul le plan de contrôle est centralisé.",
+      "d": "Un réseau IP physique (l'underlay) reste indispensable, ne serait-ce que pour relier les équipements entre eux et au contrôleur.",
+      "e": "Le contrôleur n'est pas sur le chemin des données ; y faire passer tout le trafic en ferait un goulot d'étranglement."
+    },
+    "reference": "Cisco, CCNA 200-301 Official Cert Guide, Volume 2 : Introduction to Controller-Based Networking"
+  },
+  {
+    "slug": "ccna-6.2-catalyst-workflows-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque tâche à la section de Cisco Catalyst Center où elle s'effectue.",
+      "left": [
+        {
+          "id": "sites",
+          "text": "Créer la hiérarchie des sites et les pools d'adresses IP"
+        },
+        {
+          "id": "rules",
+          "text": "Définir quels groupes d'utilisateurs peuvent communiquer entre eux"
+        },
+        {
+          "id": "deploy",
+          "text": "Pousser les configurations sur les équipements d'un site"
+        },
+        {
+          "id": "health",
+          "text": "Consulter les scores de santé des clients et des équipements"
+        }
+      ],
+      "right": [
+        {
+          "id": "design",
+          "text": "Design"
+        },
+        {
+          "id": "policy",
+          "text": "Policy"
+        },
+        {
+          "id": "provision",
+          "text": "Provision"
+        },
+        {
+          "id": "assurance",
+          "text": "Assurance"
+        },
+        {
+          "id": "edge",
+          "text": "Fabric Edge"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "sites": "design",
+        "rules": "policy",
+        "deploy": "provision",
+        "health": "assurance"
+      }
+    },
+    "explanation": "Catalyst Center organise son travail en grandes sections. Design : décrire le réseau (sites, bâtiments, étages, pools d'adresses, paramètres communs comme DNS ou NTP). Policy : définir l'intention, par exemple les groupes et les règles d'accès entre groupes. Provision : déployer les configurations et les politiques sur les équipements. Assurance : superviser le réseau, avec scores de santé et analyse des problèmes.",
+    "distractorNotes": {
+      "edge": "Fabric Edge est un rôle d'équipement dans une fabric SD-Access (le commutateur d'accès qui raccorde les terminaux), pas une section de Catalyst Center."
+    },
+    "reference": "Cisco Catalyst Center User Guide"
+  },
+  {
+    "slug": "ccna-6.3-openflow-definition-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Qu'est-ce qu'OpenFlow dans une architecture SDN ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une API northbound REST qui permet aux applications d'interroger le contrôleur."
+        },
+        {
+          "id": "b",
+          "text": "Un protocole southbound par lequel le contrôleur programme les tables de flux des commutateurs."
+        },
+        {
+          "id": "c",
+          "text": "Un protocole de routage qui remplace OSPF entre les commutateurs de la fabric."
+        },
+        {
+          "id": "d",
+          "text": "Un format d'encapsulation qui transporte les trames au-dessus de l'underlay."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "OpenFlow, normalisé par l'Open Networking Foundation (ONF), est l'un des premiers protocoles southbound du SDN. Le contrôleur s'en sert pour installer, modifier ou supprimer des entrées dans les tables de flux des commutateurs : critères de correspondance (ports, adresses, VLAN…) et actions (transmettre, rejeter, envoyer au contrôleur). Les commutateurs se limitent alors à appliquer ces entrées, ce qui correspond à un plan de contrôle centralisé dans le contrôleur.",
+    "distractorNotes": {
+      "a": "Une API REST pour les applications est une interface northbound ; OpenFlow relie le contrôleur aux commutateurs, donc vers le sud.",
+      "c": "OpenFlow n'est pas un protocole de routage échangé entre commutateurs ; il est échangé entre le contrôleur et chaque commutateur.",
+      "d": "L'encapsulation au-dessus de l'underlay est le rôle de VXLAN ou de GRE, pas d'OpenFlow."
+    },
+    "reference": "ONF, OpenFlow Switch Specification"
+  },
+  {
+    "slug": "ccna-6.3-nbi-sbi-scenario-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un script Python envoie une requête POST à l'Intent API de Cisco Catalyst Center pour créer un VLAN. Catalyst Center pousse ensuite la configuration aux commutateurs par NETCONF. Comment qualifier ces deux échanges ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le script utilise l'API southbound, Catalyst Center l'API northbound."
+        },
+        {
+          "id": "b",
+          "text": "Les deux échanges passent par l'API northbound du contrôleur."
+        },
+        {
+          "id": "c",
+          "text": "Le script utilise l'API northbound, Catalyst Center une interface southbound."
+        },
+        {
+          "id": "d",
+          "text": "Les deux échanges passent par une interface southbound du contrôleur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "On situe les interfaces par rapport au contrôleur. Au-dessus de lui se trouvent les applications, scripts et outils d'orchestration : ils lui parlent par l'interface northbound, ici l'Intent API REST (JSON sur HTTPS). En dessous se trouvent les équipements réseau : le contrôleur les configure par une interface southbound, ici NETCONF (on trouve aussi RESTCONF, CLI par SSH, SNMP ou OpenFlow). Le script ne parle jamais directement aux commutateurs : il exprime une demande et le contrôleur la traduit.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : le script est au-dessus du contrôleur (nord), les commutateurs en dessous (sud).",
+      "b": "NETCONF entre le contrôleur et les commutateurs est un échange vers les équipements, donc southbound.",
+      "d": "L'Intent API REST appelée par le script est l'interface que le contrôleur expose aux applications : elle est northbound."
+    },
+    "reference": "Cisco Catalyst Center User Guide"
+  },
+  {
+    "slug": "ccna-6.3-northbound-traits-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur l'API northbound d'un contrôleur SDN sont exactes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle permet aux applications et aux scripts de communiquer avec le contrôleur."
+        },
+        {
+          "id": "b",
+          "text": "Elle relie le contrôleur aux commutateurs pour programmer leurs tables."
+        },
+        {
+          "id": "c",
+          "text": "Elle prend généralement la forme d'une API REST, en JSON sur HTTPS."
+        },
+        {
+          "id": "d",
+          "text": "Elle utilise obligatoirement le protocole OpenFlow."
+        },
+        {
+          "id": "e",
+          "text": "Elle transporte le trafic des utilisateurs entre les sites."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "L'interface northbound est tournée vers le haut : elle permet aux applications métier, aux scripts d'automatisation et aux outils d'orchestration de lire des informations du contrôleur et de lui demander des changements. Elle est presque toujours réalisée par une API REST : méthodes HTTP sur HTTPS, données en JSON (parfois XML). Le dialogue avec les équipements relève de l'interface southbound, et aucune de ces API ne transporte le trafic des utilisateurs.",
+    "distractorNotes": {
+      "b": "Le lien entre le contrôleur et les commutateurs est l'interface southbound.",
+      "d": "OpenFlow est un protocole southbound ; il n'est pas utilisé vers les applications.",
+      "e": "Les API servent au contrôle et à la gestion ; le trafic des utilisateurs passe par le plan de données des équipements."
+    },
+    "reference": "Cisco, CCNA 200-301 Official Cert Guide, Volume 2 : Introduction to Controller-Based Networking"
+  },
+  {
+    "slug": "ccna-6.3-catalyst-southbound-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels trois mécanismes Cisco Catalyst Center utilise-t-il vers le sud pour gérer les équipements ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "NETCONF"
+        },
+        {
+          "id": "b",
+          "text": "L'Intent API REST"
+        },
+        {
+          "id": "c",
+          "text": "La CLI par SSH"
+        },
+        {
+          "id": "d",
+          "text": "SNMP"
+        },
+        {
+          "id": "e",
+          "text": "OMP"
+        },
+        {
+          "id": "f",
+          "text": "Les notifications webhook vers un outil ITSM"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "Pour découvrir, configurer et superviser les équipements, Catalyst Center s'appuie sur plusieurs interfaces southbound : la CLI par SSH (ou Telnet), SNMP pour l'inventaire et la supervision, et NETCONF avec des modèles YANG sur les équipements IOS XE récents. Il reçoit aussi syslog et télémétrie pour Assurance. Vers le nord, il expose l'Intent API REST et peut envoyer des notifications (webhooks) à des outils tiers comme un ITSM. OMP appartient au SD-WAN.",
+    "distractorNotes": {
+      "b": "L'Intent API REST est l'interface northbound de Catalyst Center, utilisée par les applications et les scripts.",
+      "e": "OMP est le protocole de plan de contrôle de Cisco SD-WAN entre vSmart et les routeurs ; Catalyst Center ne l'utilise pas pour gérer les équipements.",
+      "f": "Les webhooks vers un ITSM sont des intégrations vers le nord (outils tiers), pas des moyens de gérer les équipements."
+    },
+    "reference": "Cisco Catalyst Center User Guide"
+  },
+  {
+    "slug": "ccna-6.3-netconf-traits-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur NETCONF sont exactes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il fonctionne sur SSH, sur le port TCP 830 par défaut."
+        },
+        {
+          "id": "b",
+          "text": "Il utilise les méthodes HTTP GET, POST et DELETE."
+        },
+        {
+          "id": "c",
+          "text": "Il échange des messages XML structurés selon des modèles YANG."
+        },
+        {
+          "id": "d",
+          "text": "Il transporte ses messages sur UDP 161."
+        },
+        {
+          "id": "e",
+          "text": "Il programme des tables de flux sur le modèle d'OpenFlow."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "NETCONF (RFC 6241) est un protocole de gestion southbound. Il fonctionne sur SSH (RFC 6242), sur le port TCP 830 par défaut. Ses messages sont des appels RPC encodés en XML (get, get-config, edit-config…) ; les données manipulées suivent des modèles YANG. Il permet aussi des fonctions comme la validation et les datastores (running, candidate). RESTCONF reprend les modèles YANG mais sur HTTPS avec des méthodes HTTP.",
+    "distractorNotes": {
+      "b": "Les méthodes HTTP sont celles de RESTCONF ; NETCONF utilise des opérations RPC comme get-config ou edit-config.",
+      "d": "UDP 161 est le port de SNMP, pas de NETCONF.",
+      "e": "NETCONF configure les équipements selon des modèles YANG ; la programmation de tables de flux est le principe d'OpenFlow."
+    },
+    "reference": "RFC 6241 ; RFC 6242"
+  },
+  {
+    "slug": "ccna-6.3-restconf-traits-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur RESTCONF sont exactes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il fonctionne sur HTTPS et utilise des méthodes HTTP comme GET ou PATCH."
+        },
+        {
+          "id": "b",
+          "text": "Il fonctionne uniquement sur SSH, sur le port TCP 830."
+        },
+        {
+          "id": "c",
+          "text": "Il manipule des données décrites par des modèles YANG."
+        },
+        {
+          "id": "d",
+          "text": "Il n'accepte que le format CSV pour les données."
+        },
+        {
+          "id": "e",
+          "text": "Il est l'interface qu'un contrôleur utilise pour transporter le trafic des utilisateurs."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "RESTCONF (RFC 8040) donne un accès de type REST aux mêmes données que NETCONF : les ressources sont décrites par des modèles YANG et manipulées avec les méthodes HTTP (GET, POST, PUT, PATCH, DELETE) sur HTTPS. Les données sont encodées en XML ou en JSON. Sur IOS XE, il s'active avec restconf et le serveur HTTPS. Un contrôleur peut l'utiliser comme interface southbound pour configurer les équipements.",
+    "distractorNotes": {
+      "b": "SSH sur TCP 830 est le transport de NETCONF ; RESTCONF fonctionne sur HTTPS.",
+      "d": "RESTCONF encode les données en XML ou en JSON, pas en CSV.",
+      "e": "RESTCONF sert à la gestion et à la configuration ; le trafic des utilisateurs n'y transite jamais."
+    },
+    "reference": "RFC 8040"
+  },
+  {
+    "slug": "ccna-6.3-vxlan-udp-port-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Les nœuds d'une fabric encapsulent le trafic des utilisateurs en VXLAN au-dessus de l'underlay. Quel port UDP de destination est attribué par l'IANA à VXLAN ?",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Numéro de port UDP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "4789"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "VXLAN (RFC 7348) encapsule une trame Ethernet complète dans un en-tête VXLAN (avec un VNI de 24 bits qui identifie le segment), puis dans UDP et IP. Le port UDP de destination attribué par l'IANA est 4789. L'en-tête IP externe porte les adresses des VTEP source et destination (dans SD-Access, les loopbacks des nœuds), ce qui permet à l'underlay de router le paquet sans connaître les adresses des terminaux.",
+    "distractorNotes": {},
+    "reference": "RFC 7348, section 5"
+  },
+  {
+    "slug": "ccna-6.3-sda-packet-flow-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Dans une fabric SD-Access, un terminal envoie un paquet à un terminal raccordé à un autre nœud edge dont l'emplacement n'est pas encore connu. Placez les étapes dans l'ordre.",
+      "items": [
+        {
+          "id": "enc",
+          "text": "Le nœud edge source encapsule le paquet en VXLAN vers le RLOC obtenu"
+        },
+        {
+          "id": "dec",
+          "text": "Le nœud edge de destination désencapsule le paquet et le remet au terminal"
+        },
+        {
+          "id": "req",
+          "text": "Le nœud edge source interroge le nœud de plan de contrôle par une requête LISP"
+        },
+        {
+          "id": "rx",
+          "text": "Le nœud edge source reçoit le paquet du terminal"
+        },
+        {
+          "id": "rep",
+          "text": "Le nœud de plan de contrôle répond avec le RLOC du nœud edge de destination"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "rx",
+        "req",
+        "rep",
+        "enc",
+        "dec"
+      ]
+    },
+    "explanation": "Le nœud edge source reçoit le paquet ; ne connaissant pas encore l'emplacement de la destination, il envoie une requête LISP (map-request) au nœud de plan de contrôle, qui répond avec le RLOC, l'adresse de loopback du nœud edge qui raccorde le terminal. Le nœud source encapsule alors le paquet en VXLAN (avec le SGT et le VNI) vers ce RLOC ; l'underlay le route, et le nœud de destination le désencapsule pour le remettre au terminal. La réponse est mise en cache pour les paquets suivants.",
+    "distractorNotes": {},
+    "reference": "Cisco SD-Access Solution Design Guide (CVD)"
+  },
+  {
+    "slug": "ccna-6.3-sdwan-bringup-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un routeur Cisco SD-WAN est mis en service sur un site. Placez dans l'ordre les étapes qui mènent au transport du trafic des utilisateurs.",
+      "items": [
+        {
+          "id": "omp",
+          "text": "Il annonce ses préfixes et ses TLOC par OMP et reçoit ceux des autres sites"
+        },
+        {
+          "id": "ipsec",
+          "text": "Il établit des tunnels IPsec avec les routeurs des autres sites"
+        },
+        {
+          "id": "bond",
+          "text": "Il est authentifié par vBond, qui lui indique les adresses des contrôleurs"
+        },
+        {
+          "id": "smart",
+          "text": "Il établit une connexion de contrôle sécurisée (DTLS) avec vSmart"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "bond",
+        "smart",
+        "omp",
+        "ipsec"
+      ]
+    },
+    "explanation": "Le routeur contacte d'abord vBond, l'orchestrateur, qui l'authentifie et lui indique comment joindre vManage et les contrôleurs vSmart. Il établit alors une connexion de contrôle sécurisée (DTLS ou TLS) avec vSmart, sur laquelle tourne OMP : il annonce ses préfixes et ses TLOC (points d'attache au transport) et reçoit ceux des autres sites. Grâce aux TLOC appris, il construit enfin les tunnels IPsec du plan de données avec les autres routeurs, sans passer par vSmart.",
+    "distractorNotes": {},
+    "reference": "Cisco SD-WAN Design Guide (CVD)"
+  },
+  {
+    "slug": "ccna-6.3-intent-request-chain-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un outil d'orchestration demande à un contrôleur SDN d'appliquer une nouvelle politique. Placez les étapes dans l'ordre.",
+      "items": [
+        {
+          "id": "sbi",
+          "text": "Le contrôleur pousse la configuration aux équipements par NETCONF"
+        },
+        {
+          "id": "nbi",
+          "text": "L'outil envoie une requête REST à l'API northbound du contrôleur"
+        },
+        {
+          "id": "apply",
+          "text": "Les équipements appliquent la configuration à leur trafic"
+        },
+        {
+          "id": "trans",
+          "text": "Le contrôleur traduit la demande en configuration propre à chaque équipement"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "nbi",
+        "trans",
+        "sbi",
+        "apply"
+      ]
+    },
+    "explanation": "La demande descend du haut vers le bas de l'architecture. L'outil d'orchestration s'adresse au contrôleur par l'API northbound (REST, JSON sur HTTPS). Le contrôleur traduit cette demande abstraite en configurations adaptées à chaque équipement, selon son modèle et son rôle. Il les pousse ensuite par une interface southbound, ici NETCONF. Les équipements les appliquent enfin dans leur plan de données.",
+    "distractorNotes": {},
+    "reference": "Cisco, CCNA 200-301 Official Cert Guide, Volume 2 : Introduction to Controller-Based Networking"
+  },
+  {
+    "slug": "ccna-6.3-sdwan-components-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque composant de Cisco SD-WAN à son rôle.",
+      "left": [
+        {
+          "id": "vmanage",
+          "text": "vManage"
+        },
+        {
+          "id": "vsmart",
+          "text": "vSmart"
+        },
+        {
+          "id": "vbond",
+          "text": "vBond"
+        },
+        {
+          "id": "vedge",
+          "text": "vEdge / cEdge"
+        }
+      ],
+      "right": [
+        {
+          "id": "mgmt",
+          "text": "Gestion centralisée : interface graphique, modèles de configuration, supervision"
+        },
+        {
+          "id": "ctrl",
+          "text": "Plan de contrôle : diffusion des routes et des politiques par OMP"
+        },
+        {
+          "id": "orch",
+          "text": "Orchestration : authentification initiale et aide à la traversée de NAT"
+        },
+        {
+          "id": "data",
+          "text": "Plan de données : transport du trafic dans des tunnels IPsec"
+        },
+        {
+          "id": "lisp",
+          "text": "Localisation des terminaux par une base LISP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "vmanage": "mgmt",
+        "vsmart": "ctrl",
+        "vbond": "orch",
+        "vedge": "data"
+      }
+    },
+    "explanation": "Cisco SD-WAN sépare clairement les plans. vManage (SD-WAN Manager) est le plan de gestion : interface unique, modèles, supervision et API northbound. vSmart (SD-WAN Controller) porte le plan de contrôle avec OMP. vBond (SD-WAN Validator) orchestre : il authentifie les composants qui arrivent et les met en relation, en aidant à traverser le NAT. Les routeurs vEdge ou cEdge forment le plan de données et transportent le trafic dans des tunnels IPsec.",
+    "distractorNotes": {
+      "lisp": "La base de localisation LISP appartient à SD-Access (nœud de plan de contrôle de la fabric), pas à Cisco SD-WAN, qui utilise OMP."
+    },
+    "reference": "Cisco SD-WAN Design Guide (CVD)"
+  },
+  {
+    "slug": "ccna-6.3-protocol-transport-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque protocole southbound à son transport par défaut.",
+      "left": [
+        {
+          "id": "netconf",
+          "text": "NETCONF"
+        },
+        {
+          "id": "restconf",
+          "text": "RESTCONF"
+        },
+        {
+          "id": "openflow",
+          "text": "OpenFlow"
+        },
+        {
+          "id": "snmp",
+          "text": "SNMP"
+        }
+      ],
+      "right": [
+        {
+          "id": "ssh830",
+          "text": "SSH sur TCP 830"
+        },
+        {
+          "id": "https",
+          "text": "HTTPS sur TCP 443"
+        },
+        {
+          "id": "tcp6653",
+          "text": "TCP 6653"
+        },
+        {
+          "id": "udp161",
+          "text": "UDP 161"
+        },
+        {
+          "id": "tcp23",
+          "text": "Telnet sur TCP 23"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "netconf": "ssh830",
+        "restconf": "https",
+        "openflow": "tcp6653",
+        "snmp": "udp161"
+      }
+    },
+    "explanation": "NETCONF utilise SSH sur le port TCP 830 (RFC 6242). RESTCONF fonctionne sur HTTPS, donc TCP 443 par défaut (RFC 8040). OpenFlow utilise TCP, port 6653 attribué par l'IANA (6633 était utilisé avant cette attribution), souvent protégé par TLS. SNMP fonctionne sur UDP : les requêtes arrivent sur le port 161 de l'agent, les traps partent vers le port 162 du gestionnaire.",
+    "distractorNotes": {
+      "tcp23": "Telnet sur TCP 23 donne un accès CLI non chiffré ; aucun des quatre protocoles proposés ne l'utilise comme transport."
+    },
+    "reference": "RFC 6242 ; RFC 8040 ; ONF, OpenFlow Switch Specification ; RFC 3417"
+  },
+  {
+    "slug": "ccna-6.3-sda-node-roles-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque élément d'une solution Cisco SD-Access à sa fonction.",
+      "left": [
+        {
+          "id": "cp",
+          "text": "Nœud de plan de contrôle (control plane node)"
+        },
+        {
+          "id": "border",
+          "text": "Nœud border"
+        },
+        {
+          "id": "edge",
+          "text": "Nœud edge"
+        },
+        {
+          "id": "cc",
+          "text": "Cisco Catalyst Center"
+        }
+      ],
+      "right": [
+        {
+          "id": "map",
+          "text": "Tenir la base LISP qui associe chaque terminal à son nœud de rattachement"
+        },
+        {
+          "id": "ext",
+          "text": "Relier la fabric aux réseaux extérieurs"
+        },
+        {
+          "id": "acc",
+          "text": "Raccorder les terminaux et encapsuler leur trafic en VXLAN"
+        },
+        {
+          "id": "mgmt",
+          "text": "Automatiser la fabric, définir les politiques et superviser"
+        },
+        {
+          "id": "omp",
+          "text": "Diffuser les routes et les TLOC par OMP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "cp": "map",
+        "border": "ext",
+        "edge": "acc",
+        "cc": "mgmt"
+      }
+    },
+    "explanation": "Le nœud de plan de contrôle joue le rôle de map server / map resolver LISP : il sait derrière quel nœud se trouve chaque terminal. Le border node relie la fabric au reste du monde (WAN, data center, Internet). Le nœud edge est le commutateur d'accès : il raccorde les terminaux, les enregistre et sert de VTEP VXLAN. Catalyst Center n'est pas dans la fabric : il l'automatise, y déploie les politiques et la supervise.",
+    "distractorNotes": {
+      "omp": "OMP et les TLOC appartiennent à Cisco SD-WAN (vSmart et routeurs de périphérie) ; SD-Access utilise LISP pour son plan de contrôle."
+    },
+    "reference": "Cisco SD-Access Solution Design Guide (CVD)"
+  }
+]
