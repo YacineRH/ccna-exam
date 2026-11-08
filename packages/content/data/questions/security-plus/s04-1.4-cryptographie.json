@@ -1,0 +1,1858 @@
+[
+  {
+    "slug": "security-plus-1.4-wildcard-subdomains-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise publie une quarantaine de services sur des sous-domaines directs d'example.com (vpn.example.com, crm.example.com, wiki.example.com…) et en ajoute un nouveau presque chaque mois. Elle veut un seul certificat, accepté par les navigateurs, qu'elle n'ait pas à réémettre à chaque nouveau service. Quel type de certificat répond le mieux au besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un certificat auto-signé généré sur le serveur frontal"
+        },
+        {
+          "id": "b",
+          "text": "Un certificat à validation étendue (EV) pour www.example.com"
+        },
+        {
+          "id": "c",
+          "text": "Un certificat générique (wildcard) pour *.example.com"
+        },
+        {
+          "id": "d",
+          "text": "Un certificat SAN listant les sous-domaines déjà en service"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un certificat générique *.example.com couvre n'importe quel nom formé d'une seule étiquette devant example.com : vpn.example.com, crm.example.com et tout sous-domaine direct créé plus tard, sans réémission. Émis par une AC publique, il est accepté par les navigateurs. Ses limites sont à connaître : il ne couvre ni example.com lui-même ni un nom à deux niveaux comme a.b.example.com, et la compromission de sa clé privée touche tous les services qui le partagent.",
+    "distractorNotes": {
+      "a": "Un certificat auto-signé n'est rattaché à aucune racine de confiance : chaque navigateur afficherait un avertissement.",
+      "b": "Un certificat EV renforce la vérification de l'identité de l'organisation, mais il ne couvre que les noms qu'il contient (les AC n'émettent pas de certificat EV générique).",
+      "d": "Un certificat SAN ne couvre que les noms listés : chaque nouveau sous-domaine imposerait de le réémettre."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-ocsp-realtime-status-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le client lourd d'une banque doit vérifier, au moment de chaque connexion, si le certificat du serveur a été révoqué, en interrogeant l'AC sur ce seul certificat plutôt qu'en téléchargeant la liste de tous les certificats révoqués. Quel mécanisme utilise-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La liste de révocation de certificats (CRL)"
+        },
+        {
+          "id": "b",
+          "text": "Le protocole OCSP (Online Certificate Status Protocol)"
+        },
+        {
+          "id": "c",
+          "text": "La demande de signature de certificat (CSR)"
+        },
+        {
+          "id": "d",
+          "text": "Le séquestre de clés (key escrow)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "OCSP permet à un client d'interroger un répondeur désigné par l'AC sur l'état d'un certificat précis, identifié par son numéro de série ; la réponse signée vaut good, revoked ou unknown. Le client n'a pas à télécharger ni à analyser une liste entière, et l'information est plus fraîche que celle d'une CRL publiée périodiquement. Avec l'agrafage OCSP (stapling), c'est le serveur qui joint à la poignée de main une réponse OCSP récente.",
+    "distractorNotes": {
+      "a": "La CRL est justement la liste complète des certificats révoqués non expirés, que le client télécharge et met en cache : c'est ce que l'énoncé veut éviter.",
+      "c": "La CSR est la demande envoyée à l'AC pour obtenir un certificat ; elle ne renseigne pas sur une révocation.",
+      "d": "Le séquestre de clés conserve une copie des clés chez un tiers pour les récupérer ; il n'a aucun rôle dans la vérification de révocation."
+    },
+    "reference": "RFC 6960 (OCSP) ; RFC 5280 (CRL)"
+  },
+  {
+    "slug": "security-plus-1.4-key-escrow-recovery-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une administration chiffre les dossiers de ses agents avec des clés propres à chacun. Le règlement interne impose de pouvoir déchiffrer ces dossiers si un agent quitte le service ou perd sa clé, sans avoir besoin de lui. Quelle solution répond à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'étirement des clés personnelles par PBKDF2"
+        },
+        {
+          "id": "b",
+          "text": "La publication des clés privées dans l'annuaire LDAP"
+        },
+        {
+          "id": "c",
+          "text": "La révocation des certificats des agents partis"
+        },
+        {
+          "id": "d",
+          "text": "Le séquestre des clés auprès d'un tiers de confiance"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le séquestre de clés (key escrow) consiste à confier une copie des clés de chiffrement à un tiers de confiance (service interne dédié ou prestataire), sous des conditions strictes d'accès : en cas de départ, de décès ou de perte de clé, l'organisation peut récupérer les données sans le titulaire. Le séquestre doit lui-même être protégé (HSM, double contrôle, journalisation), car il concentre des clés très sensibles.",
+    "distractorNotes": {
+      "a": "L'étirement de clé ralentit la dérivation d'une clé à partir d'un mot de passe ; il ne fournit aucune copie de la clé à l'organisation.",
+      "b": "Publier des clés privées dans un annuaire les exposerait à tous les utilisateurs de l'annuaire : la confidentialité serait perdue.",
+      "c": "Révoquer un certificat déclare qu'il ne doit plus être utilisé ; cela ne permet pas de déchiffrer les données protégées par la clé correspondante."
+    },
+    "reference": "NIST SP 800-57 Part 1 Rev. 5 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-csr-content-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un administrateur passe l'intranet de son entreprise en HTTPS avec un certificat émis par une AC publique. Il vient de générer la paire de clés sur le serveur web. Que doit-il transmettre à l'AC ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une CSR contenant la clé publique et le nom du serveur"
+        },
+        {
+          "id": "b",
+          "text": "La clé privée du serveur, pour que l'AC la signe"
+        },
+        {
+          "id": "c",
+          "text": "Une CRL signée avec la clé privée du serveur"
+        },
+        {
+          "id": "d",
+          "text": "Le certificat racine de l'AC, complété du nom du serveur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La demande de signature de certificat (CSR, format PKCS#10) contient la clé publique et les informations d'identité (nom commun, noms alternatifs, organisation). Elle est signée avec la clé privée correspondante, ce qui prouve que le demandeur la détient. L'AC vérifie la demande, puis émet un certificat qui lie cette clé publique au nom. La clé privée ne quitte jamais le serveur : l'AC n'en a pas besoin.",
+    "distractorNotes": {
+      "b": "La clé privée ne doit jamais être communiquée, pas même à l'AC : celle-ci signe la clé publique, pas la clé privée.",
+      "c": "Une CRL est publiée par une AC pour lister les certificats révoqués ; un serveur n'en produit pas pour demander un certificat.",
+      "d": "Le certificat racine appartient à l'AC et ne se modifie pas ; c'est un nouveau certificat, signé par l'AC, qui portera le nom du serveur."
+    },
+    "reference": "RFC 2986 (PKCS #10) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-self-signed-warning-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une équipe de développement installe un certificat auto-signé sur un serveur de recette. Les testeurs reçoivent un avertissement de sécurité dans leur navigateur, alors que le nom du certificat correspond à l'URL et qu'il est dans sa période de validité. Quelle est la cause de l'avertissement ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le certificat ne contient pas de clé publique utilisable"
+        },
+        {
+          "id": "b",
+          "text": "Le certificat empêche le chiffrement de la session TLS"
+        },
+        {
+          "id": "c",
+          "text": "Aucune AC de confiance du navigateur n'a signé le certificat"
+        },
+        {
+          "id": "d",
+          "text": "Le certificat figure dans la CRL de l'AC publique"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un certificat auto-signé est signé avec sa propre clé privée : émetteur et sujet sont identiques. Le navigateur ne peut le rattacher à aucune racine présente dans son magasin de confiance et ne peut donc pas vérifier l'identité du serveur, d'où l'avertissement. La session reste chiffrée. En interne, la solution est de faire émettre le certificat par une AC d'entreprise dont la racine est déployée sur les postes, plutôt que d'apprendre aux utilisateurs à ignorer l'alerte.",
+    "distractorNotes": {
+      "a": "Un certificat auto-signé contient bien une clé publique, celle qui sert aussi à vérifier sa propre signature.",
+      "b": "La session TLS est chiffrée normalement ; c'est l'authentification du serveur qui ne peut pas être établie.",
+      "d": "Aucune AC publique n'a émis ce certificat : il ne peut pas figurer dans sa CRL."
+    },
+    "reference": "RFC 5280 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-fde-laptop-theft-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les commerciaux d'une PME emportent en clientèle des portables qui contiennent des fichiers clients. La direction veut qu'en cas de vol aucune donnée du disque ne soit lisible, y compris les fichiers temporaires et le fichier d'échange du système. Quelle mesure répond le mieux à l'exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le chiffrement des fichiers clients un par un"
+        },
+        {
+          "id": "b",
+          "text": "Le chiffrement complet du disque (FDE)"
+        },
+        {
+          "id": "c",
+          "text": "Le chiffrement du trafic par un VPN"
+        },
+        {
+          "id": "d",
+          "text": "Le masquage des données clients à l'écran"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le chiffrement complet du disque (BitLocker, FileVault, LUKS…) protège l'intégralité du support : système, fichiers temporaires, fichier d'échange, fichiers d'hibernation et données des utilisateurs. Sans la clé, souvent scellée dans le TPM et complétée d'un code PIN, un voleur qui retire le disque ne lit que des données chiffrées. C'est la mesure de référence pour les données au repos sur les terminaux mobiles.",
+    "distractorNotes": {
+      "a": "Le chiffrement fichier par fichier laisse en clair les copies temporaires, le fichier d'échange et tout fichier oublié.",
+      "c": "Un VPN protège les données en transit sur le réseau, pas celles stockées sur le disque d'un portable volé.",
+      "d": "Le masquage cache une partie des données à l'affichage ; le disque contient toujours les valeurs réelles en clair."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-tokenization-pci-scope-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un site de commerce en ligne veut réduire son périmètre PCI DSS. Ses applications de facturation et de fidélité doivent manipuler une valeur de substitution pour chaque numéro de carte sans jamais stocker le numéro réel ; seul un service central, isolé, doit pouvoir retrouver ce numéro. Quelle technique répond le mieux à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le masquage des douze premiers chiffres à l'affichage"
+        },
+        {
+          "id": "b",
+          "text": "Le hachage SHA-256 non salé des numéros de carte"
+        },
+        {
+          "id": "c",
+          "text": "La stéganographie des numéros dans les images produit"
+        },
+        {
+          "id": "d",
+          "text": "La tokenisation adossée à un coffre de jetons central"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La tokenisation remplace la donnée sensible par un jeton sans valeur exploitable ; la correspondance entre jeton et numéro réel n'est conservée que dans le coffre de jetons, seul système à devoir rester dans le périmètre le plus strict. Les applications qui ne manipulent que des jetons ne stockent plus de numéro de carte, ce qui réduit fortement le périmètre d'audit PCI DSS, tout en permettant au service central de retrouver le numéro pour un remboursement.",
+    "distractorNotes": {
+      "a": "Le masquage n'agit qu'à l'affichage : les applications stockeraient toujours le numéro réel.",
+      "b": "Un hachage est à sens unique : le service central ne pourrait pas retrouver le numéro. Non salé, il serait de plus vulnérable à une recherche exhaustive, l'espace des numéros de carte étant réduit.",
+      "c": "La stéganographie dissimule l'existence d'une donnée ; elle ne retire pas le numéro des systèmes et n'est pas un contrôle de conformité."
+    },
+    "reference": "PCI DSS v4.0 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-hsm-root-ca-key-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise crée sa propre AC racine, servie par deux serveurs en haute disponibilité. L'auditeur exige que la clé privée de l'AC soit générée et utilisée dans un équipement dédié, partagé par les deux serveurs, résistant à l'effraction et validé FIPS 140-3, et qu'elle n'en sorte jamais en clair. Quel équipement répond à l'exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un module matériel de sécurité (HSM) en réseau"
+        },
+        {
+          "id": "b",
+          "text": "La puce TPM soudée sur chacun des deux serveurs"
+        },
+        {
+          "id": "c",
+          "text": "Un fichier PKCS#12 protégé par une phrase secrète"
+        },
+        {
+          "id": "d",
+          "text": "L'enclave sécurisée du processeur de chaque serveur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un HSM est un équipement dédié, résistant à l'effraction, qui génère et conserve les clés et réalise les opérations cryptographiques (ici les signatures de l'AC) sans exposer la clé privée. Un HSM réseau peut servir plusieurs serveurs, ce qui convient à une AC en haute disponibilité, et les modèles du marché sont validés FIPS 140-3 (ou FIPS 140-2). C'est l'outil de référence pour protéger les clés d'une PKI.",
+    "distractorNotes": {
+      "b": "Un TPM est lié à une seule machine : ses clés ne sont pas partagées entre deux serveurs, et il n'est pas conçu comme équipement de signature pour une AC.",
+      "c": "Un fichier PKCS#12 est un conteneur logiciel : la clé est chargée en mémoire du serveur pour être utilisée, ce qui contredit l'exigence d'un équipement dédié.",
+      "d": "Une enclave sécurisée est une zone isolée d'un processeur, propre à chaque machine : ce n'est ni un équipement dédié ni un module partagé entre deux serveurs."
+    },
+    "reference": "NIST FIPS 140-3 ; NIST SP 800-57 Part 1 Rev. 5"
+  },
+  {
+    "slug": "security-plus-1.4-secure-enclave-biometric-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque développe une application mobile qui déverrouille les virements par empreinte digitale. Le RSSI exige que le modèle biométrique et les clés associées soient traités dans une zone isolée du processeur du téléphone, inaccessible même si le système d'exploitation est compromis. Quelle technologie répond à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un module matériel de sécurité (HSM) dans le centre de données"
+        },
+        {
+          "id": "b",
+          "text": "Un système de gestion de clés (KMS) hébergé dans le cloud"
+        },
+        {
+          "id": "c",
+          "text": "L'enclave sécurisée de l'appareil"
+        },
+        {
+          "id": "d",
+          "text": "Le séquestre des clés biométriques auprès de la banque"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une enclave sécurisée (Secure Enclave d'Apple, environnements d'exécution de confiance des processeurs ARM) est un sous-système isolé du processeur principal, avec sa propre mémoire protégée. Il stocke et compare le modèle biométrique et protège les clés : le système d'exploitation ne reçoit qu'un résultat (succès ou échec), jamais la donnée biométrique ni la clé, même s'il est compromis.",
+    "distractorNotes": {
+      "a": "Un HSM protège des clés côté serveur ; il ne se trouve pas dans le téléphone et ne traite pas le modèle biométrique localement.",
+      "b": "Un KMS cloud gère des clés à distance ; les données biométriques quitteraient le téléphone, ce que l'exigence vise justement à éviter.",
+      "d": "Confier les données biométriques à la banque les ferait sortir du téléphone et créerait une cible centrale, à l'opposé de l'isolement demandé."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-steganography-dlp-images-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'outil DLP d'une entreprise signale qu'un salarié envoie chaque jour vers sa messagerie personnelle des photos de vacances anormalement volumineuses. L'analyse montre que les bits de poids faible des pixels contiennent des extraits de documents internes. Quelle technique d'obfuscation a été employée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La tokenisation"
+        },
+        {
+          "id": "b",
+          "text": "La stéganographie"
+        },
+        {
+          "id": "c",
+          "text": "Le masquage de données"
+        },
+        {
+          "id": "d",
+          "text": "Le hachage salé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La stéganographie dissimule une information dans un support anodin (image, son, vidéo) de façon que son existence même passe inaperçue. Modifier les bits de poids faible des pixels altère l'image de façon invisible à l'œil tout en y logeant des données. Les indices typiques sont une taille de fichier inhabituelle, des statistiques de pixels anormales ou des envois répétés d'images sans motif métier ; des outils de stéganalyse permettent de les confirmer.",
+    "distractorNotes": {
+      "a": "La tokenisation remplace une donnée sensible par un jeton stocké dans un coffre ; elle ne cache rien dans une image.",
+      "c": "Le masquage remplace une partie d'une donnée par des caractères de substitution ; il ne dissimule pas de données dans un autre fichier.",
+      "d": "Le hachage salé produit une empreinte à sens unique ; on ne peut pas en extraire les documents d'origine."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-data-masking-call-center-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les conseillers du service client d'un opérateur doivent identifier l'abonné au téléphone sans voir son IBAN complet : l'écran n'en affiche que les quatre derniers caractères, les autres étant remplacés par des astérisques. Quelle technique est appliquée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le masquage de données"
+        },
+        {
+          "id": "b",
+          "text": "La tokenisation"
+        },
+        {
+          "id": "c",
+          "text": "Le salage"
+        },
+        {
+          "id": "d",
+          "text": "La stéganographie"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le masquage de données remplace tout ou partie d'une valeur par des caractères de substitution pour limiter l'exposition aux seuls éléments utiles. Ici, les quatre derniers caractères suffisent à confirmer l'identité, tandis que l'IBAN complet reste réservé aux traitements qui en ont besoin. C'est une application directe du principe du moindre privilège à la donnée elle-même.",
+    "distractorNotes": {
+      "b": "La tokenisation substitue à la valeur stockée un jeton sans lien avec elle ; elle n'affiche pas une partie de la valeur réelle.",
+      "c": "Le salage ajoute une valeur aléatoire avant un hachage ; il ne concerne pas l'affichage d'une donnée.",
+      "d": "La stéganographie cache l'existence d'une information dans un autre support ; ici, l'IBAN est partiellement visible."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-salt-identical-hashes-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Lors d'un test d'intrusion, l'équipe extrait la table des comptes d'une application. Elle constate immédiatement que deux utilisateurs ont le même mot de passe, sans avoir rien déchiffré. Quelle mesure aurait empêché ce constat ?",
+      "exhibit": "user    password_sha256\n------  ----------------------------------------------------------------\nalice   5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8\nbob     7e1bd7ae0314a15f45353d4deb14c70a697075b3491e3dc4be713cdc57ffd76f\ncarol   5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer SHA-256 par SHA-512 pour toutes les empreintes"
+        },
+        {
+          "id": "b",
+          "text": "Chiffrer le disque du serveur de base de données"
+        },
+        {
+          "id": "c",
+          "text": "Encoder les empreintes en Base64 avant de les stocker"
+        },
+        {
+          "id": "d",
+          "text": "Ajouter un sel aléatoire propre à chaque compte"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Sans sel, un même mot de passe donne toujours la même empreinte : alice et carol partagent ici la même valeur, et une table arc-en-ciel retrouverait aussitôt les mots de passe courants. Un sel aléatoire, unique par compte et stocké avec l'empreinte, rend les empreintes de deux mots de passe identiques différentes et rend inutiles les tables précalculées. NIST SP 800-63B recommande en outre une fonction de dérivation lente (étirement de clé) plutôt qu'un hachage simple.",
+    "distractorNotes": {
+      "a": "SHA-512 reste déterministe : deux mots de passe identiques donneraient encore deux empreintes identiques.",
+      "b": "Le chiffrement du disque protège contre le vol du support ; une extraction par l'application ou la base lit les empreintes déchiffrées.",
+      "c": "Base64 est un simple encodage réversible : deux empreintes identiques restent identiques une fois encodées."
+    },
+    "reference": "NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-1.4-key-stretching-gpu-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une start-up stocke les mots de passe de ses clients sous forme d'empreintes SHA-256 salées. Un audit montre qu'un seul GPU calcule plusieurs milliards de ces empreintes par seconde. Le RSSI veut rendre chaque tentative de devinette des milliers de fois plus coûteuse pour un attaquant qui volerait la base. Quelle mesure répond le mieux ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Allonger le sel de chaque compte de 128 à 256 bits"
+        },
+        {
+          "id": "b",
+          "text": "Adopter une fonction lente comme bcrypt, PBKDF2 ou Argon2"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer SHA-256 par MD5, plus compact à stocker"
+        },
+        {
+          "id": "d",
+          "text": "Enregistrer les empreintes dans une blockchain interne"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'étirement de clé (key stretching) applique une fonction volontairement coûteuse : des milliers d'itérations pour PBKDF2, un facteur de coût pour bcrypt, du temps de calcul et de la mémoire pour Argon2. La vérification d'un mot de passe légitime reste rapide à l'échelle humaine, mais chaque essai d'un attaquant coûte autant, ce qui divise sa vitesse par le facteur choisi. Le sel, lui, empêche les tables précalculées sans ralentir un essai.",
+    "distractorNotes": {
+      "a": "Un sel plus long ne ralentit pas le calcul d'une empreinte : il protège contre les tables précalculées, pas contre la force brute.",
+      "c": "MD5 est encore plus rapide à calculer et n'est plus considéré comme sûr : l'attaque serait facilitée.",
+      "d": "Une blockchain rend les données difficiles à modifier ; elle ne ralentit en rien le test de mots de passe sur des empreintes volées."
+    },
+    "reference": "NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-1.4-signature-keys-contract-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le service juridique d'une entreprise envoie ses contrats au format PDF. Chaque client doit pouvoir vérifier que le contrat vient bien de l'entreprise et n'a pas été modifié. Quelles clés sont utilisées pour signer puis pour vérifier la signature ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Signature avec la clé publique du client, vérification avec la clé privée du client"
+        },
+        {
+          "id": "b",
+          "text": "Signature avec la clé publique de l'entreprise, vérification avec sa clé privée"
+        },
+        {
+          "id": "c",
+          "text": "Signature avec la clé privée de l'entreprise, vérification avec sa clé publique"
+        },
+        {
+          "id": "d",
+          "text": "Signature avec la clé privée du client, vérification avec la clé publique du client"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'entreprise calcule l'empreinte du document et la signe avec sa clé privée, qu'elle seule détient. Tout client vérifie la signature avec la clé publique de l'entreprise, obtenue par son certificat : si la vérification réussit, le document n'a pas été modifié (intégrité) et seul le détenteur de la clé privée a pu le signer (authenticité et non-répudiation). C'est l'inverse du chiffrement, où l'on chiffre avec la clé publique du destinataire.",
+    "distractorNotes": {
+      "a": "Utiliser les clés du client prouverait au mieux quelque chose sur le client, pas sur l'entreprise ; et une clé publique ne sert pas à signer.",
+      "b": "Une clé publique est connue de tous : une signature faite avec elle ne prouverait rien, et la clé privée ne doit pas être nécessaire pour vérifier.",
+      "d": "L'entreprise ne détient pas la clé privée du client ; une signature faite avec elle n'attesterait pas l'origine de l'entreprise."
+    },
+    "reference": "NIST FIPS 186-5"
+  },
+  {
+    "slug": "security-plus-1.4-hmac-microservices-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux microservices internes partagent déjà une clé secrète, distribuée par le KMS. Le développeur doit permettre au récepteur de vérifier que chaque message JSON provient bien de l'émetteur et n'a pas été modifié ; ni la confidentialité ni la non-répudiation ne sont exigées. Quel mécanisme est le plus adapté ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un HMAC-SHA-256 calculé avec la clé partagée"
+        },
+        {
+          "id": "b",
+          "text": "Une empreinte SHA-256 jointe à chaque message"
+        },
+        {
+          "id": "c",
+          "text": "Une signature RSA avec un certificat par service"
+        },
+        {
+          "id": "d",
+          "text": "Un chiffrement AES-CBC du message avec la clé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un HMAC combine une fonction de hachage et une clé secrète : seul un détenteur de la clé peut produire la valeur attendue, ce qui garantit l'intégrité et l'authenticité de l'origine entre les deux parties. Il exploite la clé déjà partagée, est très rapide et ne demande pas de PKI. Comme les deux services connaissent la clé, il n'apporte pas de non-répudiation, mais elle n'est pas exigée ici.",
+    "distractorNotes": {
+      "b": "Une empreinte sans clé peut être recalculée par quiconque modifie le message : elle ne prouve ni l'origine ni l'absence de falsification délibérée.",
+      "c": "Une signature RSA répondrait au besoin, mais elle impose une paire de clés et des certificats pour chaque service et apporte une non-répudiation inutile : elle est moins adaptée que le HMAC avec la clé existante.",
+      "d": "AES-CBC assure la confidentialité, non exigée, mais ne détecte pas à lui seul une modification du message chiffré."
+    },
+    "reference": "RFC 2104 (HMAC)"
+  },
+  {
+    "slug": "security-plus-1.4-forward-secrecy-ecdhe-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'un audit, on rappelle qu'un attaquant peut enregistrer aujourd'hui le trafic TLS d'un serveur, puis voler sa clé privée dans quelques années. Le RSSI exige que ce vol ne permette pas de déchiffrer les sessions enregistrées auparavant. Quelle configuration garantit cette confidentialité persistante (forward secrecy) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un échange de clés RSA, le client chiffrant le secret avec la clé publique du serveur"
+        },
+        {
+          "id": "b",
+          "text": "Un échange de clés Diffie-Hellman éphémère sur courbe elliptique (ECDHE)"
+        },
+        {
+          "id": "c",
+          "text": "Une clé RSA du serveur portée de 2048 à 4096 bits, avec le même échange de clés"
+        },
+        {
+          "id": "d",
+          "text": "Un hachage des enregistrements TLS avec SHA-384 au lieu de SHA-256"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Avec ECDHE, client et serveur génèrent pour chaque session une paire de clés éphémère et en dérivent un secret commun qui n'est jamais transmis ; les clés éphémères sont détruites ensuite. La clé privée du certificat ne sert qu'à signer l'échange (authentification) : la voler plus tard ne permet pas de recalculer les secrets des sessions passées. TLS 1.3 a d'ailleurs supprimé le transport de clé RSA : hors reprise de session par PSK seule, ses échanges reposent tous sur (EC)DHE.",
+    "distractorNotes": {
+      "a": "Avec le transport de clé RSA, le secret de session est chiffré avec la clé publique du serveur : quiconque obtient plus tard la clé privée déchiffre tout le trafic enregistré.",
+      "c": "Une clé plus longue résiste mieux à la cryptanalyse, mais si elle est volée, elle déchiffre toujours les sessions passées : le problème reste entier.",
+      "d": "La fonction de hachage sert à l'intégrité et à la dérivation des clés ; elle ne change rien au fait que le secret dépend de la clé privée du serveur."
+    },
+    "reference": "RFC 8446 (TLS 1.3)"
+  },
+  {
+    "slug": "security-plus-1.4-ecc-iot-signatures-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un fabricant d'objets connectés utilise des microcontrôleurs peu puissants et dotés de peu de mémoire. Il veut des signatures numériques à clés courtes, d'un niveau de sécurité comparable à RSA 3072 bits. Quel choix convient le mieux ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "RSA avec des clés de 1024 bits"
+        },
+        {
+          "id": "b",
+          "text": "AES-256 en mode GCM"
+        },
+        {
+          "id": "c",
+          "text": "ECDSA sur la courbe P-256"
+        },
+        {
+          "id": "d",
+          "text": "Diffie-Hellman sur un groupe de 3072 bits"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La cryptographie sur courbes elliptiques offre la même sécurité que RSA avec des clés bien plus courtes : une courbe de 256 bits correspond à environ 128 bits de sécurité, comme RSA 3072 selon NIST SP 800-57. Les clés, les signatures et les calculs sont plus légers, ce qui convient aux équipements contraints. ECDSA sur P-256 est un algorithme de signature normalisé par FIPS 186-5.",
+    "distractorNotes": {
+      "a": "RSA 1024 bits n'offre qu'environ 80 bits de sécurité : il est trop faible et n'est plus admis.",
+      "b": "AES est un chiffrement symétrique : il ne produit pas de signature numérique vérifiable par une clé publique.",
+      "d": "Diffie-Hellman sert à établir une clé partagée, pas à signer, et un groupe de 3072 bits n'apporte pas de clés courtes."
+    },
+    "reference": "NIST SP 800-57 Part 1 Rev. 5 ; NIST FIPS 186-5"
+  },
+  {
+    "slug": "security-plus-1.4-blockchain-ledger-integrity-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un consortium de transporteurs adopte un registre public ouvert, fondé sur une blockchain, pour tracer les conteneurs. Un participant demande ce qui empêche un membre de modifier discrètement une entrée ancienne. Quelle propriété du registre s'y oppose ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque bloc contient l'empreinte du précédent et le registre est copié chez tous les participants"
+        },
+        {
+          "id": "b",
+          "text": "Les entrées sont chiffrées en AES et seule l'AC du consortium détient la clé de déchiffrement"
+        },
+        {
+          "id": "c",
+          "text": "Les données sont masquées pour que seuls les auditeurs désignés puissent les consulter"
+        },
+        {
+          "id": "d",
+          "text": "Le registre est conservé sur un serveur central dont les clés sont protégées par un HSM"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Dans une blockchain, chaque bloc inclut l'empreinte cryptographique du bloc qui le précède. Modifier une entrée ancienne change l'empreinte de son bloc et casse le chaînage de tous les suivants. Comme le registre est distribué et que chaque participant en détient une copie validée par consensus, une version falsifiée est immédiatement rejetée. Le registre est ouvert : sa protection repose sur l'intégrité, pas sur la confidentialité.",
+    "distractorNotes": {
+      "b": "Le chiffrement protège la confidentialité, pas l'intégrité ; un registre public ouvert est d'ailleurs lisible par tous, et une clé unique détenue par une AC le recentraliserait.",
+      "c": "Le masquage limite ce que l'on voit d'une donnée ; il n'empêche pas sa modification.",
+      "d": "Un serveur central est l'inverse d'un registre distribué : son administrateur pourrait modifier les données sans que les autres le détectent."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-missing-intermediate-chain-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Des clients signalent des erreurs de certificat sur shop.example.com depuis certaines applications mobiles et certains navigateurs ; d'autres navigateurs fonctionnent. Le certificat n'a pas expiré, n'est pas révoqué et son nom correspond. Quelle action corrige le mieux le problème ?",
+      "exhibit": "$ openssl s_client -connect shop.example.com:443 -servername shop.example.com\nCONNECTED(00000003)\ndepth=0 CN = shop.example.com\nverify error:num=20:unable to get local issuer certificate\nverify error:num=21:unable to verify the first certificate\n---\nCertificate chain\n 0 s:CN = shop.example.com\n   i:C = US, O = Example Trust, CN = Example Trust TLS CA R2\n---\nVerify return code: 21 (unable to verify the first certificate)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Révoquer le certificat et en demander un nouveau à l'AC"
+        },
+        {
+          "id": "b",
+          "text": "Remplacer le certificat par un certificat auto-signé"
+        },
+        {
+          "id": "c",
+          "text": "Installer le certificat du serveur dans le magasin racine des clients"
+        },
+        {
+          "id": "d",
+          "text": "Configurer le serveur pour présenter aussi le certificat de l'AC intermédiaire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La chaîne présentée ne contient que le certificat du serveur (profondeur 0), émis par « Example Trust TLS CA R2 », une AC intermédiaire. Le client doit construire la chaîne jusqu'à une racine de confiance : sans le certificat intermédiaire, il échoue (« unable to get local issuer certificate »). Certains navigateurs le retrouvent dans un cache ou le téléchargent, d'où les résultats variables. Le serveur doit envoyer son certificat suivi de celui de l'intermédiaire ; la racine, déjà présente chez les clients, n'a pas à être envoyée.",
+    "distractorNotes": {
+      "a": "Le certificat est valide : un nouveau certificat installé de la même façon produirait la même erreur, la chaîne restant incomplète.",
+      "b": "Un certificat auto-signé n'est rattaché à aucune racine de confiance : tous les clients afficheraient une erreur.",
+      "c": "Déclarer un certificat de serveur comme racine sur chaque client contourne la chaîne de confiance, ne passe pas à l'échelle et ne corrige pas la configuration du serveur."
+    },
+    "reference": "RFC 5280 ; RFC 8446 (TLS 1.3)"
+  },
+  {
+    "slug": "security-plus-1.4-san-wildcard-mismatch-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Ce certificat, émis par une AC publique, est installé sur un répartiteur de charge qui sert plusieurs sites de l'entreprise. Pour laquelle de ces URL un navigateur à jour signalera-t-il une erreur de nom ?",
+      "exhibit": "$ openssl x509 -in lb.crt -noout -subject -ext subjectAltName\nsubject=CN = *.example.com\nX509v3 Subject Alternative Name:\n    DNS:*.example.com, DNS:example.com",
+      "options": [
+        {
+          "id": "a",
+          "text": "https://example.com"
+        },
+        {
+          "id": "b",
+          "text": "https://api.eu.example.com"
+        },
+        {
+          "id": "c",
+          "text": "https://www.example.com"
+        },
+        {
+          "id": "d",
+          "text": "https://shop.example.com"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Quand l'extension Subject Alternative Name est présente, les navigateurs ne vérifient que les noms qu'elle contient et ignorent le CN. Ici, elle liste *.example.com et example.com. Un caractère générique ne remplace qu'une seule étiquette, la plus à gauche : *.example.com couvre www.example.com et shop.example.com, mais pas api.eu.example.com, qui en comporte deux devant example.com. example.com est couvert par son entrée explicite. Il faudrait ajouter api.eu.example.com ou *.eu.example.com aux SAN.",
+    "distractorNotes": {
+      "a": "example.com figure explicitement dans le SAN : sans cette entrée, il ne serait pas couvert par *.example.com, mais elle est bien présente.",
+      "c": "www.example.com est un sous-domaine direct : l'étiquette « www » correspond au caractère générique de *.example.com.",
+      "d": "shop.example.com est un sous-domaine direct d'example.com : il est couvert par *.example.com."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-crl-ocsp-statements-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un administrateur PKI rédige la note qui présente aux équipes les mécanismes de vérification de révocation. Quelles deux affirmations sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Une CRL est signée par l'AC et liste les numéros de série des certificats révoqués non expirés."
+        },
+        {
+          "id": "b",
+          "text": "Une CRL liste les numéros de série de tous les certificats encore valides émis par l'AC."
+        },
+        {
+          "id": "c",
+          "text": "Avec l'agrafage OCSP, chaque client interroge lui-même le répondeur OCSP pendant la poignée de main."
+        },
+        {
+          "id": "d",
+          "text": "Une réponse OCSP indique l'état d'un certificat donné : good, revoked ou unknown."
+        },
+        {
+          "id": "e",
+          "text": "Les réponses OCSP ne sont pas signées, c'est pourquoi la CRL reste la seule source fiable."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "La CRL (RFC 5280) est une liste signée par l'AC, publiée périodiquement, qui contient les numéros de série des certificats révoqués et pas encore expirés ; le client la télécharge et la met en cache. OCSP (RFC 6960) répond à la demande sur un certificat précis, par une réponse signée good, revoked ou unknown. L'agrafage OCSP déplace la requête vers le serveur, qui joint une réponse récente à la poignée de main TLS, ce qui économise une requête au client et protège sa vie privée.",
+    "distractorNotes": {
+      "b": "Une CRL ne recense que les certificats révoqués ; un certificat absent de la liste (et non expiré) est considéré comme non révoqué.",
+      "c": "C'est l'inverse : avec l'agrafage, le serveur obtient la réponse OCSP et la transmet ; le client n'a pas à contacter le répondeur.",
+      "e": "Les réponses OCSP sont signées par l'AC ou par un répondeur qu'elle a désigné ; elles sont aussi fiables que la CRL."
+    },
+    "reference": "RFC 5280 ; RFC 6960"
+  },
+  {
+    "slug": "security-plus-1.4-tpm-capabilities-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le responsable du parc d'une entreprise choisit des portables équipés d'un TPM 2.0 pour déployer le chiffrement de disque. Quelles deux affirmations décrivent correctement le TPM ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "C'est un équipement réseau partagé qui réalise les signatures de plusieurs serveurs d'AC."
+        },
+        {
+          "id": "b",
+          "text": "Il peut sceller la clé de chiffrement du disque à l'état mesuré du démarrage du poste."
+        },
+        {
+          "id": "c",
+          "text": "Ses clés sont exportables librement vers un autre poste pour faciliter les migrations."
+        },
+        {
+          "id": "d",
+          "text": "Il enregistre des mesures de la chaîne de démarrage, ce qui permet une attestation à distance."
+        },
+        {
+          "id": "e",
+          "text": "Sa présence rend inutile le chiffrement du disque, les données étant stockées dans la puce."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le TPM est un composant matériel du poste (puce ou fonction du microprogramme) qui génère et protège des clés liées à cette machine. Pendant le démarrage, il enregistre des mesures des composants exécutés dans ses registres PCR : il peut ainsi libérer la clé de chiffrement du disque seulement si la chaîne de démarrage n'a pas été modifiée (scellement, utilisé par BitLocker), et fournir une attestation signée de cet état à un service distant.",
+    "distractorNotes": {
+      "a": "Cette description est celle d'un HSM réseau ; le TPM est propre à une seule machine.",
+      "c": "Les clés racines du TPM sont conçues pour ne jamais quitter la puce : c'est ce qui lie les secrets à la machine.",
+      "e": "Le TPM a une capacité de stockage minime : il protège la clé, tandis que les données restent sur le disque, qu'il faut chiffrer."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-symmetric-algorithms-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une architecte doit choisir un algorithme symétrique pour chiffrer les sauvegardes nocturnes, qui représentent plusieurs téraoctets. Parmi ces algorithmes, lesquels sont symétriques ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "AES"
+        },
+        {
+          "id": "b",
+          "text": "RSA"
+        },
+        {
+          "id": "c",
+          "text": "ECDSA"
+        },
+        {
+          "id": "d",
+          "text": "Diffie-Hellman"
+        },
+        {
+          "id": "e",
+          "text": "ChaCha20"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "AES (FIPS 197) est un chiffrement par blocs et ChaCha20 un chiffrement par flot ; tous deux utilisent la même clé pour chiffrer et déchiffrer, et sont assez rapides pour de gros volumes. C'est pourquoi les protocoles combinent les deux familles : un mécanisme asymétrique pour établir ou transmettre la clé, puis un algorithme symétrique pour les données. TLS 1.3 propose d'ailleurs AES-GCM et ChaCha20-Poly1305.",
+    "distractorNotes": {
+      "b": "RSA est asymétrique (paire de clés publique et privée) ; il sert au transport de clés et à la signature, pas au chiffrement de gros volumes.",
+      "c": "ECDSA est un algorithme de signature asymétrique sur courbes elliptiques ; il ne chiffre pas de données.",
+      "d": "Diffie-Hellman est un protocole asymétrique d'établissement de clé : il permet de convenir d'un secret, pas de chiffrer les données elles-mêmes."
+    },
+    "reference": "NIST FIPS 197 ; RFC 8446 (TLS 1.3)"
+  },
+  {
+    "slug": "security-plus-1.4-hybrid-encrypt-sign-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise transmet chaque semaine un fichier de plusieurs gigaoctets à un partenaire. Les exigences sont la confidentialité du fichier et la non-répudiation de l'expéditeur. Chacun dispose d'une paire de clés RSA et du certificat de l'autre. Quelles deux opérations l'expéditeur doit-il effectuer ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Chiffrer le fichier avec sa propre clé privée pour le rendre confidentiel."
+        },
+        {
+          "id": "b",
+          "text": "Signer l'empreinte du fichier avec la clé publique du partenaire."
+        },
+        {
+          "id": "c",
+          "text": "Chiffrer le fichier avec une clé AES aléatoire, puis chiffrer cette clé avec la clé publique du partenaire."
+        },
+        {
+          "id": "d",
+          "text": "Chiffrer la clé AES de session avec la clé privée du partenaire."
+        },
+        {
+          "id": "e",
+          "text": "Signer l'empreinte du fichier avec sa propre clé privée."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Le chiffrement hybride répond à la confidentialité : un algorithme symétrique rapide (AES) chiffre le gros fichier avec une clé de session aléatoire, et seule cette petite clé est chiffrée avec la clé publique du partenaire, que lui seul peut déchiffrer avec sa clé privée. La non-répudiation exige une signature : l'expéditeur signe l'empreinte du fichier avec sa propre clé privée, et le partenaire la vérifie avec la clé publique de l'expéditeur.",
+    "distractorNotes": {
+      "a": "Tout ce qui est chiffré avec la clé privée de l'expéditeur se déchiffre avec sa clé publique, connue de tous : aucune confidentialité.",
+      "b": "Une clé publique, connue de tous, ne peut pas produire de signature ; celle-ci se fait avec la clé privée du signataire.",
+      "d": "L'expéditeur ne détient pas la clé privée du partenaire ; la clé de session se chiffre avec la clé publique de ce dernier."
+    },
+    "reference": "NIST SP 800-57 Part 1 Rev. 5 ; NIST FIPS 186-5"
+  },
+  {
+    "slug": "security-plus-1.4-tokenization-vault-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un prestataire de paiement propose à un commerçant une tokenisation avec coffre : chaque numéro de carte est remplacé par une valeur aléatoire, la correspondance n'étant conservée que dans le coffre du prestataire. Quelles deux affirmations sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le jeton est l'empreinte SHA-256 du numéro, donc identique chez tous les commerçants."
+        },
+        {
+          "id": "b",
+          "text": "Sans accès au coffre, le numéro d'origine ne peut pas être retrouvé à partir du jeton."
+        },
+        {
+          "id": "c",
+          "text": "Le jeton se déchiffre avec la clé publique du prestataire, il doit donc rester secret."
+        },
+        {
+          "id": "d",
+          "text": "La tokenisation affiche les quatre derniers chiffres et masque les autres à l'écran."
+        },
+        {
+          "id": "e",
+          "text": "Les systèmes du commerçant qui ne stockent que des jetons réduisent son périmètre PCI DSS."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Avec une tokenisation adossée à un coffre, le jeton est une valeur aléatoire sans relation mathématique avec le numéro de carte : il n'existe ni clé ni calcul pour revenir en arrière, seule la table du coffre fait le lien. Un attaquant qui vole les jetons du commerçant n'obtient rien d'exploitable hors du système de paiement. Les systèmes qui ne stockent, ne traitent et ne transmettent que des jetons peuvent ainsi sortir du périmètre des données de carte, ce qui allège l'audit PCI DSS.",
+    "distractorNotes": {
+      "a": "Un jeton de coffre est aléatoire, pas une empreinte ; un hachage non salé d'un numéro de carte serait d'ailleurs vulnérable à une recherche exhaustive.",
+      "c": "Le jeton n'est pas un chiffré : aucune clé, publique ou privée, ne permet de le transformer en numéro de carte.",
+      "d": "Cela décrit le masquage à l'affichage, une technique distincte qui laisse la valeur réelle stockée."
+    },
+    "reference": "PCI DSS v4.0 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-key-length-128-bit-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le RSSI impose pour tout nouveau système un niveau de sécurité d'au moins 128 bits, au sens des équivalences de NIST SP 800-57. Quelles deux configurations respectent cette exigence ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "RSA avec un module de 2048 bits"
+        },
+        {
+          "id": "b",
+          "text": "Diffie-Hellman sur un groupe de 2048 bits"
+        },
+        {
+          "id": "c",
+          "text": "Triple DES à trois clés (3TDEA)"
+        },
+        {
+          "id": "d",
+          "text": "RSA avec un module de 3072 bits"
+        },
+        {
+          "id": "e",
+          "text": "ECDSA sur la courbe P-256"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "NIST SP 800-57 Part 1 établit des équivalences de robustesse : 112 bits de sécurité pour RSA 2048, Diffie-Hellman 2048 et 3TDEA ; 128 bits pour AES-128, RSA ou Diffie-Hellman 3072 et les courbes elliptiques de 256 à 383 bits comme P-256. Seules RSA 3072 et ECDSA P-256 atteignent donc le seuil. On voit l'intérêt des courbes elliptiques : à sécurité égale, la clé fait 256 bits au lieu de 3072.",
+    "distractorNotes": {
+      "a": "RSA 2048 offre environ 112 bits de sécurité : encore admis aujourd'hui, mais en dessous du seuil exigé.",
+      "b": "Un groupe Diffie-Hellman de 2048 bits équivaut, comme RSA 2048, à environ 112 bits de sécurité.",
+      "c": "3TDEA plafonne à 112 bits de sécurité (sa taille de bloc de 64 bits pose d'autres limites) et NIST l'a retiré pour le chiffrement de nouvelles données."
+    },
+    "reference": "NIST SP 800-57 Part 1 Rev. 5"
+  },
+  {
+    "slug": "security-plus-1.4-signature-properties-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une collectivité signe numériquement les arrêtés qu'elle publie en ligne. Quelles deux propriétés la signature numérique apporte-t-elle à ces documents ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La confidentialité"
+        },
+        {
+          "id": "b",
+          "text": "L'intégrité"
+        },
+        {
+          "id": "c",
+          "text": "La disponibilité"
+        },
+        {
+          "id": "d",
+          "text": "La non-répudiation"
+        },
+        {
+          "id": "e",
+          "text": "L'anonymat du signataire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La signature est calculée sur l'empreinte du document avec la clé privée du signataire. Toute modification du document fait échouer la vérification : c'est l'intégrité. Seul le détenteur de la clé privée a pu signer, et le certificat le relie à une identité : il ne peut pas nier être l'auteur, c'est la non-répudiation. Le document reste lisible par tous : la signature n'en protège pas le contenu.",
+    "distractorNotes": {
+      "a": "La signature ne chiffre pas le document ; la confidentialité demanderait un chiffrement avec la clé du destinataire.",
+      "c": "La disponibilité relève de la redondance et de la résilience des services, pas de la cryptographie appliquée au document.",
+      "e": "C'est l'inverse : la signature, rattachée à un certificat, identifie le signataire."
+    },
+    "reference": "NIST FIPS 186-5"
+  },
+  {
+    "slug": "security-plus-1.4-intermediate-ca-compromise-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise découvre que la clé privée de son AC intermédiaire, qui émet les certificats de ses serveurs web, a été dérobée. L'AC racine, hors ligne, n'est pas touchée. Quelles deux actions sont nécessaires ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Faire révoquer par l'AC racine le certificat de l'AC intermédiaire et publier l'information de révocation."
+        },
+        {
+          "id": "b",
+          "text": "Renouveler le certificat de l'AC intermédiaire en conservant sa paire de clés actuelle."
+        },
+        {
+          "id": "c",
+          "text": "Retirer le certificat racine du magasin de confiance de tous les postes et serveurs."
+        },
+        {
+          "id": "d",
+          "text": "Réémettre les certificats des serveurs depuis une nouvelle AC intermédiaire dotée d'une nouvelle paire de clés."
+        },
+        {
+          "id": "e",
+          "text": "Laisser les certificats émis arriver à expiration pour éviter de surcharger la CRL."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Avec la clé de l'intermédiaire, un attaquant peut émettre des certificats que tous les clients jugeront valides. L'AC racine doit révoquer le certificat de l'intermédiaire (CRL et OCSP), ce qui invalide la chaîne de tout ce qu'il a signé. Il faut ensuite créer une nouvelle AC intermédiaire, avec une nouvelle paire de clés certifiée par la racine, et réémettre les certificats des serveurs. Garder la racine hors ligne permet précisément de se remettre d'une telle compromission sans la toucher.",
+    "distractorNotes": {
+      "b": "La clé est compromise : un nouveau certificat pour la même paire de clés laisserait l'attaquant émettre des certificats valides.",
+      "c": "La racine n'est pas compromise ; la retirer casserait toute la PKI sans nécessité, alors que révoquer l'intermédiaire suffit.",
+      "e": "Attendre l'expiration laisserait l'attaquant exploiter la clé pendant des mois ; la révocation existe justement pour ce cas."
+    },
+    "reference": "RFC 5280 ; NIST SP 800-57 Part 1 Rev. 5"
+  },
+  {
+    "slug": "security-plus-1.4-encryption-levels-match-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un RSSI recense les besoins de chiffrement de son organisation. Associez chaque besoin au niveau de chiffrement qui y répond.",
+      "left": [
+        {
+          "id": "n1",
+          "text": "Un portable volé ne doit rien révéler, système, fichier d'échange et fichiers temporaires compris"
+        },
+        {
+          "id": "n2",
+          "text": "Un rapport précis doit rester chiffré même s'il est copié sur une clé USB ou joint à un courriel"
+        },
+        {
+          "id": "n3",
+          "text": "Le SGBD chiffre de façon transparente l'ensemble des fichiers de données et des journaux de la base"
+        },
+        {
+          "id": "n4",
+          "text": "Dans la table des patients, seul le champ du numéro de sécurité sociale de chaque fiche est chiffré"
+        }
+      ],
+      "right": [
+        {
+          "id": "disk",
+          "text": "Chiffrement complet du disque"
+        },
+        {
+          "id": "file",
+          "text": "Chiffrement au niveau du fichier"
+        },
+        {
+          "id": "db",
+          "text": "Chiffrement de la base de données"
+        },
+        {
+          "id": "rec",
+          "text": "Chiffrement au niveau de l'enregistrement"
+        },
+        {
+          "id": "tls",
+          "text": "Chiffrement de transport (TLS)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "n1": "disk",
+        "n2": "file",
+        "n3": "db",
+        "n4": "rec"
+      }
+    },
+    "explanation": "Le chiffrement complet du disque protège tout le support, y compris les données que le système écrit à l'insu de l'utilisateur. Le chiffrement de fichier suit le document où qu'il soit copié. Le chiffrement de base de données (TDE) protège les fichiers de la base au repos sans modifier les applications. Le chiffrement au niveau de l'enregistrement, ou du champ, ne protège que les valeurs sensibles, ce qui limite l'exposition même pour un administrateur de la base qui lit les tables.",
+    "distractorNotes": {
+      "tls": "TLS protège les données en transit entre deux points ; aucun des besoins listés ne porte sur une transmission réseau."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-algorithm-usage-match-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une équipe de développement documente les algorithmes de son application. Associez chaque algorithme à son usage.",
+      "left": [
+        {
+          "id": "a1",
+          "text": "AES-256"
+        },
+        {
+          "id": "a2",
+          "text": "ECDHE"
+        },
+        {
+          "id": "a3",
+          "text": "SHA-256"
+        },
+        {
+          "id": "a4",
+          "text": "HMAC-SHA-256"
+        },
+        {
+          "id": "a5",
+          "text": "ECDSA"
+        }
+      ],
+      "right": [
+        {
+          "id": "bulk",
+          "text": "Chiffrement symétrique de gros volumes de données"
+        },
+        {
+          "id": "kex",
+          "text": "Établissement d'une clé de session partagée"
+        },
+        {
+          "id": "hash",
+          "text": "Empreinte de taille fixe, calculée sans clé"
+        },
+        {
+          "id": "mac",
+          "text": "Code d'authentification de message à clé secrète"
+        },
+        {
+          "id": "sig",
+          "text": "Signature numérique à clé privée"
+        },
+        {
+          "id": "kdf",
+          "text": "Dérivation lente d'un mot de passe"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "a1": "bulk",
+        "a2": "kex",
+        "a3": "hash",
+        "a4": "mac",
+        "a5": "sig"
+      }
+    },
+    "explanation": "AES est l'algorithme symétrique de référence pour chiffrer des données. ECDHE permet à deux parties d'établir un secret partagé à partir de clés éphémères, sans le transmettre. SHA-256 produit une empreinte de 256 bits sans clé, qui sert au contrôle d'intégrité. HMAC-SHA-256 combine SHA-256 et une clé secrète pour authentifier un message. ECDSA signe avec une clé privée sur courbe elliptique, vérifiable par la clé publique.",
+    "distractorNotes": {
+      "kdf": "La dérivation lente d'un mot de passe est le rôle de PBKDF2, bcrypt ou Argon2, absents de la liste ; un SHA-256 simple est au contraire très rapide."
+    },
+    "reference": "NIST FIPS 197 ; NIST FIPS 180-4 ; NIST FIPS 186-5 ; RFC 2104 ; RFC 8446"
+  },
+  {
+    "slug": "security-plus-1.4-crypto-tools-match-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le RSSI d'un groupe présente au comité les outils matériels et logiciels qui protègent les clés. Associez chaque description à l'outil correspondant.",
+      "left": [
+        {
+          "id": "d1",
+          "text": "Puce du poste de travail qui scelle la clé de chiffrement du disque à l'état du démarrage"
+        },
+        {
+          "id": "d2",
+          "text": "Équipement dédié et résistant à l'effraction qui signe pour l'AC sans exposer sa clé privée"
+        },
+        {
+          "id": "d3",
+          "text": "Service centralisé qui crée, distribue, fait tourner et retire les clés des applications"
+        },
+        {
+          "id": "d4",
+          "text": "Zone isolée du processeur d'un smartphone qui traite les données biométriques"
+        }
+      ],
+      "right": [
+        {
+          "id": "tpm",
+          "text": "TPM"
+        },
+        {
+          "id": "hsm",
+          "text": "HSM"
+        },
+        {
+          "id": "kms",
+          "text": "Système de gestion de clés (KMS)"
+        },
+        {
+          "id": "enc",
+          "text": "Enclave sécurisée"
+        },
+        {
+          "id": "rca",
+          "text": "AC racine"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "d1": "tpm",
+        "d2": "hsm",
+        "d3": "kms",
+        "d4": "enc"
+      }
+    },
+    "explanation": "Le TPM est propre à une machine et lie des secrets à son état de démarrage. Le HSM est un équipement dédié qui génère, stocke et utilise des clés de grande valeur, comme celles d'une AC, sans qu'elles en sortent. Le KMS gère le cycle de vie des clés pour de nombreuses applications (création, rotation, révocation, destruction), souvent adossé à des HSM. L'enclave sécurisée isole, dans le processeur d'un appareil, les traitements les plus sensibles du reste du système.",
+    "distractorNotes": {
+      "rca": "Une AC racine est une entité de la PKI qui signe des certificats ; ce n'est pas un outil de stockage de clés, et elle s'appuie elle-même sur un HSM pour protéger sa clé."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-obfuscation-match-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une déléguée à la protection des données recense les techniques d'obfuscation employées dans l'entreprise. Associez chaque situation à la technique qu'elle illustre.",
+      "left": [
+        {
+          "id": "s1",
+          "text": "Un message est caché dans les bits de poids faible des pixels d'une image publiée sur le site"
+        },
+        {
+          "id": "s2",
+          "text": "Le numéro de carte est remplacé par une valeur aléatoire, la correspondance restant dans un coffre"
+        },
+        {
+          "id": "s3",
+          "text": "Le centre d'appels ne voit que les quatre derniers chiffres du numéro de téléphone du client"
+        },
+        {
+          "id": "s4",
+          "text": "La copie de la base destinée aux tests contient des noms et adresses fictifs mais réalistes"
+        }
+      ],
+      "right": [
+        {
+          "id": "stego",
+          "text": "Stéganographie"
+        },
+        {
+          "id": "token",
+          "text": "Tokenisation"
+        },
+        {
+          "id": "mask",
+          "text": "Masquage de données"
+        },
+        {
+          "id": "salt",
+          "text": "Salage"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "stego",
+        "s2": "token",
+        "s3": "mask",
+        "s4": "mask"
+      }
+    },
+    "explanation": "La stéganographie dissimule l'existence même d'une information dans un support anodin. La tokenisation substitue à la donnée un jeton aléatoire dont seul le coffre connaît la correspondance, ce qui permet de retrouver la valeur d'origine si besoin. Le masquage remplace tout ou partie de la donnée, soit à l'affichage (masquage dynamique, quatre derniers chiffres), soit dans une copie de la base (masquage statique pour les tests), sans possibilité de retour à la valeur réelle.",
+    "distractorNotes": {
+      "salt": "Le salage ajoute une valeur aléatoire à un mot de passe avant hachage ; il ne rend pas une donnée affichable ou exploitable sous une autre forme."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-pki-components-match-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une entreprise déploie sa PKI interne et rédige la fiche de rôle de chaque composant. Associez chaque composant à son rôle.",
+      "left": [
+        {
+          "id": "c1",
+          "text": "AC racine"
+        },
+        {
+          "id": "c2",
+          "text": "AC intermédiaire"
+        },
+        {
+          "id": "c3",
+          "text": "CRL"
+        },
+        {
+          "id": "c4",
+          "text": "Répondeur OCSP"
+        },
+        {
+          "id": "c5",
+          "text": "CSR"
+        }
+      ],
+      "right": [
+        {
+          "id": "anchor",
+          "text": "Ancre de confiance au certificat auto-signé, gardée hors ligne"
+        },
+        {
+          "id": "issue",
+          "text": "Émet les certificats des serveurs et des utilisateurs au quotidien"
+        },
+        {
+          "id": "list",
+          "text": "Liste signée et périodique des numéros de série révoqués"
+        },
+        {
+          "id": "query",
+          "text": "Donne à la demande l'état de révocation d'un certificat précis"
+        },
+        {
+          "id": "req",
+          "text": "Demande portant la clé publique et l'identité du demandeur"
+        },
+        {
+          "id": "escrow",
+          "text": "Conserve une copie des clés privées pour pouvoir les récupérer"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "c1": "anchor",
+        "c2": "issue",
+        "c3": "list",
+        "c4": "query",
+        "c5": "req"
+      }
+    },
+    "explanation": "La racine est le point de confiance ultime : son certificat est auto-signé et distribué dans les magasins de confiance, et elle reste hors ligne pour limiter les risques. L'intermédiaire, certifiée par la racine, émet les certificats courants ; sa compromission se traite sans toucher à la racine. La CRL et OCSP publient la révocation, l'une sous forme de liste périodique, l'autre par réponse à la demande. La CSR est la demande que le titulaire envoie pour obtenir un certificat.",
+    "distractorNotes": {
+      "escrow": "Ce rôle est celui du séquestre de clés (key escrow), qui n'est pas un composant de la liste ; une AC n'a pas à détenir les clés privées de ses abonnés."
+    },
+    "reference": "RFC 5280 ; RFC 6960"
+  },
+  {
+    "slug": "security-plus-1.4-certificate-issuance-order-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un administrateur obtient d'une AC publique un certificat pour le site portail.example.com. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "install",
+          "text": "Installer le certificat et celui de l'AC intermédiaire sur le serveur web"
+        },
+        {
+          "id": "csr",
+          "text": "Créer la CSR avec la clé publique et le nom portail.example.com"
+        },
+        {
+          "id": "validate",
+          "text": "L'AC vérifie la CSR reçue et le contrôle du domaine par le demandeur"
+        },
+        {
+          "id": "keygen",
+          "text": "Générer la paire de clés sur le serveur web"
+        },
+        {
+          "id": "sign",
+          "text": "L'AC signe le certificat avec sa clé privée et le délivre"
+        },
+        {
+          "id": "submit",
+          "text": "Transmettre la CSR à l'AC"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "keygen",
+        "csr",
+        "submit",
+        "validate",
+        "sign",
+        "install"
+      ]
+    },
+    "explanation": "La paire de clés est générée en premier, car la CSR contient la clé publique et est signée par la clé privée. La CSR est ensuite transmise à l'AC, qui doit vérifier le contrôle du domaine (ou l'identité de l'organisation pour les certificats OV et EV) avant toute émission. Elle signe alors le certificat avec sa propre clé privée. L'administrateur l'installe enfin avec la chaîne intermédiaire, sans laquelle certains clients ne pourraient pas remonter jusqu'à la racine.",
+    "reference": "RFC 5280 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 1.4"
+  },
+  {
+    "slug": "security-plus-1.4-key-lifecycle-order-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une équipe gère dans son KMS la clé qui chiffre les sauvegardes d'un service. Ordonnez les étapes de la vie de cette clé, selon les phases de gestion des clés de NIST SP 800-57.",
+      "items": [
+        {
+          "id": "use",
+          "text": "Activer la clé et l'utiliser pour chiffrer les nouvelles sauvegardes"
+        },
+        {
+          "id": "destroy",
+          "text": "Détruire toutes les copies de la clé une fois la durée de conservation écoulée"
+        },
+        {
+          "id": "gen",
+          "text": "Générer la clé dans le HSM et l'enregistrer dans le KMS, encore inactive"
+        },
+        {
+          "id": "retire",
+          "text": "À la rotation, cesser de chiffrer avec la clé en la gardant pour relire les anciennes sauvegardes"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "gen",
+        "use",
+        "retire",
+        "destroy"
+      ]
+    },
+    "explanation": "NIST SP 800-57 décrit quatre phases : préopérationnelle (la clé est générée et enregistrée mais pas encore utilisée), opérationnelle (elle protège des données), post-opérationnelle (elle ne protège plus de nouvelles données mais reste disponible, par exemple pour déchiffrer des archives) et destruction. Détruire la clé avant la fin de la conservation des sauvegardes rendrait celles-ci illisibles ; la garder au-delà prolongerait inutilement le risque de compromission.",
+    "reference": "NIST SP 800-57 Part 1 Rev. 5"
+  },
+  {
+    "slug": "security-plus-1.4-tls13-handshake-order-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un analyste explique à un stagiaire une poignée de main TLS 1.3 complète, sans reprise de session ni authentification du client. Ordonnez les messages, du premier au dernier.",
+      "items": [
+        {
+          "id": "sfin",
+          "text": "Finished du serveur"
+        },
+        {
+          "id": "ch",
+          "text": "ClientHello avec la liste des suites et une part de clé (key_share)"
+        },
+        {
+          "id": "cv",
+          "text": "CertificateVerify, signature du serveur sur la transcription"
+        },
+        {
+          "id": "cfin",
+          "text": "Finished du client"
+        },
+        {
+          "id": "sh",
+          "text": "ServerHello avec la part de clé du serveur"
+        },
+        {
+          "id": "cert",
+          "text": "Certificate, chaîne de certificats du serveur"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "ch",
+        "sh",
+        "cert",
+        "cv",
+        "sfin",
+        "cfin"
+      ]
+    },
+    "explanation": "En TLS 1.3, le client envoie dès le ClientHello sa part de clé (EC)DHE. Le serveur répond par le ServerHello avec la sienne : les deux parties dérivent alors les clés de la poignée de main, et tout le reste est chiffré. Le serveur envoie ses extensions chiffrées, son Certificate, puis CertificateVerify, qui prouve qu'il détient la clé privée du certificat, et enfin son Finished. Le client vérifie le tout et termine par son propre Finished : un seul aller-retour suffit.",
+    "reference": "RFC 8446 (TLS 1.3)"
+  },
+  {
+    "slug": "security-plus-1.4-symmetric-key-count-30-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un cabinet de 30 collaborateurs veut que chaque paire de collaborateurs dispose de sa propre clé de chiffrement. Combien de clés faut-il avec un chiffrement uniquement symétrique, et combien de paires de clés avec un chiffrement asymétrique ?",
+      "fields": [
+        {
+          "id": "sym",
+          "label": "Nombre de clés symétriques distinctes (nombre entier)"
+        },
+        {
+          "id": "asym",
+          "label": "Nombre de paires de clés asymétriques (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "sym": {
+          "accepted": [
+            "435"
+          ],
+          "normalize": "int"
+        },
+        "asym": {
+          "accepted": [
+            "30"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "En symétrique, chaque paire d'interlocuteurs partage une clé distincte : il en faut n(n − 1)/2, soit 30 × 29 / 2 = 435. En asymétrique, chacun possède une seule paire de clés : il chiffre pour un collègue avec la clé publique de celui-ci, qui déchiffre avec sa clé privée. Il suffit donc de 30 paires (60 clés au total). Cet écart explique pourquoi l'asymétrique sert à distribuer les clés et le symétrique à chiffrer les données.",
+    "reference": "NIST SP 800-57 Part 1 Rev. 5"
+  },
+  {
+    "slug": "security-plus-1.4-sha256-output-size-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un technicien vérifie l'intégrité d'une image ISO téléchargée en comparant son empreinte SHA-256 à celle publiée par l'éditeur. Quelle est la taille de cette empreinte, et combien de caractères compte-t-elle une fois écrite en hexadécimal ?",
+      "fields": [
+        {
+          "id": "bits",
+          "label": "Taille de l'empreinte, en bits (nombre entier)"
+        },
+        {
+          "id": "hex",
+          "label": "Nombre de caractères hexadécimaux (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "bits": {
+          "accepted": [
+            "256"
+          ],
+          "normalize": "int"
+        },
+        "hex": {
+          "accepted": [
+            "64"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "SHA-256, de la famille SHA-2 définie par FIPS 180-4, produit toujours une empreinte de 256 bits, quelle que soit la taille du fichier. Un caractère hexadécimal code 4 bits : l'empreinte s'écrit donc avec 256 / 4 = 64 caractères. La moindre modification du fichier change complètement l'empreinte. Pour se protéger d'un attaquant qui remplacerait à la fois le fichier et l'empreinte, celle-ci doit être obtenue par un canal de confiance ou signée par l'éditeur.",
+    "reference": "NIST FIPS 180-4"
+  },
+  {
+    "slug": "security-plus-1.4-symmetric-key-growth-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une équipe de 20 ingénieurs utilise une clé symétrique distincte par paire de personnes. Elle s'agrandit à 25 ingénieurs, en gardant le même principe. Combien de clés faut-il au total après l'agrandissement, et combien de nouvelles clés faut-il créer ?",
+      "fields": [
+        {
+          "id": "total",
+          "label": "Nombre total de clés pour 25 ingénieurs (nombre entier)"
+        },
+        {
+          "id": "new",
+          "label": "Nombre de clés à créer en plus (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "total": {
+          "accepted": [
+            "300"
+          ],
+          "normalize": "int"
+        },
+        "new": {
+          "accepted": [
+            "110"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le nombre de clés pour n personnes est n(n − 1)/2. Pour 20 ingénieurs : 20 × 19 / 2 = 190 clés. Pour 25 : 25 × 24 / 2 = 300 clés. Il faut donc en créer 300 − 190 = 110. On peut le vérifier autrement : chacun des 5 arrivants a besoin d'une clé avec les 20 anciens (100 clés) et avec les 4 autres arrivants (5 × 4 / 2 = 10 clés), soit 110. Cette croissance quadratique montre les limites de la gestion de clés purement symétrique.",
+    "reference": "NIST SP 800-57 Part 1 Rev. 5"
+  },
+  {
+    "slug": "security-plus-1.4-pbkdf2-iterations-rate-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un attaquant dispose d'un équipement qui calcule 1 milliard d'empreintes HMAC-SHA-256 par seconde. Le RSSI fait passer le stockage des mots de passe à PBKDF2-HMAC-SHA-256 avec 100 000 itérations par mot de passe. Combien de mots de passe candidats l'attaquant pourra-t-il tester par seconde ?",
+      "fields": [
+        {
+          "id": "rate",
+          "label": "Nombre de candidats testés par seconde (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "rate": {
+          "accepted": [
+            "10000"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "PBKDF2 applique la fonction de base (ici HMAC-SHA-256) de façon itérée : avec 100 000 itérations, tester un seul mot de passe candidat coûte 100 000 calculs. L'équipement passe donc de 1 000 000 000 de candidats par seconde à 1 000 000 000 / 100 000 = 10 000. C'est le principe de l'étirement de clé : la vérification légitime d'un mot de passe reste quasi instantanée, tandis que la recherche exhaustive devient 100 000 fois plus lente.",
+    "reference": "NIST SP 800-63B"
+  }
+]

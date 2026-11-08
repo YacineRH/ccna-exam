@@ -1,0 +1,1615 @@
+[
+  {
+    "slug": "security-plus-1.2-cia-ddos-availability-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pendant deux heures, le site de commande d'un e-commerçant reçoit un flot de requêtes HTTP venant de milliers d'adresses : les clients ne peuvent plus passer commande, mais aucune donnée n'a été lue ni modifiée. Quelle propriété de la triade CIA cette attaque a-t-elle compromise ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La confidentialité"
+        },
+        {
+          "id": "b",
+          "text": "L'intégrité"
+        },
+        {
+          "id": "c",
+          "text": "La disponibilité"
+        },
+        {
+          "id": "d",
+          "text": "La non-répudiation"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La disponibilité garantit que les systèmes et les données restent accessibles aux utilisateurs autorisés quand ils en ont besoin. Une attaque par déni de service distribué (DDoS) sature le service sans rien lire ni modifier : elle vise précisément la disponibilité. Les mesures associées sont la redondance, la répartition de charge, les services anti-DDoS en amont et les plans de continuité. Repérer la propriété touchée oriente le choix des contrôles à renforcer.",
+    "distractorNotes": {
+      "a": "La confidentialité serait atteinte si des données avaient été divulguées ; l'énoncé précise qu'aucune donnée n'a été lue.",
+      "b": "L'intégrité serait atteinte si des données avaient été modifiées sans autorisation ; ce n'est pas le cas ici.",
+      "d": "La non-répudiation ne fait pas partie de la triade CIA : elle concerne la preuve qu'un acteur est l'auteur d'une action."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-cia-backup-key-availability-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME chiffre ses sauvegardes nocturnes en AES-256 et les stocke sur un NAS séparé. La clé de déchiffrement n'est conservée que dans un fichier du serveur de fichiers sauvegardé. Un rançongiciel chiffre ce serveur, fichier de clé compris ; l'enquête montre que le NAS n'a pas été touché et qu'aucune donnée n'est sortie du réseau. Quelle propriété des sauvegardes la gestion de la clé a-t-elle mise en défaut ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Leur confidentialité"
+        },
+        {
+          "id": "b",
+          "text": "Leur disponibilité"
+        },
+        {
+          "id": "c",
+          "text": "Leur intégrité"
+        },
+        {
+          "id": "d",
+          "text": "Leur non-répudiation"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Les sauvegardes sont intactes (intégrité préservée) et n'ont pas été lues (confidentialité préservée), mais sans la clé elles ne peuvent plus être déchiffrées : la restauration est impossible, donc leur disponibilité est perdue. Le chiffrement protège la confidentialité, mais il déplace le risque sur la clé : une clé stockée uniquement sur le système qu'on protège disparaît avec lui. La gestion des clés (NIST SP 800-57) prévoit une sauvegarde de la clé séparée des données, par exemple dans un coffre ou un HSM hors site.",
+    "distractorNotes": {
+      "a": "Les sauvegardes restent chiffrées en AES-256 et rien n'a été exfiltré : leur confidentialité n'est pas atteinte.",
+      "c": "L'énoncé indique que le NAS n'a pas été touché : les sauvegardes n'ont pas été modifiées, seule la clé est devenue inaccessible.",
+      "d": "La non-répudiation porte sur la preuve de l'auteur d'une action ; elle n'a rien à voir avec la restauration des sauvegardes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; NIST SP 800-57"
+  },
+  {
+    "slug": "security-plus-1.2-cia-integrity-config-files-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une équipe d'exploitation veut que toute modification non autorisée des fichiers de configuration de ses serveurs de production soit détectée. Quelles deux mesures répondent directement à cet objectif d'intégrité ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chiffrer les disques des serveurs avec AES-256"
+        },
+        {
+          "id": "b",
+          "text": "Déployer une surveillance d'intégrité des fichiers (FIM) qui alerte à chaque changement"
+        },
+        {
+          "id": "c",
+          "text": "Regrouper les serveurs en grappe derrière un répartiteur de charge"
+        },
+        {
+          "id": "d",
+          "text": "Signer numériquement les fichiers et vérifier la signature à leur chargement"
+        },
+        {
+          "id": "e",
+          "text": "Masquer les valeurs sensibles contenues dans les fichiers"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "L'intégrité garantit que les données ne sont pas modifiées sans autorisation, ou que toute modification est détectée. Un outil de surveillance d'intégrité des fichiers (FIM) compare régulièrement l'empreinte de chaque fichier à une référence et alerte en cas d'écart. Une signature numérique vérifiée au chargement détecte elle aussi toute altération, puisque l'empreinte recalculée ne correspondrait plus. Le chiffrement et le masquage protègent la confidentialité ; la mise en grappe protège la disponibilité.",
+    "distractorNotes": {
+      "a": "Le chiffrement du disque protège la confidentialité en cas de vol du support ; il ne détecte pas qu'un fichier a été modifié par un utilisateur du système.",
+      "c": "La grappe et la répartition de charge servent la disponibilité ; une modification malveillante serait même répliquée sans être signalée.",
+      "e": "Le masquage cache des valeurs aux lecteurs non autorisés : c'est une mesure de confidentialité, sans détection de modification."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; NIST SP 800-53 Rev. 5"
+  },
+  {
+    "slug": "security-plus-1.2-cia-incident-property-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le RSSI d'une banque classe les incidents de l'année selon la propriété de la triade CIA qu'ils ont principalement compromise. Associez chaque incident à cette propriété.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Une extraction de la base clients est publiée sur un forum."
+        },
+        {
+          "id": "l2",
+          "text": "Le montant d'un virement est modifié en transit par un attaquant."
+        },
+        {
+          "id": "l3",
+          "text": "La rupture du seul lien Internet du siège coupe l'accès à la messagerie en ligne."
+        },
+        {
+          "id": "l4",
+          "text": "Un mot de passe envoyé en Telnet est capturé par écoute du réseau."
+        },
+        {
+          "id": "l5",
+          "text": "Une coupure de courant arrête la salle serveurs, faute d'onduleur."
+        }
+      ],
+      "right": [
+        {
+          "id": "c",
+          "text": "Confidentialité"
+        },
+        {
+          "id": "i",
+          "text": "Intégrité"
+        },
+        {
+          "id": "a",
+          "text": "Disponibilité"
+        },
+        {
+          "id": "nr",
+          "text": "Non-répudiation"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "c",
+        "l2": "i",
+        "l3": "a",
+        "l4": "c",
+        "l5": "a"
+      }
+    },
+    "explanation": "La confidentialité est atteinte quand une information parvient à quelqu'un qui n'y a pas droit : fuite de la base clients, mot de passe capturé sur un protocole en clair comme Telnet. L'intégrité est atteinte quand une donnée est modifiée sans autorisation, comme le montant du virement. La disponibilité est atteinte quand le service ou les données ne sont plus accessibles : coupure du seul lien Internet, panne électrique sans alimentation de secours. Classer ainsi les incidents aide à choisir les contrôles : chiffrement, contrôle d'intégrité, redondance.",
+    "distractorNotes": {
+      "nr": "La non-répudiation, hors de la triade, prouve qu'un acteur est l'auteur d'une action ; aucun de ces incidents ne porte sur une telle preuve."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-cia-sla-downtime-hours-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le contrat de service d'une plateforme SaaS garantit une disponibilité de 99,9 % sur une année de 365 jours. Quelle durée d'indisponibilité cumulée maximale ce niveau autorise-t-il sur l'année ?",
+      "fields": [
+        {
+          "id": "v",
+          "label": "Durée en heures, avec deux décimales"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "v": {
+          "accepted": [
+            "8.76",
+            "8,76",
+            "8.76 h",
+            "8,76 h",
+            "8.76h",
+            "8,76h"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Une année de 365 jours compte 365 × 24 = 8 760 heures. Une disponibilité de 99,9 % tolère 0,1 % d'indisponibilité, soit 8 760 × 0,001 = 8,76 heures (environ 8 h 46 min) par an. Chaque « 9 » supplémentaire divise ce budget par dix : 99,99 % ne laisse plus que 0,876 heure, soit environ 53 minutes. Ce calcul relie un objectif de disponibilité, pilier de la triade CIA, aux moyens à prévoir : redondance, maintenance sans interruption, reprise rapide.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-non-repudiation-transfer-approval-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une banque, un directeur financier conteste avoir validé un ordre de virement dans l'application de trésorerie. Quel mécanisme, s'il avait été en place, permettrait LE MIEUX de prouver qu'il est bien l'auteur de cette validation ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un HMAC-SHA256 de l'ordre, calculé avec une clé partagée entre son poste et le serveur"
+        },
+        {
+          "id": "b",
+          "text": "Une empreinte SHA-256 de l'ordre, enregistrée dans la base de données de l'application"
+        },
+        {
+          "id": "c",
+          "text": "Le chiffrement TLS 1.3 de la session entre son poste et le serveur de l'application"
+        },
+        {
+          "id": "d",
+          "text": "Une signature numérique de l'ordre avec sa clé privée, conservée sur sa carte à puce"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La non-répudiation empêche un acteur de nier une action. Elle repose sur une signature numérique : seule la clé privée du directeur, gardée sous son contrôle exclusif (carte à puce), peut produire la signature, et chacun peut la vérifier avec sa clé publique certifiée. La signature prouve à la fois l'origine et l'intégrité de l'ordre. Les mécanismes à clé partagée ou sans clé ne relient pas l'action à une personne unique.",
+    "distractorNotes": {
+      "a": "Un HMAC prouve l'intégrité et l'origine entre deux parties qui partagent la clé, mais chacune d'elles aurait pu le calculer : il n'apporte pas de non-répudiation.",
+      "b": "Une empreinte seule montre qu'un contenu n'a pas changé, mais n'importe qui peut la calculer : elle n'identifie aucun auteur.",
+      "c": "TLS protège la confidentialité et l'intégrité de la session en transit ; il ne laisse aucune preuve durable de qui a validé l'ordre."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; NIST FIPS 186-5"
+  },
+  {
+    "slug": "security-plus-1.2-non-repudiation-shared-account-log-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les quatre comptables du service utilisent le compte « tresorerie », dont ils partagent le mot de passe, depuis un même poste en libre-service (10.20.4.31). Le virement frauduleux VIR-4471 a été approuvé et chacun nie en être l'auteur. Quelle mesure aurait LE MIEUX permis d'imputer cette approbation à une personne ?",
+      "exhibit": "2026-10-14 09:12:03 app=treso user=tresorerie src=10.20.4.31 LOGIN OK\n2026-10-14 09:14:47 app=treso user=tresorerie src=10.20.4.31 APPROVE VIR-4471\n2026-10-14 09:15:02 app=treso user=tresorerie src=10.20.4.31 LOGOUT",
+      "options": [
+        {
+          "id": "a",
+          "text": "Journaliser en plus l'adresse IP source de chaque action de l'application"
+        },
+        {
+          "id": "b",
+          "text": "Synchroniser l'horloge du serveur d'application sur une source NTP fiable"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer le compte partagé par un compte nominatif par comptable, avec MFA"
+        },
+        {
+          "id": "d",
+          "text": "Conserver les journaux de l'application pendant au moins cinq ans"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le journal enregistre bien l'action, l'heure et la source, mais sous un compte partagé par quatre personnes, depuis un poste commun : rien ne relie l'approbation à un individu. L'imputabilité, et donc la non-répudiation, exige que chaque action soit faite sous une identité unique et fortement authentifiée. Des comptes nominatifs avec MFA rendent l'usurpation difficile et permettent d'attribuer chaque approbation ; pour aller plus loin, une signature de l'ordre avec la clé privée de chacun.",
+    "distractorNotes": {
+      "a": "L'exhibit contient déjà l'adresse source, et elle est celle du poste commun : l'adresse IP n'identifie pas la personne assise devant.",
+      "b": "Des horodatages fiables sont utiles, mais l'heure exacte de l'action ne dit pas lequel des quatre comptables l'a effectuée.",
+      "d": "Conserver plus longtemps un journal qui n'identifie personne ne règle pas le problème d'attribution."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; NIST SP 800-53 Rev. 5"
+  },
+  {
+    "slug": "security-plus-1.2-non-repudiation-esignature-conditions-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une collectivité veut que les contrats signés électroniquement par ses fournisseurs soient opposables : un fournisseur ne doit pas pouvoir nier avoir signé. Quelles deux conditions sont nécessaires ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La clé privée de signature reste sous le contrôle exclusif du signataire."
+        },
+        {
+          "id": "b",
+          "text": "Le contrat est chiffré avec la clé publique de la collectivité avant l'envoi."
+        },
+        {
+          "id": "c",
+          "text": "La signature est un HMAC calculé avec une clé partagée par les deux parties."
+        },
+        {
+          "id": "d",
+          "text": "Un certificat émis par une autorité de confiance lie la clé publique au signataire."
+        },
+        {
+          "id": "e",
+          "text": "Le contrat signé est transmis à la collectivité sur une connexion TLS."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "La non-répudiation d'une signature repose sur deux piliers. D'une part, seul le signataire peut produire la signature : sa clé privée doit rester sous son contrôle exclusif. D'autre part, le vérificateur doit savoir à qui appartient la clé publique : un certificat X.509 émis par une autorité de certification de confiance (RFC 5280) lie cette clé à l'identité du signataire. Le chiffrement et TLS protègent la confidentialité, pas la preuve d'origine.",
+    "distractorNotes": {
+      "b": "Chiffrer avec la clé publique de la collectivité assure la confidentialité : n'importe qui peut chiffrer avec une clé publique, cela ne prouve pas qui a envoyé le contrat.",
+      "c": "Avec une clé partagée, la collectivité pourrait elle-même produire le HMAC : le fournisseur peut donc nier, il n'y a pas de non-répudiation.",
+      "e": "TLS protège le transport ; une fois la session terminée, il ne reste aucune preuve attribuable au fournisseur."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; RFC 5280 ; NIST FIPS 186-5"
+  },
+  {
+    "slug": "security-plus-1.2-non-repudiation-signature-steps-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Alice signe numériquement un contrat qu'elle envoie à Bruno, qui vérifie ensuite la signature. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "s3",
+          "text": "Alice envoie à Bruno le contrat accompagné de sa signature."
+        },
+        {
+          "id": "s1",
+          "text": "Alice calcule l'empreinte (hachage) du contrat."
+        },
+        {
+          "id": "s4",
+          "text": "Bruno vérifie la signature avec la clé publique d'Alice et l'empreinte qu'il recalcule sur le contrat reçu."
+        },
+        {
+          "id": "s2",
+          "text": "Alice applique l'algorithme de signature à cette empreinte avec sa clé privée."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "s1",
+        "s2",
+        "s3",
+        "s4"
+      ]
+    },
+    "explanation": "On ne signe pas le document entier mais son empreinte, calculée par une fonction de hachage (SHA-256 par exemple). Alice signe cette empreinte avec sa clé privée, puis envoie le contrat et la signature. Bruno recalcule l'empreinte du contrat reçu et vérifie la signature avec la clé publique d'Alice : si la vérification réussit, le contrat n'a pas été modifié (intégrité) et seule Alice a pu le signer (authenticité et non-répudiation).",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; NIST FIPS 186-5"
+  },
+  {
+    "slug": "security-plus-1.2-aaa-accounting-wifi-sessions-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le prestataire du Wi-Fi d'un aéroport doit pouvoir indiquer, pour chaque utilisateur, l'heure de connexion, la durée de la session et le volume de données échangé. Quelle fonction du modèle AAA répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'authentification"
+        },
+        {
+          "id": "b",
+          "text": "L'autorisation"
+        },
+        {
+          "id": "c",
+          "text": "L'identification"
+        },
+        {
+          "id": "d",
+          "text": "La comptabilité (accounting)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le modèle AAA distingue trois fonctions : l'authentification vérifie l'identité revendiquée, l'autorisation détermine ce que l'identité authentifiée peut faire, et la comptabilité (accounting) enregistre ce qu'elle a fait : début et fin de session, durée, volume, commandes. Ces enregistrements servent à la facturation, à l'audit et aux enquêtes. Avec RADIUS, ce sont les messages Accounting-Request Start et Stop qui les transportent.",
+    "distractorNotes": {
+      "a": "L'authentification vérifie l'identité de l'utilisateur à la connexion ; elle ne mesure ni la durée ni le volume de la session.",
+      "b": "L'autorisation fixe les droits accordés (réseau accessible, débit) ; elle n'enregistre pas l'usage réel.",
+      "c": "L'identification est la simple déclaration d'une identité, avant l'authentification ; elle ne trace pas l'activité."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-aaa-authorization-sudo-log-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un administrateur junior, jmartin, signale au support qu'il « n'arrive pas à se connecter » au serveur web01 pour redémarrer nginx. Quel diagnostic l'analyste doit-il poser ?",
+      "exhibit": "Oct 21 08:02:11 web01 sshd[2214]: Accepted publickey for jmartin from\n  10.0.5.23 port 51522 ssh2: ED25519 SHA256:q3VfK2...\nOct 21 08:02:11 web01 sshd[2214]: pam_unix(sshd:session): session opened\n  for user jmartin(uid=1004) by (uid=0)\nOct 21 08:03:40 web01 sudo:  jmartin : user NOT in sudoers ; TTY=pts/0 ;\n  PWD=/home/jmartin ; USER=root ; COMMAND=/usr/bin/systemctl restart nginx",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'authentification a échoué : le serveur n'a pas reconnu la clé publique de jmartin."
+        },
+        {
+          "id": "b",
+          "text": "L'authentification a réussi, mais l'autorisation lui refuse l'élévation demandée."
+        },
+        {
+          "id": "c",
+          "text": "La comptabilité est défaillante : la session de jmartin n'a pas été journalisée."
+        },
+        {
+          "id": "d",
+          "text": "Le compte est verrouillé après trop d'échecs d'authentification successifs."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La première ligne montre « Accepted publickey for jmartin » et la deuxième l'ouverture de session : l'authentification a réussi. La troisième montre que sudo refuse la commande, car jmartin ne figure pas dans la configuration sudoers : c'est un refus d'autorisation, il n'a pas le droit d'exécuter cette commande en root. Distinguer authentification et autorisation oriente la correction : il ne faut pas réinitialiser ses identifiants, mais décider s'il doit recevoir ce droit, idéalement limité à cette seule commande (moindre privilège).",
+    "distractorNotes": {
+      "a": "« Accepted publickey » indique au contraire que la clé a été acceptée et que la session s'est ouverte.",
+      "c": "Les trois lignes prouvent que la session et la tentative sudo ont bien été journalisées : la comptabilité fonctionne.",
+      "d": "Aucun échec d'authentification n'apparaît ; la connexion SSH a réussi et le refus vient de sudo."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-1.2-aaa-tacacs-command-authorization-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un opérateur veut centraliser l'AAA des administrateurs de ses routeurs et commutateurs. Il exige que l'autorisation de chaque commande soit traitée séparément de l'authentification et que tout le corps des paquets AAA soit protégé, pas seulement le mot de passe. Quel protocole répond LE MIEUX à ces exigences ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "TACACS+"
+        },
+        {
+          "id": "b",
+          "text": "RADIUS"
+        },
+        {
+          "id": "c",
+          "text": "LDAP"
+        },
+        {
+          "id": "d",
+          "text": "Kerberos"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "TACACS+ sépare les trois fonctions AAA : un équipement peut authentifier l'administrateur, puis demander l'autorisation de chaque commande et en enregistrer l'exécution. Il protège tout le corps du paquet (hors en-tête) et fonctionne sur TCP 49. C'est le choix habituel pour l'administration des équipements réseau. RADIUS, sur UDP 1812/1813, combine authentification et autorisation dans la même réponse et ne protège que l'attribut mot de passe : il est surtout utilisé pour l'accès réseau des utilisateurs (VPN, 802.1X, Wi-Fi).",
+    "distractorNotes": {
+      "b": "RADIUS regroupe authentification et autorisation dans l'Access-Accept et ne protège que le mot de passe : il ne répond à aucune des deux exigences.",
+      "c": "LDAP est un protocole d'annuaire : il peut servir de base d'identités, mais n'offre pas d'autorisation commande par commande sur les équipements réseau.",
+      "d": "Kerberos délivre des tickets d'authentification dans un domaine ; il ne gère ni l'autorisation des commandes d'un routeur ni leur journalisation."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; RFC 8907 ; RFC 2865"
+  },
+  {
+    "slug": "security-plus-1.2-aaa-system-authentication-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise inventorie ses mécanismes d'authentification et veut distinguer ceux qui authentifient des systèmes de ceux qui authentifient des personnes. Quels deux mécanismes authentifient un système ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un certificat machine présenté par un poste lors d'une authentification 802.1X EAP-TLS"
+        },
+        {
+          "id": "b",
+          "text": "Un mot de passe et un code TOTP saisis par un employé sur le portail VPN"
+        },
+        {
+          "id": "c",
+          "text": "Une empreinte digitale lue par le capteur du portable d'un commercial"
+        },
+        {
+          "id": "d",
+          "text": "Un badge sans contact présenté par un visiteur au lecteur de l'accueil"
+        },
+        {
+          "id": "e",
+          "text": "Un certificat client présenté par un microservice lors d'une connexion TLS mutuelle"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Le modèle AAA s'applique aussi aux systèmes : postes, serveurs, services et objets connectés doivent prouver leur identité avant d'obtenir un accès. Un certificat machine, utilisé par exemple en 802.1X avec EAP-TLS, authentifie le poste lui-même, avant même qu'un utilisateur ne s'y connecte. En TLS mutuel (mTLS), chaque service présente un certificat que l'autre vérifie. Les mots de passe, codes TOTP, données biométriques et badges authentifient des personnes.",
+    "distractorNotes": {
+      "b": "Le mot de passe et le code TOTP sont des facteurs connus ou détenus par l'employé : ils authentifient une personne.",
+      "c": "La biométrie est par nature un facteur lié à une personne, pas à un système.",
+      "d": "Le badge est remis à une personne et prouve son droit d'entrer ; c'est une authentification de personne."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; IEEE 802.1X-2020"
+  },
+  {
+    "slug": "security-plus-1.2-aaa-vpn-radius-sequence-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un salarié se connecte au VPN de l'entreprise ; le concentrateur VPN s'appuie sur un serveur RADIUS pour l'AAA. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "r3",
+          "text": "Le serveur renvoie un Access-Accept qui porte les attributs de la session, comme le groupe et les ACL applicables."
+        },
+        {
+          "id": "r5",
+          "text": "À la déconnexion, un Accounting-Request « Stop » enregistre la durée et le volume de la session."
+        },
+        {
+          "id": "r1",
+          "text": "Le salarié saisit son nom d'utilisateur, déclarant ainsi son identité."
+        },
+        {
+          "id": "r4",
+          "text": "Le concentrateur envoie un Accounting-Request « Start » qui ouvre l'enregistrement de la session."
+        },
+        {
+          "id": "r2",
+          "text": "Le serveur RADIUS vérifie son mot de passe et son code à usage unique."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5"
+      ]
+    },
+    "explanation": "La séquence suit le modèle AAA, précédé de l'identification. L'utilisateur déclare son identité (identification), puis le serveur RADIUS la vérifie avec ses facteurs (authentification). En cas de succès, l'Access-Accept transporte les attributs qui fixent ses droits (autorisation). Une fois la session établie, le concentrateur ouvre l'enregistrement par un Accounting-Request Start, puis le clôt par un Stop à la déconnexion (comptabilité). Sans authentification réussie, il n'y a ni autorisation ni session à comptabiliser.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; RFC 2865"
+  },
+  {
+    "slug": "security-plus-1.2-aaa-radius-accounting-port-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le pare-feu placé entre les concentrateurs VPN et le serveur RADIUS doit laisser passer les messages de comptabilité (accounting) RADIUS sur leur port officiel. Quel port UDP faut-il ouvrir pour ces messages ?",
+      "fields": [
+        {
+          "id": "v",
+          "label": "Numéro de port UDP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "v": {
+          "accepted": [
+            "1813"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "RADIUS utilise UDP 1812 pour l'authentification et l'autorisation (Access-Request, Access-Accept, Access-Reject) et UDP 1813 pour la comptabilité (Accounting-Request, Accounting-Response). Les anciens ports 1645 et 1646 se rencontrent encore sur de vieux équipements, mais les ports officiels sont 1812 et 1813. Si seul 1812 est ouvert, les utilisateurs se connectent normalement, mais aucune session n'est enregistrée : la fonction de comptabilité du modèle AAA est perdue sans que personne ne s'en aperçoive.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; RFC 2866"
+  },
+  {
+    "slug": "security-plus-1.2-gap-analysis-iso27001-readiness-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une ETI qui vise la certification ISO/IEC 27001:2022 veut d'abord mesurer la distance entre ses pratiques actuelles et les exigences de la norme. Quelle démarche doit-elle mener ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un test d'intrusion externe"
+        },
+        {
+          "id": "b",
+          "text": "Une analyse d'écart (gap analysis)"
+        },
+        {
+          "id": "c",
+          "text": "Une analyse d'impact sur l'activité (BIA)"
+        },
+        {
+          "id": "d",
+          "text": "Un scan de vulnérabilités authentifié"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une analyse d'écart compare l'état actuel d'une organisation à un état cible, ici les exigences d'ISO/IEC 27001:2022 et les mesures de l'annexe A. Elle produit la liste des écarts, qu'on priorise ensuite dans un plan d'action. C'est la première étape classique d'un projet de certification : elle évite de découvrir les manques le jour de l'audit. Les tests techniques mesurent une exposition, pas la conformité à un référentiel.",
+    "distractorNotes": {
+      "a": "Un test d'intrusion mesure l'exploitabilité technique du périmètre ; il ne couvre pas les exigences organisationnelles de la norme (politique, revue de direction, gestion des risques).",
+      "c": "La BIA détermine l'impact d'une interruption des activités et fixe RTO et RPO ; elle ne compare pas les pratiques à une norme.",
+      "d": "Un scan de vulnérabilités recense des failles techniques ; il ne mesure pas la conformité aux exigences d'un SMSI."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; ISO/IEC 27001:2022"
+  },
+  {
+    "slug": "security-plus-1.2-gap-analysis-csf-next-step-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le RSSI d'une clinique a terminé une analyse d'écart fondée sur le NIST CSF 2.0 : il dispose du profil actuel, du profil cible et de la liste des écarts. Quelle est l'étape suivante la plus logique ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Recommencer l'analyse avec un second référentiel pour confirmer les écarts"
+        },
+        {
+          "id": "b",
+          "text": "Demander tout de suite un audit externe pour faire valider la conformité"
+        },
+        {
+          "id": "c",
+          "text": "Prioriser les écarts selon le risque et établir un plan d'action chiffré"
+        },
+        {
+          "id": "d",
+          "text": "Déclarer les écarts relevés à l'autorité de protection des données"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le NIST CSF 2.0 décrit un profil actuel et un profil cible ; l'écart entre les deux sert à bâtir un plan d'action. On priorise les écarts selon le risque, le coût et les ressources, on fixe des responsables et des échéances, puis on mesure les progrès en mettant à jour le profil actuel. Une analyse d'écart n'a de valeur que si elle débouche sur ce plan ; un audit ou une nouvelle analyse avant toute correction ne ferait que reconstater les mêmes manques.",
+    "distractorNotes": {
+      "a": "Changer de référentiel ne corrige rien ; les écarts sont déjà identifiés et doivent maintenant être traités.",
+      "b": "Un audit avant toute correction constaterait les mêmes manques ; on traite d'abord les écarts prioritaires.",
+      "d": "Une analyse d'écart n'est pas une violation de données : elle n'appelle aucune notification à une autorité."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; NIST Cybersecurity Framework 2.0"
+  },
+  {
+    "slug": "security-plus-1.2-gap-analysis-required-inputs-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un consultant prépare l'analyse d'écart d'une PME par rapport aux CIS Critical Security Controls v8. Quelles deux informations lui sont indispensables pour mesurer les écarts ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les signatures d'attaque actives sur l'IDS de la PME"
+        },
+        {
+          "id": "b",
+          "text": "L'état actuel des mesures de sécurité en place dans la PME"
+        },
+        {
+          "id": "c",
+          "text": "La perte annuelle attendue (ALE) de chaque actif de la PME"
+        },
+        {
+          "id": "d",
+          "text": "La liste des failles exploitées lors du dernier test d'intrusion"
+        },
+        {
+          "id": "e",
+          "text": "L'état cible défini par les mesures du référentiel retenu (ex. IG1)"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Une analyse d'écart compare deux états : l'état actuel, établi par entretiens, revues documentaires et vérifications, et l'état cible, défini par un référentiel, ici les mesures des CIS Controls v8 pour le groupe d'implémentation visé (IG1 pour une PME aux moyens limités). L'écart est la différence entre les deux. Les autres informations peuvent enrichir la priorisation, mais aucune n'est nécessaire pour mesurer cette différence.",
+    "distractorNotes": {
+      "a": "Les signatures de l'IDS décrivent une configuration de détection ; elles ne disent ni l'état global des mesures ni l'état cible.",
+      "c": "L'ALE, issue d'une analyse quantitative des risques, peut aider à prioriser, mais elle ne mesure pas l'écart au référentiel.",
+      "d": "Les résultats d'un test d'intrusion éclairent certaines faiblesses techniques, mais ne couvrent pas toutes les mesures du référentiel et ne sont pas indispensables."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; CIS Critical Security Controls v8"
+  },
+  {
+    "slug": "security-plus-1.2-gap-analysis-policy-findings-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Lors d'une analyse d'écart menée le 3 novembre 2026, l'auditeur compare la politique cible de l'entreprise à ses constats. Quelle exigence présente un écart ?",
+      "exhibit": "Exigence de la politique cible        Constat de l'audit\n------------------------------------   ------------------------------------\n1. MFA pour tout accès distant         MFA imposée sur le VPN, seul accès\n                                       distant ouvert\n2. Correctif critique appliqué en      Délai médian : 9 jours ; 3 serveurs\n   14 jours au plus                    à 41 jours\n3. Restauration des sauvegardes        Dernier test réussi : 09/2026\n   testée chaque trimestre\n4. Revue des droits semestrielle       Dernière revue : 07/2026",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'exigence 1"
+        },
+        {
+          "id": "b",
+          "text": "L'exigence 2"
+        },
+        {
+          "id": "c",
+          "text": "L'exigence 3"
+        },
+        {
+          "id": "d",
+          "text": "L'exigence 4"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Chaque exigence doit être vérifiée pour toute sa portée, pas en moyenne. L'exigence 2 impose 14 jours pour chaque correctif critique : un délai médian de 9 jours semble conforme, mais trois serveurs à 41 jours constituent un écart. L'exigence 1 est respectée puisque le VPN, seul accès distant, impose la MFA. Le test de restauration de septembre 2026 date de moins d'un trimestre, et la revue des droits de juillet 2026 de moins de six mois. L'écart relevé ira au plan d'action, avec les serveurs concernés.",
+    "distractorNotes": {
+      "a": "Le VPN est le seul accès distant et il impose la MFA : l'exigence est satisfaite.",
+      "c": "La restauration testée en septembre 2026 date de moins de trois mois au 3 novembre : l'exigence trimestrielle est respectée.",
+      "d": "La revue de juillet 2026 date de moins de six mois au 3 novembre : l'exigence semestrielle est respectée."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; ISO/IEC 27001:2022"
+  },
+  {
+    "slug": "security-plus-1.2-zero-trust-policy-engine-role-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'architecte d'une banque documente son architecture Zero Trust selon le NIST SP 800-207. Quel composant décide d'accorder, de refuser ou de révoquer l'accès d'un sujet à une ressource, en combinant la politique de l'entreprise et des sources externes comme le renseignement sur les menaces ou l'état de conformité du poste ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le policy enforcement point (PEP)"
+        },
+        {
+          "id": "b",
+          "text": "Le policy administrator (PA)"
+        },
+        {
+          "id": "c",
+          "text": "Le policy engine (PE)"
+        },
+        {
+          "id": "d",
+          "text": "La zone de confiance implicite"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Dans le NIST SP 800-207, le policy engine (PE) est le cerveau de la décision : il évalue chaque demande d'accès à l'aide de la politique et de données d'entrée (CDM, renseignement sur les menaces, journaux, identité) et rend une décision d'accorder, de refuser ou de révoquer. Le policy administrator (PA) exécute cette décision en établissant ou en fermant le chemin de communication, et le PEP l'applique au niveau du flux. Le PE et le PA forment ensemble le point de décision (PDP).",
+    "distractorNotes": {
+      "a": "Le PEP active, surveille et termine la connexion selon les instructions qu'il reçoit ; il n'évalue pas lui-même la politique.",
+      "b": "Le PA met en œuvre la décision du PE (ouverture du chemin, jeton de session) ; il ne prend pas la décision.",
+      "d": "La zone de confiance implicite est la portion située derrière le PEP ; ce n'est pas un composant de décision."
+    },
+    "reference": "NIST SP 800-207 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-zero-trust-adaptive-identity-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une architecture Zero Trust, une comptable qui se connecte d'ordinaire depuis Lyon avec un portable géré doit passer une vérification MFA supplémentaire quand elle se connecte à 3 h du matin depuis un appareil inconnu situé à l'étranger. Quel concept du plan de contrôle cette réaction illustre-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La réduction de la portée des menaces (threat scope reduction)"
+        },
+        {
+          "id": "b",
+          "text": "La zone de confiance implicite (implicit trust zone)"
+        },
+        {
+          "id": "c",
+          "text": "Le point d'application de la politique (PEP)"
+        },
+        {
+          "id": "d",
+          "text": "L'identité adaptative (adaptive identity)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'identité adaptative ajuste le niveau de vérification au contexte de chaque demande : lieu, heure, appareil, comportement habituel. Une connexion inhabituelle relève le niveau de risque et déclenche une authentification renforcée, voire un refus. C'est l'inverse d'une confiance accordée une fois pour toutes : dans le Zero Trust, chaque accès est réévalué selon le contexte, et les objectifs SY0-701 rangent ce concept dans le plan de contrôle.",
+    "distractorNotes": {
+      "a": "La réduction de la portée des menaces limite ce qu'un compte compromis peut atteindre (moindre privilège, microsegmentation) ; elle ne module pas l'authentification selon le contexte.",
+      "b": "La zone de confiance implicite est l'espace derrière le PEP où le trafic n'est plus contrôlé ; ce n'est pas une réaction au contexte de connexion.",
+      "c": "Le PEP applique la décision sur le flux, mais il appartient au plan de données et ne décide pas du niveau d'authentification."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; NIST SP 800-207"
+  },
+  {
+    "slug": "security-plus-1.2-zero-trust-implicit-trust-zone-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Une fois la session autorisée par la passerelle ZTNA, srv-app01 dialogue avec srv-db01 sans aucun nouveau contrôle. Comment le NIST SP 800-207 qualifie-t-il le segment situé derrière le PEP, et quelle recommandation en découle ?",
+      "exhibit": "[Utilisateur] --> [Passerelle ZTNA (PEP)] --> [Segment applicatif VLAN 50]\n                         |                     srv-app01  10.50.1.10\n                         v                     srv-db01   10.50.1.20\n                 [Contrôleur PE/PA]            (même VLAN, aucun filtrage\n                                                entre les serveurs)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un plan de contrôle ; il faut y héberger le PE et le PA pour accélérer les décisions"
+        },
+        {
+          "id": "b",
+          "text": "Une DMZ ; il faut la protéger par un second pare-feu pour isoler la base"
+        },
+        {
+          "id": "c",
+          "text": "Une zone de confiance implicite ; il faut la réduire en rapprochant les PEP des ressources"
+        },
+        {
+          "id": "d",
+          "text": "Une zone de confiance implicite ; il faut l'étendre au datacenter pour réduire les contrôles"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le NIST SP 800-207 appelle zone de confiance implicite la portion située derrière le PEP : tout ce qui s'y trouve se fait confiance sans nouvelle vérification. Ici, un attaquant qui compromettrait srv-app01 atteindrait srv-db01 librement. La recommandation est de rendre cette zone aussi petite que possible, en plaçant le point d'application au plus près de chaque ressource (microsegmentation, PEP par charge de travail), pour que chaque flux, y compris entre serveurs, soit évalué.",
+    "distractorNotes": {
+      "a": "Le segment transporte le trafic applicatif : c'est le plan de données ; le PE et le PA forment le plan de contrôle et n'ont pas à y être placés.",
+      "b": "Le segment est interne et placé derrière la passerelle : ce n'est pas une DMZ, et un pare-feu de plus ne change pas le modèle de confiance implicite.",
+      "d": "Le constat est juste, mais la recommandation est inverse : agrandir la zone de confiance implicite étend ce qu'un attaquant peut atteindre."
+    },
+    "reference": "NIST SP 800-207"
+  },
+  {
+    "slug": "security-plus-1.2-zero-trust-threat-scope-reduction-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le RSSI d'un groupe industriel veut appliquer la réduction de la portée des menaces (threat scope reduction) dans son architecture Zero Trust, pour limiter ce qu'un attaquant pourrait atteindre après la compromission d'un compte. Quelles deux mesures y répondent ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ouvrir à tout utilisateur authentifié par le VPN l'accès complet au réseau interne"
+        },
+        {
+          "id": "b",
+          "text": "Microsegmenter le réseau pour que chaque charge de travail ne joigne que les flux nécessaires"
+        },
+        {
+          "id": "c",
+          "text": "Regrouper tous les serveurs internes dans un même VLAN considéré comme de confiance"
+        },
+        {
+          "id": "d",
+          "text": "Allonger la durée des sessions pour réduire le nombre de réauthentifications"
+        },
+        {
+          "id": "e",
+          "text": "Limiter chaque compte de service aux seuls droits nécessaires à sa fonction"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "La réduction de la portée des menaces vise à limiter le rayon d'action d'un attaquant qui a déjà franchi une étape. Le moindre privilège restreint ce que peut faire un compte compromis, et la microsegmentation restreint les systèmes qu'il peut joindre. Le Zero Trust suppose que la compromission est possible (assume breach) et cherche donc à cloisonner, au lieu de faire confiance à tout ce qui est interne ou déjà authentifié.",
+    "distractorNotes": {
+      "a": "Un accès complet après le VPN est le modèle périmétrique que le Zero Trust abandonne : il maximise la portée d'un compte compromis.",
+      "c": "Un VLAN unique de confiance crée une large zone de confiance implicite où l'attaquant se déplace librement.",
+      "d": "Des sessions plus longues prolongent l'usage d'un compte volé ; le Zero Trust privilégie au contraire une réévaluation fréquente."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; NIST SP 800-207"
+  },
+  {
+    "slug": "security-plus-1.2-zero-trust-planes-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Selon le découpage des objectifs CompTIA SY0-701, classez chaque élément d'une architecture Zero Trust dans le plan auquel il appartient.",
+      "left": [
+        {
+          "id": "pe",
+          "text": "Policy engine"
+        },
+        {
+          "id": "pa",
+          "text": "Policy administrator"
+        },
+        {
+          "id": "ai",
+          "text": "Adaptive identity"
+        },
+        {
+          "id": "itz",
+          "text": "Implicit trust zones"
+        },
+        {
+          "id": "pep",
+          "text": "Policy enforcement point"
+        }
+      ],
+      "right": [
+        {
+          "id": "ctl",
+          "text": "Plan de contrôle"
+        },
+        {
+          "id": "dat",
+          "text": "Plan de données"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "pe": "ctl",
+        "pa": "ctl",
+        "ai": "ctl",
+        "itz": "dat",
+        "pep": "dat"
+      }
+    },
+    "explanation": "Le plan de contrôle prend et pilote les décisions : le policy engine décide, le policy administrator exécute la décision, et des concepts comme l'identité adaptative, la réduction de la portée des menaces et le contrôle d'accès piloté par la politique s'y rattachent. Le plan de données transporte le trafic : on y trouve le sujet ou système qui demande l'accès, le policy enforcement point qui ouvre ou coupe le flux, et les zones de confiance implicite situées derrière lui. Le NIST SP 800-207 sépare aussi ces deux plans.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2 ; NIST SP 800-207"
+  },
+  {
+    "slug": "security-plus-1.2-zero-trust-access-flow-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Dans une architecture Zero Trust conforme au NIST SP 800-207, un employé demande l'accès à une application RH. Ordonnez les étapes du traitement de sa demande, de la première à la dernière.",
+      "items": [
+        {
+          "id": "z4",
+          "text": "Le PA, informé de la décision, configure le PEP pour ouvrir la session et lui transmet les éléments de session."
+        },
+        {
+          "id": "z2",
+          "text": "Le PEP transmet la demande au policy administrator (PA)."
+        },
+        {
+          "id": "z5",
+          "text": "L'employé échange avec l'application à travers le PEP, qui peut couper la session à tout moment."
+        },
+        {
+          "id": "z1",
+          "text": "La demande d'accès de l'employé parvient au policy enforcement point (PEP)."
+        },
+        {
+          "id": "z3",
+          "text": "Le policy engine (PE) évalue la demande selon la politique et ses sources de données, puis rend sa décision."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "z1",
+        "z2",
+        "z3",
+        "z4",
+        "z5"
+      ]
+    },
+    "explanation": "Le PEP est le seul passage vers la ressource : il reçoit la demande et la transmet au PA, qui sollicite le PE. Le PE évalue la demande (identité, état du poste, renseignement sur les menaces, politique) et rend sa décision. Le PA la met en œuvre en configurant le PEP pour établir la session. L'employé accède alors à l'application à travers le PEP ; si le contexte change, le PE peut révoquer l'accès et le PA fait couper la session. L'accès est accordé par session, jamais une fois pour toutes.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-207"
+  },
+  {
+    "slug": "security-plus-1.2-zero-trust-pep-term-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Dans l'architecture Zero Trust d'un hôpital, la passerelle placée devant le dossier patient informatisé intercepte chaque demande d'accès, la transmet pour décision, puis ouvre, surveille et coupe la connexion selon les instructions reçues. Quel composant du NIST SP 800-207 joue ce rôle ?",
+      "fields": [
+        {
+          "id": "v",
+          "label": "Nom du composant en anglais, ou son sigle"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "v": {
+          "accepted": [
+            "policy enforcement point",
+            "PEP",
+            "policy enforcement point (PEP)",
+            "point d'application de la politique",
+            "point d'application des politiques"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Le policy enforcement point (PEP) se trouve sur le chemin des données, entre le sujet et la ressource. Il ne décide pas : il relaie la demande vers le point de décision (policy engine et policy administrator), puis applique la décision en ouvrant, surveillant et terminant la connexion. Il peut s'agir d'une passerelle, d'un agent sur le poste ou d'un composant placé devant la ressource. Plus le PEP est proche de la ressource, plus la zone de confiance implicite qu'il laisse derrière lui est petite.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-207"
+  },
+  {
+    "slug": "security-plus-1.2-physical-bollards-vehicle-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le hall vitré du siège d'une entreprise donne directement sur une rue passante, et la direction veut empêcher qu'un véhicule bélier puisse percuter l'entrée. Quel contrôle physique est le plus adapté ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des bollards devant la façade"
+        },
+        {
+          "id": "b",
+          "text": "Un vestibule d'accès (sas)"
+        },
+        {
+          "id": "c",
+          "text": "Des caméras de vidéosurveillance"
+        },
+        {
+          "id": "d",
+          "text": "Un éclairage extérieur renforcé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Les bollards sont des poteaux renforcés, fixes ou rétractables, qui arrêtent physiquement un véhicule tout en laissant passer les piétons. Ils protègent les entrées, vitrines et équipements exposés contre une attaque à la voiture bélier ou un accident. C'est un contrôle physique préventif : il empêche l'impact au lieu de seulement le constater. Les autres contrôles cités servent à filtrer les personnes, à dissuader ou à enregistrer, pas à arrêter un véhicule.",
+    "distractorNotes": {
+      "b": "Un vestibule d'accès contrôle le passage des personnes une à une ; il n'arrête pas un véhicule lancé contre la façade.",
+      "c": "La vidéosurveillance dissuade et enregistre l'événement, mais n'empêche pas physiquement l'impact.",
+      "d": "L'éclairage améliore la dissuasion et la qualité des images ; il n'offre aucune résistance à un véhicule."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-physical-guards-judgment-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un entrepôt logistique est couvert par des caméras qui enregistrent en continu. Après plusieurs vols commis en quelques minutes, la direction veut un contrôle capable d'apprécier une situation imprévue, de vérifier l'identité des visiteurs et d'intervenir immédiatement. Quel contrôle répond LE MIEUX à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des gardes de sécurité présents sur le site"
+        },
+        {
+          "id": "b",
+          "text": "Des caméras supplémentaires à haute résolution"
+        },
+        {
+          "id": "c",
+          "text": "Une clôture périphérique plus haute"
+        },
+        {
+          "id": "d",
+          "text": "Des capteurs de mouvement infrarouges"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Les gardes de sécurité sont le seul contrôle physique doté de jugement humain : ils évaluent une situation imprévue, contrôlent les identités, interviennent, escortent et alertent. Les caméras dissuadent et enregistrent, mais sans opérateur elles ne réagissent pas ; ici, les vols ont eu lieu malgré l'enregistrement continu. Les clôtures et les capteurs retardent ou détectent, sans pouvoir décider ni agir. Les gardes complètent ces dispositifs, ils ne les remplacent pas.",
+    "distractorNotes": {
+      "b": "Des images plus nettes facilitent l'enquête après coup, mais une caméra n'apprécie rien et n'intervient pas.",
+      "c": "Une clôture retarde et dissuade l'intrusion, mais ne vérifie pas les visiteurs et ne réagit pas à une situation imprévue.",
+      "d": "Les capteurs détectent une présence et déclenchent une alarme, sans capacité de jugement ni d'intervention."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-physical-tailgating-prevention-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Dans un datacenter, des employés laissent régulièrement entrer derrière eux des personnes sans badge (talonnage). Quelles deux mesures empêchent LE MIEUX ce comportement ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des bollards devant l'entrée principale du bâtiment"
+        },
+        {
+          "id": "b",
+          "text": "Un éclairage renforcé du parking et des accès"
+        },
+        {
+          "id": "c",
+          "text": "Un vestibule d'accès (sas) n'admettant qu'une personne à la fois"
+        },
+        {
+          "id": "d",
+          "text": "Une clôture périphérique autour de l'ensemble du site"
+        },
+        {
+          "id": "e",
+          "text": "Un garde posté à l'entrée qui contrôle chaque badge"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Le talonnage (tailgating) exploite la politesse ou l'inattention : une personne autorisée ouvre, une autre la suit. Un vestibule d'accès (sas, parfois appelé mantrap) n'ouvre la seconde porte que lorsque la première est refermée et qu'une seule personne est présente. Un garde vérifie que chaque personne présente son propre badge et peut refuser l'entrée. Les contrôles de périmètre et l'éclairage ne traitent pas le passage à la porte elle-même.",
+    "distractorNotes": {
+      "a": "Les bollards arrêtent les véhicules ; ils n'empêchent pas une personne de suivre un employé à pied.",
+      "b": "L'éclairage dissuade et améliore la vidéosurveillance, mais ne contrôle pas qui franchit la porte.",
+      "d": "La clôture protège le périmètre extérieur ; le talonnage a lieu à la porte du bâtiment, déjà à l'intérieur de ce périmètre."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-physical-sensor-principles-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'intégrateur d'alarme d'un musée présente les détecteurs de sa gamme. Associez chaque principe de détection au type de capteur correspondant.",
+      "left": [
+        {
+          "id": "p1",
+          "text": "Détecte la variation du rayonnement thermique d'un corps en mouvement, sans rien émettre lui-même."
+        },
+        {
+          "id": "p2",
+          "text": "Réagit au poids d'une personne qui marche sur un tapis placé sous le revêtement de sol."
+        },
+        {
+          "id": "p3",
+          "text": "Émet des ondes radio à haute fréquence et détecte le décalage de celles que renvoie un objet en mouvement."
+        },
+        {
+          "id": "p4",
+          "text": "Émet des ondes sonores inaudibles et détecte la modification de leur écho causée par un mouvement."
+        }
+      ],
+      "right": [
+        {
+          "id": "ir",
+          "text": "Capteur infrarouge"
+        },
+        {
+          "id": "pr",
+          "text": "Capteur de pression"
+        },
+        {
+          "id": "mw",
+          "text": "Capteur à micro-ondes"
+        },
+        {
+          "id": "us",
+          "text": "Capteur à ultrasons"
+        },
+        {
+          "id": "mg",
+          "text": "Contact magnétique d'ouverture"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "p1": "ir",
+        "p2": "pr",
+        "p3": "mw",
+        "p4": "us"
+      }
+    },
+    "explanation": "Le capteur infrarouge passif repère l'écart de chaleur entre un corps et le décor : il n'émet rien. Le capteur de pression détecte un poids, par exemple sous un tapis ou sous un objet exposé. Le capteur à micro-ondes et le capteur à ultrasons sont actifs : ils émettent une onde (radio ou sonore inaudible) et détectent la modification de son retour provoquée par un mouvement (effet Doppler). Connaître ces principes aide à choisir le capteur selon le local et les sources de fausses alarmes.",
+    "distractorNotes": {
+      "mg": "Un contact magnétique signale l'ouverture d'une porte ou d'une fenêtre quand l'aimant s'éloigne ; il ne correspond à aucun des principes décrits."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-physical-pressure-sensor-artwork-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un musée veut être alerté si une sculpture posée sur un socle est soulevée. La salle reste ouverte au public toute la journée, avec des visiteurs qui passent en permanence près du socle, et un voleur pourrait se déplacer très lentement pour tromper un détecteur de mouvement. Quel capteur répond LE MIEUX à ces contraintes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un détecteur infrarouge passif orienté vers le socle"
+        },
+        {
+          "id": "b",
+          "text": "Un détecteur à micro-ondes couvrant toute la salle"
+        },
+        {
+          "id": "c",
+          "text": "Un capteur de pression placé sous la sculpture"
+        },
+        {
+          "id": "d",
+          "text": "Un détecteur à ultrasons couvrant toute la salle"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le capteur de pression surveille l'objet lui-même : il réagit dès que le poids sur le socle change, quel que soit le nombre de visiteurs dans la salle et quelle que soit la lenteur du geste. Les détecteurs infrarouges, à micro-ondes ou à ultrasons détectent un mouvement dans un volume : en journée, les visiteurs les déclencheraient sans cesse, et ils ne peuvent donc être armés qu'à la fermeture. Le choix d'un capteur dépend autant de l'activité normale du lieu que de la menace visée.",
+    "distractorNotes": {
+      "a": "Le passage permanent des visiteurs devant le socle déclencherait l'infrarouge en continu pendant les heures d'ouverture.",
+      "b": "Un détecteur volumétrique couvrant la salle se déclencherait au moindre visiteur : il ne peut servir qu'à la fermeture.",
+      "d": "Comme le détecteur à micro-ondes, il détecte tout mouvement dans la salle et ne distingue pas un visiteur d'un vol."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-deception-honeynet-advantage-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une équipe de recherche en sécurité hésite entre un honeypot isolé et un honeynet de plusieurs serveurs factices interconnectés (contrôleur de domaine, serveur de fichiers, base de données). Quel avantage principal le honeynet lui apporte-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il bloque automatiquement les attaquants avant qu'ils n'atteignent la production"
+        },
+        {
+          "id": "b",
+          "text": "Il permet de se passer d'isolation, puisque tous les systèmes y sont factices"
+        },
+        {
+          "id": "c",
+          "text": "Il révèle l'usage d'identifiants volés lorsqu'ils sont utilisés hors du réseau"
+        },
+        {
+          "id": "d",
+          "text": "Il permet d'observer les déplacements latéraux d'un attaquant entre plusieurs systèmes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un honeypot isolé montre comment un attaquant compromet un système. Un honeynet, réseau de plusieurs leurres instrumentés, permet en plus d'observer la suite : reconnaissance interne, déplacements latéraux, élévation de privilèges, outils et objectifs. Les informations recueillies alimentent la détection et le renseignement sur les menaces. Comme tout leurre, le honeynet doit rester isolé et surveillé, pour qu'il ne serve jamais de rebond vers la production.",
+    "distractorNotes": {
+      "a": "Un leurre attire et observe ; il ne bloque pas les attaques visant les vrais systèmes.",
+      "b": "Un honeynet doit au contraire être isolé de la production : un attaquant pourrait sinon s'en servir comme rebond.",
+      "c": "Repérer l'usage de faux identifiants est le rôle d'un honeytoken, pas d'un réseau de systèmes factices."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-deception-honeytoken-siem-alert-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyste du SOC reçoit cette alerte. Quel type de leurre l'a déclenchée, et que révèle-t-elle LE PLUS probablement ?",
+      "exhibit": "ALERTE SIEM   2026-11-02 23:47:15 UTC   Sévérité : critique\nRègle   : utilisation de la clé d'accès cloud AKIAEXAMPLEDECOY0001\nSource  : 203.0.113.77 (hébergeur VPS, hors périmètre de l'entreprise)\nAction  : ListBuckets (refusée : la clé n'a aucun droit)\nContexte: clé placée le 15/09/2026 dans config.example du dépôt interne\n          « infra-scripts » ; aucun système ni script ne l'utilise",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un honeyfile ; un poste interne a ouvert le fichier config.example"
+        },
+        {
+          "id": "b",
+          "text": "Un honeytoken ; un tiers a lu le dépôt et tente d'exploiter ses secrets"
+        },
+        {
+          "id": "c",
+          "text": "Un honeypot ; un attaquant a compromis un serveur factice exposé"
+        },
+        {
+          "id": "d",
+          "text": "Un honeytoken ; un attaquant a trouvé la clé par force brute"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La clé n'a jamais servi à rien et n'existe qu'à un seul endroit, le fichier config.example du dépôt « infra-scripts » : c'est un honeytoken, une fausse donnée sans usage légitime dont toute utilisation est suspecte. Son emploi depuis un hébergeur extérieur indique que quelqu'un a lu le dépôt, par une fuite, un accès non autorisé ou un poste compromis, et teste les secrets trouvés. L'analyste doit rechercher qui a accédé au dépôt et vérifier qu'aucun vrai secret n'y figure.",
+    "distractorNotes": {
+      "a": "L'alerte porte sur l'usage de la clé depuis une adresse externe, pas sur l'ouverture d'un fichier, que surveillerait un honeyfile.",
+      "c": "Aucun serveur factice n'intervient : l'alerte provient de l'usage d'un identifiant leurre auprès du service cloud.",
+      "d": "Une clé d'accès cloud est longue et aléatoire, et le leurre n'existe qu'à un endroit : la lecture du dépôt est bien plus probable qu'une force brute."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-deception-honeypot-facts-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une PME installe dans sa DMZ un serveur factice qui imite un ancien serveur FTP vulnérable. Quelles deux affirmations sur ce honeypot sont vraies ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "N'ayant aucun usage légitime, toute connexion qu'il reçoit est suspecte."
+        },
+        {
+          "id": "b",
+          "text": "Il bloque les attaques dirigées contre les vrais serveurs de la DMZ."
+        },
+        {
+          "id": "c",
+          "text": "Il remplace l'IDS et le pare-feu de la DMZ pour la détection."
+        },
+        {
+          "id": "d",
+          "text": "Il ne sert qu'aux tests d'intrusion menés par l'équipe interne."
+        },
+        {
+          "id": "e",
+          "text": "Il doit être isolé de la production pour ne pas servir de rebond."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Un honeypot est un système leurre qui imite une cible intéressante pour attirer et observer les attaquants. Comme personne n'a de raison légitime de s'y connecter, chaque connexion est un signal fort, avec très peu de faux positifs. Il doit être isolé et surveillé : s'il est compromis, l'attaquant ne doit pas pouvoir rebondir vers les systèmes réels. Il complète les défenses existantes sans les remplacer.",
+    "distractorNotes": {
+      "b": "Le honeypot attire et observe l'attaquant ; il ne filtre pas le trafic destiné aux autres serveurs.",
+      "c": "Il apporte une source de détection supplémentaire, mais ne remplace ni le pare-feu ni l'IDS.",
+      "d": "Il sert à détecter et étudier de vrais attaquants, pas seulement à des exercices internes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-deception-technique-match-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'équipe de défense d'une entreprise déploie plusieurs leurres. Associez chaque dispositif à la technologie de leurre qu'il illustre.",
+      "left": [
+        {
+          "id": "d1",
+          "text": "Un serveur SSH factice exposé sur Internet, qui journalise chaque tentative de connexion."
+        },
+        {
+          "id": "d2",
+          "text": "Un réseau complet de machines factices interconnectées, instrumenté pour suivre l'attaquant."
+        },
+        {
+          "id": "d3",
+          "text": "Un faux client inséré dans la base CRM, avec une adresse de courriel unique surveillée."
+        },
+        {
+          "id": "d4",
+          "text": "Un faux compte de service dont le mot de passe figure dans un script ; toute connexion alerte."
+        }
+      ],
+      "right": [
+        {
+          "id": "hp",
+          "text": "Honeypot"
+        },
+        {
+          "id": "hn",
+          "text": "Honeynet"
+        },
+        {
+          "id": "hf",
+          "text": "Honeyfile"
+        },
+        {
+          "id": "ht",
+          "text": "Honeytoken"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "d1": "hp",
+        "d2": "hn",
+        "d3": "ht",
+        "d4": "ht"
+      }
+    },
+    "explanation": "Un honeypot est un système leurre unique ; un honeynet est un réseau de plusieurs leurres. Un honeytoken est une donnée leurre sans usage réel, placée là où un attaquant la trouverait : un faux enregistrement client, dont l'adresse surveillée révèle la fuite de la base si elle reçoit un message, ou de faux identifiants dont l'emploi trahit l'intrus. Un honeyfile est un fichier leurre dont l'ouverture déclenche une alerte. Dans tous les cas, l'usage du leurre est en soi un indicateur de compromission.",
+    "distractorNotes": {
+      "hf": "Un honeyfile est un fichier leurre dont l'ouverture est surveillée ; aucun des dispositifs décrits n'est un fichier."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  },
+  {
+    "slug": "security-plus-1.2-deception-honeyfile-term-001",
+    "certification": "security-plus",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Pour repérer quiconque fouille les partages réseau, l'équipe sécurité dépose dans le dossier de la direction un tableur « salaires_2026.xlsx » sans contenu réel ; toute ouverture de ce fichier déclenche une alerte dans le SIEM. Quel terme anglais désigne ce type de leurre ?",
+      "fields": [
+        {
+          "id": "v",
+          "label": "Terme en anglais, en un mot"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "v": {
+          "accepted": [
+            "honeyfile",
+            "honey file",
+            "honey-file"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Un honeyfile est un fichier leurre, au nom attrayant, placé là où un intrus ou un initié malveillant irait chercher des informations. Personne n'a de raison légitime de l'ouvrir : son ouverture, journalisée par l'audit d'accès aux fichiers ou par une balise intégrée, est donc un indicateur fort. Il se distingue du honeytoken, donnée leurre (identifiant, enregistrement) dont c'est l'usage qui alerte, et du honeypot, système leurre complet.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 1.2"
+  }
+]
