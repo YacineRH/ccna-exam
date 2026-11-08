@@ -1,0 +1,1317 @@
+[
+  {
+    "slug": "ccna-3.4-ospf-ip-protocol-89-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "OSPFv2 n'utilise ni TCP ni UDP : ses paquets sont encapsulés directement dans IP. Quelle valeur le champ Protocol de l'en-tête IPv4 contient-il pour un paquet OSPF ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "89"
+        },
+        {
+          "id": "b",
+          "text": "88"
+        },
+        {
+          "id": "c",
+          "text": "17"
+        },
+        {
+          "id": "d",
+          "text": "112"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "OSPF est un protocole de couche 3 transporté directement par IP, avec le numéro de protocole 89 dans le champ Protocol de l'en-tête IPv4. Il n'a donc pas de numéro de port : une ACL qui doit le laisser passer utilise « permit ospf any any » (ou « permit 89 any any »), et non un port TCP ou UDP. La fiabilité des échanges (accusés de réception, retransmissions) est assurée par OSPF lui-même, avec les paquets LSAck et le Retransmit interval.",
+    "distractorNotes": {
+      "b": "88 est le numéro de protocole IP d'EIGRP, autre protocole de routage encapsulé directement dans IP.",
+      "c": "17 identifie UDP, utilisé par exemple par RIP (port 520) ; OSPF n'utilise pas UDP.",
+      "d": "112 est le numéro de protocole IP de VRRP, un protocole de redondance de passerelle, pas d'OSPF."
+    },
+    "reference": "RFC 2328, section A.1"
+  },
+  {
+    "slug": "ccna-3.4-ospf-init-one-way-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 et R2 sont reliés par leurs interfaces G0/0. Depuis plusieurs minutes, « show ip ospf neighbor » sur R1 affiche le voisin 2.2.2.2 à l'état INIT, alors que la même commande sur R2 n'affiche aucun voisin. Quelle est la cause la plus probable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les timers Hello et Dead configurés sur R1 et R2 sont différents."
+        },
+        {
+          "id": "b",
+          "text": "R2 ne reçoit pas les Hello de R1, par exemple à cause d'une ACL entrante."
+        },
+        {
+          "id": "c",
+          "text": "La MTU IP de l'interface G0/0 de R2 est inférieure à celle de R1."
+        },
+        {
+          "id": "d",
+          "text": "R1 et R2 sont tous les deux DROTHER sur ce segment."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "INIT signifie que R1 reçoit et accepte les Hello de R2 (les paramètres concordent), mais que ces Hello ne citent pas encore le router ID de R1 dans leur liste de voisins. Or R2 n'inscrit un voisin dans ses Hello que s'il a reçu un Hello de lui. Comme R2 n'affiche aucun voisin, les Hello de R1 ne lui parviennent pas : communication à sens unique, typiquement une ACL entrante sur R2 qui bloque OSPF, ou un problème de multicast sur le lien. Dès que R2 reçoit un Hello de R1, les deux routeurs passent en 2-WAY.",
+    "distractorNotes": {
+      "a": "Avec des timers différents, R1 rejetterait les Hello de R2 : 2.2.2.2 n'apparaîtrait pas du tout dans sa table des voisins, même en INIT.",
+      "c": "La MTU n'est pas transportée dans les Hello mais dans les DBD : une différence de MTU bloque l'adjacence plus tard, en EXSTART ou EXCHANGE, après l'état 2-WAY.",
+      "d": "Deux DROTHER se voient mutuellement et restent en 2-WAY, état stable et normal ; R2 afficherait alors R1 comme voisin."
+    },
+    "reference": "RFC 2328, section 10.5"
+  },
+  {
+    "slug": "ccna-3.4-ospf-neighbor-dead-time-column-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans la sortie de « show ip ospf neighbor », que représente la valeur de la colonne Dead Time affichée pour un voisin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le temps écoulé depuis que l'adjacence avec ce voisin a atteint l'état FULL"
+        },
+        {
+          "id": "b",
+          "text": "Le temps qui reste avant que le routeur local envoie son prochain Hello à ce voisin"
+        },
+        {
+          "id": "c",
+          "text": "La valeur du Dead interval configurée sur l'interface du voisin, fixe tant qu'on ne la modifie pas"
+        },
+        {
+          "id": "d",
+          "text": "Le temps qui reste avant que le voisin soit déclaré DOWN si aucun nouveau Hello n'est reçu"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le Dead Time est un compte à rebours propre à chaque voisin : il part du Dead interval (40 s par défaut sur Ethernet) et revient à cette valeur à chaque Hello reçu de ce voisin. Avec un Hello toutes les 10 s, il oscille donc normalement entre 40 et 30 s environ. S'il atteint zéro, le voisin passe à DOWN (motif « Dead timer expired ») et ses routes sont recalculées. Une valeur qui descend nettement sous 30 s signale des Hello perdus.",
+    "distractorNotes": {
+      "a": "La durée de vie de l'adjacence (Neighbor is up for…) n'apparaît que dans « show ip ospf neighbor detail » ; la colonne Dead Time décroît puis remonte à chaque Hello.",
+      "b": "Le délai avant le prochain Hello envoyé est propre à l'interface et s'affiche dans « show ip ospf interface » (Hello due in…), pas dans la table des voisins.",
+      "c": "La colonne n'affiche pas une valeur fixe : elle décroît chaque seconde et revient au Dead interval à chaque Hello reçu."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (show ip ospf neighbor)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-duplicate-router-id-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pour gagner du temps, un technicien a copié la configuration OSPF de R1 sur R2, y compris la ligne « router-id 1.1.1.1 ». R1 et R2 sont reliés directement par leurs interfaces G0/0, dans le même sous-réseau et la même area, avec les mêmes timers. Que se passe-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'adjacence atteint FULL, et IOS remplace d'office le router ID de R2 par l'adresse de son interface active la plus élevée."
+        },
+        {
+          "id": "b",
+          "text": "L'adjacence reste bloquée en EXSTART, faute de pouvoir désigner le maître entre deux router ID égaux."
+        },
+        {
+          "id": "c",
+          "text": "Aucune adjacence ne se forme : IOS signale un router ID en double et ignore les Hello de ce voisin."
+        },
+        {
+          "id": "d",
+          "text": "L'adjacence atteint FULL, mais les routes de R2 sont écartées, car ses LSA portent le même router ID que celles de R1."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le router ID identifie un routeur de façon unique dans le domaine OSPF : il figure dans l'en-tête de chaque paquet et dans les LSA. Quand un routeur reçoit sur une interface un Hello qui porte son propre router ID, IOS journalise un message %OSPF-4-DUP_RTRID_NBR (« OSPF detected duplicate router-id ») et ne forme pas d'adjacence avec ce voisin. Il faut donner à R2 un router ID unique, puis relancer le processus OSPF (« clear ip ospf process ») pour qu'il soit pris en compte.",
+    "distractorNotes": {
+      "a": "IOS ne modifie jamais d'office un router ID configuré par la commande router-id ; il signale seulement le doublon.",
+      "b": "Les routeurs n'atteignent pas ExStart : le doublon est détecté dès les Hello, et aucun voisin n'est créé.",
+      "d": "Les deux routeurs ne forment pas d'adjacence du tout ; il n'y a donc pas d'échange de LSA entre eux."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-network-type-timers-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 et R2 étaient voisins OSPF FULL sur un lien Ethernet, avec les paramètres par défaut. Un administrateur saisit « ip ospf network point-to-multipoint » sur l'interface de R1 uniquement, sans modifier les timers. Peu après, ni R1 ni R2 n'affichent plus l'autre dans « show ip ospf neighbor ». Pourquoi ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le type de réseau est un champ du Hello, et R2 rejette les Hello qui annoncent un type différent du sien."
+        },
+        {
+          "id": "b",
+          "text": "Le type point-to-multipoint exige une commande neighbor pour joindre R2 en unicast, absente ici."
+        },
+        {
+          "id": "c",
+          "text": "R1 ne participe plus à l'élection du DR, et R2 attend qu'un DR soit élu sur le lien pour l'accepter comme voisin."
+        },
+        {
+          "id": "d",
+          "text": "Les timers par défaut de R1 deviennent Hello 30 s et Dead 120 s, et ne concordent plus avec les 10 s et 40 s de R2."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le type de réseau OSPF ne figure pas dans le Hello, mais il fixe les timers par défaut : 10 s / 40 s pour BROADCAST et POINT_TO_POINT, 30 s / 120 s pour POINT_TO_MULTIPOINT et NON_BROADCAST. Après la commande, R1 émet des Hello avec un Hello interval de 30 s et un Dead interval de 120 s, que R2 (10 s / 40 s) rejette, et inversement : l'adjacence tombe à l'expiration du Dead timer. Il faut appliquer le même type de réseau aux deux extrémités, ou aligner explicitement les timers.",
+    "distractorNotes": {
+      "a": "Le Hello ne contient pas de champ « type de réseau » : la différence n'a d'effet ici que par les timers par défaut qu'elle modifie.",
+      "b": "Le type point-to-multipoint de base envoie ses Hello en multicast à 224.0.0.5 ; les commandes neighbor ne sont nécessaires que pour les types non broadcast.",
+      "c": "Les routeurs ne se voient même plus en INIT : ce sont les Hello qui sont rejetés, bien avant toute question d'élection du DR."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf network, ip ospf hello-interval)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-md5-key-id-mismatch-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 et R2 ne deviennent pas voisins OSPF. Les timers sont les valeurs par défaut des deux côtés et le lien fonctionne (ping réussi). Quelle est la cause ?",
+      "exhibit": "! Extrait de la configuration de R1\ninterface GigabitEthernet0/0\n ip address 10.0.12.1 255.255.255.252\n ip ospf authentication message-digest\n ip ospf message-digest-key 1 md5 Exam4ge\nrouter ospf 1\n router-id 1.1.1.1\n network 10.0.12.0 0.0.0.3 area 0\n\n! Extrait de la configuration de R2\ninterface GigabitEthernet0/0\n ip address 10.0.12.2 255.255.255.252\n ip ospf authentication message-digest\n ip ospf message-digest-key 2 md5 Exam4ge\nrouter ospf 2\n router-id 2.2.2.2\n network 10.0.12.0 0.0.0.3 area 0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les numéros de processus OSPF diffèrent (1 sur R1, 2 sur R2)."
+        },
+        {
+          "id": "b",
+          "text": "L'identifiant de clé MD5 diffère (1 sur R1, 2 sur R2)."
+        },
+        {
+          "id": "c",
+          "text": "Il manque « area 0 authentication message-digest » sous router ospf."
+        },
+        {
+          "id": "d",
+          "text": "Un lien /30 n'a pas de BDR, si bien que l'adjacence reste en 2-WAY."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Avec l'authentification MD5, chaque paquet OSPF porte l'identifiant de la clé utilisée et un condensé calculé avec cette clé. Le récepteur cherche sur son interface la clé de même identifiant : R2 reçoit des paquets signés avec la clé 1, qu'il ne possède pas (il n'a que la clé 2), et les rejette ; R1 rejette de même les paquets signés avec la clé 2. Même mot de passe ne suffit pas : l'identifiant et la chaîne doivent être identiques des deux côtés. « ip ospf message-digest-key 1 md5 Exam4ge » sur R2 (et suppression de la clé 2) rétablit l'adjacence.",
+    "distractorNotes": {
+      "a": "Le numéro de processus OSPF n'a qu'une portée locale et n'est pas transporté dans les paquets : deux voisins peuvent utiliser des numéros différents.",
+      "c": "« ip ospf authentication message-digest » active déjà l'authentification MD5 sur l'interface ; la commande au niveau de l'area n'est qu'une autre façon de l'activer.",
+      "d": "Un segment broadcast de deux routeurs élit un DR et un BDR, qui forment une adjacence FULL ; de plus, l'échec d'authentification empêche ici d'atteindre 2-WAY."
+    },
+    "reference": "RFC 2328, annexe D ; Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-mtu-dbd-reject-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 et R2 sont reliés par leurs interfaces G0/0. La MTU IP vaut 1500 octets sur R1 et 1400 octets sur R2 (« ip mtu 1400 ») ; « ip ospf mtu-ignore » n'est configuré nulle part. Une fois l'état ExStart atteint, quel comportement est conforme à OSPF ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 rejette les DBD de R2, car ils annoncent une MTU inférieure à la sienne."
+        },
+        {
+          "id": "b",
+          "text": "Chaque routeur rejette les DBD de l'autre, car leurs MTU ne sont pas identiques."
+        },
+        {
+          "id": "c",
+          "text": "R2 rejette les DBD de R1, car ils annoncent une MTU supérieure à la sienne."
+        },
+        {
+          "id": "d",
+          "text": "Chaque routeur accepte les DBD de l'autre, car seule la MTU des Hello est vérifiée."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Chaque DBD indique la MTU IP de l'interface qui l'envoie. Un routeur rejette un DBD qui annonce une MTU supérieure à celle qu'il peut recevoir sur son interface sans fragmentation : R2 (1400) refuse donc les DBD de R1 (1500), tandis que R1 accepte ceux de R2. Les DBD de R1 ne sont jamais acquittés, R1 les retransmet, et l'adjacence reste bloquée en EXSTART ou EXCHANGE jusqu'à « Too many retransmissions ». La correction consiste à aligner la MTU IP des deux interfaces.",
+    "distractorNotes": {
+      "a": "Une MTU annoncée inférieure à la sienne ne pose aucun problème au récepteur : R1 peut recevoir sans fragmentation les paquets de 1400 octets de R2.",
+      "b": "Le contrôle n'est pas une égalité stricte : seul le routeur dont la MTU est la plus petite rejette les DBD de son voisin.",
+      "d": "Les Hello ne transportent pas de MTU ; c'est le champ Interface MTU des DBD qui est contrôlé, et R2 rejette ceux de R1."
+    },
+    "reference": "RFC 2328, section 10.6"
+  },
+  {
+    "slug": "ccna-3.4-ospf-exstart-master-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 (router ID 192.168.10.1, adresse d'interface 10.0.0.1) et R2 (router ID 172.31.0.2, adresse d'interface 10.0.0.2) passent à l'état ExStart sur le lien qui les relie. Quel routeur devient le maître de l'échange des bases de données ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2, car l'adresse IP de son interface est la plus élevée"
+        },
+        {
+          "id": "b",
+          "text": "R1, car son router ID est le plus élevé"
+        },
+        {
+          "id": "c",
+          "text": "Le DR du lien, quel que soit son router ID"
+        },
+        {
+          "id": "d",
+          "text": "Le premier routeur qui envoie un DBD au voisin"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "En ExStart, chaque routeur envoie un DBD vide avec les bits I, M et MS positionnés, en se déclarant maître. En recevant celui du voisin, le routeur qui a le router ID le plus faible se reconnaît esclave et adopte le numéro de séquence du maître. Ici, 192.168.10.1 est supérieur à 172.31.0.2 : R1 est le maître et pilote l'échange des DBD en Exchange, l'esclave acquittant chaque DBD en reprenant son numéro de séquence. Ce rôle n'a aucun lien avec l'élection du DR.",
+    "distractorNotes": {
+      "a": "Les adresses d'interface n'interviennent pas dans le choix du maître : seule la comparaison des router ID compte.",
+      "c": "Le rôle de maître est propre à chaque adjacence et ne dépend que des router ID ; un DR peut très bien être l'esclave d'un échange.",
+      "d": "Les deux routeurs envoient d'abord un DBD en se déclarant maître ; l'ordre d'envoi ne départage pas, le router ID le plus élevé l'emporte."
+    },
+    "reference": "RFC 2328, section 10.6"
+  },
+  {
+    "slug": "ccna-3.4-ospf-passive-no-hellos-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 (10.1.12.1/24, area 0, timers par défaut) est relié à l'interface G0/1 de R2, mais aucun des deux routeurs ne voit l'autre comme voisin OSPF. Quelle est la cause ?",
+      "exhibit": "R2# show ip ospf interface gigabitethernet0/1\nGigabitEthernet0/1 is up, line protocol is up\n  Internet Address 10.1.12.2/24, Area 0\n  Process ID 1, Router ID 2.2.2.2, Network Type BROADCAST, Cost: 1\n  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5\n    No Hellos (Passive interface)\n  Neighbor Count is 0, Adjacent neighbor count is 0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les timers de R2 diffèrent de ceux de R1."
+        },
+        {
+          "id": "b",
+          "text": "R2 n'annonce pas le sous-réseau 10.1.12.0/24 dans OSPF."
+        },
+        {
+          "id": "c",
+          "text": "L'interface G0/1 de R2 est passive pour OSPF."
+        },
+        {
+          "id": "d",
+          "text": "Le type BROADCAST impose un DR, qui n'est pas encore élu."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La ligne « No Hellos (Passive interface) » indique que G0/1 est déclarée passive (« passive-interface gigabitethernet0/1 » sous router ospf). Une interface passive reste dans OSPF, et son sous-réseau est toujours annoncé (Area 0 dans l'exhibit), mais IOS n'y envoie plus de Hello et ignore ceux qu'il y reçoit : aucun voisin ne peut s'y former, d'où « Neighbor Count is 0 ». On réserve la commande aux interfaces sans routeur voisin (LAN d'utilisateurs) ; ici, il faut la retirer avec « no passive-interface gigabitethernet0/1 ».",
+    "distractorNotes": {
+      "a": "L'exhibit montre Hello 10 et Dead 40, les valeurs par défaut que R1 utilise aussi : les timers concordent.",
+      "b": "L'interface est rattachée à l'area 0 (Internet Address 10.1.12.2/24, Area 0) : son sous-réseau est bien annoncé, même en mode passif.",
+      "d": "L'élection du DR découle de l'échange des Hello et ne les empêche jamais ; un routeur seul sur un segment devient lui-même DR."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (passive-interface, show ip ospf interface)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-hello-mask-mismatch-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un segment Ethernet (type BROADCAST), l'interface de R1 est configurée en 10.1.1.1/24 et celle de R2 en 10.1.1.2/25. L'area, les timers et l'authentification sont identiques. Quel est le résultat ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 accepte les Hello de R2, car 10.1.1.2 appartient à son /24, mais R2 rejette ceux de R1."
+        },
+        {
+          "id": "b",
+          "text": "L'adjacence atteint FULL ; chaque routeur annonce simplement un préfixe différent dans sa LSA."
+        },
+        {
+          "id": "c",
+          "text": "L'adjacence reste bloquée en EXSTART, car les DBD annoncent des masques différents."
+        },
+        {
+          "id": "d",
+          "text": "Aucune adjacence : chaque routeur rejette les Hello de l'autre, dont le masque diffère du sien."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Sur un réseau broadcast, le Hello transporte le masque de l'interface émettrice, et le récepteur exige qu'il soit identique au sien (règle levée seulement sur les liens point-to-point et les liens virtuels). R1 rejette les Hello de R2 (masque 255.255.255.128 au lieu de 255.255.255.0) et R2 ceux de R1 : aucun ne voit l'autre, même en INIT, et « debug ip ospf hello » signale des paramètres Hello discordants. Il faut configurer le même masque des deux côtés, celui du sous-réseau réel.",
+    "distractorNotes": {
+      "a": "Le contrôle porte sur l'égalité des masques transportés dans les Hello, pas sur l'appartenance de l'adresse au sous-réseau : les deux routeurs rejettent les Hello de l'autre.",
+      "b": "Le masque est vérifié dès la réception des Hello ; avec des masques différents, l'adjacence ne commence même pas.",
+      "c": "Les DBD ne transportent pas de masque d'interface ; les routeurs n'atteignent jamais ExStart, car les Hello sont rejetés."
+    },
+    "reference": "RFC 2328, section 10.5"
+  },
+  {
+    "slug": "ccna-3.4-ospf-loading-state-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après un redémarrage de R2, « show ip ospf neighbor » sur R1 affiche quelques instants le voisin 2.2.2.2 à l'état LOADING. Que fait R1 vis-à-vis de ce voisin à ce moment-là ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il attend un Hello de 2.2.2.2 qui contienne son propre router ID."
+        },
+        {
+          "id": "b",
+          "text": "Il négocie avec 2.2.2.2 qui sera le maître et qui sera l'esclave."
+        },
+        {
+          "id": "c",
+          "text": "Il envoie à 2.2.2.2 les en-têtes de toutes ses LSA dans des DBD."
+        },
+        {
+          "id": "d",
+          "text": "Il réclame par LSR les LSA qui lui manquent, et les reçoit en LSU."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Les états se succèdent ainsi : en Exchange, les deux routeurs se décrivent leur LSDB par des DBD qui ne contiennent que des en-têtes de LSA ; chacun dresse la liste des LSA qu'il n'a pas ou dont le voisin possède une instance plus récente. En Loading, l'échange des DBD est terminé et le routeur envoie des LSR pour ces LSA, que le voisin lui envoie dans des LSU (acquittés par des LSAck). Quand la liste des LSA demandées est vide, le voisin passe à FULL.",
+    "distractorNotes": {
+      "a": "C'est la situation de l'état INIT : un Hello du voisin a été reçu, mais sans le router ID local dans sa liste de voisins.",
+      "b": "Le choix du maître et de l'esclave, avec le numéro de séquence initial des DBD, a lieu en ExStart.",
+      "c": "La description de la LSDB par des DBD caractérise l'état Exchange, qui précède Loading."
+    },
+    "reference": "RFC 2328, section 10.1"
+  },
+  {
+    "slug": "ccna-3.4-ospf-hello-matching-fields-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 et R2 sont reliés par un segment Ethernet (type BROADCAST). Quelles trois valeurs transportées dans leurs paquets Hello doivent être identiques pour qu'ils deviennent voisins OSPF ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le Hello interval"
+        },
+        {
+          "id": "b",
+          "text": "La priorité OSPF de l'interface"
+        },
+        {
+          "id": "c",
+          "text": "L'ID d'area"
+        },
+        {
+          "id": "d",
+          "text": "Le router ID"
+        },
+        {
+          "id": "e",
+          "text": "Le Dead interval"
+        },
+        {
+          "id": "f",
+          "text": "Le DR annoncé par chaque routeur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "À la réception d'un Hello, le routeur vérifie l'ID d'area (en-tête OSPF), puis le masque de réseau (sur un segment broadcast), le Hello interval et le Dead interval, ainsi que l'option de zone stub et l'authentification : toute différence fait rejeter le Hello, et le voisin n'apparaît pas du tout. D'autres champs du Hello servent au contraire à distinguer les routeurs ou à élire le DR et le BDR (router ID, priorité, DR et BDR annoncés) et n'ont pas à concorder.",
+    "distractorNotes": {
+      "b": "La priorité ne sert qu'à l'élection du DR et du BDR ; deux voisins peuvent avoir des priorités différentes, c'est même ce qui départage l'élection.",
+      "d": "Le router ID doit au contraire être différent : deux routeurs qui annoncent le même router ID ne forment pas d'adjacence.",
+      "f": "Un routeur qui arrive sur un segment n'annonce encore aucun DR (0.0.0.0) et apprend celui des autres par leurs Hello ; ce champ n'est pas une condition d'adjacence."
+    },
+    "reference": "RFC 2328, sections 8.2 et 10.5"
+  },
+  {
+    "slug": "ccna-3.4-ospf-adjacency-tolerated-differences-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 et R2 sont les deux seuls routeurs d'un segment Ethernet (type BROADCAST) ; les autres paramètres OSPF sont identiques et valides. Quelles deux différences de configuration entre leurs interfaces n'empêchent pas l'adjacence d'atteindre l'état FULL ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "« ip ospf cost 10 » sur R1 et « ip ospf cost 50 » sur R2"
+        },
+        {
+          "id": "b",
+          "text": "Interface de R1 dans l'area 0, interface de R2 dans l'area 1"
+        },
+        {
+          "id": "c",
+          "text": "Masque /24 sur R1 et masque /26 sur R2, dans le même réseau"
+        },
+        {
+          "id": "d",
+          "text": "« ip ospf priority 1 » sur R1 et « ip ospf priority 100 » sur R2"
+        },
+        {
+          "id": "e",
+          "text": "MTU IP de 1500 octets sur R1 et de 1400 octets sur R2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Le coût OSPF est une valeur locale : il n'est pas transporté dans les Hello et sert seulement au calcul SPF de chaque routeur, qui peut donc utiliser un coût différent dans chaque sens. La priorité figure dans le Hello mais n'a pas à concorder : elle départage l'élection (si les deux interfaces démarrent ensemble, R2, priorité 100, devient DR et R1 BDR ; l'élection n'étant pas préemptive, ce peut être l'inverse si R1 était seul auparavant), et dans tous les cas les deux routeurs forment une adjacence FULL. En revanche, l'area et le masque doivent être identiques dès les Hello, et la MTU est contrôlée dans les DBD.",
+    "distractorNotes": {
+      "b": "L'ID d'area figure dans l'en-tête de chaque paquet OSPF : un Hello reçu d'une autre area est rejeté, et les routeurs ne deviennent pas voisins.",
+      "c": "Sur un segment broadcast, le masque du Hello doit être identique à celui de l'interface qui le reçoit : les Hello sont rejetés dans les deux sens.",
+      "e": "Le routeur qui a la plus petite MTU rejette les DBD de l'autre : l'adjacence reste bloquée en EXSTART ou EXCHANGE et n'atteint pas FULL."
+    },
+    "reference": "RFC 2328, section 10.5"
+  },
+  {
+    "slug": "ccna-3.4-ospf-dbd-properties-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les paquets Database Description (DBD) d'OSPFv2 sont vraies ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Ils contiennent les en-têtes des LSA de la LSDB, et non les LSA complètes."
+        },
+        {
+          "id": "b",
+          "text": "Leur réception est confirmée par des paquets LSAck, comme pour les LSU."
+        },
+        {
+          "id": "c",
+          "text": "Ils sont envoyés à 224.0.0.6 pour atteindre le DR et le BDR du segment."
+        },
+        {
+          "id": "d",
+          "text": "Ils indiquent la MTU IP de l'interface par laquelle ils sont envoyés."
+        },
+        {
+          "id": "e",
+          "text": "Ils sont échangés périodiquement après FULL pour vérifier la synchronisation."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Les DBD (type 2) servent en ExStart à désigner le maître, puis en Exchange à décrire la LSDB : chaque DBD liste des en-têtes de LSA (type, Link State ID, routeur annonceur, numéro de séquence), assez pour que le voisin repère ce qui lui manque et le réclame par LSR. Chaque DBD porte aussi le champ Interface MTU, contrôlé par le récepteur, d'où les blocages en ExStart quand les MTU diffèrent. L'échange est fiable sans LSAck : l'esclave acquitte chaque DBD du maître en renvoyant un DBD de même numéro de séquence.",
+    "distractorNotes": {
+      "b": "Les LSAck n'acquittent que des LSA reçues en LSU ; les DBD sont acquittés implicitement par le DBD de l'esclave qui reprend le numéro de séquence du maître.",
+      "c": "224.0.0.6 sert aux LSU et LSAck envoyés par les DROTHER ; sur un segment broadcast, les DBD sont envoyés en unicast au voisin concerné.",
+      "e": "L'échange de DBD s'arrête une fois les bases décrites ; ensuite, seules les LSU (changements et rafraîchissement des LSA toutes les 30 minutes) maintiennent la synchronisation."
+    },
+    "reference": "RFC 2328, sections 10.6 et A.3.3"
+  },
+  {
+    "slug": "ccna-3.4-ospf-neighbor-table-dr-role-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le réseau est stable, et E0/1 est un segment Ethernet de type BROADCAST. Quelles deux affirmations sont vraies ? (Choisissez-en deux.)",
+      "exhibit": "R1# show ip ospf neighbor\n\nNeighbor ID     Pri   State           Dead Time   Address         Interface\n2.2.2.2           0   FULL/  -        00:00:35    10.0.12.2       Serial0/0/0\n3.3.3.3           1   FULL/BDR        00:00:38    172.16.5.3      Ethernet0/1\n4.4.4.4           1   FULL/DROTHER    00:00:31    172.16.5.4      Ethernet0/1\n5.5.5.5           1   FULL/DROTHER    00:00:39    172.16.5.5      Ethernet0/1",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 est le DR du segment de E0/1."
+        },
+        {
+          "id": "b",
+          "text": "4.4.4.4 et 5.5.5.5 sont en FULL entre eux."
+        },
+        {
+          "id": "c",
+          "text": "Aucun DR ni BDR n'est élu sur le lien de S0/0/0."
+        },
+        {
+          "id": "d",
+          "text": "R1 envoie ses LSU sur E0/1 à 224.0.0.6."
+        },
+        {
+          "id": "e",
+          "text": "4.4.4.4 sera déclaré DOWN dans 31 s."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Sur E0/1, R1 est FULL avec le BDR (3.3.3.3) et avec deux DROTHER, et aucun voisin n'est DR. Un DROTHER resterait en 2WAY avec les autres DROTHER, et le BDR est déjà 3.3.3.3 : R1 est donc le DR. Sur S0/0/0, le tiret à la place du rôle (et la priorité affichée à 0) indique un lien sans élection DR/BDR, comme ce lien série de type POINT_TO_POINT. Le Dead Time est un compte à rebours remis au Dead interval à chaque Hello reçu.",
+    "distractorNotes": {
+      "b": "Deux DROTHER ne forment pas d'adjacence complète entre eux : ils restent en 2WAY et ne synchronisent leur LSDB qu'avec le DR et le BDR.",
+      "d": "En tant que DR, R1 envoie ses LSU à 224.0.0.5 (tous les routeurs OSPF) ; 224.0.0.6 est utilisée par les DROTHER pour joindre le DR et le BDR.",
+      "e": "Le Dead Time revient au Dead interval (40 s par défaut) à chaque Hello reçu : le voisin n'est déclaré DOWN que si aucun Hello n'arrive avant la fin du compte à rebours."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (show ip ospf neighbor) ; RFC 2328, section 8.1"
+  },
+  {
+    "slug": "ccna-3.4-ospf-hello-functions-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles trois fonctions les paquets Hello OSPF assurent-ils ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Découvrir dynamiquement les voisins OSPF présents sur une interface"
+        },
+        {
+          "id": "b",
+          "text": "Vérifier que la MTU IP des deux interfaces est compatible"
+        },
+        {
+          "id": "c",
+          "text": "Transmettre au voisin la table de routage complète du routeur"
+        },
+        {
+          "id": "d",
+          "text": "Indiquer aux voisins que le routeur est toujours actif"
+        },
+        {
+          "id": "e",
+          "text": "Choisir le maître et l'esclave de l'échange des bases de données"
+        },
+        {
+          "id": "f",
+          "text": "Transporter la priorité, le DR et le BDR utilisés pour l'élection du DR"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d",
+        "f"
+      ]
+    },
+    "explanation": "Envoyés toutes les 10 s par défaut sur Ethernet, à 224.0.0.5, les Hello (type 1) découvrent les voisins, vérifient les paramètres qui doivent concorder (area, masque, timers, authentification) et servent de keepalive : sans Hello pendant le Dead interval, le voisin est déclaré DOWN. Ils transportent aussi la priorité du routeur et le DR et le BDR qu'il connaît, informations sur lesquelles repose l'élection sur un segment multiaccès. Ils ne transportent aucune information de topologie ni de route.",
+    "distractorNotes": {
+      "b": "La MTU n'est pas dans le Hello : elle est indiquée et contrôlée dans les DBD, d'où les blocages en ExStart plutôt qu'une absence de voisin.",
+      "c": "OSPF n'échange pas de table de routage : les routeurs synchronisent des LSA (DBD, LSR, LSU), puis chacun calcule ses routes avec SPF.",
+      "e": "Le maître et l'esclave sont désignés en ExStart par les premiers DBD, en comparant les router ID."
+    },
+    "reference": "RFC 2328, section 7.1"
+  },
+  {
+    "slug": "ccna-3.4-ospf-hello-interval-dead-auto-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "L'interface G0/0 de R1 (Ethernet, type BROADCAST) utilise les timers OSPF par défaut. L'administrateur y saisit seulement « ip ospf hello-interval 5 », sans commande « ip ospf dead-interval ». Quelles valeurs « show ip ospf interface g0/0 » affiche-t-il ensuite ?",
+      "fields": [
+        {
+          "id": "hello",
+          "label": "Hello interval, en secondes (nombre entier)"
+        },
+        {
+          "id": "dead",
+          "label": "Dead interval, en secondes (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "hello": {
+          "accepted": [
+            "5"
+          ],
+          "normalize": "int"
+        },
+        "dead": {
+          "accepted": [
+            "20"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Par défaut, le Dead interval vaut quatre fois le Hello interval. Tant qu'aucune commande « ip ospf dead-interval » n'est configurée, IOS recalcule le Dead interval à partir du Hello interval : avec un Hello de 5 s, il passe à 20 s (au lieu de 10 s et 40 s par défaut sur Ethernet). Comme ces deux valeurs doivent être identiques chez les voisins, il faut appliquer la même modification sur l'interface du routeur d'en face, sinon l'adjacence tombe à l'expiration du Dead timer.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf hello-interval, ip ospf dead-interval)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-multicast-addresses-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur un segment Ethernet (type BROADCAST) où un DR et un BDR sont élus, donnez les adresses de destination utilisées par OSPFv2.",
+      "fields": [
+        {
+          "id": "hello",
+          "label": "Adresse de destination des Hello envoyés par tous les routeurs (en décimal pointé)"
+        },
+        {
+          "id": "drother",
+          "label": "Adresse à laquelle un DROTHER envoie ses LSU vers le DR et le BDR (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "hello": {
+          "accepted": [
+            "224.0.0.5"
+          ],
+          "normalize": "ipv4"
+        },
+        "drother": {
+          "accepted": [
+            "224.0.0.6"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "224.0.0.5 (AllSPFRouters) désigne tous les routeurs OSPF : c'est la destination des Hello sur les réseaux broadcast et point-to-point, et celle des LSU que le DR réémet sur le segment. 224.0.0.6 (AllDRouters) n'est écoutée que par le DR et le BDR : les DROTHER y envoient leurs LSU et leurs LSAck, ce qui évite d'inonder tous les routeurs du segment. Ces adresses sont link-local : les paquets ne sont jamais routés au-delà du segment.",
+    "reference": "RFC 2328, section 8.1"
+  },
+  {
+    "slug": "ccna-3.4-ospf-interface-brief-nbrs-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Le réseau est stable, et le segment de Gi0/1 est un réseau Ethernet de type BROADCAST où tous les routeurs ont une priorité non nulle. Répondez à partir de la sortie.",
+      "exhibit": "R1# show ip ospf interface brief\nInterface    PID   Area            IP Address/Mask    Cost  State Nbrs F/C\nGi0/1        1     0               172.16.20.1/24     1     DROTH 2/4\nGi0/0        1     0               10.0.13.1/30       1     P2P   1/1",
+      "fields": [
+        {
+          "id": "routers",
+          "label": "Nombre total de routeurs OSPF sur le segment de Gi0/1, R1 compris (nombre entier)"
+        },
+        {
+          "id": "twoway",
+          "label": "Nombre de voisins de Gi0/1 que R1 voit à l'état 2WAY (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "routers": {
+          "accepted": [
+            "5"
+          ],
+          "normalize": "int"
+        },
+        "twoway": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La colonne Nbrs F/C donne le nombre de voisins à l'état FULL, puis le nombre total de voisins sur l'interface. Sur Gi0/1, R1 a 4 voisins : avec lui, le segment compte 5 routeurs. R1 est DROTH (DROTHER) : il ne forme d'adjacence complète qu'avec le DR et le BDR, d'où 2 voisins FULL ; les 2 autres voisins sont des DROTHER avec lesquels R1 reste normalement en 2WAY. Sur Gi0/0, P2P et 1/1 indiquent un lien point-to-point sans DR, avec son unique voisin en FULL.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (show ip ospf interface)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-md5-interface-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 doit authentifier ses échanges OSPF avec R2 sur GigabitEthernet0/0, comme R2 le fait déjà. En partant du mode de configuration globale, entrez dans l'interface ; puis, dans l'ordre de votre choix, activez l'authentification OSPF MD5 sur cette interface et définissez la clé d'identifiant 1 avec le mot de passe ExamForge26.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "interface GigabitEthernet0/0"
+        ],
+        [
+          "ip ospf authentication message-digest"
+        ],
+        [
+          "ip ospf message-digest-key 1 md5 ExamForge26",
+          "ip ospf message-digest-key 1 md5 0 ExamForge26"
+        ]
+      ]
+    },
+    "explanation": "« ip ospf authentication message-digest » active l'authentification MD5 sur la seule interface, sans commande au niveau de l'area. « ip ospf message-digest-key 1 md5 ExamForge26 » définit la clé : l'identifiant (1) et la chaîne doivent être identiques chez le voisin, car chaque paquet porte l'identifiant de la clé utilisée et le récepteur vérifie le condensé avec sa clé de même identifiant. Tant que les deux côtés ne sont pas alignés, les Hello sont rejetés et le voisin disparaît.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf authentication, ip ospf message-digest-key)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-hello-dead-align-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R2 utilise sur son lien vers R1 un Hello interval de 15 s et un Dead interval de 60 s, et R1 n'arrive pas à former d'adjacence. En partant du mode de configuration globale, entrez dans l'interface GigabitEthernet0/1 de R1 ; puis, dans l'ordre de votre choix, configurez explicitement ces deux mêmes timers OSPF.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "interface GigabitEthernet0/1"
+        ],
+        [
+          "ip ospf hello-interval 15"
+        ],
+        [
+          "ip ospf dead-interval 60"
+        ]
+      ]
+    },
+    "explanation": "Le Hello interval et le Dead interval sont transportés dans chaque Hello et doivent être identiques des deux côtés : avec les valeurs par défaut (10 s / 40 s), R1 rejette les Hello de R2 et inversement. Les deux commandes d'interface alignent R1 sur R2. Configurer le Dead interval explicitement évite de dépendre du calcul automatique (quatre fois le Hello) et garantit la valeur de 60 s attendue. On vérifie avec « show ip ospf interface » (ligne Timer intervals configured).",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf hello-interval, ip ospf dead-interval)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-ip-mtu-align-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "L'adjacence OSPF entre R1 et R2 reste bloquée en EXSTART : la MTU IP de l'interface de R2 vaut 1400 octets, celle de R1 a la valeur par défaut (1500 octets). En partant du mode de configuration globale, réglez la MTU IP de l'interface GigabitEthernet0/0 de R1 sur 1400 octets, sans désactiver le contrôle de MTU d'OSPF.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/0"
+        ],
+        [
+          "ip mtu 1400"
+        ]
+      ]
+    },
+    "explanation": "Chaque DBD annonce la MTU IP de l'interface émettrice, et R2 rejette les DBD de R1 qui annoncent 1500 octets, plus que ses 1400 : l'adjacence ne dépasse pas ExStart. « ip mtu 1400 » aligne la MTU IP de R1 sur celle de R2, ce qui supprime la cause. « ip ospf mtu-ignore » ferait aussi passer l'adjacence à FULL, mais en désactivant le contrôle au lieu de corriger l'incohérence de MTU entre les deux interfaces.",
+    "reference": "RFC 2328, section 10.6 ; Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-show-interface-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode privilégié de R1, affichez les paramètres OSPF détaillés de la seule interface GigabitEthernet0/1 : area, type de réseau, coût, timers, DR et BDR du segment.",
+      "prompt": "R1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show ip ospf interface GigabitEthernet0/1"
+        ]
+      ]
+    },
+    "explanation": "« show ip ospf interface » suivi du nom d'une interface limite la sortie détaillée à cette interface : adresse et area, router ID, type de réseau et coût, état (DR, BDR, DROTHER, POINT_TO_POINT) et priorité, DR et BDR du segment, timers Hello, Dead, Wait et Retransmit, nombre de voisins et d'adjacences. C'est la commande de base pour comparer les paramètres des deux extrémités quand des voisins ne se forment pas.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (show ip ospf interface)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-show-interface-brief-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode privilégié de R1, affichez un tableau qui résume chaque interface où OSPF est actif, à raison d'une ligne par interface : processus, area, adresse, coût, état et nombre de voisins FULL sur le nombre total de voisins.",
+      "prompt": "R1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show ip ospf interface brief"
+        ]
+      ]
+    },
+    "explanation": "« show ip ospf interface brief » donne une ligne par interface OSPF avec les colonnes Interface, PID, Area, IP Address/Mask, Cost, State et Nbrs F/C (voisins FULL / voisins au total). C'est un moyen rapide de vérifier qu'une interface est dans la bonne area, de repérer son rôle (DR, BDR, DROTH, P2P) et de comparer le nombre d'adjacences complètes au nombre de voisins.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (show ip ospf interface)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-debug-adjacency-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode privilégié de R1, activez le débogage qui affiche en temps réel les événements d'adjacence OSPF : changements d'état des voisins, échange des DBD et élection du DR.",
+      "prompt": "R1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "debug ip ospf adj"
+        ]
+      ]
+    },
+    "explanation": "« debug ip ospf adj » trace la formation des adjacences : passage des voisins par les différents états, échange des DBD en ExStart et Exchange, élection du DR et du BDR, erreurs d'authentification. Pour les paramètres de Hello discordants (timers, masque), « debug ip ospf hello » est plus parlant. Comme tout débogage, il se désactive avec « undebug all » une fois le diagnostic terminé, pour ne pas charger le processeur.",
+    "reference": "Cisco IOS Debug Command Reference (debug ip ospf adj)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-default-timers-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Classez ces valeurs OSPF par défaut d'IOS, de la plus courte à la plus longue.",
+      "items": [
+        {
+          "id": "deadbc",
+          "text": "Dead interval sur une interface de type BROADCAST"
+        },
+        {
+          "id": "retr",
+          "text": "Retransmit interval d'une interface"
+        },
+        {
+          "id": "hellop2mp",
+          "text": "Hello interval sur une interface de type POINT_TO_MULTIPOINT"
+        },
+        {
+          "id": "trans",
+          "text": "Transmit Delay d'une interface"
+        },
+        {
+          "id": "deadp2mp",
+          "text": "Dead interval sur une interface de type POINT_TO_MULTIPOINT"
+        },
+        {
+          "id": "hellobc",
+          "text": "Hello interval sur une interface de type BROADCAST"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "trans",
+        "retr",
+        "hellobc",
+        "hellop2mp",
+        "deadbc",
+        "deadp2mp"
+      ]
+    },
+    "explanation": "Valeurs par défaut affichées par « show ip ospf interface » : Transmit Delay 1 s (délai ajouté à l'âge des LSA envoyées), Retransmit 5 s (attente d'un acquittement avant de renvoyer une LSA, un DBD ou un LSR), Hello 10 s et Dead 40 s sur les types BROADCAST et POINT_TO_POINT, Hello 30 s et Dead 120 s sur les types POINT_TO_MULTIPOINT et NON_BROADCAST. Le Dead vaut quatre fois le Hello, et c'est parce que le type de réseau change ces valeurs par défaut que deux extrémités de types différents peuvent ne plus se voir.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf hello-interval, ip ospf retransmit-interval, ip ospf transmit-delay)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-flooding-via-dr-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Sur un segment Ethernet (type BROADCAST), R1 et R3 sont des DROTHER ; le DR et le BDR sont d'autres routeurs. Une interface de R3 tombe en panne. Remettez dans l'ordre les étapes de la diffusion de cette information sur le segment.",
+      "items": [
+        {
+          "id": "dr",
+          "text": "Le DR réémet le LSU vers tous les routeurs OSPF du segment."
+        },
+        {
+          "id": "ack",
+          "text": "R1 reçoit le LSU réémis par le DR et l'acquitte par un LSAck."
+        },
+        {
+          "id": "lsa",
+          "text": "R3 génère une nouvelle instance de son LSA de type 1 (Router LSA)."
+        },
+        {
+          "id": "lsu",
+          "text": "R3 envoie un LSU qui contient cette LSA au DR et au BDR."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "lsa",
+        "lsu",
+        "dr",
+        "ack"
+      ]
+    },
+    "explanation": "Un DROTHER n'inonde pas lui-même tout le segment : R3 crée une nouvelle instance de sa Router LSA, puis l'envoie dans un LSU à 224.0.0.6, adresse écoutée par le DR et le BDR seulement. Le DR la réémet sur le segment à 224.0.0.5 ; le BDR, lui, se contente de surveiller que le DR fait son travail. R1 reçoit le LSU du DR, installe la LSA et l'acquitte par un LSAck envoyé au DR et au BDR. La réémission par le DR vaut acquittement implicite pour R3.",
+    "reference": "RFC 2328, sections 8.1 et 13"
+  },
+  {
+    "slug": "ccna-3.4-ospf-packet-types-roles-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque rôle au type de paquet OSPFv2 qui le remplit.",
+      "left": [
+        {
+          "id": "summary",
+          "text": "Décrire le contenu de la LSDB par une liste d'en-têtes de LSA"
+        },
+        {
+          "id": "request",
+          "text": "Réclamer au voisin des LSA précises, manquantes ou plus récentes chez lui"
+        },
+        {
+          "id": "carry",
+          "text": "Transporter des LSA complètes, lors de l'échange initial comme après un changement"
+        },
+        {
+          "id": "ack",
+          "text": "Confirmer la réception des LSA"
+        }
+      ],
+      "right": [
+        {
+          "id": "t2",
+          "text": "Type 2 : Database Description (DBD)"
+        },
+        {
+          "id": "t3",
+          "text": "Type 3 : Link-State Request (LSR)"
+        },
+        {
+          "id": "t4",
+          "text": "Type 4 : Link-State Update (LSU)"
+        },
+        {
+          "id": "t5",
+          "text": "Type 5 : Link-State Acknowledgment (LSAck)"
+        },
+        {
+          "id": "t1",
+          "text": "Type 1 : Hello"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "summary": "t2",
+        "request": "t3",
+        "carry": "t4",
+        "ack": "t5"
+      }
+    },
+    "explanation": "OSPFv2 utilise cinq types de paquets, numérotés dans l'en-tête OSPF. Les DBD (2) résument la LSDB par des en-têtes de LSA pendant ExStart et Exchange ; le routeur réclame par LSR (3) les LSA qui lui manquent ou qui sont plus récentes chez le voisin ; les LSU (4) transportent les LSA elles-mêmes, en réponse à un LSR comme lors de l'inondation d'un changement ; les LSAck (5) confirment chaque LSA reçue, ce qui rend l'inondation fiable.",
+    "distractorNotes": {
+      "t1": "Le Hello découvre et surveille les voisins, vérifie les paramètres communs et sert à l'élection du DR ; il ne transporte ni ne décrit aucune LSA."
+    },
+    "reference": "RFC 2328, section A.3"
+  },
+  {
+    "slug": "ccna-3.4-ospf-neighbor-states-meaning-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque état de voisin OSPF à la situation qui le caractérise.",
+      "left": [
+        {
+          "id": "init",
+          "text": "Init"
+        },
+        {
+          "id": "twoway",
+          "text": "2-Way"
+        },
+        {
+          "id": "exstart",
+          "text": "ExStart"
+        },
+        {
+          "id": "exchange",
+          "text": "Exchange"
+        },
+        {
+          "id": "full",
+          "text": "Full"
+        }
+      ],
+      "right": [
+        {
+          "id": "r_init",
+          "text": "Un Hello du voisin a été reçu, sans le router ID local dans sa liste de voisins."
+        },
+        {
+          "id": "r_2way",
+          "text": "Le router ID local figure dans un Hello du voisin : la communication est bidirectionnelle."
+        },
+        {
+          "id": "r_exstart",
+          "text": "Les deux routeurs désignent le maître et fixent le numéro de séquence initial des DBD."
+        },
+        {
+          "id": "r_exchange",
+          "text": "Les deux routeurs se décrivent leur LSDB par des DBD contenant des en-têtes de LSA."
+        },
+        {
+          "id": "r_full",
+          "text": "Les LSDB sont synchronisées : l'adjacence est complète."
+        },
+        {
+          "id": "r_down",
+          "text": "Aucun Hello n'a été reçu de ce voisin pendant le Dead interval."
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "init": "r_init",
+        "twoway": "r_2way",
+        "exstart": "r_exstart",
+        "exchange": "r_exchange",
+        "full": "r_full"
+      }
+    },
+    "explanation": "Init : le routeur reçoit les Hello du voisin, mais celui-ci ne l'a pas encore vu. 2-Way : chacun se trouve dans les Hello de l'autre ; sur un segment broadcast, c'est l'état final entre deux DROTHER, et l'élection du DR a lieu à ce stade. ExStart : le router ID le plus élevé devient maître et fixe le numéro de séquence. Exchange : échange des DBD. Après Loading (LSR et LSU pour les LSA manquantes), le voisin passe à Full.",
+    "distractorNotes": {
+      "r_down": "Cette situation correspond à l'état Down : à l'expiration du Dead interval, le voisin quitte n'importe quel état pour revenir à Down."
+    },
+    "reference": "RFC 2328, section 10.1"
+  },
+  {
+    "slug": "ccna-3.4-ospf-adjacency-symptoms-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "R1 et R2 sont reliés par un segment Ethernet (type BROADCAST) ; leurs autres paramètres OSPF sont identiques et valides. Associez chaque situation à ce que montre « show ip ospf neighbor » sur R1 pour le voisin R2, une fois le délai de convergence écoulé.",
+      "left": [
+        {
+          "id": "mtu",
+          "text": "Les MTU IP des deux interfaces diffèrent."
+        },
+        {
+          "id": "md5",
+          "text": "Les clés d'authentification MD5 configurées diffèrent."
+        },
+        {
+          "id": "pid",
+          "text": "R1 utilise le processus OSPF 1 et R2 le processus OSPF 100."
+        },
+        {
+          "id": "drother",
+          "text": "R1 et R2 sont deux DROTHER d'un segment dont le DR et le BDR sont d'autres routeurs."
+        },
+        {
+          "id": "dead",
+          "text": "Le Dead interval vaut 40 s sur R1 et 60 s sur R2."
+        }
+      ],
+      "right": [
+        {
+          "id": "absent",
+          "text": "R2 n'apparaît pas dans la table des voisins."
+        },
+        {
+          "id": "stuck",
+          "text": "R2 reste bloqué en EXSTART ou en EXCHANGE."
+        },
+        {
+          "id": "twoway",
+          "text": "R2 reste en 2WAY, ce qui est normal."
+        },
+        {
+          "id": "full",
+          "text": "R2 atteint l'état FULL."
+        },
+        {
+          "id": "init",
+          "text": "R2 reste bloqué en INIT."
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "mtu": "stuck",
+        "md5": "absent",
+        "pid": "full",
+        "drother": "twoway",
+        "dead": "absent"
+      }
+    },
+    "explanation": "Une authentification ou un Dead interval différents font rejeter les Hello : aucun voisin n'est créé. La MTU n'est contrôlée que dans les DBD : les Hello passent, mais l'échange des bases échoue en ExStart ou Exchange. Le numéro de processus n'a qu'une portée locale et n'empêche rien. Enfin, deux DROTHER s'arrêtent volontairement en 2WAY : ils ne synchronisent leur LSDB qu'avec le DR et le BDR.",
+    "distractorNotes": {
+      "init": "INIT traduit une communication à sens unique (R1 reçoit les Hello de R2, mais R2 ne reçoit pas ceux de R1, par exemple à cause d'une ACL) ; aucune des situations proposées ne la provoque, car les Hello circulent ici dans les deux sens."
+    },
+    "reference": "Cisco Technical Note: OSPF Neighbor Problems Explained ; RFC 2328, section 10.5"
+  }
+]
