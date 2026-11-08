@@ -1,0 +1,1568 @@
+[
+  {
+    "slug": "ccna-5.5-esp-anti-replay-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un attaquant capture sur Internet des paquets ESP valides échangés entre deux passerelles VPN, puis les réémet tels quels quelques minutes plus tard. Quel élément permet à la passerelle réceptrice de rejeter ces paquets rejoués ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le SPI de l'en-tête ESP, qui change à chaque paquet émis"
+        },
+        {
+          "id": "b",
+          "text": "L'échange Diffie-Hellman, renouvelé avant chaque paquet émis"
+        },
+        {
+          "id": "c",
+          "text": "Le numéro de séquence de l'en-tête ESP, contrôlé par une fenêtre anti-rejeu"
+        },
+        {
+          "id": "d",
+          "text": "Le mode tunnel, qui masque les adresses IP des hôtes d'origine"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Chaque paquet ESP porte un numéro de séquence croissant, propre à la SA. Le récepteur tient une fenêtre glissante des numéros déjà reçus : un paquet dont le numéro a déjà été vu, ou qui est trop ancien pour la fenêtre, est rejeté, même si son contenu et son ICV sont parfaitement valides. Cette protection anti-rejeu suppose que le service d'intégrité soit actif, ce qui est le cas avec un transform-set ESP comprenant un HMAC (esp-sha256-hmac, par exemple).",
+    "distractorNotes": {
+      "a": "Le SPI identifie la SA ; il reste le même pour tous les paquets de cette SA et ne permet pas de distinguer un paquet rejoué.",
+      "b": "Diffie-Hellman sert à dériver des clés pendant la négociation IKE, pas à chaque paquet ; il ne détecte pas les paquets rejoués.",
+      "d": "Le mode tunnel cache les adresses internes, mais un paquet rejoué reste un paquet ESP valide : sans contrôle du numéro de séquence, il serait accepté."
+    },
+    "reference": "RFC 4303"
+  },
+  {
+    "slug": "ccna-5.5-tunnel-mode-outer-header-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 (adresse publique 203.0.113.1, LAN 10.1.1.0/24) et R2 (adresse publique 198.51.100.2, LAN 10.2.2.0/24) sont reliés par un VPN IPsec site-à-site qui utilise ce transform-set ; il n'y a aucun NAT entre les deux routeurs. Le poste 10.1.1.10 ouvre une session vers le serveur 10.2.2.20. Que voit une capture faite sur Internet, entre R1 et R2 ?",
+      "exhibit": "R1#show running-config | section transform-set\ncrypto ipsec transform-set TS esp-aes 256 esp-sha256-hmac\n mode tunnel",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des paquets de 10.1.1.10 vers 10.2.2.20, protocole ESP, dont seule la charge utile est chiffrée"
+        },
+        {
+          "id": "b",
+          "text": "Des paquets de 203.0.113.1 vers 198.51.100.2, protocole UDP sur le port 500, qui contiennent la session"
+        },
+        {
+          "id": "c",
+          "text": "Des paquets de 203.0.113.1 vers 198.51.100.2, protocole AH, où les adresses 10.x restent lisibles"
+        },
+        {
+          "id": "d",
+          "text": "Des paquets de 203.0.113.1 vers 198.51.100.2, protocole ESP (50), où les adresses 10.x sont chiffrées"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le transform-set n'utilise que ESP (esp-aes 256 pour le chiffrement, esp-sha256-hmac pour l'intégrité) en mode tunnel. En mode tunnel, tout le paquet d'origine, en-tête IP compris, est chiffré puis placé derrière un nouvel en-tête IP dont les adresses sont celles des deux passerelles, 203.0.113.1 et 198.51.100.2. Le champ protocole de cet en-tête vaut 50 (ESP). Sans NAT sur le chemin, NAT-T ne s'active pas : ESP n'est pas encapsulé dans UDP 4500. Les adresses 10.1.1.10 et 10.2.2.20 ne sont donc visibles qu'une fois le paquet déchiffré par R2.",
+    "distractorNotes": {
+      "a": "C'est le résultat du mode transport, qui conserve l'en-tête IP d'origine ; le transform-set est en mode tunnel.",
+      "b": "UDP 500 transporte la négociation IKE, pas les données ; sans NAT, les données circulent directement dans ESP (protocole 50).",
+      "c": "Le transform-set ne contient aucune transformation ah-… ; et AH ne chiffre rien, alors que le transform-set chiffre avec AES."
+    },
+    "reference": "RFC 4301 ; RFC 4303"
+  },
+  {
+    "slug": "ccna-5.5-dmvpn-spoke-to-spoke-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise relie 200 agences à son siège par Internet. Elle veut que la configuration du routeur du siège n'ait pas à décrire chaque agence une par une, et que deux agences puissent établir à la demande un tunnel direct entre elles pour leurs échanges. Quelle solution Cisco répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un tunnel GRE over IPsec point à point entre le siège et chaque agence"
+        },
+        {
+          "id": "b",
+          "text": "DMVPN, qui associe GRE multipoint, NHRP et IPsec"
+        },
+        {
+          "id": "c",
+          "text": "Une crypto map statique sur le routeur du siège, avec une entrée par agence"
+        },
+        {
+          "id": "d",
+          "text": "Un VPN SSL/TLS avec Cisco Secure Client installé sur chaque routeur d'agence"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "DMVPN (Dynamic Multipoint VPN) repose sur une interface tunnel GRE multipoint (mGRE) au hub, qui n'a pas besoin d'une configuration par spoke : les agences s'enregistrent elles-mêmes auprès du hub grâce à NHRP. Quand une agence veut joindre une autre agence, NHRP lui fournit l'adresse publique de celle-ci et un tunnel direct spoke-à-spoke se monte dynamiquement. IPsec chiffre l'ensemble des tunnels, et GRE permet d'y faire tourner un protocole de routage.",
+    "distractorNotes": {
+      "a": "Des tunnels GRE point à point obligent à configurer une interface tunnel par agence au siège, et le trafic entre agences transite par le siège.",
+      "c": "Une crypto map statique exige justement une entrée par pair au siège, et ne crée aucun tunnel direct entre agences.",
+      "d": "Secure Client est un logiciel d'accès distant pour les postes des utilisateurs ; il ne relie pas des routeurs de sites entre eux."
+    },
+    "reference": "Cisco IOS XE — Dynamic Multipoint VPN Configuration Guide"
+  },
+  {
+    "slug": "ccna-5.5-secure-client-remote-access-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel logiciel Cisco un télétravailleur installe-t-il sur son portable pour ouvrir un VPN d'accès distant, en SSL/TLS ou en IPsec IKEv2, vers un pare-feu Cisco du siège ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cisco Identity Services Engine (ISE)"
+        },
+        {
+          "id": "b",
+          "text": "Cisco Catalyst Center"
+        },
+        {
+          "id": "c",
+          "text": "Cisco Webex"
+        },
+        {
+          "id": "d",
+          "text": "Cisco Secure Client (ex-AnyConnect)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Cisco Secure Client, nommé AnyConnect jusqu'à la version 4.x, est le client VPN d'accès distant de Cisco. Installé sur le poste de l'utilisateur, il établit un tunnel SSL/TLS (avec DTLS pour les flux sensibles à la latence) ou IPsec IKEv2 vers une passerelle comme un pare-feu ASA ou Secure Firewall, puis fait passer dans ce tunnel le trafic destiné aux réseaux de l'entreprise.",
+    "distractorNotes": {
+      "a": "ISE est un serveur de politiques et d'authentification (RADIUS, TACACS+) ; il peut valider les utilisateurs du VPN, mais n'établit aucun tunnel depuis le portable.",
+      "b": "Catalyst Center est un contrôleur de gestion du réseau de campus, pas un client VPN.",
+      "c": "Webex est une solution de visioconférence et de collaboration ; elle ne fournit pas de VPN d'accès distant."
+    },
+    "reference": "Cisco Secure Client Administrator Guide"
+  },
+  {
+    "slug": "ccna-5.5-ssl-vpn-firewall-traversal-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un consultant doit ouvrir un VPN d'accès distant depuis le Wi-Fi d'un hôtel, dont le pare-feu ne laisse sortir que la navigation web (HTTP et HTTPS). Pourquoi un VPN SSL/TLS a-t-il plus de chances de fonctionner qu'un VPN IPsec classique ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Parce qu'il passe par UDP 500, un port que les pare-feu d'hôtel laissent ouvert"
+        },
+        {
+          "id": "b",
+          "text": "Parce qu'il ne chiffre pas les données, ce qui évite le filtrage des flux chiffrés"
+        },
+        {
+          "id": "c",
+          "text": "Parce qu'il utilise TCP 443, le port du HTTPS, que le pare-feu laisse sortir"
+        },
+        {
+          "id": "d",
+          "text": "Parce qu'il encapsule le trafic dans GRE, un protocole que le pare-feu ignore"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un VPN SSL/TLS établit sa session sur TCP 443, exactement comme un site HTTPS : un pare-feu qui autorise la navigation web le laisse donc passer. Un VPN IPsec classique a besoin d'IKE sur UDP 500, puis d'ESP (protocole IP 50) ou, derrière un NAT, d'UDP 4500 : autant de flux qu'un pare-feu limité au web bloque. Cisco Secure Client peut aussi utiliser DTLS sur UDP 443 pour de meilleures performances, en se repliant sur TLS si UDP est filtré.",
+    "distractorNotes": {
+      "a": "UDP 500 est le port d'IKE, donc d'IPsec ; c'est justement ce qu'un pare-feu limité au web bloque.",
+      "b": "Un VPN SSL/TLS chiffre bien les données avec TLS ; c'est le port utilisé, et non l'absence de chiffrement, qui lui permet de passer.",
+      "d": "Un VPN SSL/TLS n'utilise pas GRE ; GRE (protocole IP 47) serait d'ailleurs bloqué par un pare-feu qui ne laisse sortir que HTTP et HTTPS."
+    },
+    "reference": "Cisco Secure Client Administrator Guide"
+  },
+  {
+    "slug": "ccna-5.5-diffie-hellman-role-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors de la négociation IKE d'un tunnel IPsec, quel est le rôle de l'échange Diffie-Hellman ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chiffrer les données des utilisateurs transportées dans ESP"
+        },
+        {
+          "id": "b",
+          "text": "Prouver l'identité de chaque pair à l'aide d'une clé pré-partagée"
+        },
+        {
+          "id": "c",
+          "text": "Permettre aux deux pairs de calculer une même clé secrète sans la transmettre"
+        },
+        {
+          "id": "d",
+          "text": "Calculer une empreinte qui révèle toute modification d'un paquet"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Diffie-Hellman est un algorithme d'échange de clés : chaque pair envoie une valeur publique, et la combinaison de cette valeur avec sa propre valeur privée donne aux deux pairs le même secret partagé, sans que ce secret ne circule sur le réseau. IKE en dérive les clés de chiffrement et d'intégrité. Le groupe DH (14, 19, 20…) fixe la taille des paramètres et donc la robustesse de l'échange.",
+    "distractorNotes": {
+      "a": "Le chiffrement des données est assuré par un algorithme symétrique comme AES, avec les clés issues de l'échange.",
+      "b": "L'authentification des pairs se fait par clé pré-partagée ou par signatures (certificats), pas par Diffie-Hellman, qui n'authentifie personne.",
+      "d": "Le contrôle d'intégrité repose sur un HMAC (SHA-256, par exemple), pas sur Diffie-Hellman."
+    },
+    "reference": "RFC 7296 (IKEv2)"
+  },
+  {
+    "slug": "ccna-5.5-nat-traversal-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le portable d'un télétravailleur, derrière la box d'un hôtel qui fait du PAT, ouvre un VPN IPsec vers la passerelle du siège. Quel mécanisme permet au trafic ESP de traverser la traduction d'adresses ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le passage d'ESP en mode transport, qui conserve l'en-tête IP d'origine"
+        },
+        {
+          "id": "b",
+          "text": "Le remplacement d'ESP par AH, qui n'a pas besoin de numéro de port"
+        },
+        {
+          "id": "c",
+          "text": "L'encapsulation d'ESP dans GRE, que le PAT sait traduire"
+        },
+        {
+          "id": "d",
+          "text": "NAT-T, qui encapsule ESP dans UDP sur le port 4500"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "ESP est un protocole IP (numéro 50) sans numéros de port : un équipement PAT, qui distingue les flux par leurs ports, ne sait pas le traduire pour plusieurs clients. Pendant la négociation IKE, les pairs détectent la présence d'un NAT et activent NAT-T (NAT Traversal) : IKE passe sur UDP 4500 et chaque paquet ESP est placé dans un en-tête UDP sur ce même port. Le PAT traduit alors ces paquets comme n'importe quel flux UDP.",
+    "distractorNotes": {
+      "a": "Le mode transport ne donne pas de numéro de port à ESP ; il reste un protocole IP 50 que le PAT ne sait pas traduire.",
+      "b": "AH n'a pas non plus de ports, et il authentifie les adresses de l'en-tête IP : la traduction par le NAT fait échouer son contrôle d'intégrité.",
+      "c": "GRE (protocole IP 47) n'a pas de ports non plus : un PAT ne peut pas le traduire de façon fiable."
+    },
+    "reference": "RFC 3948 (UDP Encapsulation of IPsec ESP Packets)"
+  },
+  {
+    "slug": "ccna-5.5-ipsec-sa-counters-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les postes du LAN 10.1.1.0/24 de R1 n'obtiennent aucune réponse des serveurs du LAN 10.2.2.0/24, situé derrière R2 (198.51.100.2). Que montre cette sortie ?",
+      "exhibit": "R1#show crypto ipsec sa\n\ninterface: GigabitEthernet0/0/1\n    Crypto map tag: VPN-MAP, local addr 203.0.113.1\n\n   protected vrf: (none)\n   local  ident (addr/mask/prot/port): (10.1.1.0/255.255.255.0/0/0)\n   remote ident (addr/mask/prot/port): (10.2.2.0/255.255.255.0/0/0)\n   current_peer 198.51.100.2 port 500\n     PERMIT, flags={origin_is_acl,}\n    #pkts encaps: 1250, #pkts encrypt: 1250, #pkts digest: 1250\n    #pkts decaps: 0, #pkts decrypt: 0, #pkts verify: 0",
+      "options": [
+        {
+          "id": "a",
+          "text": "IKE phase 1 a échoué : R1 n'a établi aucun tunnel avec R2."
+        },
+        {
+          "id": "b",
+          "text": "R1 chiffre et envoie le trafic vers R2, mais ne déchiffre aucun paquet en retour."
+        },
+        {
+          "id": "c",
+          "text": "Le trafic vers 10.2.2.0/24 ne correspond pas à l'ACL crypto et part en clair."
+        },
+        {
+          "id": "d",
+          "text": "R1 reçoit et déchiffre le trafic de R2, mais ne parvient pas à chiffrer le sien."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Les compteurs encaps, encrypt et digest à 1250 montrent que R1 reconnaît le trafic de 10.1.1.0/24 vers 10.2.2.0/24 comme trafic à protéger, le chiffre et l'envoie à R2 : des SA IPsec sortantes existent donc, ce qui suppose qu'IKE a abouti. Les compteurs decaps, decrypt et verify restent à 0 : aucun paquet protégé n'a été déchiffré en sens inverse. Il faut donc chercher du côté du retour : R2 qui n'a pas de route vers 10.1.1.0/24 par le tunnel, une ACL crypto non symétrique sur R2, ou ESP filtré entre R2 et R1.",
+    "distractorNotes": {
+      "a": "Sans IKE réussi, aucune SA IPsec n'existerait et aucun paquet ne serait chiffré ; ici 1250 paquets ont été encapsulés et chiffrés.",
+      "c": "Les compteurs encaps et encrypt augmentent : le trafic correspond bien à la politique (local ident et remote ident) et il est chiffré.",
+      "d": "C'est l'inverse : les compteurs de chiffrement augmentent et ceux de déchiffrement restent à zéro."
+    },
+    "reference": "Cisco IOS XE — Security for VPNs with IPsec Configuration Guide"
+  },
+  {
+    "slug": "ccna-5.5-transport-mode-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur le mode transport d'IPsec sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Il ajoute un nouvel en-tête IP qui porte les adresses des deux passerelles."
+        },
+        {
+          "id": "b",
+          "text": "Il masque aux observateurs du réseau les adresses IP des hôtes qui communiquent."
+        },
+        {
+          "id": "c",
+          "text": "Il conserve l'en-tête IP d'origine : ESP s'insère entre cet en-tête et la charge utile."
+        },
+        {
+          "id": "d",
+          "text": "C'est le mode utilisé par défaut par un transform-set sur Cisco IOS."
+        },
+        {
+          "id": "e",
+          "text": "Il convient quand les extrémités IPsec sont elles-mêmes les hôtes qui communiquent, par exemple les deux bouts d'un tunnel GRE."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "En mode transport, IPsec ne protège que la charge utile du paquet : l'en-tête IP d'origine est conservé et l'en-tête ESP s'insère juste après lui. Les adresses de cet en-tête doivent donc être celles des extrémités IPsec, ce qui convient au trafic de bout en bout entre deux hôtes, ou au GRE over IPsec, où les routeurs sont à la fois les extrémités GRE et IPsec. Le mode tunnel, lui, encapsule tout le paquet derrière un nouvel en-tête IP ; c'est le mode par défaut sur IOS et celui des VPN site-à-site.",
+    "distractorNotes": {
+      "a": "L'ajout d'un nouvel en-tête IP caractérise le mode tunnel.",
+      "b": "En mode transport, l'en-tête IP d'origine reste en clair : les adresses des hôtes sont visibles.",
+      "d": "Sur IOS, un transform-set est en mode tunnel par défaut ; le mode transport se configure avec « mode transport »."
+    },
+    "reference": "RFC 4301 ; RFC 4303"
+  },
+  {
+    "slug": "ccna-5.5-ssl-vpn-traits-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur un VPN d'accès distant SSL/TLS sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les données y sont chiffrées par ESP, comme dans un VPN IPsec."
+        },
+        {
+          "id": "b",
+          "text": "En mode sans client, un simple navigateur donne accès à certaines applications web internes."
+        },
+        {
+          "id": "c",
+          "text": "Il exige un routeur configuré de la même façon à chaque extrémité, comme un VPN site-à-site."
+        },
+        {
+          "id": "d",
+          "text": "La passerelle prouve son identité au client par un certificat numérique, comme un serveur HTTPS."
+        },
+        {
+          "id": "e",
+          "text": "Seule l'authentification est protégée ; les données circulent ensuite en clair."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Un VPN SSL/TLS s'appuie sur TLS, le protocole du HTTPS. Dans la poignée de main TLS, la passerelle présente son certificat, que le client vérifie avant d'envoyer les identifiants de l'utilisateur. Il existe deux modes : avec client (Cisco Secure Client), qui crée un vrai tunnel réseau pour toutes les applications, et sans client (clientless), où un navigateur suffit pour atteindre, via un portail, certaines applications web internes. Les données restent chiffrées par TLS (ou DTLS) pendant toute la session.",
+    "distractorNotes": {
+      "a": "Un VPN SSL/TLS chiffre les données avec TLS ou DTLS, pas avec ESP, propre à IPsec.",
+      "c": "C'est un VPN d'accès distant : l'utilisateur n'a besoin que d'un client ou d'un navigateur, face à une passerelle unique.",
+      "e": "TLS chiffre et protège en intégrité toute la session, pas seulement l'authentification."
+    },
+    "reference": "Cisco Secure Firewall ASA VPN Configuration Guide"
+  },
+  {
+    "slug": "ccna-5.5-split-tunnel-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un télétravailleur, chez lui sur le réseau 192.168.1.0/24, se connecte au VPN d'accès distant du siège avec Cisco Secure Client. Le siège utilise les réseaux 10.0.0.0/8 et 172.16.0.0/16, mais la politique de tunnel partagé (split tunneling) envoyée par la passerelle ne liste que 10.0.0.0/8. Quelles deux affirmations sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La navigation vers un site web public passe par le tunnel, puis par le pare-feu du siège."
+        },
+        {
+          "id": "b",
+          "text": "Le trafic vers le serveur 172.16.1.10 passe lui aussi par le tunnel, car la passerelle connaît ce réseau."
+        },
+        {
+          "id": "c",
+          "text": "Le trafic vers le serveur 10.20.5.8 passe chiffré dans le tunnel."
+        },
+        {
+          "id": "d",
+          "text": "Le trafic vers le serveur 10.20.5.8 part en clair, car le tunnel partagé ne chiffre pas les flux internes."
+        },
+        {
+          "id": "e",
+          "text": "Le trafic vers le serveur 172.16.1.10 sort hors du tunnel, par la connexion Internet du domicile, et n'atteint pas le serveur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Avec le tunnel partagé, la passerelle indique au client les seuls réseaux à joindre par le tunnel ; le client installe des routes vers ces réseaux via l'interface VPN et garde sa route par défaut locale pour tout le reste. 10.20.5.8 appartient à 10.0.0.0/8 : ce trafic est chiffré dans le tunnel. 172.16.1.10 n'est pas dans la liste : il suit la route par défaut du domicile, part en clair vers Internet, où une adresse privée n'est pas routée. Il faut ajouter 172.16.0.0/16 à la politique. La navigation publique sort, elle aussi, directement par la box.",
+    "distractorNotes": {
+      "a": "Avec le tunnel partagé, le trafic vers Internet suit la route par défaut locale : il ne passe ni par le tunnel ni par le pare-feu du siège.",
+      "b": "Le client ne place dans le tunnel que les réseaux de la politique ; ce que la passerelle connaît par ailleurs n'y change rien.",
+      "d": "Le trafic destiné aux réseaux de la politique est chiffré comme dans un tunnel complet ; le tunnel partagé ne fait que laisser le reste hors du tunnel."
+    },
+    "reference": "Cisco Secure Firewall ASA VPN Configuration Guide — Split Tunneling"
+  },
+  {
+    "slug": "ccna-5.5-ipsec-sa-properties-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les associations de sécurité (SA) IPsec sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Une SA IPsec est unidirectionnelle : un échange dans les deux sens en demande une paire."
+        },
+        {
+          "id": "b",
+          "text": "La SA IKE de phase 1 transporte les données des utilisateurs entre les sites."
+        },
+        {
+          "id": "c",
+          "text": "Une SA IPsec reste valable indéfiniment une fois négociée."
+        },
+        {
+          "id": "d",
+          "text": "Le récepteur retrouve la SA d'un paquet grâce au SPI porté dans l'en-tête ESP ou AH."
+        },
+        {
+          "id": "e",
+          "text": "Le SPI est le numéro de port UDP choisi par chaque pair pour ses données."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Une SA IPsec décrit la protection appliquée au trafic dans un seul sens : protocole (ESP ou AH), algorithmes, clés, durée de vie. Deux pairs qui échangent dans les deux sens ont donc au moins deux SA IPsec, une entrante et une sortante. Chaque paquet ESP ou AH porte le SPI (Security Parameter Index) de sa SA : le récepteur s'en sert pour retrouver les clés et algorithmes à appliquer. Les SA ont une durée de vie, en temps ou en volume, à l'issue de laquelle IKE en négocie de nouvelles.",
+    "distractorNotes": {
+      "b": "La SA IKE protège seulement les échanges de négociation entre les pairs ; les données passent dans les SA IPsec négociées en phase 2.",
+      "c": "Les SA IPsec expirent au bout de leur durée de vie (en secondes ou en kilo-octets) et sont renégociées.",
+      "e": "Le SPI est un champ de 32 bits des en-têtes ESP et AH, sans rapport avec un numéro de port."
+    },
+    "reference": "RFC 4301, section 4.1"
+  },
+  {
+    "slug": "ccna-5.5-ipsec-protocol-numbers-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un pare-feu placé entre deux passerelles VPN IPsec doit laisser passer la négociation et les données du tunnel (sans NAT sur le chemin). Donnez les valeurs à autoriser.",
+      "fields": [
+        {
+          "id": "esp",
+          "label": "Numéro de protocole IP d'ESP (nombre entier)"
+        },
+        {
+          "id": "ah",
+          "label": "Numéro de protocole IP d'AH (nombre entier)"
+        },
+        {
+          "id": "ike",
+          "label": "Port UDP d'IKE (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "esp": {
+          "accepted": [
+            "50"
+          ],
+          "normalize": "int"
+        },
+        "ah": {
+          "accepted": [
+            "51"
+          ],
+          "normalize": "int"
+        },
+        "ike": {
+          "accepted": [
+            "500"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "ESP et AH ne sont ni TCP ni UDP : ce sont des protocoles transportés directement par IP, identifiés par le champ protocole de l'en-tête IPv4 (ou Next Header en IPv6), 50 pour ESP et 51 pour AH. La négociation IKE, en version 1 comme en version 2, utilise UDP 500. Quand un NAT est détecté sur le chemin, NAT-T fait passer IKE et ESP sur UDP 4500, d'où l'habitude d'ouvrir aussi ce port.",
+    "reference": "RFC 4302 ; RFC 4303 ; RFC 7296"
+  },
+  {
+    "slug": "ccna-5.5-esp-tunnel-packet-layout-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une passerelle protège un paquet TCP avec ESP en mode tunnel, avec chiffrement et intégrité. Ordonnez les éléments du paquet émis, du premier transmis au dernier.",
+      "items": [
+        {
+          "id": "trailer",
+          "text": "Trailer ESP (bourrage, longueur du bourrage, en-tête suivant)"
+        },
+        {
+          "id": "origip",
+          "text": "En-tête IP d'origine (adresses des hôtes)"
+        },
+        {
+          "id": "icv",
+          "text": "Données d'authentification ESP (ICV)"
+        },
+        {
+          "id": "newip",
+          "text": "Nouvel en-tête IP (adresses des deux passerelles)"
+        },
+        {
+          "id": "tcp",
+          "text": "En-tête TCP et données de l'application"
+        },
+        {
+          "id": "esph",
+          "text": "En-tête ESP (SPI et numéro de séquence)"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "newip",
+        "esph",
+        "origip",
+        "tcp",
+        "trailer",
+        "icv"
+      ]
+    },
+    "explanation": "Le nouvel en-tête IP, en clair, achemine le paquet entre les passerelles ; son champ protocole vaut 50. Vient ensuite l'en-tête ESP, en clair lui aussi, avec le SPI et le numéro de séquence. Le paquet d'origine complet (en-tête IP puis TCP et données) et le trailer ESP forment la partie chiffrée ; le trailer apporte le bourrage exigé par l'algorithme et indique le protocole encapsulé. L'ICV termine le paquet : il couvre l'en-tête ESP et la partie chiffrée, et permet de vérifier l'intégrité avant tout déchiffrement.",
+    "reference": "RFC 4303"
+  },
+  {
+    "slug": "ccna-5.5-secure-client-connection-steps-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un télétravailleur se connecte au VPN d'accès distant SSL/TLS de son entreprise. Ordonnez les étapes, du lancement du client à l'accès aux serveurs du siège.",
+      "items": [
+        {
+          "id": "pool",
+          "text": "La passerelle attribue au client une adresse IP de son pool et lui envoie la politique, dont les réseaux du tunnel partagé."
+        },
+        {
+          "id": "launch",
+          "text": "L'utilisateur lance Cisco Secure Client et choisit la passerelle du siège."
+        },
+        {
+          "id": "data",
+          "text": "Le trafic de l'utilisateur vers les réseaux du siège circule chiffré dans le tunnel."
+        },
+        {
+          "id": "auth",
+          "text": "L'utilisateur saisit ses identifiants, que la passerelle fait vérifier par un serveur RADIUS."
+        },
+        {
+          "id": "tls",
+          "text": "Le client et la passerelle établissent une session TLS ; la passerelle présente son certificat."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "launch",
+        "tls",
+        "auth",
+        "pool",
+        "data"
+      ]
+    },
+    "explanation": "Le client ouvre d'abord une session TLS sur TCP 443 : la passerelle s'authentifie par son certificat et un canal chiffré s'établit. Ce n'est qu'ensuite que l'utilisateur envoie ses identifiants, ainsi protégés ; la passerelle les fait valider, souvent par un serveur AAA. Une fois l'utilisateur authentifié, la passerelle lui attribue une adresse interne et pousse sa politique (DNS, réseaux du tunnel partagé…). Le client installe alors ses routes et le trafic vers le siège passe dans le tunnel, en TLS ou en DTLS.",
+    "reference": "Cisco Secure Client Administrator Guide"
+  },
+  {
+    "slug": "ccna-5.5-vpn-protocols-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque protocole utilisé dans les VPN à son rôle.",
+      "left": [
+        {
+          "id": "ah",
+          "text": "AH"
+        },
+        {
+          "id": "esp",
+          "text": "ESP"
+        },
+        {
+          "id": "ike",
+          "text": "IKE"
+        },
+        {
+          "id": "gre",
+          "text": "GRE"
+        },
+        {
+          "id": "tls",
+          "text": "TLS"
+        }
+      ],
+      "right": [
+        {
+          "id": "a",
+          "text": "Négocie les associations de sécurité et les clés utilisées par IPsec"
+        },
+        {
+          "id": "b",
+          "text": "Traduit les adresses privées des hôtes en une adresse publique"
+        },
+        {
+          "id": "c",
+          "text": "Encapsule des paquets de tout protocole, multicast compris, sans les chiffrer"
+        },
+        {
+          "id": "d",
+          "text": "Assure l'intégrité et l'authentification de l'origine des paquets, sans les chiffrer"
+        },
+        {
+          "id": "e",
+          "text": "Protège les VPN d'accès distant établis sur le port 443, avec un client ou un navigateur"
+        },
+        {
+          "id": "f",
+          "text": "Chiffre la charge utile des paquets et en assure aussi l'intégrité"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "ah": "d",
+        "esp": "f",
+        "ike": "a",
+        "gre": "c",
+        "tls": "e"
+      }
+    },
+    "explanation": "AH (protocole 51) authentifie le paquet, en-tête IP compris, mais ne le chiffre pas ; ESP (protocole 50) chiffre et, en pratique, assure aussi l'intégrité, d'où sa domination. IKE (UDP 500) négocie les SA et dérive les clés. GRE (protocole 47) transporte n'importe quel protocole, y compris le multicast des protocoles de routage, mais sans aucune sécurité : on le combine à IPsec. TLS, le protocole du HTTPS, sert aux VPN SSL/TLS d'accès distant.",
+    "distractorNotes": {
+      "b": "Cette description est celle du NAT, qui ne figure pas dans la colonne de gauche et n'est pas un protocole de VPN."
+    },
+    "reference": "RFC 4301 ; RFC 2784 (GRE)"
+  },
+  {
+    "slug": "ccna-5.5-s2s-vs-remote-access-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque caractéristique selon le type de VPN auquel elle correspond.",
+      "left": [
+        {
+          "id": "soft",
+          "text": "Un logiciel installé sur le portable de l'utilisateur établit le tunnel."
+        },
+        {
+          "id": "perm",
+          "text": "Le routeur d'une agence et le pare-feu du siège maintiennent un tunnel permanent."
+        },
+        {
+          "id": "pool",
+          "text": "La passerelle attribue au client une adresse prise dans un pool."
+        },
+        {
+          "id": "all",
+          "text": "Un seul tunnel protège le trafic de tous les postes de deux réseaux."
+        },
+        {
+          "id": "demand",
+          "text": "Un commercial en déplacement ouvre lui-même le tunnel quand il en a besoin."
+        }
+      ],
+      "right": [
+        {
+          "id": "s2s",
+          "text": "VPN site-à-site"
+        },
+        {
+          "id": "ra",
+          "text": "VPN d'accès distant"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "soft": "ra",
+        "perm": "s2s",
+        "pool": "ra",
+        "all": "s2s",
+        "demand": "ra"
+      }
+    },
+    "explanation": "Un VPN site-à-site relie deux réseaux par leurs passerelles (routeurs ou pare-feu) : le tunnel est permanent ou monté automatiquement par le trafic, et il protège en une fois le trafic de tous les postes, qui n'ont rien à installer. Un VPN d'accès distant relie un utilisateur isolé : un client comme Cisco Secure Client, ou un navigateur en mode sans client, ouvre le tunnel à la demande, et la passerelle attribue au poste une adresse interne pour la durée de la session.",
+    "reference": "Cisco IOS XE — Security for VPNs with IPsec Configuration Guide"
+  },
+  {
+    "slug": "ccna-5.8-aaa-new-model-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un routeur Cisco IOS neuf, quelle commande active le modèle AAA et doit être saisie avant toute commande « aaa authentication » ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "aaa enable"
+        },
+        {
+          "id": "b",
+          "text": "aaa authentication login default local"
+        },
+        {
+          "id": "c",
+          "text": "service aaa"
+        },
+        {
+          "id": "d",
+          "text": "aaa new-model"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "« aaa new-model » active AAA sur l'équipement ; tant qu'elle n'est pas saisie, IOS refuse les commandes « aaa authentication », « aaa authorization » et « aaa accounting ». Une fois AAA actif, l'authentification des lignes ne repose plus sur les commandes « login » et « password » des lignes, mais sur des listes de méthodes (default ou nommées) qui indiquent dans quel ordre interroger les serveurs RADIUS ou TACACS+ et la base locale.",
+    "distractorNotes": {
+      "a": "« aaa enable » n'existe pas sur IOS ; c'est « aaa new-model » qui active AAA.",
+      "b": "Cette commande crée une liste de méthodes ; elle n'est acceptée qu'après « aaa new-model ».",
+      "c": "Il n'existe pas de commande « service aaa » : les commandes « service » activent d'autres fonctions, comme « service password-encryption »."
+    },
+    "reference": "Cisco IOS XE Security Configuration Guide — AAA Overview"
+  },
+  {
+    "slug": "ccna-5.8-radius-only-lockout-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur R1, « aaa new-model » est actif et la seule liste d'authentification configurée est « aaa authentication login default group radius » ; aucune liste nommée n'est appliquée aux lignes. L'utilisateur local admin existe. Le serveur RADIUS tombe en panne et ne répond plus. Que se passe-t-il quand l'administrateur tente de se connecter avec le compte admin, en SSH puis sur le port console ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les deux connexions aboutissent : IOS se replie toujours sur la base locale quand aucun serveur ne répond."
+        },
+        {
+          "id": "b",
+          "text": "Les deux connexions sont refusées : la liste default s'applique aussi à la console et ne prévoit aucun repli."
+        },
+        {
+          "id": "c",
+          "text": "La session SSH est refusée, mais la console accepte le compte local, car elle n'est jamais soumise à AAA."
+        },
+        {
+          "id": "d",
+          "text": "Les deux connexions aboutissent avec le mot de passe enable, utilisé d'office en dernier recours."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une liste de méthodes n'essaie la méthode suivante que si la précédente renvoie une erreur, par exemple un serveur qui ne répond pas. Ici, la liste ne contient qu'une méthode, group radius : quand le serveur ne répond pas, il ne reste aucune méthode et l'authentification échoue. Sans liste nommée sur les lignes, la liste default s'applique à toutes, console comprise : l'administrateur est bloqué partout. D'où la bonne pratique « aaa authentication login default group radius local », avec un compte local de secours.",
+    "distractorNotes": {
+      "a": "IOS ne se replie sur la base locale que si la méthode local figure dans la liste ; aucun repli implicite n'existe.",
+      "c": "Avec aaa new-model, la liste default s'applique aussi à la ligne console, sauf si une liste nommée y est appliquée.",
+      "d": "La méthode enable n'est utilisée que si elle figure dans la liste ; elle n'y est pas."
+    },
+    "reference": "Cisco IOS XE Security Configuration Guide — Configuring Authentication"
+  },
+  {
+    "slug": "ccna-5.8-8021x-eapol-radius-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un poste s'authentifie en 802.1X sur un port d'un commutateur d'accès, qui fait vérifier ses identifiants par Cisco ISE. Comment les messages EAP sont-ils transportés ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dans EAPoL entre le poste et le commutateur, puis dans RADIUS entre le commutateur et ISE"
+        },
+        {
+          "id": "b",
+          "text": "Dans EAPoL de bout en bout, du poste jusqu'à ISE, le commutateur se contentant de commuter"
+        },
+        {
+          "id": "c",
+          "text": "Dans EAPoL entre le poste et le commutateur, puis dans TACACS+ entre le commutateur et ISE"
+        },
+        {
+          "id": "d",
+          "text": "Dans RADIUS entre le poste et le commutateur, puis dans EAPoL entre le commutateur et ISE"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "EAPoL (EAP over LAN) encapsule EAP directement dans des trames Ethernet : il ne fonctionne que sur le lien entre le supplicant et l'authentificateur, alors que le poste n'a pas encore d'accès IP. Le commutateur, authentificateur, extrait les messages EAP et les place dans des attributs EAP-Message de paquets RADIUS (Access-Request, Access-Challenge) qu'il échange avec ISE, le serveur d'authentification. Le commutateur relaie ainsi la méthode EAP sans en connaître les secrets.",
+    "distractorNotes": {
+      "b": "EAPoL est une encapsulation de niveau 2, limitée au lien local ; il ne traverse pas le réseau IP jusqu'à ISE.",
+      "c": "TACACS+ sert à l'administration des équipements ; il ne transporte pas EAP. 802.1X s'appuie sur RADIUS.",
+      "d": "C'est l'inverse : EAPoL sur le lien du poste, RADIUS entre le commutateur et le serveur."
+    },
+    "reference": "IEEE 802.1X-2020 ; RFC 3579"
+  },
+  {
+    "slug": "ccna-5.8-8021x-unauthorized-port-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un port de commutateur est configuré en 802.1X de base, sans VLAN invité ni MAB. Un poste vient de s'y raccorder et n'est pas encore authentifié. Quel trafic le port laisse-t-il passer ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tout le trafic du poste, mais seulement dans le VLAN natif"
+        },
+        {
+          "id": "b",
+          "text": "Uniquement les trames EAPoL, ainsi que CDP et STP"
+        },
+        {
+          "id": "c",
+          "text": "Le DHCP et le DNS, pour que le poste obtienne une adresse"
+        },
+        {
+          "id": "d",
+          "text": "Le trafic IP du poste à destination du serveur RADIUS"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Tant que le poste n'est pas authentifié, le port est dans l'état non autorisé : le commutateur n'accepte que les trames EAPoL de l'échange 802.1X, plus les protocoles de contrôle CDP et STP. Aucun trafic IP du poste ne passe, pas même DHCP. Ce n'est qu'après l'Access-Accept du serveur et l'envoi d'un EAP-Success que le port passe à l'état autorisé et commute normalement le trafic du poste, qui peut alors demander une adresse.",
+    "distractorNotes": {
+      "a": "Un port 802.1X non autorisé ne commute pas le trafic du poste, quel que soit le VLAN.",
+      "c": "DHCP n'est autorisé qu'après l'authentification ; pour un accès limité avant celle-ci, il faudrait un VLAN invité ou une autre politique.",
+      "d": "Le poste ne parle jamais en IP au serveur RADIUS : c'est le commutateur qui l'interroge à sa place."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring IEEE 802.1X Port-Based Authentication"
+  },
+  {
+    "slug": "ccna-5.8-radius-password-hiding-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un analyste capture, entre R1 et le serveur RADIUS, l'Access-Request envoyé lors de la connexion de l'utilisateur jdupont. Quelle information de ce paquet est illisible sans la clé partagée entre R1 et le serveur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le nom de l'utilisateur (User-Name)"
+        },
+        {
+          "id": "b",
+          "text": "L'adresse IP de R1 (NAS-IP-Address)"
+        },
+        {
+          "id": "c",
+          "text": "Le mot de passe de l'utilisateur (User-Password)"
+        },
+        {
+          "id": "d",
+          "text": "Le port de destination UDP 1812"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "RADIUS ne chiffre pas tout le paquet : seul l'attribut User-Password est masqué, par un calcul MD5 qui combine la clé partagée et l'authentificateur de la requête. Le nom d'utilisateur, l'adresse du NAS et les autres attributs circulent en clair, et les en-têtes IP et UDP le sont forcément. C'est l'une des différences avec TACACS+, qui chiffre tout le corps de ses paquets.",
+    "distractorNotes": {
+      "a": "User-Name est un attribut transmis en clair ; une capture le révèle.",
+      "b": "NAS-IP-Address est transmis en clair, comme les autres attributs hors mot de passe.",
+      "d": "Le port de destination appartient à l'en-tête UDP, qui n'est jamais chiffré : les routeurs et les pare-feu doivent pouvoir le lire."
+    },
+    "reference": "RFC 2865, section 5.2"
+  },
+  {
+    "slug": "ccna-5.8-named-list-vty-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sur R1, la commande « login authentication VTY-AUTH » est configurée sous « line vty 0 15 » ; aucune liste nommée n'est appliquée à la console. Un serveur TACACS+ joignable et opérationnel est déclaré. Les administrateurs ouvrent sans problème leurs sessions SSH avec leurs comptes locaux, mais le serveur TACACS+ n'enregistre aucune tentative de connexion. Pourquoi ?",
+      "exhibit": "R1#show running-config | include aaa|login authentication\naaa new-model\naaa authentication login default group tacacs+ local\naaa authentication login VTY-AUTH local\n login authentication VTY-AUTH",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 se replie sur sa base locale, car le serveur TACACS+ ne répond pas à ses requêtes."
+        },
+        {
+          "id": "b",
+          "text": "Le serveur TACACS+ n'est consulté qu'après un échec de la base locale."
+        },
+        {
+          "id": "c",
+          "text": "Les lignes VTY utilisent la liste VTY-AUTH, qui ne contient que la méthode local."
+        },
+        {
+          "id": "d",
+          "text": "La liste default prime sur les listes nommées, mais seulement pour la console."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une liste nommée appliquée à une ligne par « login authentication » remplace, pour cette ligne, la liste default. Les lignes VTY utilisent donc VTY-AUTH, dont la seule méthode est local : R1 vérifie les comptes dans sa base et n'envoie aucune requête au serveur TACACS+, ce qui explique l'absence de traces. La liste default (group tacacs+ local) ne s'applique qu'aux lignes sans liste nommée, comme ici la console. Il faudrait « aaa authentication login VTY-AUTH group tacacs+ local ».",
+    "distractorNotes": {
+      "a": "Le serveur fonctionne et, surtout, VTY-AUTH ne contient aucune méthode TACACS+ : R1 ne l'interroge jamais pour les sessions SSH.",
+      "b": "VTY-AUTH ne contient que la méthode local : aucune méthode TACACS+ ne vient après elle, le serveur n'est donc jamais consulté pour les sessions SSH.",
+      "d": "C'est l'inverse : une liste nommée appliquée à une ligne prime sur la liste default pour cette ligne ; la console, sans liste nommée, suit la liste default."
+    },
+    "reference": "Cisco IOS XE Security Configuration Guide — Configuring Authentication"
+  },
+  {
+    "slug": "ccna-5.8-central-aaa-benefits-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux avantages apporte un serveur AAA central par rapport à des comptes locaux configurés sur chaque équipement ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La suppression d'un compte sur le serveur retire l'accès de l'utilisateur à tous les équipements à la fois."
+        },
+        {
+          "id": "b",
+          "text": "Les équipements n'ont plus besoin d'aucun compte local, même de secours."
+        },
+        {
+          "id": "c",
+          "text": "Les sessions Telnet deviennent chiffrées grâce au serveur AAA."
+        },
+        {
+          "id": "d",
+          "text": "Les connexions et les commandes des administrateurs peuvent être journalisées en un point unique."
+        },
+        {
+          "id": "e",
+          "text": "Les équipements n'ont plus besoin d'être joignables en IP depuis le serveur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Avec un serveur AAA (RADIUS ou TACACS+), les comptes sont gérés à un seul endroit : créer, modifier ou supprimer un compte s'applique immédiatement à tous les équipements qui interrogent ce serveur. Le serveur centralise aussi la traçabilité (accounting) : début et fin des sessions, commandes saisies. On garde toutefois un compte local de secours, utilisé par la méthode local quand aucun serveur ne répond.",
+    "distractorNotes": {
+      "b": "Un compte local de secours reste recommandé, pour se connecter quand le serveur est injoignable (méthode local en fin de liste).",
+      "c": "AAA vérifie les identifiants mais ne chiffre pas la session Telnet, qui reste en clair ; il faut SSH pour cela.",
+      "e": "L'équipement doit justement joindre le serveur en IP pour lui soumettre chaque authentification."
+    },
+    "reference": "Cisco IOS XE Security Configuration Guide — AAA Overview"
+  },
+  {
+    "slug": "ccna-5.8-radius-server-parameters-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur un routeur où « aaa new-model » est actif, quelles deux informations faut-il configurer au minimum pour qu'il puisse interroger un serveur RADIUS qui le connaît déjà comme client ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le mot de passe de chaque utilisateur à authentifier"
+        },
+        {
+          "id": "b",
+          "text": "L'adresse IP du serveur RADIUS"
+        },
+        {
+          "id": "c",
+          "text": "Le certificat numérique de chaque poste client"
+        },
+        {
+          "id": "d",
+          "text": "L'adresse MAC du serveur RADIUS"
+        },
+        {
+          "id": "e",
+          "text": "La clé secrète partagée avec le serveur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Le routeur, client RADIUS (NAS), doit savoir où envoyer ses requêtes (adresse du serveur, avec les ports par défaut si on ne les précise pas) et connaître la clé secrète partagée, déclarée à l'identique sur le serveur. Cette clé sert à authentifier les échanges et à masquer le mot de passe dans l'Access-Request. Sur IOS : « radius server NOM », puis « address ipv4 … » et « key … ». Les comptes des utilisateurs, eux, sont stockés sur le serveur.",
+    "distractorNotes": {
+      "a": "Les mots de passe des utilisateurs sont stockés sur le serveur ; c'est tout l'intérêt de l'AAA centralisé.",
+      "c": "Les certificats des postes concernent certaines méthodes EAP en 802.1X et sont vérifiés par le serveur, pas déclarés sur le routeur.",
+      "d": "Le serveur est joint en IP, souvent à travers des routeurs ; son adresse MAC n'a pas à être configurée."
+    },
+    "reference": "Cisco IOS XE Security Configuration Guide — Configuring RADIUS"
+  },
+  {
+    "slug": "ccna-5.8-radius-fallback-privilege-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le compte local admin est configuré avec « privilege 15 ». Aucune liste nommée n'est appliquée aux lignes de R1, et les administrateurs s'y connectent en SSH. Quelles deux affirmations sont correctes ?",
+      "exhibit": "R1#show running-config | section aaa|radius\naaa new-model\naaa authentication login default group radius local\naaa authorization exec default group radius local\nradius server ISE1\n address ipv4 10.10.10.50 auth-port 1812 acct-port 1813\n key R4d1usK3y",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 envoie ses requêtes d'authentification à ISE1 sur le port TCP 1812."
+        },
+        {
+          "id": "b",
+          "text": "Si ISE1 ne répond pas, admin peut se connecter avec son mot de passe local et arrive directement à l'invite R1#."
+        },
+        {
+          "id": "c",
+          "text": "R1 ne consulte sa base locale que si le compte saisi n'existe pas sur ISE1."
+        },
+        {
+          "id": "d",
+          "text": "Si ISE1 répond, c'est son Access-Accept, et non le compte local, qui détermine le niveau de privilège de la session."
+        },
+        {
+          "id": "e",
+          "text": "La clé R4d1usK3y sert à chiffrer l'intégralité de chaque paquet RADIUS."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Les deux listes default suivent l'ordre group radius puis local, et local n'est utilisé que si ISE1 ne répond pas. Serveur en panne : admin est authentifié par la base locale, puis l'autorisation EXEC, elle aussi repliée sur local, lui donne le niveau de son compte, 15, d'où l'invite R1#. Serveur opérationnel : authentification et autorisation viennent d'ISE1, et le niveau de privilège est celui que renvoie son Access-Accept (attribut shell:priv-lvl, par exemple) ; « privilege 15 » du compte local ne joue alors aucun rôle. (L'autorisation EXEC ne s'applique pas à la console sans « aaa authorization console » : la question porte sur les sessions SSH.)",
+    "distractorNotes": {
+      "a": "RADIUS utilise UDP : 1812 pour l'authentification et 1813 pour la traçabilité.",
+      "c": "Si ISE1 répond par un Access-Reject, compte inconnu compris, l'authentification échoue sans consulter la base locale ; local ne sert que si le serveur ne répond pas.",
+      "e": "RADIUS ne masque que l'attribut User-Password ; la clé sert aussi à authentifier les réponses, mais le reste du paquet circule en clair."
+    },
+    "reference": "Cisco IOS XE Security Configuration Guide — Configuring RADIUS ; Configuring Authorization"
+  },
+  {
+    "slug": "ccna-5.8-local-fallback-keyword-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur R1, « aaa new-model » est actif et la commande « aaa authentication login default group tacacs+ » est configurée. Quel mot-clé faut-il ajouter à la fin de cette commande pour que R1 vérifie les identifiants dans sa propre base de comptes (commandes username) quand aucun serveur TACACS+ ne répond ?",
+      "fields": [
+        {
+          "id": "method",
+          "label": "Mot-clé de la méthode (un seul mot)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "method": {
+          "accepted": [
+            "local",
+            "local-case"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "La méthode local désigne la base de comptes de l'équipement, définie par les commandes « username … secret … ». Placée après group tacacs+, elle n'est utilisée que si la méthode précédente renvoie une erreur, c'est-à-dire si aucun serveur TACACS+ ne répond ; un refus explicite du serveur, lui, met fin à l'authentification. La variante local-case fait de même, mais avec un nom d'utilisateur sensible à la casse.",
+    "reference": "Cisco IOS XE Security Configuration Guide — Configuring Authentication"
+  },
+  {
+    "slug": "ccna-5.8-tacacs-privilege-level-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur R1, « aaa authorization exec default group tacacs+ local » est configurée, et le serveur TACACS+ renvoie un niveau de privilège pour chaque administrateur. Quel niveau doit-il renvoyer pour qu'un administrateur arrive directement à l'invite R1#, avec accès à toutes les commandes ?",
+      "fields": [
+        {
+          "id": "priv",
+          "label": "Niveau de privilège (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "priv": {
+          "accepted": [
+            "15"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "IOS compte 16 niveaux de privilège, de 0 à 15. Le niveau 1 correspond au mode EXEC utilisateur (invite R1>) et le niveau 15 au mode EXEC privilégié complet (invite R1#), qui donne accès à toutes les commandes, dont « configure terminal ». Avec l'autorisation EXEC, c'est le serveur qui fixe ce niveau (attribut priv-lvl=15 en TACACS+) : l'administrateur n'a alors pas besoin de taper « enable ».",
+    "reference": "Cisco IOS XE Security Configuration Guide — Configuring Authorization"
+  },
+  {
+    "slug": "ccna-5.8-radius-login-list-cli-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, AAA n'est pas encore actif. Depuis le mode de configuration globale, activez AAA, puis créez la liste d'authentification de connexion par défaut, qui interroge les serveurs RADIUS et se replie sur la base locale si aucun ne répond. Enfin, déclarez le serveur RADIUS nommé RAD1, d'adresse 10.0.20.10, en précisant explicitement les ports 1812 et 1813, et sa clé partagée Rad1usS3cret (adresse et clé dans l'ordre de votre choix).",
+      "prompt": "R1(config)#",
+      "lines": 5
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          3,
+          4
+        ]
+      ],
+      "commands": [
+        [
+          "aaa new-model"
+        ],
+        [
+          "aaa authentication login default group radius local"
+        ],
+        [
+          "radius server RAD1"
+        ],
+        [
+          "address ipv4 10.0.20.10 auth-port 1812 acct-port 1813"
+        ],
+        [
+          "key Rad1usS3cret",
+          "key 0 Rad1usS3cret"
+        ]
+      ]
+    },
+    "explanation": "« aaa new-model » doit précéder toute commande aaa. La liste default s'applique à toutes les lignes sans liste nommée ; elle interroge d'abord les serveurs RADIUS (group radius) et ne passe à local que si aucun ne répond, un Access-Reject mettant fin à l'authentification. Une liste peut citer group radius avant la déclaration du serveur. « radius server RAD1 » ouvre le sous-mode du serveur, où l'on donne l'adresse et les ports (UDP 1812 pour l'authentification, 1813 pour l'accounting) et la clé, à déclarer à l'identique sur le serveur.",
+    "reference": "Cisco IOS XE Security Configuration Guide — Configuring RADIUS"
+  },
+  {
+    "slug": "ccna-5.8-tacacs-vty-list-cli-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, « aaa new-model » est actif et le serveur TACACS+ TAC1 est déjà déclaré. Depuis le mode de configuration globale, créez la liste d'authentification de connexion nommée ADMIN-SSH, qui interroge les serveurs TACACS+ et se replie sur la base locale si aucun ne répond. Appliquez-la ensuite aux lignes VTY 0 à 15, et limitez ces lignes à SSH (ces deux réglages dans l'ordre de votre choix).",
+      "prompt": "R1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          2,
+          3
+        ]
+      ],
+      "commands": [
+        [
+          "aaa authentication login ADMIN-SSH group tacacs+ local"
+        ],
+        [
+          "line vty 0 15"
+        ],
+        [
+          "login authentication ADMIN-SSH"
+        ],
+        [
+          "transport input ssh"
+        ]
+      ]
+    },
+    "explanation": "Une liste nommée n'a d'effet que si elle est appliquée à une ligne, avec « login authentication ADMIN-SSH » ; elle remplace alors la liste default pour les lignes VTY. L'ordre group tacacs+ local fait interroger TACACS+ (TCP 49) en premier et réserve la base locale au cas où aucun serveur ne répond. « transport input ssh » refuse Telnet sur ces lignes, pour que les identifiants ne circulent jamais en clair.",
+    "reference": "Cisco IOS XE Security Configuration Guide — Configuring Authentication"
+  },
+  {
+    "slug": "ccna-5.8-8021x-switch-cli-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, « aaa new-model » est actif et le serveur RADIUS ISE1 est déjà déclaré. Depuis le mode de configuration globale : faites authentifier 802.1X par les serveurs RADIUS (liste par défaut) et activez 802.1X sur le commutateur, dans l'ordre de votre choix. Puis, sur GigabitEthernet1/0/5, déjà en mode access, faites contrôler le port par l'authentification en mode automatique et définissez-le comme authentificateur, dans l'ordre de votre choix.",
+      "prompt": "SW1(config)#",
+      "lines": 5
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          0,
+          1
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "commands": [
+        [
+          "aaa authentication dot1x default group radius"
+        ],
+        [
+          "dot1x system-auth-control"
+        ],
+        [
+          "interface gigabitethernet1/0/5"
+        ],
+        [
+          "authentication port-control auto",
+          "dot1x port-control auto"
+        ],
+        [
+          "dot1x pae authenticator"
+        ]
+      ]
+    },
+    "explanation": "« aaa authentication dot1x default group radius » indique que les authentifications 802.1X sont soumises aux serveurs RADIUS ; « dot1x system-auth-control » active 802.1X sur l'ensemble du commutateur. Sur le port, « authentication port-control auto » le place dans l'état non autorisé tant que le poste ne s'est pas authentifié (force-authorized, la valeur par défaut, laisserait tout passer), et « dot1x pae authenticator » fait jouer au port le rôle d'authentificateur.",
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring IEEE 802.1X Port-Based Authentication"
+  },
+  {
+    "slug": "ccna-5.8-8021x-auth-flow-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un poste se raccorde à un port de commutateur configuré en 802.1X ; le commutateur fait vérifier les identifiants par Cisco ISE. Ordonnez les étapes, du raccordement du poste à l'obtention de son adresse IP.",
+      "items": [
+        {
+          "id": "method",
+          "text": "Le poste et ISE déroulent la méthode EAP choisie (PEAP, par exemple), relayée par le commutateur."
+        },
+        {
+          "id": "dhcp",
+          "text": "Le poste obtient son adresse IP par DHCP."
+        },
+        {
+          "id": "link",
+          "text": "Le lien monte ; le commutateur place le port dans l'état non autorisé."
+        },
+        {
+          "id": "accept",
+          "text": "ISE renvoie un Access-Accept ; le commutateur envoie un EAP-Success au poste et autorise le port."
+        },
+        {
+          "id": "req",
+          "text": "Le commutateur envoie au poste, en EAPoL, une demande d'identité (EAP-Request/Identity)."
+        },
+        {
+          "id": "resp",
+          "text": "Le poste répond avec son identité, que le commutateur transmet à ISE dans un Access-Request RADIUS."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "link",
+        "req",
+        "resp",
+        "method",
+        "accept",
+        "dhcp"
+      ]
+    },
+    "explanation": "Dès que le lien monte, le port 802.1X est non autorisé : seul EAPoL passe. L'authentificateur demande l'identité du supplicant ; la réponse, encapsulée dans RADIUS, ouvre l'échange avec ISE. La méthode EAP (PEAP, EAP-TLS…) se déroule ensuite entre le poste et ISE, le commutateur relayant les messages entre EAPoL et RADIUS (Access-Challenge, Access-Request). Après l'Access-Accept, le commutateur envoie EAP-Success et autorise le port ; le poste peut alors seulement émettre ses requêtes DHCP.",
+    "reference": "IEEE 802.1X-2020 ; RFC 3579"
+  },
+  {
+    "slug": "ccna-5.8-8021x-roles-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque élément d'un déploiement 802.1X à son rôle. Un même rôle peut être choisi plusieurs fois.",
+      "left": [
+        {
+          "id": "pc",
+          "text": "Le logiciel d'un poste de travail, qui fournit ses identifiants en EAP"
+        },
+        {
+          "id": "sw",
+          "text": "Le commutateur d'accès, qui garde le port fermé jusqu'à l'authentification"
+        },
+        {
+          "id": "ise",
+          "text": "Cisco ISE, qui vérifie les identifiants et accepte ou refuse l'accès"
+        },
+        {
+          "id": "wlc",
+          "text": "Le WLC, qui relaie vers RADIUS l'EAP des clients sans fil"
+        },
+        {
+          "id": "phone",
+          "text": "Un téléphone IP, qui s'authentifie lui-même avant d'accéder au réseau"
+        }
+      ],
+      "right": [
+        {
+          "id": "a",
+          "text": "Authentificateur (authenticator)"
+        },
+        {
+          "id": "b",
+          "text": "Serveur d'authentification (authentication server)"
+        },
+        {
+          "id": "c",
+          "text": "Demandeur (supplicant)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "pc": "c",
+        "sw": "a",
+        "ise": "b",
+        "wlc": "a",
+        "phone": "c"
+      }
+    },
+    "explanation": "Le supplicant est l'équipement qui demande l'accès et fournit ses identifiants : logiciel d'un poste ou téléphone IP. L'authentificateur contrôle l'accès au réseau : commutateur sur un port filaire, WLC (ou AP autonome) en sans fil ; il relaie l'EAP entre EAPoL et RADIUS sans valider lui-même les identifiants. Le serveur d'authentification, typiquement ISE, vérifie les identifiants et renvoie Access-Accept ou Access-Reject, avec d'éventuels attributs d'autorisation comme un VLAN.",
+    "reference": "IEEE 802.1X-2020"
+  },
+  {
+    "slug": "ccna-5.8-aaa-functions-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque action selon la fonction AAA dont elle relève.",
+      "left": [
+        {
+          "id": "pwd",
+          "text": "Vérifier le mot de passe saisi par un administrateur dans une session SSH"
+        },
+        {
+          "id": "vlan",
+          "text": "Placer un poste authentifié en 802.1X dans le VLAN 30 selon son groupe"
+        },
+        {
+          "id": "reload",
+          "text": "Refuser la commande reload à un compte d'opérateur"
+        },
+        {
+          "id": "volume",
+          "text": "Totaliser le volume de données échangé par chaque utilisateur du VPN"
+        },
+        {
+          "id": "cert",
+          "text": "Contrôler le certificat présenté par un poste lors de sa connexion"
+        }
+      ],
+      "right": [
+        {
+          "id": "authn",
+          "text": "Authentification"
+        },
+        {
+          "id": "authz",
+          "text": "Autorisation"
+        },
+        {
+          "id": "acct",
+          "text": "Traçabilité (accounting)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "pwd": "authn",
+        "vlan": "authz",
+        "reload": "authz",
+        "volume": "acct",
+        "cert": "authn"
+      }
+    },
+    "explanation": "L'authentification répond à « qui êtes-vous ? » : mot de passe, certificat ou jeton prouvent l'identité. L'autorisation répond à « qu'avez-vous le droit de faire ? » : niveau de privilège, commandes permises ou refusées, VLAN ou ACL attribués à un poste après son authentification. La traçabilité (accounting) enregistre ce qui a été fait : début et fin des sessions, commandes saisies, volume de données, utiles pour l'audit et la facturation.",
+    "reference": "Cisco IOS XE Security Configuration Guide — AAA Overview"
+  }
+]
