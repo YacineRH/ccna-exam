@@ -438,3 +438,21 @@ export interface AdminCertification {
   lastImportedAt: string | null;
   lastImport: { created?: number; updated?: number; exams?: number; examsFrozen?: number[] } | null;
 }
+
+/** Ligne de la liste des comptes (`GET /admin/users`). */
+export interface AdminUser {
+  id: string;
+  email: string;
+  displayName: string;
+  role: 'admin' | 'user';
+  createdAt: string;
+  attempts: number;
+  lastActiveAt: string | null;
+}
+
+/** Réponse de `POST /admin/users` : le mot de passe n'est renvoyé que s'il a été généré. */
+export interface CreatedUser {
+  user: AdminUser;
+  password?: string;
+  generated: boolean;
+}

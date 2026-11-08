@@ -115,7 +115,7 @@ Le test `apps/api/test/certifications.test.ts` déclare le fichier de la Securit
 
 ### Écran d'administration
 
-`/admin` (rôle administrateur, lecture seule) liste les certifications : format et barème, modules, compteurs de banque par statut (publiées, validées, brouillons, retirées), labs, **état de la série** (examens figés, passés, « déjà passés gardés tels quels » si un import a trouvé un écart) et **date du dernier import** avec son résumé (questions créées et mises à jour). Il lit `GET /admin/certifications`. Une certification déclarée par l'API seulement n'a « jamais été importée » (`certifications.last_imported_at`, `last_import`, migration `0003`).
+`/admin` (rôle administrateur) liste les certifications : format et barème, modules, compteurs de banque par statut (publiées, validées, brouillons, retirées), labs, **état de la série** (examens figés, passés, « déjà passés gardés tels quels » si un import a trouvé un écart) et **date du dernier import** avec son résumé (questions créées et mises à jour). Il lit `GET /admin/certifications`. Une certification déclarée par l'API seulement n'a « jamais été importée » (`certifications.last_imported_at`, `last_import`, migration `0003`).
 
 ### Évolutions génériques du simulateur de terminal
 
@@ -441,3 +441,7 @@ Objectif WCAG 2.1 AA, vérifié à chaque CI :
 - En-têtes de sécurité et CSP stricte servis par Caddy.
 - Secrets uniquement en variables d'environnement (`.env` ignoré par git, secrets GitHub pour la CI).
 - Détection basique de triche : un examen complet bouclé à moins de 5 s par question est marqué `suspicious`.
+
+### Comptes invités
+
+Sous les certifications, `/admin` propose la section « Comptes » : `GET /api/v1/admin/users` (e-mail, nom, rôle, date de création, nombre de sessions, dernière activité) et `POST /api/v1/admin/users` (e-mail, nom affiché, mot de passe facultatif). Sans mot de passe, le serveur en génère un (18 octets aléatoires, base64url) et ne le renvoie **qu'une fois**, dans la réponse de création. Le rôle est toujours `user` : un invité ne peut pas administrer. Réservé à une **session** d'administrateur (le jeton de service, qui agit comme premier admin, est refusé), limité à 20 créations par minute ; un e-mail déjà pris (casse ignorée) renvoie 409 `email_taken`. Le hachage (argon2id) est partagé avec l'inscription (`services/passwords.ts`). Les inscriptions publiques restent régies par `ALLOW_REGISTRATION`.

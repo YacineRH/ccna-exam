@@ -150,6 +150,40 @@ test('sélecteur de certification : liste de l’API, choix mémorisé, repli', 
   await expect(headerSelect()).toHaveValue(cert.code);
 });
 
+test('comptes invités : création depuis /admin, connexion de l’invité, accès refusé à /admin', async ({ browser }) => {
+  await page.goto('/admin');
+  await expect(page.getByRole('heading', { name: 'Comptes', level: 2 })).toBeVisible();
+
+  await page.getByLabel('Nom affiché').fill('Invité Test');
+  await page.getByLabel('E-mail').fill('invite@example.test');
+  await page.getByRole('button', { name: 'Créer le compte invité' }).click();
+
+  const status = page.getByRole('status');
+  await expect(status).toContainText('Compte créé pour Invité Test');
+  const guestPassword = (await status.locator('code').textContent()) ?? '';
+  expect(guestPassword.length).toBeGreaterThanOrEqual(12);
+  await expect(page.getByRole('table', { name: /comptes/i }).or(page.getByRole('region', { name: 'Tableau des comptes' }))).toContainText('invite@example.test');
+
+  // Doublon : refusé avec un message lisible.
+  await page.getByLabel('Nom affiché').fill('Autre');
+  await page.getByLabel('E-mail').fill('INVITE@example.test');
+  await page.getByRole('button', { name: 'Créer le compte invité' }).click();
+  await expect(page.getByRole('alert').filter({ hasText: /déjà/i })).toBeVisible();
+
+  // L'invité se connecte, n'a pas accès à l'administration.
+  const guest = await newContext(browser);
+  const gp = await guest.newPage();
+  await gp.goto('/connexion');
+  await gp.getByLabel('E-mail').fill('invite@example.test');
+  await gp.getByLabel('Mot de passe', { exact: true }).fill(guestPassword);
+  await gp.getByRole('button', { name: 'Se connecter' }).click();
+  await expect(gp.getByRole('heading', { level: 1 })).toContainText('Invité');
+  await gp.goto('/admin');
+  await expect(gp.getByText('Accès réservé aux administrateurs.')).toBeVisible();
+  expect((await gp.request.get('/api/v1/admin/users')).status()).toBe(403);
+  await guest.close();
+});
+
 test('entraînement « ordre » : réordonner au clavier, valider, vérifier le retour', async () => {
   await startPractice('ordering');
   const q = questionByStem(cert.code, await stemText());

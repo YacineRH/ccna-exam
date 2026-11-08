@@ -165,3 +165,9 @@ cd ~/examforge && git pull && docker compose up -d --build
 ```
 
 Les migrations de base s'appliquent toutes seules au démarrage de l'API.
+
+## Donner accès à des proches (comptes invités)
+
+Les inscriptions publiques sont fermées une fois le premier compte créé. Pour inviter quelqu'un : connectez-vous en administrateur, ouvrez `/admin`, section « Comptes », renseignez nom et e-mail (mot de passe facultatif, généré sinon) puis transmettez le mot de passe affiché — il ne l'est qu'une fois. Il n'y a pas encore de réinitialisation : en cas d'oubli, créez un autre compte avec un autre e-mail.
+
+Mise à jour d'un serveur déjà déployé : `cd ~/examforge && git fetch && git switch <branche> && git pull && docker compose up -d --build` ; l'API redémarre en une quinzaine de secondes (502 temporaire normal).

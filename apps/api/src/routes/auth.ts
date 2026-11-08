@@ -5,16 +5,15 @@ import { z } from 'zod';
 import type { Db } from '../db/client.js';
 import { users } from '../db/schema.js';
 import { conflict, forbidden, parseInput, unauthorized } from '../errors.js';
+import { ARGON, hashPassword, MIN_PASSWORD_LENGTH } from '../services/passwords.js';
 
-// Paramètres argon2id recommandés par l'OWASP (19 Mio, 2 passes).
-const ARGON = { memoryCost: 19456, timeCost: 2, parallelism: 1 } as const;
 // Haché factice : on vérifie quand même un mot de passe quand l'e-mail n'existe pas,
 // pour ne pas révéler par le temps de réponse quels comptes existent.
 let dummyHash: Promise<string> | null = null;
 
 const credentials = z.object({
   email: z.string().trim().toLowerCase().email().max(254),
-  password: z.string().min(12, '12 caractères minimum').max(256),
+  password: z.string().min(MIN_PASSWORD_LENGTH, `${MIN_PASSWORD_LENGTH} caractères minimum`).max(256),
 });
 const registration = credentials.extend({ displayName: z.string().trim().min(1).max(64) });
 
@@ -35,7 +34,7 @@ export function authRoutes(db: Db, opts: { allowRegistration: boolean }) {
         .insert(users)
         .values({
           email: input.email,
-          passwordHash: await hash(input.password, ARGON),
+          passwordHash: await hashPassword(input.password),
           displayName: input.displayName,
           role: first ? 'admin' : 'user',
         })

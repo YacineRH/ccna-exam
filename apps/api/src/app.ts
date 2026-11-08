@@ -10,6 +10,7 @@ import type { Env } from './env.js';
 import { HttpError } from './errors.js';
 import authPlugin, { SESSION_COOKIE } from './plugins/auth.js';
 import { adminRoutes } from './routes/admin.js';
+import { adminUserRoutes } from './routes/admin-users.js';
 import { attemptRoutes } from './routes/attempts.js';
 import { examRoutes } from './routes/exams.js';
 import { authRoutes } from './routes/auth.js';
@@ -67,6 +68,7 @@ export async function buildApp(env: Env, db: Db): Promise<FastifyInstance> {
       await v1.register(revisionRoutes(db), { prefix: '/revision' });
       await v1.register(statsRoutes(db), { prefix: '/stats' });
       await v1.register(adminRoutes(db), { prefix: '/admin' });
+      await v1.register(adminUserRoutes(db), { prefix: '/admin/users' });
     },
     { prefix: '/api/v1' },
   );
