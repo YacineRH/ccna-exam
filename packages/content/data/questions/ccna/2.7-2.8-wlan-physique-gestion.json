@@ -1,0 +1,1807 @@
+[
+  {
+    "slug": "ccna-2.7-flexconnect-trunk-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Un AP FlexConnect est raccordé au port GigabitEthernet1/0/5 d'un Catalyst 9300 d'agence (qui ne gère que l'encapsulation 802.1Q). L'AP a son adresse dans le VLAN 10 (VLAN natif configuré sur l'AP) et commute localement deux WLAN dans les VLAN 20 et 30. Depuis le mode de configuration globale, entrez dans l'interface, puis, dans l'ordre de votre choix, passez le port en trunk, fixez le VLAN natif à 10 et limitez les VLAN autorisés aux VLAN 10, 20 et 30.",
+      "prompt": "SW-AG1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          3
+        ]
+      ],
+      "commands": [
+        [
+          "interface GigabitEthernet1/0/5"
+        ],
+        [
+          "switchport mode trunk"
+        ],
+        [
+          "switchport trunk native vlan 10"
+        ],
+        [
+          "switchport trunk allowed vlan 10,20,30",
+          "switchport trunk allowed vlan 10,30,20",
+          "switchport trunk allowed vlan 20,10,30",
+          "switchport trunk allowed vlan 20,30,10",
+          "switchport trunk allowed vlan 30,10,20",
+          "switchport trunk allowed vlan 30,20,10"
+        ]
+      ]
+    },
+    "explanation": "Un AP FlexConnect qui commute localement envoie son propre trafic (CAPWAP vers le WLC) sans étiquette, et les trames des WLAN locaux étiquetées 802.1Q avec leur VLAN. Le port doit donc être un trunk (« switchport mode trunk ») dont le VLAN natif est celui de l'AP (« switchport trunk native vlan 10 ») et qui laisse passer les VLAN des clients (« switchport trunk allowed vlan 10,20,30 »). Sur un Catalyst 9300, « switchport trunk encapsulation dot1q » est inutile : seul 802.1Q existe. Un AP en mode local, lui, se contenterait d'un port d'accès dans le VLAN 10.",
+    "distractorNotes": {},
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — FlexConnect (VLAN Support) ; Catalyst 9300 VLAN Configuration Guide (trunks)"
+  },
+  {
+    "slug": "ccna-2.7-wlc-lag-switch-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Les deux ports de distribution d'un WLC AireOS 5520, sur lequel LAG est activé, sont reliés aux ports TenGigabitEthernet1/1/1 et TenGigabitEthernet1/1/2 de SW-CORE, un Catalyst 9300. Le WLC utilise les VLAN 10 (gestion), 20 et 30 (interfaces dynamiques). Depuis le mode de configuration globale, sélectionnez les deux ports en une seule commande, passez-les en trunk et autorisez les VLAN 10, 20 et 30 (ces deux commandes dans l'ordre de votre choix), puis placez-les dans le groupe d'agrégation 1 avec le mode qui convient au WLC.",
+      "prompt": "SW-CORE(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "interface range TenGigabitEthernet1/1/1 - 2",
+          "interface range TenGigabitEthernet1/1/1, TenGigabitEthernet1/1/2"
+        ],
+        [
+          "switchport mode trunk"
+        ],
+        [
+          "switchport trunk allowed vlan 10,20,30",
+          "switchport trunk allowed vlan 10,30,20",
+          "switchport trunk allowed vlan 20,10,30",
+          "switchport trunk allowed vlan 20,30,10",
+          "switchport trunk allowed vlan 30,10,20",
+          "switchport trunk allowed vlan 30,20,10"
+        ],
+        [
+          "channel-group 1 mode on"
+        ]
+      ]
+    },
+    "explanation": "« interface range » applique les mêmes commandes aux deux ports. Ils doivent être en trunk, car les ports de distribution du WLC portent le VLAN de gestion et ceux des interfaces dynamiques. Le LAG d'un WLC AireOS est un EtherChannel statique : le contrôleur n'échange ni LACPDU ni PAgP, d'où « channel-group 1 mode on ». IOS crée alors Port-channel1, qui reprend la configuration des membres. Avec « active » ou « desirable », le commutateur attendrait une négociation qui n'arrive jamais. Configurer le trunk avant d'agréger évite les ports suspendus pour configuration incohérente.",
+    "distractorNotes": {},
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Link Aggregation ; Catalyst 9300 Layer 2 Configuration Guide — EtherChannels"
+  },
+  {
+    "slug": "ccna-2.7-wlc-physical-ports-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque port physique d'un WLC AireOS (par exemple un 5520) à son rôle.",
+      "left": [
+        {
+          "id": "sp",
+          "text": "Service port"
+        },
+        {
+          "id": "ds",
+          "text": "Port de distribution (distribution system port)"
+        },
+        {
+          "id": "rp",
+          "text": "Port de redondance (RP)"
+        },
+        {
+          "id": "con",
+          "text": "Port console"
+        }
+      ],
+      "right": [
+        {
+          "id": "r_rp",
+          "text": "Relie les deux contrôleurs d'une paire HA SSO pour leurs keepalives et la synchronisation de leur état"
+        },
+        {
+          "id": "r_con",
+          "text": "Donne un accès série à la CLI, même quand aucune adresse IP n'est configurée"
+        },
+        {
+          "id": "r_ds",
+          "text": "Relie le contrôleur au réseau : CAPWAP des AP, trafic des clients et gestion en bande"
+        },
+        {
+          "id": "r_sp",
+          "text": "Sert à la gestion hors bande sur un réseau séparé ; seul port actif quand le contrôleur est en mode boot"
+        },
+        {
+          "id": "r_radius",
+          "text": "Relie le contrôleur au serveur RADIUS par un lien dédié, obligatoire pour l'authentification 802.1X"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "sp": "r_sp",
+        "ds": "r_ds",
+        "rp": "r_rp",
+        "con": "r_con"
+      }
+    },
+    "explanation": "Les ports de distribution, reliés en trunk au commutateur (souvent en LAG), transportent tout le trafic utile : tunnels CAPWAP des AP, trafic des clients des interfaces dynamiques et gestion en bande par l'interface de gestion. Le service port, sans étiquetage 802.1Q, est réservé à la gestion hors bande et reste le seul actif en mode boot. Le port de redondance relie les deux contrôleurs d'une paire HA SSO, qui y échangent keepalives et état. La console donne la CLI en série, indispensable pour la configuration initiale ou quand le réseau est inaccessible.",
+    "distractorNotes": {
+      "r_radius": "Aucun port n'est réservé à RADIUS : le WLC joint son serveur RADIUS en IP, en général depuis l'interface de gestion, par ses ports de distribution."
+    },
+    "reference": "Cisco 5520 Wireless Controller Installation Guide ; Cisco Wireless Controller Configuration Guide, Release 8.10 — Ports and Interfaces"
+  },
+  {
+    "slug": "ccna-2.7-port-mode-by-device-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Dans un réseau où les AP ont leur adresse dans le VLAN 10 et où les WLAN placent les clients dans les VLAN 20 et 30, associez chaque raccordement à la configuration minimale du port de commutateur qui lui suffit.",
+      "left": [
+        {
+          "id": "local",
+          "text": "AP en mode local"
+        },
+        {
+          "id": "flexc",
+          "text": "AP FlexConnect dont tous les WLAN sont commutés centralement"
+        },
+        {
+          "id": "flexl",
+          "text": "AP FlexConnect qui commute localement les WLAN des VLAN 20 et 30"
+        },
+        {
+          "id": "wlc",
+          "text": "Ports de distribution d'un WLC AireOS (gestion dans le VLAN 10 étiqueté, interfaces dynamiques dans les VLAN 20 et 30)"
+        }
+      ],
+      "right": [
+        {
+          "id": "acc_ap",
+          "text": "Port d'accès dans le VLAN de l'AP"
+        },
+        {
+          "id": "tr_ap",
+          "text": "Trunk 802.1Q dont le VLAN natif est celui de l'AP et qui autorise les VLAN des clients"
+        },
+        {
+          "id": "tr_wlc",
+          "text": "Trunk 802.1Q qui autorise le VLAN de gestion et ceux des interfaces dynamiques"
+        },
+        {
+          "id": "acc_cli",
+          "text": "Port d'accès dans le VLAN des clients du WLAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "local": "acc_ap",
+        "flexc": "acc_ap",
+        "flexl": "tr_ap",
+        "wlc": "tr_wlc"
+      }
+    },
+    "explanation": "Quand le trafic des clients est commuté centralement (AP local, ou FlexConnect sans commutation locale), il voyage dans le tunnel CAPWAP : le commutateur d'accès ne voit que les paquets IP de l'AP, un port d'accès dans le VLAN 10 suffit. Un AP FlexConnect qui commute localement émet les trames de ses clients étiquetées VLAN 20 ou 30, et son propre trafic sans étiquette : il faut un trunk de VLAN natif 10. Le WLC dépose le trafic des clients dans les VLAN de ses interfaces dynamiques et étiquette sa gestion : ses ports de distribution sont reliés à un trunk qui porte les VLAN 10, 20 et 30.",
+    "distractorNotes": {
+      "acc_cli": "Aucun de ces raccordements n'est placé dans le VLAN des clients : un AP doit être dans son propre VLAN (ici 10), et un port d'accès ne porterait qu'un seul VLAN, insuffisant pour le WLC ou un AP qui commute localement deux VLAN."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — FlexConnect ; Cisco Wireless LAN Controller Best Practices"
+  },
+  {
+    "slug": "ccna-2.7-wireless-client-dhcp-path-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Sur un WLC AireOS, le WLAN CORP est associé à l'interface dynamique corp-vlan20 (10.20.0.2, VLAN 20), dont le serveur DHCP primaire est 10.10.10.20 ; le proxy DHCP est actif, comme par défaut. Un client vient de s'associer à un AP en mode local. Ordonnez les étapes de sa première demande d'adresse, jusqu'à la réception de l'offre.",
+      "items": [
+        {
+          "id": "relay",
+          "text": "Le WLC relaie la requête en unicast vers 10.10.10.20, avec 10.20.0.2 comme adresse source"
+        },
+        {
+          "id": "disc",
+          "text": "Le client diffuse un DHCP Discover sur le WLAN CORP"
+        },
+        {
+          "id": "back",
+          "text": "Le WLC renvoie l'Offer au client par le tunnel CAPWAP, via l'AP"
+        },
+        {
+          "id": "capwap",
+          "text": "L'AP encapsule la trame du client dans le tunnel CAPWAP vers le WLC"
+        },
+        {
+          "id": "offer",
+          "text": "Le serveur DHCP renvoie une Offer adressée à 10.20.0.2"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "disc",
+        "capwap",
+        "relay",
+        "offer",
+        "back"
+      ]
+    },
+    "explanation": "En mode local, l'AP ne commute pas le trafic des clients : il encapsule le Discover diffusé par le client dans le tunnel CAPWAP jusqu'au WLC. Celui-ci, en proxy DHCP, le relaie en unicast vers le serveur configuré sur l'interface dynamique du WLAN, en se servant de l'adresse de cette interface, qui indique au serveur le sous-réseau du client (10.20.0.0/24). La réponse revient donc à 10.20.0.2, puis le WLC la renvoie au client à travers l'AP. C'est pour cela qu'une interface dynamique a une adresse dans le sous-réseau de son VLAN.",
+    "distractorNotes": {},
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Dynamic Interfaces ; DHCP Proxy Mode"
+  },
+  {
+    "slug": "ccna-2.7-new-ap-bottom-up-checks-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un AP en mode local tout juste installé n'apparaît pas sur le WLC. Vous dépannez avec une méthode ascendante, de la couche physique vers l'application. Ordonnez les vérifications.",
+      "items": [
+        {
+          "id": "dhcp",
+          "text": "Vérifier que l'AP a obtenu un bail DHCP dans le sous-réseau de son VLAN"
+        },
+        {
+          "id": "join",
+          "text": "Vérifier sur le WLC que l'AP figure parmi les AP joints (show ap summary)"
+        },
+        {
+          "id": "poe",
+          "text": "Vérifier que le port du commutateur alimente l'AP en PoE (show power inline)"
+        },
+        {
+          "id": "ping",
+          "text": "Vérifier que l'AP joint en ping l'interface de gestion du WLC"
+        },
+        {
+          "id": "link",
+          "text": "Vérifier que le port du commutateur est dans le VLAN prévu pour l'AP (show interfaces status)"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "poe",
+        "link",
+        "dhcp",
+        "ping",
+        "join"
+      ]
+    },
+    "explanation": "Sans alimentation, rien d'autre ne peut fonctionner : on vérifie d'abord le PoE (couche 1), puis le VLAN du port (couche 2). Viennent ensuite l'adressage (bail DHCP dans le bon sous-réseau), puis la connectivité IP jusqu'à l'interface de gestion du WLC, que CAPWAP doit pouvoir joindre. Ce n'est qu'en dernier, une fois toutes les couches inférieures validées, que l'on regarde l'association CAPWAP elle-même sur le WLC. La méthode ascendante évite de chercher un problème de configuration du WLC quand l'AP n'est tout simplement pas alimenté.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Interface and Hardware Components Configuration Guide — Power over Ethernet ; Troubleshoot a Lightweight Access Point Not Joining a Wireless LAN Controller (note technique Cisco)"
+  },
+  {
+    "slug": "ccna-2.7-poe-budget-aps-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un commutateur d'accès dispose d'un budget PoE de 370 W. Il alimente déjà 12 téléphones IP, pour lesquels il réserve 7 W chacun, et 4 AP, pour lesquels il réserve 30 W chacun. Chaque nouvel AP se verra réserver 30 W, lui aussi. Complétez.",
+      "fields": [
+        {
+          "id": "remaining",
+          "label": "Puissance encore disponible avant l'ajout d'AP, en watts (nombre entier)"
+        },
+        {
+          "id": "aps",
+          "label": "Nombre maximal d'AP supplémentaires que le commutateur peut alimenter (nombre entier)"
+        },
+        {
+          "id": "left",
+          "label": "Puissance restante une fois ces AP ajoutés, en watts (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "remaining": {
+          "accepted": [
+            "166"
+          ],
+          "normalize": "int"
+        },
+        "aps": {
+          "accepted": [
+            "5"
+          ],
+          "normalize": "int"
+        },
+        "left": {
+          "accepted": [
+            "16"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Puissance réservée : 12 × 7 = 84 W pour les téléphones et 4 × 30 = 120 W pour les AP, soit 204 W. Il reste 370 − 204 = 166 W. Chaque nouvel AP demande 30 W : 166 / 30 = 5,53, donc 5 AP au plus (150 W). Il restera 166 − 150 = 16 W, insuffisant pour un sixième AP, que le commutateur refuserait d'alimenter faute de budget. Le budget PoE global, et pas seulement la norme du port, limite donc le nombre d'AP qu'un commutateur peut alimenter ; « show power inline » affiche la puissance disponible, utilisée et restante.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Interface and Hardware Components Configuration Guide — Power over Ethernet (power budget)"
+  },
+  {
+    "slug": "ccna-2.7-wlc-lag-behaviour-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "LAG vient d'être activé sur un WLC AireOS dont les ports de distribution sont reliés à un même Catalyst. Quelles deux affirmations sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le service port peut rejoindre l'agrégat pour faire passer la gestion sur le même lien logique."
+        },
+        {
+          "id": "b",
+          "text": "Si l'un des ports de l'agrégat tombe, le trafic passe automatiquement sur les ports restants."
+        },
+        {
+          "id": "c",
+          "text": "Chaque interface dynamique garde un port primaire et un port de secours au sein de l'agrégat."
+        },
+        {
+          "id": "d",
+          "text": "Tous les ports de distribution entrent dans l'agrégat : on ne choisit pas les ports membres."
+        },
+        {
+          "id": "e",
+          "text": "Le WLC négocie l'agrégat avec LACP : les ports du commutateur doivent être en mode active."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Sur un WLC AireOS, LAG regroupe tous les ports de distribution actifs dans un seul agrégat 802.3ad statique : on ne choisit pas les membres, et toutes les interfaces (gestion, dynamiques) sont rattachées au LAG plutôt qu'à un port. Si un lien tombe, le trafic se répartit sur les liens restants sans intervention. Le contrôleur ne négocie ni LACP ni PAgP : le commutateur doit être en « channel-group … mode on ». Activer ou désactiver LAG demande un redémarrage du contrôleur.",
+    "distractorNotes": {
+      "a": "Le service port ne fait jamais partie du LAG : il reste un port indépendant, réservé à la gestion hors bande.",
+      "c": "Les ports primaire et de secours n'existent que sans LAG ; avec LAG, toutes les interfaces sont rattachées à l'agrégat.",
+      "e": "Le WLC AireOS ne parle ni LACP ni PAgP : en mode active, le commutateur ne formerait pas le port-channel. Il faut le mode on."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Link Aggregation"
+  },
+  {
+    "slug": "ccna-2.7-poe-ap-facts-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur l'alimentation des AP par PoE sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le PoE exige un câblage de catégorie 6 au minimum : sur de la catégorie 5e, l'AP ne démarre pas."
+        },
+        {
+          "id": "b",
+          "text": "Un AP alimenté en PoE a besoin d'un second câble Ethernet pour transporter ses données."
+        },
+        {
+          "id": "c",
+          "text": "Un injecteur PoE, placé entre un port de commutateur non PoE et l'AP, peut fournir l'alimentation."
+        },
+        {
+          "id": "d",
+          "text": "Le budget PoE n'est pas limité : chaque port fournit sa puissance maximale, quel que soit le nombre d'AP."
+        },
+        {
+          "id": "e",
+          "text": "Le port ne fournit la tension qu'après avoir détecté la signature PoE de l'équipement : un PC n'en reçoit pas."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Le PoE transporte l'alimentation et les données sur le même câble à paires torsadées, jusqu'à 100 m, sur du câblage de catégorie 5e ou supérieure. Avant d'appliquer la tension, le PSE vérifie la présence d'une signature de détection : un équipement non PoE, comme la carte réseau d'un PC, ne reçoit rien et ne risque rien. Quand le commutateur n'est pas PoE, un injecteur (midspan) intercalé sur le câble alimente l'AP. Le commutateur dispose enfin d'un budget global qui limite le nombre d'équipements qu'il peut alimenter.",
+    "distractorNotes": {
+      "a": "La catégorie 5e suffit pour le PoE, y compris en 802.3at et 802.3bt.",
+      "b": "Tout l'intérêt du PoE est de faire passer l'alimentation et les données sur le même câble.",
+      "d": "Le commutateur a un budget PoE global, fixé par ses blocs d'alimentation : au-delà, il refuse d'alimenter de nouveaux équipements."
+    },
+    "reference": "IEEE 802.3-2022, clause 33 (Power over Ethernet) ; Cisco Catalyst 9300 Interface and Hardware Components Configuration Guide — Power over Ethernet"
+  },
+  {
+    "slug": "ccna-2.7-wlc-dynamic-interfaces-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les interfaces dynamiques d'un WLC AireOS sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Par défaut, les AP établissent leur tunnel CAPWAP vers l'adresse d'une interface dynamique."
+        },
+        {
+          "id": "b",
+          "text": "Plusieurs WLAN peuvent être associés à la même interface dynamique."
+        },
+        {
+          "id": "c",
+          "text": "Une interface dynamique peut être rattachée au service port pour isoler le trafic des invités."
+        },
+        {
+          "id": "d",
+          "text": "Une interface dynamique n'a pas d'adresse IP : elle se résume à un numéro de VLAN."
+        },
+        {
+          "id": "e",
+          "text": "Chaque interface dynamique correspond à un VLAN, où sortent les clients des WLAN qui lui sont associés."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Une interface dynamique (ou interface VLAN) relie le WLC à un VLAN du réseau filaire : le trafic des clients des WLAN qui lui sont associés sort dans ce VLAN, étiqueté sur les ports de distribution. Plusieurs WLAN peuvent partager la même interface. Chacune a une adresse IP, un masque et une passerelle dans le sous-réseau du VLAN, ainsi qu'un serveur DHCP : le WLC s'en sert comme adresse source pour relayer les requêtes DHCP des clients. Les AP, eux, établissent par défaut leurs tunnels CAPWAP vers l'interface de gestion.",
+    "distractorNotes": {
+      "a": "Par défaut, les tunnels CAPWAP aboutissent à l'interface de gestion, qui joue le rôle d'AP-manager ; une interface dynamique ne reçoit d'AP que si l'on y active explicitement la gestion dynamique des AP (Dynamic AP Management).",
+      "c": "Le service port n'accepte que l'interface service-port, pour la gestion hors bande ; les interfaces dynamiques passent par les ports de distribution.",
+      "d": "Une interface dynamique a une adresse IP dans le sous-réseau de son VLAN, que le WLC utilise notamment pour relayer le DHCP des clients."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Dynamic Interfaces"
+  },
+  {
+    "slug": "ccna-2.7-wlc-mgmt-vlan-untagged-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un WLC AireOS en LAG, l'interface de gestion (10.10.10.5/24) est configurée avec « VLAN Identifier » à 0. Côté commutateur, le port-channel qui le relie est un trunk avec « switchport trunk native vlan 10 » et « switchport trunk allowed vlan 10,20,30 ». Comment le trafic de l'interface de gestion circule-t-il sur ce trunk ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Étiqueté VLAN 0, une étiquette que le commutateur rejette, ce qui isole la gestion."
+        },
+        {
+          "id": "b",
+          "text": "Étiqueté VLAN 1, le VLAN par défaut, qui n'est pas autorisé sur ce trunk."
+        },
+        {
+          "id": "c",
+          "text": "Sans étiquette : le commutateur le place dans le VLAN natif du trunk, le VLAN 10."
+        },
+        {
+          "id": "d",
+          "text": "Il ne passe pas par ce trunk : avec le VLAN 0, la gestion n'utilise que le service port."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sur un WLC AireOS, la valeur 0 du champ VLAN Identifier signifie « non étiqueté » : les trames de l'interface de gestion sortent sans étiquette 802.1Q, et le commutateur les place dans le VLAN natif du trunk, ici le VLAN 10, cohérent avec l'adresse 10.10.10.5. Cisco recommande plutôt d'étiqueter la gestion (VLAN Identifier 10) : elle ne dépend plus alors du VLAN natif configuré sur le commutateur. Les interfaces dynamiques, elles, sont étiquetées avec leur VLAN.",
+    "distractorNotes": {
+      "a": "AireOS n'émet pas d'étiquette VLAN 0 : la valeur 0 désigne justement une interface non étiquetée.",
+      "b": "Une trame non étiquetée n'est pas « étiquetée VLAN 1 » : elle rejoint le VLAN natif du trunk, configuré ici à 10.",
+      "d": "L'interface de gestion est toujours rattachée aux ports de distribution (ou au LAG) ; le service port porte sa propre interface, service-port."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Management Interface"
+  },
+  {
+    "slug": "ccna-2.7-wlc-trunk-missing-vlan-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le WLC AireOS est relié par LAG au port-channel Po1 de SW-CORE ; tous les AP sont en mode local. Sur le WLC, l'interface de gestion (10.10.10.5) est étiquetée VLAN 10, et les interfaces dynamiques corp-vlan20 (VLAN 20) et guest-vlan30 (VLAN 30), rattachées au LAG, servent respectivement les WLAN CORP et Invites. Les AP ont rejoint le WLC et les clients du WLAN CORP obtiennent leur adresse, mais les invités s'associent sans jamais recevoir d'adresse IP. Quelle est la cause la plus probable ?",
+      "exhibit": "SW-CORE#show interfaces trunk\n\nPort        Mode             Encapsulation  Status        Native vlan\nPo1         on               802.1q         trunking      1\n\nPort        Vlans allowed on trunk\nPo1         10,20\n\nPort        Vlans allowed and active in management domain\nPo1         10,20\n\nPort        Vlans in spanning tree forwarding state and not pruned\nPo1         10,20",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le VLAN natif de Po1 devrait être le VLAN 10, puisque l'interface de gestion est dans ce VLAN."
+        },
+        {
+          "id": "b",
+          "text": "Po1 devrait être en mode LACP active : en mode on, le port-channel ne se forme pas avec le WLC."
+        },
+        {
+          "id": "c",
+          "text": "L'interface guest-vlan30 devrait être rattachée au service port pour isoler les invités."
+        },
+        {
+          "id": "d",
+          "text": "Le VLAN 30 n'est pas autorisé sur Po1 : le trafic de guest-vlan30 n'atteint pas le réseau filaire."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "En mode local, le WLC dépose le trafic des invités dans le VLAN 30 de l'interface guest-vlan30, étiqueté sur le LAG, et relaie leurs requêtes DHCP depuis l'adresse de cette interface. Or « show interfaces trunk » montre que Po1 n'autorise que les VLAN 10 et 20 : les trames du VLAN 30 sont rejetées par le commutateur. Le VLAN 10 (gestion étiquetée, d'où des AP joints) et le VLAN 20 (CORP) passent, ce qui explique que seul le WLAN Invites soit touché. La correction est « switchport trunk allowed vlan add 30 » sur Po1.",
+    "distractorNotes": {
+      "a": "La gestion du WLC est étiquetée VLAN 10 et ce VLAN est autorisé : les AP ont d'ailleurs rejoint le WLC. Le VLAN natif n'est pas en cause.",
+      "b": "Le WLC AireOS ne gère ni LACP ni PAgP : le mode on est le bon, et le port-channel fonctionne puisque les VLAN 10 et 20 passent.",
+      "c": "Le service port ne porte que la gestion hors bande ; une interface dynamique ne peut pas y être rattachée."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Dynamic Interfaces ; Catalyst 9300 VLAN Configuration Guide (show interfaces trunk)"
+  },
+  {
+    "slug": "ccna-2.7-flexconnect-native-vlan-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'AP AP-AG2-03 est en mode FlexConnect, avec VLAN Support activé et Native VLAN ID 10 ; il obtient normalement son adresse par DHCP dans le VLAN 10 et commute localement des WLAN dans les VLAN 20 et 30. Depuis le remplacement du commutateur d'agence, il ne reçoit plus d'adresse et ne rejoint plus le WLC. Quelle est la cause la plus probable ?",
+      "exhibit": "SW-AG2#show running-config interface GigabitEthernet1/0/7\nBuilding configuration...\n\nCurrent configuration : 123 bytes\n!\ninterface GigabitEthernet1/0/7\n description AP-AG2-03\n switchport trunk allowed vlan 10,20,30\n switchport mode trunk\nend",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le trunk a gardé le VLAN natif 1 : les trames non étiquetées de l'AP n'arrivent pas dans le VLAN 10."
+        },
+        {
+          "id": "b",
+          "text": "Le port est un trunk : un AP FlexConnect doit être raccordé à un port d'accès dans le VLAN 10."
+        },
+        {
+          "id": "c",
+          "text": "Le port n'est pas en dynamic desirable : l'AP ne peut pas négocier son trunk par DTP."
+        },
+        {
+          "id": "d",
+          "text": "Les VLAN 20 et 30 doivent être retirés du trunk tant que l'AP n'a pas rejoint le WLC."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Avec VLAN Support, l'AP FlexConnect émet son propre trafic (DHCP, CAPWAP) sans étiquette : le commutateur le place dans le VLAN natif du trunk. Sans « switchport trunk native vlan 10 », le VLAN natif reste le VLAN 1, qui n'est en outre pas autorisé sur ce trunk : les requêtes DHCP de l'AP n'atteignent jamais le VLAN 10, et l'AP ne peut pas joindre le WLC. Il suffit d'ajouter « switchport trunk native vlan 10 » sur Gi1/0/7 pour que le VLAN natif corresponde à celui configuré sur l'AP.",
+    "distractorNotes": {
+      "b": "Un port d'accès permettrait à l'AP de rejoindre le WLC, mais casserait la commutation locale des VLAN 20 et 30 : le trunk est bien nécessaire, avec le bon VLAN natif.",
+      "c": "Un AP ne négocie pas de trunk avec DTP ; « switchport mode trunk » force le trunk, ce qui est la configuration recommandée.",
+      "d": "Autoriser les VLAN 20 et 30 n'empêche en rien l'AP de joindre le WLC : le problème vient du VLAN où arrivent ses trames non étiquetées."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — FlexConnect (VLAN Support) ; IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.7-ap-port-power-never-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un AP en mode local raccordé à Gi1/0/8 reste éteint, aucune LED allumée. Branché sur le port voisin, configuré de la même façon sans la dernière ligne, le même AP démarre normalement, et le commutateur dispose encore de 210 W de budget PoE. Quelle est la cause ?",
+      "exhibit": "SW1#show running-config interface GigabitEthernet1/0/8\nBuilding configuration...\n\nCurrent configuration : 130 bytes\n!\ninterface GigabitEthernet1/0/8\n description AP-B2-08\n switchport access vlan 10\n switchport mode access\n power inline never\nend",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le port est en mode accès, alors qu'un AP doit être raccordé à un trunk."
+        },
+        {
+          "id": "b",
+          "text": "Le PoE est désactivé sur ce port : il ne fournit aucune alimentation à l'AP."
+        },
+        {
+          "id": "c",
+          "text": "Le budget PoE du commutateur est épuisé : l'AP n'obtient pas sa puissance."
+        },
+        {
+          "id": "d",
+          "text": "Le VLAN 10 n'a pas de serveur DHCP : l'AP ne peut pas finir de démarrer."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Sur un Catalyst, les ports PoE sont par défaut en « power inline auto » : le commutateur détecte l'équipement alimenté et lui fournit la puissance demandée. « power inline never » désactive le PoE sur le port : l'AP, qui n'a pas d'autre alimentation, reste éteint. Comme le même AP fonctionne sur le port voisin et que le budget n'est pas épuisé, seul ce réglage est en cause. Il suffit de saisir « power inline auto » (ou « no power inline never ») sur Gi1/0/8.",
+    "distractorNotes": {
+      "a": "Un AP en mode local fonctionne sur un port d'accès ; et un problème de VLAN n'empêcherait pas les LED de s'allumer.",
+      "c": "Le commutateur dispose encore de 210 W : le budget n'est pas en cause.",
+      "d": "Un problème de DHCP empêcherait l'AP de joindre le WLC, mais l'AP serait alimenté et ses LED allumées."
+    },
+    "reference": "Cisco Catalyst 9300 Interface and Hardware Components Configuration Guide — Power over Ethernet"
+  },
+  {
+    "slug": "ccna-2.7-service-port-switch-config-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le service port d'un WLC AireOS 5520 est relié au port Gi1/0/48 d'un commutateur du réseau de gestion hors bande, le VLAN 99 (192.168.99.0/24, distinct du sous-réseau de l'interface de gestion). Comment faut-il configurer Gi1/0/48 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "En trunk 802.1Q qui transporte le VLAN 99 étiqueté, car le service port étiquette ses trames."
+        },
+        {
+          "id": "b",
+          "text": "Comme membre du port-channel des ports de distribution, en mode on."
+        },
+        {
+          "id": "c",
+          "text": "En trunk dynamic desirable, pour négocier le mode du lien avec le WLC par DTP."
+        },
+        {
+          "id": "d",
+          "text": "En port d'accès dans le VLAN 99, car le service port n'étiquette pas ses trames."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le service port d'un WLC AireOS ne prend pas en charge l'étiquetage 802.1Q : il doit être relié à un port d'accès du commutateur voisin, ici dans le VLAN 99 du réseau de gestion hors bande (« switchport mode access », « switchport access vlan 99 »). Son adresse doit appartenir à un sous-réseau différent de celui de l'interface de gestion. Il ne fait jamais partie du LAG et reste joignable même quand les ports de distribution sont en panne, ou quand le contrôleur est en mode boot.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : le service port n'émet que des trames non étiquetées et ne gère pas 802.1Q.",
+      "b": "Le service port est exclu du LAG, qui ne regroupe que les ports de distribution.",
+      "c": "Le WLC ne parle pas DTP, et un trunk est de toute façon inutile pour un port qui n'étiquette pas ses trames."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Service-Port Interfaces"
+  },
+  {
+    "slug": "ccna-2.7-wlc-lag-reboot-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un WLC AireOS, l'administrateur règle « LAG Mode on next reboot » sur Enabled dans Controller > General, applique et enregistre la configuration. Que faut-il encore faire pour que LAG soit effectivement actif ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Activer LACP en mode active sur les ports de distribution du contrôleur"
+        },
+        {
+          "id": "b",
+          "text": "Retirer le service port, qui est incompatible avec LAG"
+        },
+        {
+          "id": "c",
+          "text": "Redémarrer le contrôleur"
+        },
+        {
+          "id": "d",
+          "text": "Rien : LAG s'active à chaud, sans interruption du trafic"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sur un WLC AireOS, l'activation ou la désactivation de LAG ne prend effet qu'au redémarrage du contrôleur, comme l'indique le libellé « LAG Mode on next reboot » : il faut donc enregistrer la configuration, puis redémarrer, ce qui interrompt le service des AP. Au redémarrage, tous les ports de distribution forment un agrégat statique ; les ports du commutateur doivent être en « channel-group … mode on », le WLC ne négociant ni LACP ni PAgP.",
+    "distractorNotes": {
+      "a": "Le WLC AireOS ne prend pas en charge LACP : son LAG est statique.",
+      "b": "Le service port coexiste avec LAG : il reste en dehors de l'agrégat, pour la gestion hors bande.",
+      "d": "Le changement de mode LAG exige un redémarrage du contrôleur ; il n'est pas appliqué à chaud."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Link Aggregation"
+  },
+  {
+    "slug": "ccna-2.7-local-ap-on-trunk-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un AP en mode local, qui doit obtenir son adresse dans le VLAN 10, est raccordé à un port configuré avec « switchport mode trunk », « switchport trunk native vlan 10 » et « switchport trunk allowed vlan 10,20,30 ». Ses WLAN placent les clients dans les VLAN 20 et 30, définis sur le WLC. Que se passe-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'AP ne rejoint pas le WLC tant que le VLAN natif du trunk n'est pas le VLAN 1."
+        },
+        {
+          "id": "b",
+          "text": "L'AP rejoint le WLC, mais ses clients sont placés dans le VLAN 10 au lieu des VLAN 20 et 30."
+        },
+        {
+          "id": "c",
+          "text": "L'AP ne rejoint pas le WLC, car un AP en mode local refuse d'être raccordé à un trunk."
+        },
+        {
+          "id": "d",
+          "text": "L'AP rejoint le WLC : son trafic, non étiqueté, est placé dans le VLAN natif 10."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un AP en mode local émet tout son trafic sans étiquette 802.1Q : sur ce trunk, le commutateur le place dans le VLAN natif, le VLAN 10, où l'AP obtient son adresse et d'où il joint le WLC. Les trames des clients voyagent dans le tunnel CAPWAP et sont déposées dans les VLAN 20 et 30 par le WLC : les VLAN 20 et 30 autorisés sur ce trunk ne servent donc à rien ici. Un port d'accès dans le VLAN 10 aurait suffi, et serait plus simple ; le trunk fonctionne néanmoins.",
+    "distractorNotes": {
+      "a": "Le VLAN natif doit être celui où l'AP a son adresse, ici le VLAN 10 : c'est exactement la configuration du port.",
+      "b": "En mode local, le VLAN des clients est choisi par le WLC (interface dynamique du WLAN), pas par le port du commutateur de l'AP.",
+      "c": "Un AP ne refuse pas un trunk : il émet simplement sans étiquette, et le trafic rejoint le VLAN natif."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Lightweight Access Points ; IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.8-switch-mgmt-svi-ssh-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "SW1 est un commutateur de niveau 2 sans adresse IP. Il doit être administrable en SSH depuis d'autres sous-réseaux, à l'adresse 192.168.1.11/24 dans le VLAN 1 ; le routeur R1 (192.168.1.1) est la passerelle de ce VLAN. Les clés RSA, l'utilisateur local et « login local » sur les lignes VTY sont déjà en place. Depuis le mode de configuration globale, configurez d'abord la passerelle par défaut, puis l'interface de gestion (adresse et activation, dans l'ordre de votre choix), et enfin limitez les lignes VTY 0 à 15 à SSH.",
+      "prompt": "SW1(config)#",
+      "lines": 6
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          2,
+          3
+        ]
+      ],
+      "commands": [
+        [
+          "ip default-gateway 192.168.1.1"
+        ],
+        [
+          "interface vlan 1",
+          "interface Vlan1"
+        ],
+        [
+          "ip address 192.168.1.11 255.255.255.0"
+        ],
+        [
+          "no shutdown"
+        ],
+        [
+          "line vty 0 15"
+        ],
+        [
+          "transport input ssh"
+        ]
+      ]
+    },
+    "explanation": "Un commutateur de niveau 2 ne route pas : pour répondre à un poste d'un autre sous-réseau, il envoie ses paquets à la passerelle définie par « ip default-gateway » (commande globale). Son adresse de gestion se place sur une SVI, ici « interface vlan 1 », avec « ip address » et « no shutdown » : l'interface Vlan1 est désactivée par défaut. « transport input ssh » sous « line vty 0 15 » refuse ensuite Telnet sur les seize lignes VTY. Bonne pratique : utiliser plutôt un VLAN de gestion dédié que le VLAN 1.",
+    "distractorNotes": {},
+    "reference": "Catalyst 9300 System Management Configuration Guide — Performing Switch Setup Configuration ; Cisco IOS XE Security Configuration Guide — Secure Shell"
+  },
+  {
+    "slug": "ccna-2.8-webui-https-only-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, un Catalyst 9300, l'interface web (WebUI) ne doit plus être accessible qu'en HTTPS, et les administrateurs doivent s'y authentifier avec les comptes locaux du commutateur. Depuis le mode de configuration globale, et dans l'ordre de votre choix, désactivez le serveur HTTP, activez le serveur HTTPS et choisissez l'authentification par la base locale.",
+      "prompt": "SW1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "no ip http server"
+        ],
+        [
+          "ip http secure-server"
+        ],
+        [
+          "ip http authentication local"
+        ]
+      ]
+    },
+    "explanation": "« no ip http server » arrête le serveur HTTP en clair (TCP 80), où identifiants et pages transiteraient sans chiffrement. « ip http secure-server » active le serveur HTTPS (TCP 443), qui chiffre la session par TLS avec un certificat, auto-signé à défaut d'autre. « ip http authentication local » fait vérifier les identifiants dans la base des comptes « username » du commutateur, au lieu du mot de passe enable utilisé par défaut. Les mêmes principes valent pour la GUI d'un WLC : on la consulte en HTTPS.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS XE Network Management Configuration Guide — HTTP Server ; Cisco IOS XE Security Configuration Guide — HTTPS (HTTP Server and Client with SSL)"
+  },
+  {
+    "slug": "ccna-2.8-console-terminal-settings-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Vous reliez un portable au port console d'un commutateur Catalyst neuf. Donnez les paramètres par défaut à saisir dans l'émulateur de terminal, sans parité ni contrôle de flux.",
+      "fields": [
+        {
+          "id": "baud",
+          "label": "Vitesse, en bauds (nombre entier)"
+        },
+        {
+          "id": "data",
+          "label": "Nombre de bits de données (nombre entier)"
+        },
+        {
+          "id": "stop",
+          "label": "Nombre de bits d'arrêt (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "baud": {
+          "accepted": [
+            "9600"
+          ],
+          "normalize": "int"
+        },
+        "data": {
+          "accepted": [
+            "8"
+          ],
+          "normalize": "int"
+        },
+        "stop": {
+          "accepted": [
+            "1"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Les ports console des équipements Cisco (commutateurs, routeurs, WLC) fonctionnent par défaut à 9600 bauds, 8 bits de données, sans parité, 1 bit d'arrêt et sans contrôle de flux, souvent noté « 9600 8N1 ». La console est une liaison série locale : elle ne dépend d'aucune configuration IP, ce qui en fait l'accès de la configuration initiale et du dépannage quand le réseau est inaccessible. Elle passe par un câble console RJ-45 vers DB-9 ou USB, ou par le port console USB de l'équipement.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Series Switches Hardware Installation Guide — Connecting to the Console Port"
+  },
+  {
+    "slug": "ccna-2.8-mgmt-protocol-ports-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Donnez le port standard sur lequel le serveur attend chacun de ces protocoles de gestion.",
+      "fields": [
+        {
+          "id": "ssh",
+          "label": "SSH, port TCP (nombre entier)"
+        },
+        {
+          "id": "https",
+          "label": "HTTPS, pour l'interface graphique d'un WLC, port TCP (nombre entier)"
+        },
+        {
+          "id": "tacacs",
+          "label": "TACACS+, port TCP (nombre entier)"
+        },
+        {
+          "id": "radius",
+          "label": "RADIUS, port UDP d'authentification (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "ssh": {
+          "accepted": [
+            "22"
+          ],
+          "normalize": "int"
+        },
+        "https": {
+          "accepted": [
+            "443"
+          ],
+          "normalize": "int"
+        },
+        "tacacs": {
+          "accepted": [
+            "49"
+          ],
+          "normalize": "int"
+        },
+        "radius": {
+          "accepted": [
+            "1812"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "SSH écoute sur TCP 22 et HTTPS sur TCP 443 : ce sont les versions chiffrées de Telnet (TCP 23) et de HTTP (TCP 80), à préférer pour la CLI et pour l'interface graphique d'un commutateur ou d'un WLC. TACACS+ utilise TCP 49 et chiffre tout le corps de ses paquets. RADIUS utilise UDP 1812 pour l'authentification et UDP 1813 pour l'accounting (les anciens ports 1645 et 1646 se rencontrent encore) et ne chiffre que le mot de passe.",
+    "distractorNotes": {},
+    "reference": "RFC 4253 (SSH) ; RFC 2818 (HTTPS) ; RFC 8907 (TACACS+) ; RFC 2865 (RADIUS)"
+  },
+  {
+    "slug": "ccna-2.8-ssh-session-phases-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un administrateur ouvre une session SSHv2 vers un commutateur dont l'accès est limité à SSH avec « login local ». Ordonnez les étapes, de la connexion à l'obtention de l'invite.",
+      "items": [
+        {
+          "id": "auth",
+          "text": "Le client envoie le nom d'utilisateur et le mot de passe, déjà protégés par le chiffrement"
+        },
+        {
+          "id": "tcp",
+          "text": "Le client ouvre une connexion TCP vers le port 22 du commutateur"
+        },
+        {
+          "id": "chan",
+          "text": "Le client ouvre un canal de session et obtient l'invite de la CLI"
+        },
+        {
+          "id": "kex",
+          "text": "Échange de clés Diffie-Hellman ; le commutateur prouve son identité avec sa clé d'hôte RSA"
+        },
+        {
+          "id": "ver",
+          "text": "Client et serveur échangent leurs chaînes de version (SSH-2.0-…)"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "tcp",
+        "ver",
+        "kex",
+        "auth",
+        "chan"
+      ]
+    },
+    "explanation": "SSH s'appuie sur une connexion TCP vers le port 22. Les deux extrémités annoncent d'abord leur version du protocole, puis négocient les algorithmes et dérivent par Diffie-Hellman les clés de session ; le serveur signe l'échange avec sa clé d'hôte (la paire RSA générée sur le commutateur), que le client compare à celle qu'il connaît. Ce n'est qu'une fois le canal chiffré établi que l'utilisateur s'authentifie : le mot de passe ne circule jamais en clair, contrairement à Telnet. Le client ouvre enfin un canal de session pour la CLI.",
+    "distractorNotes": {},
+    "reference": "RFC 4253, sections 4.2 et 7 ; RFC 4252 ; RFC 4254"
+  },
+  {
+    "slug": "ccna-2.8-tacacs-login-authorization-order-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "SW1 est configuré avec « aaa new-model », « aaa authentication login default group tacacs+ local », « aaa authorization exec default group tacacs+ local » et « aaa authorization commands 15 default group tacacs+ local ». Le serveur TACACS+ répond normalement et attribue le niveau de privilège 15 au compte de l'administrateur. Ordonnez les étapes, de la connexion de l'administrateur à l'exécution de sa première commande.",
+      "items": [
+        {
+          "id": "prompt",
+          "text": "L'invite SW1# s'affiche"
+        },
+        {
+          "id": "authen",
+          "text": "SW1 transmet les identifiants au serveur TACACS+ (TCP 49), qui les valide"
+        },
+        {
+          "id": "cmd",
+          "text": "SW1 fait autoriser « configure terminal » par le serveur, puis l'exécute"
+        },
+        {
+          "id": "login",
+          "text": "L'administrateur ouvre une session SSH et saisit son nom d'utilisateur et son mot de passe"
+        },
+        {
+          "id": "author",
+          "text": "SW1 demande au serveur l'autorisation EXEC et reçoit le niveau de privilège 15"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "login",
+        "authen",
+        "author",
+        "prompt",
+        "cmd"
+      ]
+    },
+    "explanation": "TACACS+ sépare les trois fonctions AAA. Les identifiants saisis à la connexion sont d'abord vérifiés par le serveur (authentification, liste « login default »). SW1 demande ensuite l'autorisation de démarrer un shell EXEC : le serveur renvoie le niveau de privilège 15, d'où l'invite SW1# directement, sans « enable ». Avec « aaa authorization commands 15 », chaque commande de niveau 15, comme « configure terminal », est soumise au serveur avant d'être exécutée. Le mot-clé « local » ne sert que si aucun serveur ne répond.",
+    "distractorNotes": {},
+    "reference": "RFC 8907 (TACACS+) ; Cisco IOS XE Security Configuration Guide — Configuring Authorization"
+  },
+  {
+    "slug": "ccna-2.8-mgmt-need-to-method-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque besoin d'administration à la méthode ou à l'outil qui y répond.",
+      "left": [
+        {
+          "id": "b1",
+          "text": "Ouvrir à distance la CLI d'un commutateur, dans une session chiffrée"
+        },
+        {
+          "id": "b2",
+          "text": "Ouvrir l'interface graphique d'un WLC dans un navigateur, de façon chiffrée"
+        },
+        {
+          "id": "b3",
+          "text": "Corriger la configuration d'un équipement qui n'a plus aucune connectivité IP"
+        },
+        {
+          "id": "b4",
+          "text": "Gérer les AP et commutateurs de nombreux sites depuis une interface web hébergée par Cisco, sans contrôleur sur place"
+        },
+        {
+          "id": "b5",
+          "text": "Provisionner des centaines de commutateurs de campus à partir de modèles, depuis un contrôleur installé sur site"
+        }
+      ],
+      "right": [
+        {
+          "id": "ssh",
+          "text": "SSH"
+        },
+        {
+          "id": "https",
+          "text": "HTTPS"
+        },
+        {
+          "id": "console",
+          "text": "Port console"
+        },
+        {
+          "id": "meraki",
+          "text": "Dashboard Meraki"
+        },
+        {
+          "id": "catc",
+          "text": "Catalyst Center"
+        },
+        {
+          "id": "telnet",
+          "text": "Telnet"
+        },
+        {
+          "id": "http",
+          "text": "HTTP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "b1": "ssh",
+        "b2": "https",
+        "b3": "console",
+        "b4": "meraki",
+        "b5": "catc"
+      }
+    },
+    "explanation": "SSH (TCP 22) et HTTPS (TCP 443) chiffrent respectivement la CLI et l'interface web. La console, liaison série locale, ne dépend d'aucune adresse IP : c'est le recours quand l'équipement n'est plus joignable par le réseau. Le dashboard Meraki est hébergé dans le cloud de Cisco : les équipements s'y connectent eux-mêmes et se gèrent sans contrôleur sur site. Catalyst Center (ex-DNA Center) est un contrôleur installé chez le client, qui automatise le provisionnement par modèles et assure la supervision (Assurance).",
+    "distractorNotes": {
+      "telnet": "Telnet (TCP 23) transmet la session en clair, identifiants compris : il ne répond à aucun de ces besoins, et ne fonctionne pas sans connectivité IP.",
+      "http": "HTTP (TCP 80) ne chiffre rien : la GUI chiffrée d'un WLC passe par HTTPS."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — HTTP/HTTPS et SSH ; Cisco Meraki Documentation — Cloud Management Overview ; Cisco Catalyst Center User Guide"
+  },
+  {
+    "slug": "ccna-2.8-inband-vs-oob-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque accès de gestion : passe-t-il par le réseau de production (en bande) ou par un chemin séparé (hors bande) ?",
+      "left": [
+        {
+          "id": "o1",
+          "text": "Serveur de console relié aux ports console des équipements par un réseau dédié"
+        },
+        {
+          "id": "o2",
+          "text": "Session SSH vers l'interface Vlan1 d'un commutateur, à travers les VLAN des utilisateurs"
+        },
+        {
+          "id": "o3",
+          "text": "Service port d'un WLC AireOS relié à un réseau de gestion séparé"
+        },
+        {
+          "id": "o4",
+          "text": "HTTPS vers l'interface de gestion d'un WLC, par ses ports de distribution"
+        },
+        {
+          "id": "o5",
+          "text": "Modem 4G raccordé au port console d'un routeur d'agence"
+        }
+      ],
+      "right": [
+        {
+          "id": "inb",
+          "text": "Gestion en bande"
+        },
+        {
+          "id": "oob",
+          "text": "Gestion hors bande"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "o1": "oob",
+        "o2": "inb",
+        "o3": "oob",
+        "o4": "inb",
+        "o5": "oob"
+      }
+    },
+    "explanation": "La gestion en bande emprunte les mêmes liens et VLAN que le trafic des utilisateurs : SSH vers une SVI, HTTPS vers l'interface de gestion du WLC par ses ports de distribution. Elle est simple, mais disparaît avec le réseau qu'elle doit réparer. La gestion hors bande utilise un chemin séparé : réseau de gestion dédié relié au service port du WLC, serveur de console, modem cellulaire sur la console. Elle reste disponible quand le réseau de production est en panne ou mal configuré, au prix d'une infrastructure supplémentaire.",
+    "distractorNotes": {},
+    "reference": "Cisco Guide to Harden Cisco IOS Devices — Management Plane (gestion hors bande) ; Cisco Wireless Controller Configuration Guide, Release 8.10 — Service-Port Interfaces"
+  },
+  {
+    "slug": "ccna-2.8-meraki-cloud-management-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une agence est équipée d'AP Meraki gérés par le dashboard, derrière un pare-feu qui fait du NAT. Quelles deux affirmations sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque AP doit recevoir une adresse IP publique pour que le cloud puisse le joindre."
+        },
+        {
+          "id": "b",
+          "text": "Les AP se configurent un par un en CLI par SSH ; le dashboard ne sert qu'à la supervision."
+        },
+        {
+          "id": "c",
+          "text": "Si l'agence perd sa connexion au cloud, les AP continuent de servir les clients avec leur dernière configuration."
+        },
+        {
+          "id": "d",
+          "text": "Le trafic des clients est tunnelisé jusqu'au cloud Meraki, qui le route vers Internet."
+        },
+        {
+          "id": "e",
+          "text": "Les AP ouvrent eux-mêmes une connexion sortante vers le cloud : aucune règle entrante n'est à créer sur le pare-feu."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Les équipements Meraki initient eux-mêmes un tunnel de gestion sortant vers le cloud : derrière un NAT, aucune adresse publique ni règle entrante n'est nécessaire. Toute la configuration se fait dans le dashboard, puis est poussée aux équipements. Seules la gestion et la supervision passent par le cloud : le trafic des clients est commuté localement. Si le lien vers le cloud tombe, les AP continuent de fonctionner avec leur dernière configuration ; on ne peut simplement plus la modifier ni superviser le site tant que la connexion n'est pas rétablie.",
+    "distractorNotes": {
+      "a": "La connexion vers le cloud est sortante : une adresse privée derrière un NAT suffit.",
+      "b": "Les équipements Meraki se configurent dans le dashboard, qui pousse la configuration ; ils n'offrent pas de CLI de configuration en SSH.",
+      "d": "Le trafic des clients ne transite pas par le cloud : il est commuté localement ; seul le trafic de gestion va vers le dashboard."
+    },
+    "reference": "Cisco Meraki Documentation — Meraki Cloud Architecture ; Upstream Firewall Rules for Cloud Connectivity"
+  },
+  {
+    "slug": "ccna-2.8-mgmt-access-best-practices-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux pratiques renforcent la sécurité de l'accès de gestion aux commutateurs et aux WLC ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Administrer les WLC en HTTP plutôt qu'en HTTPS, pour éviter les alertes de certificat"
+        },
+        {
+          "id": "b",
+          "text": "Limiter les lignes VTY à SSH avec « transport input ssh »"
+        },
+        {
+          "id": "c",
+          "text": "Partager un même compte local entre tous les administrateurs plutôt que d'utiliser TACACS+"
+        },
+        {
+          "id": "d",
+          "text": "Laisser « transport input all » pour garder un accès de secours en Telnet"
+        },
+        {
+          "id": "e",
+          "text": "Placer les adresses de gestion dans un VLAN dédié, distinct du VLAN 1 et des VLAN des utilisateurs"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Restreindre les lignes VTY à SSH garantit que la CLI n'est jamais exposée en clair, comme elle le serait en Telnet. Un VLAN de gestion dédié, distinct du VLAN 1 (VLAN par défaut de tous les ports) et des VLAN des utilisateurs, limite qui peut seulement atteindre les interfaces de gestion, d'autant qu'on peut le filtrer par ACL. On complète par HTTPS pour les interfaces web et par des comptes nominatifs vérifiés par TACACS+ ou RADIUS, qui permettent de tracer qui a fait quoi.",
+    "distractorNotes": {
+      "a": "HTTP transmet identifiants et pages en clair ; l'alerte d'un certificat auto-signé se supprime en installant un certificat de confiance, pas en renonçant au chiffrement.",
+      "c": "Un compte partagé empêche de savoir qui a fait quoi et oblige à changer le mot de passe partout au départ de chaque administrateur ; des comptes nominatifs centralisés sont préférables.",
+      "d": "« transport input all » accepte Telnet, qui transmet tout en clair ; l'accès de secours est la console, ou un réseau hors bande."
+    },
+    "reference": "Cisco Guide to Harden Cisco IOS Devices — Management Plane ; Cisco Wireless Controller Configuration Guide, Release 8.10 — HTTP/HTTPS"
+  },
+  {
+    "slug": "ccna-2.8-ssh-remote-failure-two-causes-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. SW1 est un commutateur de niveau 2 ; R1 (192.168.1.1) est la passerelle du VLAN 1. Les clés RSA sont générées (« show ip ssh » affiche « SSH Enabled - version 2.0 ») et l'utilisateur local admin existe. Depuis le poste 10.2.2.50, situé derrière R1, l'administrateur ne parvient pas à ouvrir de session SSH vers 192.168.1.11. Quelles deux causes expliquent cet échec ?",
+      "exhibit": "SW1#show running-config | include default-gateway\nSW1#show running-config | section line vty\nline vty 0 4\n login local\n transport input telnet\nline vty 5 15\n login local\n transport input telnet\nSW1#show ip interface brief | include Vlan1\nVlan1                  192.168.1.11    YES manual up                    up",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le VLAN 1 ne peut pas porter l'adresse de gestion d'un commutateur."
+        },
+        {
+          "id": "b",
+          "text": "« login local » exige en plus un mot de passe de ligne (password) sur les lignes VTY."
+        },
+        {
+          "id": "c",
+          "text": "Les lignes VTY n'acceptent que Telnet : les connexions SSH sont refusées."
+        },
+        {
+          "id": "d",
+          "text": "SW1 n'a pas de passerelle par défaut : il ne peut pas répondre au poste 10.2.2.50."
+        },
+        {
+          "id": "e",
+          "text": "Les lignes VTY 5 à 15 doivent être supprimées, IOS n'acceptant que cinq sessions VTY."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "La première commande ne renvoie rien : SW1 n'a pas de « ip default-gateway ». Commutateur de niveau 2, il ne sait joindre que son propre sous-réseau, 192.168.1.0/24 ; ses réponses au poste 10.2.2.50 ne partent pas. Ensuite, « transport input telnet » sur toutes les lignes VTY refuse les connexions SSH, même avec des clés valides. L'interface Vlan1 est up/up avec la bonne adresse. Il faut « ip default-gateway 192.168.1.1 » et « transport input ssh » sur les lignes 0 à 15.",
+    "distractorNotes": {
+      "a": "Le VLAN 1 peut porter l'adresse de gestion (c'est le cas par défaut), même si un VLAN dédié est recommandé.",
+      "b": "« login local » vérifie le nom d'utilisateur et le mot de passe du compte local ; le mot de passe de ligne ne sert qu'avec « login » seul.",
+      "e": "Les commutateurs Catalyst ont seize lignes VTY (0 à 15), utilisables pour des sessions simultanées ; leur présence n'empêche rien."
+    },
+    "reference": "Cisco IOS XE Security Configuration Guide — Secure Shell ; Catalyst 9300 System Management Configuration Guide — Performing Switch Setup Configuration"
+  },
+  {
+    "slug": "ccna-2.8-aaa-local-fallback-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "SW1 est configuré avec « aaa new-model » et « aaa authentication login default group tacacs+ local » ; un serveur TACACS+ est défini et l'utilisateur local admin existe. Aucune autre liste d'authentification n'est configurée. Quelles deux affirmations sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Si le serveur TACACS+ rejette le mot de passe, l'accès est refusé sans que la base locale soit consultée."
+        },
+        {
+          "id": "b",
+          "text": "La base locale est consultée en premier ; le serveur ne l'est que si l'utilisateur n'y figure pas."
+        },
+        {
+          "id": "c",
+          "text": "La liste default ne s'applique qu'aux lignes VTY ; la console reste protégée par son mot de passe de ligne."
+        },
+        {
+          "id": "d",
+          "text": "SW1 joint le serveur TACACS+ sur le port UDP 49, sans établir de connexion."
+        },
+        {
+          "id": "e",
+          "text": "Si aucun serveur TACACS+ ne répond, SW1 vérifie les identifiants dans sa base locale."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Les méthodes d'une liste AAA sont essayées dans l'ordre, mais IOS ne passe à la suivante qu'en cas d'erreur, c'est-à-dire si aucun serveur du groupe ne répond. Un refus du serveur (FAIL) est définitif : la base locale n'est pas consultée. « local » sert donc de secours quand le serveur est injoignable, ce qui évite de s'enfermer dehors. La liste « default » s'applique à toutes les lignes, console comprise, tant qu'aucune liste nommée n'y est appliquée. TACACS+ utilise des connexions TCP vers le port 49.",
+    "distractorNotes": {
+      "b": "L'ordre est celui de la commande : « group tacacs+ » d'abord, « local » ensuite, et seulement si le serveur ne répond pas.",
+      "c": "Avec « aaa new-model », la liste default s'applique à toutes les lignes, console comprise ; le mot de passe de ligne n'est plus utilisé.",
+      "d": "TACACS+ utilise TCP sur le port 49 ; c'est RADIUS qui utilise UDP (1812 et 1813)."
+    },
+    "reference": "Cisco IOS XE Security Configuration Guide — Configuring Authentication (method lists) ; RFC 8907"
+  },
+  {
+    "slug": "ccna-2.8-catalyst-center-management-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur la gestion des équipements par Cisco Catalyst Center (ex-DNA Center) sont correctes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Une fois géré, un équipement refuse toute connexion SSH d'un administrateur."
+        },
+        {
+          "id": "b",
+          "text": "Il communique avec les équipements par des interfaces sud comme SSH, SNMP ou NETCONF."
+        },
+        {
+          "id": "c",
+          "text": "Il n'existe que sous forme de service hébergé par Cisco, comme le dashboard Meraki."
+        },
+        {
+          "id": "d",
+          "text": "Sa fonction Assurance analyse la télémétrie des équipements pour détecter et diagnostiquer les problèmes."
+        },
+        {
+          "id": "e",
+          "text": "Les commutateurs gérés lui envoient le trafic des utilisateurs pour qu'il le commute."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Catalyst Center est un contrôleur installé chez le client (appliance physique ou virtuelle). Il découvre et configure les équipements par ses interfaces sud (CLI en SSH, SNMP, NETCONF), en déployant des paramètres et des modèles définis une seule fois. Sa fonction Assurance collecte la télémétrie (SNMP, syslog, streaming telemetry…) pour mesurer la santé du réseau, des clients et des applications et aider au diagnostic. Il n'est que dans le plan de gestion : le trafic des utilisateurs reste commuté par les équipements, et la CLI reste disponible.",
+    "distractorNotes": {
+      "a": "Un équipement géré garde sa CLI ; Catalyst Center s'y connecte d'ailleurs lui-même en SSH. On évite seulement d'y faire des changements qui contrediraient l'intention définie dans le contrôleur.",
+      "c": "Catalyst Center s'installe chez le client, sur une appliance ou en machine virtuelle ; c'est Meraki dont le dashboard est hébergé par Cisco.",
+      "e": "Le contrôleur ne transporte pas le trafic des utilisateurs : il ne fait que gérer les équipements, qui commutent et routent eux-mêmes."
+    },
+    "reference": "Cisco Catalyst Center User Guide (Discovery, Provision, Assurance)"
+  },
+  {
+    "slug": "ccna-2.8-telnet-cleartext-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pourquoi déconseille-t-on Telnet pour administrer un commutateur à distance ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il exige une paire de clés RSA, longue à générer sur les petits commutateurs."
+        },
+        {
+          "id": "b",
+          "text": "Il passe par UDP 23 : les commandes peuvent se perdre sans retransmission."
+        },
+        {
+          "id": "c",
+          "text": "Il ne fonctionne que sur le port console, ce qui empêche l'accès à distance."
+        },
+        {
+          "id": "d",
+          "text": "Il transmet en clair identifiants et commandes, lisibles par qui capture le trafic."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Telnet ouvre une session sur TCP 23 et transporte tout en clair : nom d'utilisateur, mot de passe, commandes et sorties. Une simple capture de trafic sur le chemin suffit à récupérer les identifiants. SSH (TCP 22) rend le même service en chiffrant toute la session, une fois générée une paire de clés RSA sur l'équipement. On restreint donc les lignes VTY avec « transport input ssh ».",
+    "distractorNotes": {
+      "a": "C'est SSH qui a besoin d'une paire de clés RSA ; Telnet n'utilise aucune cryptographie.",
+      "b": "Telnet utilise TCP 23, transport fiable avec retransmission.",
+      "c": "Telnet est justement un accès à distance, par les lignes VTY ; la console est une liaison série locale."
+    },
+    "reference": "RFC 854 (Telnet) ; Cisco Guide to Harden Cisco IOS Devices — Management Plane"
+  },
+  {
+    "slug": "ccna-2.8-tacacs-command-authorization-choice-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pour l'administration de ses commutateurs, le responsable sécurité exige que le serveur AAA autorise individuellement chaque commande saisie par les administrateurs, et que tout l'échange avec le serveur, commandes comprises, soit chiffré. Quel protocole retenir, et pourquoi ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "TACACS+, qui chiffre tout le corps du paquet et traite l'autorisation à part de l'authentification"
+        },
+        {
+          "id": "b",
+          "text": "RADIUS, qui chiffre l'intégralité du paquet et autorise chaque commande dans un échange distinct"
+        },
+        {
+          "id": "c",
+          "text": "RADIUS, standard de l'IETF qui sépare l'authentification, l'autorisation et la comptabilité"
+        },
+        {
+          "id": "d",
+          "text": "TACACS+, qui passe par UDP pour autoriser plus vite chaque commande saisie"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "TACACS+ sépare authentification, autorisation et accounting : l'équipement peut soumettre chaque commande au serveur (« aaa authorization commands »), qui l'accepte ou la refuse selon le profil de l'administrateur. Il chiffre tout le corps de ses paquets, nom d'utilisateur et commandes compris, et utilise TCP 49. C'est pourquoi on le préfère pour l'administration des équipements, RADIUS servant plutôt à l'accès des utilisateurs au réseau (802.1X, VPN).",
+    "distractorNotes": {
+      "b": "RADIUS ne chiffre que le mot de passe (attribut User-Password) et n'offre pas d'autorisation commande par commande.",
+      "c": "RADIUS est bien un standard IETF, mais il combine authentification et autorisation dans le même échange.",
+      "d": "TACACS+ utilise TCP sur le port 49, pas UDP."
+    },
+    "reference": "RFC 8907 (TACACS+) ; RFC 2865 (RADIUS), section 5.2"
+  },
+  {
+    "slug": "ccna-2.8-l3-switch-default-gateway-ignored-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "DSW1 est un commutateur multicouche sur lequel « ip routing » est activé. Ses seules interfaces IP sont Vlan10 (10.0.10.1/24) et Vlan99 (10.0.99.2/24), et il n'a ni route statique ni protocole de routage ; « ip default-gateway 10.0.99.1 » est configurée, 10.0.99.1 étant le routeur R1. Une session SSH vers 10.0.99.2 réussit depuis le sous-réseau 10.0.99.0/24, mais échoue depuis le poste d'administration 10.0.50.20, situé derrière R1. Quelle est la cause ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Avec ip routing, DSW1 ignore ip default-gateway : il lui faut une route par défaut vers 10.0.99.1."
+        },
+        {
+          "id": "b",
+          "text": "La passerelle par défaut de DSW1 doit être l'adresse de sa propre interface Vlan10, 10.0.10.1."
+        },
+        {
+          "id": "c",
+          "text": "L'adresse de gestion doit être déplacée sur Vlan1, seul VLAN accepté pour l'administration."
+        },
+        {
+          "id": "d",
+          "text": "« transport input ssh » refuse les sessions SSH qui viennent d'un autre sous-réseau."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "« ip default-gateway » ne sert que lorsque le routage IP est désactivé : c'est la passerelle d'un équipement qui se comporte en hôte. Dès que « ip routing » est actif, DSW1 consulte sa table de routage, qui ne contient que 10.0.10.0/24 et 10.0.99.0/24 : il ne sait pas renvoyer ses réponses vers 10.0.50.20. Depuis 10.0.99.0/24, réseau directement connecté, la session fonctionne. Il faut une route par défaut : « ip route 0.0.0.0 0.0.0.0 10.0.99.1 » (ou un protocole de routage).",
+    "distractorNotes": {
+      "b": "Une passerelle doit être un autre routeur du sous-réseau ; la propre adresse de DSW1 ne lui apprend rien sur 10.0.50.0/24.",
+      "c": "N'importe quelle SVI peut porter l'adresse de gestion ; un VLAN dédié, comme ici le VLAN 99, est même recommandé.",
+      "d": "« transport input ssh » choisit le protocole accepté sur les lignes VTY, pas l'origine des sessions ; c'est le rôle d'« access-class »."
+    },
+    "reference": "Cisco IOS XE IP Routing Configuration Guide — ip default-gateway ; Catalyst 9300 IP Routing Configuration Guide"
+  },
+  {
+    "slug": "ccna-2.8-vty-password-not-set-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Depuis R1 (192.168.1.1), sur le même sous-réseau que SW1, l'administrateur teste l'accès Telnet à l'interface de gestion de SW1. Quelle est la cause du résultat obtenu ?",
+      "exhibit": "R1#telnet 192.168.1.11\nTrying 192.168.1.11 ... Open\n\n\nPassword required, but none set\n\n[Connection to 192.168.1.11 closed by foreign host]\nR1#",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les lignes VTY n'acceptent que SSH : la session Telnet est refusée par SW1."
+        },
+        {
+          "id": "b",
+          "text": "SW1 n'a pas d'enable secret : sans lui, aucune session VTY n'est acceptée."
+        },
+        {
+          "id": "c",
+          "text": "Les lignes VTY ont la commande login, mais aucun mot de passe de ligne n'est configuré."
+        },
+        {
+          "id": "d",
+          "text": "SW1 n'a pas de passerelle par défaut : il ne peut pas répondre à R1."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "« Open » prouve que la connexion TCP vers le port 23 de SW1 s'est établie : la connectivité IP et l'acceptation de Telnet sur les lignes VTY ne sont pas en cause. SW1 ferme ensuite la session avec « Password required, but none set » : ses lignes VTY ont « login », qui exige le mot de passe de ligne, mais aucun « password » n'y est configuré. On corrige en ajoutant un mot de passe de ligne ou, mieux, « login local » avec des comptes locaux, et en passant à SSH.",
+    "distractorNotes": {
+      "a": "Avec « transport input ssh », la connexion Telnet serait refusée d'emblée (« % Connection refused by remote host ») au lieu d'afficher « Open ».",
+      "b": "Sans enable secret ni enable password, la session VTY s'ouvre ; c'est seulement la commande « enable » qui échoue alors, avec « % No password set ».",
+      "d": "R1 est sur le même sous-réseau que SW1, qui n'a pas besoin de passerelle pour lui répondre ; la connexion TCP s'est d'ailleurs établie."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — Configuring Passwords and Privileges (line passwords)"
+  },
+  {
+    "slug": "ccna-2.8-wlc-radius-8021x-ports-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un WLC transmet à Cisco ISE les demandes d'authentification 802.1X des clients du WLAN CORP, ainsi que leurs enregistrements d'accounting. Quel protocole utilise-t-il, et sur quel(s) port(s) par défaut ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "TACACS+, sur le port TCP 49"
+        },
+        {
+          "id": "b",
+          "text": "RADIUS, sur les ports TCP 1812 et 1813"
+        },
+        {
+          "id": "c",
+          "text": "TACACS+, sur les ports UDP 1812 et 1813"
+        },
+        {
+          "id": "d",
+          "text": "RADIUS, sur les ports UDP 1812 et 1813"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'authentification 802.1X des clients repose sur RADIUS : le WLC, authentificateur, encapsule les messages EAP du client dans des paquets RADIUS vers le serveur (ISE). RADIUS utilise UDP 1812 pour l'authentification et UDP 1813 pour l'accounting (anciennement 1645 et 1646). TACACS+, sur TCP 49, sert à l'administration des équipements : sur un WLC, il ne vérifie que les comptes des administrateurs.",
+    "distractorNotes": {
+      "a": "TACACS+ ne transporte pas EAP et ne sert pas à l'authentification 802.1X des clients ; sur un WLC, il est réservé aux administrateurs.",
+      "b": "RADIUS fonctionne sur UDP, pas sur TCP.",
+      "c": "TACACS+ utilise TCP 49 ; les ports UDP 1812 et 1813 sont ceux de RADIUS."
+    },
+    "reference": "RFC 2865 et RFC 2866 (RADIUS) ; RFC 3579 (RADIUS et EAP) ; IEEE 802.1X-2020"
+  },
+  {
+    "slug": "ccna-2.8-svi-admin-down-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sur SW1, commutateur de niveau 2, l'administrateur a saisi l'adresse de gestion sous « interface vlan 1 ». Son poste (192.168.1.50/24), raccordé à Gi1/0/2 dans le VLAN 1, ne parvient pas à faire un ping vers 192.168.1.11. Les ports Gi1/0/1 et Gi1/0/2 sont up. Quelle est la cause ?",
+      "exhibit": "SW1#show ip interface brief | exclude unassigned\nInterface              IP-Address      OK? Method Status                Protocol\nVlan1                  192.168.1.11    YES manual administratively down down",
+      "options": [
+        {
+          "id": "a",
+          "text": "SW1 n'a pas de passerelle par défaut : il ne peut pas répondre au poste."
+        },
+        {
+          "id": "b",
+          "text": "Aucun port actif n'appartient au VLAN 1 : le protocole de Vlan1 reste down."
+        },
+        {
+          "id": "c",
+          "text": "Un commutateur de niveau 2 ne répond au ping que si ip routing est activé."
+        },
+        {
+          "id": "d",
+          "text": "L'interface Vlan1 est désactivée : il faut y saisir la commande no shutdown."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "« administratively down » signifie que l'interface est en shutdown : sur un Catalyst, l'interface Vlan1 existe par défaut, mais désactivée. Saisir l'adresse ne suffit pas : il faut « no shutdown » sous « interface vlan 1 ». Le protocole passera up dès que l'interface sera activée, puisque des ports du VLAN 1 sont up. Le poste est dans le même sous-réseau : aucune passerelle n'est nécessaire pour ce ping, et un commutateur de niveau 2 répond au ping sur sa SVI sans routage IP.",
+    "distractorNotes": {
+      "a": "Le poste et SW1 sont dans le même sous-réseau 192.168.1.0/24 : la passerelle ne sert que pour joindre d'autres sous-réseaux.",
+      "b": "Gi1/0/1 et Gi1/0/2 sont up dans le VLAN 1 ; le protocole est down parce que l'interface est administrativement désactivée.",
+      "c": "« ip routing » sert à router entre sous-réseaux ; la SVI de gestion d'un commutateur de niveau 2 répond au ping sans lui."
+    },
+    "reference": "Catalyst 9300 Interface and Hardware Components Configuration Guide — Configuring Interface Characteristics (SVI)"
+  },
+  {
+    "slug": "ccna-2.8-cat9k-mgmt-port-vrf-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un Catalyst 9300 dispose, en plus de ses ports de données, d'un port Ethernet de gestion, GigabitEthernet0/0. Quelle affirmation sur ce port est correcte ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "C'est un port de commutation comme les autres, placé par défaut dans le VLAN 1."
+        },
+        {
+          "id": "b",
+          "text": "Il peut rejoindre un EtherChannel avec les liaisons montantes pour augmenter le débit."
+        },
+        {
+          "id": "c",
+          "text": "Il est placé dans la VRF Mgmt-vrf, séparée des ports de données, pour un accès hors bande."
+        },
+        {
+          "id": "d",
+          "text": "Il prend en charge le trafic des utilisateurs quand les liaisons montantes sont en panne."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sur un Catalyst 9300, GigabitEthernet0/0 est un port de gestion dédié, placé dans la VRF Mgmt-vrf : sa table de routage est séparée de celle des ports de données, et il ne commute ni ne route jamais le trafic des utilisateurs. On le relie à un réseau de gestion hors bande pour l'accès SSH ou HTTPS, les transferts de fichiers ou la supervision, qui restent possibles même si le réseau de production est en panne. Les commandes qui l'utilisent précisent la VRF, par exemple « ping vrf Mgmt-vrf ».",
+    "distractorNotes": {
+      "a": "Le port de gestion n'est pas un port de commutation : il n'appartient à aucun VLAN et ne commute pas de trames.",
+      "b": "Le port de gestion ne peut pas faire partie d'un EtherChannel : seuls les ports de données peuvent être agrégés.",
+      "d": "Le port de gestion ne transporte jamais le trafic des utilisateurs ; il est isolé dans sa VRF."
+    },
+    "reference": "Catalyst 9300 Interface and Hardware Components Configuration Guide — Configuring the Ethernet Management Port"
+  },
+  {
+    "slug": "ccna-2.8-exec-timeout-default-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sans commande « exec-timeout » sur ses lignes, au bout de combien de temps d'inactivité un commutateur IOS ferme-t-il une session console ou VTY ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "5 minutes"
+        },
+        {
+          "id": "b",
+          "text": "10 minutes"
+        },
+        {
+          "id": "c",
+          "text": "30 minutes"
+        },
+        {
+          "id": "d",
+          "text": "Jamais"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Par défaut, IOS ferme une session EXEC inactive au bout de 10 minutes, ce qui correspond à « exec-timeout 10 0 » (minutes, puis secondes) sur les lignes console et VTY. On peut raccourcir ce délai, par exemple « exec-timeout 5 0 », pour qu'une session oubliée ne reste pas ouverte. « exec-timeout 0 0 » supprime toute expiration : pratique en laboratoire, mais à éviter en production, surtout sur la console.",
+    "distractorNotes": {
+      "a": "5 minutes est une valeur souvent configurée par sécurité, pas la valeur par défaut.",
+      "c": "La valeur par défaut est de 10 minutes, pas de 30.",
+      "d": "Une session sans expiration demande une configuration explicite, « exec-timeout 0 0 »."
+    },
+    "reference": "Cisco IOS Configuration Fundamentals Command Reference — exec-timeout"
+  }
+]
