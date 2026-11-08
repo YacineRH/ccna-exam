@@ -1,0 +1,1516 @@
+[
+  {
+    "slug": "ccna-5.6-show-ip-interface-acl-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle commande indique quelle ACL IPv4 est appliquée sur l'interface GigabitEthernet0/0 d'un routeur, et dans quel sens ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "show access-lists"
+        },
+        {
+          "id": "b",
+          "text": "show ip interface gigabitethernet0/0"
+        },
+        {
+          "id": "c",
+          "text": "show ip route"
+        },
+        {
+          "id": "d",
+          "text": "show interfaces gigabitethernet0/0"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« show ip interface » affiche, pour chaque interface, les lignes « Outgoing access list is … » et « Inbound access list is … » : on y lit le nom ou le numéro de l'ACL appliquée et son sens. « show access-lists » liste le contenu des ACL et leurs compteurs, mais ne dit pas où elles sont appliquées. Vérifier l'application est indispensable : une ACL bien écrite mais appliquée sur la mauvaise interface ou dans le mauvais sens ne filtre pas le trafic voulu.",
+    "distractorNotes": {
+      "a": "Elle affiche les entrées et les compteurs de chaque ACL, sans indiquer les interfaces ni le sens d'application.",
+      "c": "Elle affiche la table de routage ; elle ne donne aucune information sur les ACL.",
+      "d": "Elle donne l'état, les compteurs et les erreurs de l'interface, mais pas les ACL qui y sont appliquées."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-implicit-deny-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une ACL IPv4 contenant plusieurs entrées est appliquée en entrée sur une interface. Que devient un paquet qui ne correspond à aucune de ses entrées ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il est autorisé, car aucune entrée ne le refuse explicitement."
+        },
+        {
+          "id": "b",
+          "text": "Il est comparé à l'ACL appliquée en sortie sur la même interface."
+        },
+        {
+          "id": "c",
+          "text": "Il est rejeté par le deny implicite qui termine toute ACL."
+        },
+        {
+          "id": "d",
+          "text": "Il est transmis sans filtrage et journalisé par le routeur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Toute ACL IPv4 se termine par un « deny any » implicite, invisible dans la configuration et dans « show access-lists ». Un paquet qui ne correspond à aucune entrée est donc rejeté. C'est pourquoi une ACL qui ne contient que des « deny » bloque tout le trafic : il faut au moins une entrée « permit » (souvent « permit any » ou « permit ip any any » à la fin) pour laisser passer le reste.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : sans correspondance, le deny implicite s'applique et le paquet est rejeté.",
+      "b": "Les ACL d'entrée et de sortie sont indépendantes ; l'absence de correspondance en entrée entraîne le rejet, pas un second examen.",
+      "d": "Le deny implicite rejette le paquet sans le journaliser ; seule une entrée explicite avec le mot-clé log journalise."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-top-down-processing-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Comment IOS compare-t-il un paquet aux entrées d'une ACL IPv4 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il lit toutes les entrées et applique la plus spécifique, comme pour le routage."
+        },
+        {
+          "id": "b",
+          "text": "Il lit les entrées de haut en bas et applique la première qui correspond."
+        },
+        {
+          "id": "c",
+          "text": "Il lit toutes les entrées et applique la dernière qui correspond."
+        },
+        {
+          "id": "d",
+          "text": "Il évalue d'abord toutes les entrées deny, puis les entrées permit."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une ACL est traitée séquentiellement, dans l'ordre des numéros de séquence : dès qu'une entrée correspond, son action (permit ou deny) est appliquée et les entrées suivantes sont ignorées. L'ordre des entrées est donc déterminant : les entrées les plus précises doivent précéder les plus générales, sinon elles ne sont jamais atteintes. Si aucune entrée ne correspond, le deny implicite final s'applique.",
+    "distractorNotes": {
+      "a": "La correspondance la plus longue est la règle de la table de routage, pas celle des ACL : c'est la première correspondance qui l'emporte.",
+      "c": "IOS s'arrête à la première correspondance ; les entrées suivantes ne sont pas examinées.",
+      "d": "Les actions ne sont pas regroupées : seule la position de l'entrée dans la liste compte."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-standard-placement-topology-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le LAN A ne doit plus pouvoir joindre le LAN B, mais doit toujours joindre le LAN C. L'administrateur a créé l'ACL standard 10 (deny 10.1.1.0 0.0.0.255, puis permit any). Où l'appliquer ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "En entrée sur G0/0 de R1"
+        },
+        {
+          "id": "b",
+          "text": "En entrée sur S0/0/0 de R2"
+        },
+        {
+          "id": "c",
+          "text": "En sortie sur S0/0/0 de R1"
+        },
+        {
+          "id": "d",
+          "text": "En sortie sur G0/0 de R2"
+        }
+      ],
+      "exhibit": "LAN A 10.1.1.0/24 --G0/0 [R1] S0/0/0 ----- S0/0/0 [R2] G0/0-- LAN B 10.2.2.0/24\n                                                  [R2] G0/1-- LAN C 10.3.3.0/24"
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une ACL standard ne teste que l'adresse source : on la place au plus près de la destination, sinon elle bloque la source vers toutes les destinations. Appliquée en sortie sur G0/0 de R2, l'interface du LAN B, elle ne voit que le trafic destiné au LAN B : le LAN A y est refusé, tandis que son trafic vers le LAN C sort par G0/1 et n'est pas filtré. Le « permit any » laisse passer les autres sources vers le LAN B.",
+    "distractorNotes": {
+      "a": "En entrée sur G0/0 de R1, l'ACL refuserait tout le trafic du LAN A, y compris vers le LAN C.",
+      "b": "Le trafic du LAN A vers le LAN C entre aussi dans R2 par S0/0/0 : il serait bloqué.",
+      "c": "Tout le trafic du LAN A vers R2, donc aussi vers le LAN C, sort par S0/0/0 de R1 : il serait bloqué."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-counters-icmp-implicit-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'ACL 110 est appliquée en entrée sur l'interface de R1 reliée au LAN 10.10.10.0/24 ; aucune autre ACL n'est configurée. Les pings des postes du LAN vers 198.51.100.1 échouent et aucun compteur n'augmente pendant les essais. Quelle est l'explication ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les échos ICMP sont rejetés par l'entrée 30, car « deny tcp » s'applique aussi à l'ICMP."
+        },
+        {
+          "id": "b",
+          "text": "Les échos ICMP passent par l'entrée 40 ; ce sont les réponses echo-reply qui sont bloquées au retour."
+        },
+        {
+          "id": "c",
+          "text": "Les compteurs restent figés, car une ACL étendue ne compte que les paquets autorisés."
+        },
+        {
+          "id": "d",
+          "text": "Les échos ICMP sont rejetés par le deny implicite, qui n'a pas de compteur dans l'affichage."
+        }
+      ],
+      "exhibit": "R1# show access-lists 110\nExtended IP access list 110\n    10 permit tcp 10.10.10.0 0.0.0.255 any eq www (342 matches)\n    20 permit tcp 10.10.10.0 0.0.0.255 any eq 443 (1250 matches)\n    30 deny tcp 10.10.10.0 0.0.0.255 any eq telnet (12 matches)\n    40 permit udp 10.10.10.0 0.0.0.255 any eq domain (517 matches)"
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Aucune entrée ne vise le protocole ICMP : les entrées 10 à 30 ne concernent que TCP et l'entrée 40 que UDP. Les échos ICMP arrivent donc au deny implicite et sont rejetés. Ce deny implicite n'apparaît pas dans « show access-lists » et n'a pas de compteur, d'où l'absence d'évolution. Pour voir ces rejets, on ajoute un « deny ip any any » explicite en fin de liste, qui aura son propre compteur ; pour autoriser le ping, une entrée « permit icmp 10.10.10.0 0.0.0.255 any echo » avant la fin.",
+    "distractorNotes": {
+      "a": "« deny tcp » ne correspond qu'aux segments TCP ; l'ICMP est un protocole distinct qui ne correspond pas à l'entrée 30.",
+      "b": "L'entrée 40 ne concerne que l'UDP vers le port 53 ; de plus, aucune ACL ne filtre les réponses qui reviennent par une autre interface.",
+      "c": "Les entrées deny comptent aussi leurs correspondances : l'entrée 30 affiche 12 matches."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-wildcard-which-denied-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'ACL 130 est appliquée en entrée sur l'interface LAN de R1, à laquelle sont reliés les sous-réseaux de 172.16.0.0/16. Le trafic de quel poste est refusé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "172.16.40.5"
+        },
+        {
+          "id": "b",
+          "text": "172.16.52.10"
+        },
+        {
+          "id": "c",
+          "text": "172.16.50.77"
+        },
+        {
+          "id": "d",
+          "text": "172.16.31.250"
+        }
+      ],
+      "exhibit": "R1# show access-lists 130\nExtended IP access list 130\n    10 deny ip 172.16.32.0 0.0.7.255 any\n    20 permit ip 172.16.32.0 0.0.15.255 any\n    30 deny ip 172.16.48.0 0.0.3.255 any\n    40 permit ip 172.16.0.0 0.0.255.255 any"
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Il faut calculer la plage de chaque entrée. Entrée 10 : 172.16.32.0 0.0.7.255 couvre 172.16.32.0 à 172.16.39.255. Entrée 20 : 0.0.15.255 couvre 172.16.32.0 à 172.16.47.255. Entrée 30 : 172.16.48.0 0.0.3.255 couvre 172.16.48.0 à 172.16.51.255. Entrée 40 : tout 172.16.0.0/16. 172.16.50.77 n'est couvert ni par 10 ni par 20, mais tombe dans la plage de l'entrée 30, qui le refuse en premier.",
+    "distractorNotes": {
+      "a": "172.16.40.5 est hors de la plage 32 à 39 de l'entrée 10, mais dans la plage 32 à 47 de l'entrée 20, qui l'autorise.",
+      "b": "172.16.52.10 est juste au-delà de la plage 48 à 51 de l'entrée 30 : il est autorisé par l'entrée 40.",
+      "d": "172.16.31.250 précède la plage de l'entrée 10 (qui commence à 172.16.32.0) : seule l'entrée 40 correspond, et l'autorise."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-established-keyword-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une entrée d'ACL étendue TCP, que vérifie le mot-clé established ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Que le segment a le bit SYN positionné sans le bit ACK."
+        },
+        {
+          "id": "b",
+          "text": "Que le segment a le bit ACK ou le bit RST positionné."
+        },
+        {
+          "id": "c",
+          "text": "Que la session figure dans une table d'état tenue par le routeur."
+        },
+        {
+          "id": "d",
+          "text": "Que le port source du segment est inférieur à 1024."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le mot-clé established correspond aux segments TCP dont le bit ACK ou RST est positionné, c'est-à-dire à tout sauf le premier segment (SYN seul) d'une connexion. Placé en entrée sur l'interface externe, « permit tcp any <LAN> established » laisse revenir les réponses des sessions ouvertes depuis l'intérieur et bloque les ouvertures de connexion venues de l'extérieur. Ce n'est pas un filtrage à états : le routeur ne mémorise aucune session, il ne lit que les drapeaux.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : le premier segment d'une connexion (SYN sans ACK) est justement celui qui ne correspond pas à established.",
+      "c": "Une ACL classique n'a pas de table d'état ; established se fonde uniquement sur les drapeaux TCP du segment.",
+      "d": "established ne teste aucun numéro de port, seulement les bits ACK et RST."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-one-acl-per-direction-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Combien d'ACL IPv4 peut-on appliquer au plus sur une même interface de routeur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une seule, quel que soit le sens"
+        },
+        {
+          "id": "b",
+          "text": "Une en entrée et une en sortie"
+        },
+        {
+          "id": "c",
+          "text": "Deux en entrée et deux en sortie"
+        },
+        {
+          "id": "d",
+          "text": "Autant que voulu, évaluées dans l'ordre"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La règle est d'une ACL par protocole, par sens et par interface : une ACL IPv4 en entrée et une en sortie (et, séparément, une ACL IPv6 dans chaque sens). Saisir une seconde commande « ip access-group » dans le même sens remplace l'ACL précédente au lieu de s'y ajouter. Pour combiner plusieurs règles, on les regroupe dans une seule ACL.",
+    "distractorNotes": {
+      "a": "Les deux sens sont indépendants : une ACL en entrée et une autre en sortie peuvent coexister.",
+      "c": "Un seul « ip access-group » par sens est retenu ; une seconde commande dans le même sens remplace la première.",
+      "d": "IOS n'enchaîne pas plusieurs ACL IPv4 dans un même sens : toutes les règles doivent tenir dans une seule ACL."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-append-sequence-number-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'administrateur ajoute ensuite l'entrée « deny ip any any » sans numéro de séquence. Quel numéro reçoit-elle, et où se place-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le numéro 40, après l'entrée 30"
+        },
+        {
+          "id": "b",
+          "text": "Le numéro 31, juste après l'entrée 30"
+        },
+        {
+          "id": "c",
+          "text": "Le numéro 10, en tête, les autres étant renumérotées"
+        },
+        {
+          "id": "d",
+          "text": "Le numéro 5, en tête de la liste"
+        }
+      ],
+      "exhibit": "R1# show access-lists WEB-ONLY\nExtended IP access list WEB-ONLY\n    10 permit tcp 10.5.5.0 0.0.0.255 any eq www\n    20 permit tcp 10.5.5.0 0.0.0.255 any eq 443\n    30 permit udp 10.5.5.0 0.0.0.255 any eq domain\nR1# configure terminal\nR1(config)# ip access-list extended WEB-ONLY\nR1(config-ext-nacl)# deny ip any any"
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Sans numéro explicite, IOS donne à la nouvelle entrée le plus grand numéro existant augmenté de 10 (l'incrément par défaut) : ici 30 + 10 = 40, et l'entrée est placée en fin de liste. Pour insérer une entrée ailleurs, il faut lui donner un numéro choisi entre deux existants, par exemple 15 pour la placer entre 10 et 20. Les entrées existantes ne sont jamais renumérotées automatiquement.",
+    "distractorNotes": {
+      "b": "L'incrément par défaut est 10, pas 1 : la nouvelle entrée reçoit 40.",
+      "c": "Une entrée sans numéro est ajoutée à la fin ; IOS ne renumérote pas les entrées existantes.",
+      "d": "Seul un numéro saisi explicitement (comme 5) place une entrée en tête ; sans numéro, elle va en fin de liste."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-ipv6-traffic-filter-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle commande d'interface applique l'ACL IPv6 nommée V6-IN au trafic entrant ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ip access-group V6-IN in"
+        },
+        {
+          "id": "b",
+          "text": "ipv6 access-class V6-IN in"
+        },
+        {
+          "id": "c",
+          "text": "ipv6 traffic-filter V6-IN in"
+        },
+        {
+          "id": "d",
+          "text": "access-class V6-IN in"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une ACL IPv6, toujours nommée, se crée avec « ipv6 access-list NOM » et s'applique sur une interface avec « ipv6 traffic-filter NOM in|out ». La commande IPv4 équivalente est « ip access-group ». Sur les lignes VTY, on utilise « access-class » en IPv4 et « ipv6 access-class » en IPv6. Une ACL IPv6 se termine, elle aussi, par un deny implicite, précédé d'autorisations implicites pour la découverte de voisins.",
+    "distractorNotes": {
+      "a": "« ip access-group » applique une ACL IPv4 ; elle ne s'utilise pas pour une ACL IPv6.",
+      "b": "« ipv6 access-class » s'applique sous les lignes VTY pour filtrer l'accès d'administration, pas sur une interface.",
+      "d": "« access-class » est la commande IPv4 des lignes VTY, pas une commande d'interface."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-icmp-echo-reply-inbound-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur R1, le LAN 172.16.1.0/24 est derrière G0/0 et le réseau du siège derrière G0/1, sans NAT. La seule ACL configurée est appliquée en entrée sur G0/1 : « permit icmp any 172.16.1.0 0.0.0.255 echo-reply » puis « permit tcp any 172.16.1.0 0.0.0.255 established ». Quel est son effet sur le ping ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les pings réussissent dans les deux sens, du LAN vers le siège comme du siège vers le LAN."
+        },
+        {
+          "id": "b",
+          "text": "Les pings échouent dans les deux sens, du LAN vers le siège comme du siège vers le LAN."
+        },
+        {
+          "id": "c",
+          "text": "Les pings du LAN vers le siège réussissent ; ceux du siège vers le LAN échouent."
+        },
+        {
+          "id": "d",
+          "text": "Les pings du siège vers le LAN réussissent ; ceux du LAN vers le siège échouent."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'ACL n'examine que le trafic qui entre par G0/1, venant du siège. Les echo request émis par les postes du LAN sortent par G0/1 sans filtrage (aucune ACL en sortie), et les echo-reply qui reviennent correspondent à la première entrée : ces pings réussissent. Un ping lancé depuis le siège arrive en echo request, type ICMP qu'aucune entrée n'autorise : il est rejeté par le deny implicite.",
+    "distractorNotes": {
+      "a": "Les echo request venant du siège ne correspondent à aucune entrée : seul le type echo-reply est autorisé.",
+      "b": "Aucune ACL ne filtre la sortie de G0/1 ni l'entrée de G0/0 : les echo request des postes passent et leurs réponses sont autorisées.",
+      "d": "C'est l'inverse : l'ACL autorise les echo-reply venant du siège et refuse les echo request."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-wrong-interface-replies-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les postes de 192.168.1.0/24 ne parviennent pas à ouvrir les pages HTTP du serveur 10.2.2.10. Aucune autre ACL n'est configurée et il n'y a pas de NAT. Quelle est la cause ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le masque générique 0.0.0.255 ne couvre pas tout le réseau 192.168.1.0/24."
+        },
+        {
+          "id": "b",
+          "text": "Le mot-clé www ne désigne pas le port 80 ; il faudrait écrire eq 80."
+        },
+        {
+          "id": "c",
+          "text": "Les requêtes HTTP des postes sont rejetées par l'ACL dès leur entrée dans R1."
+        },
+        {
+          "id": "d",
+          "text": "Appliquée en entrée sur G0/1, l'ACL examine les réponses du serveur, qu'aucune entrée n'autorise."
+        }
+      ],
+      "exhibit": "R1# show running-config\n<...>\ninterface GigabitEthernet0/0\n description LAN postes 192.168.1.0/24\n ip address 192.168.1.1 255.255.255.0\n!\ninterface GigabitEthernet0/1\n description LAN serveurs 10.2.2.0/24\n ip address 10.2.2.1 255.255.255.0\n ip access-group 101 in\n!\naccess-list 101 permit tcp 192.168.1.0 0.0.0.255 host 10.2.2.10 eq www"
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "En entrée sur G0/1, l'ACL 101 voit le trafic qui arrive du LAN serveurs : les réponses de 10.2.2.10, de source 10.2.2.10 port 80 vers les postes. Elles ne correspondent pas à l'unique entrée (source 192.168.1.0/24, destination port 80) et sont rejetées par le deny implicite. Les requêtes, elles, entrent par G0/0 et sortent par G0/1 sans être filtrées. Il faut appliquer l'ACL en entrée sur G0/0, au plus près de la source, ou en sortie sur G0/1.",
+    "distractorNotes": {
+      "a": "0.0.0.255 laisse varier le dernier octet : il couvre exactement 192.168.1.0/24.",
+      "b": "IOS affiche le port 80 sous le nom www ; « eq www » et « eq 80 » sont équivalents.",
+      "c": "Les requêtes entrent par G0/0, où aucune ACL n'est appliquée, et sortent par G0/1 sans filtrage en sortie."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-standard-acl-facts-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les ACL IPv4 standard numérotées sont vraies ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elles ne comparent que l'adresse IPv4 source des paquets."
+        },
+        {
+          "id": "b",
+          "text": "Elles peuvent filtrer sur le port TCP de destination."
+        },
+        {
+          "id": "c",
+          "text": "Elles portent un numéro de 1 à 99 ou de 1300 à 1999."
+        },
+        {
+          "id": "d",
+          "text": "Elles portent un numéro de 100 à 199 ou de 2000 à 2699."
+        },
+        {
+          "id": "e",
+          "text": "Elles se placent de préférence au plus près de la source."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Une ACL standard ne teste que l'adresse source ; ses numéros vont de 1 à 99 et, en plage étendue, de 1300 à 1999. Faute de pouvoir distinguer la destination, on la place au plus près de la destination, pour ne pas bloquer la source vers d'autres réseaux. Les ACL étendues (100 à 199 et 2000 à 2699) testent en plus la destination, le protocole et les ports, et se placent près de la source.",
+    "distractorNotes": {
+      "b": "Le filtrage par protocole et par port est réservé aux ACL étendues.",
+      "d": "Ces plages sont celles des ACL IPv4 étendues.",
+      "e": "Une ACL standard près de la source bloquerait la source vers toutes les destinations : on la place près de la destination."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-equivalent-telnet-entries-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux entrées d'ACL étendue autorisent les connexions Telnet de n'importe quelle source vers l'hôte 10.1.1.1, et uniquement vers lui ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "permit tcp any host 10.1.1.1 eq 23"
+        },
+        {
+          "id": "b",
+          "text": "permit tcp any eq 23 host 10.1.1.1"
+        },
+        {
+          "id": "c",
+          "text": "permit udp any host 10.1.1.1 eq 23"
+        },
+        {
+          "id": "d",
+          "text": "permit tcp any 10.1.1.1 0.0.0.0 eq telnet"
+        },
+        {
+          "id": "e",
+          "text": "permit tcp any 10.1.1.1 255.255.255.255 eq 23"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Telnet utilise TCP vers le port de destination 23 (nom telnet). « host 10.1.1.1 » équivaut à « 10.1.1.1 0.0.0.0 » : un wildcard nul impose que les 32 bits correspondent. Le port se place après la destination pour tester le port de destination. Les deux entrées a et d sont donc identiques pour IOS.",
+    "distractorNotes": {
+      "b": "Placé après « any », « eq 23 » teste le port source ; or le client Telnet utilise un port source éphémère.",
+      "c": "Telnet utilise TCP, pas UDP : cette entrée ne correspond à aucune session Telnet.",
+      "e": "Le wildcard 255.255.255.255 laisse varier tous les bits : il équivaut à any et autorise Telnet vers toutes les destinations."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-wildcard-matching-addresses-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles trois adresses correspondent à la condition « 10.4.8.0 0.0.3.255 » d'une entrée d'ACL ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "10.4.8.1"
+        },
+        {
+          "id": "b",
+          "text": "10.4.12.1"
+        },
+        {
+          "id": "c",
+          "text": "10.4.11.254"
+        },
+        {
+          "id": "d",
+          "text": "10.4.7.255"
+        },
+        {
+          "id": "e",
+          "text": "10.4.10.0"
+        },
+        {
+          "id": "f",
+          "text": "10.4.4.10"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Le wildcard 0.0.3.255 laisse varier les 2 bits de poids faible du troisième octet et tout le quatrième. Le troisième octet de 10.4.8.0 étant 8 (multiple de 4), la condition couvre 10.4.8.0 à 10.4.11.255, soit un /22. 10.4.8.1, 10.4.10.0 et 10.4.11.254 sont dans cette plage, quelle que soit leur valeur de dernier octet.",
+    "distractorNotes": {
+      "b": "10.4.12.1 commence le bloc suivant (12 à 15) : le troisième octet dépasse 11.",
+      "d": "10.4.7.255 précède le début de la plage, qui commence à 10.4.8.0.",
+      "f": "Le troisième octet 4 diffère de 8 sur un bit non masqué par 0.0.3.255 : l'adresse est hors de la plage."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-edge-in-flows-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. L'ACL EDGE-IN est appliquée en entrée sur l'interface WAN de R1 ; le réseau interne 203.0.113.0/24 est routé sans NAT. Quelles deux communications sont autorisées par cette ACL ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une connexion HTTPS ouverte depuis Internet vers 203.0.113.10"
+        },
+        {
+          "id": "b",
+          "text": "Une connexion SSH ouverte depuis Internet vers 203.0.113.10"
+        },
+        {
+          "id": "c",
+          "text": "La réponse UDP d'un serveur DNS d'Internet à une requête de 203.0.113.25"
+        },
+        {
+          "id": "d",
+          "text": "Un ping lancé depuis Internet vers 203.0.113.10"
+        },
+        {
+          "id": "e",
+          "text": "Une connexion HTTP ouverte depuis Internet vers 203.0.113.20"
+        }
+      ],
+      "selectCount": 2,
+      "exhibit": "R1# show access-lists EDGE-IN\nExtended IP access list EDGE-IN\n    10 permit tcp any host 203.0.113.10 eq www (1520 matches)\n    20 permit tcp any host 203.0.113.10 eq 443 (2304 matches)\n    30 permit tcp any 203.0.113.0 0.0.0.255 established (9821 matches)\n    40 permit udp any eq domain 203.0.113.0 0.0.0.255 (612 matches)\n    50 deny ip any any (77 matches)"
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Le SYN HTTPS vers 203.0.113.10 et les segments suivants du client correspondent à l'entrée 20. La réponse DNS a pour port source 53 : l'entrée 40, qui teste « eq domain » côté source, l'autorise vers tout le réseau interne. Les autres flux n'ont pas d'entrée qui leur soit propre : le SYN d'une ouverture de connexion n'a pas le bit ACK et ne correspond donc pas à established, et l'ICMP n'est autorisé nulle part. Ils finissent sur l'entrée 50.",
+    "distractorNotes": {
+      "b": "Aucune entrée n'autorise le port 22 ; le SYN initial, sans ACK, ne correspond pas à established et tombe sur l'entrée 50.",
+      "d": "Aucune entrée n'autorise l'ICMP : l'echo request est refusé par l'entrée 50.",
+      "e": "L'entrée 10 ne vise que l'hôte 203.0.113.10 ; le SYN vers 203.0.113.20 ne correspond pas à established et est refusé."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-named-acl-facts-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les ACL IPv4 nommées sont vraies ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une ACL nommée peut être standard ou étendue."
+        },
+        {
+          "id": "b",
+          "text": "Une ACL nommée ne peut être qu'étendue."
+        },
+        {
+          "id": "c",
+          "text": "En mode de configuration de l'ACL, « no 20 » supprime uniquement l'entrée 20."
+        },
+        {
+          "id": "d",
+          "text": "Une ACL nommée ne se termine pas par un deny implicite."
+        },
+        {
+          "id": "e",
+          "text": "Ses entrées se saisissent en mode global, précédées de « access-list »."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "« ip access-list standard NOM » ou « ip access-list extended NOM » crée une ACL nommée de l'un ou l'autre type, puis ouvre un sous-mode où chaque entrée reçoit un numéro de séquence. Dans ce sous-mode, « no <séquence> » supprime une seule entrée et un numéro choisi entre deux existants insère une entrée au bon endroit. Le deny implicite final s'applique comme pour une ACL numérotée.",
+    "distractorNotes": {
+      "b": "Une ACL nommée peut aussi être standard : « ip access-list standard NOM ».",
+      "d": "Toute ACL IPv4, nommée ou numérotée, se termine par un deny implicite.",
+      "e": "La syntaxe « access-list <numéro> … » en mode global est celle des ACL numérotées ; les entrées d'une ACL nommée se saisissent dans son sous-mode."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-packet-match-entries-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un paquet TCP part de 172.16.9.33, port 51000, vers 10.0.0.25, port 25. Quelles deux entrées d'ACL étendue lui correspondent ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "permit tcp 172.16.8.0 0.0.1.255 host 10.0.0.25 eq smtp"
+        },
+        {
+          "id": "b",
+          "text": "permit tcp 172.16.9.32 0.0.0.31 any gt 1023"
+        },
+        {
+          "id": "c",
+          "text": "permit tcp any eq smtp host 10.0.0.25"
+        },
+        {
+          "id": "d",
+          "text": "permit tcp 172.16.9.0 0.0.0.31 any eq 25"
+        },
+        {
+          "id": "e",
+          "text": "permit ip 172.16.0.0 0.0.15.255 10.0.0.0 0.0.0.255"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Chaque condition doit être vérifiée. a : 172.16.8.0 0.0.1.255 couvre 172.16.8.0 à 172.16.9.255, la destination est l'hôte 10.0.0.25 et smtp est le port 25 de destination : correspondance. e : 172.16.0.0 0.0.15.255 couvre 172.16.0.0 à 172.16.15.255 et 10.0.0.0 0.0.0.255 couvre la destination ; « ip » englobe TCP et aucun port n'est testé : correspondance.",
+    "distractorNotes": {
+      "b": "La source est bien dans 172.16.9.32 à 172.16.9.63, mais « gt 1023 » teste le port de destination, ici 25.",
+      "c": "« eq smtp » placé après la source teste le port source, qui vaut 51000.",
+      "d": "172.16.9.0 0.0.0.31 couvre 172.16.9.0 à 172.16.9.31 : 172.16.9.33 est en dehors."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-wildcard-host-range-27-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une entrée d'ACL doit correspondre exactement aux adresses 172.16.10.64 à 172.16.10.95, et à aucune autre. Quelle adresse et quel masque générique (wildcard) faut-il indiquer ?",
+      "fields": [
+        {
+          "id": "addr",
+          "label": "Adresse (en décimal pointé)"
+        },
+        {
+          "id": "wc",
+          "label": "Masque générique (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "addr": {
+          "accepted": [
+            "172.16.10.64"
+          ],
+          "normalize": "ipv4"
+        },
+        "wc": {
+          "accepted": [
+            "0.0.0.31"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "La plage compte 96 − 64 = 32 adresses, et 64 est un multiple de 32 : c'est le bloc 172.16.10.64/27. Le masque /27 vaut 255.255.255.224, dont l'inverse est 0.0.0.31 (31 = 2⁵ − 1). L'adresse à indiquer est le début du bloc, 172.16.10.64. Une plage qui ne commence pas sur un multiple de sa taille ne peut pas s'exprimer avec une seule entrée.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-wildcard-last-address-half-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une ACL contient l'entrée « deny ip 10.50.64.0 0.0.63.255 any ». Quelle est la dernière adresse source qu'elle refuse ? On veut ensuite une entrée qui ne couvre que la seconde moitié de cette plage : quelle adresse et quel masque générique faut-il indiquer ?",
+      "fields": [
+        {
+          "id": "last",
+          "label": "Dernière adresse refusée (en décimal pointé)"
+        },
+        {
+          "id": "addr",
+          "label": "Adresse de la seconde moitié (en décimal pointé)"
+        },
+        {
+          "id": "wc",
+          "label": "Masque générique de la seconde moitié (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "last": {
+          "accepted": [
+            "10.50.127.255"
+          ],
+          "normalize": "ipv4"
+        },
+        "addr": {
+          "accepted": [
+            "10.50.96.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "wc": {
+          "accepted": [
+            "0.0.31.255"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "0.0.63.255 laisse varier les 6 bits de poids faible du troisième octet : la plage va de 10.50.64.0 à 10.50.(64 + 63).255, soit 10.50.127.255 (un /18). Sa moitié est un /19 de 32 valeurs du troisième octet : la première va de 64 à 95, la seconde de 96 à 127. La seconde moitié s'écrit donc 10.50.96.0 0.0.31.255 (31 = 2⁵ − 1).",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-host-any-wildcards-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Dans une ACL IPv4, le mot-clé host équivaut à une adresse suivie d'un masque générique, et le mot-clé any à l'adresse 0.0.0.0 suivie d'un masque générique. Quels sont ces deux masques génériques ?",
+      "fields": [
+        {
+          "id": "host",
+          "label": "Masque générique équivalent à host (en décimal pointé)"
+        },
+        {
+          "id": "any",
+          "label": "Masque générique à associer à 0.0.0.0 pour any (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "host": {
+          "accepted": [
+            "0.0.0.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "any": {
+          "accepted": [
+            "255.255.255.255"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Dans un masque générique, un bit à 0 impose la correspondance et un bit à 1 l'ignore. « host 10.1.1.1 » équivaut à « 10.1.1.1 0.0.0.0 » : les 32 bits doivent correspondre, une seule adresse est visée. « any » équivaut à « 0.0.0.0 255.255.255.255 » : aucun bit n'est testé, toutes les adresses correspondent. IOS remplace d'ailleurs ces formes par host et any à l'affichage.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-apply-standard-out-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, l'ACL standard 25 existe déjà. Depuis le mode de configuration globale, appliquez-la en sortie sur l'interface GigabitEthernet0/1.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface gigabitethernet0/1"
+        ],
+        [
+          "ip access-group 25 out"
+        ]
+      ]
+    },
+    "explanation": "Une ACL s'applique en mode de configuration d'interface avec « ip access-group <numéro|nom> in|out ». Le sens se juge du point de vue du routeur : out filtre les paquets qui quittent l'interface après le routage. Une seule ACL IPv4 est admise par sens et par interface ; « show ip interface g0/1 » confirme ensuite « Outgoing access list is 25 ».",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-named-standard-remark-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, le LAN serveurs est derrière G0/2. Créez l'ACL standard nommée GUEST-FILTER avec la remarque « Bloque le PC invite », puis une entrée qui refuse le poste 192.168.5.10 et une entrée qui autorise le reste de 192.168.5.0/24, sans numéros de séquence. Appliquez-la en sortie sur G0/2. Seul ce réseau doit pouvoir joindre le LAN serveurs.",
+      "prompt": "R1(config)#",
+      "lines": 6
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ip access-list standard GUEST-FILTER"
+        ],
+        [
+          "remark Bloque le PC invite"
+        ],
+        [
+          "deny host 192.168.5.10",
+          "deny 192.168.5.10 0.0.0.0",
+          "deny 192.168.5.10"
+        ],
+        [
+          "permit 192.168.5.0 0.0.0.255"
+        ],
+        [
+          "interface gigabitethernet0/2"
+        ],
+        [
+          "ip access-group GUEST-FILTER out"
+        ]
+      ]
+    },
+    "explanation": "« ip access-list standard GUEST-FILTER » ouvre le sous-mode de l'ACL. La remarque documente l'ACL sans effet sur le filtrage. Le deny du poste doit précéder le permit du réseau, sinon le poste correspondrait d'abord au permit. Le deny implicite refuse toutes les autres sources, comme demandé. Une ACL standard se place près de la destination : en sortie sur G0/2, l'interface du LAN serveurs.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-named-insert-delete-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, l'ACL étendue nommée INTERNET-OUT contient les entrées 10 (permit tcp 10.1.1.0 0.0.0.255 any eq www), 20 (permit tcp 10.1.1.0 0.0.0.255 any eq 443) et 30 (permit udp 10.1.1.0 0.0.0.255 any eq domain). Depuis le mode de configuration globale, ajoutez avec le numéro de séquence 5 une entrée qui refuse le HTTP (port 80) de l'hôte 10.1.1.50 vers toute destination, et supprimez l'entrée 30.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ip access-list extended INTERNET-OUT"
+        ],
+        [
+          "5 deny tcp host 10.1.1.50 any eq 80",
+          "5 deny tcp 10.1.1.50 0.0.0.0 any eq 80",
+          "5 deny tcp host 10.1.1.50 any eq www",
+          "5 deny tcp 10.1.1.50 0.0.0.0 any eq www"
+        ],
+        [
+          "no 30"
+        ]
+      ],
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    "explanation": "Le sous-mode d'une ACL nommée permet d'éditer les entrées par leur numéro de séquence. Le numéro 5 place le deny avant l'entrée 10 : sans lui, l'hôte 10.1.1.50 correspondrait d'abord au permit HTTP de son réseau. « no 30 » supprime cette seule entrée, sans toucher aux autres. Les deux opérations sont indépendantes et peuvent se faire dans n'importe quel ordre.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-established-echo-reply-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, le LAN 172.16.20.0/24 est derrière G0/0 et le WAN derrière G0/1, sans NAT. Créez l'ACL étendue nommée FROM-WAN qui autorise seulement vers ce LAN les segments TCP des sessions déjà établies (mot-clé established) et les réponses echo-reply aux pings, de toute source. Appliquez-la à l'interface et dans le sens qui filtrent le trafic venant du WAN.",
+      "prompt": "R1(config)#",
+      "lines": 5
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ip access-list extended FROM-WAN"
+        ],
+        [
+          "permit tcp any 172.16.20.0 0.0.0.255 established"
+        ],
+        [
+          "permit icmp any 172.16.20.0 0.0.0.255 echo-reply"
+        ],
+        [
+          "interface gigabitethernet0/1"
+        ],
+        [
+          "ip access-group FROM-WAN in"
+        ]
+      ],
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    "explanation": "established correspond aux segments TCP avec ACK ou RST : les réponses aux sessions ouvertes depuis le LAN passent, mais pas un SYN venu du WAN. Le type ICMP echo-reply laisse revenir les réponses aux pings du LAN, sans autoriser les echo request venus du WAN. Tout le reste est rejeté par le deny implicite. Pour filtrer ce qui arrive du WAN, l'ACL s'applique en entrée sur G0/1. L'ordre des deux entrées est indifférent, car elles ne se recouvrent pas.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-numbered-extended-range-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, depuis le mode de configuration globale, créez l'ACL étendue numérotée 130 avec trois entrées, dans cet ordre : autoriser le TCP de 10.10.0.0/16 vers les ports 20 à 21 (plage) de l'hôte 192.0.2.25 ; refuser tout autre trafic IP de toute source vers cet hôte ; autoriser tout le reste.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "access-list 130 permit tcp 10.10.0.0 0.0.255.255 host 192.0.2.25 range 20 21",
+          "access-list 130 permit tcp 10.10.0.0 0.0.255.255 192.0.2.25 0.0.0.0 range 20 21",
+          "access-list 130 permit tcp 10.10.0.0 0.0.255.255 host 192.0.2.25 range ftp-data ftp",
+          "access-list 130 permit tcp 10.10.0.0 0.0.255.255 192.0.2.25 0.0.0.0 range ftp-data ftp"
+        ],
+        [
+          "access-list 130 deny ip any host 192.0.2.25",
+          "access-list 130 deny ip any 192.0.2.25 0.0.0.0"
+        ],
+        [
+          "access-list 130 permit ip any any",
+          "access-list 130 permit ip 0.0.0.0 255.255.255.255 0.0.0.0 255.255.255.255"
+        ]
+      ]
+    },
+    "explanation": "Les numéros 100 à 199 désignent une ACL étendue. « range 20 21 » placé après la destination teste le port de destination (ftp-data et ftp en noms IOS). Le wildcard de 10.10.0.0/16 est 0.0.255.255. L'ordre compte : le permit TCP doit précéder le deny vers l'hôte, sinon il ne serait jamais atteint, et le « permit ip any any » final évite que le deny implicite bloque tout le reste.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-ipv6-acl-traffic-filter-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, depuis le mode de configuration globale, créez l'ACL IPv6 nommée NO-TELNET6 qui refuse le Telnet de toute source vers le réseau 2001:db8:10::/64 et autorise tout le reste du trafic IPv6. Appliquez-la en sortie sur GigabitEthernet0/1.",
+      "prompt": "R1(config)#",
+      "lines": 5
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ipv6 access-list NO-TELNET6"
+        ],
+        [
+          "deny tcp any 2001:db8:10::/64 eq 23",
+          "deny tcp any 2001:db8:10::/64 eq telnet"
+        ],
+        [
+          "permit ipv6 any any"
+        ],
+        [
+          "interface gigabitethernet0/1"
+        ],
+        [
+          "ipv6 traffic-filter NO-TELNET6 out"
+        ]
+      ]
+    },
+    "explanation": "Les ACL IPv6 sont toujours nommées et créées avec « ipv6 access-list ». Les réseaux s'y écrivent en préfixe/longueur, sans masque générique. Telnet est TCP vers le port 23 (nom telnet). Sans « permit ipv6 any any », le deny implicite final bloquerait le reste du trafic. Sur une interface, une ACL IPv6 s'applique avec « ipv6 traffic-filter », et non « ip access-group ».",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IPv6 Configuration Guide — Implementing Traffic Filters and Firewalls for IPv6 Security"
+  },
+  {
+    "slug": "ccna-5.6-order-entries-policy-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une ACL étendue, appliquée en entrée côté LAN 10.1.1.0/24, doit appliquer cette politique : le poste 10.1.1.10 ne doit pas accéder en HTTP au serveur 10.2.2.2 ; les autres postes du LAN le peuvent ; le LAN ne doit joindre rien d'autre dans 10.2.2.0/24 ; tout autre trafic est autorisé. Ordonnez les entrées de la première à la dernière.",
+      "items": [
+        {
+          "id": "c",
+          "text": "deny ip 10.1.1.0 0.0.0.255 10.2.2.0 0.0.0.255"
+        },
+        {
+          "id": "a",
+          "text": "deny tcp host 10.1.1.10 host 10.2.2.2 eq www"
+        },
+        {
+          "id": "d",
+          "text": "permit ip any any"
+        },
+        {
+          "id": "b",
+          "text": "permit tcp 10.1.1.0 0.0.0.255 host 10.2.2.2 eq www"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "Avec la règle de la première correspondance, on va du plus précis au plus général. Le deny de l'hôte 10.1.1.10 doit précéder le permit HTTP du LAN, qui le couvrirait sinon. Ce permit doit précéder le deny du LAN vers 10.2.2.0/24, qui bloquerait sinon le HTTP de tous les postes. Le « permit ip any any » vient en dernier : placé plus haut, il rendrait inutiles les entrées suivantes.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-order-packet-processing-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un routeur a une ACL en entrée sur l'interface de réception et une ACL en sortie sur l'interface d'émission. Ordonnez les étapes du traitement d'un paquet qui le traverse.",
+      "items": [
+        {
+          "id": "c",
+          "text": "Le routeur consulte sa table de routage pour choisir l'interface de sortie"
+        },
+        {
+          "id": "a",
+          "text": "La trame arrive sur l'interface d'entrée et le paquet IP en est extrait"
+        },
+        {
+          "id": "e",
+          "text": "Le paquet est encapsulé dans une nouvelle trame et transmis"
+        },
+        {
+          "id": "b",
+          "text": "L'ACL appliquée en entrée sur l'interface de réception est évaluée"
+        },
+        {
+          "id": "d",
+          "text": "L'ACL appliquée en sortie sur l'interface choisie est évaluée"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Une ACL en entrée est évaluée dès la réception, avant toute décision de routage : un paquet refusé ne consomme pas de recherche dans la table. Si le paquet est autorisé, le routeur choisit l'interface de sortie, puis évalue l'ACL de sortie de cette interface. Ce n'est qu'après ce second contrôle que le paquet est encapsulé dans une nouvelle trame et émis. C'est pourquoi on dit qu'une ACL en entrée économise du traitement.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-order-after-sequence-edits-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Reportez-vous à l'exhibit. Ordonnez les entrées telles que « show access-lists WEB-OUT » les affichera après ces commandes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "d",
+          "text": "deny ip any any"
+        },
+        {
+          "id": "b",
+          "text": "permit tcp 10.1.1.0 0.0.0.255 any eq www"
+        },
+        {
+          "id": "e",
+          "text": "permit icmp 10.1.1.0 0.0.0.255 any echo"
+        },
+        {
+          "id": "c",
+          "text": "permit tcp 10.1.1.0 0.0.0.255 any eq 443"
+        },
+        {
+          "id": "a",
+          "text": "deny tcp host 10.1.1.60 any eq 443"
+        }
+      ],
+      "exhibit": "R1# show access-lists WEB-OUT\nExtended IP access list WEB-OUT\n    10 deny tcp host 10.1.1.50 any eq www\n    20 permit tcp 10.1.1.0 0.0.0.255 any eq www\n    30 permit tcp 10.1.1.0 0.0.0.255 any eq 443\nR1# configure terminal\nR1(config)# ip access-list extended WEB-OUT\nR1(config-ext-nacl)# no 10\nR1(config-ext-nacl)# 25 deny tcp host 10.1.1.60 any eq 443\nR1(config-ext-nacl)# deny ip any any\nR1(config-ext-nacl)# 5 permit icmp 10.1.1.0 0.0.0.255 any echo"
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "e",
+        "b",
+        "a",
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "Les entrées sont triées par numéro de séquence. « no 10 » retire le deny de 10.1.1.50. Le deny de 10.1.1.60 reçoit 25 et se place entre 20 et 30. L'entrée sans numéro reçoit le plus grand numéro existant plus 10, soit 40 (l'entrée 25 ne change rien, 30 restant le plus grand). Le permit ICMP saisi en dernier reçoit 5 et passe en tête. Ordre : 5, 20, 25, 30, 40.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-match-acl-numbers-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque commande selon le type d'ACL que désigne son numéro.",
+      "left": [
+        {
+          "id": "n10",
+          "text": "access-list 10 …"
+        },
+        {
+          "id": "n150",
+          "text": "access-list 150 …"
+        },
+        {
+          "id": "n1450",
+          "text": "access-list 1450 …"
+        },
+        {
+          "id": "n2100",
+          "text": "access-list 2100 …"
+        },
+        {
+          "id": "n250",
+          "text": "access-list 250 …"
+        }
+      ],
+      "right": [
+        {
+          "id": "std",
+          "text": "ACL IPv4 standard"
+        },
+        {
+          "id": "ext",
+          "text": "ACL IPv4 étendue"
+        },
+        {
+          "id": "none",
+          "text": "Numéro hors des plages d'ACL IPv4"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "n10": "std",
+        "n150": "ext",
+        "n1450": "std",
+        "n2100": "ext",
+        "n250": "none"
+      }
+    },
+    "explanation": "Les ACL IPv4 standard utilisent les numéros 1 à 99 et la plage étendue 1300 à 1999 : 10 et 1450 sont donc standard. Les ACL IPv4 étendues utilisent 100 à 199 et 2000 à 2699 : 150 et 2100 sont étendues. 250 n'appartient à aucune de ces plages : les numéros 200 à 299 servent à d'autres types d'ACL (codes de type de protocole), pas au filtrage IPv4.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-match-port-operators-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque opérateur de port d'une entrée d'ACL étendue TCP aux ports qu'il désigne.",
+      "left": [
+        {
+          "id": "eq",
+          "text": "eq 23"
+        },
+        {
+          "id": "gt",
+          "text": "gt 1023"
+        },
+        {
+          "id": "lt",
+          "text": "lt 1024"
+        },
+        {
+          "id": "range",
+          "text": "range 20 21"
+        },
+        {
+          "id": "neq",
+          "text": "neq 80"
+        }
+      ],
+      "right": [
+        {
+          "id": "p23",
+          "text": "Le port 23 uniquement"
+        },
+        {
+          "id": "phigh",
+          "text": "Les ports 1024 à 65535"
+        },
+        {
+          "id": "plow",
+          "text": "Les ports 0 à 1023"
+        },
+        {
+          "id": "p2021",
+          "text": "Les ports 20 et 21"
+        },
+        {
+          "id": "pnot80",
+          "text": "Tous les ports sauf 80"
+        },
+        {
+          "id": "p1023up",
+          "text": "Les ports 1023 à 65535"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "eq": "p23",
+        "gt": "phigh",
+        "lt": "plow",
+        "range": "p2021",
+        "neq": "pnot80"
+      }
+    },
+    "explanation": "eq teste l'égalité, neq la différence. gt (greater than) et lt (less than) sont des inégalités strictes : « gt 1023 » commence à 1024 et « lt 1024 » s'arrête à 1023. range inclut ses deux bornes. Placé après la destination, l'opérateur teste le port de destination ; placé après la source, le port source.",
+    "distractorNotes": {
+      "p1023up": "« gt » est strict : « gt 1023 » exclut 1023 et commence à 1024 ; il faudrait « gt 1022 » ou « range 1023 65535 »."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  },
+  {
+    "slug": "ccna-5.6-match-acl-commands-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque tâche à la commande IOS qui la réalise.",
+      "left": [
+        {
+          "id": "t1",
+          "text": "Appliquer une ACL IPv4 en entrée sur une interface"
+        },
+        {
+          "id": "t2",
+          "text": "Limiter les sources autorisées à ouvrir une session Telnet ou SSH sur le routeur"
+        },
+        {
+          "id": "t3",
+          "text": "Ajouter un commentaire dans une ACL"
+        },
+        {
+          "id": "t4",
+          "text": "Supprimer l'entrée 30 d'une ACL nommée"
+        },
+        {
+          "id": "t5",
+          "text": "Afficher les entrées des ACL et leurs compteurs"
+        }
+      ],
+      "right": [
+        {
+          "id": "c1",
+          "text": "ip access-group NOM in"
+        },
+        {
+          "id": "c2",
+          "text": "access-class NOM in"
+        },
+        {
+          "id": "c3",
+          "text": "remark texte"
+        },
+        {
+          "id": "c4",
+          "text": "no 30"
+        },
+        {
+          "id": "c5",
+          "text": "show access-lists"
+        },
+        {
+          "id": "c6",
+          "text": "clear access-list counters"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "t1": "c1",
+        "t2": "c2",
+        "t3": "c3",
+        "t4": "c4",
+        "t5": "c5"
+      }
+    },
+    "explanation": "« ip access-group » s'applique en mode interface, « access-class » sous « line vty » pour filtrer l'accès d'administration. « remark » documente une ACL sans effet sur le filtrage. Dans le sous-mode d'une ACL nommée, « no <séquence> » retire une seule entrée. « show access-lists » affiche les entrées et leurs compteurs de correspondances.",
+    "distractorNotes": {
+      "c6": "Cette commande remet à zéro les compteurs des ACL ; elle ne les affiche pas et ne correspond à aucune des tâches."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — IP Access Lists"
+  }
+]
