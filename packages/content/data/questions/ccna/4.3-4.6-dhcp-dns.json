@@ -1,0 +1,1119 @@
+[
+  {
+    "slug": "ccna-4.3-dhcp-udp-ports-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un client DHCPv4 et le serveur DHCP se trouvent sur le même sous-réseau, sans agent relais. Donnez les ports UDP de destination des messages suivants.",
+      "fields": [
+        {
+          "id": "disc",
+          "label": "Port UDP de destination du DHCPDISCOVER émis par le client (nombre entier)"
+        },
+        {
+          "id": "offer",
+          "label": "Port UDP de destination du DHCPOFFER envoyé par le serveur au client (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "disc": {
+          "accepted": [
+            "67"
+          ],
+          "normalize": "int"
+        },
+        "offer": {
+          "accepted": [
+            "68"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "DHCP reprend les ports de BOOTP : le serveur écoute sur UDP 67 (port « serveur ») et le client sur UDP 68 (port « client »). Tout message du client vers le serveur, comme le DHCPDISCOVER ou le DHCPREQUEST, est donc adressé au port 67, et tout message du serveur vers le client, comme le DHCPOFFER ou le DHCPACK, au port 68. Le client utilise aussi le port 68 comme port source : contrairement à la plupart des services, il n'emploie pas de port éphémère, car il doit recevoir les réponses avant même d'avoir une adresse IP. Un agent relais, lui, reçoit les réponses du serveur sur le port 67.",
+    "distractorNotes": {},
+    "reference": "RFC 2131, section 4.1"
+  },
+  {
+    "slug": "ccna-4.3-dns-record-types-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque besoin au type d'enregistrement DNS qui y répond.",
+      "left": [
+        {
+          "id": "v4",
+          "text": "Associer le nom srv1.example.com à l'adresse 192.0.2.10"
+        },
+        {
+          "id": "v6",
+          "text": "Associer le nom srv1.example.com à l'adresse 2001:db8::10"
+        },
+        {
+          "id": "alias",
+          "text": "Faire de www.example.com un alias de srv1.example.com"
+        },
+        {
+          "id": "mail",
+          "text": "Indiquer le serveur qui reçoit le courrier adressé à @example.com"
+        },
+        {
+          "id": "rev",
+          "text": "Retrouver le nom associé à l'adresse 192.0.2.10 (résolution inverse)"
+        }
+      ],
+      "right": [
+        {
+          "id": "ns",
+          "text": "NS"
+        },
+        {
+          "id": "ptr",
+          "text": "PTR"
+        },
+        {
+          "id": "a",
+          "text": "A"
+        },
+        {
+          "id": "mx",
+          "text": "MX"
+        },
+        {
+          "id": "cname",
+          "text": "CNAME"
+        },
+        {
+          "id": "aaaa",
+          "text": "AAAA"
+        },
+        {
+          "id": "soa",
+          "text": "SOA"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "v4": "a",
+        "v6": "aaaa",
+        "alias": "cname",
+        "mail": "mx",
+        "rev": "ptr"
+      }
+    },
+    "explanation": "L'enregistrement A associe un nom à une adresse IPv4, et AAAA (quatre fois la taille d'un A, 128 bits) à une adresse IPv6. CNAME déclare un alias : le résolveur suit le nom canonique indiqué puis cherche son enregistrement A ou AAAA. MX désigne le ou les serveurs de messagerie d'un domaine, avec une préférence (la plus basse est essayée en premier). PTR sert à la résolution inverse : l'adresse 192.0.2.10 est recherchée sous le nom 10.2.0.192.in-addr.arpa, dont l'enregistrement PTR donne le nom de l'hôte.",
+    "distractorNotes": {
+      "ns": "NS désigne les serveurs faisant autorité pour une zone (délégation), pas une adresse ni un alias.",
+      "soa": "SOA (Start of Authority) décrit les paramètres de la zone : serveur primaire, contact, numéro de série et temporisations."
+    },
+    "reference": "RFC 1035, section 3.2.2 ; RFC 3596 (AAAA)"
+  },
+  {
+    "slug": "ccna-4.3-dhcp-client-broadcast-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un PC qui n'a encore jamais obtenu d'adresse démarre sur un réseau doté d'un serveur DHCP. Quels deux messages DHCP le PC émet-il en broadcast ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "DHCPOFFER"
+        },
+        {
+          "id": "b",
+          "text": "DHCPDISCOVER"
+        },
+        {
+          "id": "c",
+          "text": "DHCPACK"
+        },
+        {
+          "id": "d",
+          "text": "DHCPRELEASE"
+        },
+        {
+          "id": "e",
+          "text": "DHCPREQUEST"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Sans adresse IP et sans connaître de serveur, le client diffuse son DHCPDISCOVER (source 0.0.0.0, destination 255.255.255.255, UDP 67). Après avoir reçu une ou plusieurs offres, il diffuse aussi son DHCPREQUEST : il n'a toujours pas d'adresse configurée, et la diffusion informe tous les serveurs de l'offre retenue (identifiée par l'option « server identifier ») ; les serveurs dont l'offre est déclinée libèrent l'adresse proposée. DHCPOFFER et DHCPACK sont émis par le serveur, pas par le client.",
+    "distractorNotes": {
+      "a": "Le DHCPOFFER est émis par le serveur en réponse au DHCPDISCOVER, pas par le PC.",
+      "c": "Le DHCPACK est émis par le serveur pour confirmer le bail ; le PC ne l'envoie pas.",
+      "d": "Le DHCPRELEASE est envoyé en unicast au serveur, par un client qui possède déjà un bail et rend son adresse ; il n'intervient pas lors d'une première obtention."
+    },
+    "reference": "RFC 2131, section 4.4.4"
+  },
+  {
+    "slug": "ccna-4.3-dhcp-release-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'administrateur libère l'adresse IPv4 d'un PC avant la fin de son bail, pour la rendre au serveur DHCP. Quel message DHCP le PC envoie-t-il au serveur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "DHCPDECLINE"
+        },
+        {
+          "id": "b",
+          "text": "DHCPNAK"
+        },
+        {
+          "id": "c",
+          "text": "DHCPRELEASE"
+        },
+        {
+          "id": "d",
+          "text": "DHCPINFORM"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le DHCPRELEASE indique au serveur que le client renonce à son bail avant son expiration : le serveur peut alors réattribuer l'adresse. Le client l'envoie en unicast au serveur qui lui a accordé le bail, puisqu'il connaît son adresse, et cesse aussitôt d'utiliser l'adresse. Sous Windows, c'est ce que produit « ipconfig /release » ; sur un routeur client DHCP, « release dhcp » suivi du nom de l'interface.",
+    "distractorNotes": {
+      "a": "Le DHCPDECLINE signale au serveur que l'adresse proposée est déjà utilisée sur le réseau (conflit détecté par le client), pas un abandon volontaire du bail.",
+      "b": "Le DHCPNAK est émis par le serveur pour refuser une demande du client, par exemple une adresse qui n'appartient pas au bon réseau.",
+      "d": "Le DHCPINFORM sert à un client qui a déjà une adresse configurée à demander seulement d'autres paramètres (DNS, domaine…)."
+    },
+    "reference": "RFC 2131"
+  },
+  {
+    "slug": "ccna-4.3-dhcp-pool-lease-domain-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale de R1, excluez d'abord les adresses 10.10.10.1 à 10.10.10.20, puis créez le pool DHCP nommé ADMIN qui distribue le réseau 10.10.10.0/24 avec la passerelle par défaut 10.10.10.1, le nom de domaine admin.local et un bail de 3 jours.",
+      "prompt": "R1(config)#",
+      "lines": 6
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          2,
+          5
+        ]
+      ],
+      "commands": [
+        [
+          "ip dhcp excluded-address 10.10.10.1 10.10.10.20"
+        ],
+        [
+          "ip dhcp pool ADMIN"
+        ],
+        [
+          "network 10.10.10.0 255.255.255.0",
+          "network 10.10.10.0 /24"
+        ],
+        [
+          "default-router 10.10.10.1"
+        ],
+        [
+          "domain-name admin.local"
+        ],
+        [
+          "lease 3",
+          "lease 3 0",
+          "lease 3 0 0"
+        ]
+      ]
+    },
+    "explanation": "« ip dhcp excluded-address » se saisit en mode global et prend la première et la dernière adresse de la plage : ces adresses, réservées à la passerelle et aux équipements adressés statiquement, ne seront jamais attribuées. « ip dhcp pool ADMIN » ouvre le mode R1(dhcp-config)#, où « network » définit le réseau distribué, « default-router » la passerelle (option 3), « domain-name » le suffixe DNS (option 15) et « lease » la durée du bail, exprimée en jours, puis éventuellement en heures et en minutes. Sans commande « lease », le bail par défaut d'IOS est d'un jour.",
+    "distractorNotes": {},
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Server"
+  },
+  {
+    "slug": "ccna-4.3-dhcp-default-lease-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un routeur Cisco IOS est configuré comme serveur DHCP. Son pool ne contient aucune commande lease. Quelle durée de bail accorde-t-il aux clients ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "8 jours"
+        },
+        {
+          "id": "b",
+          "text": "12 heures"
+        },
+        {
+          "id": "c",
+          "text": "1 heure"
+        },
+        {
+          "id": "d",
+          "text": "1 jour"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le serveur DHCP d'IOS accorde par défaut un bail d'un jour (24 heures). La sous-commande de pool « lease {jours [heures [minutes]] | infinite} » permet de le modifier, par exemple « lease 0 8 » pour 8 heures ou « lease infinite » pour un bail sans expiration. Avec un bail d'un jour, le client tente un premier renouvellement au bout de 12 heures (T1, la moitié du bail). On vérifie la date d'expiration de chaque bail avec « show ip dhcp binding ».",
+    "distractorNotes": {
+      "a": "8 jours est la durée par défaut d'un serveur DHCP Windows Server, pas celle d'IOS.",
+      "b": "12 heures correspond à T1, le moment où le client tente de renouveler un bail d'un jour, pas à la durée du bail.",
+      "c": "1 heure n'est la valeur par défaut d'aucun pool IOS ; il faudrait configurer « lease 0 1 »."
+    },
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Server"
+  },
+  {
+    "slug": "ccna-4.3-dhcp-binding-client-id-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 fonctionne sous IOS 15. Quelle est l'adresse MAC du client qui a reçu l'adresse 192.168.10.12 ?",
+      "exhibit": "R1#show ip dhcp binding\nBindings from all pools not associated with VRF:\nIP address          Client-ID/              Lease expiration        Type\n                    Hardware address/\n                    User name\n192.168.10.11       0100.5079.6668.01       Nov 09 2026 09:12 AM    Automatic\n192.168.10.12       0100.5079.6668.02       Nov 09 2026 09:40 AM    Automatic\n192.168.10.13       0100.5079.6668.03       Nov 09 2026 10:05 AM    Automatic",
+      "options": [
+        {
+          "id": "a",
+          "text": "0100.5079.6668"
+        },
+        {
+          "id": "b",
+          "text": "0050.7966.6801"
+        },
+        {
+          "id": "c",
+          "text": "0050.7966.6802"
+        },
+        {
+          "id": "d",
+          "text": "0050.7966.6803"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La colonne Client-ID affiche l'identifiant client (option 61) envoyé par le poste. Pour un client Ethernet, il se compose du type de matériel, 01 pour Ethernet, suivi des 12 chiffres hexadécimaux de l'adresse MAC. Pour 192.168.10.12, l'identifiant 0100.5079.6668.02 se lit donc 01 + 0050.7966.6802 : il faut retirer le préfixe 01, puis regrouper les chiffres restants par quatre. La colonne Type indique Automatic pour une liaison dynamique tirée du pool, et Manual pour une réservation configurée par l'administrateur.",
+    "distractorNotes": {
+      "a": "Ce sont les 12 premiers chiffres de l'identifiant, préfixe 01 compris : il faut d'abord retirer ce type de matériel, puis lire les 12 chiffres qui suivent.",
+      "b": "0050.7966.6801 est l'adresse MAC du client qui a reçu 192.168.10.11 (identifiant 0100.5079.6668.01).",
+      "d": "0050.7966.6803 est l'adresse MAC du client qui a reçu 192.168.10.13 (identifiant 0100.5079.6668.03)."
+    },
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Server"
+  },
+  {
+    "slug": "ccna-4.3-dns-transport-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur le transport des messages DNS sont vraies ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Un client DNS envoie ses requêtes depuis le port source 53, vers un port éphémère du serveur."
+        },
+        {
+          "id": "b",
+          "text": "Les requêtes et réponses DNS ordinaires d'un client sont transportées par UDP, port 53."
+        },
+        {
+          "id": "c",
+          "text": "DNS utilise le port UDP 53 pour les requêtes de type A et le port UDP 54 pour les requêtes AAAA."
+        },
+        {
+          "id": "d",
+          "text": "Les transferts de zone entre serveurs DNS utilisent TCP, port 53."
+        },
+        {
+          "id": "e",
+          "text": "DNS n'utilise jamais TCP : une réponse trop grande pour UDP est tronquée et le reste est perdu."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Une requête DNS est courte et une réponse tient le plus souvent dans un seul datagramme : UDP 53 évite l'établissement d'une connexion. TCP 53 sert aux transferts de zone (AXFR, IXFR) entre serveurs primaire et secondaires, et à toute réponse trop grande pour UDP : le serveur renvoie alors une réponse tronquée (bit TC), et le client renouvelle sa requête sur TCP. Le serveur écoute sur le port 53 ; le client, lui, émet depuis un port source éphémère, choisi aléatoirement pour compliquer l'empoisonnement du cache.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : le serveur écoute sur le port 53, et le client émet depuis un port source éphémère choisi aléatoirement.",
+      "c": "Tous les types de requête (A, AAAA, MX, PTR…) passent par le même port 53 ; le type est un champ du message DNS, pas un port.",
+      "e": "Une réponse tronquée porte le bit TC, qui pousse le client à reposer sa question sur TCP 53 ; DNS utilise aussi TCP pour les transferts de zone."
+    },
+    "reference": "RFC 1035, section 4.2 ; RFC 7766"
+  },
+  {
+    "slug": "ccna-4.3-dns-router-config-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "La résolution de noms par DNS a été désactivée sur R1. Depuis le mode de configuration globale, réactivez-la, définissez le nom de domaine par défaut corp.example et désignez le serveur DNS 192.168.1.53. L'ordre des commandes est libre.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "ip domain-lookup",
+          "ip domain lookup"
+        ],
+        [
+          "ip domain-name corp.example",
+          "ip domain name corp.example"
+        ],
+        [
+          "ip name-server 192.168.1.53"
+        ]
+      ]
+    },
+    "explanation": "« ip domain-lookup » (active par défaut) autorise R1 à résoudre les noms par DNS ; on la désactive souvent sur les équipements de labo pour éviter qu'une faute de frappe ne soit prise pour un nom d'hôte. « ip name-server » désigne le ou les serveurs interrogés (jusqu'à six adresses). « ip domain-name » fixe le suffixe ajouté aux noms courts : « ping srv1 » interroge alors srv1.corp.example. Sur IOS XE récent, les formes « ip domain lookup » et « ip domain name » sont équivalentes. Attention à ne pas confondre avec « ip dns server », qui fait du routeur un serveur DNS.",
+    "distractorNotes": {},
+    "reference": "IP Addressing: DNS Configuration Guide (Cisco IOS XE), Configuring DNS"
+  },
+  {
+    "slug": "ccna-4.3-dns-no-name-server-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un serveur DNS 192.168.1.53, qui connaît www.example.com, est joignable depuis R1. Quelle est la cause de l'échec de la résolution ?",
+      "exhibit": "R1#ping www.example.com\nTranslating \"www.example.com\"...domain server (255.255.255.255)\n% Unrecognized host or address, or protocol not running.",
+      "options": [
+        {
+          "id": "a",
+          "text": "La commande ip domain-lookup est désactivée sur R1"
+        },
+        {
+          "id": "b",
+          "text": "Le serveur DNS ne possède pas d'enregistrement PTR pour ce nom"
+        },
+        {
+          "id": "c",
+          "text": "Le serveur DNS 192.168.1.53 bloque les requêtes reçues sur TCP 53"
+        },
+        {
+          "id": "d",
+          "text": "Aucun serveur DNS n'est désigné sur R1 par ip name-server"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La ligne « Translating … » montre que la résolution DNS est active : R1 tente bien de résoudre le nom. Mais la requête part vers 255.255.255.255 : faute de commande « ip name-server », IOS diffuse sa requête DNS sur les segments connectés, où aucun serveur ne répond, et finit par afficher « Unrecognized host ». Avec « ip name-server 192.168.1.53 », la ligne indiquerait « domain server (192.168.1.53) ». C'est aussi ce comportement qui fait patienter le routeur après une commande mal tapée en mode d'exécution, prise pour un nom d'hôte.",
+    "distractorNotes": {
+      "a": "Si ip domain-lookup était désactivée, R1 n'essaierait aucune résolution : la ligne « Translating … domain server » n'apparaîtrait pas.",
+      "b": "Un enregistrement PTR sert à la résolution inverse (adresse vers nom) ; pour joindre www.example.com, R1 demande un enregistrement A.",
+      "c": "Les requêtes DNS d'un client partent sur UDP 53 ; de plus, l'exhibit montre que la requête n'est pas adressée à 192.168.1.53 mais diffusée vers 255.255.255.255."
+    },
+    "reference": "IP Addressing: DNS Configuration Guide (Cisco IOS XE), Configuring DNS"
+  },
+  {
+    "slug": "ccna-4.3-dhcp-lease-rebinding-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un PC obtient un bail DHCP de 8 heures ; les temporisations T1 et T2 ont leurs valeurs par défaut. Juste après, le serveur qui a accordé le bail tombe en panne et aucun autre serveur DHCP n'existe sur le réseau. Remettez dans l'ordre les événements vécus par le PC.",
+      "items": [
+        {
+          "id": "t2",
+          "text": "Le PC diffuse un DHCPREQUEST à l'attention de tout serveur DHCP"
+        },
+        {
+          "id": "bound",
+          "text": "Le PC reçoit le DHCPACK et commence à utiliser son adresse"
+        },
+        {
+          "id": "restart",
+          "text": "Le PC recommence la procédure par un DHCPDISCOVER"
+        },
+        {
+          "id": "t1",
+          "text": "Le PC envoie un DHCPREQUEST en unicast au serveur qui lui a accordé le bail"
+        },
+        {
+          "id": "expire",
+          "text": "Le bail expire et le PC cesse d'utiliser l'adresse"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "bound",
+        "t1",
+        "t2",
+        "expire",
+        "restart"
+      ]
+    },
+    "explanation": "Par défaut, T1 vaut la moitié du bail (4 heures ici) et T2 les 7/8 du bail (87,5 %, soit 7 heures). À T1, le client entre dans l'état RENEWING : il demande la prolongation au serveur qui lui a accordé le bail, en unicast, puisqu'il connaît son adresse. Sans réponse, il passe à T2 dans l'état REBINDING et diffuse sa demande pour obtenir une prolongation de n'importe quel serveur. Si personne ne répond avant l'expiration, il doit abandonner l'adresse et repartir de l'état INIT avec un DHCPDISCOVER.",
+    "distractorNotes": {},
+    "reference": "RFC 2131, section 4.4.5"
+  },
+  {
+    "slug": "ccna-4.3-ios-dhcp-server-steps-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "R1, routeur Cisco IOS, est le serveur DHCP du réseau 192.168.5.0/24, avec les paramètres de détection de conflit par défaut. Un PC de ce réseau démarre sans adresse. Remettez dans l'ordre les actions de R1.",
+      "items": [
+        {
+          "id": "ack",
+          "text": "R1 envoie un DHCPACK et enregistre la liaison, visible avec show ip dhcp binding"
+        },
+        {
+          "id": "ping",
+          "text": "R1 envoie un ping vers l'adresse choisie et n'obtient aucune réponse"
+        },
+        {
+          "id": "rx",
+          "text": "R1 reçoit le DHCPDISCOVER diffusé par le PC"
+        },
+        {
+          "id": "req",
+          "text": "R1 reçoit le DHCPREQUEST du PC, qui désigne R1 comme serveur retenu"
+        },
+        {
+          "id": "pick",
+          "text": "R1 choisit dans le pool une adresse libre, ni exclue ni déjà attribuée"
+        },
+        {
+          "id": "offer",
+          "text": "R1 envoie un DHCPOFFER qui propose cette adresse"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "rx",
+        "pick",
+        "ping",
+        "offer",
+        "req",
+        "ack"
+      ]
+    },
+    "explanation": "À réception du DHCPDISCOVER, le serveur IOS sélectionne dans le pool une adresse qui n'est ni exclue (ip dhcp excluded-address) ni liée à un autre client. Avant de la proposer, il vérifie qu'elle est vraiment libre : par défaut, il envoie deux échos ICMP (ip dhcp ping packets 2). Sans réponse, il émet le DHCPOFFER. Le PC répond par un DHCPREQUEST qui identifie le serveur retenu ; R1 confirme alors par un DHCPACK et crée la liaison. Si le ping avait reçu une réponse, l'adresse aurait été enregistrée comme conflit et une autre aurait été choisie.",
+    "distractorNotes": {},
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Server"
+  },
+  {
+    "slug": "ccna-4.6-dhcp-broadcast-not-routed-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sans configuration particulière, pourquoi le routeur R1 ne transmet-il pas le DHCPDISCOVER d'un PC vers un serveur DHCP situé sur un autre sous-réseau ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le message est adressé au port TCP 67, que les routeurs filtrent par défaut"
+        },
+        {
+          "id": "b",
+          "text": "Le message est une trame Ethernet sans en-tête IP, que R1 ne peut pas router"
+        },
+        {
+          "id": "c",
+          "text": "Le message est envoyé au broadcast limité 255.255.255.255, que R1 ne route pas"
+        },
+        {
+          "id": "d",
+          "text": "Le message porte un TTL de 0, ce qui lui interdit de traverser un routeur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le PC n'a pas encore d'adresse et ne connaît pas le serveur : il envoie son DHCPDISCOVER de 0.0.0.0 vers 255.255.255.255, en UDP 67. Ce broadcast limité ne franchit jamais un routeur : il reste confiné au domaine de diffusion du PC. Pour joindre un serveur distant, il faut un agent relais, configuré sur Cisco IOS avec « ip helper-address » sur l'interface qui reçoit les broadcasts des clients : le routeur transforme alors le message en unicast vers le serveur.",
+    "distractorNotes": {
+      "a": "DHCP utilise UDP, pas TCP ; le port 67 est celui du serveur, et il n'est pas filtré par défaut.",
+      "b": "Le DHCPDISCOVER est un datagramme UDP encapsulé dans IP ; c'est son adresse de destination de diffusion qui l'empêche d'être routé.",
+      "d": "Le client émet le DHCPDISCOVER avec un TTL normal (64 ou 128 selon le système) ; ce n'est pas le TTL qui bloque le message."
+    },
+    "reference": "RFC 2131, section 4.1 ; RFC 1542"
+  },
+  {
+    "slug": "ccna-4.6-show-dhcp-lease-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'interface G0/1 de R1 obtient son adresse auprès du serveur DHCP du FAI grâce à ip address dhcp. Quelle commande affiche, sur R1, l'adresse obtenue, le serveur qui l'a accordée et la durée du bail ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "show ip dhcp binding"
+        },
+        {
+          "id": "b",
+          "text": "show dhcp lease"
+        },
+        {
+          "id": "c",
+          "text": "show ip dhcp pool"
+        },
+        {
+          "id": "d",
+          "text": "show ip dhcp server statistics"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« show dhcp lease » est la commande du côté client : elle affiche, pour chaque interface configurée avec « ip address dhcp », l'adresse et le masque reçus, l'adresse du serveur qui a accordé le bail, l'état du client (Bound une fois le bail obtenu) et les durées du bail, du renouvellement (T1) et de la réassociation (T2). Les commandes « show ip dhcp … » concernent le serveur DHCP IOS : elles décrivent les baux que le routeur accorde, pas celui qu'il a reçu. « show ip interface brief » indique aussi DHCP dans la colonne Method.",
+    "distractorNotes": {
+      "a": "« show ip dhcp binding » liste les baux qu'un routeur serveur DHCP a accordés à ses clients, pas le bail que R1 a reçu.",
+      "c": "« show ip dhcp pool » décrit les pools configurés sur un serveur DHCP IOS (adresses totales, adresses louées), pas le bail obtenu par l'interface.",
+      "d": "« show ip dhcp server statistics » compte les messages DHCP reçus et émis par le serveur IOS ; R1 n'est ici que client."
+    },
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Client"
+  },
+  {
+    "slug": "ccna-4.6-relay-missing-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. PC1 s'est attribué l'adresse 169.254.23.7. Le serveur 10.70.0.10 possède un pool pour 192.168.70.0/24 et le routage entre les deux réseaux est fonctionnel. Quelle est la cause du problème ?",
+      "exhibit": "[PC1] --- G0/0 (192.168.70.1/24) R1 G0/1 (10.70.0.1/24) --- [DHCP 10.70.0.10]\n\nR1#show ip interface GigabitEthernet0/0 | include Helper\n  Helper address is not set",
+      "options": [
+        {
+          "id": "a",
+          "text": "PC1 a reçu une adresse du pool, mais ne joint pas sa passerelle 192.168.70.1"
+        },
+        {
+          "id": "b",
+          "text": "Le pool du serveur est épuisé et le serveur a répondu à PC1 par un DHCPNAK"
+        },
+        {
+          "id": "c",
+          "text": "PC1 envoie son DHCPDISCOVER en unicast vers 10.70.0.10, et R1 le rejette"
+        },
+        {
+          "id": "d",
+          "text": "R1 ne relaie pas vers le serveur le DHCPDISCOVER diffusé par PC1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une adresse 169.254.0.0/16 (APIPA) signifie que PC1 n'a reçu aucune réponse DHCP et s'est attribué une adresse locale de lien. Son DHCPDISCOVER, diffusé vers 255.255.255.255, n'est pas routé par R1, et la ligne « Helper address is not set » montre qu'aucun agent relais n'est configuré sur G0/0, l'interface qui reçoit les broadcasts de PC1. Le serveur ne voit donc jamais la demande. La correction consiste à saisir « ip helper-address 10.70.0.10 » sur l'interface G0/0.",
+    "distractorNotes": {
+      "a": "Une adresse en 169.254.x.x est une adresse APIPA, que le PC s'attribue lui-même faute de réponse : il n'a rien reçu du pool.",
+      "b": "Sans agent relais, le serveur ne reçoit aucun message de PC1 et ne peut lui répondre, ni par une offre ni par un DHCPNAK.",
+      "c": "Un client sans adresse ne connaît pas le serveur : il diffuse son DHCPDISCOVER vers 255.255.255.255, il ne l'envoie pas en unicast."
+    },
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Relay Agent"
+  },
+  {
+    "slug": "ccna-4.6-relay-pool-giaddr-mismatch-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les PC du réseau 192.168.60.0/24 n'obtiennent pas d'adresse. R2, serveur DHCP, dispose d'une route vers 192.168.60.0/24, et R1 et R2 se joignent. Quelle est la cause du problème ?",
+      "exhibit": "[PC] --- G0/0 (192.168.60.1/24) R1 G0/1 (10.2.2.1/30) --- (10.2.2.2/30) R2\n\n! Extrait de la configuration de R1\ninterface GigabitEthernet0/0\n ip address 192.168.60.1 255.255.255.0\n ip helper-address 10.2.2.2\n!\n! Extrait de la configuration de R2\nip dhcp excluded-address 192.168.60.1 192.168.60.10\n!\nip dhcp pool LAN60\n network 192.168.61.0 255.255.255.0\n default-router 192.168.60.1",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2 ne trouve aucun pool dont le réseau contient l'adresse giaddr 192.168.60.1"
+        },
+        {
+          "id": "b",
+          "text": "La commande ip helper-address doit être configurée sur G0/1 de R1, face à R2"
+        },
+        {
+          "id": "c",
+          "text": "R2 doit avoir une interface dans 192.168.60.0/24 pour attribuer ses adresses"
+        },
+        {
+          "id": "d",
+          "text": "La plage exclue contient 192.168.60.1 : R2 rejette les messages relayés par R1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le relais est correct : « ip helper-address » est sur G0/0, l'interface qui reçoit les broadcasts des PC. En relayant, R1 inscrit 192.168.60.1 dans le champ giaddr. R2 cherche alors le pool dont la commande « network » contient cette adresse ; or le pool LAN60 déclare 192.168.61.0/24, sans doute par erreur de saisie. Aucun pool ne correspond, et R2 ne propose rien. Il faut corriger la ligne en « network 192.168.60.0 255.255.255.0 ». La passerelle et la plage exclue, elles, sont cohérentes avec le réseau des PC.",
+    "distractorNotes": {
+      "b": "Sur G0/1, R1 ne reçoit aucun broadcast des PC ; la commande est déjà sur la bonne interface, G0/0.",
+      "c": "Grâce à giaddr, un serveur DHCP peut servir des réseaux auxquels il n'est pas connecté ; il lui suffit d'une route vers l'agent relais.",
+      "d": "Une plage exclue empêche seulement d'attribuer ces adresses aux clients ; elle n'a aucun effet sur les messages relayés depuis 192.168.60.1."
+    },
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Relay Agent ; RFC 2131, section 4.3.1"
+  },
+  {
+    "slug": "ccna-4.6-dhcp-client-default-route-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'interface G0/1 de R1 est configurée avec ip address dhcp. Le serveur du FAI lui fournit une adresse et l'option 3 (routeur par défaut) 203.0.113.1. Aucune route par défaut n'est configurée sur R1. Quel est l'effet de l'option 3 sur R1 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 installe une route par défaut vers 203.0.113.1, de distance administrative 1"
+        },
+        {
+          "id": "b",
+          "text": "R1 ignore l'option, car seuls les hôtes, pas les routeurs, utilisent une passerelle"
+        },
+        {
+          "id": "c",
+          "text": "R1 installe une route par défaut vers 203.0.113.1, de distance administrative 254"
+        },
+        {
+          "id": "d",
+          "text": "R1 enregistre ip default-gateway 203.0.113.1, utilisée seulement sans routage IP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un routeur client DHCP utilise l'option 3 pour installer une route statique par défaut vers la passerelle reçue, ici « S* 0.0.0.0/0 [254/0] via 203.0.113.1 ». Sa distance administrative de 254 en fait une route de secours : toute route par défaut configurée à la main (distance 1) ou apprise par un protocole de routage la remplace. La commande d'interface « ip dhcp client default-router distance » permet de modifier cette valeur. Cette route n'est pas annoncée aux voisins sans configuration supplémentaire.",
+    "distractorNotes": {
+      "a": "La distance 1 est celle d'une route statique configurée à la main ; la route issue de DHCP reçoit par défaut la distance 254.",
+      "b": "Un routeur client DHCP exploite bien l'option 3 : il en tire une route statique par défaut vers la passerelle du FAI.",
+      "d": "« ip default-gateway » est une commande saisie à la main, pour un équipement qui ne route pas ; la passerelle reçue par DHCP devient une route par défaut."
+    },
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Client"
+  },
+  {
+    "slug": "ccna-4.6-helper-address-facts-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur la commande ip helper-address de Cisco IOS sont vraies ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Par défaut, elle ne relaie que les messages DHCP et BOOTP (UDP 67)."
+        },
+        {
+          "id": "b",
+          "text": "Elle se configure sur l'interface qui reçoit les broadcasts des clients."
+        },
+        {
+          "id": "c",
+          "text": "Elle se saisit en mode de configuration globale et vaut pour toutes les interfaces."
+        },
+        {
+          "id": "d",
+          "text": "Avant de relayer, le routeur remplace l'adresse MAC du client (chaddr) par la sienne."
+        },
+        {
+          "id": "e",
+          "text": "Elle transforme le broadcast reçu en unicast vers l'adresse qu'elle indique."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "« ip helper-address » est une sous-commande d'interface, à saisir sur l'interface (physique, sous-interface ou SVI) du côté des clients, car c'est là qu'arrivent leurs broadcasts. Le routeur réémet alors le message en unicast vers l'adresse indiquée, en plaçant l'adresse de cette interface dans giaddr pour les messages DHCP. On peut configurer plusieurs helper-address sur une même interface, par exemple pour deux serveurs redondants. Par défaut, IOS relaie aussi d'autres services UDP diffusés, dont TFTP (69), DNS (53), Time (37), TACACS (49) et NetBIOS (137 et 138) ; « ip forward-protocol » en ajuste la liste.",
+    "distractorNotes": {
+      "a": "Par défaut, ip helper-address relaie aussi d'autres services UDP diffusés, en plus de BOOTP/DHCP (67 et 68) : TFTP (69), DNS (53), Time (37), TACACS (49) et NetBIOS (137 et 138), notamment.",
+      "c": "C'est une sous-commande d'interface : elle ne s'applique qu'à l'interface sur laquelle elle est saisie.",
+      "d": "L'agent relais laisse chaddr intact : le serveur en a besoin pour identifier le client et lui attribuer son bail."
+    },
+    "reference": "Cisco IOS IP Addressing Services Command Reference, ip helper-address ; RFC 1542"
+  },
+  {
+    "slug": "ccna-4.6-dhcp-conflict-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un routeur Cisco IOS est serveur DHCP, avec les paramètres par défaut. Quelles deux affirmations sur la gestion des conflits d'adresses sont vraies ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La commande clear ip dhcp binding * efface aussi la liste des conflits."
+        },
+        {
+          "id": "b",
+          "text": "Par défaut, le serveur ne vérifie pas qu'une adresse est libre avant de la proposer."
+        },
+        {
+          "id": "c",
+          "text": "La commande show ip dhcp conflict liste les adresses détectées en conflit."
+        },
+        {
+          "id": "d",
+          "text": "Un client qui constate que l'adresse reçue est déjà utilisée envoie un DHCPRELEASE."
+        },
+        {
+          "id": "e",
+          "text": "Une adresse en conflit n'est plus attribuée tant que clear ip dhcp conflict ne l'a pas effacée."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Avant de proposer une adresse, le serveur IOS envoie par défaut deux pings (ip dhcp ping packets). Si une réponse arrive, l'adresse est enregistrée comme conflit (journalisation active par défaut, ip dhcp conflict logging) et retirée du pool : elle n'est plus attribuée tant que l'administrateur ne l'a pas libérée avec « clear ip dhcp conflict ». « show ip dhcp conflict » affiche ces adresses et la méthode de détection (Ping ou Gratuitous ARP). Le diagnostic consiste à trouver l'équipement configuré en statique dans la plage, puis à l'exclure du pool.",
+    "distractorNotes": {
+      "a": "clear ip dhcp binding efface les liaisons des clients ; les conflits s'effacent séparément avec clear ip dhcp conflict.",
+      "b": "Par défaut, le serveur IOS envoie deux pings vers l'adresse avant de la proposer ; ip dhcp ping packets 0 désactive cette vérification.",
+      "d": "Un client qui détecte que l'adresse est déjà utilisée envoie un DHCPDECLINE ; le DHCPRELEASE sert à rendre volontairement un bail."
+    },
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Server"
+  },
+  {
+    "slug": "ccna-4.6-helper-svi-selection-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le serveur 192.168.30.10 possède un pool pour chaque VLAN dont les équipements utilisent DHCP. Sur quelles deux interfaces de SW1 faut-il configurer ip helper-address 192.168.30.10 ?",
+      "exhibit": "SW1 : commutateur de niveau 3, routage entre VLAN par SVI\n\nSVI     Adresse           Équipements du VLAN\nVlan10  192.168.10.1/24   Postes utilisateurs, adressage par DHCP\nVlan20  192.168.20.1/24   Téléphones IP, adressage par DHCP\nVlan30  192.168.30.1/24   Serveurs, dont le serveur DHCP 192.168.30.10\nVlan40  192.168.40.1/24   Imprimantes, adresses statiques",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "interface Vlan30"
+        },
+        {
+          "id": "b",
+          "text": "interface Vlan10"
+        },
+        {
+          "id": "c",
+          "text": "interface Vlan40"
+        },
+        {
+          "id": "d",
+          "text": "interface Vlan20"
+        },
+        {
+          "id": "e",
+          "text": "interface GigabitEthernet1/0/1, port d'accès d'un poste du VLAN 10"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Il faut un relais sur chaque interface de niveau 3 qui reçoit les broadcasts de clients DHCP situés hors du sous-réseau du serveur. Les postes (VLAN 10) et les téléphones (VLAN 20) utilisent DHCP : leurs SVI Vlan10 et Vlan20 doivent porter ip helper-address 192.168.30.10. SW1 inscrira 192.168.10.1 ou 192.168.20.1 dans giaddr, ce qui permettra au serveur de choisir le bon pool. Les équipements du VLAN 30 joignent le serveur directement par broadcast, et les imprimantes du VLAN 40 n'émettent aucune demande DHCP.",
+    "distractorNotes": {
+      "a": "Le serveur se trouve dans le VLAN 30 : les broadcasts DHCP de ce VLAN lui parviennent directement, sans relais.",
+      "c": "Les imprimantes du VLAN 40 ont des adresses statiques et n'émettent aucun DHCPDISCOVER : un relais n'y servirait à rien.",
+      "e": "Un port d'accès de niveau 2 n'a pas d'adresse IP et ne route pas : le relais se configure sur la SVI du VLAN, Vlan10."
+    },
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Relay Agent"
+  },
+  {
+    "slug": "ccna-4.6-pool-exhaustion-count-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. R1 n'a encore attribué aucune adresse quand 120 postes du réseau 192.168.20.0/24 démarrent et lui demandent chacun une adresse. Aucun conflit n'est détecté et aucune autre source d'adresses n'existe.",
+      "exhibit": "! Extrait de la configuration de R1\nip dhcp excluded-address 192.168.20.1 192.168.20.99\nip dhcp excluded-address 192.168.20.200 192.168.20.254\n!\nip dhcp pool LAN20\n network 192.168.20.0 255.255.255.0\n default-router 192.168.20.1\n dns-server 192.168.20.5",
+      "fields": [
+        {
+          "id": "avail",
+          "label": "Nombre d'adresses que R1 peut attribuer dans ce pool (nombre entier)"
+        },
+        {
+          "id": "left",
+          "label": "Nombre de postes qui restent sans adresse (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "avail": {
+          "accepted": [
+            "100"
+          ],
+          "normalize": "int"
+        },
+        "left": {
+          "accepted": [
+            "20"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le réseau 192.168.20.0/24 offre 254 adresses d'hôte, de .1 à .254 ; l'adresse réseau (.0) et le broadcast (.255) ne sont jamais attribués. Les deux plages exclues retirent .1 à .99 (99 adresses) et .200 à .254 (55 adresses) : il reste .100 à .199, soit 254 − 99 − 55 = 100 adresses. Les 100 premiers postes obtiennent un bail ; les 20 suivants ne reçoivent aucune offre, car le pool est épuisé, et un poste Windows s'attribue alors une adresse APIPA 169.254.x.x. Pour servir tous les postes, il faut réduire les exclusions ou élargir le réseau du pool.",
+    "distractorNotes": {},
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Server"
+  },
+  {
+    "slug": "ccna-4.6-helper-two-servers-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Les clients du réseau connecté à l'interface G0/2 de R1 doivent obtenir leur adresse auprès de deux serveurs DHCP redondants, 10.50.0.10 et 10.50.0.11, situés sur un autre sous-réseau. Depuis le mode de configuration globale, configurez R1 pour relayer leurs requêtes vers les deux serveurs.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "interface GigabitEthernet0/2"
+        ],
+        [
+          "ip helper-address 10.50.0.10"
+        ],
+        [
+          "ip helper-address 10.50.0.11"
+        ]
+      ]
+    },
+    "explanation": "Plusieurs commandes « ip helper-address » peuvent coexister sur une même interface : R1 relaie alors chaque broadcast DHCP reçu sur G0/2 vers les deux serveurs, en unicast. Chaque serveur répond selon son pool, et le client retient l'une des offres dans son DHCPREQUEST diffusé, que R1 relaie aussi aux deux serveurs : celui qui n'est pas retenu libère l'adresse qu'il avait proposée. Une seconde commande ne remplace pas la première, elle s'y ajoute ; « show ip interface GigabitEthernet0/2 » affiche alors « Helper addresses are » suivi des deux adresses.",
+    "distractorNotes": {},
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Relay Agent"
+  },
+  {
+    "slug": "ccna-4.6-helper-misplaced-fix-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Reportez-vous à l'exhibit. Les clients du réseau 172.16.80.0/24 n'obtiennent pas d'adresse. Depuis le mode de configuration globale, corrigez la configuration du relais : retirez d'abord la commande mal placée, puis configurez-la sur la bonne interface.",
+      "exhibit": "[Clients 172.16.80.0/24] --- G0/0 R1 G0/1 --- [Serveur DHCP 10.80.0.20]\n\n! Extrait de la configuration de R1\ninterface GigabitEthernet0/0\n ip address 172.16.80.1 255.255.255.0\n!\ninterface GigabitEthernet0/1\n ip address 10.80.0.1 255.255.255.0\n ip helper-address 10.80.0.20",
+      "prompt": "R1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/1"
+        ],
+        [
+          "no ip helper-address 10.80.0.20",
+          "no ip helper-address"
+        ],
+        [
+          "interface GigabitEthernet0/0"
+        ],
+        [
+          "ip helper-address 10.80.0.20"
+        ]
+      ]
+    },
+    "explanation": "La commande « ip helper-address » est sur G0/1, côté serveur : aucun client n'y émet de broadcast, et les DHCPDISCOVER reçus sur G0/0 ne sont pas relayés. On la retire avec « no ip helper-address 10.80.0.20 » en mode de configuration de G0/1, puis on la saisit sur G0/0. R1 placera alors 172.16.80.1 dans giaddr, et le serveur choisira son pool 172.16.80.0/24.",
+    "distractorNotes": {},
+    "reference": "IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Relay Agent"
+  },
+  {
+    "slug": "ccna-4.6-dhcp-header-fields-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque champ de l'en-tête d'un message DHCPv4 à son contenu.",
+      "left": [
+        {
+          "id": "ciaddr",
+          "text": "ciaddr"
+        },
+        {
+          "id": "yiaddr",
+          "text": "yiaddr"
+        },
+        {
+          "id": "siaddr",
+          "text": "siaddr"
+        },
+        {
+          "id": "giaddr",
+          "text": "giaddr"
+        },
+        {
+          "id": "chaddr",
+          "text": "chaddr"
+        }
+      ],
+      "right": [
+        {
+          "id": "r_your",
+          "text": "Adresse IP que le serveur attribue au client"
+        },
+        {
+          "id": "r_dns",
+          "text": "Adresse du serveur DNS que le client devra utiliser"
+        },
+        {
+          "id": "r_relay",
+          "text": "Adresse de l'interface de l'agent relais qui a reçu le message du client"
+        },
+        {
+          "id": "r_mac",
+          "text": "Adresse matérielle (MAC) du client"
+        },
+        {
+          "id": "r_cur",
+          "text": "Adresse IP que le client utilise déjà, par exemple lors d'un renouvellement"
+        },
+        {
+          "id": "r_next",
+          "text": "Adresse du serveur à utiliser à l'étape suivante du démarrage, comme un serveur TFTP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "ciaddr": "r_cur",
+        "yiaddr": "r_your",
+        "siaddr": "r_next",
+        "giaddr": "r_relay",
+        "chaddr": "r_mac"
+      }
+    },
+    "explanation": "Les champs d'adresse de l'en-tête DHCP viennent de BOOTP. ciaddr (client) contient l'adresse que le client possède déjà ; il vaut 0.0.0.0 lors d'une première demande. yiaddr (« your ») porte l'adresse que le serveur attribue, dans le DHCPOFFER et le DHCPACK. siaddr désigne le serveur suivant du démarrage, par exemple le serveur TFTP d'un démarrage réseau PXE. giaddr (gateway) est rempli par l'agent relais avec l'adresse de son interface côté clients ; il permet au serveur de choisir le pool et de renvoyer sa réponse au relais. chaddr contient l'adresse MAC du client.",
+    "distractorNotes": {
+      "r_dns": "L'adresse du serveur DNS n'est pas un champ fixe de l'en-tête : elle est transmise dans l'option 6 (Domain Name Server)."
+    },
+    "reference": "RFC 2131, section 2"
+  }
+]
