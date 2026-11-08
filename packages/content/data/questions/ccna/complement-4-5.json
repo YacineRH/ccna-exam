@@ -1,0 +1,611 @@
+[
+  {
+    "slug": "ccna-4.8-missing-rsa-keys-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le compte local admin existe sur R1, et PC-A joint R1 sans difficulté par ping. Pourtant, « ssh -l admin 10.0.0.1 » lancé depuis PC-A échoue aussitôt. Quelle action permet d'établir la connexion SSH ?",
+      "exhibit": "! Extrait de la configuration de R1\nhostname R1\n!\nip domain-name examforge.lab\n!\nline vty 0 15\n login local\n transport input ssh\n\nR1# show ip ssh\nSSH Disabled - version 1.99\n%Please create RSA keys to enable SSH (and of atleast 768 bits for SSH v2).\nAuthentication timeout: 120 secs; Authentication retries: 3",
+      "options": [
+        {
+          "id": "a",
+          "text": "Saisir « ip ssh version 2 » en configuration globale pour activer le serveur SSH."
+        },
+        {
+          "id": "b",
+          "text": "Remplacer « transport input ssh » par « transport input all » sous les lignes VTY."
+        },
+        {
+          "id": "c",
+          "text": "Remplacer « login local » par « login » et définir un mot de passe de ligne avec « password »."
+        },
+        {
+          "id": "d",
+          "text": "Générer une paire de clés RSA avec « crypto key generate rsa modulus 2048 »."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "« show ip ssh » indique « SSH Disabled » et réclame des clés RSA : le serveur SSH d'IOS ne démarre qu'une fois une paire de clés RSA générée, et tant qu'il est désactivé, R1 n'accepte aucune connexion sur le port TCP 22. Les prérequis de la génération sont présents (hostname autre que Router et ip domain-name) : « crypto key generate rsa modulus 2048 » crée la paire R1.examforge.lab et active aussitôt SSH. Avec un modulus d'au moins 768 bits, SSHv2 devient possible ; « ip ssh version 2 » permet ensuite de refuser SSHv1. La configuration des lignes VTY est déjà correcte.",
+    "distractorNotes": {
+      "a": "« ip ssh version 2 » choisit la version du protocole, mais ne crée pas de clés : sans paire RSA, le serveur SSH reste désactivé.",
+      "b": "« transport input all » autoriserait Telnet sur les lignes VTY, mais le serveur SSH resterait désactivé faute de clés RSA ; la connexion SSH échouerait toujours.",
+      "c": "L'authentification n'est pas en cause : la connexion échoue avant toute demande d'identifiants, car aucun serveur SSH n'écoute sur R1. De plus, « login local » est la méthode attendue avec le compte admin."
+    },
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-ssh-default-timers-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur un routeur Cisco IOS dont le serveur SSH est actif, ni « ip ssh time-out » ni « ip ssh authentication-retries » n'ont été configurées. Quelles valeurs le serveur SSH applique-t-il ?",
+      "fields": [
+        {
+          "id": "timeout",
+          "label": "Délai accordé pour négocier et s'authentifier, en secondes (nombre entier)"
+        },
+        {
+          "id": "retries",
+          "label": "Nombre de tentatives d'authentification autorisées par connexion (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "timeout": {
+          "accepted": [
+            "120"
+          ],
+          "normalize": "int"
+        },
+        "retries": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Par défaut, le serveur SSH d'IOS laisse 120 secondes au client pour mener la négociation et l'authentification, et accepte 3 tentatives d'authentification avant de couper la connexion ; « show ip ssh » les affiche sur la ligne « Authentication timeout: 120 secs; Authentication retries: 3 ». « ip ssh time-out » accepte de 1 à 120 secondes : on ne peut que réduire le délai. « ip ssh authentication-retries » accepte de 0 à 5 tentatives. Ces deux réglages ne concernent que la phase d'ouverture de la session ; la fermeture d'une session inactive relève d'exec-timeout sous les lignes VTY.",
+    "distractorNotes": {},
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-vty-exec-timeout-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les administrateurs se connectent en SSH à R1. La politique de sécurité impose de fermer automatiquement toute session SSH restée sans activité pendant 5 minutes. Quelle configuration répond à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "En configuration globale : ip ssh time-out 300"
+        },
+        {
+          "id": "b",
+          "text": "Sous line vty 0 15 : exec-timeout 0 5"
+        },
+        {
+          "id": "c",
+          "text": "Sous line vty 0 15 : exec-timeout 5 0"
+        },
+        {
+          "id": "d",
+          "text": "En configuration globale : ip ssh authentication-retries 5"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une session SSH aboutit à une session EXEC sur une ligne VTY : sa fermeture après inactivité se règle donc sur les lignes, avec « exec-timeout <minutes> [<secondes>] ». « exec-timeout 5 0 » ferme la session après 5 minutes sans saisie. La valeur par défaut est de 10 minutes, et « exec-timeout 0 0 » désactive la temporisation, ce qui est déconseillé. Les commandes « ip ssh » ne concernent que l'ouverture de la connexion : elles limitent la durée de la négociation et de l'authentification, et le nombre de tentatives, mais n'agissent plus une fois la session établie.",
+    "distractorNotes": {
+      "a": "« ip ssh time-out » limite seulement la durée de la négociation et de l'authentification, et n'accepte pas plus de 120 secondes ; il n'agit pas sur une session établie.",
+      "b": "exec-timeout prend d'abord les minutes, puis les secondes : « exec-timeout 0 5 » fermerait la session après 5 secondes d'inactivité.",
+      "d": "« ip ssh authentication-retries » fixe le nombre de tentatives d'authentification par connexion ; il ne ferme pas les sessions inactives."
+    },
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE) ; Cisco IOS Configuration Fundamentals Command Reference, exec-timeout"
+  },
+  {
+    "slug": "ccna-5.10-akm-8021x-instead-psk-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le WLAN BUREAU doit fonctionner en WPA2-Personal : les utilisateurs ne disposent que de la phrase secrète communiquée par l'administrateur. Leurs appareils voient le SSID, mais demandent un nom d'utilisateur et un mot de passe, et aucune connexion n'aboutit. Quelle modification corrige le problème ?",
+      "exhibit": "(Cisco Controller) >show wlan 3\n\nWLAN Identifier.................................. 3\nProfile Name..................................... BUREAU\nNetwork Name (SSID).............................. BUREAU\nStatus........................................... Enabled\nMAC Filtering.................................... Disabled\nBroadcast SSID................................... Enabled\n...\nInterface........................................ bureau-vlan30\n...\nSecurity\n   802.11 Authentication:........................ Open System\n   Wi-Fi Protected Access (WPA/WPA2)............. Enabled\n      WPA (SSN IE)............................... Disabled\n      WPA2 (RSN IE).............................. Enabled\n         TKIP Cipher............................. Disabled\n         AES Cipher.............................. Enabled\n      Auth Key Management\n         802.1x.................................. Enabled\n         PSK..................................... Disabled",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cocher le chiffrement TKIP en plus d'AES dans la politique WPA2 du WLAN."
+        },
+        {
+          "id": "b",
+          "text": "Activer WPA (SSN IE) en plus de WPA2 (RSN IE) dans Security > Layer 2."
+        },
+        {
+          "id": "c",
+          "text": "Choisir PSK au lieu de 802.1X dans Auth Key Mgmt, puis saisir la clé au format ASCII."
+        },
+        {
+          "id": "d",
+          "text": "Choisir un serveur RADIUS dans l'onglet Security > AAA Servers du WLAN."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La sortie montre WPA2 avec AES, ce qui convient, mais la gestion des clés (Auth Key Management) est en 802.1x et PSK est désactivé : le WLAN est donc en WPA2-Enterprise. Les clients lisent cette méthode dans l'élément RSN des beacons et demandent des identifiants personnels, qui devraient être validés par un serveur RADIUS. Pour un WLAN WPA2-Personal, il faut choisir PSK dans Auth Key Mgmt, saisir la phrase secrète (format ASCII, 8 à 63 caractères), cliquer « Apply », puis enregistrer la configuration.",
+    "distractorNotes": {
+      "a": "Le chiffrement n'est pas en cause : AES (CCMP) est le bon choix pour WPA2, et TKIP, obsolète, ne changerait rien à la méthode d'authentification 802.1X.",
+      "b": "WPA (SSN IE) n'ajouterait qu'une compatibilité avec l'ancien WPA ; la gestion des clés resterait 802.1X et les clients demanderaient toujours des identifiants.",
+      "d": "Un serveur RADIUS ferait fonctionner le WLAN en WPA2-Enterprise, avec un compte par utilisateur ; or les utilisateurs n'ont qu'une phrase secrète et le WLAN doit être en WPA2-Personal."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — WLAN Security (WPA/WPA2)"
+  },
+  {
+    "slug": "ccna-5.10-psk-never-sent-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un client rejoint un WLAN WPA2-Personal dont l'utilisateur a saisi la phrase secrète. Comment cette phrase secrète est-elle protégée pendant la connexion ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle est envoyée en clair dans la requête d'association, puis l'AP la remplace par une clé AES."
+        },
+        {
+          "id": "b",
+          "text": "Elle est envoyée chiffrée en AES dans la requête d'association, avec une clé connue de l'AP."
+        },
+        {
+          "id": "c",
+          "text": "Elle n'est jamais transmise : chaque côté en dérive la PMK et prouve qu'il la détient par un MIC."
+        },
+        {
+          "id": "d",
+          "text": "Elle est transmise dans un tunnel TLS que le WLC établit avec le client avant l'association."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "En WPA2-Personal, la phrase secrète ne circule jamais sur l'air. Le client et l'authentificateur en dérivent chacun la même PMK de 256 bits, à partir de la phrase et du SSID. Pendant le 4-way handshake, ils échangent des nonces, calculent la PTK, et chaque côté prouve qu'il connaît la PMK par le MIC des messages 2 et 3. Un capteur ne voit donc que des nonces et des MIC ; il peut toutefois tenter de deviner une phrase faible hors ligne à partir de ces échanges, d'où l'intérêt d'une phrase longue ou de WPA3-SAE.",
+    "distractorNotes": {
+      "a": "Aucune étape de WPA2 n'envoie la phrase secrète en clair ; la requête d'association ne contient que les capacités du client et les suites de sécurité choisies.",
+      "b": "Avant le 4-way handshake, le client et l'AP ne partagent encore aucune clé de chiffrement ; la phrase secrète n'est d'ailleurs jamais transmise, même chiffrée.",
+      "d": "Un tunnel TLS est propre à certaines méthodes EAP de WPA2-Enterprise, comme PEAP ; WPA2-Personal n'utilise ni EAP ni TLS."
+    },
+    "reference": "IEEE 802.11-2020 (4-way handshake)"
+  },
+  {
+    "slug": "ccna-5.10-mac-filter-new-laptop-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un nouveau portable, dont la carte Wi-Fi gère WPA2 avec AES, n'arrive pas à rejoindre le WLAN ATELIER. L'administrateur y a saisi lui-même la phrase secrète, qu'il vient d'utiliser avec succès sur son propre téléphone. Les clients déjà en service se connectent normalement, et le journal du WLC montre que le portable est rejeté avant tout échange de clés. Quelle est la cause la plus probable ?",
+      "exhibit": "(Cisco Controller) >show wlan 4\n\nWLAN Identifier.................................. 4\nProfile Name..................................... ATELIER\nNetwork Name (SSID).............................. ATELIER\nStatus........................................... Enabled\nMAC Filtering.................................... Enabled\nBroadcast SSID................................... Enabled\n...\nInterface........................................ atelier-vlan50\n...\nSecurity\n   802.11 Authentication:........................ Open System\n   Wi-Fi Protected Access (WPA/WPA2)............. Enabled\n      WPA (SSN IE)............................... Disabled\n      WPA2 (RSN IE).............................. Enabled\n         TKIP Cipher............................. Disabled\n         AES Cipher.............................. Enabled\n      Auth Key Management\n         802.1x.................................. Disabled\n         PSK..................................... Enabled",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le WLAN n'accepte pas TKIP, seul chiffrement que le portable propose."
+        },
+        {
+          "id": "b",
+          "text": "L'adresse MAC du portable ne figure pas dans la liste de filtrage du WLC."
+        },
+        {
+          "id": "c",
+          "text": "Le pool DHCP du VLAN 50 n'a plus d'adresse libre pour le portable."
+        },
+        {
+          "id": "d",
+          "text": "La phrase secrète du WLAN est au format HEX et non au format ASCII."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le WLAN est correctement configuré en WPA2, AES et PSK, et la phrase secrète est validée par le téléphone de l'administrateur. Mais « MAC Filtering » est activé : à l'association, le WLC vérifie que l'adresse MAC du client figure dans sa liste de filtrage (Security > AAA > MAC Filtering) ou est acceptée par un serveur RADIUS. Les clients déjà en service y sont enregistrés ; le nouveau portable ne l'est pas, d'où son rejet avant le 4-way handshake. Il faut ajouter son adresse MAC à la liste, en gardant à l'esprit que ce filtrage se contourne facilement par usurpation d'adresse MAC.",
+    "distractorNotes": {
+      "a": "L'énoncé précise que la carte gère WPA2 avec AES : elle propose donc CCMP, la suite que le WLAN attend.",
+      "c": "Un pool DHCP épuisé n'empêche pas l'association ni le 4-way handshake : le client se connecterait, puis n'obtiendrait pas d'adresse IP.",
+      "d": "Le format de la PSK est le même pour tous les clients : la phrase saisie a fonctionné sur le téléphone, donc elle correspond bien à la configuration du WLAN."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10"
+  },
+  {
+    "slug": "ccna-4.3-dhcp-decline-arp-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un PC démarre sans adresse. Le serveur DHCP lui attribue 192.168.20.50, mais un autre hôte, configuré à la main, utilise déjà cette adresse. Le PC vérifie l'adresse par ARP avant de l'utiliser. Remettez les événements dans l'ordre.",
+      "items": [
+        {
+          "id": "a",
+          "text": "Le serveur propose 192.168.20.50 dans un DHCPOFFER."
+        },
+        {
+          "id": "b",
+          "text": "Le PC envoie un DHCPDECLINE ; le serveur marque l'adresse comme indisponible."
+        },
+        {
+          "id": "c",
+          "text": "Le PC diffuse un DHCPDISCOVER pour trouver un serveur."
+        },
+        {
+          "id": "d",
+          "text": "Le PC interroge 192.168.20.50 par ARP et l'autre hôte lui répond."
+        },
+        {
+          "id": "e",
+          "text": "Le PC reprend la procédure depuis le début, par un nouveau DHCPDISCOVER."
+        },
+        {
+          "id": "f",
+          "text": "Le PC demande l'adresse par un DHCPREQUEST et le serveur la confirme par un DHCPACK."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "c",
+        "a",
+        "f",
+        "d",
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Après les quatre messages habituels (DHCPDISCOVER, DHCPOFFER, DHCPREQUEST, DHCPACK), la RFC 2131 recommande au client de vérifier l'adresse reçue, par exemple par une requête ARP. Une réponse prouve qu'un autre hôte l'utilise : le client doit alors envoyer un DHCPDECLINE au serveur, qui retire l'adresse des adresses attribuables, et reprendre la configuration, après une attente d'au moins 10 secondes. DHCPDECLINE est donc le message du client qui refuse une adresse déjà en usage, à ne pas confondre avec DHCPRELEASE, qui rend une adresse valide avant la fin du bail.",
+    "distractorNotes": {},
+    "reference": "RFC 2131, section 3.1"
+  },
+  {
+    "slug": "ccna-4.3-dhcp-option-codes-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque option DHCPv4 au paramètre qu'elle transporte vers le client.",
+      "left": [
+        {
+          "id": "o3",
+          "text": "Option 3"
+        },
+        {
+          "id": "o6",
+          "text": "Option 6"
+        },
+        {
+          "id": "o15",
+          "text": "Option 15"
+        },
+        {
+          "id": "o51",
+          "text": "Option 51"
+        },
+        {
+          "id": "o150",
+          "text": "Option 150"
+        }
+      ],
+      "right": [
+        {
+          "id": "dns",
+          "text": "Adresses des serveurs DNS"
+        },
+        {
+          "id": "lease",
+          "text": "Durée du bail"
+        },
+        {
+          "id": "mask",
+          "text": "Masque de sous-réseau"
+        },
+        {
+          "id": "router",
+          "text": "Routeur par défaut (passerelle)"
+        },
+        {
+          "id": "tftp",
+          "text": "Serveur TFTP des téléphones IP Cisco"
+        },
+        {
+          "id": "domain",
+          "text": "Nom de domaine DNS"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "o3": "router",
+        "o6": "dns",
+        "o15": "domain",
+        "o51": "lease",
+        "o150": "tftp"
+      }
+    },
+    "explanation": "Les paramètres qu'un serveur DHCPv4 fournit en plus de l'adresse voyagent dans des options numérotées (RFC 2132). Sur un pool Cisco IOS, default-router renseigne l'option 3, dns-server l'option 6, domain-name l'option 15 et lease l'option 51. L'option 150, propre à Cisco, indique aux téléphones IP l'adresse du serveur TFTP où télécharger leur configuration ; elle se configure dans le pool par « option 150 ip <adresse> ». Le masque, déduit de la commande network du pool, part dans l'option 1.",
+    "distractorNotes": {
+      "mask": "Le masque de sous-réseau est transporté par l'option 1, qui ne figure pas parmi les options à associer."
+    },
+    "reference": "RFC 2132 ; IP Addressing: DHCP Configuration Guide (Cisco IOS XE), Configuring the Cisco IOS XE DHCP Server"
+  },
+  {
+    "slug": "ccna-4.3-ip-host-table-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 ne dispose d'aucun serveur DNS. Depuis le mode de configuration globale, dans l'ordre de votre choix, ajoutez à sa table d'hôtes locale le nom SRV1, associé à 192.168.1.10, et le nom NAS1, associé à 192.168.1.20, afin que « ping SRV1 » et « ping NAS1 » fonctionnent.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "ip host SRV1 192.168.1.10"
+        ],
+        [
+          "ip host NAS1 192.168.1.20"
+        ]
+      ]
+    },
+    "explanation": "« ip host <nom> <adresse> » crée une entrée statique dans la table d'hôtes d'IOS. Lorsqu'une commande comme ping, telnet ou ssh reçoit un nom, IOS consulte d'abord cette table, puis, si la résolution DNS est active et qu'un serveur est déclaré par ip name-server, interroge le DNS. « show hosts » affiche les entrées, avec le type perm pour les entrées statiques et temp pour celles apprises par DNS. Cette table, propre à chaque équipement, ne remplace pas un DNS à l'échelle du réseau.",
+    "distractorNotes": {},
+    "reference": "IP Addressing: DNS Configuration Guide (Cisco IOS XE), Configuring DNS"
+  },
+  {
+    "slug": "ccna-4.6-helper-default-udp-ports-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur R1, l'interface G0/0 est configurée avec « ip helper-address 10.1.1.10 », et aucune commande ip forward-protocol n'a été saisie. Outre les messages DHCP et BOOTP, quels deux autres types de broadcasts UDP, reçus sur G0/0, R1 relaie-t-il par défaut vers 10.1.1.10 ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les requêtes NTP (port UDP 123)"
+        },
+        {
+          "id": "b",
+          "text": "Les requêtes DNS (port UDP 53)"
+        },
+        {
+          "id": "c",
+          "text": "Les messages Syslog (port UDP 514)"
+        },
+        {
+          "id": "d",
+          "text": "Les requêtes TFTP (port UDP 69)"
+        },
+        {
+          "id": "e",
+          "text": "Les requêtes SNMP (port UDP 161)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "« ip helper-address » ne se limite pas à DHCP : par défaut, IOS relaie en unicast vers l'adresse indiquée les broadcasts UDP de huit services, à savoir BOOTP/DHCP (67 et 68), TFTP (69), DNS (53), Time (37), NetBIOS Name Service (137), NetBIOS Datagram (138), TACACS (49) et IEN-116 (42). La liste se modifie en configuration globale : « no ip forward-protocol udp <port> » retire un service, « ip forward-protocol udp <port> » en ajoute un. On retire souvent les services inutiles, comme NetBIOS, pour ne pas envoyer au serveur DHCP du trafic qu'il ne traite pas.",
+    "distractorNotes": {
+      "a": "NTP (UDP 123) ne fait pas partie des ports relayés par défaut ; il faudrait « ip forward-protocol udp 123 ».",
+      "c": "Syslog (UDP 514) n'est pas relayé par défaut ; les messages Syslog sont d'ailleurs envoyés en unicast vers le serveur, sans besoin de relais.",
+      "e": "SNMP (UDP 161) ne figure pas dans la liste par défaut ; un NMS interroge les agents en unicast."
+    },
+    "reference": "Cisco IOS IP Addressing Services Command Reference, ip helper-address"
+  },
+  {
+    "slug": "ccna-4.6-client-t1-t2-timers-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "L'interface G0/1 de R1, configurée avec « ip address dhcp », obtient du serveur du FAI un bail de 12 heures. Le serveur n'envoie pas d'options T1 et T2 : R1 applique les valeurs par défaut de la RFC 2131. Le serveur cesse ensuite de répondre. Calculez les deux délais suivants, comptés à partir de l'obtention du bail.",
+      "fields": [
+        {
+          "id": "t1",
+          "label": "Délai avant la première demande de renouvellement envoyée au serveur qui a accordé le bail (T1), en minutes (nombre entier)"
+        },
+        {
+          "id": "t2",
+          "label": "Délai avant la diffusion d'un DHCPREQUEST à destination de tout serveur (T2), en minutes (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "t1": {
+          "accepted": [
+            "360"
+          ],
+          "normalize": "int"
+        },
+        "t2": {
+          "accepted": [
+            "630"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Par défaut, T1 vaut 50 % de la durée du bail et T2 87,5 %. Un bail de 12 heures dure 720 minutes : T1 = 0,5 × 720 = 360 minutes (6 heures) et T2 = 0,875 × 720 = 630 minutes (10 h 30). À T1, le client entre dans l'état RENEWING et envoie un DHCPREQUEST en unicast au serveur qui lui a accordé le bail. Sans réponse jusqu'à T2, il passe à l'état REBINDING et diffuse sa demande à tout serveur. Si le bail expire sans réponse, R1 retire l'adresse de l'interface et recommence par un DHCPDISCOVER.",
+    "distractorNotes": {},
+    "reference": "RFC 2131, section 4.4.5"
+  },
+  {
+    "slug": "ccna-4.6-relay-server-no-route-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les PC du réseau 192.168.40.0/24 n'obtiennent pas d'adresse. Une capture sur G0/1 de R1 montre les DHCPDISCOVER relayés en unicast vers 10.1.1.10, avec giaddr 192.168.40.1, mais aucune réponse de SRV ne revient. Quelle est la cause du problème ?",
+      "exhibit": "[PC] --- G0/0 (192.168.40.1/24) R1 G0/1 (10.1.1.1/24) --- [SRV 10.1.1.10]\n\n! Extrait de la configuration de R1\ninterface GigabitEthernet0/0\n ip address 192.168.40.1 255.255.255.0\n ip helper-address 10.1.1.10\n\nParamètres IP de SRV : 10.1.1.10/24, aucune passerelle par défaut\nÉtendue DHCP de SRV : 192.168.40.100 à 192.168.40.200,\n                      routeur 192.168.40.1",
+      "options": [
+        {
+          "id": "a",
+          "text": "La commande ip helper-address doit être configurée sur G0/1, l'interface face à SRV."
+        },
+        {
+          "id": "b",
+          "text": "SRV n'a aucune route vers 192.168.40.1, l'adresse de R1 à laquelle il doit répondre."
+        },
+        {
+          "id": "c",
+          "text": "L'étendue de SRV doit appartenir au réseau 10.1.1.0/24, celui de l'interface qui le relie à R1."
+        },
+        {
+          "id": "d",
+          "text": "R1 ne relaie les messages DHCP qu'après la commande « ip forward-protocol udp bootps »."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le relais fonctionne côté R1 : la commande est sur l'interface des clients et la capture montre les DHCPDISCOVER relayés. SRV choisit bien l'étendue 192.168.40.0/24, celle qui contient giaddr, mais la RFC 2131 lui impose d'envoyer sa réponse à l'agent relais dont l'adresse figure dans giaddr, ici 192.168.40.1. Cette adresse n'appartient pas au réseau 10.1.1.0/24 de SRV, et SRV n'a pas de passerelle : il ne peut pas envoyer le DHCPOFFER. Il faut lui donner la passerelle 10.1.1.1, ou une route vers 192.168.40.0/24 par 10.1.1.1.",
+    "distractorNotes": {
+      "a": "ip helper-address se place sur l'interface qui reçoit les broadcasts des clients, G0/0, comme ici ; sur G0/1, elle ne recevrait aucun DHCPDISCOVER à relayer.",
+      "c": "Le serveur choisit l'étendue dont le réseau contient l'adresse giaddr : une étendue en 10.1.1.0/24 ne conviendrait pas aux PC de 192.168.40.0/24.",
+      "d": "BOOTP/DHCP fait partie des services relayés par défaut par ip helper-address ; la capture confirme d'ailleurs que R1 relaie les DHCPDISCOVER."
+    },
+    "reference": "RFC 2131, section 4.1 ; RFC 1542"
+  },
+  {
+    "slug": "ccna-4.4-location-contact-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Les NMS doivent savoir où se trouve R1 et qui contacter en cas de problème. Depuis le mode de configuration globale, dans l'ordre de votre choix, indiquez l'emplacement Paris-B2-Baie4 et le contact noc@examforge.lab.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "snmp-server location Paris-B2-Baie4"
+        ],
+        [
+          "snmp-server contact noc@examforge.lab"
+        ]
+      ]
+    },
+    "explanation": "« snmp-server location » et « snmp-server contact » renseignent les objets sysLocation (1.3.6.1.2.1.1.6) et sysContact (1.3.6.1.2.1.1.4) du groupe system de la MIB-2. Un NMS les lit par une simple GetRequest, à côté de sysName (le hostname) et de sysUpTime, ce qui permet d'inventorier les équipements et de savoir qui prévenir lors d'une alerte. Ces commandes n'ouvrent aucun accès : il faut toujours une communauté SNMPv1/v2c ou un utilisateur SNMPv3 pour que l'agent réponde.",
+    "distractorNotes": {},
+    "reference": "SNMP Configuration Guide (Cisco IOS XE) ; RFC 3418"
+  },
+  {
+    "slug": "ccna-4.4-host-informs-v2c-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur R1, la communauté SNMPv2c N0c2026 est configurée. Le NMS 10.1.1.50 doit recevoir les notifications de R1 en SNMPv2c, et R1 doit renvoyer chaque notification tant que le NMS n'en a pas accusé réception. Quelle commande déclare ce destinataire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "snmp-server host 10.1.1.50 traps version 2c N0c2026"
+        },
+        {
+          "id": "b",
+          "text": "snmp-server host 10.1.1.50 informs version 1 N0c2026"
+        },
+        {
+          "id": "c",
+          "text": "snmp-server host 10.1.1.50 informs version 3 noauth N0c2026"
+        },
+        {
+          "id": "d",
+          "text": "snmp-server host 10.1.1.50 informs version 2c N0c2026"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "« snmp-server host » choisit le type de notification : traps (valeur par défaut) ou informs. Un Trap n'est jamais acquitté, alors qu'une InformRequest attend une réponse du manager : l'agent la retransmet jusqu'à la recevoir ou atteindre son nombre maximal de tentatives. Les informs sont apparues avec SNMPv2 et n'existent pas en SNMPv1 ; pour un envoi avec communauté, la commande doit donc préciser « version 2c », suivi du nom de la communauté. « snmp-server enable traps » reste nécessaire pour que les notifications soient générées. Les informs coûtent plus de mémoire et de trafic que les traps, mais une alerte perdue est réémise.",
+    "distractorNotes": {
+      "a": "Le mot-clé traps envoie des notifications non acquittées : une notification perdue n'est jamais renvoyée.",
+      "b": "SNMPv1 ne connaît que les traps : les informs exigent SNMPv2c ou SNMPv3.",
+      "c": "« version 3 » attend un nom d'utilisateur SNMPv3, pas une communauté ; or le besoin porte sur SNMPv2c avec la communauté N0c2026."
+    },
+    "reference": "SNMP Configuration Guide (Cisco IOS XE) ; RFC 3416"
+  }
+]
