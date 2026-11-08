@@ -1,0 +1,349 @@
+{
+  "slug": "ccna-lab-1.8-ipv6-routeur-eui64",
+  "certification": "ccna",
+  "domain": "1.0",
+  "subtopic": "1.8",
+  "difficulty": "medium",
+  "title": "Adresser un routeur en IPv6 : adresse statique, EUI-64 et lien local",
+  "statement": "Le site passe en double pile avec le préfixe 2001:DB8:ACAD::/48. R1 a déjà ses adresses IPv4 ; son interface G0/0/1 vers l'atelier est encore désactivée. Les postes des deux LAN obtiendront leur adresse par SLAAC, à partir des annonces de R1.\n\nConfigurez R1 :\n1. Activez le routage IPv6 unicast, pour que R1 achemine l'IPv6 et émette des annonces de routeur (RA) sur ses LAN.\n2. G0/0/0 (bureaux) : adresse globale statique 2001:DB8:ACAD:10::1/64, et aucune autre adresse globale.\n3. G0/0/1 (atelier) : une seule adresse globale, dans le préfixe 2001:DB8:ACAD:20::/64, dont l'identifiant d'interface est dérivé de l'adresse MAC (EUI-64). Activez l'interface.\n4. Sur G0/0/0 et G0/0/1, remplacez l'adresse lien local générée automatiquement par FE80::1, plus simple à donner comme passerelle.\n5. Loopback0 : adresse 2001:DB8:ACAD:FF::1, avec un préfixe d'hôte.",
+  "topology": "                         R1 (ISR 4321)\n          G0/0/0               G0/0/1 (désactivée)        Loopback0\n            |                    |\n   LAN Bureaux               LAN Atelier\n   PC en SLAAC               PC en SLAAC\n\n  Interface   IPv4 (déjà configurée)   IPv6 globale                    Lien local\n  G0/0/0      192.168.10.1/24          2001:DB8:ACAD:10::1/64          FE80::1\n  G0/0/1      192.168.20.1/24          2001:DB8:ACAD:20::/64 (EUI-64)  FE80::1\n  Loopback0   -                        2001:DB8:ACAD:FF::1/128         (automatique)",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": [
+        "GigabitEthernet0/0/0-1"
+      ],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN Bureaux\n ip address 192.168.10.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description LAN Atelier\n ip address 192.168.20.1 255.255.255.0"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "ipv6-routing",
+      "description": "R1 route l'IPv6 unicast (et émet donc des RA sur ses LAN).",
+      "check": {
+        "type": "line",
+        "line": "ipv6 unicast-routing"
+      }
+    },
+    {
+      "id": "g000-global",
+      "description": "G0/0/0 porte l'adresse globale 2001:DB8:ACAD:10::1/64, et aucune autre adresse globale.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "ipv6 address 2001:DB8:ACAD:10::1/64"
+          },
+          {
+            "type": "regex",
+            "section": "interface GigabitEthernet0/0/0",
+            "pattern": "^ipv6 address (?!\\S+ link-local$)(?!2001:DB8:ACAD:10::1/64$)",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "g001-eui64",
+      "description": "G0/0/1 a une seule adresse globale : le préfixe 2001:DB8:ACAD:20::/64 complété en EUI-64.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "section": "interface GigabitEthernet0/0/1",
+            "pattern": "^ipv6 address 2001:DB8:ACAD:20:[0-9A-F:]*/64 eui-64$"
+          },
+          {
+            "type": "regex",
+            "section": "interface GigabitEthernet0/0/1",
+            "pattern": "^ipv6 address (?!\\S+ link-local$)(?!2001:DB8:ACAD:20:[0-9A-F:]*/64 eui-64$)",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "link-local",
+      "description": "G0/0/0 et G0/0/1 ont toutes deux l'adresse lien local FE80::1.",
+      "check": {
+        "type": "line",
+        "sectionPattern": "^interface GigabitEthernet0/0/[01]$",
+        "sections": "all",
+        "line": "ipv6 address FE80::1 link-local"
+      }
+    },
+    {
+      "id": "interfaces-up",
+      "description": "G0/0/0 et G0/0/1 sont administrativement actives.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "shutdown",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/0/1",
+            "line": "shutdown",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "loopback",
+      "description": "Loopback0 porte 2001:DB8:ACAD:FF::1 avec un préfixe d'hôte.",
+      "check": {
+        "type": "line",
+        "section": "interface Loopback0",
+        "line": "ipv6 address 2001:DB8:ACAD:FF::1/128"
+      }
+    }
+  ],
+  "hints": [
+    "Sur un routeur IOS, poser des adresses IPv6 ne suffit pas à router : une commande globale active l'acheminement IPv6 unicast et, avec lui, l'émission des annonces de routeur. Les adresses se posent ensuite interface par interface, au format préfixe/longueur.",
+    "Pour l'EUI-64, on donne le préfixe (identifiant d'interface à zéro) suivi d'un mot-clé : IOS fabrique les 64 bits de droite à partir de la MAC. Une adresse lien local se pose sans longueur de préfixe, avec son propre mot-clé, et remplace l'adresse automatique. Une adresse d'hôte occupe les 128 bits.",
+    "ipv6 unicast-routing en configuration globale ; sous G0/0/1 : ipv6 address 2001:db8:acad:20::/64 eui-64 ; sous chaque interface LAN : ipv6 address fe80::1 link-local ; sous Loopback0 un préfixe /128. Une interface de routeur reste désactivée tant qu'on ne l'a pas activée."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "ipv6 unicast-routing",
+        "interface g0/0/0",
+        "ipv6 address 2001:db8:acad:10::1/64",
+        "ipv6 address fe80::1 link-local",
+        "interface g0/0/1",
+        "ipv6 address 2001:db8:acad:20::/64 eui-64",
+        "ipv6 address fe80::1 link-local",
+        "no shutdown",
+        "interface loopback 0",
+        "ipv6 address 2001:db8:acad:ff::1/128",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Adresses en majuscules et non abrégées (identifiant ::1 donné avec eui-64, qu'IOS remplace par l'EUI-64), abréviations IOS, ordre libre, routage activé en dernier",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "int lo0",
+            "ipv6 add 2001:0DB8:ACAD:00FF:0000:0000:0000:0001/128",
+            "int g0/0/1",
+            "no sh",
+            "ipv6 add FE80:0:0:0:0:0:0:1 link-local",
+            "ipv6 add 2001:DB8:ACAD:20:0:0:0:1/64 eui-64",
+            "int GigabitEthernet 0/0/0",
+            "ipv6 add FE80::1 link-local",
+            "ipv6 add 2001:DB8:ACAD:10:0:0:0:1/64",
+            "exit",
+            "ipv6 unicast-routing",
+            "\u001a"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Lien local posé avec interface range, puis une faute de frappe corrigée par no ipv6 address",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface range g0/0/0 - 1",
+            "ipv6 address fe80::1 link-local",
+            "no shutdown",
+            "exit",
+            "interface g0/0/0",
+            "ipv6 address 2001:db8:acad:11::1/64",
+            "no ipv6 address 2001:db8:acad:11::1/64",
+            "ipv6 address 2001:db8:acad:10::1/64",
+            "interface g0/0/1",
+            "ipv6 address 2001:db8:acad:20::/64 eui-64",
+            "interface loopback0",
+            "ipv6 address 2001:db8:acad:ff::1/128",
+            "exit",
+            "ipv6 unicast-routing",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Routage IPv6 oublié : les adresses sont posées, mais R1 n'achemine pas l'IPv6 et n'envoie aucune RA (pas de SLAAC sur les LAN)",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "ipv6 address 2001:db8:acad:10::1/64",
+            "ipv6 address fe80::1 link-local",
+            "interface g0/0/1",
+            "ipv6 address 2001:db8:acad:20::/64 eui-64",
+            "ipv6 address fe80::1 link-local",
+            "no shutdown",
+            "interface loopback 0",
+            "ipv6 address 2001:db8:acad:ff::1/128",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "ipv6-routing"
+      ]
+    },
+    {
+      "description": "Identifiant d'interface statique ::1 sur G0/0/1 au lieu de l'EUI-64",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "interface g0/0/0",
+            "ipv6 address 2001:db8:acad:10::1/64",
+            "ipv6 address fe80::1 link-local",
+            "interface g0/0/1",
+            "ipv6 address 2001:db8:acad:20::1/64",
+            "ipv6 address fe80::1 link-local",
+            "no shutdown",
+            "interface loopback 0",
+            "ipv6 address 2001:db8:acad:ff::1/128",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "g001-eui64"
+      ]
+    },
+    {
+      "description": "ipv6 enable sur G0/0/1 : seule une adresse lien local automatique est créée, aucune adresse globale",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "interface g0/0/0",
+            "ipv6 address 2001:db8:acad:10::1/64",
+            "ipv6 address fe80::1 link-local",
+            "interface g0/0/1",
+            "ipv6 enable",
+            "no shutdown",
+            "interface loopback 0",
+            "ipv6 address 2001:db8:acad:ff::1/128",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "g001-eui64",
+        "link-local"
+      ]
+    },
+    {
+      "description": "Faute de frappe sur G0/0/0 non retirée : IOS garde les deux adresses globales, la mauvaise reste annoncée",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "interface g0/0/0",
+            "ipv6 address 2001:db8:acad:11::1/64",
+            "ipv6 address 2001:db8:acad:10::1/64",
+            "ipv6 address fe80::1 link-local",
+            "interface g0/0/1",
+            "ipv6 address 2001:db8:acad:20::/64 eui-64",
+            "ipv6 address fe80::1 link-local",
+            "no shutdown",
+            "interface loopback 0",
+            "ipv6 address 2001:db8:acad:ff::1/128",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "g000-global"
+      ]
+    },
+    {
+      "description": "G0/0/1 laissée désactivée et Loopback0 en /64 au lieu d'un préfixe d'hôte",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "interface g0/0/0",
+            "ipv6 address 2001:db8:acad:10::1/64",
+            "ipv6 address fe80::1 link-local",
+            "interface g0/0/1",
+            "ipv6 address 2001:db8:acad:20::/64 eui-64",
+            "ipv6 address fe80::1 link-local",
+            "interface loopback 0",
+            "ipv6 address 2001:db8:acad:ff::1/64",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "interfaces-up",
+        "loopback"
+      ]
+    },
+    {
+      "description": "Lien local FE80::1 posé sur G0/0/0 seulement : G0/0/1 garde son adresse lien local EUI-64 automatique",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "interface g0/0/0",
+            "ipv6 address 2001:db8:acad:10::1/64",
+            "ipv6 address fe80::1 link-local",
+            "interface g0/0/1",
+            "ipv6 address 2001:db8:acad:20::/64 eui-64",
+            "no shutdown",
+            "interface loopback 0",
+            "ipv6 address 2001:db8:acad:ff::1/128",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "link-local"
+      ]
+    }
+  ],
+  "explanation": "Sur IOS, le routage IPv6 unicast est désactivé par défaut : sans ipv6 unicast-routing, le routeur traite l'IPv6 comme un hôte. Il configure ses adresses et répond au ping, mais n'achemine aucun paquet IPv6 entre ses interfaces, ne rejoint pas le groupe tous-routeurs FF02::2 et n'envoie aucune annonce de routeur (RA) : les postes ne peuvent pas faire de SLAAC et n'apprennent aucune passerelle. Chaque adresse globale se pose sous l'interface au format préfixe/longueur. Une interface accepte plusieurs adresses globales, donc une adresse saisie par erreur reste en place à côté de la bonne et doit être retirée par no ipv6 address. Avec le mot-clé eui-64, on ne donne que le préfixe /64. IOS construit l'identifiant d'interface à partir de la MAC : il la coupe en deux, insère FFFE au milieu et inverse le 7e bit (bit universel/local). Par exemple, la MAC 00A0.C9A1.B2C3 donne ::2A0:C9FF:FEA1:B2C3. show ipv6 interface brief affiche l'adresse obtenue. Dès qu'une adresse IPv6 (ou ipv6 enable) est configurée, l'interface reçoit automatiquement une adresse lien local FE80::/64, elle aussi en EUI-64. ipv6 address FE80::1 link-local la remplace par une valeur fixe, sans longueur de préfixe. Réutiliser FE80::1 sur plusieurs interfaces est permis : une adresse lien local n'a de sens que sur son lien. Les RA ont pour source cette adresse, et les postes la prennent comme passerelle. Une loopback reçoit un préfixe d'hôte /128. Enfin, une interface de routeur reste en shutdown tant qu'on n'a pas tapé no shutdown.",
+  "reference": "Cisco IOS XE — IP Addressing: IPv6 Configuration Guide, « IPv6 Addressing and Basic Connectivity » (Configuring a Global IPv6 Address Using EUI-64, Configuring a Link-Local Address, Enabling IPv6 Routing) ; Cisco IOS IPv6 Command Reference (ipv6 address, ipv6 address eui-64, ipv6 address link-local, ipv6 unicast-routing)",
+  "estimatedMinutes": 10
+}

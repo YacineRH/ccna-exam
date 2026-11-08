@@ -1,0 +1,389 @@
+{
+  "slug": "ccna-lab-2.3-cdp-lldp-perimetre",
+  "certification": "ccna",
+  "domain": "2.0",
+  "subtopic": "2.3",
+  "difficulty": "medium",
+  "title": "Maîtriser CDP et LLDP sur un routeur de périmètre",
+  "statement": "R1 relie le LAN, desservi par le commutateur Cisco S1, à Internet par G0/1. Par G0/2, il rejoint le pare-feu d'un prestataire, qui n'est pas un équipement Cisco. Aujourd'hui, CDP tourne sur toutes les interfaces avec ses minuteries par défaut, et LLDP est éteint. L'audit demande de ne plus rien révéler vers l'extérieur.\n\nConfigurez R1 :\n1. CDP reste actif sur R1, car l'équipe réseau s'en sert pour contrôler le raccordement à S1, mais il n'est plus échangé avec le FAI sur G0/1.\n2. Activez LLDP sur R1.\n3. Sur G0/1, aucun message LLDP n'est émis ni pris en compte.\n4. Sur G0/2, R1 doit découvrir le pare-feu par LLDP sans lui envoyer ses propres informations : réception LLDP seulement, et pas de CDP.\n5. G0/0 (LAN) continue d'émettre et de recevoir CDP et LLDP.\n6. Minuteries : CDP envoie un message toutes les 30 s, avec une durée de rétention de 90 s ; LLDP envoie toutes les 15 s, avec une rétention de 60 s.",
+  "topology": "      S1 (Catalyst, parle CDP et LLDP) - postes et téléphones IP\n                       |\n              G0/0  10.1.1.1/24  (LAN)\n                  R1 (ISR 2911)\n     G0/2 10.1.2.1/30          G0/1 203.0.113.2/30\n            |                            |\n   Pare-feu du prestataire          FAI 203.0.113.1\n   (non Cisco, parle LLDP)          (non maîtrisé)\n\n  Aujourd'hui : CDP actif partout (envoi 60 s, rétention 180 s), LLDP éteint.",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": [
+        "GigabitEthernet0/0-2"
+      ],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0\n description LAN vers S1\n ip address 10.1.1.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/1\n description WAN vers FAI\n ip address 203.0.113.2 255.255.255.252\n no shutdown\ninterface GigabitEthernet0/2\n description Pare-feu prestataire\n ip address 10.1.2.1 255.255.255.252\n no shutdown"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "wan-no-cdp",
+      "description": "CDP n'est plus échangé sur G0/1, vers le FAI.",
+      "check": {
+        "type": "line",
+        "section": "interface GigabitEthernet0/1",
+        "line": "no cdp enable"
+      }
+    },
+    {
+      "id": "cdp-global",
+      "description": "CDP reste actif sur R1, avec un envoi toutes les 30 s et une rétention de 90 s.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "line": "no cdp run",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "line": "cdp timer 30"
+          },
+          {
+            "type": "line",
+            "line": "cdp holdtime 90"
+          }
+        ]
+      }
+    },
+    {
+      "id": "lldp-run",
+      "description": "LLDP est activé sur R1, et G0/0 (LAN) échange toujours CDP et LLDP dans les deux sens.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "line": "lldp run"
+          },
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/0",
+            "line": [
+              "no cdp enable",
+              "no lldp transmit",
+              "no lldp receive"
+            ],
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "lldp-timers",
+      "description": "LLDP envoie un message toutes les 15 s, avec une rétention de 60 s.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "line": "lldp timer 15"
+          },
+          {
+            "type": "line",
+            "line": "lldp holdtime 60"
+          }
+        ]
+      }
+    },
+    {
+      "id": "wan-no-lldp",
+      "description": "Sur G0/1, LLDP n'est ni émis ni reçu.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/1",
+            "line": "no lldp transmit"
+          },
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/1",
+            "line": "no lldp receive"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fw-receive-only",
+      "description": "Sur G0/2, R1 reçoit LLDP sans en émettre, et n'échange pas CDP.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/2",
+            "line": "no cdp enable"
+          },
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/2",
+            "line": "no lldp transmit"
+          },
+          {
+            "type": "line",
+            "section": "interface GigabitEthernet0/2",
+            "line": "no lldp receive",
+            "absent": true
+          }
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "CDP se règle à deux niveaux : pour tout l'équipement et interface par interface. Le couper pour tout le routeur priverait aussi le lien vers S1 de la découverte. LLDP, lui, est éteint par défaut sur IOS.",
+    "Une fois LLDP activé globalement, chaque interface émet et reçoit ; ces deux sens se désactivent séparément sous l'interface. CDP, lui, ne se coupe sous l'interface que dans les deux sens à la fois. Les minuteries globales se donnent en secondes : l'intervalle d'envoi d'une part, la durée de rétention annoncée au voisin d'autre part.",
+    "En configuration globale : lldp run, puis cdp timer / cdp holdtime et lldp timer / lldp holdtime. Sous G0/1 : no cdp enable et la forme no des deux sens LLDP ; sous G0/2 : no cdp enable et no lldp transmit seulement."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "cdp timer 30",
+        "cdp holdtime 90",
+        "lldp run",
+        "lldp timer 15",
+        "lldp holdtime 60",
+        "interface g0/1",
+        "no cdp enable",
+        "no lldp transmit",
+        "no lldp receive",
+        "interface g0/2",
+        "no cdp enable",
+        "no lldp transmit",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations IOS, interfaces d'abord, LLDP activé en dernier",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "int g0/2",
+            "no cdp en",
+            "no lldp tr",
+            "int g0/1",
+            "no lldp rec",
+            "no lldp tr",
+            "no cdp en",
+            "exit",
+            "lldp hold 60",
+            "lldp tim 15",
+            "cdp hold 90",
+            "cdp tim 30",
+            "lldp run",
+            "\u001a"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "interface range pour G0/1 et G0/2, après un no cdp run annulé par cdp run",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "no cdp run",
+            "cdp run",
+            "cdp timer 30",
+            "cdp holdtime 90",
+            "lldp run",
+            "lldp timer 15",
+            "lldp holdtime 60",
+            "interface range g0/1 - 2",
+            "no cdp enable",
+            "no lldp transmit",
+            "exit",
+            "interface GigabitEthernet 0/1",
+            "no lldp receive",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "no cdp run : CDP disparaît aussi du LAN, S1 ne voit plus R1",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "no cdp run",
+            "lldp run",
+            "lldp timer 15",
+            "lldp holdtime 60",
+            "interface g0/1",
+            "no lldp transmit",
+            "no lldp receive",
+            "interface g0/2",
+            "no lldp transmit",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "cdp-global",
+        "wan-no-cdp",
+        "fw-receive-only"
+      ]
+    },
+    {
+      "description": "Réglages LLDP par interface sans lldp run : LLDP reste éteint sur tout le routeur",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "cdp timer 30",
+            "cdp holdtime 90",
+            "lldp timer 15",
+            "lldp holdtime 60",
+            "interface g0/1",
+            "no cdp enable",
+            "no lldp transmit",
+            "no lldp receive",
+            "interface g0/2",
+            "no cdp enable",
+            "no lldp transmit",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "lldp-run"
+      ]
+    },
+    {
+      "description": "Sens inversé sur G0/2 : no lldp receive au lieu de no lldp transmit, R1 s'annonce au pare-feu sans rien apprendre",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "cdp timer 30",
+            "cdp holdtime 90",
+            "lldp run",
+            "lldp timer 15",
+            "lldp holdtime 60",
+            "interface g0/1",
+            "no cdp enable",
+            "no lldp transmit",
+            "no lldp receive",
+            "interface g0/2",
+            "no cdp enable",
+            "no lldp receive",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "fw-receive-only"
+      ]
+    },
+    {
+      "description": "interface range sur les trois ports : CDP et LLDP coupés aussi sur le LAN",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "cdp timer 30",
+            "cdp holdtime 90",
+            "lldp run",
+            "lldp timer 15",
+            "lldp holdtime 60",
+            "interface range g0/0 - 2",
+            "no cdp enable",
+            "no lldp transmit",
+            "exit",
+            "interface g0/1",
+            "no lldp receive",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "lldp-run"
+      ]
+    },
+    {
+      "description": "Minuteries inversées : intervalle d'envoi et durée de rétention échangés",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "cdp timer 90",
+            "cdp holdtime 30",
+            "lldp run",
+            "lldp timer 60",
+            "lldp holdtime 15",
+            "interface g0/1",
+            "no cdp enable",
+            "no lldp transmit",
+            "no lldp receive",
+            "interface g0/2",
+            "no cdp enable",
+            "no lldp transmit",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "cdp-global",
+        "lldp-timers"
+      ]
+    },
+    {
+      "description": "G0/1 : émission LLDP coupée, mais les LLDPDU du FAI sont encore acceptées",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "cdp timer 30",
+            "cdp holdtime 90",
+            "lldp run",
+            "lldp timer 15",
+            "lldp holdtime 60",
+            "interface g0/1",
+            "no cdp enable",
+            "no lldp transmit",
+            "interface g0/2",
+            "no cdp enable",
+            "no lldp transmit",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "wan-no-lldp"
+      ]
+    }
+  ],
+  "explanation": "CDP (propriétaire Cisco) et LLDP (IEEE 802.1AB) annoncent au voisin direct le nom de l'équipement, son modèle, sa version logicielle, ses adresses et ses capacités. C'est précieux sur le LAN pour contrôler le câblage (show cdp neighbors sur R1 ou sur S1) ; c'est aussi par CDP ou LLDP-MED qu'un commutateur indique son VLAN voix à un téléphone IP. Ces trames ne franchissent pas un commutateur : R1 découvre S1, pas les postes branchés derrière lui. Vers un réseau qu'on ne maîtrise pas, c'est une fuite d'informations. Sur IOS (ici un ISR 2911) comme sur les Catalyst, CDP est actif par défaut : un message toutes les 60 s (cdp timer), avec une durée de rétention de 180 s (cdp holdtime). Attention, sur certains routeurs IOS XE (ISR 4000, ASR 1000), CDP peut être désactivé par défaut selon la version : show cdp le dit. La rétention est la durée pendant laquelle le voisin garde l'entrée s'il ne reçoit plus rien. no cdp run couperait CDP pour tout le routeur, LAN compris. no cdp enable sous une interface le coupe sur ce seul lien, dans les deux sens : CDP n'a pas de réglage par sens. LLDP est désactivé par défaut sur IOS. lldp run l'active globalement, et chaque interface se met alors à émettre et à recevoir. Ses valeurs par défaut sont 30 s pour lldp timer et 120 s pour lldp holdtime. Sous l'interface, no lldp transmit et no lldp receive coupent chaque sens séparément. Sur G0/1, il faut les deux pour ne rien échanger avec le FAI. Sur G0/2, couper seulement l'émission permet d'apprendre le pare-feu (show lldp neighbors) sans rien lui révéler. Les réglages d'interface sont acceptés même sans lldp run, mais LLDP reste alors éteint partout. La rétention doit rester supérieure à l'intervalle d'envoi : 90 s pour 30 s (rapport 3, comme par défaut en CDP), 60 s pour 15 s (rapport 4, comme par défaut en LLDP). Vérification : show cdp, show cdp interface, show lldp, show cdp neighbors et show lldp neighbors.",
+  "reference": "Cisco IOS — Cisco Discovery Protocol Configuration Guide, Cisco IOS Release 15M&T, « Using Cisco Discovery Protocol » ; Cisco IOS — Carrier Ethernet Configuration Guide, Cisco IOS Release 15M&T, « Using Link Layer Discovery Protocol in Multivendor Networks » ; Cisco IOS Command References (cdp run, cdp enable, cdp timer, cdp holdtime, lldp run, lldp transmit, lldp receive, lldp timer, lldp holdtime)",
+  "estimatedMinutes": 10
+}

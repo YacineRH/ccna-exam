@@ -1,0 +1,532 @@
+{
+  "slug": "ccna-lab-2.8-gestion-commutateur",
+  "certification": "ccna",
+  "domain": "2.0",
+  "subtopic": "2.8",
+  "difficulty": "medium",
+  "title": "Accès de gestion d'un commutateur : VLAN de gestion, SVI, passerelle et HTTPS",
+  "statement": "S1 est un Catalyst 2960 de niveau 2 (image crypto k9). Son adresse de gestion est encore 192.168.1.2, sur l'interface Vlan1, et aucune session Telnet n'aboutit : les lignes VTY exigent un mot de passe qui n'a jamais été défini, et le mode privilégié n'a ni mot de passe ni secret. La gestion doit passer dans le VLAN 99 (GESTION). Ce VLAN existe déjà et le trunk Gi0/1 le transporte jusqu'à R1, dont l'adresse 192.168.99.1 sert de passerelle. Un collègue a créé l'interface Vlan99 sans l'adresser ; elle est encore désactivée. L'interface web de S1 est servie en HTTP et en HTTPS.\n\nConfigurez S1 :\n1. Interface Vlan99 : adresse 192.168.99.11/24, interface active.\n2. Le VLAN 1 ne sert plus à la gestion : l'interface Vlan1 perd son adresse IP et elle est désactivée.\n3. S1 ne route pas : donnez-lui 192.168.99.1 comme passerelle pour joindre les postes d'administration des autres sous-réseaux.\n4. Les 16 lignes VTY acceptent Telnet et demandent à la connexion le mot de passe Vty-S1! (le passage à SSH fera l'objet d'une autre intervention).\n5. Une fois connecté à distance, l'administrateur doit pouvoir passer en mode privilégié : protégez-le par un secret stocké haché, En@ble-S1.\n6. L'interface web n'est plus servie en HTTP clair ; HTTPS reste disponible pour l'outil de supervision.\n7. Enregistrez la configuration.",
+  "topology": "  Poste d'administration 192.168.50.10 (autre sous-réseau)\n                 |\n                R1  G0/0/1.99 = 192.168.99.1/24 (passerelle du VLAN 99)\n                 |  trunk\n               Gi0/1\n                S1 (Catalyst 2960, niveau 2, image k9)\n         Fa0/1-24 : postes utilisateurs\n\n  Aujourd'hui : interface Vlan1 192.168.1.2/24 (active)\n                interface Vlan99 sans adresse (shutdown)\n                lignes VTY : login, sans mot de passe ; pas d'enable secret\n                ip http server et ip http secure-server actifs\n  Cible       : interface Vlan99 192.168.99.11/24, passerelle 192.168.99.1, Telnet et HTTPS",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "S1",
+      "type": "switch",
+      "interfaces": [
+        "FastEthernet0/1-24",
+        "GigabitEthernet0/1-2"
+      ],
+      "startupConfig": "hostname S1\nno ip domain-lookup\nip http server\nip http secure-server\nvlan 99\n name GESTION\ninterface GigabitEthernet0/1\n description Vers R1\n switchport mode trunk\ninterface Vlan1\n ip address 192.168.1.2 255.255.255.0\ninterface Vlan99\n description Gestion\n shutdown\nline con 0\nline vty 0 4\n login\nline vty 5 15\n login"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "svi-gestion",
+      "description": "L'interface Vlan99 porte 192.168.99.11/24 et elle est active.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "section": "interface Vlan99",
+            "line": "ip address 192.168.99.11 255.255.255.0"
+          },
+          {
+            "type": "line",
+            "section": "interface Vlan99",
+            "line": "shutdown",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "vlan1-off",
+      "description": "L'interface Vlan1 n'a plus d'adresse IP et elle est désactivée.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "section": "interface Vlan1",
+            "pattern": "^ip address ",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "section": "interface Vlan1",
+            "line": "shutdown"
+          }
+        ]
+      }
+    },
+    {
+      "id": "default-gateway",
+      "description": "S1 utilise 192.168.99.1 comme passerelle pour son trafic de gestion.",
+      "check": {
+        "type": "line",
+        "line": "ip default-gateway 192.168.99.1"
+      }
+    },
+    {
+      "id": "vty",
+      "description": "Les 16 lignes VTY acceptent Telnet et demandent le mot de passe Vty-S1! à la connexion.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "sectionPattern": "^line vty ",
+            "sections": "all",
+            "pattern": "^password Vty-S1!$",
+            "caseSensitive": true
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty ",
+            "sections": "all",
+            "line": "login"
+          },
+          {
+            "type": "regex",
+            "sectionPattern": "^line vty ",
+            "pattern": "^transport input (ssh|none)$",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "enable-secret",
+      "description": "Le mode privilégié est protégé par le secret haché En@ble-S1, sans mot de passe enable en clair.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "pattern": "^enable secret (0 )?En@ble-S1$",
+            "caseSensitive": true
+          },
+          {
+            "type": "regex",
+            "pattern": "^enable password ",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "http-off",
+      "description": "L'interface web n'est plus servie en HTTP clair, mais reste disponible en HTTPS.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "line": "ip http server",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "line": "ip http secure-server"
+          }
+        ]
+      }
+    },
+    {
+      "id": "saved",
+      "description": "La configuration est enregistrée en NVRAM après la dernière modification.",
+      "check": {
+        "type": "command",
+        "command": [
+          "copy running-config startup-config",
+          "write memory",
+          "write"
+        ],
+        "afterLastChange": true
+      }
+    }
+  ],
+  "hints": [
+    "Un commutateur de niveau 2 n'a qu'une adresse de gestion, portée par une interface VLAN (SVI). Comme il ne route pas, il ne consulte pas de table de routage pour son propre trafic : il lui faut une passerelle déclarée explicitement. Une session à distance n'aboutit que si la ligne VTY et le mode privilégié ont chacun leur mot de passe.",
+    "Une SVI créée à la main reste désactivée tant qu'on ne l'active pas ; l'ancienne perd son adresse par la forme no de la commande d'adressage. Sur les lignes VTY, un mot de passe ne sert que si une autre commande le fait demander à la connexion ; IOS affiche ces lignes en deux blocs, 0 4 et 5 15. Les serveurs web HTTP et HTTPS se coupent par deux commandes globales distinctes.",
+    "interface vlan 99 : ip address … et no shutdown ; interface vlan 1 : no ip address et shutdown ; ip default-gateway en global ; line vty 0 15 : password … et login ; enable secret plutôt qu'enable password ; no ip http server, en laissant ip http secure-server ; puis copy running-config startup-config."
+  ],
+  "solution": [
+    {
+      "device": "S1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface vlan 99",
+        "ip address 192.168.99.11 255.255.255.0",
+        "no shutdown",
+        "interface vlan 1",
+        "no ip address",
+        "shutdown",
+        "exit",
+        "ip default-gateway 192.168.99.1",
+        "line vty 0 15",
+        "password Vty-S1!",
+        "login",
+        "exit",
+        "enable secret En@ble-S1",
+        "no ip http server",
+        "end",
+        "copy running-config startup-config"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations IOS, blocs VTY configurés séparément avec transport input explicite, ordre libre, wr",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "en",
+            "conf t",
+            "no ip http server",
+            "line vty 0 4",
+            "pass Vty-S1!",
+            "login",
+            "transport input telnet",
+            "line vty 5 15",
+            "pass Vty-S1!",
+            "login",
+            "transport input telnet ssh",
+            "exit",
+            "int vl1",
+            "no ip add",
+            "sh",
+            "int vlan99",
+            "ip add 192.168.99.11 255.255.255.0",
+            "no sh",
+            "exit",
+            "ip default-gateway 192.168.99.1",
+            "enable secret En@ble-S1",
+            "\u001a",
+            "wr"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Erreurs corrigées : enable password retiré au profit du secret, adresse de la SVI ressaisie, HTTPS coupé par erreur puis rétabli, write memory",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "enable password En@ble-S1",
+            "no enable password",
+            "enable secret 0 En@ble-S1",
+            "interface Vlan99",
+            "ip address 192.168.99.12 255.255.255.0",
+            "ip address 192.168.99.11 255.255.255.0",
+            "no shutdown",
+            "interface Vlan1",
+            "no ip address",
+            "shutdown",
+            "exit",
+            "ip default-gateway 192.168.99.1",
+            "no ip http secure-server",
+            "no ip http server",
+            "ip http secure-server",
+            "line vty 0 15",
+            "login",
+            "password Vty-S1!",
+            "end",
+            "write memory"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "SVI Vlan99 adressée mais jamais activée : S1 n'a plus aucune adresse joignable",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface vlan 99",
+            "ip address 192.168.99.11 255.255.255.0",
+            "interface vlan 1",
+            "no ip address",
+            "shutdown",
+            "exit",
+            "ip default-gateway 192.168.99.1",
+            "line vty 0 15",
+            "password Vty-S1!",
+            "login",
+            "exit",
+            "enable secret En@ble-S1",
+            "no ip http server",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": [
+        "svi-gestion"
+      ]
+    },
+    {
+      "description": "Route par défaut au lieu d'une passerelle : sans ip routing, le 2960 ne s'en sert pas pour son trafic de gestion",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface vlan 99",
+            "ip address 192.168.99.11 255.255.255.0",
+            "no shutdown",
+            "interface vlan 1",
+            "no ip address",
+            "shutdown",
+            "exit",
+            "ip route 0.0.0.0 0.0.0.0 192.168.99.1",
+            "line vty 0 15",
+            "password Vty-S1!",
+            "login",
+            "exit",
+            "enable secret En@ble-S1",
+            "no ip http server",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": [
+        "default-gateway"
+      ]
+    },
+    {
+      "description": "enable password au lieu de enable secret : le mot de passe reste en clair, ou en type 7 réversible",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface vlan 99",
+            "ip address 192.168.99.11 255.255.255.0",
+            "no shutdown",
+            "interface vlan 1",
+            "no ip address",
+            "shutdown",
+            "exit",
+            "ip default-gateway 192.168.99.1",
+            "line vty 0 15",
+            "password Vty-S1!",
+            "login",
+            "exit",
+            "enable password En@ble-S1",
+            "no ip http server",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": [
+        "enable-secret"
+      ]
+    },
+    {
+      "description": "Seules les lignes VTY 0 à 4 sont configurées : les lignes 5 à 15 refusent toujours les connexions",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface vlan 99",
+            "ip address 192.168.99.11 255.255.255.0",
+            "no shutdown",
+            "interface vlan 1",
+            "no ip address",
+            "shutdown",
+            "exit",
+            "ip default-gateway 192.168.99.1",
+            "line vty 0 4",
+            "password Vty-S1!",
+            "login",
+            "exit",
+            "enable secret En@ble-S1",
+            "no ip http server",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": [
+        "vty"
+      ]
+    },
+    {
+      "description": "login local sur les VTY sans aucun compte local : le mot de passe de ligne n'est jamais demandé et personne ne peut se connecter",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface vlan 99",
+            "ip address 192.168.99.11 255.255.255.0",
+            "no shutdown",
+            "interface vlan 1",
+            "no ip address",
+            "shutdown",
+            "exit",
+            "ip default-gateway 192.168.99.1",
+            "line vty 0 15",
+            "password Vty-S1!",
+            "login local",
+            "exit",
+            "enable secret En@ble-S1",
+            "no ip http server",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": [
+        "vty"
+      ]
+    },
+    {
+      "description": "transport input ssh sur les VTY alors que SSH n'est pas configuré : Telnet est refusé et aucun accès distant ne reste",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface vlan 99",
+            "ip address 192.168.99.11 255.255.255.0",
+            "no shutdown",
+            "interface vlan 1",
+            "no ip address",
+            "shutdown",
+            "exit",
+            "ip default-gateway 192.168.99.1",
+            "line vty 0 15",
+            "password Vty-S1!",
+            "login",
+            "transport input ssh",
+            "exit",
+            "enable secret En@ble-S1",
+            "no ip http server",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": [
+        "vty"
+      ]
+    },
+    {
+      "description": "Vlan1 désactivée mais encore adressée en 192.168.1.2, et HTTPS coupé à la place de HTTP",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface vlan 99",
+            "ip address 192.168.99.11 255.255.255.0",
+            "no shutdown",
+            "interface vlan 1",
+            "shutdown",
+            "exit",
+            "ip default-gateway 192.168.99.1",
+            "line vty 0 15",
+            "password Vty-S1!",
+            "login",
+            "exit",
+            "enable secret En@ble-S1",
+            "no ip http secure-server",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": [
+        "vlan1-off",
+        "http-off"
+      ]
+    },
+    {
+      "description": "Les deux serveurs web coupés : l'outil de supervision perd aussi l'accès HTTPS",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface vlan 99",
+            "ip address 192.168.99.11 255.255.255.0",
+            "no shutdown",
+            "interface vlan 1",
+            "no ip address",
+            "shutdown",
+            "exit",
+            "ip default-gateway 192.168.99.1",
+            "line vty 0 15",
+            "password Vty-S1!",
+            "login",
+            "exit",
+            "enable secret En@ble-S1",
+            "no ip http server",
+            "no ip http secure-server",
+            "end",
+            "copy running-config startup-config"
+          ]
+        }
+      ],
+      "failing": [
+        "http-off"
+      ]
+    },
+    {
+      "description": "Configuration enregistrée avant la coupure de HTTP : la startup-config ne contient pas la dernière modification",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface vlan 99",
+            "ip address 192.168.99.11 255.255.255.0",
+            "no shutdown",
+            "interface vlan 1",
+            "no ip address",
+            "shutdown",
+            "exit",
+            "ip default-gateway 192.168.99.1",
+            "line vty 0 15",
+            "password Vty-S1!",
+            "login",
+            "exit",
+            "enable secret En@ble-S1",
+            "do copy running-config startup-config",
+            "no ip http server",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "saved"
+      ]
+    }
+  ],
+  "explanation": "Un Catalyst 2960 de niveau 2 n'a qu'une adresse IP, portée par une interface VLAN (SVI), et seulement pour être administré. Il n'achemine rien entre VLAN : avec le routage IP désactivé, il se comporte comme un hôte et envoie tout trafic hors de son sous-réseau à l'adresse ip default-gateway. Une route statique ne lui sert pas à cela tant que le routage n'est pas activé. Le VLAN 1 est le VLAN par défaut de tous les ports : y laisser la gestion permet à n'importe quel poste branché sur une prise d'atteindre l'interface d'administration. On retire donc l'adresse de Vlan1 (no ip address) et on la désactive. Une SVI créée à la main reste en shutdown jusqu'au no shutdown. Pour passer up/up, il faut en plus que le VLAN 99 existe et qu'au moins un port actif le transporte ; le trunk Gi0/1 suffit (autostate). L'accès à distance demande deux mots de passe. Sur une ligne VTY, login fait demander le mot de passe de ligne : avec login sans password, IOS refuse la connexion (« Password required, but none set »), et avec login local, ce sont les comptes locaux qui sont demandés, or il n'y en a aucun ici. Le 2960 a 16 lignes VTY (0 à 15), qu'IOS affiche en deux blocs, line vty 0 4 et line vty 5 15 ; line vty 0 15 règle les deux. transport input ssh couperait Telnet, seul protocole utilisable tant que SSH n'est pas configuré. Une fois connecté, enable est refusé (« % No password set ») tant qu'aucun mot de passe enable ni secret n'existe. enable secret stocke un hachage (type 5, 8 ou 9 selon la version), alors qu'enable password reste en clair, ou en type 7 réversible avec service password-encryption ; si les deux existent, le secret l'emporte. Le 2960 sert son interface web en HTTP (ip http server) et, avec une image k9, en HTTPS (ip http secure-server). En HTTP, identifiants et pages circulent en clair : no ip http server coupe ce seul service et laisse HTTPS. Telnet circule lui aussi en clair ; le passage à SSH est traité dans le lab du sous-thème 4.8, le durcissement de la console et des VTY dans celui du 5.3. Enfin, copy running-config startup-config (ou write memory) doit suivre la dernière modification pour qu'elle survive à un redémarrage.",
+  "reference": "Catalyst 2960 Switch Software Configuration Guide, Cisco IOS Release 15.0(2)SE — « Assigning the Switch IP Address and Default Gateway », « Configuring Switch-Based Authentication » (Protecting Access to Privileged EXEC Commands, Setting a Telnet Password for a Terminal Line, Configuring the Switch for Secure Socket Layer HTTP) ; Cisco IOS Configuration Fundamentals Command Reference (ip default-gateway, enable secret, password, login, transport input) ; Cisco IOS HTTP Services Command Reference (ip http server, ip http secure-server)",
+  "estimatedMinutes": 10
+}
