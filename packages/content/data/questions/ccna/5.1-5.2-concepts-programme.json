@@ -1,0 +1,1488 @@
+[
+  {
+    "slug": "ccna-5.1-cia-integrity-hash-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avant d'installer une nouvelle image IOS XE, l'administrateur calcule son empreinte (hash) et la compare à celle publiée sur le site de téléchargement de Cisco. Quel pilier de la triade CIA cette vérification protège-t-elle avant tout ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La confidentialité"
+        },
+        {
+          "id": "b",
+          "text": "La disponibilité"
+        },
+        {
+          "id": "c",
+          "text": "L'intégrité"
+        },
+        {
+          "id": "d",
+          "text": "La non-répudiation"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'intégrité garantit que les données n'ont pas été modifiées, ni par accident ni par malveillance. Une fonction de hachage produit une empreinte qui change dès qu'un seul bit du fichier change : si l'empreinte calculée correspond à celle publiée par Cisco, l'image n'a été ni corrompue pendant le téléchargement ni altérée (par exemple pour y cacher une porte dérobée). Sur IOS, la commande verify /md5 suivie du nom du fichier calcule cette empreinte.",
+    "distractorNotes": {
+      "a": "La confidentialité protège contre la lecture non autorisée ; une empreinte ne cache rien du contenu de l'image.",
+      "b": "La disponibilité concerne l'accès au service ou aux données quand on en a besoin ; comparer une empreinte ne la garantit pas.",
+      "d": "La non-répudiation exige une signature numérique liée à une identité ; une simple empreinte ne prouve pas qui a produit le fichier, et ce n'est pas un pilier de la triade CIA."
+    },
+    "reference": "NIST FIPS 199 ; Cisco IOS Configuration Fundamentals Command Reference (verify)"
+  },
+  {
+    "slug": "ccna-5.1-cia-confidentiality-telnet-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un administrateur gère ses commutateurs en Telnet. Un attaquant qui écoute passivement le trafic du VLAN de gestion récupère le nom d'utilisateur et le mot de passe de l'administrateur, sans rien modifier ni perturber. Quel pilier de la triade CIA est compromis ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La confidentialité"
+        },
+        {
+          "id": "b",
+          "text": "L'intégrité"
+        },
+        {
+          "id": "c",
+          "text": "La disponibilité"
+        },
+        {
+          "id": "d",
+          "text": "L'authenticité"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Telnet transmet tout en clair, identifiants compris. Une écoute passive permet donc de lire des informations que seul l'administrateur devait connaître : c'est une atteinte à la confidentialité. Rien n'est modifié (intégrité intacte) et le service continue de fonctionner (disponibilité intacte). La parade est de remplacer Telnet par SSH, qui chiffre la session, avec transport input ssh sur les lignes VTY.",
+    "distractorNotes": {
+      "b": "L'intégrité serait atteinte si l'attaquant modifiait les échanges ou la configuration ; ici il se contente de lire.",
+      "c": "La disponibilité serait atteinte si le service de gestion devenait inaccessible ; l'écoute passive ne perturbe rien.",
+      "d": "L'authenticité ne fait pas partie de la triade CIA ; le vol d'identifiants permettra plus tard une usurpation, mais l'atteinte constatée ici est la divulgation d'un secret."
+    },
+    "reference": "NIST FIPS 199 ; RFC 4253"
+  },
+  {
+    "slug": "ccna-5.1-cia-classify-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque incident au pilier de la triade CIA qu'il atteint principalement.",
+      "left": [
+        {
+          "id": "synflood",
+          "text": "Un serveur web ne répond plus, saturé de demandes de connexion TCP jamais terminées."
+        },
+        {
+          "id": "sniff",
+          "text": "Un attaquant lit les identifiants d'un administrateur qui se connecte en Telnet."
+        },
+        {
+          "id": "transfer",
+          "text": "Un intermédiaire change le montant d'un virement pendant son transit sur le réseau."
+        },
+        {
+          "id": "logs",
+          "text": "Un intrus efface des lignes des journaux syslog pour cacher son passage."
+        },
+        {
+          "id": "dhcp",
+          "text": "Le pool d'un serveur DHCP est épuisé et les nouveaux postes n'obtiennent plus d'adresse."
+        }
+      ],
+      "right": [
+        {
+          "id": "c",
+          "text": "Confidentialité"
+        },
+        {
+          "id": "i",
+          "text": "Intégrité"
+        },
+        {
+          "id": "a",
+          "text": "Disponibilité"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "synflood": "a",
+        "sniff": "c",
+        "transfer": "i",
+        "logs": "i",
+        "dhcp": "a"
+      }
+    },
+    "explanation": "La confidentialité est atteinte quand une information est lue par quelqu'un qui n'y a pas droit (identifiants Telnet en clair). L'intégrité est atteinte quand une donnée est modifiée sans autorisation : un montant de virement falsifié ou des journaux retouchés. La disponibilité est atteinte quand un service n'est plus accessible à ses utilisateurs légitimes : serveur saturé par un SYN flood, ou pool DHCP épuisé (famine DHCP) qui empêche les postes d'obtenir une adresse.",
+    "reference": "NIST FIPS 199"
+  },
+  {
+    "slug": "ccna-5.1-threat-vuln-examples-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque élément d'un audit de sécurité au concept qu'il illustre.",
+      "left": [
+        {
+          "id": "telnet",
+          "text": "Les lignes VTY d'un commutateur acceptent encore Telnet."
+        },
+        {
+          "id": "group",
+          "text": "Un groupe criminel cible activement les entreprises du secteur."
+        },
+        {
+          "id": "tool",
+          "text": "Un outil public automatise la prise de contrôle via une faille connue."
+        },
+        {
+          "id": "fix",
+          "text": "Passer en SSH et filtrer l'accès aux lignes VTY par une ACL."
+        }
+      ],
+      "right": [
+        {
+          "id": "a",
+          "text": "Vulnérabilité"
+        },
+        {
+          "id": "b",
+          "text": "Menace"
+        },
+        {
+          "id": "c",
+          "text": "Exploit"
+        },
+        {
+          "id": "d",
+          "text": "Atténuation"
+        },
+        {
+          "id": "e",
+          "text": "Risque"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "telnet": "a",
+        "group": "b",
+        "tool": "c",
+        "fix": "d"
+      }
+    },
+    "explanation": "Une vulnérabilité est une faiblesse d'un système : un protocole de gestion qui transmet tout en clair. Une menace est une circonstance ou un acteur susceptible de nuire en exploitant une vulnérabilité : le groupe criminel. Un exploit est le moyen concret (code, outil) de tirer parti d'une faille. L'atténuation est la mesure qui réduit la vulnérabilité ou son impact : SSH et ACL sur les VTY.",
+    "distractorNotes": {
+      "e": "Le risque n'est pas un objet observé mais une évaluation : la combinaison de la probabilité qu'une menace exploite une vulnérabilité et de l'impact qui en résulterait."
+    },
+    "reference": "RFC 4949 (Internet Security Glossary, Version 2) ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "ccna-5.1-risk-likelihood-impact-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Selon le NIST SP 800-30, quelles deux grandeurs combinées déterminent le niveau d'un risque ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le prix d'achat des équipements concernés"
+        },
+        {
+          "id": "b",
+          "text": "La probabilité qu'une menace exploite une vulnérabilité"
+        },
+        {
+          "id": "c",
+          "text": "Le nombre de règles configurées sur le pare-feu"
+        },
+        {
+          "id": "d",
+          "text": "L'impact négatif qu'aurait cet événement sur l'organisation"
+        },
+        {
+          "id": "e",
+          "text": "L'ancienneté de la version du logiciel installé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le NIST SP 800-30 définit le risque comme une fonction de la probabilité (likelihood) qu'un événement menaçant se produise et exploite une vulnérabilité, et de l'impact négatif qui en résulterait. Une vulnérabilité grave sur un système isolé et sans valeur présente un risque faible ; une vulnérabilité modérée sur un serveur exposé à Internet et critique pour l'activité présente un risque élevé. Les mesures d'atténuation visent à réduire l'un ou l'autre de ces deux facteurs.",
+    "distractorNotes": {
+      "a": "Le prix du matériel n'est pas l'impact : une perte de données clients sur un serveur bon marché peut être bien plus grave que la panne d'un équipement coûteux.",
+      "c": "Le nombre de règles ne mesure ni la probabilité ni l'impact ; un pare-feu chargé de règles peut rester mal configuré.",
+      "e": "L'ancienneté d'un logiciel peut révéler une vulnérabilité, mais elle n'est pas l'une des deux composantes du risque."
+    },
+    "reference": "NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "ccna-5.1-malware-types-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque type de malware à son mode de fonctionnement.",
+      "left": [
+        {
+          "id": "virus",
+          "text": "Virus"
+        },
+        {
+          "id": "worm",
+          "text": "Ver"
+        },
+        {
+          "id": "ransom",
+          "text": "Rançongiciel (ransomware)"
+        },
+        {
+          "id": "spy",
+          "text": "Logiciel espion (spyware)"
+        }
+      ],
+      "right": [
+        {
+          "id": "a",
+          "text": "Se greffe sur un fichier ou un programme légitime et se propage quand celui-ci est exécuté."
+        },
+        {
+          "id": "b",
+          "text": "Se réplique seul d'hôte en hôte à travers le réseau en exploitant une faille, sans action de l'utilisateur."
+        },
+        {
+          "id": "c",
+          "text": "Rend les données inutilisables en les chiffrant, puis réclame une somme contre la clé."
+        },
+        {
+          "id": "d",
+          "text": "Collecte discrètement les frappes et l'activité de la victime et les transmet à un tiers."
+        },
+        {
+          "id": "e",
+          "text": "Ensemble de machines compromises pilotées à distance par un serveur de commande."
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "virus": "a",
+        "worm": "b",
+        "ransom": "c",
+        "spy": "d"
+      }
+    },
+    "explanation": "Le virus a besoin d'un hôte (fichier, programme, macro) et d'une action, souvent de l'utilisateur, pour s'exécuter et se propager. Le ver est autonome : il se propage seul par le réseau en exploitant une vulnérabilité d'un service, d'où sa vitesse de diffusion. Le rançongiciel s'attaque surtout à la disponibilité des données en les chiffrant. Le logiciel espion s'attaque à la confidentialité en exfiltrant ce que fait la victime.",
+    "distractorNotes": {
+      "e": "Cette description est celle d'un botnet : ce n'est pas un type de malware mais le réseau de machines compromises qu'un malware permet de constituer, souvent utilisé pour des DDoS."
+    },
+    "reference": "NIST SP 800-83 Rev. 1 (Guide to Malware Incident Prevention and Handling)"
+  },
+  {
+    "slug": "ccna-5.1-ransomware-backup-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME craint qu'un rançongiciel chiffre les données de ses serveurs de fichiers. Quelle mesure lui permettra le mieux de retrouver ses données sans payer si l'attaque réussit ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chiffrer les disques des serveurs de fichiers avec une clé forte"
+        },
+        {
+          "id": "b",
+          "text": "Copier chaque nuit les données sur un partage réseau monté en permanence"
+        },
+        {
+          "id": "c",
+          "text": "Changer tous les mots de passe des comptes juste après l'attaque"
+        },
+        {
+          "id": "d",
+          "text": "Faire des sauvegardes hors ligne régulières dont la restauration est testée"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un rançongiciel chiffre tout ce qu'il peut atteindre depuis la machine compromise. Seule une copie inaccessible au malware (hors ligne, déconnectée ou immuable) reste intacte, et elle n'est utile que si la restauration a été testée. C'est la principale recommandation des guides de lutte contre les rançongiciels : elle préserve la disponibilité des données sans dépendre de la clé de l'attaquant.",
+    "distractorNotes": {
+      "a": "Le chiffrement au repos protège la confidentialité en cas de vol des disques, mais le rançongiciel, exécuté sur le serveur en fonctionnement, rechiffre les données par-dessus.",
+      "b": "Un partage monté en permanence est accessible depuis le serveur infecté : le rançongiciel chiffre aussi les sauvegardes.",
+      "c": "Changer les mots de passe peut couper l'accès de l'attaquant, mais ne déchiffre aucune donnée déjà chiffrée."
+    },
+    "reference": "CISA #StopRansomware Guide"
+  },
+  {
+    "slug": "ccna-5.1-social-engineering-variants-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque variante d'hameçonnage à l'exemple qui lui correspond.",
+      "left": [
+        {
+          "id": "spear",
+          "text": "Spear phishing"
+        },
+        {
+          "id": "whaling",
+          "text": "Whaling"
+        },
+        {
+          "id": "vishing",
+          "text": "Vishing"
+        },
+        {
+          "id": "smishing",
+          "text": "Smishing"
+        }
+      ],
+      "right": [
+        {
+          "id": "a",
+          "text": "Un appel d'un faux technicien de la banque demande de dicter le code reçu par la victime."
+        },
+        {
+          "id": "b",
+          "text": "Un e-mail personnalisé cite le projet et le chef d'équipe d'une comptable précise."
+        },
+        {
+          "id": "c",
+          "text": "Un SMS annonce un colis en attente et renvoie vers un faux site de paiement."
+        },
+        {
+          "id": "d",
+          "text": "Un message soigné vise le PDG et réclame la validation urgente d'un virement."
+        },
+        {
+          "id": "e",
+          "text": "L'attaquant piège un site professionnel que les employés de la cible consultent souvent."
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "spear": "b",
+        "whaling": "d",
+        "vishing": "a",
+        "smishing": "c"
+      }
+    },
+    "explanation": "Toutes ces attaques relèvent de l'ingénierie sociale : elles poussent la victime à livrer un secret ou à agir. Le spear phishing vise une personne ou un petit groupe avec des détails personnalisés, obtenus souvent par reconnaissance (réseaux sociaux, site de l'entreprise). Le whaling est un spear phishing qui vise des dirigeants, dont l'autorité permet par exemple de faire valider un virement. Le vishing passe par la voix (téléphone), le smishing par SMS.",
+    "distractorNotes": {
+      "e": "Piéger un site fréquenté par les cibles est une attaque de point d'eau (watering hole) : la victime n'est pas sollicitée par un message, elle est compromise en visitant un site habituel."
+    },
+    "reference": "CISA, Avoiding Social Engineering and Phishing Attacks ; NIST SP 800-12 Rev. 1"
+  },
+  {
+    "slug": "ccna-5.1-social-engineering-definition-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle catégorie d'attaque exploite la confiance, la peur ou la serviabilité des personnes, plutôt qu'une faille d'un équipement ou d'un logiciel ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La reconnaissance"
+        },
+        {
+          "id": "b",
+          "text": "L'ingénierie sociale"
+        },
+        {
+          "id": "c",
+          "text": "Le déni de service"
+        },
+        {
+          "id": "d",
+          "text": "Le débordement de tampon"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'ingénierie sociale manipule les personnes pour qu'elles révèlent des informations ou accomplissent une action : hameçonnage, appel d'un faux support, talonnage à l'entrée d'un bâtiment, clé USB abandonnée. Aucun pare-feu ne la bloque complètement : la contre-mesure principale est la sensibilisation et la formation des utilisateurs, complétées par des procédures (vérification d'identité avant de réinitialiser un mot de passe, par exemple).",
+    "distractorNotes": {
+      "a": "La reconnaissance collecte des informations sur la cible (hôtes actifs, ports ouverts) ; elle peut alimenter l'ingénierie sociale mais ne manipule personne.",
+      "c": "Le déni de service vise à rendre un service indisponible, généralement en saturant ses ressources techniques.",
+      "d": "Le débordement de tampon exploite une faille de programmation d'un logiciel, pas un comportement humain."
+    },
+    "reference": "RFC 4949 (Internet Security Glossary, Version 2)"
+  },
+  {
+    "slug": "ccna-5.1-brute-force-mitigation-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Les journaux d'un routeur montrent des milliers d'échecs de connexion SSH depuis la même adresse, avec des mots de passe différents. Quelles deux mesures réduisent l'efficacité de cette attaque par force brute ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer SSH par Telnet sur les lignes VTY"
+        },
+        {
+          "id": "b",
+          "text": "Imposer des mots de passe longs et complexes aux comptes locaux"
+        },
+        {
+          "id": "c",
+          "text": "Augmenter la valeur d'exec-timeout sur les lignes VTY"
+        },
+        {
+          "id": "d",
+          "text": "Désactiver la commande service password-encryption"
+        },
+        {
+          "id": "e",
+          "text": "Bloquer les connexions après plusieurs échecs avec login block-for"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Une attaque par force brute essaie des mots de passe jusqu'à trouver le bon. Deux leviers la freinent : agrandir l'espace des possibilités (mots de passe longs et variés, qui multiplient le nombre d'essais nécessaires) et limiter le rythme des essais. Sur IOS, login block-for 120 attempts 5 within 60, par exemple, bloque toute nouvelle connexion pendant 120 secondes après 5 échecs en 60 secondes (mode quiet), ce qui rend l'attaque beaucoup trop lente.",
+    "distractorNotes": {
+      "a": "Telnet transmet les identifiants en clair et n'offre aucune protection contre les essais répétés : la sécurité baisse.",
+      "c": "exec-timeout ferme une session inactive après connexion ; il n'agit pas sur les tentatives d'authentification.",
+      "d": "service password-encryption masque les mots de passe dans la configuration ; le désactiver ne freine en rien les essais à distance."
+    },
+    "reference": "Cisco IOS Security Configuration Guide — Cisco IOS Login Enhancements (Login Block)"
+  },
+  {
+    "slug": "ccna-5.1-brute-force-keyspace-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un mot de passe compte exactement 4 caractères, chacun choisi parmi les 26 lettres minuscules de l'alphabet. Combien de combinaisons une attaque par force brute doit-elle essayer, au maximum, pour être sûre de le trouver ?",
+      "fields": [
+        {
+          "id": "combos",
+          "label": "Nombre de combinaisons (nombre entier, sans espace)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "combos": {
+          "accepted": [
+            "456976"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Chaque position peut prendre 26 valeurs, indépendamment des autres : le nombre de combinaisons est 26 × 26 × 26 × 26 = 26^4 = 456 976. Un outil automatisé les essaie en très peu de temps si rien ne limite le rythme. Allonger le mot de passe ou élargir le jeu de caractères fait croître ce nombre de façon exponentielle : avec 12 caractères parmi 94 caractères imprimables, on dépasse 4 × 10^23 combinaisons.",
+    "reference": "NIST SP 800-63B"
+  },
+  {
+    "slug": "ccna-5.1-buffer-overflow-definition-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un bulletin de sécurité Cisco signale une vulnérabilité de débordement de tampon (buffer overflow) dans un service d'IOS XE. Quel mécanisme décrit cette catégorie de faille ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le service copie une entrée plus grande que la zone mémoire prévue, qui déborde sur la mémoire voisine."
+        },
+        {
+          "id": "b",
+          "text": "Le service reçoit tant de requêtes légitimes que sa file d'attente sature et rejette les suivantes."
+        },
+        {
+          "id": "c",
+          "text": "Le service accepte des milliers d'essais de mots de passe sans jamais bloquer le client."
+        },
+        {
+          "id": "d",
+          "text": "Le service transmet ses données en clair, si bien qu'un tiers peut les lire sur le réseau."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un débordement de tampon survient quand un programme écrit dans une zone mémoire (tampon) plus de données qu'elle ne peut en contenir, faute de vérifier la taille de l'entrée. Les octets en trop écrasent la mémoire adjacente : le service peut planter (déni de service) ou, si l'attaquant contrôle les données écrites, exécuter du code arbitraire. La parade côté réseau est d'appliquer le correctif et, en attendant, de désactiver le service ou d'en restreindre l'accès.",
+    "distractorNotes": {
+      "b": "Saturer un service par un volume de requêtes est un déni de service par épuisement des ressources, pas un débordement de tampon.",
+      "c": "Accepter des essais illimités de mots de passe expose à la force brute ; aucune mémoire n'est écrasée.",
+      "d": "Transmettre en clair expose à l'écoute (atteinte à la confidentialité) ; c'est une faiblesse de protocole, pas une erreur de gestion mémoire."
+    },
+    "reference": "MITRE CWE-120 (Buffer Copy without Checking Size of Input)"
+  },
+  {
+    "slug": "ccna-5.1-mac-flooding-sequence-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Ordonnez les étapes d'une attaque par débordement de la table d'adresses MAC d'un commutateur, de la première à la dernière.",
+      "items": [
+        {
+          "id": "a",
+          "text": "Le commutateur ne peut plus apprendre de nouvelles adresses MAC."
+        },
+        {
+          "id": "b",
+          "text": "L'attaquant émet un très grand nombre de trames avec des adresses MAC source aléatoires."
+        },
+        {
+          "id": "c",
+          "text": "La table d'adresses MAC (table CAM) atteint sa capacité maximale."
+        },
+        {
+          "id": "d",
+          "text": "Les trames vers des MAC absentes de la table sont inondées sur tous les ports du VLAN."
+        },
+        {
+          "id": "e",
+          "text": "L'attaquant capture des trames échangées entre d'autres hôtes du VLAN."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "b",
+        "c",
+        "a",
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Le commutateur apprend l'adresse MAC source de chaque trame reçue. En injectant des adresses source aléatoires, l'attaquant remplit la table CAM ; une fois pleine, elle n'accepte plus de nouvelles entrées, et les entrées légitimes qui expirent ne peuvent plus être réapprises. Le commutateur traite alors les destinations inconnues comme une diffusion : il inonde la trame sur tous les ports du VLAN, y compris celui de l'attaquant, qui peut capturer ce trafic. Port security, en limitant le nombre de MAC par port, bloque l'attaque à sa première étape.",
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Port Security"
+  },
+  {
+    "slug": "ccna-5.1-dhcp-starvation-rogue-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un matin, les postes du VLAN 20 n'obtiennent plus d'adresse : le pool du serveur DHCP légitime est épuisé, et ses baux sont attribués à des centaines d'adresses MAC inconnues apparues sur un même port d'accès. Une heure plus tard, des postes obtiennent une adresse, mais avec 192.168.20.77 comme passerelle par défaut, l'adresse d'un portable non autorisé branché sur ce port. Que s'est-il passé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un débordement de la table MAC, pour que le commutateur inonde le trafic vers le portable"
+        },
+        {
+          "id": "b",
+          "text": "Une usurpation ARP, le portable répondant aux requêtes ARP visant la passerelle"
+        },
+        {
+          "id": "c",
+          "text": "Une famine DHCP, puis un serveur DHCP pirate qui place le portable en man-in-the-middle"
+        },
+        {
+          "id": "d",
+          "text": "Un saut de VLAN, le portable ayant négocié un trunk pour joindre le serveur DHCP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La première phase est une famine DHCP (DHCP starvation) : des requêtes DHCP émises au nom de centaines d'adresses MAC fictives vident le pool du serveur légitime, ce qui est un déni de service. La seconde phase exploite ce silence : un serveur DHCP pirate répond aux clients en s'annonçant comme passerelle, si bien que tout leur trafic sortant passe par lui (man-in-the-middle). DHCP snooping bloque les réponses DHCP sur les ports non fiables et limite le débit des requêtes ; port security limite les adresses MAC par port.",
+    "distractorNotes": {
+      "a": "Les MAC inconnues ont consommé des baux DHCP, et la mauvaise passerelle a été fournie par DHCP : un débordement de table MAC ne modifie pas la configuration IP des postes.",
+      "b": "L'usurpation ARP associe la MAC de l'attaquant à l'IP de la vraie passerelle ; ici les postes ont reçu une autre adresse de passerelle, ce qui désigne DHCP.",
+      "d": "Le portable est sur le VLAN 20 avec les victimes ; il n'a besoin d'aucun trunk pour leur répondre, et rien n'indique une négociation DTP."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring DHCP Snooping ; RFC 2131"
+  },
+  {
+    "slug": "ccna-5.1-arp-spoofing-exhibit-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Hier, la passerelle 192.168.10.1 (un routeur Cisco) apparaissait dans ce cache avec l'adresse 00-1e-49-7a-02-c1. L'hôte 192.168.10.40 est un poste de travail du même VLAN. Quelle attaque est probablement en cours, et quelle fonctionnalité de commutateur Cisco la contre ?",
+      "exhibit": "C:\\>arp -a\n\nInterface : 192.168.10.23 --- 0xb\n  Adresse Internet      Adresse physique      Type\n  192.168.10.1          00-50-56-a1-3c-07     dynamique\n  192.168.10.40         00-50-56-a1-3c-07     dynamique\n  192.168.10.255        ff-ff-ff-ff-ff-ff     statique",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un débordement de la table MAC, contré par port security"
+        },
+        {
+          "id": "b",
+          "text": "Une usurpation ARP, contrée par Dynamic ARP Inspection (DAI)"
+        },
+        {
+          "id": "c",
+          "text": "Une famine DHCP, contrée par la limitation de débit de DHCP snooping"
+        },
+        {
+          "id": "d",
+          "text": "Un saut de VLAN, contré par switchport mode access"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le cache ARP associe désormais l'IP de la passerelle à la MAC du poste 192.168.10.40, alors qu'elle correspondait hier à la MAC du routeur. Le poste 192.168.10.40 a donc envoyé des réponses ARP falsifiées (usurpation ou empoisonnement ARP) : le trafic que la victime destine à la passerelle lui parvient, ce qui le place en man-in-the-middle. DAI compare les messages ARP reçus sur les ports non fiables avec la base de liaisons de DHCP snooping et rejette ceux dont le couple IP-MAC ne correspond pas.",
+    "distractorNotes": {
+      "a": "Un débordement de table MAC agit sur la table CAM du commutateur, pas sur le cache ARP d'un hôte ; il ne crée pas de fausse association IP-MAC.",
+      "c": "La victime a bien une adresse et une passerelle correcte (192.168.10.1) : c'est la résolution de l'adresse de la passerelle qui est faussée, pas l'attribution DHCP.",
+      "d": "L'attaquant et la victime sont dans le même VLAN ; aucun passage vers un autre VLAN n'est en jeu."
+    },
+    "reference": "Cisco Catalyst 9300 Security Configuration Guide — Configuring Dynamic ARP Inspection ; RFC 826"
+  },
+  {
+    "slug": "ccna-5.1-switch-spoofing-dtp-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un poste pirate branché sur un port de commutateur Catalyst émet des messages DTP pour former un trunk et accéder ainsi à tous les VLAN (usurpation de commutateur, switch spoofing). Quelle commande d'interface empêche cette attaque sur ce port ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "switchport mode dynamic auto"
+        },
+        {
+          "id": "b",
+          "text": "switchport trunk native vlan 999"
+        },
+        {
+          "id": "c",
+          "text": "spanning-tree portfast"
+        },
+        {
+          "id": "d",
+          "text": "switchport mode access"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le saut de VLAN par usurpation de commutateur repose sur DTP : si le port accepte de négocier, le poste pirate se fait passer pour un commutateur et obtient un trunk qui transporte tous les VLAN autorisés. switchport mode access fixe le port en mode accès : il ne deviendra pas un trunk, quels que soient les messages DTP reçus. La bonne pratique est de configurer en accès tous les ports destinés aux hôtes et de désactiver la négociation (switchport nonegotiate) sur les vrais trunks.",
+    "distractorNotes": {
+      "a": "En dynamic auto, le port devient un trunk si l'autre extrémité le demande (mode desirable) : c'est justement ce qu'exploite l'attaquant.",
+      "b": "Changer le VLAN natif protège contre le saut de VLAN par double étiquetage, mais ne désactive pas la négociation DTP.",
+      "c": "PortFast accélère le passage du port à l'état forwarding pour STP ; il n'agit pas sur la négociation de trunk."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-5.1-vlan-double-tagging-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux conditions sont nécessaires pour qu'une attaque de saut de VLAN par double étiquetage 802.1Q (double tagging) atteigne un hôte d'un autre VLAN ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le port d'accès de l'attaquant appartient au VLAN natif du trunk."
+        },
+        {
+          "id": "b",
+          "text": "Le port de l'attaquant négocie un trunk avec le commutateur par DTP."
+        },
+        {
+          "id": "c",
+          "text": "La victime est raccordée au même commutateur que l'attaquant."
+        },
+        {
+          "id": "d",
+          "text": "Le port de l'attaquant est configuré avec spanning-tree portfast."
+        },
+        {
+          "id": "e",
+          "text": "Le VLAN natif est transmis sans étiquette sur le trunk entre commutateurs."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "L'attaquant envoie une trame portant deux étiquettes : l'externe correspond à son VLAN, qui est aussi le VLAN natif du trunk ; l'interne désigne le VLAN de la victime. Le premier commutateur transmet la trame sur le trunk sans l'étiquette externe, puisque le VLAN natif circule non étiqueté. Le second commutateur lit alors l'étiquette interne et délivre la trame dans le VLAN de la victime. L'attaque est unidirectionnelle. Parades : un VLAN natif inutilisé par les ports d'accès, ou l'étiquetage du VLAN natif (vlan dot1q tag native).",
+    "distractorNotes": {
+      "b": "Négocier un trunk par DTP est une autre technique de saut de VLAN (usurpation de commutateur) ; le double étiquetage fonctionne depuis un simple port d'accès.",
+      "c": "La trame doit traverser un trunk pour que l'étiquette externe soit retirée : la victime doit être derrière un autre commutateur.",
+      "d": "PortFast n'agit que sur la convergence STP du port ; il n'a aucun effet sur le traitement des étiquettes 802.1Q."
+    },
+    "reference": "IEEE 802.1Q ; Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLAN Trunks"
+  },
+  {
+    "slug": "ccna-5.1-dos-vs-ddos-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Qu'est-ce qui distingue une attaque par déni de service distribué (DDoS) d'une attaque par déni de service (DoS) simple ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle vise la confidentialité des données plutôt que leur disponibilité."
+        },
+        {
+          "id": "b",
+          "text": "Elle provient de nombreuses sources simultanées, souvent les machines d'un botnet."
+        },
+        {
+          "id": "c",
+          "text": "Elle exige l'exploitation d'une faille logicielle sur le système de la cible."
+        },
+        {
+          "id": "d",
+          "text": "Elle ne peut viser que des serveurs DNS joignables depuis Internet."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "DoS et DDoS ont le même objectif : rendre un service indisponible pour ses utilisateurs légitimes. La différence est le nombre de sources : un DoS part d'un seul système, alors qu'une DDoS mobilise un grand nombre de machines à la fois, souvent compromises et regroupées en botnet. Le volume cumulé est bien plus élevé, et bloquer une adresse source ne suffit plus : il faut des protections en amont (fournisseur d'accès, service anti-DDoS).",
+    "distractorNotes": {
+      "a": "Comme le DoS, la DDoS vise la disponibilité ; elle ne cherche pas à lire des données.",
+      "c": "La plupart des DDoS sont volumétriques : elles saturent la bande passante ou les ressources sans exploiter de faille logicielle.",
+      "d": "Une DDoS peut viser n'importe quel service exposé (web, messagerie, VPN) ; les serveurs DNS sont une cible parmi d'autres, ou servent de réflecteurs."
+    },
+    "reference": "RFC 4949 (Internet Security Glossary, Version 2)"
+  },
+  {
+    "slug": "ccna-5.1-mitm-statements-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les attaques man-in-the-middle sont correctes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Elles ne sont possibles que si l'attaquant est sur le même segment de couche 2 que la victime."
+        },
+        {
+          "id": "b",
+          "text": "Elles visent la disponibilité du service plutôt que la confidentialité des échanges."
+        },
+        {
+          "id": "c",
+          "text": "Elles permettent de lire les échanges entre deux hôtes, et aussi de les modifier."
+        },
+        {
+          "id": "d",
+          "text": "Elles échouent dès que les hôtes sont reliés par un commutateur plutôt que par un hub."
+        },
+        {
+          "id": "e",
+          "text": "Un chiffrement avec vérification de l'identité du serveur (clé d'hôte SSH, certificat TLS) les déjoue."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Dans une attaque man-in-the-middle, l'attaquant s'intercale entre deux parties qui croient communiquer directement : il peut lire, modifier ou injecter des données, ce qui menace la confidentialité et l'intégrité. Le chiffrement seul ne suffit pas si l'attaquant peut se faire passer pour le serveur ; c'est l'authentification du serveur (clé d'hôte SSH connue, certificat TLS valide) qui permet de détecter l'imposteur et de refuser la connexion.",
+    "distractorNotes": {
+      "a": "Sur un LAN, l'usurpation ARP ou un serveur DHCP pirate suffisent, mais une attaque man-in-the-middle peut aussi passer par un faux point d'accès Wi-Fi, un DNS falsifié ou un détournement de routage.",
+      "b": "L'attaquant a intérêt à laisser passer le trafic pour rester invisible : ce sont la confidentialité et l'intégrité qui sont visées.",
+      "d": "Un commutateur limite l'écoute passive, mais l'usurpation ARP ou DHCP redirige précisément le trafic vers l'attaquant à travers le commutateur."
+    },
+    "reference": "RFC 4949 (Internet Security Glossary, Version 2) ; RFC 4251"
+  },
+  {
+    "slug": "ccna-5.2-phishing-sim-click-rate-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Dans le cadre du programme de sensibilisation, l'équipe sécurité envoie un faux e-mail d'hameçonnage à 400 employés. 36 d'entre eux cliquent sur le lien. Quel est le taux de clic de cette campagne simulée ?",
+      "fields": [
+        {
+          "id": "rate",
+          "label": "Taux de clic en pourcentage (nombre entier, sans le signe %)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "rate": {
+          "accepted": [
+            "9"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le taux de clic est le nombre de destinataires qui ont cliqué divisé par le nombre de destinataires : 36 / 400 = 0,09, soit 9 %. Cet indicateur, suivi de campagne en campagne avec le taux de signalement à l'équipe sécurité, mesure l'effet du programme de sensibilisation. Les personnes qui ont cliqué reçoivent en général une explication immédiate et une formation ciblée, plutôt qu'une sanction.",
+    "reference": "NIST SP 800-50"
+  },
+  {
+    "slug": "ccna-5.2-incident-response-phases-order-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Ordonnez ces étapes de la gestion d'un incident de sécurité, de la première à la dernière, selon le cycle de vie du NIST SP 800-61 Rev. 2.",
+      "items": [
+        {
+          "id": "a",
+          "text": "Éradication"
+        },
+        {
+          "id": "b",
+          "text": "Détection et analyse"
+        },
+        {
+          "id": "c",
+          "text": "Activité post-incident (retour d'expérience)"
+        },
+        {
+          "id": "d",
+          "text": "Préparation"
+        },
+        {
+          "id": "e",
+          "text": "Rétablissement"
+        },
+        {
+          "id": "f",
+          "text": "Confinement"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "d",
+        "b",
+        "f",
+        "a",
+        "e",
+        "c"
+      ]
+    },
+    "explanation": "Le NIST SP 800-61 Rev. 2 décrit quatre phases : préparation (plan, équipe, outils), détection et analyse (confirmer et qualifier l'incident), confinement, éradication et rétablissement, puis activité post-incident. Dans la troisième phase, on limite d'abord la propagation (isoler les systèmes touchés), on supprime ensuite la cause (malware, comptes créés par l'attaquant, faille), puis on remet les systèmes en service. Le retour d'expérience alimente enfin la préparation du prochain incident. La Rev. 3 (2025) remplace ce cycle par les fonctions du CSF 2.0, mais le cycle de la Rev. 2 reste la référence pédagogique courante.",
+    "reference": "NIST SP 800-61 Rev. 2, section 3 (remplacée en avril 2025 par la Rev. 3, qui réorganise la réponse aux incidents selon les fonctions du NIST CSF 2.0)"
+  },
+  {
+    "slug": "ccna-5.2-physical-defense-layers-order-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un visiteur doit atteindre une baie réseau du centre de données de l'entreprise. Ordonnez les contrôles d'accès physique qu'il rencontre, du plus extérieur au plus intérieur.",
+      "items": [
+        {
+          "id": "a",
+          "text": "Lecteur biométrique sur la porte de la salle serveurs"
+        },
+        {
+          "id": "b",
+          "text": "Clôture et portail gardé à l'entrée du site"
+        },
+        {
+          "id": "c",
+          "text": "Serrure à clé de la baie réseau"
+        },
+        {
+          "id": "d",
+          "text": "Lecteur de badge à la porte principale du bâtiment"
+        },
+        {
+          "id": "e",
+          "text": "Sas (mantrap) à l'entrée de l'étage du centre de données"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "b",
+        "d",
+        "e",
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Le contrôle d'accès physique applique la défense en profondeur : plusieurs barrières successives, de plus en plus strictes à mesure qu'on s'approche des équipements sensibles. Le périmètre du site filtre d'abord, le badge contrôle l'entrée du bâtiment, le sas empêche le talonnage à l'entrée de la zone sensible, la biométrie réserve la salle serveurs aux personnes autorisées, et la baie fermée à clé protège encore les ports console et les câbles. Franchir une couche ne suffit pas à atteindre les équipements.",
+    "reference": "NIST SP 800-53 Rev. 5, PE-3 (Physical Access Control)"
+  },
+  {
+    "slug": "ccna-5.2-incident-response-actions-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque action à la phase du cycle de réponse aux incidents du NIST SP 800-61 Rev. 2 à laquelle elle appartient.",
+      "left": [
+        {
+          "id": "plan",
+          "text": "Rédiger le plan de réponse aux incidents et désigner les membres de l'équipe."
+        },
+        {
+          "id": "drill",
+          "text": "Organiser un exercice sur table qui simule une infection par rançongiciel."
+        },
+        {
+          "id": "correlate",
+          "text": "Corréler une alerte IDS avec les journaux du pare-feu pour confirmer l'incident."
+        },
+        {
+          "id": "isolate",
+          "text": "Placer les postes infectés dans un VLAN isolé, puis les réinstaller à partir d'une image saine."
+        },
+        {
+          "id": "review",
+          "text": "Réunir l'équipe après l'incident pour décider des améliorations à apporter."
+        }
+      ],
+      "right": [
+        {
+          "id": "a",
+          "text": "Préparation"
+        },
+        {
+          "id": "b",
+          "text": "Détection et analyse"
+        },
+        {
+          "id": "c",
+          "text": "Confinement, éradication et rétablissement"
+        },
+        {
+          "id": "d",
+          "text": "Activité post-incident"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "plan": "a",
+        "drill": "a",
+        "correlate": "b",
+        "isolate": "c",
+        "review": "d"
+      }
+    },
+    "explanation": "La préparation regroupe tout ce qui se fait avant l'incident : plan, équipe, outils, exercices. La détection et l'analyse consistent à repérer des signes (alertes IDS, antivirus, journaux, signalements d'utilisateurs) et à confirmer qu'il s'agit d'un incident. Le confinement limite les dégâts, l'éradication supprime la cause et le rétablissement remet les systèmes en service. L'activité post-incident tire les leçons pour améliorer le plan et les contrôles. La Rev. 3 (2025) remplace ce cycle par les fonctions du CSF 2.0, mais le cycle de la Rev. 2 reste la référence pédagogique courante.",
+    "reference": "NIST SP 800-61 Rev. 2, section 3 (remplacée en avril 2025 par la Rev. 3, qui réorganise la réponse aux incidents selon les fonctions du NIST CSF 2.0)"
+  },
+  {
+    "slug": "ccna-5.2-phishing-simulation-purpose-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel est l'objectif d'une campagne d'hameçonnage simulée dans un programme de sécurité ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vérifier que le filtre antispam bloque tous les e-mails malveillants entrants"
+        },
+        {
+          "id": "b",
+          "text": "Identifier l'origine des véritables e-mails d'hameçonnage reçus par l'entreprise"
+        },
+        {
+          "id": "c",
+          "text": "Recueillir les mots de passe des employés pour contrôler leur robustesse"
+        },
+        {
+          "id": "d",
+          "text": "Mesurer la propension des employés à se faire piéger et renforcer leur vigilance"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une campagne simulée envoie aux employés de faux e-mails d'hameçonnage réalistes et mesure qui clique, qui saisit des informations et qui signale le message. Elle relève de la sensibilisation des utilisateurs (user awareness) : elle révèle les comportements à risque et sert de piqûre de rappel, la personne piégée étant aussitôt informée de ce qui aurait dû l'alerter. Répétée, elle permet de suivre l'évolution des taux de clic et de signalement.",
+    "distractorNotes": {
+      "a": "Les messages simulés sont généralement autorisés à contourner le filtre : c'est l'humain que l'on teste, pas la passerelle de messagerie.",
+      "b": "Remonter à l'origine d'un vrai message relève de l'analyse d'incident, pas d'une campagne de sensibilisation.",
+      "c": "Une campagne simulée ne conserve pas les mots de passe saisis ; les collecter créerait un nouveau risque, et la robustesse se contrôle par la politique de mots de passe."
+    },
+    "reference": "NIST SP 800-50"
+  },
+  {
+    "slug": "ccna-5.2-acceptable-use-policy-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel document de la politique de sécurité indique aux employés ce qu'ils ont le droit de faire, ou non, avec les ordinateurs, le réseau et l'accès Internet de l'entreprise ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La politique d'utilisation acceptable (AUP)"
+        },
+        {
+          "id": "b",
+          "text": "Le plan de réponse aux incidents"
+        },
+        {
+          "id": "c",
+          "text": "Le plan de reprise d'activité (PRA)"
+        },
+        {
+          "id": "d",
+          "text": "L'accord de niveau de service (SLA)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La politique d'utilisation acceptable (Acceptable Use Policy, ou règles de comportement) fixe les usages autorisés et interdits des ressources informatiques : sites et logiciels permis, partage des identifiants, usage personnel, supports amovibles. Chaque utilisateur la lit et la signe avant d'obtenir un accès, ce qui en fait aussi un outil de sensibilisation et une base pour les sanctions en cas de manquement.",
+    "distractorNotes": {
+      "b": "Le plan de réponse aux incidents décrit comment l'équipe détecte, contient et traite un incident ; il ne règle pas l'usage quotidien des ressources par les employés.",
+      "c": "Le plan de reprise d'activité décrit comment rétablir les systèmes après un sinistre majeur.",
+      "d": "Un SLA est un engagement de qualité de service entre un fournisseur et son client (disponibilité, délais d'intervention)."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, PL-4 (Rules of Behavior)"
+  },
+  {
+    "slug": "ccna-5.2-physical-access-controls-multi-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux mesures relèvent du contrôle d'accès physique ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'authentification 802.1X des postes sur les ports du commutateur"
+        },
+        {
+          "id": "b",
+          "text": "Un lecteur biométrique sur la porte de la salle serveurs"
+        },
+        {
+          "id": "c",
+          "text": "Le filtrage des lignes VTY du routeur par une ACL standard"
+        },
+        {
+          "id": "d",
+          "text": "La limitation du nombre d'adresses MAC par port avec port security"
+        },
+        {
+          "id": "e",
+          "text": "Une baie réseau fermée à clé dans le local technique"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Le contrôle d'accès physique empêche les personnes non autorisées d'approcher les équipements : serrures, badges, biométrie, sas, gardiennage. Il est indispensable car un accès physique à un équipement réseau permet de brancher un câble console, de lancer une procédure de récupération de mot de passe, de voler l'équipement ou de le débrancher. Les mesures logiques, aussi solides soient-elles, ne protègent pas contre ces actions.",
+    "distractorNotes": {
+      "a": "802.1X est un contrôle d'accès logique au réseau : il authentifie un appareil ou un utilisateur avant d'ouvrir le port.",
+      "c": "Une ACL sur les lignes VTY filtre les adresses autorisées à ouvrir une session de gestion à distance : c'est un contrôle logique.",
+      "d": "Port security filtre les adresses MAC autorisées sur un port : c'est un contrôle logique de couche 2."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, PE-3 (Physical Access Control)"
+  },
+  {
+    "slug": "ccna-5.2-badge-mfa-scenario-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le badge d'une technicienne a ouvert la porte de la salle serveurs un dimanche à 2 h 14, alors qu'elle était en congé à l'étranger et ignorait que son badge avait été copié. Une caméra filme déjà cette porte, et un sas ne laisse passer qu'une personne à la fois. Parmi ces mesures, laquelle aurait empêché cette entrée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter une seconde caméra à l'intérieur de la salle serveurs"
+        },
+        {
+          "id": "b",
+          "text": "Désactiver le badge dès que sa titulaire en signale la perte"
+        },
+        {
+          "id": "c",
+          "text": "Exiger un code PIN ou une empreinte digitale en plus du badge"
+        },
+        {
+          "id": "d",
+          "text": "Sensibiliser davantage les employés au talonnage (tailgating)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le badge est un facteur de possession, et il a été copié : à lui seul, il ne prouve plus l'identité de la personne. Ajouter un second facteur d'une autre catégorie, un code PIN (connaissance) ou une empreinte (caractéristique biométrique), crée une authentification multifacteur que l'intrus ne peut pas satisfaire avec la seule copie. Le sas fonctionne déjà, mais il ne fait qu'empêcher deux personnes de passer avec une seule authentification.",
+    "distractorNotes": {
+      "a": "Une caméra est un contrôle de détection et de dissuasion : elle aide à identifier l'intrus après coup, mais n'empêche pas l'ouverture de la porte.",
+      "b": "La titulaire ignorait la copie et ne pouvait donc rien signaler ; de plus, la copie ne fait pas disparaître le badge original.",
+      "d": "Il n'y a pas eu de talonnage : l'intrus a ouvert la porte lui-même avec une copie valide, et le sas empêche déjà ce comportement."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, PE-3 (Physical Access Control) ; NIST SP 800-63B"
+  },
+  {
+    "slug": "ccna-5.2-evidence-chain-of-custody-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un serveur compromis vient d'être isolé du réseau par l'équipe de réponse aux incidents. La direction envisage de porter plainte. Que doit faire l'équipe avant de réinstaller ce serveur à partir d'une image saine ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Redémarrer le serveur pour arrêter les processus malveillants en mémoire"
+        },
+        {
+          "id": "b",
+          "text": "Copier le disque et la mémoire, et consigner chaque manipulation dans une chaîne de possession"
+        },
+        {
+          "id": "c",
+          "text": "Supprimer les comptes créés par l'attaquant pour l'empêcher de revenir"
+        },
+        {
+          "id": "d",
+          "text": "Lancer une analyse antivirus complète qui supprime les fichiers infectés"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Pour qu'une preuve soit recevable, elle doit être collectée sans être altérée et sa traçabilité doit être documentée : qui l'a recueillie, quand, comment, et entre quelles mains elle est passée (chaîne de possession, chain of custody). On copie d'abord les données volatiles (mémoire), qui disparaissent à l'extinction, puis on réalise une image du disque. La réinstallation, qui relève de l'éradication et du rétablissement, ne vient qu'ensuite.",
+    "distractorNotes": {
+      "a": "Un redémarrage efface la mémoire vive, qui contient des preuves volatiles (processus, connexions, clés) ; le serveur est déjà isolé, rien ne presse.",
+      "c": "Modifier le système avant d'en faire une copie altère les preuves ; le serveur étant isolé, l'attaquant ne peut plus l'utiliser.",
+      "d": "L'antivirus supprime ou modifie des fichiers qui constituent des preuves, avant même qu'une copie n'ait été faite."
+    },
+    "reference": "NIST SP 800-61 Rev. 2, section 3.3.2 (remplacée en avril 2025 par la Rev. 3, qui réorganise la réponse aux incidents selon les fonctions du NIST CSF 2.0) ; NIST SP 800-86"
+  },
+  {
+    "slug": "ccna-5.2-helpdesk-pretexting-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un individu appelle le support informatique en se présentant comme le directeur financier, en déplacement. Il obtient la réinitialisation du mot de passe de ce dernier en citant son nom, son poste et son numéro d'employé, trouvés sur des réseaux sociaux et dans un ancien organigramme. Quelles deux mesures du programme de sécurité auraient le plus directement empêché cette attaque ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Un sas à l'entrée du bâtiment qui ne laisse passer qu'une personne à la fois"
+        },
+        {
+          "id": "b",
+          "text": "Une politique imposant des mots de passe d'au moins 14 caractères"
+        },
+        {
+          "id": "c",
+          "text": "Une procédure qui impose de rappeler le demandeur au numéro de l'annuaire interne avant toute réinitialisation"
+        },
+        {
+          "id": "d",
+          "text": "Le chiffrement intégral du disque de l'ordinateur portable du directeur financier"
+        },
+        {
+          "id": "e",
+          "text": "Une formation des agents du support aux techniques d'ingénierie sociale par téléphone"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "L'attaque exploite deux faiblesses : le support accepte comme preuve d'identité des informations publiques, et ses agents ne reconnaissent pas un prétexte (vishing). Une procédure de vérification indépendante, comme rappeler au numéro de l'annuaire interne et non à celui donné par l'appelant, déjoue l'usurpation même si l'attaquant connaît tout du dirigeant. La formation des agents leur apprend à repérer les signaux d'alerte (urgence, autorité, refus de vérification) et à appliquer cette procédure sans céder à la pression.",
+    "distractorNotes": {
+      "a": "Un sas protège contre le talonnage à l'entrée d'un bâtiment ; l'attaque s'est faite entièrement par téléphone.",
+      "b": "La longueur du mot de passe ne sert à rien si le support le remplace à la demande de l'attaquant.",
+      "d": "Le chiffrement du disque protège les données en cas de vol du portable ; il n'empêche pas la réinitialisation du compte par le support."
+    },
+    "reference": "NIST SP 800-63B ; NIST SP 800-50"
+  },
+  {
+    "slug": "ccna-5.2-suspicious-email-report-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un employé reçoit un e-mail qui semble venir du service paie et lui demande de confirmer ses coordonnées bancaires via un lien. Le message lui paraît suspect. Que doit-il faire, conformément à un programme de sensibilisation ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le transférer à ses collègues pour qu'ils se méfient du même message"
+        },
+        {
+          "id": "b",
+          "text": "Répondre à l'expéditeur pour lui demander de prouver son identité"
+        },
+        {
+          "id": "c",
+          "text": "Le signaler à l'équipe sécurité par le canal prévu, sans cliquer ni ouvrir de pièce jointe"
+        },
+        {
+          "id": "d",
+          "text": "Ouvrir le lien dans une fenêtre de navigation privée pour examiner le site"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le bon réflexe est de ne pas interagir avec le message et de le signaler par le canal officiel (bouton de signalement, adresse de l'équipe sécurité). L'équipe peut alors analyser le message, le supprimer des autres boîtes, bloquer le domaine ou le lien, et vérifier si d'autres employés ont cliqué. Un programme de sensibilisation insiste autant sur ce signalement que sur la reconnaissance des indices (urgence, expéditeur inhabituel, lien trompeur).",
+    "distractorNotes": {
+      "a": "Transférer le message le diffuse plus largement, au risque qu'un collègue clique ; l'alerte collective revient à l'équipe sécurité.",
+      "b": "Répondre confirme à l'attaquant que l'adresse est active et ouvre un dialogue qu'il maîtrise.",
+      "d": "La navigation privée ne protège pas contre un site malveillant : elle évite seulement de conserver l'historique et les cookies."
+    },
+    "reference": "NIST SP 800-50 ; CISA, Avoiding Social Engineering and Phishing Attacks"
+  },
+  {
+    "slug": "ccna-5.2-policy-procedure-hierarchy-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un document interne décrit, étape par étape, comment l'équipe réseau doit révoquer les accès d'un employé le jour de son départ : désactiver son compte, son badge, puis son accès VPN. De quel type de document de sécurité s'agit-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une politique"
+        },
+        {
+          "id": "b",
+          "text": "Une norme (standard)"
+        },
+        {
+          "id": "c",
+          "text": "Une ligne directrice (guideline)"
+        },
+        {
+          "id": "d",
+          "text": "Une procédure"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une procédure détaille les étapes concrètes à suivre pour appliquer une politique ou une norme dans un cas précis. Ici, la politique pourrait dire « les accès d'un employé sont révoqués dès son départ » ; la procédure explique comment le faire, dans quel ordre et avec quels outils. Ces documents forment une hiérarchie : la politique fixe l'intention approuvée par la direction, les normes la rendent obligatoire et mesurable, les procédures la mettent en œuvre.",
+    "distractorNotes": {
+      "a": "Une politique énonce des règles et des objectifs généraux approuvés par la direction, sans détailler les étapes techniques.",
+      "b": "Une norme fixe une exigence obligatoire et précise, comme un algorithme de chiffrement ou une longueur de mot de passe minimale, sans décrire un déroulé pas à pas.",
+      "c": "Une ligne directrice donne des recommandations facultatives ; une révocation des accès décrite étape par étape est une marche à suivre obligatoire."
+    },
+    "reference": "NIST SP 800-12 Rev. 1 (An Introduction to Information Security)"
+  },
+  {
+    "slug": "ccna-5.2-precursors-indicators-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Selon le NIST SP 800-61 Rev. 2, un précurseur annonce qu'un incident pourrait survenir, tandis qu'un indicateur signale qu'un incident a peut-être eu lieu ou est en cours. Quels deux signes sont des indicateurs ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les journaux du serveur web révèlent le passage d'un scanner de vulnérabilités."
+        },
+        {
+          "id": "b",
+          "text": "L'antivirus signale qu'un poste de la comptabilité est infecté par un malware."
+        },
+        {
+          "id": "c",
+          "text": "Un éditeur annonce un exploit visant la version du serveur de messagerie utilisée."
+        },
+        {
+          "id": "d",
+          "text": "Une sonde IDS alerte sur une tentative de débordement de tampon contre la base de données."
+        },
+        {
+          "id": "e",
+          "text": "Un groupe annonce sur un forum son intention d'attaquer l'entreprise."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Un indicateur montre qu'une attaque est en cours ou a déjà eu lieu : une infection détectée par l'antivirus, une tentative d'exploitation repérée par l'IDS. Un précurseur, plus rare, laisse prévoir une attaque future et permet d'agir avant elle : un scan de vulnérabilités (reconnaissance), la publication d'un exploit qui vise un logiciel déployé, une menace explicite. Les deux alimentent la phase de détection et d'analyse du cycle de réponse aux incidents.",
+    "distractorNotes": {
+      "a": "Un scan de vulnérabilités est une reconnaissance qui précède souvent une attaque : c'est un précurseur.",
+      "c": "La publication d'un exploit ne signifie pas que l'entreprise a été attaquée ; c'est un précurseur, l'occasion d'appliquer le correctif.",
+      "e": "Une menace annoncée concerne une attaque future : c'est un précurseur."
+    },
+    "reference": "NIST SP 800-61 Rev. 2, section 3.2.2 (remplacée en avril 2025 par la Rev. 3, qui réorganise la réponse aux incidents selon les fonctions du NIST CSF 2.0)"
+  }
+]
