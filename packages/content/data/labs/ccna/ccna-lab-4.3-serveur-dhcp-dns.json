@@ -1,0 +1,348 @@
+{
+  "slug": "ccna-lab-4.3-serveur-dhcp-dns",
+  "certification": "ccna",
+  "domain": "4.0",
+  "subtopic": "4.3",
+  "difficulty": "medium",
+  "title": "Serveur DHCP IOS pour le LAN et résolution DNS du routeur",
+  "statement": "R1 doit distribuer lui-même la configuration IP des postes du LAN 192.168.30.0/24, connecté à son interface G0/0/0 (192.168.30.1). Les serveurs DNS internes sont 192.168.30.10 (primaire) et 192.168.30.11 (secondaire), à adresse fixe.\n\n1. Les adresses 192.168.30.1 à 192.168.30.20 (routeur, serveurs, imprimantes) et l'adresse 192.168.30.254 (point d'accès d'administration) ne doivent jamais être attribuées.\n2. Créez le pool UTILISATEURS pour tout le réseau du LAN.\n3. Les clients reçoivent R1 comme passerelle par défaut, les deux serveurs DNS dans l'ordre primaire puis secondaire, et le nom de domaine entreprise.lab.\n4. Les baux durent 2 jours et 12 heures.\n5. R1 lui-même doit pouvoir résoudre des noms (ping intranet.entreprise.lab, par exemple) en interrogeant 192.168.30.10. Attention : la configuration de départ a désactivé la résolution de noms.",
+  "topology": "                  LAN 192.168.30.0/24 (postes clients DHCP)\n                  DNS 192.168.30.10 et 192.168.30.11 (adresses fixes)\n                  Point d'accès d'administration 192.168.30.254\n                                  |\n                         G0/0/0 192.168.30.1/24\n                                  R1\n                         G0/0/1 203.0.113.2/30 ---- FAI 203.0.113.1\n\nRoute par défaut : 0.0.0.0/0 via 203.0.113.1 (déjà configurée)",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN utilisateurs\n ip address 192.168.30.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Vers FAI\n ip address 203.0.113.2 255.255.255.252\n no shutdown\nip route 0.0.0.0 0.0.0.0 203.0.113.1"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "exclusion-basse",
+      "description": "Les adresses 192.168.30.1 à 192.168.30.20 ne sont jamais attribuées.",
+      "check": {
+        "type": "any",
+        "checks": [
+          { "type": "line", "line": "ip dhcp excluded-address 192.168.30.1 192.168.30.20" },
+          {
+            "type": "all",
+            "checks": [
+              { "type": "line", "line": ["ip dhcp excluded-address 192.168.30.1", "ip dhcp excluded-address 192.168.30.1 192.168.30.1"] },
+              { "type": "line", "line": "ip dhcp excluded-address 192.168.30.2 192.168.30.20" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "exclusion-haute",
+      "description": "L'adresse 192.168.30.254 n'est jamais attribuée.",
+      "check": {
+        "type": "line",
+        "line": ["ip dhcp excluded-address 192.168.30.254", "ip dhcp excluded-address 192.168.30.254 192.168.30.254"]
+      }
+    },
+    {
+      "id": "pool-reseau",
+      "description": "Le pool UTILISATEURS distribue des adresses de tout le réseau 192.168.30.0/24, et le service DHCP de R1 est actif.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "sectionPattern": "^ip dhcp pool UTILISATEURS$",
+            "pattern": "^network 192\\.168\\.30\\.0 (255\\.255\\.255\\.0|/24)$"
+          },
+          { "type": "line", "line": "no service dhcp", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "passerelle",
+      "description": "Les clients reçoivent R1 comme passerelle par défaut.",
+      "check": { "type": "line", "sectionPattern": "^ip dhcp pool UTILISATEURS$", "line": "default-router 192.168.30.1" }
+    },
+    {
+      "id": "dns-clients",
+      "description": "Les clients reçoivent les deux serveurs DNS, le primaire en premier.",
+      "check": { "type": "line", "sectionPattern": "^ip dhcp pool UTILISATEURS$", "line": "dns-server 192.168.30.10 192.168.30.11" }
+    },
+    {
+      "id": "domaine-clients",
+      "description": "Les clients reçoivent le nom de domaine entreprise.lab.",
+      "check": { "type": "line", "sectionPattern": "^ip dhcp pool UTILISATEURS$", "line": "domain-name entreprise.lab" }
+    },
+    {
+      "id": "bail",
+      "description": "Les baux du pool durent 2 jours et 12 heures.",
+      "check": { "type": "regex", "sectionPattern": "^ip dhcp pool UTILISATEURS$", "pattern": "^lease 2 12( 0)?$" }
+    },
+    {
+      "id": "resolution-routeur",
+      "description": "R1 résout lui-même les noms en interrogeant 192.168.30.10, et la résolution de noms est réactivée.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "pattern": "^ip name-server (\\S+ )*192\\.168\\.30\\.10( \\S+)*$" },
+          { "type": "line", "line": ["no ip domain-lookup", "no ip domain lookup"], "absent": true }
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "Les plages exclues se déclarent en configuration globale, le reste dans le mode de configuration du pool. La résolution de noms du routeur est un réglage global, distinct des options remises aux clients.",
+    "Une exclusion accepte une première et une dernière adresse, ou une seule adresse. Dans le pool : le réseau et son masque, la passerelle, les serveurs DNS (plusieurs adresses sur la même ligne, dans l'ordre de préférence), le domaine, puis la durée du bail en jours, heures et minutes. Pour le routeur, il faut à la fois indiquer un serveur DNS et annuler le no ip domain-lookup de départ.",
+    "ip dhcp excluded-address deux fois ; dans ip dhcp pool UTILISATEURS : network, default-router, dns-server <primaire> <secondaire>, domain-name et lease <jours> <heures> ; en global : ip name-server <adresse> et ip domain-lookup."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "ip dhcp excluded-address 192.168.30.1 192.168.30.20",
+        "ip dhcp excluded-address 192.168.30.254",
+        "ip dhcp pool UTILISATEURS",
+        "network 192.168.30.0 255.255.255.0",
+        "default-router 192.168.30.1",
+        "dns-server 192.168.30.10 192.168.30.11",
+        "domain-name entreprise.lab",
+        "lease 2 12",
+        "exit",
+        "ip domain-lookup",
+        "ip name-server 192.168.30.10",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Préfixe /24, minutes explicites, forme ip domain lookup, deux serveurs pour le routeur, exclusions tapées depuis le pool à la fin",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "ip dhcp pool UTILISATEURS",
+            "lease 2 12 0",
+            "domain-name entreprise.lab",
+            "dns-server 192.168.30.10 192.168.30.11",
+            "default-router 192.168.30.1",
+            "network 192.168.30.0 /24",
+            "ip dhcp excluded-address 192.168.30.254 192.168.30.254",
+            "ip dhcp excluded-address 192.168.30.1 192.168.30.20",
+            "ip name-server 192.168.30.10 192.168.30.11",
+            "ip domain lookup",
+            "\u001a"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Adresse du routeur exclue à part, puis la plage des serveurs et imprimantes",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.30.1",
+            "ip dhcp excluded-address 192.168.30.2 192.168.30.20",
+            "ip dhcp excluded-address 192.168.30.254",
+            "ip domain-lookup",
+            "ip name-server 192.168.30.10",
+            "ip dhcp pool UTILISATEURS",
+            "network 192.168.30.0 /24",
+            "default-router 192.168.30.1",
+            "dns-server 192.168.30.10 192.168.30.11",
+            "domain-name entreprise.lab",
+            "lease 2 12",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Deux commandes dns-server successives : la seconde remplace la première, les clients ne reçoivent que 192.168.30.11",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.30.1 192.168.30.20",
+            "ip dhcp excluded-address 192.168.30.254",
+            "ip dhcp pool UTILISATEURS",
+            "network 192.168.30.0 255.255.255.0",
+            "default-router 192.168.30.1",
+            "dns-server 192.168.30.10",
+            "dns-server 192.168.30.11",
+            "domain-name entreprise.lab",
+            "lease 2 12",
+            "exit",
+            "ip domain-lookup",
+            "ip name-server 192.168.30.10"
+          ]
+        }
+      ],
+      "failing": ["dns-clients"]
+    },
+    {
+      "description": "Serveurs DNS remis dans le mauvais ordre",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.30.1 192.168.30.20",
+            "ip dhcp excluded-address 192.168.30.254",
+            "ip dhcp pool UTILISATEURS",
+            "network 192.168.30.0 255.255.255.0",
+            "default-router 192.168.30.1",
+            "dns-server 192.168.30.11 192.168.30.10",
+            "domain-name entreprise.lab",
+            "lease 2 12",
+            "exit",
+            "ip domain-lookup",
+            "ip name-server 192.168.30.10"
+          ]
+        }
+      ],
+      "failing": ["dns-clients"]
+    },
+    {
+      "description": "lease 12 : douze jours, pas douze heures",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.30.1 192.168.30.20",
+            "ip dhcp excluded-address 192.168.30.254",
+            "ip dhcp pool UTILISATEURS",
+            "network 192.168.30.0 255.255.255.0",
+            "default-router 192.168.30.1",
+            "dns-server 192.168.30.10 192.168.30.11",
+            "domain-name entreprise.lab",
+            "lease 12",
+            "exit",
+            "ip domain-lookup",
+            "ip name-server 192.168.30.10"
+          ]
+        }
+      ],
+      "failing": ["bail"]
+    },
+    {
+      "description": "Serveur DNS indiqué au routeur, mais résolution laissée désactivée",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.30.1 192.168.30.20",
+            "ip dhcp excluded-address 192.168.30.254",
+            "ip dhcp pool UTILISATEURS",
+            "network 192.168.30.0 255.255.255.0",
+            "default-router 192.168.30.1",
+            "dns-server 192.168.30.10 192.168.30.11",
+            "domain-name entreprise.lab",
+            "lease 2 12",
+            "exit",
+            "ip name-server 192.168.30.10"
+          ]
+        }
+      ],
+      "failing": ["resolution-routeur"]
+    },
+    {
+      "description": "Domaine configuré pour le routeur (ip domain-name) au lieu d'être remis aux clients",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.30.1 192.168.30.20",
+            "ip dhcp excluded-address 192.168.30.254",
+            "ip dhcp pool UTILISATEURS",
+            "network 192.168.30.0 255.255.255.0",
+            "default-router 192.168.30.1",
+            "dns-server 192.168.30.10 192.168.30.11",
+            "lease 2 12",
+            "exit",
+            "ip domain-name entreprise.lab",
+            "ip domain-lookup",
+            "ip name-server 192.168.30.10"
+          ]
+        }
+      ],
+      "failing": ["domaine-clients"]
+    },
+    {
+      "description": "Passerelle d'un autre réseau et masque trop court pour le pool",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ip dhcp excluded-address 192.168.30.1 192.168.30.20",
+            "ip dhcp excluded-address 192.168.30.254",
+            "ip dhcp pool UTILISATEURS",
+            "network 192.168.30.0 255.255.255.128",
+            "default-router 203.0.113.2",
+            "dns-server 192.168.30.10 192.168.30.11",
+            "domain-name entreprise.lab",
+            "lease 2 12",
+            "exit",
+            "ip domain-lookup",
+            "ip name-server 192.168.30.10"
+          ]
+        }
+      ],
+      "failing": ["pool-reseau", "passerelle"]
+    },
+    {
+      "description": "Exclusion décalée d'une adresse et oubli du point d'accès",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "ip dhcp excluded-address 192.168.30.2 192.168.30.20"] }
+      ],
+      "failing": ["exclusion-basse", "exclusion-haute"]
+    },
+    {
+      "description": "no service dhcp tapé pour « réinitialiser » le serveur",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "no service dhcp",
+            "ip dhcp excluded-address 192.168.30.1 192.168.30.20",
+            "ip dhcp excluded-address 192.168.30.254",
+            "ip dhcp pool UTILISATEURS",
+            "network 192.168.30.0 255.255.255.0",
+            "default-router 192.168.30.1",
+            "dns-server 192.168.30.10 192.168.30.11",
+            "domain-name entreprise.lab",
+            "lease 2 12",
+            "exit",
+            "ip domain-lookup",
+            "ip name-server 192.168.30.10"
+          ]
+        }
+      ],
+      "failing": ["pool-reseau"]
+    }
+  ],
+  "explanation": "Le serveur DHCP d'IOS attribue les adresses du réseau déclaré par network dans le pool (192.168.30.0 255.255.255.0, ou /24), sauf celles exclues par ip dhcp excluded-address, une commande de configuration globale qui prend une plage (première et dernière adresse) ou une seule adresse ; tapée depuis le pool, IOS l'exécute en revenant au mode global. Les adresses à configuration fixe (routeur, serveurs, imprimantes, point d'accès) doivent être exclues, sinon un client pourrait les recevoir ; IOS vérifie en plus par un ping qu'une adresse est libre avant de l'offrir, et range les doublons dans show ip dhcp conflict. Les options : default-router (option 3) doit être une adresse du LAN du client, ici 192.168.30.1 ; dns-server (option 6) accepte jusqu'à 8 adresses, dans l'ordre de préférence, sur une seule ligne (une seconde commande dns-server remplace la première au lieu de s'y ajouter) ; domain-name (option 15) donne le suffixe DNS des clients ; lease (option 51) se lit jours, heures, minutes : lease 2 12 vaut 2 jours et 12 heures, alors que lease 12 vaut 12 jours ; sans lease, le bail dure 1 jour. Le service DHCP (service dhcp) est actif par défaut ; no service dhcp arrête le serveur. La résolution de noms du routeur est un autre sujet : ip name-server donne au routeur ses serveurs DNS (jusqu'à 6), mais elle ne sert à rien tant que no ip domain-lookup, souvent tapé en lab pour éviter qu'une commande mal saisie ne déclenche une requête DNS, désactive la résolution ; ip domain-lookup (ou ip domain lookup) la rétablit. ip domain-name, enfin, ne concerne que le routeur (suffixe des noms courts, clés RSA) et n'est pas remis aux clients DHCP. Vérifications : show ip dhcp pool, show ip dhcp binding, show running-config | section dhcp, ping d'un nom depuis R1, show hosts.",
+  "reference": "Cisco IOS XE IP Addressing: DHCP Configuration Guide, « Configuring the Cisco IOS XE DHCP Server » ; Cisco IOS XE IP Addressing: DNS Configuration Guide, « Configuring DNS » (ip name-server, ip domain-lookup) ; RFC 2131 et RFC 2132 (options 3, 6, 15 et 51)",
+  "estimatedMinutes": 12
+}
