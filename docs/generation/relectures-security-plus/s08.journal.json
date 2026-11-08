@@ -1,0 +1,199 @@
+[
+  {
+    "slug": "security-plus-2.3-buffer-overflow-classify-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-toctou-temp-file-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-malicious-update-supply-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Référence CWE-494 (téléchargement sans contrôle d'intégrité) peu pertinente : la version piégée est livrée et signée par l'éditeur, ce que l'explication souligne elle-même."
+    ],
+    "correction": "Référence remplacée par les objectifs SY0-701 (2.3) et NIST SP 800-161 Rev. 1 (gestion des risques de la chaîne d'approvisionnement)."
+  },
+  {
+    "slug": "security-plus-2.3-buffer-overflow-patch-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [
+      "Contexte proche de s09 vpn-zero-day-contournement-001 (portail VPN, RCE pré-auth) mais réponse différente (correctif disponible ici) : pas un doublon."
+    ],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-vm-escape-definition-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-buffer-overflow-crash-log-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Explication trop affirmative : 0xc0000409 n'est pas propre au dépassement de pile (Windows l'utilise aussi pour les arrêts « fail fast »)."
+    ],
+    "correction": "Explication nuancée : le code est celui du contrôle /GS, mais c'est sa coïncidence avec le champ surdimensionné qui fonde le diagnostic."
+  },
+  {
+    "slug": "security-plus-2.3-memory-injection-edr-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-parameterized-query-sast-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-signed-update-verify-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-resource-reuse-residual-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Difficulté surévaluée : deux options partagent la classe « réutilisation de ressources », le choix se réduit ensuite à TLS contre assainissement ; une seule étape de raisonnement."
+    ],
+    "correction": "Difficulté passée de hard à medium."
+  },
+  {
+    "slug": "security-plus-2.3-vm-escape-scan-report-001",
+    "verdict": "corrigée",
+    "gravite": "fond",
+    "problemes": [
+      "Explication et note b fausses : elles affirment que F-2 (7.5) a un score plus élevé que F-3 (8.8), alors que F-3 est le plus élevé.",
+      "Indice : la bonne réponse était aussi la constatation de score maximal."
+    ],
+    "correction": "F-2 remplacée par une exécution de code à distance dans db-02 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H = 9.8, recalculé) : le piège « score le plus élevé » devient réel ; explication et note b réécrites. Scores F-1 7.8, F-3 8.8, F-4 5.3 vérifiés."
+  },
+  {
+    "slug": "security-plus-2.3-race-condition-transfer-fix-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-memory-protections-legacy-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Indice de forme : seules les deux bonnes options comportaient une relative explicative (« qui interdit… », « qui rend… »)."
+    ],
+    "correction": "Options réécrites en forme parallèle (nom de la mesure + sigle), sans relative explicative."
+  },
+  {
+    "slug": "security-plus-2.3-public-bucket-controls-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "L'énoncé demandait d'« empêcher » la récidive alors que le CSPM, bonne réponse, est surtout un contrôle de détection."
+    ],
+    "correction": "Énoncé reformulé : éviter la récidive et repérer tout écart sur les comptes cloud."
+  },
+  {
+    "slug": "security-plus-2.3-vm-escape-hardening-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-static-analysis-review-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-app-vuln-classes-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [
+      "Recoupe les questions de classement unitaires du lot (buffer-overflow-classify, toctou-temp-file, malicious-update-supply) mais sous forme de synthèse à quatre classes : accepté."
+    ],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-vuln-mitigation-map-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-cloud-virt-indicators-001",
+    "verdict": "corrigée",
+    "gravite": "fond",
+    "problemes": [
+      "Constat l3 ambigu : une VM invitée peut écrire légitimement sur l'hôte par un dossier partagé ; « évasion de VM » n'était pas la seule lecture."
+    ],
+    "correction": "l3 précise qu'aucun dossier partagé n'est configuré."
+  },
+  {
+    "slug": "security-plus-2.3-vuln-mgmt-cycle-vpn-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [
+      "Doublon de s09 security-plus-2.3-cycle-gestion-vuln-001 : même gabarit (cycle de gestion des vulnérabilités SY0-701), mêmes cinq étapes (analyse, priorisation CVSS, correctif, nouvelle analyse, rapport) et même ordre."
+    ],
+    "correction": "Restaurée par l’orchestrateur : doublon rejeté des deux côtés (s08 et s09) ; seule la version de s09 est retirée."
+  },
+  {
+    "slug": "security-plus-2.3-malicious-update-ir-001",
+    "verdict": "ok",
+    "gravite": null,
+    "problemes": [
+      "Même gabarit que s09 zero-day-cms-nist-001 (phases NIST SP 800-61), mais scénario, actions et nombre d'étapes différents (sans préparation) : gardée, à surveiller si la banque 4.8 contient déjà beaucoup d'ordonnancements NIST."
+    ],
+    "correction": ""
+  },
+  {
+    "slug": "security-plus-2.3-aslr-acronym-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Difficulté surévaluée : retrouver un sigle à partir de sa description est un rappel (easy)."
+    ],
+    "correction": "Difficulté passée de medium à easy."
+  },
+  {
+    "slug": "security-plus-2.3-dep-blocked-stack-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Difficulté surévaluée : retrouver un sigle à partir de sa description est un rappel (easy)."
+    ],
+    "correction": "Difficulté passée de medium à easy."
+  },
+  {
+    "slug": "security-plus-2.3-cvss-critical-count-001",
+    "verdict": "corrigée",
+    "gravite": "forme",
+    "problemes": [
+      "Difficulté surévaluée : application directe de l'échelle qualitative, une seule étape (comptes 3 et 2 vérifiés)."
+    ],
+    "correction": "Difficulté passée de hard à medium."
+  }
+]

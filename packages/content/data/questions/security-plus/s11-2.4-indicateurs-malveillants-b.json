@@ -1,0 +1,1041 @@
+[
+  {
+    "slug": "security-plus-2.4-rfid-badge-clone-night-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un site utilise des badges de proximité 125 kHz qui transmettent leur identifiant sans chiffrement. Le journal du contrôle d'accès montre le badge d'une comptable présenté à 2 h 10 sur la porte des archives, alors qu'elle était chez elle et a toujours son badge. La veille, un inconnu s'était tenu tout contre elle dans l'ascenseur, un sac à la main. Quelle attaque est LA PLUS probable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le talonnage (tailgating) derrière un salarié autorisé"
+        },
+        {
+          "id": "b",
+          "text": "Le clonage RFID de l'identifiant du badge"
+        },
+        {
+          "id": "c",
+          "text": "La force brute physique sur la serrure de la porte"
+        },
+        {
+          "id": "d",
+          "text": "Une attaque environnementale contre le local"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Les badges de proximité 125 kHz émettent un identifiant fixe, sans authentification cryptographique : un lecteur dissimulé dans un sac peut le lire à quelques centimètres, puis l'attaquant l'écrit sur une carte vierge. Le badge cloné est ensuite accepté comme l'original, d'où un passage enregistré au nom de la comptable à une heure où elle était absente, sans que son badge ait quitté sa poche. La proximité suspecte dans l'ascenseur correspond à la phase de lecture. Le clonage RFID figure parmi les attaques physiques de l'objectif 2.4.",
+    "distractorNotes": {
+      "a": "Le talonnage consiste à suivre une personne qui ouvre la porte avec son propre badge : le journal n'enregistrerait pas le badge de la comptable à 2 h 10, en son absence.",
+      "c": "La force brute physique laisse des traces d'effraction et une alarme de porte forcée, pas un passage accepté avec un badge valide.",
+      "d": "Une attaque environnementale vise l'alimentation, la climatisation ou l'environnement des équipements ; elle n'explique pas un badge accepté."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-rfid-clone-mitigation-crypto-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après plusieurs cas de clonage de badges de proximité 125 kHz, le responsable de la sûreté d'une usine veut qu'un badge copié à distance ne puisse plus ouvrir les portes, y compris celles qui ne sont pas gardées. Quelle mesure répond LE MIEUX à cet objectif ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Installer une caméra au-dessus de chaque lecteur pour filmer tous les passages"
+        },
+        {
+          "id": "b",
+          "text": "Imprimer la photo du titulaire sur chaque badge et la faire vérifier à l'accueil"
+        },
+        {
+          "id": "c",
+          "text": "Renuméroter tous les badges et réémettre leurs identifiants une fois par an"
+        },
+        {
+          "id": "d",
+          "text": "Passer à des cartes sans contact dont le lecteur vérifie un défi-réponse chiffré"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le clonage fonctionne parce que le badge 125 kHz se contente d'émettre un identifiant fixe : qui le lit peut le rejouer. Une carte à authentification cryptographique (défi-réponse avec une clé secrète stockée dans la puce) répond à un défi différent à chaque lecture ; copier ce qu'elle émet ne permet pas de produire la bonne réponse au défi suivant, et la clé ne se lit pas à distance. C'est la seule mesure proposée qui empêche un badge copié d'ouvrir une porte non gardée ; l'ajout d'un code PIN au lecteur renforcerait encore le dispositif.",
+    "distractorNotes": {
+      "a": "Une caméra est un contrôle de détection : elle aide l'enquête après coup mais n'empêche pas la porte de s'ouvrir devant un badge cloné.",
+      "b": "La vérification de la photo n'a lieu qu'à l'accueil ; un badge cloné ouvre toujours les portes non gardées, et la photo n'est pas transmise au lecteur.",
+      "c": "Les nouveaux identifiants restent fixes et lisibles à distance : ils peuvent être clonés de la même façon dès le lendemain de la réémission."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-door-forced-brute-force-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le matin, l'agent de sécurité constate que le cylindre de la serrure de la porte DC-PORTE-02 est arraché et que le chambranle porte des marques de pied-de-biche. Aucun badge n'a été présenté sur cette porte pendant la nuit. Quelle attaque physique décrit LE MIEUX l'incident ?",
+      "exhibit": "Journal du contrôle d'accès - site de Nantes\n2026-10-14 01:47:12  DC-PORTE-02  ALARME  Porte forcée (aucun badge présenté)\n2026-10-14 01:47:15  DC-PORTE-02  ALARME  Porte maintenue ouverte\n2026-10-14 01:52:40  DC-PORTE-02  INFO    Porte refermée",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le clonage RFID d'un badge d'administrateur"
+        },
+        {
+          "id": "b",
+          "text": "Une attaque environnementale contre la salle"
+        },
+        {
+          "id": "c",
+          "text": "Le talonnage derrière un technicien de garde"
+        },
+        {
+          "id": "d",
+          "text": "La force brute sur la porte et sa serrure"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "En physique, la force brute désigne l'ouverture d'un accès par la force : porte enfoncée, serrure arrachée, vitre brisée. Le contrôle d'accès le signale par une alarme « porte forcée » : la porte s'est ouverte sans qu'aucun badge valide ni bouton de sortie ne l'ait autorisée. Les dégâts constatés (cylindre arraché, marques de levier) confirment ce diagnostic. Les contre-mesures visent à retarder et à détecter : portes et serrures renforcées, alarmes reliées à un poste de surveillance, vidéosurveillance.",
+    "distractorNotes": {
+      "a": "Un badge cloné ouvre la porte normalement : le journal montrerait un passage accepté, sans alarme de porte forcée ni dégâts.",
+      "b": "Une attaque environnementale vise l'alimentation, la climatisation ou l'humidité de la salle, pas la serrure de la porte.",
+      "c": "Le talonnage suppose qu'une personne autorisée ouvre la porte avec son badge ; or aucun badge n'a été présenté et la porte a été forcée."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-sqli-root-cause-parameterized-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le journal de débogage d'une boutique en ligne montre la requête construite par le code PHP à partir du paramètre id de l'URL /fiche.php. Toutes les lignes de la table produits, y compris celles retirées de la vente, sont renvoyées. Quelle mesure corrige LE MIEUX la cause de la vulnérabilité ?",
+      "exhibit": "2026-10-12 14:03:11 DEBUG fiche.php requete=\n  SELECT nom, prix, stock FROM produits WHERE id = '4' OR '1'='1'\n2026-10-12 14:03:11 DEBUG fiche.php lignes=1842",
+      "options": [
+        {
+          "id": "a",
+          "text": "Encoder en entités HTML toutes les données renvoyées dans les pages"
+        },
+        {
+          "id": "b",
+          "text": "Construire la requête avec une instruction préparée et un paramètre lié"
+        },
+        {
+          "id": "c",
+          "text": "Activer le chiffrement transparent (TDE) des fichiers de la base"
+        },
+        {
+          "id": "d",
+          "text": "Ajouter un jeton anti-CSRF dans chaque lien vers la page produit"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La valeur saisie (4' OR '1'='1) est concaténée dans le texte SQL : l'apostrophe ferme la chaîne et OR '1'='1' rend la condition toujours vraie, d'où le renvoi de toute la table. C'est une injection SQL (CWE-89). Avec une instruction préparée, le texte de la requête est fixé à l'avance et la valeur est transmise à part comme donnée : elle ne peut plus modifier la structure de la requête. C'est la correction de la cause ; un pare-feu applicatif (WAF) ou la validation des entrées restent des défenses complémentaires.",
+    "distractorNotes": {
+      "a": "L'encodage HTML en sortie protège contre le XSS ; il n'empêche pas la valeur d'entrée de modifier la requête SQL.",
+      "c": "Le TDE protège les fichiers de la base au repos ; la base déchiffre normalement les données pour une requête injectée.",
+      "d": "Un jeton anti-CSRF empêche un site tiers de forger des requêtes ; l'attaquant peut injecter sa propre requête directement."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE CWE (CWE-89) ; OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-2.4-linux-uid0-backdoor-privesc-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sur le serveur web01, l'application web s'exécute sous le compte de service www-data, qui n'a aucun droit d'administration. Le SIEM a déclenché une alerte sur ces deux lignes de /var/log/auth.log (repliées pour l'affichage). Quelle conclusion est LA PLUS probable ?",
+      "exhibit": "Nov  3 02:14:07 web01 sudo: www-data : user NOT in sudoers ; TTY=unknown ;\n    PWD=/var/www/html ; USER=root ; COMMAND=/bin/bash\nNov  3 02:15:52 web01 useradd[4121]: new user: name=sysupd, UID=0, GID=0,\n    home=/root, shell=/bin/bash",
+      "options": [
+        {
+          "id": "a",
+          "text": "La commande sudo a réussi et a ouvert un shell root, dont l'attaquant s'est servi pour créer sysupd"
+        },
+        {
+          "id": "b",
+          "text": "Un attaquant a pris le contrôle du compte d'un autre utilisateur ordinaire : c'est une élévation horizontale"
+        },
+        {
+          "id": "c",
+          "text": "Un attaquant agissant sous www-data a obtenu root par une autre voie, puis a créé un compte dérobé d'UID 0"
+        },
+        {
+          "id": "d",
+          "text": "Une attaque par force brute sur SSH a permis d'ouvrir une session sous le compte sysupd"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La première ligne montre qu'un processus de www-data, sans terminal et depuis le dossier de l'application, a tenté d'obtenir un shell root par sudo : la tentative est refusée (user NOT in sudoers). Moins de deux minutes plus tard, un compte sysupd d'UID 0 et de GID 0 est créé : seul root peut créer un compte, et un UID 0 donne les pleins pouvoirs. L'attaquant, probablement entré par l'application web, a donc obtenu root autrement (exploitation d'une faille locale, binaire SUID, mauvaise configuration), puis s'est ménagé un accès persistant. C'est une élévation de privilèges verticale : il faut isoler le serveur et investiguer.",
+    "distractorNotes": {
+      "a": "« user NOT in sudoers » signifie que sudo a refusé la commande : aucun shell root n'a été ouvert par cette voie.",
+      "b": "L'élévation horizontale donne accès aux droits d'un autre utilisateur de même niveau ; un compte d'UID 0 a les droits de root, c'est une élévation verticale.",
+      "d": "Aucune ligne sshd n'apparaît, et sysupd n'existait pas avant 02:15:52 : il a été créé, non attaqué par force brute."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE ATT&CK (tactique Privilege Escalation)"
+  },
+  {
+    "slug": "security-plus-2.4-csrf-hidden-image-transfer-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Une cliente connectée à sa banque en ligne, banque.example.com, ouvre dans un autre onglet un forum où un message contient la balise ci-dessous. Sans qu'elle fasse quoi que ce soit, un virement de 900 euros est créé depuis son compte. De quelle attaque s'agit-il ?",
+      "exhibit": "<img src=\"https://banque.example.com/virement?dest=40913&montant=900\"\n     width=\"1\" height=\"1\" alt=\"\">",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une falsification de requête intersite (CSRF)"
+        },
+        {
+          "id": "b",
+          "text": "Une attaque par rejeu d'une requête capturée"
+        },
+        {
+          "id": "c",
+          "text": "Une falsification de requête côté serveur (SSRF)"
+        },
+        {
+          "id": "d",
+          "text": "Une injection SQL dans le formulaire du forum"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "En affichant la page du forum, le navigateur de la cliente charge l'« image » : il envoie une requête GET vers banque.example.com et y joint le cookie de session de la banque, faute d'attribut SameSite restrictif sur ce cookie. La banque reçoit une requête authentifiée et l'exécute, sans pouvoir distinguer une action voulue d'une action forgée par un site tiers. C'est la définition de la CSRF (CWE-352). Les défenses : jeton anti-CSRF imprévisible, attribut SameSite sur les cookies, et aucune action sensible déclenchée par une simple requête GET.",
+    "distractorNotes": {
+      "c": "Dans une SSRF, c'est le serveur vulnérable qui émet la requête vers une cible choisie par l'attaquant ; ici, c'est le navigateur de la victime.",
+      "b": "Aucune requête capturée n'est renvoyée : le navigateur forge une requête nouvelle, authentifiée par le cookie de session.",
+      "d": "Aucune requête SQL n'est manipulée : la balise du forum provoque simplement une requête HTTP vers la banque."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE CWE (CWE-352)"
+  },
+  {
+    "slug": "security-plus-2.4-ssrf-metadata-allowlist-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une application web hébergée dans le cloud propose la fonction « importer une image depuis une URL » : le serveur télécharge lui-même l'adresse fournie. Un test d'intrusion montre qu'avec l'URL http://169.254.169.254/latest/meta-data/ le serveur renvoie les métadonnées de son instance, dont des identifiants temporaires. Quelle mesure réduit LE MIEUX ce risque ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter un jeton anti-CSRF unique et imprévisible au formulaire d'import"
+        },
+        {
+          "id": "b",
+          "text": "Filtrer côté serveur les URL par liste d'autorisation et refuser les adresses internes"
+        },
+        {
+          "id": "c",
+          "text": "Définir l'attribut SameSite=Strict sur le cookie de session de l'application"
+        },
+        {
+          "id": "d",
+          "text": "Publier un en-tête Content-Security-Policy qui limite les sources d'images"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "C'est une falsification de requête côté serveur (SSRF, CWE-918) : l'attaquant se sert du serveur comme relais pour joindre une ressource qu'il ne peut atteindre lui-même, ici le service de métadonnées de l'instance, en adresse de lien local. La défense porte sur les requêtes que le serveur émet : n'autoriser que des destinations prévues, vérifier l'adresse obtenue après résolution DNS et refuser les plages internes, de bouclage et de lien local, sans suivre aveuglément les redirections. Imposer la version du service de métadonnées qui exige un jeton de session complète utilement ce filtrage.",
+    "distractorNotes": {
+      "a": "Le jeton anti-CSRF empêche un site tiers de forger la requête du navigateur ; ici, l'attaquant soumet lui-même l'URL et c'est le serveur qui part en requête.",
+      "c": "SameSite limite l'envoi du cookie dans les requêtes intersites (défense contre la CSRF) ; il ne restreint pas les destinations des requêtes du serveur.",
+      "d": "La CSP s'applique dans le navigateur ; elle n'a aucun effet sur les requêtes HTTP que le serveur émet lui-même."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE CWE (CWE-918) ; OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-2.4-ping-tool-command-injection-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'un audit, un testeur saisit dans le champ « Adresse » de l'outil de diagnostic ping d'un routeur une adresse IP suivie d'un point-virgule et d'une commande de lecture de fichier. La page affiche le résultat du ping, suivi du contenu du fichier /etc/passwd du routeur. Quelle attaque le testeur a-t-il mise en évidence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une traversée de répertoire"
+        },
+        {
+          "id": "b",
+          "text": "Une injection de commandes système"
+        },
+        {
+          "id": "c",
+          "text": "Un dépassement de tampon"
+        },
+        {
+          "id": "d",
+          "text": "Une injection SQL"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'application transmet la saisie à un interpréteur de commandes, du type « ping » suivi de la valeur. Le point-virgule termine la première commande et l'interpréteur exécute ensuite la commande ajoutée, avec les droits du service web, souvent root sur ce type d'équipement. C'est une injection de commandes système (CWE-78). Il faut appeler le programme sans passer par un shell, en lui passant ses arguments séparément, et valider la saisie par liste d'autorisation (une adresse IP et rien d'autre).",
+    "distractorNotes": {
+      "a": "Une traversée de répertoire manipule un chemin avec des séquences ../ pour lire un fichier ; ici, c'est une seconde commande qui est exécutée.",
+      "c": "Un dépassement de tampon repose sur une entrée trop longue qui écrase la mémoire ; ici, le service ne plante pas et exécute une commande ajoutée.",
+      "d": "Aucune base de données n'est interrogée : le séparateur ; est interprété par un shell, pas par un moteur SQL."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE CWE (CWE-78)"
+  },
+  {
+    "slug": "security-plus-2.4-impossible-travel-contain-first-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'entreprise n'a ni VPN ni proxy hors de France. Jointe par téléphone, Claire Durand confirme être à Lyon depuis ce matin et dit avoir validé « par réflexe » une notification MFA vers 08:21. L'analyste conclut à un incident. Selon NIST SP 800-61, quelle action doit-il mener EN PREMIER ?",
+      "exhibit": "Journal des connexions - compte c.durand@example.com\nHeure     IP source      Localisation    Résultat  MFA\n07:58:14  192.0.2.45     Lyon, FR        Succès    Notification approuvée\n08:21:37  203.0.113.88   Singapour, SG   Succès    Notification approuvée\n08:24:02  203.0.113.88   Singapour, SG   Succès    Session existante",
+      "options": [
+        {
+          "id": "a",
+          "text": "Révoquer les sessions ouvertes du compte et réinitialiser ses identifiants"
+        },
+        {
+          "id": "b",
+          "text": "Rédiger le rapport de retour d'expérience destiné à la direction"
+        },
+        {
+          "id": "c",
+          "text": "Ajouter Singapour aux pays autorisés pour limiter les faux positifs"
+        },
+        {
+          "id": "d",
+          "text": "Attendre de nouvelles connexions depuis Singapour pour en être sûr"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Lyon et Singapour sont séparés de plus de 10 000 km : 23 minutes entre deux connexions réussies, c'est un déplacement impossible. Sans VPN qui expliquerait l'adresse, et avec une validation MFA donnée par réflexe, le mot de passe est compromis et la session de Singapour appartient à l'attaquant. L'analyse étant faite, le processus NIST SP 800-61 passe au confinement : couper l'accès de l'attaquant en révoquant les sessions et jetons actifs et en réinitialisant le mot de passe. Viendront ensuite l'éradication, la reprise, puis le retour d'expérience.",
+    "distractorNotes": {
+      "b": "Le retour d'expérience relève de l'activité post-incident, la dernière phase : l'attaquant garde son accès pendant ce temps.",
+      "c": "Autoriser le pays de l'attaquant supprimerait l'alerte sans traiter la compromission avérée du compte.",
+      "d": "L'incident est déjà confirmé ; attendre laisse l'attaquant agir avec la session qu'il détient."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-2.4-hr-backup-out-of-cycle-log-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le script de sauvegarde de la base RH d'une entreprise s'exécute chaque nuit à 01:00 et écrit une seule ligne dans le journal. Un dimanche, le SIEM reçoit des lignes de ce script à 15:42 puis à 15:47, alors qu'aucune intervention n'était planifiée, et un fichier d'export de la base apparaît sur un partage réseau inhabituel. Quel indicateur d'activité malveillante ces observations illustrent-elles LE MIEUX ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une journalisation hors cycle"
+        },
+        {
+          "id": "b",
+          "text": "Un verrouillage de compte"
+        },
+        {
+          "id": "c",
+          "text": "Des journaux manquants"
+        },
+        {
+          "id": "d",
+          "text": "Un déplacement impossible"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La journalisation hors cycle (out-of-cycle logging) désigne des événements produits en dehors du rythme habituel d'un processus : un traitement planifié qui écrit à une heure ou à une fréquence anormale, ou une activité un jour où elle n'a pas lieu d'être. Ici, un script normalement nocturne et unique s'exécute deux fois un dimanche après-midi, en même temps qu'un export vers un emplacement inhabituel : quelqu'un s'en sert probablement pour exfiltrer la base RH. L'analyste doit vérifier qui a lancé le script et d'où.",
+    "distractorNotes": {
+      "c": "Les journaux ne manquent pas : au contraire, des lignes supplémentaires apparaissent hors de l'horaire habituel.",
+      "b": "Aucun échec d'authentification ni compte bloqué n'est mentionné dans le scénario.",
+      "d": "Le déplacement impossible concerne des connexions d'un même compte depuis des lieux trop éloignés pour le délai écoulé ; rien de tel ici."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-2.4-darkweb-sale-published-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le service de veille d'une enseigne de distribution signale qu'un message mis en ligne sur un forum cybercriminel propose à la vente « la base clients complète » de l'entreprise, avec un échantillon de 50 lignes que l'équipe reconnaît comme authentiques. Aucune alerte interne n'avait été émise. Quel indicateur d'activité malveillante cette situation illustre-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une consommation de ressources"
+        },
+        {
+          "id": "b",
+          "text": "Un contenu bloqué"
+        },
+        {
+          "id": "c",
+          "text": "Une journalisation hors cycle"
+        },
+        {
+          "id": "d",
+          "text": "Une compromission publiée"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'objectif 2.4 range parmi les indicateurs les informations publiées ou documentées (published/documented) : une fuite annoncée sur un forum, un site de rançongiciel ou par un chercheur, souvent avant toute détection interne. Ici, un échantillon authentique prouve que des données ont quitté l'entreprise. L'équipe doit déclencher la réponse à incident : chercher le vecteur et l'étendue de la fuite, préserver les preuves et, selon les données touchées, préparer les notifications réglementaires.",
+    "distractorNotes": {
+      "a": "La consommation de ressources concerne un usage anormal du processeur, de la mémoire, du disque ou de la bande passante ; rien de tel n'est observé.",
+      "b": "Un contenu bloqué suppose qu'un contrôle de sécurité ait arrêté une action ; ici, aucune alerte n'a été émise et la fuite a eu lieu.",
+      "c": "La journalisation hors cycle porte sur des événements internes produits à un rythme anormal ; l'information vient d'une source externe."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-ssrf-localhost-admin-term-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. La fonction /apercu d'une application télécharge côté serveur la page indiquée par le paramètre url pour en afficher la miniature. La réponse à cette requête contient la console d'administration de l'application, qui n'écoute que sur l'interface de bouclage du serveur. Donnez le sigle anglais de l'attaque.",
+      "exhibit": "203.0.113.50 - - [05/Nov/2026:10:12:44 +0100]\n  \"GET /apercu?url=http://127.0.0.1:8080/admin/ HTTP/1.1\" 200 5120",
+      "fields": [
+        {
+          "id": "attack",
+          "label": "Sigle de l'attaque (en lettres capitales, comme XSS)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "attack": {
+          "accepted": [
+            "SSRF",
+            "Server-Side Request Forgery",
+            "Server Side Request Forgery"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "L'attaquant fournit une URL pointant vers 127.0.0.1 : c'est le serveur lui-même qui émet la requête, depuis l'intérieur, et atteint une console qui refuse les connexions extérieures. Il s'agit d'une Server-Side Request Forgery (SSRF), ou falsification de requête côté serveur (CWE-918). Le même procédé sert à sonder le réseau interne ou à lire le service de métadonnées d'une instance cloud. La parade : liste d'autorisation des destinations et refus des adresses internes, de bouclage et de lien local après résolution DNS.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE CWE (CWE-918)"
+  },
+  {
+    "slug": "security-plus-2.4-path-traversal-resolved-file-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Une application de téléchargement construit le chemin du fichier en concaténant le dossier /var/www/app/public/docs/ et la valeur du paramètre fichier, sans filtrage. Un analyste du SOC veut savoir quel fichier la requête journalisée a réellement visé. Donnez le chemin absolu obtenu une fois les séquences ../ résolues.",
+      "exhibit": "198.51.100.61 - - [06/Nov/2026:16:20:05 +0100]\n  \"GET /telecharger?fichier=../../../etc/passwd HTTP/1.1\" 404 196",
+      "fields": [
+        {
+          "id": "path",
+          "label": "Chemin absolu résolu (commençant par /)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "path": {
+          "accepted": [
+            "/var/www/etc/passwd"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Le chemin construit est /var/www/app/public/docs/../../../etc/passwd. Chaque séquence ../ remonte d'un niveau : la première mène à /var/www/app/public, la deuxième à /var/www/app, la troisième à /var/www. Le serveur a donc cherché /var/www/etc/passwd, qui n'existe pas, d'où la réponse 404. C'est bien une tentative de traversée de répertoire (CWE-22), mal calibrée : il aurait fallu remonter jusqu'à la racine. L'échec de cette requête ne prouve pas que l'application est sûre : l'analyste doit chercher d'autres tentatives de la même source avec un code 200.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE CWE (CWE-22)"
+  },
+  {
+    "slug": "security-plus-2.4-physical-attacks-matching-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le responsable de la sûreté d'un groupe industriel classe les incidents de l'année. Associez chaque incident au type d'attaque physique qu'il représente.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Une porte de baie forcée au pied-de-biche, serrure arrachée"
+        },
+        {
+          "id": "l2",
+          "text": "Un lecteur caché dans un sac copie le badge de proximité d'un cadre"
+        },
+        {
+          "id": "l3",
+          "text": "Un intrus coupe la climatisation du local serveurs pour provoquer une surchauffe"
+        },
+        {
+          "id": "l4",
+          "text": "Une copie de badge présentée la nuit au lecteur du parking est acceptée"
+        },
+        {
+          "id": "l5",
+          "text": "Une vanne ouverte volontairement au-dessus de la salle informatique l'inonde"
+        }
+      ],
+      "right": [
+        {
+          "id": "brute",
+          "text": "Force brute physique"
+        },
+        {
+          "id": "rfid",
+          "text": "Clonage RFID"
+        },
+        {
+          "id": "env",
+          "text": "Attaque environnementale"
+        },
+        {
+          "id": "tail",
+          "text": "Talonnage (tailgating)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "brute",
+        "l2": "rfid",
+        "l3": "env",
+        "l4": "rfid",
+        "l5": "env"
+      }
+    },
+    "explanation": "La force brute physique ouvre un accès par la force (porte, serrure, vitre). Le clonage RFID copie l'identifiant d'un badge sans contact, à distance, puis l'utilise : la lecture discrète et l'usage de la copie relèvent tous deux de cette attaque. Les attaques environnementales visent les conditions dont dépendent les équipements (alimentation, climatisation, eau, incendie) pour provoquer une panne. Les contre-mesures diffèrent : renforcement et alarmes, badges à authentification cryptographique, redondance et surveillance de l'environnement.",
+    "distractorNotes": {
+      "tail": "Le talonnage consiste à franchir un accès derrière une personne autorisée qui l'a ouvert ; aucun des incidents ne décrit ce mode opératoire."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4)"
+  },
+  {
+    "slug": "security-plus-2.4-app-attack-payloads-matching-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un analyste du SOC relit les alertes du pare-feu applicatif (WAF) de la semaine. Associez chaque observation à l'attaque applicative qu'elle révèle.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Paramètre id qui contient une apostrophe suivie de « UNION SELECT » et de noms de colonnes"
+        },
+        {
+          "id": "l2",
+          "text": "Paramètre fichier=../../../../etc/hosts"
+        },
+        {
+          "id": "l3",
+          "text": "Champ nom de 3 000 caractères « A », puis plantage du service, pointeur d'instruction à 0x41414141"
+        },
+        {
+          "id": "l4",
+          "text": "Paramètre webhook=http://10.0.0.5:6379/, qui fait contacter un serveur interne par l'application"
+        },
+        {
+          "id": "l5",
+          "text": "Formulaire caché sur un site tiers, soumis automatiquement vers /compte/email du site protégé"
+        }
+      ],
+      "right": [
+        {
+          "id": "sqli",
+          "text": "Injection SQL"
+        },
+        {
+          "id": "trav",
+          "text": "Traversée de répertoire"
+        },
+        {
+          "id": "bof",
+          "text": "Dépassement de tampon"
+        },
+        {
+          "id": "ssrf",
+          "text": "Falsification de requête côté serveur (SSRF)"
+        },
+        {
+          "id": "csrf",
+          "text": "Falsification de requête intersite (CSRF)"
+        },
+        {
+          "id": "replay",
+          "text": "Attaque par rejeu"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "sqli",
+        "l2": "trav",
+        "l3": "bof",
+        "l4": "ssrf",
+        "l5": "csrf"
+      }
+    },
+    "explanation": "UNION SELECT accole une requête de l'attaquant à celle de l'application : injection SQL. Les séquences ../ font sortir le chemin du dossier prévu : traversée de répertoire. Une longue suite de « A » (0x41 en ASCII) qui finit dans le pointeur d'instruction prouve qu'une entrée trop longue a écrasé une adresse de retour : dépassement de tampon. Une URL interne fournie à une fonction qui la contacte fait du serveur un relais : SSRF. Un formulaire tiers qui s'envoie vers le site, avec le cookie de la victime, est une CSRF.",
+    "distractorNotes": {
+      "replay": "Le rejeu consiste à renvoyer à l'identique un message authentique capturé ; aucune observation ne décrit un message réémis."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE CWE ; OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-2.4-indicators-soc-matching-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Lors d'une formation, un responsable du SOC présente des situations réelles. Associez chaque situation à l'indicateur d'activité malveillante qu'elle illustre.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "En une heure, 60 utilisateurs appellent l'assistance : leur compte est bloqué après des échecs de connexion qu'ils n'ont pas commis"
+        },
+        {
+          "id": "l2",
+          "text": "Un serveur web d'ordinaire à 10 % de processeur tourne à 100 % chaque nuit et sature le lien montant"
+        },
+        {
+          "id": "l3",
+          "text": "Les utilisateurs ne peuvent plus ouvrir les fichiers d'un partage, tous renommés avec une extension inconnue"
+        },
+        {
+          "id": "l4",
+          "text": "La passerelle de messagerie met en quarantaine des dizaines de pièces jointes envoyées par un même poste interne"
+        },
+        {
+          "id": "l5",
+          "text": "Le SIEM ne reçoit aucun événement d'un contrôleur de domaine entre 01:10 et 03:40, alors qu'il est resté en service"
+        }
+      ],
+      "right": [
+        {
+          "id": "lock",
+          "text": "Verrouillage de compte"
+        },
+        {
+          "id": "res",
+          "text": "Consommation de ressources"
+        },
+        {
+          "id": "inacc",
+          "text": "Ressource inaccessible"
+        },
+        {
+          "id": "block",
+          "text": "Contenu bloqué"
+        },
+        {
+          "id": "miss",
+          "text": "Journaux manquants"
+        },
+        {
+          "id": "conc",
+          "text": "Sessions simultanées"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "lock",
+        "l2": "res",
+        "l3": "inacc",
+        "l4": "block",
+        "l5": "miss"
+      }
+    },
+    "explanation": "Des verrouillages massifs que les utilisateurs n'expliquent pas trahissent des essais de mots de passe sur de nombreux comptes. Une charge et un trafic sortant anormaux révèlent une consommation de ressources (minage, exfiltration, relais). Des fichiers devenus illisibles et renommés rendent la ressource inaccessible, signe typique d'un chiffrement par rançongiciel. Des pièces jointes arrêtées par la passerelle constituent un contenu bloqué : le contrôle a fonctionné, mais le poste émetteur est suspect. Un trou dans la collecte d'un serveur actif signale des journaux manquants, souvent effacés ou dont l'envoi a été coupé.",
+    "distractorNotes": {
+      "conc": "Les sessions simultanées désignent un même compte connecté en même temps depuis plusieurs endroits ; aucune situation ne décrit ce cas."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-2.4-ssrf-incident-response-order-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Le WAF d'une application hébergée dans le cloud signale des requêtes de la fonction d'import d'images vers le service de métadonnées de l'instance, soupçonnées de SSRF. Ordonnez les actions de l'équipe selon les phases de NIST SP 800-61 Rev. 2, de la première à la dernière.",
+      "items": [
+        {
+          "id": "fix",
+          "text": "Corriger le code par une liste d'autorisation des destinations et supprimer les accès créés par l'attaquant"
+        },
+        {
+          "id": "lessons",
+          "text": "Tenir la réunion de retour d'expérience et mettre à jour les procédures"
+        },
+        {
+          "id": "contain",
+          "text": "Désactiver la fonction d'import et révoquer les identifiants temporaires exposés"
+        },
+        {
+          "id": "restore",
+          "text": "Réactiver la fonction d'import après tests, sous surveillance renforcée"
+        },
+        {
+          "id": "analyze",
+          "text": "Confirmer dans les journaux du WAF et de l'application que des identifiants ont été lus"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "analyze",
+        "contain",
+        "fix",
+        "restore",
+        "lessons"
+      ]
+    },
+    "explanation": "NIST SP 800-61 Rev. 2 enchaîne détection et analyse, puis confinement, éradication et reprise, et enfin l'activité post-incident. L'équipe confirme d'abord l'incident et son ampleur dans les journaux. Le confinement arrête l'hémorragie : couper la fonction vulnérable et rendre inutilisables les identifiants volés. L'éradication supprime la cause (le code qui suit toute URL) et ce que l'attaquant a pu créer avec ces identifiants. La reprise remet le service en production sous surveillance, avant le retour d'expérience qui améliore la préparation.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-2.4-stack-overflow-os-protections-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un éditeur vient de publier le correctif d'un dépassement de tampon sur la pile dans un service écrit en C. En attendant que tous les serveurs soient mis à jour, le RSSI veut s'assurer que des protections du système compliquent l'exploitation de la faille. Quelles deux protections répondent à ce besoin ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'en-tête HSTS envoyé par les serveurs web"
+        },
+        {
+          "id": "b",
+          "text": "La randomisation de l'espace d'adressage (ASLR)"
+        },
+        {
+          "id": "c",
+          "text": "Un jeton anti-CSRF dans les formulaires"
+        },
+        {
+          "id": "d",
+          "text": "Le salage des empreintes de mots de passe"
+        },
+        {
+          "id": "e",
+          "text": "La prévention de l'exécution des données (DEP/NX)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "L'exploitation classique d'un dépassement de pile écrase l'adresse de retour pour sauter vers un code connu de l'attaquant. L'ASLR place la pile, le tas et les bibliothèques à des adresses aléatoires à chaque exécution : l'attaquant ne sait plus quelle adresse écrire. DEP (bit NX du processeur) marque la pile et le tas comme non exécutables : le code injecté dans le tampon ne peut pas s'exécuter. Ces protections ne suppriment pas la faille (un plantage reste possible et des techniques comme le ROP visent à les contourner), d'où la nécessité d'appliquer le correctif.",
+    "distractorNotes": {
+      "a": "HSTS impose HTTPS au navigateur ; il n'a aucun effet sur la gestion de la mémoire d'un service.",
+      "c": "Le jeton anti-CSRF protège contre les requêtes forgées depuis un site tiers, pas contre la corruption de mémoire.",
+      "d": "Le salage protège les empreintes de mots de passe stockées contre les tables précalculées ; il ne concerne pas l'exécution de code."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE CWE (CWE-121)"
+  },
+  {
+    "slug": "security-plus-2.4-path-traversal-fix-measures-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un audit révèle que le paramètre fichier de l'URL /telecharger?fichier=rapport.pdf permet de lire des fichiers situés hors du dossier des documents publics. Quelles deux mesures empêchent cette traversée de répertoire ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer le nom de fichier par un identifiant que le serveur associe à une liste de fichiers autorisés"
+        },
+        {
+          "id": "b",
+          "text": "Échapper les apostrophes du paramètre avant de l'insérer dans la requête SQL de l'application"
+        },
+        {
+          "id": "c",
+          "text": "Supprimer une seule fois les séquences « ../ » présentes dans le paramètre avant de l'utiliser"
+        },
+        {
+          "id": "d",
+          "text": "Ajouter l'attribut HttpOnly au cookie de session pour le rendre illisible par les scripts"
+        },
+        {
+          "id": "e",
+          "text": "Résoudre le chemin canonique demandé et refuser tout chemin situé hors du dossier des documents"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "La traversée de répertoire (CWE-22) vient d'un chemin construit à partir d'une saisie. Deux approches la bloquent sûrement : ne jamais laisser l'utilisateur fournir un chemin (un identifiant opaque renvoie, côté serveur, vers un fichier d'une liste fermée), ou calculer le chemin canonique (séquences ../, liens et encodages résolus) puis vérifier qu'il reste dans le dossier autorisé. Exécuter le service avec un compte aux droits réduits limite en plus les dégâts.",
+    "distractorNotes": {
+      "b": "L'échappement des apostrophes vise l'injection SQL ; il ne change rien aux séquences ../ d'un chemin de fichier.",
+      "c": "Un filtrage en une seule passe se contourne par des séquences imbriquées ou encodées : c'est une liste de blocage fragile, pas une vérification du chemin final.",
+      "d": "HttpOnly protège le cookie contre la lecture par un script (XSS) ; il n'agit pas sur l'accès aux fichiers du serveur."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE CWE (CWE-22) ; OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-2.4-security-log-cleared-gap-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Ces événements du journal Sécurité d'un serveur de fichiers ont été collectés par le SIEM. Le compte svc_backup ne sert qu'à la sauvegarde lancée chaque soir à 23:00. Le SIEM n'a reçu aucun événement de ce serveur entre 02:03 et 04:30, alors que le serveur est resté en service. Quelles deux conclusions l'analyste peut-il tirer ?",
+      "exhibit": "Date et heure          ID    Source              Compte\n2026-11-04 01:58:02    4624  Security-Auditing   svc_backup\n2026-11-04 01:58:02    4672  Security-Auditing   svc_backup\n2026-11-04 02:03:17    1102  Eventlog            svc_backup\n2026-11-04 04:30:11    4624  Security-Auditing   adm.leroy",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'événement 4672 montre que svc_backup n'a pas réussi à ouvrir sa session à 01:58"
+        },
+        {
+          "id": "b",
+          "text": "L'événement 1102 correspond à l'archivage automatique du journal par Windows"
+        },
+        {
+          "id": "c",
+          "text": "Le journal Sécurité a été effacé depuis une session de svc_backup, pour masquer des traces"
+        },
+        {
+          "id": "d",
+          "text": "L'ouverture de session 4624 de 01:58 prouve une attaque par force brute sur svc_backup"
+        },
+        {
+          "id": "e",
+          "text": "L'absence d'événements de 02:03 à 04:30 constitue un indicateur de journaux manquants"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "L'événement 1102 (« The audit log was cleared ») est écrit quand le journal Sécurité est vidé, et il indique le compte qui l'a fait : ici svc_backup, en pleine nuit, hors de son créneau de 23:00. Juste avant, ce compte a ouvert une session (4624) dotée de privilèges spéciaux (4672). Effacer le journal est une technique classique pour masquer ses traces, et le silence du serveur pendant deux heures et demie alors qu'il fonctionnait est un indicateur de journaux manquants. Le compte svc_backup est probablement compromis.",
+    "distractorNotes": {
+      "a": "4672 (« Special privileges assigned to new logon ») accompagne une ouverture de session réussie dotée de privilèges élevés ; un échec serait un 4625.",
+      "b": "L'archivage ou la rotation automatique du journal ne produit pas l'événement 1102, réservé à l'effacement du journal d'audit.",
+      "d": "Aucun échec 4625 ne précède l'ouverture de session : rien ne montre des essais répétés de mots de passe."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; NIST SP 800-92"
+  },
+  {
+    "slug": "security-plus-2.4-environmental-attack-resilience-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un hébergeur régional craint qu'un intrus coupe l'alimentation électrique ou la climatisation de sa salle serveurs pour provoquer une panne. Quelles deux mesures réduisent LE MIEUX l'impact d'une telle attaque environnementale ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Des onduleurs relayés par un groupe électrogène"
+        },
+        {
+          "id": "b",
+          "text": "Un pare-feu applicatif devant les sites hébergés"
+        },
+        {
+          "id": "c",
+          "text": "L'authentification multifacteur sur le VPN d'administration"
+        },
+        {
+          "id": "d",
+          "text": "Une climatisation redondante surveillée par des sondes et des alertes"
+        },
+        {
+          "id": "e",
+          "text": "Le chiffrement intégral des disques des serveurs"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Une attaque environnementale vise les conditions dont dépendent les équipements plutôt que les équipements eux-mêmes : couper le courant, arrêter la climatisation, provoquer une inondation ou un départ de feu. On en réduit l'impact par la redondance et la détection : onduleurs pour tenir la coupure, relayés par un groupe électrogène pour la durée ; climatisation en N+1 avec sondes de température et d'humidité qui alertent avant la surchauffe. Le contrôle d'accès physique aux locaux techniques complète ces mesures.",
+    "distractorNotes": {
+      "b": "Un WAF filtre les requêtes HTTP vers les applications ; il n'aide en rien face à une coupure de courant ou de climatisation.",
+      "c": "La MFA protège l'accès logique à l'administration ; elle n'empêche ni ne compense une panne environnementale.",
+      "e": "Le chiffrement protège la confidentialité des données au repos ; il ne maintient pas les serveurs en fonctionnement."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; NIST SP 800-53 Rev. 5 (famille PE)"
+  },
+  {
+    "slug": "security-plus-2.4-privesc-hunt-indicators-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Lors d'une chasse aux menaces, un analyste cherche des signes d'élévation de privilèges dans le parc d'une PME. Quelles trois observations doivent retenir son attention ?",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Un compte d'utilisateur standard ajouté au groupe Admins du domaine sans demande de changement"
+        },
+        {
+          "id": "b",
+          "text": "Un utilisateur qui se trompe une fois de mot de passe, puis se connecte normalement"
+        },
+        {
+          "id": "c",
+          "text": "Un processus lancé par l'application web, d'ordinaire sous un compte de service, qui tourne sous SYSTEM"
+        },
+        {
+          "id": "d",
+          "text": "Le renouvellement automatique d'un certificat TLS 30 jours avant son expiration"
+        },
+        {
+          "id": "e",
+          "text": "Un exécutable déposé dans /tmp par un utilisateur, appartenant à root et doté du bit SUID"
+        },
+        {
+          "id": "f",
+          "text": "Une session VPN ouverte depuis le domicile habituel d'un salarié, en heures ouvrées"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "L'élévation de privilèges permet à un attaquant d'obtenir plus de droits que ceux de son point d'entrée. Un ajout non justifié au groupe Admins du domaine donne des droits d'administration sur tout l'annuaire. Un processus d'un compte de service web qui s'exécute sous SYSTEM suggère l'exploitation d'une faille locale. Un exécutable SUID appartenant à root dans /tmp, dossier accessible à tous, est un moyen classique de conserver un accès root : quiconque le lance obtient les droits de root. Les trois autres observations décrivent une activité normale.",
+    "distractorNotes": {
+      "b": "Une erreur de saisie isolée suivie d'une connexion réussie est un événement banal, sans gain de droits.",
+      "d": "Le renouvellement anticipé d'un certificat est une tâche d'exploitation prévue, qui ne change les droits de personne.",
+      "f": "Une connexion VPN depuis un lieu et à une heure habituels est conforme au profil du salarié."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.4) ; MITRE ATT&CK (tactique Privilege Escalation)"
+  }
+]

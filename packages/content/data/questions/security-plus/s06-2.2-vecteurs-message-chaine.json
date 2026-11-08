@@ -1,0 +1,960 @@
+[
+  {
+    "slug": "security-plus-2.2-im-external-federation-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Plusieurs employés reçoivent sur la messagerie instantanée de l'entreprise des messages d'un compte « Support IT » appartenant à un locataire externe inconnu, avec un lien vers une fausse page de connexion. L'entreprise doit continuer à échanger par cette messagerie avec trois partenaires. Quelle mesure réduit LE MIEUX cette surface d'attaque ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Publier une politique DMARC p=reject sur le domaine de messagerie de l'entreprise"
+        },
+        {
+          "id": "b",
+          "text": "Ajouter un filtre antispam sur la passerelle SMTP qui reçoit le courrier entrant"
+        },
+        {
+          "id": "c",
+          "text": "N'autoriser l'accès externe qu'aux domaines des trois partenaires"
+        },
+        {
+          "id": "d",
+          "text": "Imposer WPA3-Enterprise sur le réseau sans fil utilisé par les employés"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La messagerie instantanée est un vecteur par message à part entière : quand l'accès externe (fédération) est ouvert à tous les domaines, n'importe quel locataire peut contacter les employés en se faisant passer pour le support. Limiter cet accès à une liste de domaines approuvés supprime le canal pour les inconnus tout en préservant les échanges avec les trois partenaires. Les contrôles propres au courriel (SPF, DKIM, DMARC, passerelle SMTP) ne voient pas ce trafic, qui ne passe pas par SMTP.",
+    "distractorNotes": {
+      "a": "DMARC protège le domaine de l'entreprise contre l'usurpation dans le courriel ; les messages instantanés ne transitent pas par SMTP et n'y sont pas soumis.",
+      "b": "La passerelle SMTP n'analyse que le courrier électronique ; les messages instantanés lui échappent entièrement.",
+      "d": "WPA3 protège l'accès au réseau sans fil ; il n'empêche pas un compte externe d'envoyer des messages par la messagerie, quel que soit le réseau."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.2)"
+  },
+  {
+    "slug": "security-plus-2.2-dmarc-alignment-fail-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyste du SOC de example.org examine un message placé en quarantaine par la passerelle. Les contrôles SPF et DKIM réussissent, mais DMARC échoue. Quelle est la cause de l'échec DMARC ?",
+      "exhibit": "Authentication-Results: mx1.example.org;\n  spf=pass (sender IP is 198.51.100.23) smtp.mailfrom=bounce.example.net;\n  dkim=pass header.d=example.net header.s=sel1;\n  dmarc=fail (p=QUARANTINE sp=QUARANTINE dis=QUARANTINE)\n    header.from=example.com\nFrom: \"Service comptable\" <compta@example.com>\nTo: achats@example.org\nSubject: Relance facture 2026-0412",
+      "options": [
+        {
+          "id": "a",
+          "text": "La signature DKIM a été invalidée par un relais qui a modifié le corps du message"
+        },
+        {
+          "id": "b",
+          "text": "Le domaine example.com ne publie aucun enregistrement DMARC dans le DNS"
+        },
+        {
+          "id": "c",
+          "text": "L'adresse 198.51.100.23 ne figure pas dans l'enregistrement SPF du domaine émetteur"
+        },
+        {
+          "id": "d",
+          "text": "Les domaines validés par SPF et DKIM ne sont pas alignés sur le domaine de l'en-tête From:"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "DMARC ne se contente pas d'un SPF ou d'un DKIM réussi : il exige qu'au moins l'un des deux réussisse pour un domaine aligné sur celui de l'en-tête From:, celui que voit l'utilisateur. Ici, SPF valide bounce.example.net (enveloppe) et DKIM valide d=example.net, alors que le From: annonce example.com. Aucun identifiant authentifié n'appartient au domaine organisationnel example.com : DMARC échoue et la politique p=quarantine publiée par example.com s'applique. C'est le cas d'un usurpateur qui authentifie son propre domaine, ou d'un prestataire d'envoi légitime mal configuré.",
+    "distractorNotes": {
+      "a": "L'en-tête indique dkim=pass : la signature est valide, le corps n'a donc pas été modifié après signature.",
+      "b": "Sans enregistrement DMARC, le résultat serait dmarc=none ; l'en-tête montre au contraire la politique p=QUARANTINE publiée par example.com.",
+      "c": "L'en-tête indique spf=pass pour 198.51.100.23 : l'adresse est autorisée par l'enregistrement SPF de bounce.example.net."
+    },
+    "reference": "RFC 7489 (DMARC) ; RFC 7208 (SPF) ; RFC 6376 (DKIM)"
+  },
+  {
+    "slug": "security-plus-2.2-dmarc-policy-reject-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Après trois mois de surveillance des rapports agrégés, le RSSI de example.com veut que les serveurs destinataires refusent les messages qui usurpent son domaine et échouent à DMARC. Quelle valeur doit prendre la balise p de l'enregistrement ?",
+      "exhibit": "_dmarc.example.com. 3600 IN TXT\n  \"v=DMARC1; p=none; rua=mailto:dmarc-rapports@example.com\"",
+      "fields": [
+        {
+          "id": "p",
+          "label": "Valeur de la balise p (un mot, sans « p= »)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "p": {
+          "accepted": [
+            "reject",
+            "p=reject"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "La balise p de DMARC indique aux destinataires quoi faire d'un message qui échoue : « none » ne demande rien (mode surveillance, utile pour recevoir les rapports rua et repérer les sources légitimes), « quarantine » demande de traiter le message comme suspect (dossier indésirable, quarantaine), « reject » demande de le refuser pendant la transaction SMTP. Passer à p=reject après une période de surveillance évite de bloquer des envois légitimes oubliés, puis ferme l'usurpation directe du domaine dans le From:.",
+    "distractorNotes": {},
+    "reference": "RFC 7489 (DMARC)"
+  },
+  {
+    "slug": "security-plus-2.2-sms-vector-controls-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise équipe ses commerciaux de smartphones gérés. Une campagne de SMS annonçant un « colis en attente » renvoie vers un site qui vole les identifiants. Quelles deux mesures réduisent ce risque ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une politique DMARC p=reject publiée sur le domaine de l'entreprise"
+        },
+        {
+          "id": "b",
+          "text": "Un filtrage DNS et web appliqué aux terminaux par la solution de gestion des mobiles"
+        },
+        {
+          "id": "c",
+          "text": "Un enregistrement SPF qui se termine par -all sur le domaine de l'entreprise"
+        },
+        {
+          "id": "d",
+          "text": "L'analyse en bac à sable des pièces jointes par la passerelle de messagerie"
+        },
+        {
+          "id": "e",
+          "text": "Une formation qui montre ces SMS et une procédure simple pour les signaler"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Le SMS est un vecteur par message qui ne passe pas par l'infrastructure de courriel de l'entreprise : il arrive directement sur le téléphone. Les défenses utiles agissent donc sur le terminal et sur l'utilisateur. Un filtrage DNS et web imposé par la gestion des mobiles (MDM, protection contre les menaces mobiles) bloque l'accès au site malveillant même si l'utilisateur touche le lien. La sensibilisation, avec des exemples réels et un moyen de signaler, réduit les clics et permet de réagir vite. SPF, DMARC et la passerelle de messagerie ne protègent que le courriel.",
+    "distractorNotes": {
+      "a": "DMARC agit sur le courriel qui usurpe le domaine de l'entreprise ; un SMS ne transite jamais par SMTP.",
+      "c": "SPF autorise des serveurs d'envoi de courriel ; il n'a aucun effet sur les SMS reçus par les téléphones.",
+      "d": "La passerelle de messagerie n'analyse que le courriel, et ces SMS ne portent d'ailleurs pas de pièce jointe."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.2)"
+  },
+  {
+    "slug": "security-plus-2.2-sms-bypasses-gateway-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME a déployé une passerelle de messagerie qui bloque la plupart des courriels de phishing. Pourtant, plusieurs employés ont saisi leur mot de passe après avoir reçu un SMS contenant un lien. Pourquoi ce vecteur a-t-il échappé au contrôle existant ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le SMS est chiffré de bout en bout, ce qui empêche la passerelle d'inspecter le lien"
+        },
+        {
+          "id": "b",
+          "text": "Le SMS arrive par le réseau de l'opérateur mobile, sans passer par la passerelle de messagerie"
+        },
+        {
+          "id": "c",
+          "text": "Le SMS utilise TLS 1.3, que la passerelle de messagerie ne sait pas déchiffrer"
+        },
+        {
+          "id": "d",
+          "text": "Le SMS contourne DMARC grâce à un enregistrement SPF autorisant l'opérateur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le SMS est acheminé par l'opérateur mobile directement jusqu'au téléphone. Il ne traverse aucun serveur de l'entreprise : ni la passerelle de messagerie, ni le proxy si le téléphone utilise les données mobiles. Les contrôles construits pour le courriel ne le voient donc pas. C'est ce qui fait du SMS un vecteur par message distinct, à couvrir par des mesures sur le terminal (filtrage, gestion des mobiles) et par la sensibilisation des utilisateurs.",
+    "distractorNotes": {
+      "a": "Le SMS n'est pas chiffré de bout en bout : seul le lien radio est chiffré, et l'opérateur voit le contenu. Ce n'est pas la raison de l'échec.",
+      "c": "Le SMS n'utilise pas TLS ; la question ne se pose pas puisqu'il ne passe jamais par la passerelle.",
+      "d": "SPF et DMARC ne concernent que le courriel ; un SMS n'est soumis à aucun des deux."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.2)"
+  },
+  {
+    "slug": "security-plus-2.2-time-of-click-url-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un courriel reçu lundi à 8 h contenait un lien vers un site encore inoffensif, qui a passé l'analyse de la passerelle. À 10 h, l'attaquant a remplacé la page par un formulaire de vol d'identifiants, et un utilisateur l'a ouverte à 11 h. Quelle fonction de la passerelle aurait LE MIEUX protégé cet utilisateur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La vérification SPF de l'adresse IP du serveur émetteur"
+        },
+        {
+          "id": "b",
+          "text": "L'analyse en bac à sable des pièces jointes du message"
+        },
+        {
+          "id": "c",
+          "text": "Le chiffrement TLS imposé entre les serveurs de messagerie"
+        },
+        {
+          "id": "d",
+          "text": "La réécriture des liens, avec une nouvelle analyse au moment du clic"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'attaquant a exploité le délai entre la remise du message et le clic : le lien était propre lors de l'analyse à la réception, puis il a été armé. La réécriture des liens remplace chaque URL par un passage par le service de la passerelle, qui réévalue la destination au moment du clic et peut alors bloquer la page devenue malveillante. Les contrôles faits uniquement à la réception, comme l'authentification de l'émetteur, ne voient pas ce changement.",
+    "distractorNotes": {
+      "a": "SPF vérifie que le serveur émetteur est autorisé pour le domaine ; il ne dit rien de la page vers laquelle pointe le lien, ni de son évolution.",
+      "b": "Le message ne contenait pas de pièce jointe, mais un lien ; et cette analyse a lieu à la réception, avant que la page soit armée.",
+      "c": "TLS protège la confidentialité du transport entre serveurs ; il n'évalue pas le contenu des liens."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.2) ; MITRE ATT&CK T1566.002 (Spearphishing Link)"
+  },
+  {
+    "slug": "security-plus-2.2-match-message-vectors-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un analyste classe les signalements de la semaine selon le vecteur par message utilisé. Associez chaque signalement à son vecteur.",
+      "left": [
+        {
+          "id": "teams",
+          "text": "Message reçu sur Teams d'un compte externe « Support IT », avec un lien de connexion"
+        },
+        {
+          "id": "colis",
+          "text": "Texto annonçant un colis en attente, avec un lien raccourci"
+        },
+        {
+          "id": "smtp",
+          "text": "Message reçu sur compta@example.com dont l'en-tête From: usurpe un fournisseur"
+        },
+        {
+          "id": "whatsapp",
+          "text": "Message WhatsApp d'un numéro inconnu qui se présente comme le directeur général"
+        },
+        {
+          "id": "liste",
+          "text": "Message envoyé à la liste de diffusion du personnel, avec un lien vers une fausse page"
+        }
+      ],
+      "right": [
+        {
+          "id": "mail",
+          "text": "Courriel"
+        },
+        {
+          "id": "sms",
+          "text": "SMS"
+        },
+        {
+          "id": "im",
+          "text": "Messagerie instantanée"
+        },
+        {
+          "id": "voix",
+          "text": "Appel vocal"
+        },
+        {
+          "id": "usb",
+          "text": "Support amovible"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "teams": "im",
+        "colis": "sms",
+        "smtp": "mail",
+        "whatsapp": "im",
+        "liste": "mail"
+      }
+    },
+    "explanation": "Les vecteurs par message se distinguent par le canal qui achemine le contenu : le courriel (SMTP, en-têtes From:, listes de diffusion), le SMS (réseau de l'opérateur mobile, souvent avec des liens raccourcis) et la messagerie instantanée (Teams, Slack, WhatsApp…), où un compte externe ou inconnu peut joindre directement l'employé. Identifier le canal oriente les contrôles : authentification du courriel et passerelle pour le premier, mesures sur le terminal pour le SMS, restriction de l'accès externe et sensibilisation pour la messagerie instantanée.",
+    "distractorNotes": {
+      "voix": "L'appel vocal (vishing) passe par la voix ; aucun des signalements ne décrit un appel téléphonique.",
+      "usb": "Un support amovible est un objet physique branché sur un poste ; tous les signalements décrivent des messages reçus."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.2)"
+  },
+  {
+    "slug": "security-plus-2.2-spf-purpose-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'administrateur de example.com veut que les serveurs destinataires puissent vérifier si l'adresse IP qui leur transmet un courriel est autorisée à envoyer pour son domaine. Quel mécanisme doit-il publier dans le DNS ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un enregistrement SPF"
+        },
+        {
+          "id": "b",
+          "text": "Une clé publique DKIM"
+        },
+        {
+          "id": "c",
+          "text": "Un enregistrement MX"
+        },
+        {
+          "id": "d",
+          "text": "Une signature DNSSEC"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "SPF (Sender Policy Framework) est un enregistrement TXT qui liste les serveurs (adresses, plages, inclusions) autorisés à envoyer pour le domaine de l'enveloppe (MAIL FROM). Le serveur destinataire compare l'adresse IP de la connexion à cette liste et obtient pass, fail, softfail ou neutral. SPF seul ne protège pas l'en-tête From: affiché à l'utilisateur : c'est DMARC qui ajoute la vérification d'alignement et la politique à appliquer.",
+    "distractorNotes": {
+      "b": "La clé publique DKIM permet de vérifier la signature cryptographique d'un message, pas l'autorisation de l'adresse IP émettrice.",
+      "c": "L'enregistrement MX désigne les serveurs qui reçoivent le courrier du domaine, pas ceux qui ont le droit d'en envoyer.",
+      "d": "DNSSEC authentifie les réponses DNS elles-mêmes ; il ne dit pas quelles adresses peuvent envoyer du courriel pour le domaine."
+    },
+    "reference": "RFC 7208 (SPF)"
+  },
+  {
+    "slug": "security-plus-2.2-consumer-im-risk-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Les commerciaux d'une entreprise échangent avec leurs clients par WhatsApp sur leurs téléphones personnels, hors de tout outil géré. Le RSSI considère ce canal comme une surface d'attaque. Quelles deux affirmations justifient son analyse ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les messages et fichiers reçus échappent à la passerelle, au filtrage et à l'archivage de l'entreprise"
+        },
+        {
+          "id": "b",
+          "text": "Les messages circulent en clair sur Internet et peuvent être lus par n'importe quel intermédiaire"
+        },
+        {
+          "id": "c",
+          "text": "Le chiffrement de bout en bout empêche les outils de l'entreprise d'inspecter les liens et fichiers reçus"
+        },
+        {
+          "id": "d",
+          "text": "WhatsApp vérifie les expéditeurs par DMARC, ce qui suffit à bloquer les comptes usurpés"
+        },
+        {
+          "id": "e",
+          "text": "Une messagerie grand public ne permet pas de transmettre de fichiers aux employés"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Une messagerie instantanée grand public non gérée est un vecteur par message que l'entreprise ne contrôle pas : les liens et fichiers arrivent sur le téléphone sans passer par la passerelle ni le filtrage, et rien n'est journalisé ni archivé pour une enquête. Le chiffrement de bout en bout de WhatsApp protège la confidentialité des échanges, mais il empêche aussi toute inspection côté serveur par l'entreprise. Les réponses passent par une messagerie gérée (accès externe contrôlé, journalisation) ou par des mesures sur le terminal.",
+    "distractorNotes": {
+      "b": "WhatsApp chiffre les messages de bout en bout ; le risque ne vient pas d'une lecture en transit.",
+      "d": "DMARC est un mécanisme propre au courriel ; WhatsApp ne l'utilise pas, et un compte inconnu peut écrire à n'importe quel numéro.",
+      "e": "WhatsApp permet d'envoyer documents, images et archives : c'est précisément une voie d'entrée possible pour des fichiers malveillants."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.2)"
+  },
+  {
+    "slug": "security-plus-2.2-dkim-proves-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un analyste lit dkim=pass header.d=example.com dans l'en-tête d'un courriel reçu. Que prouve ce résultat ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Que l'adresse IP du serveur émetteur est autorisée par l'enregistrement SPF de example.com"
+        },
+        {
+          "id": "b",
+          "text": "Que le message ne contient ni lien malveillant ni pièce jointe dangereuse"
+        },
+        {
+          "id": "c",
+          "text": "Que example.com a signé le message et que les parties signées n'ont pas été modifiées depuis la signature"
+        },
+        {
+          "id": "d",
+          "text": "Que le domaine de l'en-tête From: est forcément aligné sur example.com"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "DKIM ajoute une signature numérique calculée sur le corps et sur une liste d'en-têtes. Le destinataire récupère la clé publique dans le DNS (sélecteur._domainkey.example.com) et vérifie la signature : un résultat pass prouve que le domaine d= a signé et que les éléments signés n'ont pas changé en route. DKIM ne juge pas le contenu et ne relie pas à lui seul le domaine signataire à celui du From: ; c'est DMARC qui vérifie cet alignement.",
+    "distractorNotes": {
+      "a": "L'autorisation de l'adresse IP émettrice relève de SPF, pas de DKIM.",
+      "b": "Un attaquant peut signer avec DKIM son propre domaine : la signature n'indique rien sur l'innocuité du contenu.",
+      "d": "Le domaine d= peut différer du domaine du From: ; c'est DMARC qui contrôle l'alignement entre les deux."
+    },
+    "reference": "RFC 6376 (DKIM)"
+  },
+  {
+    "slug": "security-plus-2.2-counterfeit-hardware-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pour économiser 40 %, un service achats a commandé des commutateurs auprès d'un revendeur inconnu sur une place de marché en ligne. L'équipe réseau découvre des composants contrefaits et un firmware modifié. Quel vecteur de menace cet incident illustre-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un réseau sans fil non sécurisé"
+        },
+        {
+          "id": "b",
+          "text": "Un service ouvert sur Internet"
+        },
+        {
+          "id": "c",
+          "text": "La chaîne d'approvisionnement matérielle"
+        },
+        {
+          "id": "d",
+          "text": "Un support amovible"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le matériel a été compromis avant même son installation, chez un acteur de la chaîne d'approvisionnement : un fournisseur hors du circuit agréé par le constructeur. Des composants contrefaits ou un firmware modifié peuvent introduire des portes dérobées ou des défaillances invisibles à l'inventaire. La parade consiste à acheter auprès de distributeurs agréés, à vérifier l'authenticité (numéros de série, firmware signé) et à encadrer les fournisseurs dans la politique d'achat.",
+    "distractorNotes": {
+      "a": "Rien n'indique un réseau sans fil ; le problème est présent dans le matériel dès sa livraison.",
+      "b": "Un service ouvert est une faiblesse de configuration d'un système en production ; ici, la compromission précède le déploiement.",
+      "d": "Un support amovible (clé USB, disque externe) n'est pas en cause : ce sont les équipements eux-mêmes qui ont été altérés."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.2) ; MITRE ATT&CK T1195.003 (Compromise Hardware Supply Chain)"
+  },
+  {
+    "slug": "security-plus-2.2-msp-compromise-first-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le fournisseur de services gérés (MSP) qui administre le parc d'une PME l'informe que son outil de gestion à distance a été compromis et qu'il sert à diffuser un rançongiciel chez plusieurs clients. Aucun poste de la PME ne montre encore de chiffrement. Quelle action la PME doit-elle mener EN PREMIER ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Résilier le contrat du MSP et lancer un appel d'offres pour le remplacer"
+        },
+        {
+          "id": "b",
+          "text": "Couper les accès du MSP : comptes, VPN et agents de gestion à distance"
+        },
+        {
+          "id": "c",
+          "text": "Réinstaller tous les postes de travail à partir d'images de référence"
+        },
+        {
+          "id": "d",
+          "text": "Organiser la réunion de retour d'expérience avec le MSP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'alerte du MSP fournit déjà l'analyse initiale : le canal d'administration de confiance est aux mains de l'attaquant. La priorité est le confinement, c'est-à-dire couper ce canal (désactiver les comptes du MSP, fermer son VPN, arrêter ou isoler les agents de gestion à distance) avant que la charge n'atteigne la PME. Les autres actions viennent ensuite : rechercher des traces, éradiquer, reprendre, puis tirer les leçons et revoir la relation contractuelle.",
+    "distractorNotes": {
+      "a": "Résilier le contrat ne coupe pas les accès techniques déjà en place ; c'est une décision à prendre plus tard, après l'incident.",
+      "c": "Réinstaller relève de la reprise : sans avoir coupé le canal du MSP, les postes réinstallés resteraient exposés, et aucun n'est encore chiffré.",
+      "d": "Le retour d'expérience est la dernière phase du processus, une fois l'incident clos."
+    },
+    "reference": "NIST SP 800-61 Rev. 2 ; MITRE ATT&CK T1199 (Trusted Relationship)"
+  },
+  {
+    "slug": "security-plus-2.2-soc2-type2-vendor-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avant de confier ses dossiers clients à un hébergeur SaaS, le RSSI veut une preuve indépendante que les contrôles de sécurité du vendeur ont réellement fonctionné sur une longue période, et pas seulement qu'ils sont bien conçus. Quel document doit-il exiger ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un rapport SOC 2 de type I"
+        },
+        {
+          "id": "b",
+          "text": "Un rapport SOC 2 de type II"
+        },
+        {
+          "id": "c",
+          "text": "Un accord de confidentialité (NDA) signé"
+        },
+        {
+          "id": "d",
+          "text": "Un questionnaire de sécurité rempli par le vendeur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un rapport SOC 2 est établi par un auditeur indépendant selon les critères de l'AICPA (sécurité, disponibilité, intégrité du traitement, confidentialité, vie privée). Le type I décrit les contrôles et juge leur conception à une date donnée ; le type II évalue en plus leur efficacité opérationnelle sur une période d'observation, souvent de six à douze mois. C'est le type II qui répond à l'exigence du RSSI et réduit l'incertitude sur ce vendeur, maillon de la chaîne d'approvisionnement.",
+    "distractorNotes": {
+      "a": "Le type I ne juge que la conception des contrôles à une date donnée, sans tester leur fonctionnement sur une période.",
+      "c": "Un NDA engage le vendeur à la confidentialité ; il ne prouve rien sur l'efficacité de ses contrôles.",
+      "d": "Un questionnaire rempli par le vendeur est une déclaration non vérifiée par un tiers indépendant."
+    },
+    "reference": "AICPA SOC 2 (type I, type II)"
+  },
+  {
+    "slug": "security-plus-2.2-msp-trusted-access-log-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un dimanche, le SIEM signale la création d'un compte sur le serveur de fichiers d'une entreprise. L'adresse 10.20.0.15 est le bastion utilisé par les techniciens du MSP, qui n'interviennent que les jours ouvrés et sur ticket ; aucun ticket n'est ouvert. Aucun échec d'ouverture de session n'a été enregistré pour svc-msp depuis trente jours. Quel est le vecteur d'accès initial LE PLUS probable ?",
+      "exhibit": "Journal Sécurité - SRV-FIC01 - dimanche 2026-03-15\n03:12:07  4624  Ouverture de session réussie\n          Compte : CORP\\svc-msp  Type d'ouverture : 10\n          Adresse réseau source : 10.20.0.15\n03:12:07  4672  Privilèges spéciaux attribués à la nouvelle session\n          Compte : CORP\\svc-msp\n03:14:41  4720  Un compte d'utilisateur a été créé\n          Demandeur : CORP\\svc-msp  Nouveau compte : CORP\\backup-adm",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une attaque par pulvérisation de mots de passe contre le compte svc-msp"
+        },
+        {
+          "id": "b",
+          "text": "Une clé USB piégée branchée sur le serveur de fichiers"
+        },
+        {
+          "id": "c",
+          "text": "Un courriel de phishing ouvert par un employé de l'entreprise"
+        },
+        {
+          "id": "d",
+          "text": "La compromission du MSP, dont l'accès de confiance a été réutilisé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La session arrive du bastion du MSP avec son compte de service, réussit du premier coup (aucun 4625 depuis trente jours), obtient des privilèges spéciaux (4672) et crée un compte d'administration (4720), hors des horaires et sans ticket. Tout désigne l'utilisation abusive d'une relation de confiance : l'attaquant a compromis le MSP ou ses identifiants, puis emprunté son accès légitime. C'est le risque propre à la chaîne d'approvisionnement de services : l'accès accordé au prestataire devient celui de l'attaquant. La suite consiste à couper cet accès et à prévenir le MSP.",
+    "distractorNotes": {
+      "a": "Une pulvérisation de mots de passe laisserait des échecs d'authentification (4625) ; il n'y en a aucun pour svc-msp depuis trente jours.",
+      "b": "Une clé USB suppose un accès physique et ne produirait pas une ouverture de session RDP (type 10) depuis le bastion du MSP.",
+      "c": "Le compte utilisé est celui du MSP et la connexion vient de son bastion ; rien ne relie l'événement au poste d'un employé de l'entreprise."
+    },
+    "reference": "MITRE ATT&CK T1199 (Trusted Relationship)"
+  },
+  {
+    "slug": "security-plus-2.2-open-source-dependency-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une bibliothèque open source très utilisée publie une version piégée après la prise de contrôle du compte de son mainteneur. Une entreprise développe une vingtaine d'applications qui embarquent des centaines de dépendances. Quelles deux mesures limitent son exposition à ce type d'incident ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Placer un pare-feu applicatif web (WAF) devant les applications publiées"
+        },
+        {
+          "id": "b",
+          "text": "Maintenir une nomenclature logicielle (SBOM) de chaque application"
+        },
+        {
+          "id": "c",
+          "text": "Chiffrer les disques des serveurs de build"
+        },
+        {
+          "id": "d",
+          "text": "Figer les versions des dépendances et vérifier leurs empreintes à chaque build"
+        },
+        {
+          "id": "e",
+          "text": "Publier une politique DMARC p=reject sur le domaine de l'entreprise"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La bibliothèque est un fournisseur logiciel de l'entreprise : sa compromission se propage à toutes les applications qui l'intègrent. Figer les versions (fichier de verrouillage) et vérifier les empreintes empêche qu'une nouvelle version, piégée, soit tirée automatiquement au prochain build. La SBOM recense les composants et leurs versions : quand l'incident est annoncé, elle permet de savoir en quelques minutes quelles applications sont touchées. Les deux mesures agissent sur le vecteur lui-même, l'intégration de code tiers.",
+    "distractorNotes": {
+      "a": "Un WAF filtre les requêtes HTTP entrantes ; il ne voit pas le code malveillant embarqué dans l'application par une dépendance.",
+      "c": "Le chiffrement des disques protège les données au repos en cas de vol ; il n'empêche pas de télécharger et d'intégrer une version piégée.",
+      "e": "DMARC protège le domaine de messagerie contre l'usurpation ; il n'a aucun rapport avec les dépendances logicielles."
+    },
+    "reference": "NIST SP 800-53 Rev. 5 (famille SR, gestion des risques de la chaîne d'approvisionnement) ; MITRE ATT&CK T1195.001"
+  },
+  {
+    "slug": "security-plus-2.2-dependency-confusion-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les développeurs d'une entreprise utilisent des paquets internes hébergés sur un dépôt privé. Un attaquant publie sur le dépôt public un paquet portant le même nom qu'un paquet interne, avec un numéro de version plus élevé, et le serveur de build l'installe. Quelle mesure empêche LE MIEUX cette substitution ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Configurer le gestionnaire de paquets pour que les noms internes ne se résolvent que sur le dépôt privé"
+        },
+        {
+          "id": "b",
+          "text": "Installer un antivirus sur le serveur de build et planifier une analyse complète chaque nuit"
+        },
+        {
+          "id": "c",
+          "text": "Imposer TLS 1.3 pour toutes les connexions du serveur de build vers les dépôts de paquets"
+        },
+        {
+          "id": "d",
+          "text": "Signer avec le certificat de l'entreprise les applications produites par le serveur de build"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Cette attaque par confusion de dépendances exploite la règle de résolution du gestionnaire de paquets : face à deux sources, il prend la version la plus haute, y compris sur le dépôt public. En réservant les noms internes au dépôt privé (espace de noms ou portée dédiés, source unique par paquet), on supprime la possibilité de substitution. Réserver aussi ces noms sur le dépôt public renforce la mesure.",
+    "distractorNotes": {
+      "b": "Un antivirus détecte au mieux un code malveillant connu, après son installation ; il ne corrige pas la règle de résolution qui fait choisir le paquet public.",
+      "c": "TLS protège le téléchargement contre l'interception, mais le paquet malveillant arrive par un canal authentique, depuis le vrai dépôt public.",
+      "d": "Signer les applications produites certifie leur origine ; le paquet piégé y serait intégré et signé comme le reste."
+    },
+    "reference": "MITRE ATT&CK T1195.001 (Compromise Software Dependencies and Development Tools)"
+  },
+  {
+    "slug": "security-plus-2.2-match-supply-chain-mitigation-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le comité des risques passe en revue les risques liés aux tiers. Associez chaque situation à la mesure qui la traite le mieux.",
+      "left": [
+        {
+          "id": "msp",
+          "text": "Les techniciens du MSP ont en permanence des droits d'administrateur du domaine, utilisés quelques heures par mois"
+        },
+        {
+          "id": "miroir",
+          "text": "Une mise à jour d'un logiciel éditeur est téléchargée depuis un miroir tiers"
+        },
+        {
+          "id": "switch",
+          "text": "Un revendeur inconnu propose des commutateurs nettement sous le prix du marché"
+        },
+        {
+          "id": "saas",
+          "text": "Un futur hébergeur SaaS des dossiers clients ne donne aucune visibilité sur ses contrôles"
+        },
+        {
+          "id": "libs",
+          "text": "Une application interne embarque des centaines de bibliothèques open source"
+        }
+      ],
+      "right": [
+        {
+          "id": "jit",
+          "text": "Accès à la demande via un bastion, avec MFA et enregistrement des sessions"
+        },
+        {
+          "id": "sig",
+          "text": "Vérification de la signature de code et de l'empreinte avant déploiement"
+        },
+        {
+          "id": "agree",
+          "text": "Achat auprès de distributeurs agréés par le constructeur et contrôle d'authenticité"
+        },
+        {
+          "id": "audit",
+          "text": "Clause de droit d'audit et rapport SOC 2 de type II exigés au contrat"
+        },
+        {
+          "id": "sbom",
+          "text": "Nomenclature logicielle (SBOM) et veille sur les vulnérabilités des composants"
+        },
+        {
+          "id": "dmarc",
+          "text": "Politique DMARC p=reject sur le domaine de l'entreprise"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "msp": "jit",
+        "miroir": "sig",
+        "switch": "agree",
+        "saas": "audit",
+        "libs": "sbom"
+      }
+    },
+    "explanation": "Chaque acteur de la chaîne d'approvisionnement appelle sa mesure. Le MSP dispose d'un accès privilégié : on le réduit au juste nécessaire, à la demande, sous MFA et avec traçabilité. Un logiciel obtenu hors du canal de l'éditeur se valide par sa signature et son empreinte. Le matériel s'achète dans le circuit agréé, avec contrôle d'authenticité. Un vendeur SaaS s'évalue avant signature par un rapport indépendant et un droit d'audit. Les composants open source se recensent dans une SBOM, croisée avec la veille sur les vulnérabilités.",
+    "distractorNotes": {
+      "dmarc": "DMARC protège le domaine de messagerie contre l'usurpation dans le courriel ; aucune des situations ne relève de ce vecteur."
+    },
+    "reference": "NIST Cybersecurity Framework 2.0 (catégorie GV.SC) ; NIST SP 800-53 Rev. 5 (famille SR)"
+  },
+  {
+    "slug": "security-plus-2.2-vendor-library-vuln-cycle-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une vulnérabilité critique est publiée dans une bibliothèque fournie par un éditeur tiers et intégrée à plusieurs applications de l'entreprise. Ordonnez les étapes de gestion des vulnérabilités, de la première à la dernière.",
+      "items": [
+        {
+          "id": "remed",
+          "text": "Mettre à jour la bibliothèque vers la version corrigée publiée par l'éditeur"
+        },
+        {
+          "id": "report",
+          "text": "Rendre compte au comité des risques des délais de correction et des exceptions"
+        },
+        {
+          "id": "ident",
+          "text": "Interroger les SBOM pour repérer les applications qui embarquent la version vulnérable"
+        },
+        {
+          "id": "valid",
+          "text": "Relancer l'analyse pour vérifier que la version vulnérable a disparu"
+        },
+        {
+          "id": "analyse",
+          "text": "Confirmer l'exposition et prioriser selon le score CVSS et l'exposition à Internet"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "ident",
+        "analyse",
+        "remed",
+        "valid",
+        "report"
+      ]
+    },
+    "explanation": "La gestion des vulnérabilités suit un cycle : identification, analyse, réponse et remédiation, validation, rapport. On identifie d'abord les systèmes concernés, ici grâce aux SBOM qui recensent les composants fournis par des tiers. L'analyse confirme l'exposition réelle et fixe les priorités (CVSS, exposition, criticité métier). La remédiation applique le correctif de l'éditeur. La validation vérifie, par une nouvelle analyse, que la correction est effective. Le rapport clôt le cycle et documente les exceptions.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 4.3) ; NIST SP 800-40 Rev. 4"
+  },
+  {
+    "slug": "security-plus-2.2-identify-supply-chain-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le RSSI d'une banque régionale illustre en réunion le vecteur « chaîne d'approvisionnement ». Quelles deux situations en relèvent ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des clés USB abandonnées sur le parking sont branchées par des employés"
+        },
+        {
+          "id": "b",
+          "text": "L'outil de gestion à distance d'un MSP sert à déployer un logiciel malveillant chez ses clients"
+        },
+        {
+          "id": "c",
+          "text": "Une caméra IP est restée configurée avec le mot de passe d'usine"
+        },
+        {
+          "id": "d",
+          "text": "Une mise à jour légitime d'un éditeur contient une porte dérobée insérée dans sa chaîne de build"
+        },
+        {
+          "id": "e",
+          "text": "Un serveur expose le port RDP 3389 directement sur Internet"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le vecteur chaîne d'approvisionnement passe par un tiers de confiance : fournisseur de services gérés, vendeur de logiciel ou fournisseur de matériel. L'attaquant compromet ce tiers pour atteindre ses clients par un canal qu'ils considèrent comme légitime : l'outil d'administration du MSP, ou le mécanisme de mise à jour de l'éditeur. Les autres situations relèvent d'autres vecteurs, qui ne passent par aucun tiers : support amovible, identifiants par défaut, service ouvert.",
+    "distractorNotes": {
+      "a": "Les clés USB abandonnées relèvent du vecteur support amovible, pas d'un tiers de la chaîne d'approvisionnement.",
+      "c": "Un mot de passe d'usine conservé relève du vecteur identifiants par défaut, une faiblesse de configuration interne.",
+      "e": "Un port RDP exposé relève du vecteur service ouvert, une faiblesse de configuration de l'organisation elle-même."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.2)"
+  },
+  {
+    "slug": "security-plus-2.2-sha256-hex-length-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Avant de déployer l'installateur d'un vendeur, un administrateur compare son empreinte SHA-256 à celle publiée sur le site du vendeur. Combien de caractères hexadécimaux compte une empreinte SHA-256 ?",
+      "fields": [
+        {
+          "id": "n",
+          "label": "Nombre de caractères hexadécimaux (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "n": {
+          "accepted": [
+            "64"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "SHA-256 produit une empreinte de 256 bits, soit 32 octets. Chaque caractère hexadécimal code 4 bits : 256 / 4 = 64 caractères. Comparer l'empreinte du fichier téléchargé à celle publiée par le vendeur détecte une altération en route ou sur un miroir. Elle ne protège pas si le vendeur lui-même diffuse un fichier compromis, d'où l'intérêt de la signature de code et de l'évaluation des fournisseurs.",
+    "distractorNotes": {},
+    "reference": "NIST FIPS 180-4 (SHA-2)"
+  },
+  {
+    "slug": "security-plus-2.2-signed-backdoored-update-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un éditeur découvre qu'un attaquant, présent dans son environnement de build, a inséré une porte dérobée dans une mise à jour. La mise à jour a été signée avec le certificat légitime de l'éditeur puis diffusée à ses clients, qui vérifient tous les signatures. Quelles deux affirmations sont vraies ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une signature valide prouve l'origine du fichier et son intégrité depuis la signature, pas l'absence de code malveillant"
+        },
+        {
+          "id": "b",
+          "text": "La vérification de la CRL par les clients aurait bloqué l'installation de cette mise à jour"
+        },
+        {
+          "id": "c",
+          "text": "Comparer l'empreinte SHA-256 à celle publiée par l'éditeur aurait révélé la porte dérobée"
+        },
+        {
+          "id": "d",
+          "text": "L'attaque suppose nécessairement le vol de la clé privée de signature de l'éditeur"
+        },
+        {
+          "id": "e",
+          "text": "Comparer les résultats de deux chaînes de build indépendantes aide l'éditeur à détecter ce type d'injection"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Le code malveillant a été injecté avant la signature : le processus normal de l'éditeur l'a signé comme le reste. Pour les clients, la mise à jour est donc authentique au sens cryptographique, et le canal de confiance devient le vecteur. La signature garantit l'origine et l'intégrité depuis l'instant de la signature, rien de plus. La défense se place chez l'éditeur : protéger l'environnement de build, et comparer des builds reproductibles produits par des chaînes indépendantes, qu'une injection dans une seule chaîne ferait diverger. Chez le client, la détection comportementale reste nécessaire.",
+    "distractorNotes": {
+      "b": "Le certificat n'était pas révoqué au moment de la diffusion ; la CRL n'aurait rien signalé.",
+      "c": "L'éditeur a publié l'empreinte du fichier compromis lui-même : elle correspond parfaitement.",
+      "d": "Il suffit d'injecter le code avant l'étape de signature automatique ; l'attaquant n'a pas besoin d'emporter la clé privée."
+    },
+    "reference": "MITRE ATT&CK T1195.002 (Compromise Software Supply Chain) ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.2)"
+  }
+]

@@ -1,0 +1,1833 @@
+[
+  {
+    "slug": "security-plus-2.5-default-credentials-router",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME installe un nouveau routeur Wi-Fi dans ses bureaux. Le technicien constate que l'interface d'administration accepte toujours le compte admin avec le mot de passe imprimé dans le manuel du fabricant. Quelle mesure corrige directement la faiblesse constatée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Envoyer les journaux du routeur vers un serveur syslog central"
+        },
+        {
+          "id": "b",
+          "text": "Masquer le SSID du réseau sans fil diffusé dans les bureaux"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer le mot de passe d'usine par un mot de passe robuste"
+        },
+        {
+          "id": "d",
+          "text": "Régler l'heure du routeur sur un serveur NTP interne"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les identifiants d'usine sont publiés dans les manuels et recensés dans des listes que les attaquants et les botnets testent automatiquement : tant qu'ils restent actifs, n'importe qui joignant l'interface d'administration en prend le contrôle. Changer les mots de passe par défaut est l'une des mesures de durcissement citées par l'objectif 2.5 de la SY0-701, et le contrôle 4 des CIS Controls v8 (configuration sécurisée) en fait une règle de base pour tout équipement neuf.",
+    "distractorNotes": {
+      "a": "Centraliser les journaux aide à détecter une connexion frauduleuse, mais n'empêche pas d'utiliser le mot de passe du manuel.",
+      "b": "Masquer le SSID ne protège pas l'interface d'administration et ne cache pas réellement le réseau : le nom circule toujours dans les trames des clients.",
+      "d": "Une heure juste est utile pour corréler les journaux, mais ne change rien à l'accès possible avec les identifiants d'usine."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; CIS Critical Security Controls v8 (contrôle 4)"
+  },
+  {
+    "slug": "security-plus-2.5-segmentation-pci-scope",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un commerçant en ligne veut réduire le périmètre de son audit PCI DSS : seuls les serveurs qui traitent les numéros de carte doivent y entrer, et non ses 200 postes bureautiques. Quelle technique d'atténuation répond à cet objectif ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Isoler l'environnement des cartes dans un segment filtré par pare-feu"
+        },
+        {
+          "id": "b",
+          "text": "Chiffrer le disque de chacun des 200 postes bureautiques de l'entreprise"
+        },
+        {
+          "id": "c",
+          "text": "Déployer un agent EDR sur l'ensemble des postes bureautiques"
+        },
+        {
+          "id": "d",
+          "text": "Imposer un changement trimestriel des mots de passe des utilisateurs"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Sans segmentation, tout système capable de joindre les serveurs de paiement fait partie de l'environnement des données de titulaires (CDE) et entre dans le périmètre de l'audit. En isolant le CDE dans un segment dont le pare-feu n'autorise que les flux nécessaires, l'entreprise sort les postes bureautiques du périmètre PCI DSS et réduit en même temps la surface d'attaque : une compromission d'un poste ne donne plus d'accès direct aux serveurs de cartes.",
+    "distractorNotes": {
+      "b": "Le chiffrement des disques protège les données d'un poste volé, mais un poste qui peut joindre le CDE reste dans le périmètre.",
+      "c": "Un EDR améliore la détection sur les postes, sans les séparer des serveurs de paiement : le périmètre ne change pas.",
+      "d": "La rotation des mots de passe n'isole aucun système ; NIST SP 800-63B déconseille d'ailleurs les changements périodiques sans motif."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; PCI DSS v4.0"
+  },
+  {
+    "slug": "security-plus-2.5-kiosk-allow-list",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une médiathèque met à disposition du public des postes en libre-service qui ne doivent exécuter que le navigateur et le logiciel de catalogue. Des visiteurs tentent de lancer des programmes apportés sur clé USB. Quel contrôle empêche le mieux l'exécution de tout autre programme ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un antivirus à signatures mis à jour toutes les heures"
+        },
+        {
+          "id": "b",
+          "text": "Un pare-feu d'hôte qui bloque les connexions entrantes"
+        },
+        {
+          "id": "c",
+          "text": "Un chiffrement complet du disque de chaque poste"
+        },
+        {
+          "id": "d",
+          "text": "Une liste d'autorisation d'applications (allow list)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une liste d'autorisation inverse la logique habituelle : seuls les exécutables explicitement approuvés (par chemin, empreinte ou signature de l'éditeur) peuvent se lancer, et tout le reste est refusé par défaut. Sur un poste à usage fixe comme une borne publique, la liste est courte et stable, ce qui rend la mesure simple à maintenir. Un programme apporté sur clé USB, qu'il soit malveillant ou simplement non prévu, est bloqué. C'est l'un des contrôles du CIS Controls v8 (contrôle 2, inventaire et contrôle des logiciels).",
+    "distractorNotes": {
+      "a": "Un antivirus ne bloque que ce que ses signatures reconnaissent comme malveillant : un jeu ou un outil légitime apporté par un visiteur s'exécuterait.",
+      "b": "Le pare-feu d'hôte filtre les connexions réseau ; il n'empêche pas de lancer un programme local.",
+      "c": "Le chiffrement du disque protège les données au repos en cas de vol, pas contre l'exécution de programmes sur le poste allumé."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; CIS Critical Security Controls v8 (contrôle 2)"
+  },
+  {
+    "slug": "security-plus-2.5-backup-tape-encryption",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Chaque vendredi, un prestataire transporte les cartouches de sauvegarde d'un cabinet médical vers un coffre externe. Le responsable craint qu'une cartouche soit perdue en route. Quelle mesure protège la confidentialité des données sauvegardées ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Passer à des sauvegardes incrémentielles plutôt que complètes"
+        },
+        {
+          "id": "b",
+          "text": "Chiffrer les sauvegardes, en gardant les clés hors des cartouches"
+        },
+        {
+          "id": "c",
+          "text": "Calculer une empreinte SHA-256 de chaque cartouche avant le départ"
+        },
+        {
+          "id": "d",
+          "text": "Faire signer un registre à chaque remise des cartouches"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une cartouche perdue ou volée se lit avec n'importe quel lecteur compatible : seule une donnée chiffrée reste inexploitable pour celui qui la trouve. Le chiffrement des données au repos fait partie des techniques d'atténuation de l'objectif 2.5. Il n'a de valeur que si la clé ne voyage pas avec le support : elle est conservée et sauvegardée à part, selon les règles de gestion des clés de NIST SP 800-57.",
+    "distractorNotes": {
+      "a": "Le type de sauvegarde change le volume copié et la durée de restauration, pas la lisibilité d'une cartouche perdue.",
+      "c": "Une empreinte permet de vérifier l'intégrité d'une cartouche, mais les données restent lisibles en clair.",
+      "d": "Le registre documente la chaîne de traçabilité ; il prouve qui avait la cartouche, sans la rendre illisible pour un tiers."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-57"
+  },
+  {
+    "slug": "security-plus-2.5-unused-switch-ports",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans les salles de réunion d'une entreprise, plusieurs prises murales sont reliées à des ports actifs du commutateur d'étage alors qu'aucun équipement n'y est branché. Quelle mesure de durcissement réduit le risque qu'un visiteur y connecte un appareil non autorisé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Affecter ces ports au VLAN des postes pour simplifier le brassage"
+        },
+        {
+          "id": "b",
+          "text": "Activer la journalisation des requêtes DNS des postes de travail"
+        },
+        {
+          "id": "c",
+          "text": "Désactiver administrativement les ports inutilisés"
+        },
+        {
+          "id": "d",
+          "text": "Chiffrer les disques des ordinateurs présents dans les salles"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un port actif et non surveillé est une porte d'entrée physique dans le réseau interne : un visiteur y obtient une adresse et accède aux ressources du VLAN. Désactiver (shutdown) les ports qui ne servent pas fait partie du durcissement cité par l'objectif 2.5 (« désactivation des ports et protocoles »). Pour les ports qui doivent rester actifs, on complète par un contrôle d'accès réseau comme IEEE 802.1X.",
+    "distractorNotes": {
+      "a": "Placer ces prises dans le VLAN des postes donnerait au visiteur un accès direct aux ressources des salariés : c'est l'inverse du but recherché.",
+      "b": "La journalisation DNS peut révéler un appareil inconnu après coup, mais n'empêche pas sa connexion.",
+      "d": "Le chiffrement des disques protège les données des ordinateurs en cas de vol ; il ne ferme pas les ports du commutateur."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; CIS Critical Security Controls v8 (contrôle 4)"
+  },
+  {
+    "slug": "security-plus-2.5-mfp-disk-sanitization",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une imprimante multifonction louée arrive en fin de contrat et doit être rendue au loueur. Son disque interne conserve une copie des documents numérisés, dont des bulletins de paie. Quelle action protège ces documents avant le départ de l'appareil ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Réinitialiser le mot de passe administrateur de l'appareil"
+        },
+        {
+          "id": "b",
+          "text": "Assainir le disque interne selon NIST SP 800-88"
+        },
+        {
+          "id": "c",
+          "text": "Mettre à jour le micrologiciel vers la dernière version"
+        },
+        {
+          "id": "d",
+          "text": "Retirer l'appareil de l'inventaire des actifs"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le décommissionnement d'un équipement ne se limite pas au matériel : toute donnée stockée doit être rendue irrécupérable avant que l'appareil quitte l'organisation. NIST SP 800-88 Rev. 1 décrit trois niveaux (clear, purge, destroy) ; pour un support qui sort du contrôle de l'entreprise, on vise au moins la purge, par exemple avec la fonction d'effacement sécurisé du constructeur, ou l'on retire et détruit le disque si le contrat le permet. On conserve ensuite la preuve de l'effacement.",
+    "distractorNotes": {
+      "a": "Changer le mot de passe n'efface rien : le disque, une fois démonté, se lit directement.",
+      "c": "Un micrologiciel à jour corrige des vulnérabilités de l'appareil, mais laisse les documents sur le disque.",
+      "d": "Mettre l'inventaire à jour est la dernière étape du décommissionnement ; elle ne protège pas les données encore présentes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-88 Rev. 1"
+  },
+  {
+    "slug": "security-plus-2.5-client-side-encryption-cloud",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une collectivité externalise ses sauvegardes dans un stockage objet chez un fournisseur cloud. Le RSSI exige que le personnel du fournisseur ne puisse en aucun cas lire les données, même sur demande adressée au seul fournisseur. Quelle solution répond le mieux à l'exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Activer le chiffrement côté serveur avec des clés gérées par le fournisseur"
+        },
+        {
+          "id": "b",
+          "text": "Imposer TLS 1.3 pour tous les transferts vers le stockage objet"
+        },
+        {
+          "id": "c",
+          "text": "Activer le versionnement et le verrouillage des objets (WORM)"
+        },
+        {
+          "id": "d",
+          "text": "Chiffrer les sauvegardes avant l'envoi, avec des clés gardées en interne"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Pour que le fournisseur ne puisse pas lire les données, il ne doit jamais détenir les clés. Le chiffrement côté client, réalisé avant l'envoi avec des clés que seule la collectivité conserve, garantit que le fournisseur ne stocke que des données chiffrées inexploitables, y compris s'il est contraint de les remettre. Le choix du chiffrement adapté (au repos, en transit, et qui détient la clé) fait partie des techniques d'atténuation de l'objectif 2.5.",
+    "distractorNotes": {
+      "a": "Les données sont chiffrées sur les disques du fournisseur, mais il détient les clés : ses administrateurs, ou une réquisition qui lui est adressée, peuvent obtenir les données en clair.",
+      "b": "TLS protège les données pendant le transfert uniquement ; elles arrivent en clair dans le service du fournisseur.",
+      "c": "Le verrouillage WORM protège contre la suppression ou la modification, par exemple par un rançongiciel, pas contre la lecture."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-57"
+  },
+  {
+    "slug": "security-plus-2.5-edr-network-isolation",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'EDR signale qu'un poste du service comptable communique avec un serveur de commande et de contrôle connu. L'équipe veut stopper toute propagation tout en préservant le contenu de la mémoire vive pour l'analyse. Quelle action est la plus adaptée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Isoler le poste du réseau depuis la console EDR, sans l'éteindre"
+        },
+        {
+          "id": "b",
+          "text": "Éteindre le poste en coupant directement son alimentation"
+        },
+        {
+          "id": "c",
+          "text": "Réinstaller le poste sans attendre à partir de l'image de référence"
+        },
+        {
+          "id": "d",
+          "text": "Désactiver le compte Active Directory de l'utilisateur du poste"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'isolation réseau proposée par les EDR coupe toutes les communications du poste, sauf celle avec la console de gestion : le logiciel malveillant ne peut plus joindre son serveur ni se propager, mais la machine reste allumée. La mémoire vive, la plus volatile des sources de preuves selon la RFC 3227, reste donc disponible pour une capture. L'isolation est l'une des techniques d'atténuation citées par l'objectif 2.5.",
+    "distractorNotes": {
+      "b": "Couper l'alimentation arrête la communication, mais détruit le contenu de la mémoire vive que l'équipe veut préserver.",
+      "c": "Réinstaller le poste efface toutes les preuves et empêche de comprendre l'intrusion ; la reconstruction vient après l'analyse.",
+      "d": "Le code malveillant continue de s'exécuter sur le poste et de communiquer avec son serveur, quel que soit l'état du compte de l'utilisateur."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; RFC 3227"
+  },
+  {
+    "slug": "security-plus-2.5-virtual-patch-zero-day",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un éditeur publie un avis : une vulnérabilité critique de son application web, déjà exploitée, ne sera corrigée que dans dix jours. L'application est exposée sur Internet et indispensable aux clients. Quelle mesure réduit le mieux le risque en attendant le correctif ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Accepter le risque et attendre la publication du correctif officiel"
+        },
+        {
+          "id": "b",
+          "text": "Réinstaller l'application à partir du support d'origine"
+        },
+        {
+          "id": "c",
+          "text": "Bloquer le motif d'exploitation publié par une règle WAF"
+        },
+        {
+          "id": "d",
+          "text": "Augmenter la fréquence des sauvegardes complètes du serveur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Quand aucun correctif n'existe et que le service ne peut pas être arrêté, on applique un contrôle compensatoire : un « correctif virtuel ». Une règle de pare-feu applicatif (WAF) ou d'IPS qui reconnaît la requête d'exploitation décrite dans l'avis bloque l'attaque avant qu'elle atteigne l'application. On installe ensuite le vrai correctif dès sa sortie, après test, comme le prévoit NIST SP 800-40 Rev. 4, puis on vérifie par un nouveau scan.",
+    "distractorNotes": {
+      "a": "Accepter un risque critique déjà exploité, alors qu'une mesure compensatoire simple existe, n'est pas une réponse raisonnable.",
+      "b": "La version d'origine contient la même vulnérabilité : la réinstaller ne protège de rien.",
+      "d": "Des sauvegardes plus fréquentes facilitent la reprise après une attaque, mais n'empêchent pas l'exploitation."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-40 Rev. 4"
+  },
+  {
+    "slug": "security-plus-2.5-helpdesk-delegation",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pour leur permettre de réinitialiser les mots de passe des utilisateurs, les cinq techniciens du support ont été ajoutés au groupe Admins du domaine. Un audit relève l'écart. Quelle correction applique le principe du moindre privilège ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les laisser dans le groupe en leur imposant l'authentification multifacteur"
+        },
+        {
+          "id": "b",
+          "text": "Leur déléguer sur l'OU des utilisateurs le seul droit de réinitialisation"
+        },
+        {
+          "id": "c",
+          "text": "Leur faire utiliser un compte Admins du domaine unique et partagé"
+        },
+        {
+          "id": "d",
+          "text": "Les placer dans le groupe Administrateurs des contrôleurs de domaine"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le moindre privilège consiste à n'accorder que les droits nécessaires à la tâche. Active Directory permet de déléguer sur une unité d'organisation (OU) un droit précis, ici la réinitialisation des mots de passe des comptes utilisateurs, sans aucun autre pouvoir sur l'annuaire. Les techniciens sont retirés du groupe Admins du domaine : un compte de support compromis ne donne plus le contrôle de tout le domaine. C'est la mesure AC-6 (Least Privilege) de NIST SP 800-53 Rev. 5.",
+    "distractorNotes": {
+      "a": "L'authentification multifacteur rend le vol des comptes plus difficile, mais chaque technicien garde le contrôle total du domaine.",
+      "c": "Un compte partagé garde tous les privilèges et supprime en plus la traçabilité individuelle des actions.",
+      "d": "Le groupe Administrateurs intégré des contrôleurs de domaine donne un contrôle presque équivalent à celui des Admins du domaine : le privilège reste excessif."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-53 Rev. 5 (AC-6)"
+  },
+  {
+    "slug": "security-plus-2.5-configuration-drift-gpo",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un parc de 300 serveurs Windows, un audit montre que des paramètres durcis à l'installation (SMBv1 désactivé, compte Invité désactivé) ont été réactivés au fil des dépannages. Quelle mesure corrige le mieux cette dérive dans la durée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Imposer la base de référence par GPO et contrôler la conformité"
+        },
+        {
+          "id": "b",
+          "text": "Refaire un durcissement manuel de chaque serveur après chaque audit trimestriel"
+        },
+        {
+          "id": "c",
+          "text": "Installer un second antivirus sur chacun des serveurs du parc"
+        },
+        {
+          "id": "d",
+          "text": "Chiffrer le volume système de chacun des serveurs du parc"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La dérive de configuration se corrige en rendant la base de référence (baseline) autoritaire : une stratégie de groupe réapplique périodiquement les paramètres de sécurité, et un outil de conformité signale les serveurs qui s'en écartent. Le durcissement ne reste efficace que s'il est imposé et vérifié en continu, comme le demandent la mesure CM-6 (Configuration Settings) de NIST SP 800-53 Rev. 5 et le contrôle 4 des CIS Controls v8.",
+    "distractorNotes": {
+      "b": "Un durcissement manuel ponctuel laisse la dérive se reproduire entre deux audits et dépend de la rigueur de chaque intervention.",
+      "c": "Un antivirus supplémentaire ne réimpose aucun paramètre et peut même entrer en conflit avec le premier.",
+      "d": "Le chiffrement du volume protège les données au repos ; il ne remet pas SMBv1 ou le compte Invité dans l'état attendu."
+    },
+    "reference": "NIST SP 800-53 Rev. 5 (CM-6) ; CIS Critical Security Controls v8 (contrôle 4)"
+  },
+  {
+    "slug": "security-plus-2.5-file-integrity-monitoring",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur des serveurs web Linux, le RSSI veut être alerté dès qu'un binaire système ou un fichier de /etc est modifié, par exemple par un rootkit ou par un administrateur hors procédure. Quel outil de surveillance répond le mieux à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un scanner de vulnérabilités authentifié lancé chaque semaine"
+        },
+        {
+          "id": "b",
+          "text": "Un IDS réseau qui inspecte le trafic devant la ferme web"
+        },
+        {
+          "id": "c",
+          "text": "Une sonde qui vérifie chaque minute la disponibilité HTTP"
+        },
+        {
+          "id": "d",
+          "text": "Un outil FIM qui compare les empreintes à une référence"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un outil de contrôle d'intégrité des fichiers (FIM) calcule l'empreinte cryptographique des fichiers surveillés et la compare régulièrement, ou en temps réel, à une référence approuvée : toute modification d'un binaire ou d'un fichier de configuration déclenche une alerte, quel qu'en soit l'auteur. C'est une forme de surveillance de l'hôte, technique d'atténuation de l'objectif 2.5, qui répond à la mesure SI-7 (intégrité des logiciels, micrologiciels et informations) de NIST SP 800-53 Rev. 5.",
+    "distractorNotes": {
+      "a": "Un scanner hebdomadaire cherche des vulnérabilités connues ; il ne signale pas en continu la modification d'un fichier.",
+      "b": "Un IDS réseau voit le trafic, pas les fichiers modifiés sur le disque des serveurs, surtout si la modification est locale.",
+      "c": "Une sonde de disponibilité vérifie que le site répond ; un rootkit discret ne change rien à cette réponse."
+    },
+    "reference": "NIST SP 800-53 Rev. 5 (SI-7)"
+  },
+  {
+    "slug": "security-plus-2.5-ot-vendor-segmentation",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le prestataire de maintenance de la gestion technique du bâtiment (GTB) d'un hôpital doit accéder à distance à l'automate qui pilote la climatisation. Aujourd'hui, l'automate est sur le même réseau plat que les postes cliniques. Quelle architecture limite le mieux le risque ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Fournir au prestataire un VPN donnant accès à tout le réseau interne, protégé par MFA"
+        },
+        {
+          "id": "b",
+          "text": "Isoler la GTB dans un segment dont le pare-feu n'admet que le bastion du prestataire"
+        },
+        {
+          "id": "c",
+          "text": "Rediriger un port du pare-feu Internet vers l'automate, filtré sur l'IP du prestataire"
+        },
+        {
+          "id": "d",
+          "text": "Installer un antivirus sur l'automate et conserver le réseau dans son état actuel"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Deux risques se cumulent : l'accès distant d'un tiers et l'absence de cloisonnement entre la GTB et les postes cliniques. Un segment dédié à la GTB, protégé par un pare-feu qui n'autorise que les flux nécessaires depuis un bastion d'accès (où le prestataire s'authentifie et où les sessions sont tracées), traite les deux : le prestataire ne voit que l'automate, et un poste clinique compromis ne peut plus l'atteindre. C'est l'application de la segmentation et du contrôle d'accès de l'objectif 2.5 (mesure SC-7 de NIST SP 800-53 Rev. 5).",
+    "distractorNotes": {
+      "a": "La MFA protège l'authentification, mais le prestataire, ou un attaquant qui le compromet, obtient l'accès à tout le réseau de l'hôpital.",
+      "c": "L'automate serait exposé directement sur Internet et resterait sur le réseau plat : une compromission ouvrirait l'accès aux postes cliniques.",
+      "d": "Un automate n'accepte généralement pas d'antivirus, et le réseau plat laisse intact le risque de propagation entre GTB et postes."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-53 Rev. 5 (SC-7)"
+  },
+  {
+    "slug": "security-plus-2.5-share-ntfs-effective",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'utilisatrice mdupont, membre du seul groupe GG_Finance, ouvre le dossier par le partage réseau \\\\FS01\\Finance. Quelle est sa permission effective ?",
+      "exhibit": "Partage \\\\FS01\\Finance\n  Autorisations du partage :\n    Tout le monde ........ Contrôle total\nDossier D:\\Finance, autorisations NTFS :\n    GG_Finance ........... Lecture et exécution\n    GG_Direction ......... Modification\n    Administrateurs ...... Contrôle total",
+      "options": [
+        {
+          "id": "a",
+          "text": "Contrôle total, car le partage l'accorde à Tout le monde"
+        },
+        {
+          "id": "b",
+          "text": "Modification, car c'est la plus forte des permissions NTFS"
+        },
+        {
+          "id": "c",
+          "text": "Lecture et exécution, selon la règle la plus restrictive"
+        },
+        {
+          "id": "d",
+          "text": "Aucun accès, car son compte n'est pas cité nominativement"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Pour un accès par le réseau, Windows calcule séparément la permission de partage et la permission NTFS, puis retient la plus restrictive des deux. Ici, le partage accorde Contrôle total à Tout le monde, et NTFS n'accorde à GG_Finance que Lecture et exécution : mdupont obtient donc Lecture et exécution. Une pratique courante consiste justement à laisser le partage large et à appliquer le moindre privilège par les ACL NTFS, qui s'appliquent aussi en accès local.",
+    "distractorNotes": {
+      "a": "Le Contrôle total du partage est plafonné par l'ACL NTFS : la plus restrictive des deux l'emporte.",
+      "b": "Modification est accordée à GG_Direction, dont mdupont n'est pas membre ; on ne retient pas la plus forte permission de l'ACL, mais celle de ses groupes.",
+      "d": "Les permissions s'appliquent aux comptes comme aux groupes dont ils sont membres : l'appartenance à GG_Finance suffit."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-53 Rev. 5 (AC-3, AC-6)"
+  },
+  {
+    "slug": "security-plus-2.5-edr-fileless",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un analyste découvre qu'un attaquant a lancé, sur plusieurs postes, des commandes PowerShell encodées qui chargent du code en mémoire sans écrire de fichier sur le disque. L'antivirus à signatures n'a rien détecté. Quel outil de protection des terminaux est le plus adapté à ce type d'attaque ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un EDR qui analyse le comportement des processus"
+        },
+        {
+          "id": "b",
+          "text": "Un chiffrement complet du disque de chacun des postes concernés"
+        },
+        {
+          "id": "c",
+          "text": "Un pare-feu d'hôte qui bloque toutes les connexions entrantes"
+        },
+        {
+          "id": "d",
+          "text": "Un antivirus à signatures d'un second éditeur, en complément"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Une attaque « sans fichier » ne laisse sur le disque aucun exécutable à comparer à une signature. Un EDR (Endpoint Detection and Response) observe en continu le comportement des processus : PowerShell lancé avec une commande encodée par un processus inhabituel, injection en mémoire, connexions sortantes suspectes. Il déclenche une alerte, conserve la télémétrie pour l'enquête et permet d'agir à distance (arrêt du processus, isolation du poste). La protection des terminaux par EDR fait partie du durcissement cité par l'objectif 2.5.",
+    "distractorNotes": {
+      "b": "Le chiffrement du disque protège les données d'un poste éteint ou volé ; il ne voit rien d'un code qui s'exécute en mémoire.",
+      "c": "Ces attaques s'appuient sur des connexions sortantes et sur des outils légitimes ; bloquer l'entrant ne les détecte pas.",
+      "d": "Un second moteur à signatures souffre de la même limite : sans fichier sur le disque, il n'y a rien à comparer."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; CIS Critical Security Controls v8 (contrôle 10)"
+  },
+  {
+    "slug": "security-plus-2.5-tls-deprecated-versions",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un scan de configuration TLS du portail https://portail.example.com montre que le serveur accepte SSLv3, TLS 1.0, TLS 1.1, TLS 1.2 et TLS 1.3. Quelles versions sont dépréciées et doivent être désactivées dans le cadre du durcissement ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "SSLv3 seulement"
+        },
+        {
+          "id": "b",
+          "text": "SSLv3 et TLS 1.0"
+        },
+        {
+          "id": "c",
+          "text": "SSLv3, TLS 1.0 et TLS 1.1"
+        },
+        {
+          "id": "d",
+          "text": "SSLv3, TLS 1.0, TLS 1.1 et TLS 1.2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "SSLv3 est cassé (attaque POODLE) et l'IETF a officiellement déprécié TLS 1.0 et TLS 1.1 en 2021 (RFC 8996) : ils reposent sur des constructions anciennes (MD5 et SHA-1 dans la négociation, absence de suites AEAD obligatoires). TLS 1.2, correctement configuré avec des suites modernes, reste admis, et TLS 1.3 (RFC 8446) est la version recommandée. Désactiver les protocoles obsolètes est une mesure de durcissement de l'objectif 2.5 : un attaquant ne peut plus forcer une négociation vers une version faible.",
+    "distractorNotes": {
+      "a": "TLS 1.0 et TLS 1.1 sont eux aussi dépréciés : les laisser actifs permet encore des négociations vers des versions faibles.",
+      "b": "TLS 1.1 est déprécié au même titre que TLS 1.0 ; il doit lui aussi être désactivé.",
+      "d": "TLS 1.2 n'est pas déprécié : avec des suites de chiffrement modernes, il reste une version acceptable aux côtés de TLS 1.3."
+    },
+    "reference": "RFC 8996 ; RFC 8446 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5)"
+  },
+  {
+    "slug": "security-plus-2.5-iptables-rule-order",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sur ce serveur web exposé à Internet, la politique prévoit : HTTPS ouvert à tous, SSH réservé au réseau d'administration 10.20.0.0/24. Un scan lancé depuis Internet montre pourtant le port 22 ouvert. Quelle est la cause ?",
+      "exhibit": "# iptables -L INPUT -n --line-numbers\nChain INPUT (policy DROP)\nnum  target  prot opt source        destination\n1    ACCEPT  all  --  0.0.0.0/0     0.0.0.0/0    ctstate RELATED,ESTABLISHED\n2    ACCEPT  tcp  --  0.0.0.0/0     0.0.0.0/0    tcp dpt:443\n3    ACCEPT  tcp  --  0.0.0.0/0     0.0.0.0/0    tcp dpt:22\n4    ACCEPT  tcp  --  10.20.0.0/24  0.0.0.0/0    tcp dpt:22\n5    DROP    tcp  --  0.0.0.0/0     0.0.0.0/0    tcp dpt:22",
+      "options": [
+        {
+          "id": "a",
+          "text": "La politique DROP bloque les réponses aux sessions SSH autorisées"
+        },
+        {
+          "id": "b",
+          "text": "La règle 3 accepte SSH de toute source avant la règle 4"
+        },
+        {
+          "id": "c",
+          "text": "La règle 4 est trop large : 10.20.0.0/24 contient des adresses Internet"
+        },
+        {
+          "id": "d",
+          "text": "La règle 1 accepte toute nouvelle connexion entrante, quel que soit le port"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "iptables évalue les règles dans l'ordre et s'arrête à la première qui correspond. Un paquet SSH venant d'Internet n'est pas une réponse (règle 1), n'est pas à destination de 443 (règle 2), mais correspond à la règle 3, qui l'accepte quelle que soit la source : les règles 4 et 5 ne sont jamais atteintes pour ce trafic. Il faut supprimer la règle 3 ; la règle 4 accepte alors le seul réseau d'administration, et la règle 5 comme la politique DROP refusent le reste. Une ACL ne vaut que par l'ordre de ses règles.",
+    "distractorNotes": {
+      "a": "La règle 1 accepte le trafic RELATED,ESTABLISHED : les réponses passent. Le symptôme observé est d'ailleurs l'inverse, un port trop ouvert.",
+      "c": "10.20.0.0/24 est une plage privée RFC 1918 de 256 adresses, qui ne contient aucune adresse routée sur Internet.",
+      "d": "La règle 1 ne correspond qu'aux paquets d'une connexion déjà établie ou liée à une connexion existante ; une nouvelle connexion n'est pas dans cet état."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-53 Rev. 5 (SC-7)"
+  },
+  {
+    "slug": "security-plus-2.5-legacy-ics-isolation",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une usine exploite un poste de supervision sous Windows XP qui pilote une ligne de production. Le fabricant de la ligne interdit toute mise à jour du système et toute installation de logiciel tiers sous peine de perdre le support. Le poste ne doit dialoguer qu'avec l'automate de la ligne et le serveur d'historisation. Quelle mesure réduit le mieux le risque ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Isoler le poste dans un segment filtré limité à l'automate et à l'historien"
+        },
+        {
+          "id": "b",
+          "text": "Migrer le poste vers Windows 11 lors du prochain arrêt de maintenance de la ligne"
+        },
+        {
+          "id": "c",
+          "text": "Installer sur le poste un agent EDR encore compatible avec Windows XP"
+        },
+        {
+          "id": "d",
+          "text": "Accepter le risque, puisqu'aucun correctif ne peut être appliqué au poste"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le système ne peut être ni corrigé ni équipé d'un agent : les mesures sur l'hôte sont exclues par le fabricant. Il reste à réduire son exposition. Un segment dédié, dont le pare-feu n'autorise que les deux flux nécessaires (automate et historien), empêche un poste bureautique compromis ou un ver de l'atteindre, et l'empêche lui-même de servir de relais. C'est le contrôle compensatoire attendu pour un système hérité (legacy) : isolation et segmentation, objectif 2.5, mesure SC-7 de NIST SP 800-53 Rev. 5.",
+    "distractorNotes": {
+      "b": "La migration est interdite par le fabricant : elle ferait perdre le support de la ligne et n'est pas une option dans ce scénario.",
+      "c": "Installer un logiciel tiers est explicitement interdit par le fabricant, quel que soit l'éditeur de l'agent.",
+      "d": "Accepter le risque n'est pas justifié alors qu'une mesure compensatoire efficace, la segmentation, reste possible sans toucher au poste."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-53 Rev. 5 (SC-7)"
+  },
+  {
+    "slug": "security-plus-2.5-sudoers-least-privilege",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Lors de la revue des droits d'un serveur web, l'auditeur cherche la règle sudo qui accorde, en pratique, bien plus que l'action prévue. Laquelle ?",
+      "exhibit": "# cat /etc/sudoers.d/web\n%webops  ALL=(root) /usr/bin/systemctl restart nginx\n%dba     ALL=(postgres) /usr/bin/pg_dump\ndeploy   ALL=(root) NOPASSWD: /usr/bin/vim /etc/nginx/nginx.conf\nalice    ALL=(root) /usr/sbin/nginx -t",
+      "options": [
+        {
+          "id": "a",
+          "text": "La ligne qui permet à webops de redémarrer nginx en tant que root"
+        },
+        {
+          "id": "b",
+          "text": "La ligne qui permet à dba de lancer pg_dump sous l'identité postgres"
+        },
+        {
+          "id": "c",
+          "text": "La ligne qui permet à deploy de modifier nginx.conf avec vim"
+        },
+        {
+          "id": "d",
+          "text": "La ligne qui permet à alice de tester la configuration par nginx -t"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La règle de deploy semble limitée à l'édition d'un fichier, mais elle lance vim en tant que root : un éditeur complet permet d'exécuter des commandes du système, qui héritent alors des droits root. La règle accorde donc, en pratique, un accès root complet, sans mot de passe en plus. Le moindre privilège impose ici sudoedit, qui ouvre une copie du fichier avec l'éditeur de l'utilisateur sous son propre compte, puis la réinstalle. Les autres règles se limitent à une commande sans possibilité d'en lancer d'autres (mesure AC-6 de NIST SP 800-53 Rev. 5).",
+    "distractorNotes": {
+      "a": "La règle se limite à la commande systemctl restart nginx, arguments compris : elle ne permet rien d'autre que ce redémarrage.",
+      "b": "pg_dump s'exécute sous le compte postgres, pas sous root, et ne fait qu'exporter des bases : c'est l'action prévue pour les DBA.",
+      "d": "nginx -t se contente de vérifier la syntaxe de la configuration et rend la main : aucune autre commande n'est accessible."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-53 Rev. 5 (AC-6)"
+  },
+  {
+    "slug": "security-plus-2.5-allow-list-userprofile",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Après le nettoyage du poste, le RSSI veut empêcher qu'un exécutable non approuvé, déposé dans le profil d'un utilisateur, puisse de nouveau se lancer sur les postes comptables, quels que soient son nom, son empreinte ou le domaine qu'il contacte. Quelle mesure répond le mieux à cet objectif ?",
+      "exhibit": "2026-10-14 09:12:03 host=PC-COMPTA-07 user=lmartin event=process_start\n  image=C:\\Users\\lmartin\\AppData\\Roaming\\upd\\svch0st.exe\n  parent=C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE\n  signed=false\n2026-10-14 09:12:05 host=PC-COMPTA-07 event=dns_query\n  query=cdn-maj.example.net answer=203.0.113.45",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bloquer le domaine cdn-maj.example.net sur le proxy et sur le DNS interne"
+        },
+        {
+          "id": "b",
+          "text": "Ajouter l'empreinte de svch0st.exe à la liste de blocage de l'antivirus"
+        },
+        {
+          "id": "c",
+          "text": "Activer le chiffrement complet du disque sur l'ensemble des postes comptables"
+        },
+        {
+          "id": "d",
+          "text": "Déployer une liste d'autorisation qui n'admet que les exécutables approuvés"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le journal montre un exécutable non signé, au nom imitant svchost.exe, lancé depuis AppData par Outlook : un scénario classique de pièce jointe piégée. Bloquer ce domaine ou cette empreinte ne vise que cet échantillon ; l'attaquant changera de nom, d'empreinte et de serveur. Une liste d'autorisation d'applications (AppLocker ou WDAC sous Windows, par exemple) refuse par défaut tout exécutable non approuvé, notamment dans les dossiers inscriptibles par l'utilisateur. Elle traite toute la classe d'attaque, comme l'exige l'énoncé.",
+    "distractorNotes": {
+      "a": "Le blocage du domaine n'arrête que ce serveur de commande ; un nouvel échantillon contactera un autre domaine, et l'exécutable peut nuire sans réseau.",
+      "b": "Une empreinte change à la moindre modification du fichier : la mesure ne vise que cet échantillon précis.",
+      "c": "Le chiffrement du disque protège les données d'un poste perdu ; il n'empêche aucune exécution sur un poste démarré."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; CIS Critical Security Controls v8 (contrôle 2)"
+  },
+  {
+    "slug": "security-plus-2.5-web-server-hardening-actions",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un administrateur prépare un nouveau serveur web Linux avant sa mise en production. Quelles deux actions relèvent du durcissement de ce serveur ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Activer un compte invité sans mot de passe pour les tests de recette"
+        },
+        {
+          "id": "b",
+          "text": "Désinstaller les paquets et les services dont le serveur n'a pas besoin"
+        },
+        {
+          "id": "c",
+          "text": "Autoriser la connexion SSH directe du compte root par mot de passe"
+        },
+        {
+          "id": "d",
+          "text": "Laisser le mode débogage de l'application actif pour les dépannages"
+        },
+        {
+          "id": "e",
+          "text": "Remplacer les mots de passe par défaut des comptes de l'application"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Durcir un système, c'est réduire sa surface d'attaque et supprimer les faiblesses connues avant son exposition. Retirer les logiciels et services inutiles supprime autant de composants à corriger et à attaquer ; remplacer les mots de passe par défaut ferme un accès que tout attaquant connaît. Ces deux mesures figurent dans la liste de durcissement de l'objectif 2.5 et dans les CIS Benchmarks des distributions Linux.",
+    "distractorNotes": {
+      "a": "Un compte invité sans mot de passe est un accès ouvert à tous : c'est exactement ce que le durcissement supprime.",
+      "c": "Les guides de durcissement demandent d'interdire la connexion directe de root et de privilégier une authentification par clé.",
+      "d": "Le mode débogage divulgue des messages d'erreur détaillés et parfois des fonctions d'administration ; on le désactive en production."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; CIS Benchmarks"
+  },
+  {
+    "slug": "security-plus-2.5-iot-camera-segmentation",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise déploie 60 caméras IP dont le micrologiciel, fermé, n'accepte aucun agent de sécurité et ne reçoit de mises à jour que deux fois par an. Les caméras n'ont besoin de dialoguer qu'avec l'enregistreur vidéo (NVR). Quelles deux mesures réduisent le mieux le risque ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Placer les caméras dans un VLAN dédié dont l'ACL n'admet que le NVR"
+        },
+        {
+          "id": "b",
+          "text": "Rediriger un port du pare-feu Internet vers chaque caméra pour la supervision"
+        },
+        {
+          "id": "c",
+          "text": "Désactiver le chiffrement des flux vidéo pour soulager le processeur des caméras"
+        },
+        {
+          "id": "d",
+          "text": "Remplacer les identifiants d'usine de chaque caméra par un mot de passe unique"
+        },
+        {
+          "id": "e",
+          "text": "Autoriser les caméras à joindre Internet pour vérifier elles-mêmes leurs mises à jour"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Quand l'équipement ne peut pas être protégé de l'intérieur (pas d'agent, correctifs rares), on agit sur son environnement et sa configuration. Le VLAN dédié avec une ACL limitée au NVR empêche une caméra compromise de servir de tremplin vers le reste du réseau et réduit les sources capables de l'attaquer. Les identifiants d'usine sont la première cible des botnets IoT : les remplacer par des mots de passe uniques ferme l'accès le plus courant. Segmentation, contrôle d'accès et changement des mots de passe par défaut sont trois techniques de l'objectif 2.5.",
+    "distractorNotes": {
+      "b": "Exposer chaque caméra sur Internet multiplie la surface d'attaque ; la supervision passe par le NVR ou par un accès interne.",
+      "c": "Supprimer le chiffrement expose les images à l'interception sur le réseau, sans aucun bénéfice de sécurité.",
+      "e": "Ouvrir Internet aux caméras contredit le besoin de flux limités au NVR ; les mises à jour peuvent être appliquées par l'équipe, après test."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; CIS Critical Security Controls v8 (contrôle 12)"
+  },
+  {
+    "slug": "security-plus-2.5-stolen-laptop-data",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Les commerciaux d'une société emportent en déplacement leurs ordinateurs portables, qui contiennent des fichiers clients. La direction veut limiter les conséquences d'un vol d'appareil. Quelles deux mesures répondent à ce besoin ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Un pare-feu d'hôte qui bloque les connexions entrantes non sollicitées"
+        },
+        {
+          "id": "b",
+          "text": "Une liste d'autorisation d'applications installée sur chaque portable"
+        },
+        {
+          "id": "c",
+          "text": "Le chiffrement complet du disque, avec authentification au démarrage"
+        },
+        {
+          "id": "d",
+          "text": "Un HIPS qui bloque les tentatives d'exploitation réseau visant le portable"
+        },
+        {
+          "id": "e",
+          "text": "L'inscription au MDM, qui permet d'effacer l'appareil à distance"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Un voleur dispose du matériel : il peut démarrer sur un autre système ou démonter le disque. Seul le chiffrement complet du disque, déverrouillé au démarrage par un secret que le voleur n'a pas, rend les fichiers illisibles dans ce cas. L'effacement à distance par le MDM complète la mesure : si l'appareil se connecte, ses données et ses accès sont supprimés. Les autres contrôles protègent un poste en fonctionnement entre les mains de son utilisateur, pas un appareil volé.",
+    "distractorNotes": {
+      "a": "Le pare-feu d'hôte protège le poste allumé sur un réseau ; un voleur qui lit directement le disque le contourne.",
+      "b": "La liste d'autorisation contrôle les programmes exécutés par le système installé ; elle est sans effet si le disque est lu depuis une autre machine.",
+      "d": "Un HIPS bloque des attaques contre le système en fonctionnement, pas la lecture hors ligne du disque."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-53 Rev. 5 (SC-28)"
+  },
+  {
+    "slug": "security-plus-2.5-developer-sudo-scope",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une développeuse doit pouvoir redémarrer le service applicatif d'un serveur de production pendant les trois mois d'un projet. Quelles deux mesures respectent le principe du moindre privilège ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'ajouter au groupe sudo pour qu'elle puisse exécuter toute commande en root"
+        },
+        {
+          "id": "b",
+          "text": "Lui accorder une règle sudo limitée à la commande de redémarrage du service"
+        },
+        {
+          "id": "c",
+          "text": "Lui communiquer le mot de passe root, qui sera changé à la fin du projet"
+        },
+        {
+          "id": "d",
+          "text": "Fixer une date de fin à ce droit et le revoir à la clôture du projet"
+        },
+        {
+          "id": "e",
+          "text": "Lui confier le compte de service de l'application, qui a déjà les droits"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le moindre privilège porte sur l'étendue du droit et sur sa durée. Une règle sudo qui n'autorise que la commande de redémarrage du service donne exactement la capacité nécessaire, tracée sous le compte nominatif de la développeuse. Comme le besoin est limité au projet, le droit doit avoir une date d'expiration et être revu à la clôture : sinon, il s'accumule avec les droits d'autres projets. Ces deux principes figurent dans la mesure AC-6 de NIST SP 800-53 Rev. 5 et dans la revue des accès.",
+    "distractorNotes": {
+      "a": "Le groupe sudo donne tous les droits root : c'est bien plus que le seul redémarrage du service.",
+      "c": "Le mot de passe root donne un accès total et partagé, sans traçabilité individuelle ; le changer à la fin n'en réduit pas l'étendue.",
+      "e": "Un compte de service partagé supprime la traçabilité nominative et porte souvent plus de droits que le seul redémarrage."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-53 Rev. 5 (AC-6)"
+  },
+  {
+    "slug": "security-plus-2.5-nmap-db-server-services",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le serveur db01 héberge uniquement la base MySQL des serveurs d'applications ; les administrateurs s'y connectent en SSH. Quelles trois actions de durcissement faut-il appliquer ? (Choisissez-en trois.)",
+      "exhibit": "$ nmap -sV 10.30.5.20\nNmap scan report for db01.example.com (10.30.5.20)\nHost is up (0.00041s latency).\nPORT     STATE SERVICE VERSION\n22/tcp   open  ssh     OpenSSH 8.9p1\n23/tcp   open  telnet  Linux telnetd\n80/tcp   open  http    Apache httpd 2.4.52\n3306/tcp open  mysql   MySQL 8.0.36\n5900/tcp open  vnc     VNC (protocol 3.8)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Désactiver le service telnetd"
+        },
+        {
+          "id": "b",
+          "text": "Désactiver le service SSH"
+        },
+        {
+          "id": "c",
+          "text": "Arrêter et désinstaller Apache httpd"
+        },
+        {
+          "id": "d",
+          "text": "Fermer le port 3306 à toutes les sources sur le pare-feu d'hôte"
+        },
+        {
+          "id": "e",
+          "text": "Désactiver le serveur VNC"
+        },
+        {
+          "id": "f",
+          "text": "Ouvrir le port 3389 pour une administration graphique"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Le serveur n'a besoin que de deux services : MySQL pour les applications et SSH pour l'administration. Telnet transmet les identifiants en clair et double inutilement SSH ; Apache n'a aucun rôle sur un serveur de base de données ; VNC ouvre une seconde voie d'administration, souvent mal protégée. Désactiver ou désinstaller ces trois services applique la suppression des logiciels inutiles et la désactivation des ports et protocoles de l'objectif 2.5. Le port 3306 reste ouvert, mais on peut le restreindre aux seuls serveurs d'applications.",
+    "distractorNotes": {
+      "b": "SSH est le moyen d'administration prévu et chiffré : le supprimer couperait l'accès des administrateurs.",
+      "d": "Les serveurs d'applications doivent joindre MySQL : il faut restreindre 3306 à leurs adresses, pas le fermer à tous.",
+      "f": "3389 est le port de RDP : ouvrir un nouveau service ajoute de la surface d'attaque au lieu d'en retirer."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; CIS Critical Security Controls v8 (contrôle 4)"
+  },
+  {
+    "slug": "security-plus-2.5-allow-list-vs-deny-list",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le RSSI d'un cabinet d'architectes hésite entre une liste de blocage (deny list) et une liste d'autorisation d'applications (allow list) pour ses postes. Quelles deux affirmations décrivent correctement la liste d'autorisation ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle bloque par défaut un programme inconnu des bases antivirus"
+        },
+        {
+          "id": "b",
+          "text": "Elle s'appuie sur une base de signatures de logiciels malveillants connus"
+        },
+        {
+          "id": "c",
+          "text": "Elle laisse s'exécuter tout programme qui n'est pas explicitement interdit"
+        },
+        {
+          "id": "d",
+          "text": "Elle doit être mise à jour à chaque nouvelle application ou version légitime"
+        },
+        {
+          "id": "e",
+          "text": "Elle dispense d'appliquer les correctifs aux applications qu'elle autorise"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "La liste d'autorisation repose sur un refus par défaut : seul ce qui est approuvé s'exécute, si bien qu'un logiciel malveillant inédit est bloqué sans qu'aucune signature soit nécessaire. Sa contrepartie est la charge d'administration : chaque nouvelle application, et parfois chaque nouvelle version d'une application autorisée, doit être ajoutée, faute de quoi les utilisateurs sont bloqués. La liste de blocage fonctionne à l'inverse : tout est permis sauf ce qui est connu comme indésirable.",
+    "distractorNotes": {
+      "b": "Une base de signatures de logiciels malveillants caractérise la liste de blocage, comme un antivirus classique.",
+      "c": "« Tout est permis sauf ce qui est interdit » est la définition de la liste de blocage.",
+      "e": "Une application autorisée peut contenir une vulnérabilité exploitable : la liste ne dispense pas des correctifs."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; CIS Critical Security Controls v8 (contrôle 2)"
+  },
+  {
+    "slug": "security-plus-2.5-lateral-movement-local-admin",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le poste PC-ACCUEIL-02 (10.40.2.17) est compromis. Tous les postes ont été installés à partir de la même image, avec le même mot de passe pour le compte administrateur local admloc. Quelles deux mesures limitent le plus directement ce mode de propagation ? (Choisissez-en deux.)",
+      "exhibit": "Heure     Poste        ID    Détail\n02:14:07  PC-RH-03     4624  Compte=PC-RH-03\\admloc Type=3 Source=10.40.2.17\n02:14:09  PC-RH-03     7045  Service installé : PSEXESVC\n02:16:41  PC-COMPTA-1  4624  Compte=PC-COMPTA-1\\admloc Type=3 Source=10.40.2.17\n02:16:43  PC-COMPTA-1  7045  Service installé : PSEXESVC",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Chiffrer les disques de l'ensemble des postes avec BitLocker"
+        },
+        {
+          "id": "b",
+          "text": "Donner à admloc un mot de passe unique et aléatoire par poste, géré par LAPS"
+        },
+        {
+          "id": "c",
+          "text": "Imposer aux utilisateurs du domaine un changement de mot de passe tous les 30 jours"
+        },
+        {
+          "id": "d",
+          "text": "Activer la journalisation des requêtes DNS sur les contrôleurs de domaine"
+        },
+        {
+          "id": "e",
+          "text": "Bloquer par le pare-feu d'hôte les connexions SMB entrantes venant d'autres postes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Le journal montre des ouvertures de session réseau (4624, type 3) avec le compte local admloc de chaque poste cible, depuis 10.40.2.17, suivies de l'installation du service PSEXESVC (7045) : l'attaquant réutilise le même mot de passe local sur tout le parc et exécute des commandes à distance par SMB. Un mot de passe unique par poste, géré par LAPS, rend le secret volé inutilisable ailleurs. Le pare-feu d'hôte qui refuse le SMB entrant entre postes coupe le canal utilisé : un poste de travail n'a pas à recevoir de connexions SMB des autres postes.",
+    "distractorNotes": {
+      "a": "BitLocker protège les disques hors ligne ; il n'empêche pas une connexion réseau authentifiée sur un poste allumé.",
+      "c": "L'attaque utilise un compte local, pas les comptes du domaine ; le changement périodique sans motif est en outre déconseillé par NIST SP 800-63B.",
+      "d": "La journalisation DNS peut aider l'enquête, mais n'empêche ni la réutilisation du mot de passe ni les connexions SMB."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; CIS Critical Security Controls v8 (contrôle 5)"
+  },
+  {
+    "slug": "security-plus-2.5-ssd-decommissioning",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un serveur qui stockait des données de cartes bancaires est retiré du service ; ses disques SSD seront revendus à un brocanteur. Quelles deux actions sont nécessaires dans ce décommissionnement ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Purger les SSD par leur commande intégrée (sanitize ou effacement cryptographique)"
+        },
+        {
+          "id": "b",
+          "text": "Faire un formatage rapide des volumes avant la remise des disques"
+        },
+        {
+          "id": "c",
+          "text": "Révoquer les certificats du serveur et supprimer ses comptes et entrées DNS"
+        },
+        {
+          "id": "d",
+          "text": "Réécrire une fois les volumes avec un outil du système, ce qui suffit à purger un SSD"
+        },
+        {
+          "id": "e",
+          "text": "Laisser actif le compte de service du serveur, au cas où une application l'utiliserait encore"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Le décommissionnement traite à la fois les supports et tout ce que le système laissait derrière lui. Un SSD qui quitte l'organisation doit être purgé (NIST SP 800-88 Rev. 1) : les commandes intégrées au disque, comme sanitize ou l'effacement cryptographique, atteignent aussi les cellules de réserve qu'un outil du système ne voit pas. Il faut aussi révoquer les certificats du serveur et supprimer ses comptes et ses enregistrements DNS (ainsi que les règles de pare-feu qui le visaient) : sinon, un identifiant ou un enregistrement orphelin peut être réutilisé par un attaquant.",
+    "distractorNotes": {
+      "b": "Un formatage rapide ne réécrit que les structures du système de fichiers : les données restent récupérables avec des outils courants.",
+      "d": "Sur un SSD, l'équilibrage d'usure et la réserve de cellules font qu'une réécriture logicielle n'atteint pas tous les blocs : elle n'équivaut pas à une purge.",
+      "e": "Un compte orphelin, dont plus personne ne surveille l'usage, est une porte d'entrée classique : il doit être désactivé puis supprimé."
+    },
+    "reference": "NIST SP 800-88 Rev. 1 ; PCI DSS v4.0"
+  },
+  {
+    "slug": "security-plus-2.5-technique-categories",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Lors d'un comité sécurité, le RSSI d'une PME classe les actions menées ce trimestre. Associez chaque action à la technique d'atténuation qu'elle met en œuvre.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Placer les caméras IP dans un VLAN dédié, filtré par le pare-feu interne"
+        },
+        {
+          "id": "l2",
+          "text": "N'autoriser à s'exécuter que les programmes signés par les éditeurs approuvés"
+        },
+        {
+          "id": "l3",
+          "text": "Installer la mise à jour de sécurité publiée par l'éditeur du VPN"
+        },
+        {
+          "id": "l4",
+          "text": "Retirer un serveur en fin de vie, effacer ses disques et le sortir de l'inventaire"
+        }
+      ],
+      "right": [
+        {
+          "id": "seg",
+          "text": "Segmentation"
+        },
+        {
+          "id": "allow",
+          "text": "Liste d'autorisation d'applications"
+        },
+        {
+          "id": "patch",
+          "text": "Application des correctifs"
+        },
+        {
+          "id": "decom",
+          "text": "Décommissionnement"
+        },
+        {
+          "id": "enc",
+          "text": "Chiffrement"
+        },
+        {
+          "id": "mon",
+          "text": "Surveillance"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "seg",
+        "l2": "allow",
+        "l3": "patch",
+        "l4": "decom"
+      }
+    },
+    "explanation": "Chaque action correspond à une technique d'atténuation de l'objectif 2.5. Un VLAN dédié et filtré découpe le réseau en zones : c'est de la segmentation. N'autoriser que les programmes approuvés, ici par leur signature, est une liste d'autorisation d'applications. Installer la mise à jour de l'éditeur relève de la gestion des correctifs. Retirer proprement un système en fin de vie, supports effacés et inventaire à jour, est le décommissionnement.",
+    "distractorNotes": {
+      "enc": "Aucune des actions ne rend des données illisibles sans clé : le chiffrement n'est mis en œuvre par aucune d'elles.",
+      "mon": "La surveillance (SIEM, FIM, EDR) observe et alerte ; aucune des actions listées n'est un dispositif de détection."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5)"
+  },
+  {
+    "slug": "security-plus-2.5-endpoint-protection-tools",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un analyste présente aux nouveaux arrivants les protections installées sur les postes et serveurs de l'entreprise. Associez chaque description à l'outil correspondant.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Bloque, sur le serveur lui-même, un trafic qui correspond à une signature d'exploit avant qu'il atteigne l'application"
+        },
+        {
+          "id": "l2",
+          "text": "Filtre les connexions du poste selon le port, l'adresse et le programme concerné"
+        },
+        {
+          "id": "l3",
+          "text": "Rend les données d'un ordinateur portable volé illisibles sans le secret de démarrage"
+        },
+        {
+          "id": "l4",
+          "text": "Collecte en continu la télémétrie des processus et permet d'isoler le poste à distance"
+        }
+      ],
+      "right": [
+        {
+          "id": "hips",
+          "text": "HIPS"
+        },
+        {
+          "id": "hfw",
+          "text": "Pare-feu d'hôte"
+        },
+        {
+          "id": "fde",
+          "text": "Chiffrement complet du disque (FDE)"
+        },
+        {
+          "id": "edr",
+          "text": "EDR"
+        },
+        {
+          "id": "nids",
+          "text": "NIDS"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "hips",
+        "l2": "hfw",
+        "l3": "fde",
+        "l4": "edr"
+      }
+    },
+    "explanation": "Le HIPS (Host-based Intrusion Prevention System) inspecte sur l'hôte le trafic et l'activité, et bloque ce qui correspond à ses règles d'intrusion. Le pare-feu d'hôte filtre les connexions par port, adresse et application. Le chiffrement complet du disque protège les données au repos d'un appareil perdu ou volé. L'EDR enregistre le comportement des processus pour la détection et l'enquête, et permet d'agir à distance, notamment d'isoler le poste. Ces outils de protection des terminaux font partie du durcissement de l'objectif 2.5.",
+    "distractorNotes": {
+      "nids": "Un NIDS est une sonde réseau qui détecte et signale le trafic suspect sur un segment ; il n'est pas installé sur l'hôte et ne bloque pas."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5)"
+  },
+  {
+    "slug": "security-plus-2.5-insecure-protocol-replacement",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un audit de configuration relève des protocoles transmettant les identifiants en clair. Associez chaque protocole à désactiver à son remplaçant sécurisé.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Telnet"
+        },
+        {
+          "id": "l2",
+          "text": "FTP"
+        },
+        {
+          "id": "l3",
+          "text": "HTTP"
+        },
+        {
+          "id": "l4",
+          "text": "SNMPv2c"
+        }
+      ],
+      "right": [
+        {
+          "id": "ssh",
+          "text": "SSH"
+        },
+        {
+          "id": "sftp",
+          "text": "SFTP"
+        },
+        {
+          "id": "https",
+          "text": "HTTPS"
+        },
+        {
+          "id": "snmp3",
+          "text": "SNMPv3 avec authentification et chiffrement"
+        },
+        {
+          "id": "tftp",
+          "text": "TFTP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "ssh",
+        "l2": "sftp",
+        "l3": "https",
+        "l4": "snmp3"
+      }
+    },
+    "explanation": "Désactiver les protocoles non sécurisés fait partie du durcissement de l'objectif 2.5. Telnet laisse place à SSH, qui chiffre la session d'administration. FTP est remplacé par SFTP (transfert sur SSH) ou par FTPS. HTTP cède la place à HTTPS, protégé par TLS. SNMPv2c n'a pour authentification qu'une chaîne de communauté envoyée en clair ; SNMPv3 avec authentification et chiffrement (niveau authPriv) protège à la fois l'accès et le contenu des échanges.",
+    "distractorNotes": {
+      "tftp": "TFTP n'offre ni authentification ni chiffrement : c'est un protocole à désactiver lui aussi, pas un remplaçant sécurisé."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; RFC 8446"
+  },
+  {
+    "slug": "security-plus-2.5-firewall-acl-first-match",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Reportez-vous à l'exhibit. Le pare-feu interne applique les règles dans l'ordre et s'arrête à la première qui correspond. Associez chaque flux à la règle qui le traite.",
+      "exhibit": "Règle  Action  Proto  Source           Destination       Port\n1      permit  tcp    10.10.20.0/24    10.10.50.10/32    443\n2      deny    tcp    any              10.10.50.10/32    22\n3      permit  tcp    10.10.99.0/24    10.10.50.0/24     22\n4      deny    ip     any              any               any",
+      "left": [
+        {
+          "id": "f1",
+          "text": "10.10.20.15 vers 10.10.50.10, TCP 443"
+        },
+        {
+          "id": "f2",
+          "text": "10.10.99.5 vers 10.10.50.10, TCP 22"
+        },
+        {
+          "id": "f3",
+          "text": "10.10.99.5 vers 10.10.50.20, TCP 22"
+        },
+        {
+          "id": "f4",
+          "text": "10.10.20.15 vers 10.10.50.20, TCP 443"
+        },
+        {
+          "id": "f5",
+          "text": "10.10.20.15 vers 10.10.50.10, TCP 80"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Autorisé par la règle 1"
+        },
+        {
+          "id": "r2",
+          "text": "Refusé par la règle 2"
+        },
+        {
+          "id": "r3",
+          "text": "Autorisé par la règle 3"
+        },
+        {
+          "id": "r4",
+          "text": "Refusé par la règle 4"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "f1": "r1",
+        "f2": "r2",
+        "f3": "r3",
+        "f4": "r4",
+        "f5": "r4"
+      }
+    },
+    "explanation": "Avec un traitement à la première correspondance, l'ordre des règles décide. Le flux vers 10.10.50.10 en 443 depuis le LAN 10.10.20.0/24 correspond à la règle 1. Le SSH de 10.10.99.5 vers 10.10.50.10 est refusé par la règle 2 avant d'atteindre la règle 3, qui l'aurait autorisé : l'administration de ce serveur sensible est volontairement interdite. Le SSH vers 10.10.50.20 échappe à la règle 2 et est autorisé par la règle 3. Le HTTPS vers 10.10.50.20 et le HTTP vers 10.10.50.10 ne correspondent à aucune règle d'autorisation : la règle 4 les refuse.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; NIST SP 800-53 Rev. 5 (SC-7)"
+  },
+  {
+    "slug": "security-plus-2.5-hardening-risk-reduced",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le responsable d'infrastructure d'une PME justifie devant la direction chaque mesure de durcissement prévue. Associez chaque mesure au risque qu'elle réduit le plus directement.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Changer les mots de passe par défaut des équipements"
+        },
+        {
+          "id": "l2",
+          "text": "Désactiver les ports de commutateur inutilisés"
+        },
+        {
+          "id": "l3",
+          "text": "Supprimer les logiciels dont le serveur n'a pas besoin"
+        },
+        {
+          "id": "l4",
+          "text": "Chiffrer le disque des ordinateurs portables"
+        }
+      ],
+      "right": [
+        {
+          "id": "creds",
+          "text": "Connexion avec des identifiants publiés dans la documentation du fabricant"
+        },
+        {
+          "id": "rogue",
+          "text": "Branchement d'un appareil non autorisé dans une salle de réunion"
+        },
+        {
+          "id": "surface",
+          "text": "Exploitation d'une vulnérabilité dans un composant qui ne sert à rien"
+        },
+        {
+          "id": "theft",
+          "text": "Lecture des fichiers d'un ordinateur portable volé"
+        },
+        {
+          "id": "phish",
+          "text": "Saisie d'un mot de passe par un salarié sur un faux site de connexion"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "creds",
+        "l2": "rogue",
+        "l3": "surface",
+        "l4": "theft"
+      }
+    },
+    "explanation": "Chaque mesure de durcissement vise un risque précis. Les identifiants d'usine sont publics : les remplacer empêche une connexion triviale. Un port de commutateur désactivé ne donne plus accès au réseau à qui s'y branche. Un logiciel supprimé ne peut plus être exploité, même s'il contient une vulnérabilité non corrigée : c'est la réduction de la surface d'attaque. Le chiffrement du disque rend illisibles les fichiers d'un portable volé.",
+    "distractorNotes": {
+      "phish": "L'hameçonnage se combat par la sensibilisation, le filtrage de la messagerie et une MFA résistante à l'hameçonnage ; aucune des quatre mesures ne le traite."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5) ; CIS Benchmarks"
+  },
+  {
+    "slug": "security-plus-2.5-patch-deployment-steps",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "L'éditeur d'un système de gestion de bases de données publie un correctif de sécurité. L'équipe d'exploitation suit son processus de gestion des correctifs. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "deploy",
+          "text": "Déployer le correctif en production pendant la fenêtre de maintenance"
+        },
+        {
+          "id": "identify",
+          "text": "Identifier dans l'inventaire les serveurs concernés par le bulletin"
+        },
+        {
+          "id": "verify",
+          "text": "Vérifier par un scan de vulnérabilités que le correctif est bien appliqué"
+        },
+        {
+          "id": "test",
+          "text": "Tester le correctif sur un environnement de préproduction représentatif"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "identify",
+        "test",
+        "deploy",
+        "verify"
+      ]
+    },
+    "explanation": "On ne peut corriger que ce que l'on connaît : l'inventaire indique d'abord quels serveurs exécutent la version vulnérable. Le correctif est ensuite testé en préproduction, pour éviter qu'il casse une application en production. Il est alors déployé dans une fenêtre de maintenance approuvée, puis un scan de vérification confirme que la vulnérabilité a disparu sur chaque serveur. NIST SP 800-40 Rev. 4 décrit ce cycle de gestion des correctifs comme une maintenance préventive continue.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-40 Rev. 4"
+  },
+  {
+    "slug": "security-plus-2.5-server-decommission-steps",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une entreprise retire du service un serveur de fichiers en fin de vie, dont les disques seront confiés à un recycleur. Ordonnez les étapes du décommissionnement, de la première à la dernière.",
+      "items": [
+        {
+          "id": "sanitize",
+          "text": "Purger les disques selon NIST SP 800-88"
+        },
+        {
+          "id": "approve",
+          "text": "Faire approuver la demande de changement pour le retrait du serveur"
+        },
+        {
+          "id": "inventory",
+          "text": "Remettre le matériel au recycleur avec le certificat d'effacement et mettre à jour l'inventaire"
+        },
+        {
+          "id": "archive",
+          "text": "Archiver les données soumises à la politique de conservation"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "approve",
+        "archive",
+        "sanitize",
+        "inventory"
+      ]
+    },
+    "explanation": "Le retrait d'un système est un changement : il commence par une demande approuvée, qui vérifie qu'aucun service ne dépend encore du serveur. Les données à conserver sont ensuite archivées selon la politique de conservation, car l'effacement les détruira. Vient la purge des disques, adaptée à des supports qui quittent l'organisation selon NIST SP 800-88 Rev. 1. Enfin, le matériel part avec la preuve d'effacement et l'inventaire des actifs est mis à jour.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-88 Rev. 1 ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5)"
+  },
+  {
+    "slug": "security-plus-2.5-compensating-control-cycle",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un scan authentifié détecte sur le portail VPN une vulnérabilité critique, activement exploitée, pour laquelle l'éditeur n'a pas encore publié de correctif. Ordonnez la réponse de l'équipe de gestion des vulnérabilités, de la première à la dernière étape.",
+      "items": [
+        {
+          "id": "rescan",
+          "text": "Relancer le scan pour confirmer la correction et clore le ticket"
+        },
+        {
+          "id": "prioritize",
+          "text": "Évaluer et prioriser la vulnérabilité : score CVSS, exposition à Internet, exploitation active"
+        },
+        {
+          "id": "patch",
+          "text": "Installer, après test, le correctif publié par l'éditeur"
+        },
+        {
+          "id": "detect",
+          "text": "Confirmer la vulnérabilité relevée par le scan sur le portail VPN"
+        },
+        {
+          "id": "compensate",
+          "text": "Restreindre l'accès au portail et ajouter une règle IPS en attendant le correctif"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "detect",
+        "prioritize",
+        "compensate",
+        "patch",
+        "rescan"
+      ]
+    },
+    "explanation": "Le cycle de gestion des vulnérabilités part de l'identification : la détection du scan est d'abord confirmée. L'analyse fixe ensuite la priorité, ici maximale, au vu du score CVSS, de l'exposition à Internet et de l'exploitation active. Faute de correctif, l'équipe applique sans attendre un contrôle compensatoire qui réduit l'exposition. Elle installe le correctif dès sa publication, après test, puis vérifie par un nouveau scan que la vulnérabilité a disparu avant de clore le ticket.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-40 Rev. 4 ; FIRST CVSS v3.1 Specification"
+  },
+  {
+    "slug": "security-plus-2.5-telnet-port-block",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un audit révèle que les commutateurs d'accès d'une agence acceptent encore l'administration à distance par Telnet. L'équipe active SSH et veut, en complément, bloquer sur le pare-feu interne le port de Telnet vers le réseau d'administration. Quel port TCP doit-elle bloquer ?",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Numéro de port TCP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "23"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Telnet écoute sur le port TCP 23 et transmet toute la session, identifiants compris, en clair : une simple capture réseau suffit à les récupérer. On le désactive sur les équipements au profit de SSH (TCP 22), qui chiffre la session, et l'on bloque en complément le port 23 vers les équipements : si un appareil oublié l'expose encore, le pare-feu le protège. C'est la désactivation des ports et protocoles non sécurisés citée par l'objectif 2.5.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5)"
+  },
+  {
+    "slug": "security-plus-2.5-chmod-script-octal",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur un serveur Linux, le script /opt/paie/export.sh appartient à l'utilisateur paie et au groupe compta. Selon le moindre privilège : le propriétaire doit pouvoir le lire, le modifier et l'exécuter ; les membres du groupe doivent pouvoir le lire et l'exécuter sans le modifier ; les autres utilisateurs n'ont aucun droit. Quel mode faut-il passer à chmod ?",
+      "fields": [
+        {
+          "id": "mode",
+          "label": "Mode en notation octale, trois chiffres"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "mode": {
+          "accepted": [
+            "750",
+            "0750"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Chaque chiffre octal additionne lecture (4), écriture (2) et exécution (1), pour le propriétaire, le groupe puis les autres. Le propriétaire a rwx : 4 + 2 + 1 = 7. Le groupe a r-x : 4 + 1 = 5. Les autres n'ont rien : 0. Le mode est donc 750 (chmod 750 /opt/paie/export.sh), soit rwxr-x--- dans ls -l. Retirer tout droit aux autres utilisateurs et l'écriture au groupe applique le moindre privilège aux permissions du système de fichiers.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-53 Rev. 5 (AC-6) ; CIS Benchmarks"
+  },
+  {
+    "slug": "security-plus-2.5-listening-services-count",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. La politique de durcissement des serveurs web impose que seuls SSH (22) et HTTPS (443) écoutent sur les interfaces réseau ; un service n'écoutant que sur 127.0.0.1 est toléré. Combien de services, d'après cette sortie, doivent être désactivés ou restreints ?",
+      "exhibit": "$ ss -tln\nState   Recv-Q  Send-Q  Local Address:Port  Peer Address:Port\nLISTEN  0       128           0.0.0.0:22          0.0.0.0:*\nLISTEN  0       80          127.0.0.1:3306        0.0.0.0:*\nLISTEN  0       32            0.0.0.0:21          0.0.0.0:*\nLISTEN  0       511           0.0.0.0:443         0.0.0.0:*\nLISTEN  0       64            0.0.0.0:111         0.0.0.0:*\nLISTEN  0       128           0.0.0.0:23          0.0.0.0:*\nLISTEN  0       511           0.0.0.0:80          0.0.0.0:*",
+      "fields": [
+        {
+          "id": "count",
+          "label": "Nombre de services (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "count": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La colonne Local Address indique où chaque service écoute. 0.0.0.0 signifie toutes les interfaces : le service est joignable depuis le réseau. Sur 0.0.0.0, on trouve 22 et 443, autorisés, puis 21 (FTP), 111 (rpcbind), 23 (Telnet) et 80 (HTTP), interdits par la politique : 4 services à désactiver ou à restreindre. MySQL (3306) n'écoute que sur 127.0.0.1, l'interface de bouclage, et reste toléré. Ce contrôle des ports à l'écoute met en œuvre la désactivation des ports et protocoles inutiles.",
+    "distractorNotes": {},
+    "reference": "CIS Benchmarks ; CompTIA Security+ SY0-701 Exam Objectives (objectif 2.5)"
+  },
+  {
+    "slug": "security-plus-2.5-umask-027-effective",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Pour appliquer un benchmark CIS, un administrateur fixe le umask par défaut des utilisateurs d'un serveur Linux à 027. Un éditeur de texte crée ensuite un fichier en demandant les droits 666, et la commande mkdir crée un répertoire en demandant les droits 777. Quels modes effectifs obtiennent ce fichier et ce répertoire ?",
+      "fields": [
+        {
+          "id": "file",
+          "label": "Mode du fichier, notation octale à trois chiffres"
+        },
+        {
+          "id": "dir",
+          "label": "Mode du répertoire, notation octale à trois chiffres"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "file": {
+          "accepted": [
+            "640",
+            "0640"
+          ],
+          "normalize": "int"
+        },
+        "dir": {
+          "accepted": [
+            "750",
+            "0750"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le umask retire des droits demandés les bits qu'il contient : mode effectif = mode demandé ET NON umask. 027 retire l'écriture au groupe (2) et tous les droits aux autres (7). Pour le fichier : 666 (rw-rw-rw-) devient 640 (rw-r-----). Pour le répertoire : 777 (rwxrwxrwx) devient 750 (rwxr-x---). Le groupe garde la lecture, les autres utilisateurs n'ont plus aucun accès aux nouveaux fichiers : la configuration renforcée applique le moindre privilège par défaut, sans dépendre de chaque utilisateur.",
+    "distractorNotes": {},
+    "reference": "CIS Benchmarks ; NIST SP 800-53 Rev. 5 (AC-6)"
+  }
+]

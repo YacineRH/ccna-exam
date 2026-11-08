@@ -1,0 +1,993 @@
+[
+  {
+    "slug": "security-plus-2.3-xss-stockee-forum-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur le forum interne d'une entreprise, un utilisateur publie un message contenant une balise <script>. Depuis, le navigateur de chaque employé qui affiche ce fil exécute le script. Quelle vulnérabilité est exploitée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une XSS réfléchie (reflected)"
+        },
+        {
+          "id": "b",
+          "text": "Une injection SQL"
+        },
+        {
+          "id": "c",
+          "text": "Une XSS stockée (persistante)"
+        },
+        {
+          "id": "d",
+          "text": "Une falsification de requête intersite (CSRF)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le script est enregistré côté serveur avec le message, puis renvoyé à chaque personne qui consulte le fil : c'est une XSS stockée, ou persistante. Elle touche tous les visiteurs sans qu'ils aient à cliquer sur un lien piégé, ce qui la rend plus dangereuse qu'une XSS réfléchie. La cause est l'affichage sans encodage de données fournies par un utilisateur ; on la corrige par l'encodage contextuel des sorties et la validation des entrées, une politique CSP limitant les dégâts.",
+    "distractorNotes": {
+      "a": "Une XSS réfléchie renvoie immédiatement le script contenu dans la requête de la victime (lien piégé) ; ici, il est stocké et servi à tous.",
+      "b": "Une injection SQL vise les requêtes envoyées à la base de données, pas le code exécuté dans le navigateur des lecteurs.",
+      "d": "La CSRF fait envoyer une requête légitime à l'insu d'un utilisateur authentifié ; elle n'implique pas l'injection d'un script affiché dans la page."
+    },
+    "reference": "OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-2.3-sqli-journal-correction-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyste examine le journal d'accès du site marchand de l'entreprise. Le développeur demande quelle correction du code traite la cause de la vulnérabilité exploitée. Que faut-il lui recommander ?",
+      "exhibit": "192.0.2.7 - - [12/Mar/2026:14:02:11 +0100] \"GET /?id=4 HTTP/1.1\" 200 512\n192.0.2.7 - - [12/Mar/2026:14:02:19 +0100] \"GET /?id=4%27 HTTP/1.1\" 500 312\n192.0.2.7 - - [12/Mar/2026:14:02:27 +0100] \"GET /?id=4+OR+1=1 HTTP/1.1\" 200 9830",
+      "options": [
+        {
+          "id": "a",
+          "text": "Encoder en entités HTML les données affichées dans les pages"
+        },
+        {
+          "id": "b",
+          "text": "Utiliser des requêtes paramétrées pour interroger la base"
+        },
+        {
+          "id": "c",
+          "text": "Imposer HTTPS sur tout le site avec l'en-tête HSTS"
+        },
+        {
+          "id": "d",
+          "text": "Ajouter l'attribut HttpOnly aux cookies de session"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'attaquant ajoute une apostrophe (%27) au paramètre id : le serveur répond par une erreur 500, signe que la requête SQL est cassée. Il envoie ensuite « 4 OR 1=1 » (les + codent des espaces), condition toujours vraie : la réponse passe de 512 à 9 830 octets, car la base renvoie tous les produits. C'est une injection SQL, due à la concaténation de la saisie dans la requête. Les requêtes paramétrées (préparées) transmettent la valeur séparément du code SQL, qui ne peut plus être modifié : c'est la correction de la cause.",
+    "distractorNotes": {
+      "a": "L'encodage HTML des sorties corrige les XSS ; il ne change rien à la requête SQL construite avec la saisie.",
+      "c": "HTTPS et HSTS protègent le transport ; la charge malveillante arrive chiffrée et reste interprétée par la base.",
+      "d": "HttpOnly empêche un script de lire le cookie (atténuation des XSS) ; il n'a aucun effet sur une injection SQL."
+    },
+    "reference": "OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-2.3-xss-cookie-httponly-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un test d'intrusion montre qu'une XSS réfléchie de l'application RH permet d'exécuter document.cookie et d'envoyer le cookie de session vers un serveur externe. En attendant la correction du code, l'équipe veut empêcher tout script de la page de lire ce cookie. Quel réglage répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter l'attribut Secure au cookie de session"
+        },
+        {
+          "id": "b",
+          "text": "Ajouter l'attribut SameSite=Strict au cookie de session"
+        },
+        {
+          "id": "c",
+          "text": "Allonger la durée de validité du cookie de session"
+        },
+        {
+          "id": "d",
+          "text": "Ajouter l'attribut HttpOnly au cookie de session"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un cookie marqué HttpOnly n'est plus accessible par JavaScript : document.cookie ne le renvoie pas, et le script injecté par la XSS ne peut plus le dérober. Le navigateur continue de l'envoyer au serveur, donc l'application fonctionne normalement. C'est une atténuation, pas une correction : la XSS reste exploitable pour d'autres actions dans la page, et il faut encoder les sorties dans le code. L'attribut Secure et l'attribut SameSite répondent à d'autres menaces.",
+    "distractorNotes": {
+      "a": "Secure limite l'envoi du cookie aux connexions HTTPS ; un script de la page peut toujours le lire.",
+      "b": "SameSite restreint l'envoi du cookie lors de requêtes intersites (protection contre la CSRF) ; il n'empêche pas sa lecture par un script de la page.",
+      "c": "Une durée plus longue étend la fenêtre d'utilisation d'un cookie volé : elle aggrave le risque."
+    },
+    "reference": "OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-2.3-smbv1-ms17-010-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Lors d'un audit interne, un analyste scanne un serveur de fichiers sous Windows Server 2016, version encore prise en charge par l'éditeur. Quelle mesure corrige le mieux la vulnérabilité détectée ?",
+      "exhibit": "$ nmap -p445 --script smb-vuln-ms17-010 10.20.0.15\nPORT    STATE SERVICE\n445/tcp open  microsoft-ds\n\nHost script results:\n| smb-vuln-ms17-010:\n|   VULNERABLE:\n|   Remote Code Execution vulnerability in Microsoft SMBv1 servers (ms17-010)\n|     State: VULNERABLE\n|     IDs:  CVE:CVE-2017-0143\n|     Risk factor: HIGH",
+      "options": [
+        {
+          "id": "a",
+          "text": "Activer la signature SMB sur le serveur"
+        },
+        {
+          "id": "b",
+          "text": "Changer le mot de passe du compte Administrateur local"
+        },
+        {
+          "id": "c",
+          "text": "Installer le correctif MS17-010 et désactiver SMBv1"
+        },
+        {
+          "id": "d",
+          "text": "Publier le partage sur le port TCP 139 plutôt que 445"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le script NSE smb-vuln-ms17-010 signale une vulnérabilité d'exécution de code à distance dans le serveur SMBv1 de Windows (bulletin MS17-010, famille exploitée par EternalBlue et WannaCry). C'est une vulnérabilité du système d'exploitation : on la corrige en appliquant le correctif publié par l'éditeur. Désactiver SMBv1, protocole obsolète dont les clients modernes n'ont pas besoin, supprime en plus la surface d'attaque. La faille ne dépend d'aucun identifiant : elle se déclenche avant toute authentification.",
+    "distractorNotes": {
+      "a": "La signature SMB protège l'intégrité des échanges contre le relais ; elle ne corrige pas le défaut de traitement des paquets SMBv1.",
+      "b": "L'exploitation ne demande aucun mot de passe : changer celui de l'administrateur ne ferme pas la faille.",
+      "d": "Le service SMB reste le même sur le port 139 (NetBIOS) : la vulnérabilité serait toujours exploitable."
+    },
+    "reference": "MITRE CVE (CVE-2017-0143) ; NIST SP 800-40 Rev. 4"
+  },
+  {
+    "slug": "security-plus-2.3-firmware-uefi-persistance-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un poste de travail est réinfecté par le même logiciel malveillant après le remplacement de son disque et la réinstallation de Windows à partir d'une image saine. Le poste est resté débranché du réseau pendant l'opération, et l'infection réapparaît dès le premier démarrage. Quelle est l'explication LA PLUS probable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un certificat TLS expiré sur le serveur de messagerie"
+        },
+        {
+          "id": "b",
+          "text": "Un implant persistant dans le micrologiciel UEFI"
+        },
+        {
+          "id": "c",
+          "text": "Un bootkit logé dans le secteur d'amorçage du disque"
+        },
+        {
+          "id": "d",
+          "text": "Une règle mal configurée sur le proxy web de l'entreprise"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le micrologiciel UEFI est stocké dans une mémoire flash de la carte mère, hors du disque : ni le formatage, ni le remplacement du disque, ni la réinstallation du système ne l'effacent. Un implant (bootkit UEFI) peut s'y loger et réinstaller sa charge à chaque démarrage, avant le système d'exploitation. Le poste étant hors réseau, aucune cause réseau n'explique la réinfection. On reflashe le micrologiciel avec une image signée du constructeur ou on remplace la carte mère ; Secure Boot et la protection en écriture du micrologiciel réduisent ensuite le risque.",
+    "distractorNotes": {
+      "a": "Un certificat expiré provoque des alertes de connexion ; il n'installe aucun code sur un poste débranché.",
+      "c": "Le disque a été remplacé : un code logé dans son secteur d'amorçage aurait disparu avec lui.",
+      "d": "Le poste était hors réseau au moment de la réinfection : le proxy n'a joué aucun rôle."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-commutateurs-fin-support-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un inventaire révèle que les commutateurs d'accès d'une PME ont atteint leur fin de support : le constructeur ne publie plus aucune mise à jour. Quel est le principal risque de sécurité de cette situation ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les commutateurs perdront leur configuration au prochain redémarrage"
+        },
+        {
+          "id": "b",
+          "text": "Les licences des commutateurs expireront et couperont le trafic"
+        },
+        {
+          "id": "c",
+          "text": "Les commutateurs ne prendront plus en charge les VLAN 802.1Q"
+        },
+        {
+          "id": "d",
+          "text": "Les vulnérabilités découvertes à l'avenir ne seront plus corrigées"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un matériel en fin de vie ou de support continue de fonctionner, mais le constructeur ne corrige plus les failles de son micrologiciel. Chaque vulnérabilité découverte ensuite reste ouverte définitivement, et les attaquants savent cibler ces équipements. On planifie leur remplacement et, en attendant, on applique des mesures compensatoires : isolement du plan de gestion, filtrage de l'accès d'administration, surveillance renforcée.",
+    "distractorNotes": {
+      "a": "La fin de support n'efface pas la configuration enregistrée en mémoire non volatile.",
+      "b": "La fin de support concerne les mises à jour et l'assistance ; elle ne désactive pas le fonctionnement des équipements.",
+      "c": "Les fonctions existantes, comme le 802.1Q, restent disponibles : seules les mises à jour cessent."
+    },
+    "reference": "NIST SP 800-40 Rev. 4"
+  },
+  {
+    "slug": "security-plus-2.3-md5-sans-sel-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après la fuite de la table des utilisateurs d'une application, un auditeur constate que les mots de passe y sont stockés sous forme de hachages MD5 sans sel. Des milliers d'entre eux sont retrouvés en quelques heures. Quelle correction répond le mieux à cette vulnérabilité cryptographique ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Hacher avec une fonction lente et salée, comme Argon2 ou bcrypt"
+        },
+        {
+          "id": "b",
+          "text": "Remplacer MD5 par SHA-256 sans sel, en une seule itération"
+        },
+        {
+          "id": "c",
+          "text": "Chiffrer les mots de passe en AES-256 avec une clé dans le code"
+        },
+        {
+          "id": "d",
+          "text": "Encoder les mots de passe en Base64 avant de les hacher en MD5"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "MD5 est très rapide à calculer et, sans sel, deux mots de passe identiques donnent le même hachage : tables précalculées et attaques massives sur GPU sont efficaces. Une fonction de dérivation conçue pour les mots de passe (Argon2, bcrypt, scrypt, PBKDF2) ajoute un sel unique par compte et un coût de calcul réglable, ce qui rend chaque essai coûteux. NIST SP 800-63B demande ce type de stockage : sel et fonction de dérivation à coût élevé.",
+    "distractorNotes": {
+      "b": "SHA-256 est lui aussi rapide ; sans sel ni itérations, il reste vulnérable aux tables précalculées et à la force brute.",
+      "c": "Un chiffrement réversible dont la clé figure dans le code est récupérable avec le code : tous les mots de passe seraient déchiffrés.",
+      "d": "Base64 est un simple encodage réversible : il ne ralentit pas l'attaque et n'ajoute aucun sel."
+    },
+    "reference": "NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-2.3-tls-retrogradation-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un scan révèle qu'un serveur web accepte encore SSL 3.0 et TLS 1.0 en plus de TLS 1.2 et TLS 1.3. Quel type d'attaque cette configuration rend-elle possible ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une force brute sur le mot de passe de l'administrateur"
+        },
+        {
+          "id": "b",
+          "text": "Une injection SQL dans l'en-tête de négociation TLS"
+        },
+        {
+          "id": "c",
+          "text": "Une rétrogradation (downgrade) vers un protocole faible"
+        },
+        {
+          "id": "d",
+          "text": "Une collision sur la signature SHA-256 du certificat"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Tant que le serveur accepte d'anciennes versions, un attaquant placé en intermédiaire peut perturber la négociation pour que client et serveur se replient sur la version la plus faible, puis exploiter ses défauts (POODLE contre SSL 3.0, par exemple). TLS 1.3 intègre un mécanisme de détection de la rétrogradation (RFC 8446), mais il ne protège que les clients qui le vérifient : les clients anciens restent exposés tant que le serveur propose ces protocoles obsolètes. La correction consiste à désactiver SSL 3.0 et TLS 1.0 pour ne garder que TLS 1.2 et TLS 1.3.",
+    "distractorNotes": {
+      "a": "La version de protocole acceptée ne facilite pas la force brute sur un mot de passe d'administration.",
+      "b": "La négociation TLS ne transmet aucune donnée à une base SQL : ce n'est pas un vecteur d'injection SQL.",
+      "d": "Aucune collision pratique n'est connue sur SHA-256 ; le problème vient des versions de protocole proposées."
+    },
+    "reference": "RFC 8446"
+  },
+  {
+    "slug": "security-plus-2.3-cameras-identifiants-defaut-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un auditeur se connecte à l'interface web des caméras IP d'un entrepôt avec le compte admin et le mot de passe indiqués dans la notice du fabricant. Quel type de vulnérabilité a-t-il mis en évidence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une vulnérabilité zero-day du micrologiciel"
+        },
+        {
+          "id": "b",
+          "text": "Une mauvaise configuration des équipements"
+        },
+        {
+          "id": "c",
+          "text": "Une vulnérabilité due à la fin de vie du matériel"
+        },
+        {
+          "id": "d",
+          "text": "Un dépassement de tampon dans le serveur web"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le fabricant documente un compte par défaut pour l'installation ; ne pas le modifier est une erreur de configuration, pas un défaut du produit. Ces identifiants sont publics et testés automatiquement par les botnets (Mirai en a fait sa méthode principale). On change les identifiants à la mise en service, on désactive les comptes inutiles et on applique une configuration de référence (baseline).",
+    "distractorNotes": {
+      "a": "Une zero-day est un défaut inconnu de l'éditeur ; un mot de passe par défaut documenté dans la notice est connu de tous.",
+      "c": "Rien n'indique que le constructeur a cessé le support : le problème existe aussi sur un matériel récent.",
+      "d": "L'auditeur s'est connecté normalement avec des identifiants valides, sans exploiter de défaut mémoire."
+    },
+    "reference": "CIS Critical Security Controls v8"
+  },
+  {
+    "slug": "security-plus-2.3-iphone-jailbreak-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le service informatique découvre qu'un iPhone professionnel a été jailbreaké par son utilisateur pour installer des personnalisations. Quelle conséquence de sécurité est la plus importante ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les protections d'iOS, dont l'isolation des applications, sont contournées"
+        },
+        {
+          "id": "b",
+          "text": "L'identifiant IMEI du téléphone est modifié de façon automatique"
+        },
+        {
+          "id": "c",
+          "text": "Le téléphone ne peut plus rejoindre de réseau Wi-Fi protégé en WPA3"
+        },
+        {
+          "id": "d",
+          "text": "Le code de verrouillage de l'écran est supprimé de façon automatique"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le jailbreak exploite des failles d'iOS pour obtenir les droits root et lever les restrictions du système : bac à sable des applications, vérification des signatures, limitation à l'App Store. Une application malveillante peut alors accéder aux données des autres applications, et les contrôles du MDM ne sont plus fiables. C'est pourquoi les solutions MDM détectent les appareils jailbreakés et leur retirent l'accès aux ressources de l'entreprise.",
+    "distractorNotes": {
+      "b": "Le jailbreak modifie les restrictions logicielles d'iOS ; il ne change pas l'IMEI de l'appareil.",
+      "c": "Les fonctions réseau restent disponibles : le jailbreak n'empêche pas l'usage du WPA3.",
+      "d": "Le code de verrouillage n'est pas supprimé par le jailbreak ; c'est l'isolation entre applications qui est perdue."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-navigateur-zero-day-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un éditeur annonce qu'une faille de son navigateur est exploitée par des attaquants depuis plusieurs semaines, alors qu'il en ignorait l'existence ; aucun correctif n'est encore disponible. Comment qualifie-t-on cette vulnérabilité ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une vulnérabilité liée à la fin de vie"
+        },
+        {
+          "id": "b",
+          "text": "Une vulnérabilité de mauvaise configuration"
+        },
+        {
+          "id": "c",
+          "text": "Une vulnérabilité de chaîne d'approvisionnement"
+        },
+        {
+          "id": "d",
+          "text": "Une vulnérabilité zero-day"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une vulnérabilité zero-day est exploitée avant que l'éditeur la connaisse ou ait pu publier un correctif : les défenseurs ont eu « zéro jour » pour se préparer. Les signatures antivirales et les scanners de vulnérabilités ne la détectent pas encore. On s'en protège par la défense en profondeur (moindre privilège, segmentation, EDR comportemental) et par les mesures de contournement publiées en attendant le correctif.",
+    "distractorNotes": {
+      "a": "Le navigateur est maintenu : l'éditeur prépare un correctif, ce qui exclut la fin de vie.",
+      "b": "La faille se trouve dans le code du navigateur, pas dans un réglage choisi par l'utilisateur.",
+      "c": "Rien n'indique la compromission d'un fournisseur ou d'un composant tiers : le défaut est dans le produit de l'éditeur."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-vpn-zero-day-contournement-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un constructeur de passerelles VPN confirme qu'une vulnérabilité d'exécution de code à distance, sans authentification, touche le portail web de ses appareils et est exploitée activement. Aucun correctif n'existe encore ; l'avis publie une mesure de contournement qui désactive le module vulnérable sans couper les tunnels existants. La passerelle de l'entreprise est concernée. Que doit faire le RSSI EN PREMIER ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Attendre le correctif officiel en renforçant la journalisation"
+        },
+        {
+          "id": "b",
+          "text": "Appliquer le contournement puis chercher des traces d'intrusion"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer la passerelle par un modèle concurrent dans le mois"
+        },
+        {
+          "id": "d",
+          "text": "Mettre à jour les signatures antivirales des postes clients"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une zero-day exploitée activement sur un équipement exposé à Internet exige d'agir sans attendre. La mesure de contournement de l'éditeur ferme le vecteur d'attaque immédiatement et sans interruption de service : c'est la priorité. Comme l'exploitation a précédé l'avis, il faut ensuite rechercher des indicateurs de compromission sur la passerelle, une intrusion antérieure n'étant pas effacée par le contournement. Le correctif sera installé dès sa publication.",
+    "distractorNotes": {
+      "a": "Plus de journaux aident à détecter une exploitation, mais la passerelle reste exploitable jusqu'au correctif, qui n'a pas de date.",
+      "c": "Un remplacement prend des semaines et laisse la passerelle exposée entre-temps ; il ne répond pas à l'urgence.",
+      "d": "La faille se trouve sur la passerelle, pas sur les postes : mettre à jour leurs signatures ne ferme pas le vecteur d'attaque."
+    },
+    "reference": "NIST SP 800-40 Rev. 4"
+  },
+  {
+    "slug": "security-plus-2.3-sqli-mesures-prevention-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une équipe de développement corrige un formulaire de recherche vulnérable à l'injection SQL. Quelles deux mesures préviennent cette vulnérabilité ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter un en-tête Content-Security-Policy"
+        },
+        {
+          "id": "b",
+          "text": "Utiliser des requêtes préparées (paramétrées)"
+        },
+        {
+          "id": "c",
+          "text": "Ajouter l'attribut HttpOnly aux cookies"
+        },
+        {
+          "id": "d",
+          "text": "Passer le site en TLS 1.3 uniquement"
+        },
+        {
+          "id": "e",
+          "text": "Valider les saisies selon une liste d'autorisation"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "L'injection SQL vient d'une saisie interprétée comme du code SQL. Les requêtes préparées séparent la structure de la requête des valeurs : celles-ci ne peuvent plus la modifier. La validation des saisies par liste d'autorisation (type, longueur, caractères admis) rejette en amont les valeurs inattendues et complète la première mesure. Les autres options visent les XSS ou le transport, pas la construction de la requête.",
+    "distractorNotes": {
+      "a": "CSP limite les scripts que le navigateur exécute : elle atténue les XSS, pas l'injection côté base.",
+      "c": "HttpOnly protège le cookie contre la lecture par un script ; la requête SQL reste injectable.",
+      "d": "TLS 1.3 chiffre le transport ; la charge d'injection arrive intacte au serveur."
+    },
+    "reference": "OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-2.3-mdm-sideloading-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise équipe ses commerciaux de smartphones Android gérés par MDM. Plusieurs ont installé des applications à partir de fichiers APK téléchargés sur des sites tiers. Quelles deux règles MDM empêchent le mieux ce comportement ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bloquer l'installation depuis des sources inconnues"
+        },
+        {
+          "id": "b",
+          "text": "Imposer un code de verrouillage de six chiffres"
+        },
+        {
+          "id": "c",
+          "text": "Activer l'effacement à distance des appareils perdus"
+        },
+        {
+          "id": "d",
+          "text": "N'autoriser que les applications du magasin géré"
+        },
+        {
+          "id": "e",
+          "text": "Imposer le chiffrement complet du stockage"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Installer un APK hors de la boutique officielle s'appelle le sideloading : l'application échappe aux contrôles de la boutique et peut contenir un logiciel malveillant. Le MDM peut interdire l'installation depuis des sources inconnues, ce qui bloque directement les APK, et restreindre les installations aux applications approuvées d'un magasin géré (liste d'autorisation). Les autres règles protègent l'appareil ou ses données, mais n'empêchent pas l'installation.",
+    "distractorNotes": {
+      "b": "Le code de verrouillage protège contre un accès physique ; l'utilisateur légitime peut toujours installer un APK.",
+      "c": "L'effacement à distance répond à la perte ou au vol ; il n'empêche aucune installation.",
+      "e": "Le chiffrement protège les données au repos ; il n'agit pas sur les applications installées."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-audit-web-mauvaise-config-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un audit de l'infrastructure web d'une PME relève six constats. Quels trois constats relèvent d'une mauvaise configuration ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le listage des répertoires est activé sur le serveur Apache"
+        },
+        {
+          "id": "b",
+          "text": "Le pare-feu matériel n'est plus pris en charge par son fabricant"
+        },
+        {
+          "id": "c",
+          "text": "La console d'administration garde le mot de passe par défaut"
+        },
+        {
+          "id": "d",
+          "text": "Une faille sans correctif connu touche la version du CMS utilisée"
+        },
+        {
+          "id": "e",
+          "text": "Le formulaire de contact concatène les saisies dans une requête SQL"
+        },
+        {
+          "id": "f",
+          "text": "Les pages d'erreur affichent la pile d'appels de l'application"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "f"
+      ]
+    },
+    "explanation": "Une mauvaise configuration est un réglage inadapté d'un produit par ailleurs sain, corrigible sans modifier son code : listage des répertoires laissé actif, compte par défaut conservé, messages d'erreur détaillés (mode débogage) exposés aux visiteurs. OWASP les range dans la catégorie Security Misconfiguration. Les autres constats relèvent d'autres types : matériel en fin de support, zero-day, défaut de code.",
+    "distractorNotes": {
+      "b": "C'est une vulnérabilité de matériel en fin de vie ou de support : aucun réglage ne remplace les correctifs absents.",
+      "d": "Une faille sans correctif dans le code du CMS est une zero-day, pas un mauvais réglage.",
+      "e": "La concaténation des saisies est un défaut de programmation (injection SQL), corrigé dans le code."
+    },
+    "reference": "OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-2.3-scan-tls-faiblesses-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Un analyste évalue le portail client exposé sur Internet. Quels deux éléments de la sortie révèlent une vulnérabilité cryptographique à corriger ? (Choisissez-en deux.)",
+      "exhibit": "$ sslscan portail.example.com:443\n  SSL/TLS Protocols:\nSSLv2     disabled\nSSLv3     disabled\nTLSv1.0   enabled\nTLSv1.1   disabled\nTLSv1.2   enabled\nTLSv1.3   enabled\n\n  Supported Server Cipher(s):\nAccepted  TLSv1.3  256 bits  TLS_AES_256_GCM_SHA384\nAccepted  TLSv1.2  256 bits  ECDHE-RSA-AES256-GCM-SHA384\nAccepted  TLSv1.2  128 bits  RC4-SHA\nAccepted  TLSv1.0  256 bits  ECDHE-RSA-AES256-SHA\n\n  SSL Certificate:\nSignature Algorithm: sha256WithRSAEncryption\nRSA Key Strength:    2048",
+      "options": [
+        {
+          "id": "a",
+          "text": "La signature du certificat en sha256WithRSAEncryption"
+        },
+        {
+          "id": "b",
+          "text": "La prise en charge du protocole TLS 1.0"
+        },
+        {
+          "id": "c",
+          "text": "La suite TLS_AES_256_GCM_SHA384 en TLS 1.3"
+        },
+        {
+          "id": "d",
+          "text": "La suite RC4-SHA acceptée en TLS 1.2"
+        },
+        {
+          "id": "e",
+          "text": "La clé RSA de 2048 bits du certificat"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "TLS 1.0 est obsolète et officiellement déprécié : il expose aux attaques par rétrogradation et à des faiblesses connues (BEAST, chiffrement CBC ancien). RC4 est un chiffrement par flot cassé, interdit dans TLS ; sa présence permet de négocier une suite faible même en TLS 1.2. Il faut désactiver TLS 1.0 et retirer RC4. Le reste est conforme aux recommandations actuelles : TLS 1.3 avec AES-256-GCM, certificat signé en SHA-256 avec une clé RSA de 2048 bits.",
+    "distractorNotes": {
+      "a": "Une signature RSA avec SHA-256 est l'usage courant et reste sûre ; ce sont SHA-1 et MD5 qui sont proscrits.",
+      "c": "TLS 1.3 avec AES-256-GCM est la configuration recommandée : il n'y a rien à corriger.",
+      "e": "Une clé RSA de 2048 bits reste acceptée par le NIST pour un certificat ; elle n'est pas une faiblesse en soi."
+    },
+    "reference": "RFC 8446 ; NIST SP 800-57"
+  },
+  {
+    "slug": "security-plus-2.3-associer-scenario-type-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un RSSI classe les constats d'un audit. Associez chaque situation au type de vulnérabilité correspondant.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Un commercial installe sur son smartphone Android un APK récupéré sur un forum"
+        },
+        {
+          "id": "l2",
+          "text": "Un utilisateur lève les restrictions d'iOS pour obtenir les droits root sur son iPhone"
+        },
+        {
+          "id": "l3",
+          "text": "Un pare-feu dont le constructeur ne publie plus de mises à jour reste en production"
+        },
+        {
+          "id": "l4",
+          "text": "Un serveur FTP accepte par erreur les connexions anonymes en écriture"
+        },
+        {
+          "id": "l5",
+          "text": "Un attaquant exploite une faille que l'éditeur ne connaît pas encore"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Sideloading"
+        },
+        {
+          "id": "r2",
+          "text": "Jailbreaking"
+        },
+        {
+          "id": "r3",
+          "text": "Matériel en fin de vie"
+        },
+        {
+          "id": "r4",
+          "text": "Mauvaise configuration"
+        },
+        {
+          "id": "r5",
+          "text": "Zero-day"
+        },
+        {
+          "id": "r6",
+          "text": "Vulnérabilité cryptographique"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "r1",
+        "l2": "r2",
+        "l3": "r3",
+        "l4": "r4",
+        "l5": "r5"
+      }
+    },
+    "explanation": "Le sideloading installe une application hors de la boutique officielle ; le jailbreaking lève les restrictions d'iOS pour obtenir les droits root. Un équipement que le constructeur ne met plus à jour est en fin de vie : ses failles futures resteront ouvertes. L'accès anonyme en écriture est un réglage inadapté d'un service sain, donc une mauvaise configuration. Une faille exploitée avant que l'éditeur la connaisse est une zero-day.",
+    "distractorNotes": {
+      "r6": "Aucune situation ne met en cause un algorithme, une clé ou un protocole cryptographique faible."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-associer-indicateur-web-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un analyste du SOC qualifie quatre alertes levées sur l'application web de l'entreprise. Associez chaque indicateur observé à la vulnérabilité exploitée.",
+      "left": [
+        {
+          "id": "p1",
+          "text": "Une balise <script> placée dans un paramètre d'URL est renvoyée telle quelle dans la page de résultats"
+        },
+        {
+          "id": "p2",
+          "text": "Une balise HTML active enregistrée dans un commentaire s'exécute chez tous les visiteurs de l'article"
+        },
+        {
+          "id": "p3",
+          "text": "Une saisie commençant par une apostrophe dans le champ identifiant ouvre une session sans mot de passe valide"
+        },
+        {
+          "id": "p4",
+          "text": "Une instruction SQL de temporisation saisie dans un paramètre retarde la réponse sans en changer le contenu"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "XSS réfléchie"
+        },
+        {
+          "id": "r2",
+          "text": "XSS stockée"
+        },
+        {
+          "id": "r3",
+          "text": "Injection SQL contournant l'authentification"
+        },
+        {
+          "id": "r4",
+          "text": "Injection SQL aveugle temporelle"
+        },
+        {
+          "id": "r5",
+          "text": "Falsification de requête intersite (CSRF)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "p1": "r1",
+        "p2": "r2",
+        "p3": "r3",
+        "p4": "r4"
+      }
+    },
+    "explanation": "Un script renvoyé dans la réponse à la requête qui le contient est une XSS réfléchie ; un script enregistré puis servi à chaque visiteur est une XSS stockée. Une saisie avec apostrophe qui ouvre une session montre que la saisie modifie la requête SQL de vérification : c'est une injection SQL qui contourne l'authentification. Quand l'application ne renvoie aucune donnée mais qu'un délai demandé en SQL se reproduit, l'injection est aveugle et temporelle : le temps de réponse sert de canal. Les deux injections SQL se corrigent par des requêtes paramétrées.",
+    "distractorNotes": {
+      "r5": "La CSRF fait envoyer à l'insu d'un utilisateur authentifié une requête légitime ; aucun de ces indicateurs n'implique une requête forgée depuis un autre site."
+    },
+    "reference": "OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-2.3-associer-vuln-correction-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une équipe sécurité prépare son plan de remédiation. Associez chaque vulnérabilité à la mesure qui la traite le mieux.",
+      "left": [
+        {
+          "id": "v1",
+          "text": "Injection SQL dans un formulaire de recherche"
+        },
+        {
+          "id": "v2",
+          "text": "XSS stockée dans les commentaires d'un blog"
+        },
+        {
+          "id": "v3",
+          "text": "Micrologiciel de routeur affecté par une faille publiée"
+        },
+        {
+          "id": "v4",
+          "text": "Serveur web acceptant encore des suites RC4"
+        },
+        {
+          "id": "v5",
+          "text": "Applications installées par sideloading sur les mobiles"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Requêtes paramétrées"
+        },
+        {
+          "id": "r2",
+          "text": "Encodage contextuel des sorties"
+        },
+        {
+          "id": "r3",
+          "text": "Mise à jour signée du micrologiciel"
+        },
+        {
+          "id": "r4",
+          "text": "Retrait des suites faibles de la configuration TLS"
+        },
+        {
+          "id": "r5",
+          "text": "Blocage des sources inconnues par le MDM"
+        },
+        {
+          "id": "r6",
+          "text": "Authentification multifacteur des utilisateurs"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "v1": "r1",
+        "v2": "r2",
+        "v3": "r3",
+        "v4": "r4",
+        "v5": "r5"
+      }
+    },
+    "explanation": "Les requêtes paramétrées empêchent la saisie de modifier la requête SQL. L'encodage des sorties selon leur contexte (HTML, attribut, JavaScript) neutralise le script stocké avant affichage. Une faille de micrologiciel se corrige par l'image corrigée du constructeur, dont la signature garantit l'origine. RC4 étant cassé, on le retire de la liste des suites proposées. Le MDM bloque l'installation d'applications hors des sources approuvées.",
+    "distractorNotes": {
+      "r6": "La MFA protège les comptes contre l'usage de mots de passe volés ; elle ne corrige aucune de ces vulnérabilités techniques."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-terme-sideloading-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "La charte mobile d'une entreprise interdit d'installer une application à partir d'un fichier récupéré hors de la boutique officielle, par exemple un APK sous Android. Quel terme anglais, cité dans les objectifs SY0-701 parmi les vulnérabilités des appareils mobiles, désigne cette pratique ?",
+      "fields": [
+        {
+          "id": "t",
+          "label": "Terme (un mot, en anglais)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "t": {
+          "accepted": [
+            "sideloading",
+            "side-loading",
+            "side loading"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Le sideloading (chargement latéral) consiste à installer une application sans passer par la boutique officielle : fichier APK sous Android, profil ou outil tiers sous iOS. L'application échappe ainsi aux contrôles de la boutique (analyse, signature, retrait des applications malveillantes). C'est un vecteur courant de logiciels malveillants ; le MDM le bloque en interdisant les sources inconnues et en imposant un magasin géré.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives (objectif 2.3)"
+  },
+  {
+    "slug": "security-plus-2.3-cvss-sqli-score-001",
+    "certification": "security-plus",
+    "domain": "2.0",
+    "subtopic": "2.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Selon la spécification CVSS v3.1, quand la portée est inchangée (S:U), le score de base est l'arrondi à la décimale supérieure de min(impact + exploitabilité, 10). Quels sont le score de base de cette vulnérabilité et sa qualification ?",
+      "exhibit": "Vulnérabilité : injection SQL non authentifiée, portail client\nVecteur : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H\nSous-score d'impact         : 5.87\nSous-score d'exploitabilité : 3.89",
+      "fields": [
+        {
+          "id": "score",
+          "label": "Score de base (nombre à une décimale)"
+        },
+        {
+          "id": "qual",
+          "label": "Qualification (un mot, en français ou en anglais)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "score": {
+          "accepted": [
+            "9.8",
+            "9,8"
+          ],
+          "normalize": "text"
+        },
+        "qual": {
+          "accepted": [
+            "critique",
+            "critical"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "5,87 + 3,89 = 9,76, inférieur à 10 ; l'arrondi à la décimale supérieure donne 9,8. Dans l'échelle qualitative CVSS v3.1, 9,0 à 10,0 correspond à « critique » (7,0 à 8,9 : élevée). Ce score est typique d'une injection SQL exploitable à distance, sans complexité, sans privilège ni interaction, avec un impact élevé sur la confidentialité, l'intégrité et la disponibilité : elle se corrige en priorité.",
+    "distractorNotes": {},
+    "reference": "FIRST CVSS v3.1 Specification"
+  }
+]
