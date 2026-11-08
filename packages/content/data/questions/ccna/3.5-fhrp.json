@@ -1,0 +1,1763 @@
+[
+  {
+    "slug": "ccna-3.5-hsrp-arp-reply-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 (routeur active) et R2 (routeur standby) forment le groupe HSRP 30 avec la configuration par défaut. Un PC du LAN envoie une requête ARP pour l'adresse IP virtuelle du groupe. Qui répond, et avec quelle adresse MAC ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2, avec l'adresse MAC de son interface"
+        },
+        {
+          "id": "b",
+          "text": "R1, avec l'adresse MAC de son interface"
+        },
+        {
+          "id": "c",
+          "text": "R1, avec l'adresse MAC virtuelle du groupe"
+        },
+        {
+          "id": "d",
+          "text": "R1 et R2, chacun avec la MAC de son interface"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Seul le routeur active répond aux requêtes ARP pour l'adresse IP virtuelle, et il donne l'adresse MAC virtuelle du groupe (0000.0c07.ac1e pour le groupe 30 en version 1, 30 = 0x1E), pas la MAC de son interface. Le PC enregistre donc dans son cache ARP une MAC qui n'appartient à aucun routeur en particulier : si R2 devient active, il reprend cette même MAC et le PC continue d'envoyer ses trames sans rien changer. Le routeur standby surveille l'active mais ne répond pas pour l'adresse virtuelle.",
+    "distractorNotes": {
+      "a": "Le routeur standby ne répond pas pour l'adresse virtuelle ; il attend la panne de l'active pour reprendre l'IP et la MAC virtuelles.",
+      "b": "Par défaut, l'active répond avec la MAC virtuelle ; répondre avec la MAC de l'interface empêcherait une bascule transparente pour les hôtes (il faut pour cela configurer « standby use-bia »).",
+      "d": "Un seul routeur, l'active, répond pour l'adresse virtuelle ; deux réponses avec des MAC différentes rendraient le cache ARP des hôtes instable."
+    },
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-vrrp-hsrp-preempt-default-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle différence de comportement par défaut existe entre HSRP et VRRP ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "HSRP préempte par défaut, VRRP ne préempte pas."
+        },
+        {
+          "id": "b",
+          "text": "VRRP préempte par défaut, HSRP ne préempte pas."
+        },
+        {
+          "id": "c",
+          "text": "VRRP a la priorité 255 par défaut, HSRP la priorité 100."
+        },
+        {
+          "id": "d",
+          "text": "HSRP annonce chaque seconde, VRRP toutes les 3 secondes."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Avec VRRP, la préemption est activée par défaut : un routeur backup de priorité plus haute que le master prend le rôle de master dès qu'il le constate. Avec HSRP, elle est désactivée par défaut : le routeur active garde son rôle tant qu'il fonctionne, même si un routeur de priorité supérieure arrive, sauf si « standby <groupe> preempt » est configuré sur ce dernier. Les deux protocoles ont la priorité 100 par défaut ; HSRP envoie ses Hello toutes les 3 s, VRRP ses annonces toutes les secondes.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : HSRP exige « standby preempt » pour préempter, alors que VRRP préempte sans configuration.",
+      "c": "Les deux protocoles ont la priorité 100 par défaut ; la priorité 255 est réservée au propriétaire de l'adresse IP virtuelle dans VRRP.",
+      "d": "C'est l'inverse : les Hello HSRP partent toutes les 3 s et les annonces VRRP toutes les secondes."
+    },
+    "reference": "RFC 9568 ; RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-glbp-active-forwarding-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel protocole de redondance du premier saut permet à plusieurs routeurs d'un même groupe de transmettre en même temps le trafic des hôtes, avec une seule adresse IP virtuelle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "HSRP version 1"
+        },
+        {
+          "id": "b",
+          "text": "HSRP version 2"
+        },
+        {
+          "id": "c",
+          "text": "VRRP"
+        },
+        {
+          "id": "d",
+          "text": "GLBP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "GLBP (Gateway Load Balancing Protocol, propriétaire Cisco) partage la charge à l'intérieur d'un seul groupe : l'AVG (Active Virtual Gateway) répond aux requêtes ARP pour l'unique adresse IP virtuelle en donnant, selon les hôtes, la MAC virtuelle de l'un des AVF (Active Virtual Forwarders). Chaque AVF transmet le trafic envoyé à sa MAC. Avec HSRP ou VRRP, un seul routeur par groupe transmet ; pour répartir la charge, il faut plusieurs groupes, donc plusieurs adresses virtuelles distribuées à des hôtes différents.",
+    "distractorNotes": {
+      "a": "Dans un groupe HSRP, seul le routeur active transmet le trafic de l'adresse virtuelle ; les autres attendent.",
+      "b": "La version 2 étend les numéros de groupe et change la MAC et l'adresse multicast, mais garde un seul routeur active par groupe.",
+      "c": "VRRP n'a qu'un master par groupe ; les routeurs backup ne transmettent pas le trafic de l'adresse virtuelle."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-third-router-state-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Trois routeurs forment un groupe HSRP stabilisé : R1 est active, R2 est standby. Dans quel état se trouve R3 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Speak"
+        },
+        {
+          "id": "b",
+          "text": "Learn"
+        },
+        {
+          "id": "c",
+          "text": "Listen"
+        },
+        {
+          "id": "d",
+          "text": "Initial"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une fois l'élection terminée, un groupe HSRP n'a qu'un routeur active et un routeur standby. Les autres routeurs restent en Listen : ils connaissent l'adresse IP virtuelle et reçoivent les Hello de l'active et du standby, mais n'envoient pas de Hello eux-mêmes. Si l'active ou le standby disparaît, ils repassent en Speak pour participer à l'élection d'un nouveau standby. Seuls les routeurs active et standby envoient des Hello périodiques dans un groupe stable.",
+    "distractorNotes": {
+      "a": "Speak est un état transitoire pendant l'élection ; une fois l'active et le standby désignés, R3 cesse d'envoyer des Hello et repasse en Listen.",
+      "b": "Learn correspond à un routeur qui ne connaît pas encore l'adresse virtuelle et n'a reçu aucun Hello de l'active ; dans un groupe stabilisé, R3 l'a apprise.",
+      "d": "Initial est l'état de départ, avant que HSRP ne s'exécute sur l'interface (groupe qui vient d'être configuré, interface qui vient de monter)."
+    },
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-tie-highest-ip-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 (172.16.5.2) et R2 (172.16.5.3) forment le groupe HSRP 1 sans priorité configurée. Ils démarrent exactement en même temps. Quel routeur devient active, et pourquoi ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1, car il a l'adresse IP la plus basse"
+        },
+        {
+          "id": "b",
+          "text": "R1, car il a l'adresse MAC la plus basse"
+        },
+        {
+          "id": "c",
+          "text": "R2, car il a l'adresse MAC la plus haute"
+        },
+        {
+          "id": "d",
+          "text": "R2, car il a l'adresse IP la plus haute"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'élection du routeur active HSRP compare d'abord la priorité (100 par défaut sur les deux routeurs, donc égalité), puis l'adresse IP de l'interface : la plus haute l'emporte. R2 (172.16.5.3) devient donc active et R1 standby. Les adresses MAC n'interviennent pas. En pratique, comme la préemption est désactivée par défaut, le premier routeur qui atteint l'état active garde le rôle ; pour imposer un routeur, on lui donne une priorité supérieure avec « standby 1 priority » et on configure « standby 1 preempt ».",
+    "distractorNotes": {
+      "a": "HSRP départage une égalité de priorité par l'adresse IP la plus haute, pas la plus basse.",
+      "b": "Les adresses MAC des interfaces ne servent pas à l'élection HSRP ; seule l'adresse IP départage une égalité de priorité.",
+      "c": "Le résultat est juste mais la raison est fausse : c'est l'adresse IP, pas la MAC, qui départage une égalité de priorité."
+    },
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-version-mismatch-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 et R2 sont reliés au même commutateur, dans le même VLAN, et se joignent par ping. Les deux routeurs se déclarent active pour le groupe 1. Quelle est la cause du problème ?",
+      "exhibit": "R1# show standby brief\n                     P indicates configured to preempt.\n                     |\nInterface   Grp  Pri P State   Active          Standby         Virtual IP\nGi0/1       1    110 P Active  local           unknown         192.168.1.1\n\nR2# show standby brief\n                     P indicates configured to preempt.\n                     |\nInterface   Grp  Pri P State   Active          Standby         Virtual IP\nGi0/1       1    100   Active  local           unknown         192.168.1.1\n\nR1# show running-config interface GigabitEthernet0/1\ninterface GigabitEthernet0/1\n ip address 192.168.1.2 255.255.255.0\n standby 1 ip 192.168.1.1\n standby 1 priority 110\n standby 1 preempt\n\nR2# show running-config interface GigabitEthernet0/1\ninterface GigabitEthernet0/1\n ip address 192.168.1.3 255.255.255.0\n standby version 2\n standby 1 ip 192.168.1.1",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2 n'est pas configuré avec « standby 1 preempt »."
+        },
+        {
+          "id": "b",
+          "text": "R1 et R2 n'exécutent pas la même version de HSRP."
+        },
+        {
+          "id": "c",
+          "text": "R1 et R2 n'ont pas la même priorité dans le groupe 1."
+        },
+        {
+          "id": "d",
+          "text": "R2 utilise la priorité par défaut au lieu d'une valeur fixée."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Chaque routeur se voit active avec un standby « unknown » : aucun ne reçoit les Hello de l'autre. Les configurations montrent que R2 a « standby version 2 » et pas R1, qui reste en version 1. La version 1 envoie ses Hello à 224.0.0.2, la version 2 à 224.0.0.102 avec un autre format de message : les deux versions ne communiquent pas. Chacun, ne voyant aucun autre routeur, devient active pour 192.168.1.1, ce qui crée un conflit d'adresse sur le LAN. Il faut configurer la même version sur les deux interfaces.",
+    "distractorNotes": {
+      "a": "La préemption décide seulement qui reprend le rôle active entre routeurs qui se voient ; elle ne peut pas faire apparaître deux routeurs active.",
+      "c": "Des priorités différentes sont la situation normale : elles servent justement à choisir l'active entre deux routeurs qui échangent des Hello.",
+      "d": "La priorité par défaut (100) est valide ; elle ferait simplement de R2 le standby si les deux routeurs échangeaient leurs Hello."
+    },
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-brief-read-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Quelle affirmation sur le groupe HSRP 15 est exacte ?",
+      "exhibit": "R1# show standby brief\n                     P indicates configured to preempt.\n                     |\nInterface   Grp  Pri P State   Active          Standby         Virtual IP\nGi0/0       15   120 P Active  local           10.10.10.3      10.10.10.1",
+      "options": [
+        {
+          "id": "a",
+          "text": "10.10.10.3 est le routeur active et R1 est son routeur de secours."
+        },
+        {
+          "id": "b",
+          "text": "R1 est active et 10.10.10.3 prendrait le relais en cas de panne de R1."
+        },
+        {
+          "id": "c",
+          "text": "R1 est active avec la priorité par défaut du groupe."
+        },
+        {
+          "id": "d",
+          "text": "R1 est active et 10.10.10.1 est l'adresse réelle de son interface Gi0/0."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Dans « show standby brief », la colonne State donne l'état du routeur local (Active), la colonne Active le routeur active (« local », donc R1), la colonne Standby l'adresse du routeur standby (10.10.10.3) et la dernière colonne l'adresse IP virtuelle (10.10.10.1). R1 a la priorité 120 et le « P » indique qu'il est configuré pour préempter. Si R1 tombe, le standby 10.10.10.3 devient active pour 10.10.10.1 ; au retour de R1, la préemption lui permet de reprendre le rôle si sa priorité dépasse celle du nouvel active.",
+    "distractorNotes": {
+      "a": "« local » dans la colonne Active désigne R1 lui-même ; 10.10.10.3 figure dans la colonne Standby.",
+      "c": "La priorité affichée est 120 ; la valeur par défaut est 100, la priorité a donc été configurée.",
+      "d": "10.10.10.1 figure dans la colonne Virtual IP : c'est l'adresse IP virtuelle du groupe, partagée par les routeurs, pas l'adresse réelle de l'interface de R1."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-track-no-preempt-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 est le routeur active du groupe 1 et R2 le standby. Le line protocol de GigabitEthernet0/0, le lien de R1 vers le WAN, passe à down. Quel est le résultat ?",
+      "exhibit": "R1# show running-config | section track\ntrack 1 interface GigabitEthernet0/0 line-protocol\ninterface GigabitEthernet0/1\n ip address 10.0.0.2 255.255.255.0\n standby 1 ip 10.0.0.1\n standby 1 priority 110\n standby 1 preempt\n standby 1 track 1 decrement 20\n\nR2# show running-config interface GigabitEthernet0/1\ninterface GigabitEthernet0/1\n ip address 10.0.0.3 255.255.255.0\n standby 1 ip 10.0.0.1",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2 devient active, car sa priorité 100 dépasse désormais celle de R1."
+        },
+        {
+          "id": "b",
+          "text": "R1 reste active avec la priorité 100, car le décrément HSRP vaut 10."
+        },
+        {
+          "id": "c",
+          "text": "R1 reste active, à la priorité 90, car R2 n'a pas la préemption."
+        },
+        {
+          "id": "d",
+          "text": "R1 quitte le groupe HSRP, car son objet suivi est down, et R2 devient active."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'objet 1 suit le line protocol de Gi0/0. Quand il passe à down, R1 retire le décrément configuré, 20, à sa priorité : 110 − 20 = 90. R2 a la priorité par défaut, 100, désormais supérieure, mais il n'a pas « standby 1 preempt » : un routeur standby ne prend le rôle active à un active en service que s'il est configuré pour préempter. R1 reste donc active et continue de recevoir le trafic des hôtes alors qu'il a perdu son lien WAN. Il faut ajouter « standby 1 preempt » sur R2.",
+    "distractorNotes": {
+      "a": "Une priorité supérieure ne suffit pas : sans « standby 1 preempt » sur R2, R1 garde le rôle active tant qu'il envoie des Hello.",
+      "b": "10 est le décrément par défaut, utilisé seulement quand aucune valeur n'est donnée ; ici « decrement 20 » fait passer R1 de 110 à 90.",
+      "d": "Le suivi ne fait que modifier la priorité ; R1 reste dans le groupe et continue d'envoyer des Hello avec sa nouvelle priorité."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-glbp-default-round-robin-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un groupe GLBP configuré avec les paramètres par défaut, comment l'AVG répartit-il les hôtes entre les AVF lorsqu'il répond à leurs requêtes ARP ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "En proportion d'un poids attribué à chaque AVF"
+        },
+        {
+          "id": "b",
+          "text": "En donnant toujours la même MAC à un hôte donné"
+        },
+        {
+          "id": "c",
+          "text": "À tour de rôle, une MAC virtuelle après l'autre"
+        },
+        {
+          "id": "d",
+          "text": "En donnant à tous les hôtes la MAC virtuelle de l'AVG"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "GLBP propose trois méthodes de répartition : round-robin (par défaut), weighted et host-dependent. En round-robin, l'AVG répond à chaque requête ARP pour l'adresse virtuelle avec la MAC virtuelle de l'AVF suivant dans la liste, si bien que les hôtes se répartissent à peu près également entre les AVF. La méthode weighted tient compte d'un poids configuré sur chaque routeur, et host-dependent donne toujours la même MAC virtuelle à un hôte donné. Ces deux dernières se configurent avec « glbp <groupe> load-balancing ».",
+    "distractorNotes": {
+      "a": "C'est la méthode weighted, qui doit être configurée explicitement ; elle n'est pas la méthode par défaut.",
+      "b": "C'est la méthode host-dependent, utile quand un hôte doit toujours passer par le même routeur ; elle n'est pas la méthode par défaut.",
+      "d": "GLBP répartit justement le trafic entre plusieurs AVF ; donner une seule MAC à tous les hôtes reviendrait au fonctionnement d'HSRP."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-fhrp-real-ip-gateway-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 (10.1.1.2, active) et R2 (10.1.1.3, standby) forment un groupe HSRP dont l'adresse virtuelle est 10.1.1.1. Sur un PC, un technicien configure par erreur la passerelle 10.1.1.2. Quelle est la conséquence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le PC perd l'accès aux autres réseaux dès que R1 passe standby, même s'il reste en service."
+        },
+        {
+          "id": "b",
+          "text": "Le PC n'atteint aucun autre réseau, car R1 rejette les trames qui ne visent pas la MAC virtuelle."
+        },
+        {
+          "id": "c",
+          "text": "Le PC atteint les autres réseaux, et R2 reprendrait l'adresse 10.1.1.2 si R1 tombait en panne."
+        },
+        {
+          "id": "d",
+          "text": "Le PC atteint les autres réseaux tant que R1 fonctionne, mais plus du tout si R1 tombe en panne."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Seule l'adresse IP virtuelle (10.1.1.1) et sa MAC virtuelle passent d'un routeur à l'autre lors d'une bascule. En prenant 10.1.1.2, le PC résout la MAC réelle de l'interface de R1 et lui envoie ses trames ; R1 les route normalement, quel que soit son état HSRP, puisqu'elles visent sa propre MAC. Si R1 tombe, R2 devient active pour 10.1.1.1 mais ne reprend pas 10.1.1.2 : le PC n'a plus de passerelle. La redondance n'existe que pour les hôtes configurés avec l'adresse virtuelle.",
+    "distractorNotes": {
+      "a": "Un routeur standby route toujours les trames adressées à la MAC de sa propre interface ; tant que R1 fonctionne, le PC garde sa connectivité.",
+      "b": "R1 accepte et route les trames adressées à la MAC de son interface, en plus de celles adressées à la MAC virtuelle quand il est active.",
+      "c": "R2 ne reprend que l'adresse IP virtuelle et la MAC virtuelle ; l'adresse réelle de R1 disparaît avec lui."
+    },
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-fhrp-failover-transparent-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1, routeur active d'un groupe HSRP, tombe en panne ; R2, le standby, devient active. Que doivent faire les PC du LAN pour continuer à joindre les autres réseaux ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Rien : ils gardent la même passerelle et la même MAC en cache ARP."
+        },
+        {
+          "id": "b",
+          "text": "Renouveler leur bail DHCP pour recevoir l'adresse de R2 comme passerelle."
+        },
+        {
+          "id": "c",
+          "text": "Vider leur cache ARP pour apprendre l'adresse MAC de l'interface de R2."
+        },
+        {
+          "id": "d",
+          "text": "Remplacer leur passerelle par défaut par l'adresse IP réelle de R2."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "C'est tout l'intérêt d'un FHRP : les hôtes utilisent l'adresse IP virtuelle comme passerelle, et leur cache ARP associe cette adresse à la MAC virtuelle du groupe. Lors de la bascule, R2 reprend ces deux adresses et envoie des ARP gratuits pour que les commutateurs associent la MAC virtuelle à son port. Les hôtes continuent d'envoyer leurs trames à la même MAC, sans aucune action de leur part ; seuls quelques paquets sont perdus pendant la détection de la panne (hold time de 10 s par défaut).",
+    "distractorNotes": {
+      "b": "La passerelle distribuée par DHCP est l'adresse virtuelle, qui reste la même après la bascule ; aucun renouvellement n'est nécessaire.",
+      "c": "Le cache ARP contient la MAC virtuelle, que R2 reprend ; la MAC réelle de R2 n'intervient pas.",
+      "d": "Pointer vers l'adresse réelle de R2 ferait perdre la redondance ; l'adresse virtuelle reste valable après la bascule."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-hold-time-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avec les timers HSRP par défaut, combien de temps le routeur standby attend-il sans recevoir de Hello du routeur active avant de le considérer comme hors service ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "3 secondes"
+        },
+        {
+          "id": "b",
+          "text": "10 secondes"
+        },
+        {
+          "id": "c",
+          "text": "30 secondes"
+        },
+        {
+          "id": "d",
+          "text": "40 secondes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "HSRP envoie un Hello toutes les 3 secondes (hello time) et déclare un routeur hors service s'il n'en a reçu aucun pendant 10 secondes (hold time). Le hold time vaut un peu plus de trois fois le hello time, pour tolérer la perte de deux Hello. Le standby devient alors active. Pour accélérer la bascule, on peut réduire ces valeurs avec « standby <groupe> timers <hello> <hold> », par exemple 1 et 3 secondes, en les gardant cohérentes sur les routeurs du groupe.",
+    "distractorNotes": {
+      "a": "3 secondes est l'intervalle entre deux Hello (hello time), pas le délai avant de déclarer l'active hors service.",
+      "c": "30 secondes ne correspond à aucun timer HSRP par défaut.",
+      "d": "40 secondes est le dead interval OSPF par défaut sur un réseau broadcast, pas un timer HSRP."
+    },
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-vrrp-advertisement-interval-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "À quel intervalle par défaut le master VRRP envoie-t-il ses annonces ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "1 seconde"
+        },
+        {
+          "id": "b",
+          "text": "3 secondes"
+        },
+        {
+          "id": "c",
+          "text": "5 secondes"
+        },
+        {
+          "id": "d",
+          "text": "10 secondes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le master VRRP envoie ses annonces (advertisements) à 224.0.0.18 toutes les secondes par défaut. Les routeurs backup déclarent le master hors service après le master down interval, environ trois intervalles d'annonce plus un léger décalage qui dépend de la priorité (un peu plus de 3 s par défaut). Contrairement à HSRP, seules les annonces du master circulent : les backup restent silencieux tant que le master fonctionne.",
+    "distractorNotes": {
+      "b": "3 secondes est le hello time par défaut de HSRP, pas l'intervalle d'annonce de VRRP.",
+      "c": "5 secondes ne correspond à aucun timer VRRP par défaut.",
+      "d": "10 secondes est le hold time par défaut de HSRP, pas l'intervalle d'annonce de VRRP."
+    },
+    "reference": "RFC 9568 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-per-vlan-load-sharing-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 et R2 sont les passerelles HSRP des VLAN 10 et 20. L'administrateur veut que chacun transporte du trafic des hôtes en temps normal, tout en secourant l'autre. Quelle solution répond au besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un seul groupe pour les deux VLAN, avec la même priorité sur R1 et R2 pour qu'ils alternent"
+        },
+        {
+          "id": "b",
+          "text": "Un groupe par VLAN, dans lequel R1 et R2 sont configurés tous les deux comme active"
+        },
+        {
+          "id": "c",
+          "text": "Un groupe par VLAN, avec R1 prioritaire dans celui du VLAN 10 et R2 dans celui du VLAN 20"
+        },
+        {
+          "id": "d",
+          "text": "Un groupe par VLAN en HSRP version 2, qui répartit le trafic entre les deux routeurs"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Dans un groupe HSRP, un seul routeur est active. Pour que les deux routeurs travaillent, on crée un groupe par VLAN et on rend R1 active dans le groupe du VLAN 10 (priorité plus haute, préemption) et R2 active dans celui du VLAN 20. Chaque routeur est standby dans l'autre groupe et reprend son trafic en cas de panne. Ce partage se fait par VLAN, pas par hôte ; pour répartir les hôtes d'un même VLAN entre plusieurs routeurs, il faut GLBP.",
+    "distractorNotes": {
+      "a": "Une même priorité ne fait pas alterner les routeurs : l'égalité est départagée par l'adresse IP la plus haute et un seul routeur reste active.",
+      "b": "HSRP n'autorise qu'un routeur active par groupe ; il n'existe pas de configuration qui en impose deux.",
+      "d": "La version 2 change les numéros de groupe, la MAC et l'adresse multicast, mais ne partage pas la charge dans un groupe."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-track-recovery-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 est le routeur active du groupe 5. Le line protocol de GigabitEthernet0/2 de R1 passe à down, puis remonte quelques minutes plus tard. Quel routeur est active pendant la panne, puis après le rétablissement ?",
+      "exhibit": "R1# show running-config | section track\ntrack 2 interface GigabitEthernet0/2 line-protocol\ninterface GigabitEthernet0/1\n ip address 172.16.0.2 255.255.255.0\n standby 5 ip 172.16.0.1\n standby 5 priority 120\n standby 5 preempt\n standby 5 track 2 decrement 30\n\nR2# show running-config interface GigabitEthernet0/1\ninterface GigabitEthernet0/1\n ip address 172.16.0.3 255.255.255.0\n standby 5 ip 172.16.0.1\n standby 5 priority 110\n standby 5 preempt",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 pendant la panne, puis R1 après le rétablissement"
+        },
+        {
+          "id": "b",
+          "text": "R2 pendant la panne, puis R2 après le rétablissement"
+        },
+        {
+          "id": "c",
+          "text": "R1 pendant la panne, puis R2 après le rétablissement"
+        },
+        {
+          "id": "d",
+          "text": "R2 pendant la panne, puis R1 après le rétablissement"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Quand l'objet 2 passe à down, R1 retire 30 à sa priorité : 120 − 30 = 90, moins que les 110 de R2. R2 est configuré avec « standby 5 preempt » : il prend le rôle active dès qu'il reçoit un Hello de R1 annonçant 90. Quand Gi0/2 remonte, R1 retrouve sa priorité de 120, supérieure à 110, et sa propre préemption lui fait reprendre le rôle active. Chaque basculement exige à la fois une priorité supérieure et la préemption sur le routeur qui prend le rôle.",
+    "distractorNotes": {
+      "a": "À 90, R1 a une priorité inférieure à celle de R2 (110), qui préempte : R2 prend le rôle active pendant la panne.",
+      "b": "Après le rétablissement, R1 revient à 120 et préempte : il reprend le rôle active à R2.",
+      "c": "C'est l'ordre inverse : la priorité de R1 baisse pendant la panne (R2 devient active), puis remonte (R1 reprend le rôle)."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-fhrp-benefits-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux avantages un protocole de redondance du premier saut apporte-t-il aux hôtes d'un LAN ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les hôtes gardent une seule passerelle, l'adresse IP virtuelle, quel que soit le routeur qui la sert."
+        },
+        {
+          "id": "b",
+          "text": "Chaque hôte reçoit deux passerelles par défaut et choisit la plus rapide à chaque envoi."
+        },
+        {
+          "id": "c",
+          "text": "La bascule vers un routeur de secours ne demande aucune modification sur les hôtes."
+        },
+        {
+          "id": "d",
+          "text": "Les routeurs du groupe n'ont plus besoin de protocole de routage vers le cœur du réseau."
+        },
+        {
+          "id": "e",
+          "text": "La bascule est instantanée, sans aucune perte de paquets pendant la panne."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Un hôte n'utilise qu'une passerelle par défaut. Un FHRP (HSRP, VRRP, GLBP) fait partager à plusieurs routeurs une adresse IP virtuelle et une MAC virtuelle : les hôtes sont configurés avec l'adresse virtuelle, et le routeur qui la sert peut changer sans qu'ils le sachent. La bascule est transparente pour eux, mais pas instantanée : il faut attendre que le routeur de secours détecte la panne (10 s par défaut avec HSRP), et les paquets envoyés pendant ce temps sont perdus.",
+    "distractorNotes": {
+      "b": "Un hôte n'a qu'une passerelle par défaut ; un FHRP lui en présente une seule, virtuelle, servie par plusieurs routeurs.",
+      "d": "Un FHRP ne concerne que la passerelle des hôtes ; les routeurs ont toujours besoin de routes (statiques ou dynamiques) vers les autres réseaux.",
+      "e": "La panne n'est détectée qu'après le hold time (10 s par défaut avec HSRP) ; les paquets envoyés pendant ce délai sont perdus."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-v1-v2-differences-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux différences HSRP version 2 présente-t-il par rapport à la version 1 ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Il utilise le port UDP 3222 au lieu du port UDP 1985."
+        },
+        {
+          "id": "b",
+          "text": "Il envoie ses Hello à 224.0.0.102 au lieu de 224.0.0.2."
+        },
+        {
+          "id": "c",
+          "text": "Il active la préemption par défaut, contrairement à la version 1."
+        },
+        {
+          "id": "d",
+          "text": "Il réduit le hold time par défaut de 10 à 3 secondes."
+        },
+        {
+          "id": "e",
+          "text": "Sa MAC virtuelle a la forme 0000.0c9f.fXXX au lieu de 0000.0c07.acXX."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "HSRP version 2 change l'adresse multicast des Hello (224.0.0.102 au lieu de 224.0.0.2) et la plage de MAC virtuelles : 0000.0c9f.f000 à 0000.0c9f.ffff, les trois derniers chiffres hexadécimaux codant le numéro de groupe, qui peut aller jusqu'à 4095 (255 en version 1, MAC 0000.0c07.acXX). Elle prend aussi en charge IPv6. Les deux versions gardent le port UDP 1985, les timers 3/10 s, la priorité 100 et l'absence de préemption par défaut. Elles ne communiquent pas entre elles.",
+    "distractorNotes": {
+      "a": "Les deux versions utilisent le port UDP 1985 ; le port 3222 est celui de GLBP.",
+      "c": "La préemption reste désactivée par défaut en version 2 ; elle se configure avec « standby <groupe> preempt ».",
+      "d": "Les timers par défaut restent 3 s (hello) et 10 s (hold) en version 2."
+    },
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-vrrp-properties-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent VRRP ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les routeurs de secours du groupe sont à l'état Standby."
+        },
+        {
+          "id": "b",
+          "text": "La MAC virtuelle d'un groupe IPv4 a la forme 0000.5e00.01XX."
+        },
+        {
+          "id": "c",
+          "text": "La préemption est désactivée tant qu'elle n'est pas configurée."
+        },
+        {
+          "id": "d",
+          "text": "L'adresse virtuelle peut être l'adresse réelle d'une interface d'un des routeurs."
+        },
+        {
+          "id": "e",
+          "text": "Les annonces du master sont envoyées sur le port UDP 1985."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "VRRP utilise pour IPv4 les MAC virtuelles 0000.5e00.01XX, où XX est le numéro de groupe (VRID) en hexadécimal. Contrairement à HSRP, l'adresse virtuelle peut être l'adresse réelle d'une interface : ce routeur est alors le propriétaire de l'adresse (priorité 255) et devient master tant qu'il fonctionne. Le master envoie ses annonces à 224.0.0.18, directement dans IP (protocole 112), sans UDP. Les autres routeurs sont à l'état Backup, et la préemption est activée par défaut.",
+    "distractorNotes": {
+      "a": "Standby est un état HSRP ; dans VRRP, les routeurs de secours sont à l'état Backup.",
+      "c": "Avec VRRP, la préemption est activée par défaut ; c'est HSRP qui ne préempte pas sans configuration.",
+      "e": "VRRP est encapsulé directement dans IP (protocole 112) ; le port UDP 1985 est celui de HSRP."
+    },
+    "reference": "RFC 9568 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-states-hello-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Dans quels trois états HSRP un routeur envoie-t-il des Hello périodiques ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "initial",
+          "text": "Initial"
+        },
+        {
+          "id": "learn",
+          "text": "Learn"
+        },
+        {
+          "id": "listen",
+          "text": "Listen"
+        },
+        {
+          "id": "speak",
+          "text": "Speak"
+        },
+        {
+          "id": "standby",
+          "text": "Standby"
+        },
+        {
+          "id": "active",
+          "text": "Active"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "speak",
+        "standby",
+        "active"
+      ]
+    },
+    "explanation": "Un routeur HSRP n'envoie des Hello que lorsqu'il participe activement au groupe. En Speak, il envoie des Hello pour se porter candidat aux rôles d'active et de standby ; une fois élu, le routeur standby et le routeur active continuent d'en envoyer périodiquement (toutes les 3 s par défaut). En Initial, Learn et Listen, il ne fait que recevoir : il attend que HSRP démarre, que l'adresse virtuelle soit apprise ou qu'un rôle se libère. Dans un groupe stable, seuls l'active et le standby envoient des Hello.",
+    "distractorNotes": {
+      "initial": "Initial est l'état de départ, avant que HSRP ne s'exécute sur l'interface ; aucun Hello n'est envoyé.",
+      "learn": "En Learn, le routeur attend un Hello de l'active pour apprendre l'adresse virtuelle ; il n'en envoie pas.",
+      "listen": "En Listen, le routeur connaît l'adresse virtuelle et écoute les Hello de l'active et du standby sans en envoyer."
+    },
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-brief-two-groups-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Sur R1, Gi0/0.10 dessert le VLAN 10 et Gi0/0.20 le VLAN 20. Quelles trois affirmations sont exactes ? (Choisissez-en trois.)",
+      "exhibit": "R1# show standby brief\n                     P indicates configured to preempt.\n                     |\nInterface   Grp  Pri P State   Active          Standby         Virtual IP\nGi0/0.10    10   110 P Active  local           10.1.10.3       10.1.10.1\nGi0/0.20    20   90    Standby 10.1.20.3       local           10.1.20.1",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 transmet le trafic que les hôtes du VLAN 10 envoient à leur passerelle 10.1.10.1."
+        },
+        {
+          "id": "b",
+          "text": "R1 est configuré pour préempter dans le groupe 20."
+        },
+        {
+          "id": "c",
+          "text": "Le routeur 10.1.20.3 est le routeur active du groupe 20."
+        },
+        {
+          "id": "d",
+          "text": "R1 utilise la priorité par défaut dans le groupe 20."
+        },
+        {
+          "id": "e",
+          "text": "Si le routeur 10.1.20.3 tombe en panne, R1 devient active pour le groupe 20."
+        },
+        {
+          "id": "f",
+          "text": "Les hôtes du VLAN 20 doivent utiliser 10.1.20.3 comme passerelle par défaut."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Ligne du groupe 10 : R1 est active (« local » dans la colonne Active) pour l'adresse virtuelle 10.1.10.1, avec la priorité 110 et la préemption (P) ; il transmet donc le trafic des hôtes du VLAN 10. Ligne du groupe 20 : R1 est standby (« local » dans la colonne Standby), le routeur active est 10.1.20.3 et R1 a la priorité 90 sans « P ». En tant que standby, R1 deviendra active si 10.1.20.3 tombe : la reprise après une panne ne demande pas de préemption. Les hôtes du VLAN 20 utilisent l'adresse virtuelle 10.1.20.1.",
+    "distractorNotes": {
+      "b": "La colonne P est vide sur la ligne du groupe 20 : R1 n'y est pas configuré pour préempter.",
+      "d": "R1 a la priorité 90 dans le groupe 20 ; la valeur par défaut est 100.",
+      "f": "10.1.20.3 est l'adresse réelle du routeur active ; les hôtes doivent utiliser l'adresse virtuelle 10.1.20.1 pour bénéficier de la redondance."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-track-behavior-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent le suivi d'objet (track) associé à un groupe HSRP ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Quand l'objet suivi passe à down, le routeur quitte le groupe et repasse à l'état Initial."
+        },
+        {
+          "id": "b",
+          "text": "Quand l'objet suivi passe à down, la priorité HSRP du routeur baisse du décrément configuré."
+        },
+        {
+          "id": "c",
+          "text": "Le suivi rend la préemption inutile : l'autre routeur prend la main dès qu'il a la priorité la plus haute."
+        },
+        {
+          "id": "d",
+          "text": "Sans valeur de décrément explicite, la priorité HSRP baisse de 10 quand l'objet passe à down."
+        },
+        {
+          "id": "e",
+          "text": "La priorité d'origine n'est rétablie qu'après un redémarrage du routeur, même si l'objet remonte."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Avec « standby <groupe> track <objet> [decrement <valeur>] », le routeur retire la valeur du décrément à sa priorité HSRP quand l'objet suivi (par exemple le line protocol de son interface WAN) passe à down, et la lui rend dès que l'objet remonte. Sans valeur explicite, le décrément est de 10. Le suivi ne fait que modifier la priorité : pour qu'un autre routeur prenne effectivement le rôle active, il doit avoir une priorité supérieure et être configuré avec « standby <groupe> preempt ».",
+    "distractorNotes": {
+      "a": "Le routeur reste dans le groupe et continue d'envoyer des Hello ; seule sa priorité change.",
+      "c": "Une priorité supérieure ne suffit pas : le routeur qui doit prendre le rôle active doit être configuré pour préempter.",
+      "e": "La priorité est rétablie automatiquement dès que l'objet suivi repasse à up, sans redémarrage."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-glbp-properties-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent GLBP ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "GLBP est un standard ouvert de l'IETF, comme VRRP."
+        },
+        {
+          "id": "b",
+          "text": "Plusieurs routeurs d'un même groupe transmettent en même temps le trafic des hôtes."
+        },
+        {
+          "id": "c",
+          "text": "Chaque AVF possède sa propre adresse IP virtuelle, que l'AVG distribue aux hôtes."
+        },
+        {
+          "id": "d",
+          "text": "Un groupe utilise au plus quatre adresses MAC virtuelles, chacune servie par un AVF."
+        },
+        {
+          "id": "e",
+          "text": "Les hôtes reçoivent par DHCP la liste des passerelles du groupe et en choisissent une."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "GLBP, protocole propriétaire Cisco, partage la charge dans un seul groupe : l'AVG attribue jusqu'à quatre MAC virtuelles à des routeurs du groupe, les AVF, et répond aux requêtes ARP pour l'unique adresse IP virtuelle avec l'une de ces MAC. Les hôtes, tous configurés avec la même passerelle, se répartissent ainsi entre plusieurs routeurs qui transmettent du trafic en même temps. Les routeurs supplémentaires restent en secours et reprennent une MAC virtuelle si son AVF tombe en panne.",
+    "distractorNotes": {
+      "a": "GLBP est propriétaire Cisco ; le FHRP standard de l'IETF est VRRP.",
+      "c": "Un groupe GLBP n'a qu'une adresse IP virtuelle ; ce sont les MAC virtuelles qui diffèrent d'un AVF à l'autre.",
+      "e": "Les hôtes ont une seule passerelle, l'adresse virtuelle ; la répartition se fait par les réponses ARP de l'AVG."
+    },
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-v2-virtual-mac-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un routeur exécute HSRP version 2 pour le groupe 300. Quelle adresse MAC virtuelle utilise-t-il pour ce groupe ?",
+      "fields": [
+        {
+          "id": "mac",
+          "label": "Adresse MAC virtuelle (format Cisco xxxx.xxxx.xxxx)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "mac": {
+          "accepted": [
+            "0000.0c9f.f12c",
+            "00:00:0c:9f:f1:2c",
+            "00-00-0c-9f-f1-2c"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "HSRP version 2 utilise les MAC virtuelles 0000.0c9f.f000 à 0000.0c9f.ffff : les trois derniers chiffres hexadécimaux codent le numéro de groupe, de 0 à 4095. 300 = 256 + 44 = 0x12C, donc la MAC est 0000.0c9f.f12c. Le groupe 300 n'existe d'ailleurs qu'en version 2, la version 1 étant limitée aux groupes 0 à 255 (MAC 0000.0c07.acXX). Le routeur active répond aux requêtes ARP pour l'adresse virtuelle avec cette MAC.",
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-track-two-objects-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. R1 est le routeur active du groupe 1. Le line protocol de GigabitEthernet0/0 et celui de GigabitEthernet0/2 de R1 passent tous les deux à down. Une fois le groupe stabilisé, quelle est la priorité HSRP de R1, et quel routeur est active ?",
+      "exhibit": "R1# show running-config | section track\ntrack 1 interface GigabitEthernet0/0 line-protocol\ntrack 2 interface GigabitEthernet0/2 line-protocol\ninterface GigabitEthernet0/1\n ip address 10.0.0.2 255.255.255.0\n standby 1 ip 10.0.0.1\n standby 1 priority 120\n standby 1 preempt\n standby 1 track 1 decrement 15\n standby 1 track 2 decrement 10\n\nR2# show running-config interface GigabitEthernet0/1\ninterface GigabitEthernet0/1\n ip address 10.0.0.3 255.255.255.0\n standby 1 ip 10.0.0.1\n standby 1 preempt",
+      "fields": [
+        {
+          "id": "prio",
+          "label": "Priorité HSRP de R1 (nombre entier)"
+        },
+        {
+          "id": "active",
+          "label": "Adresse IP de l'interface du routeur active (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "prio": {
+          "accepted": [
+            "95"
+          ],
+          "normalize": "int"
+        },
+        "active": {
+          "accepted": [
+            "10.0.0.3"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Les décréments de tous les objets suivis qui sont down s'additionnent : 120 − 15 − 10 = 95. R2 n'a pas de priorité configurée, il garde donc la valeur par défaut, 100, désormais supérieure à 95. Comme R2 est configuré avec « standby 1 preempt », il prend le rôle active dès qu'il reçoit un Hello de R1 annonçant 95 : le routeur active est 10.0.0.3. Si un seul des deux objets tombait, R1 resterait active (105 ou 110 face à 100).",
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-vrrp-virtual-mac-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un routeur exécute VRRP pour IPv4 dans le groupe 20. Quelle adresse MAC virtuelle utilise-t-il pour ce groupe ?",
+      "fields": [
+        {
+          "id": "mac",
+          "label": "Adresse MAC virtuelle (format Cisco xxxx.xxxx.xxxx)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "mac": {
+          "accepted": [
+            "0000.5e00.0114",
+            "00:00:5e:00:01:14",
+            "00-00-5e-00-01-14"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "VRRP pour IPv4 utilise les MAC virtuelles 0000.5e00.01XX, où XX est le numéro de groupe (VRID, de 1 à 255) en hexadécimal. 20 = 16 + 4 = 0x14, donc la MAC est 0000.5e00.0114. Le préfixe 0000.5e appartient à l'IANA, ce qui distingue VRRP des protocoles Cisco : HSRP version 1 utiliserait 0000.0c07.ac14 et HSRP version 2 0000.0c9f.f014 pour le même numéro de groupe. Le master répond aux requêtes ARP pour l'adresse virtuelle avec cette MAC.",
+    "reference": "RFC 9568"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-version2-group-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "L'interface GigabitEthernet0/1 de R1 a l'adresse 10.30.0.2/24 et vous êtes dans son mode de configuration. Configurez le groupe HSRP 1030 avec l'adresse virtuelle 10.30.0.1 et donnez à R1 la priorité 105. Commencez par la commande qui rend ce numéro de groupe utilisable ; l'ordre des deux autres commandes est libre.",
+      "prompt": "R1(config-if)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "standby version 2"
+        ],
+        [
+          "standby 1030 ip 10.30.0.1"
+        ],
+        [
+          "standby 1030 priority 105"
+        ]
+      ]
+    },
+    "explanation": "HSRP version 1, utilisée par défaut, n'accepte que les groupes 0 à 255 : « standby version 2 » doit précéder toute commande qui cite le groupe 1030 (la version 2 accepte 0 à 4095). « standby 1030 ip 10.30.0.1 » définit l'adresse virtuelle, et « standby 1030 priority 105 » donne à R1 une priorité supérieure à la valeur par défaut (100). Sans « standby 1030 preempt », R1 ne prendra le rôle active à un autre routeur déjà active que si celui-ci tombe. La version doit être la même sur tous les routeurs du groupe.",
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-interface-join-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "En partant du mode de configuration globale de R2, attribuez à l'interface GigabitEthernet0/0, déjà activée, l'adresse 192.168.40.3/24, puis faites-la participer au groupe HSRP 4 avec l'adresse virtuelle 192.168.40.1. Gardez la priorité et la préemption par défaut.",
+      "prompt": "R2(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/0"
+        ],
+        [
+          "ip address 192.168.40.3 255.255.255.0"
+        ],
+        [
+          "standby 4 ip 192.168.40.1"
+        ]
+      ]
+    },
+    "explanation": "« interface GigabitEthernet0/0 » ouvre le mode de configuration de l'interface. L'adresse réelle se donne avec son masque en décimal pointé (255.255.255.0 pour un /24). « standby 4 ip 192.168.40.1 » crée le groupe 4 et définit l'adresse virtuelle, qui doit appartenir au même sous-réseau que l'interface. Sans autre commande, R2 a la priorité 100 et ne préempte pas ; les hôtes du LAN doivent utiliser 192.168.40.1, pas 192.168.40.3, comme passerelle par défaut.",
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-track-object-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 a la priorité 120 dans le groupe HSRP 1 de son interface GigabitEthernet0/1 ; R2 a la priorité 100 et la préemption. En partant du mode de configuration globale, créez l'objet de suivi 10 qui surveille le line protocol de GigabitEthernet0/0, puis associez-le au groupe 1 de GigabitEthernet0/1 pour que la priorité de R1 tombe à 95 quand cet objet passe à down.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "track 10 interface GigabitEthernet0/0 line-protocol"
+        ],
+        [
+          "interface GigabitEthernet0/1"
+        ],
+        [
+          "standby 1 track 10 decrement 25"
+        ]
+      ]
+    },
+    "explanation": "« track 10 interface GigabitEthernet0/0 line-protocol » crée l'objet 10, à l'état down dès que le line protocol de Gi0/0 tombe. Dans l'interface qui porte le groupe, « standby 1 track 10 decrement 25 » retire 25 à la priorité quand l'objet est down : 120 − 25 = 95. Sans le mot-clé decrement, la baisse serait de 10 (priorité 110, toujours supérieure à 100). À 95, R1 passe sous R2, qui préempte et devient active ; quand Gi0/0 remonte, R1 revient à 120 et ne reprend le rôle que s'il est lui aussi configuré pour préempter.",
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-timers-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Vous êtes dans le mode de configuration de l'interface de R1 qui porte le groupe HSRP 2. Pour accélérer la détection d'une panne, réglez pour ce groupe un hello time de 1 seconde et un hold time de 3 secondes.",
+      "prompt": "R1(config-if)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "standby 2 timers 1 3",
+          "standby 2 timers msec 1000 msec 3000",
+          "standby 2 timers msec 1000 3",
+          "standby 2 timers 1 msec 3000"
+        ]
+      ]
+    },
+    "explanation": "« standby <groupe> timers <hello> <hold> » fixe les deux timers, en secondes (ou en millisecondes avec le mot-clé msec devant chaque valeur). Les valeurs par défaut sont 3 s et 10 s ; avec 1 et 3 s, le standby déclare l'active hors service après 3 s sans Hello au lieu de 10. Le hold time doit rester supérieur au hello time, en pratique au moins trois fois plus grand. On configure les mêmes valeurs sur tous les routeurs du groupe.",
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-vrrp-config-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Vous êtes dans le mode de configuration de l'interface GigabitEthernet0/1 de R1 (10.50.0.2/24). Ce routeur utilise la syntaxe VRRP classique (commandes vrrp en mode interface). Créez le groupe VRRP 5 avec l'adresse virtuelle 10.50.0.1, puis donnez à R1 la priorité 110. Ne configurez rien d'autre.",
+      "prompt": "R1(config-if)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "vrrp 5 ip 10.50.0.1"
+        ],
+        [
+          "vrrp 5 priority 110"
+        ]
+      ]
+    },
+    "explanation": "« vrrp 5 ip 10.50.0.1 » crée le groupe 5 (VRID) et définit l'adresse virtuelle ; « vrrp 5 priority 110 » donne à R1 une priorité supérieure à la valeur par défaut (100), pour qu'il soit élu master. Aucune commande de préemption n'est nécessaire : VRRP préempte par défaut, contrairement à HSRP. La MAC virtuelle du groupe est 0000.5e00.0105. Sur IOS XE avec VRRPv3 activé (« fhrp version vrrp v3 »), la syntaxe passe par « vrrp 5 address-family ipv4 ».",
+    "reference": "RFC 3768 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-show-brief-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode d'exécution privilégié de R1, affichez un résumé des groupes HSRP du routeur, à raison d'une ligne par groupe : interface, groupe, priorité, préemption, état, routeur active, routeur standby et adresse IP virtuelle.",
+      "prompt": "R1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show standby brief"
+        ]
+      ]
+    },
+    "explanation": "« show standby brief » affiche une ligne par groupe HSRP : interface, numéro de groupe (Grp), priorité (Pri), un « P » si la préemption est configurée, état local, adresse du routeur active et du routeur standby (« local » pour le routeur lui-même, « unknown » s'il n'y en a pas) et adresse IP virtuelle. « show standby » sans mot-clé donne le détail de chaque groupe : MAC virtuelle, timers, priorité configurée, nombre de changements d'état.",
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-multigroup-svi-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le commutateur multicouche DSW1 porte le groupe HSRP 10 sur l'interface Vlan10 et le groupe HSRP 20 sur l'interface Vlan20 ; les adresses virtuelles sont déjà configurées. DSW2 a la priorité par défaut et la préemption dans les deux groupes. En partant du mode de configuration globale, faites de DSW1 le routeur active du VLAN 10 et le standby du VLAN 20 : donnez-lui la priorité 110 dans le groupe où il doit être active et 90 dans l'autre, et ajoutez la préemption seulement là où elle est nécessaire. Traitez d'abord le VLAN 10.",
+      "prompt": "DSW1(config)#",
+      "lines": 5
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "interface Vlan10",
+          "interface vlan 10"
+        ],
+        [
+          "standby 10 priority 110"
+        ],
+        [
+          "standby 10 preempt"
+        ],
+        [
+          "interface Vlan20",
+          "interface vlan 20"
+        ],
+        [
+          "standby 20 priority 90"
+        ]
+      ]
+    },
+    "explanation": "Dans le groupe 10, DSW1 doit prendre le rôle active même si DSW2 l'a déjà : il lui faut une priorité supérieure à 100 (110) et « standby 10 preempt ». Dans le groupe 20, DSW1 doit rester standby : avec la priorité 90, inférieure aux 100 de DSW2, il ne deviendra active qu'en cas de panne de DSW2, ce qui ne demande pas de préemption ; et comme DSW2 préempte, il reprendra le rôle si DSW1 l'a obtenu pendant son absence. Chaque commutateur transporte ainsi le trafic d'un VLAN et secourt l'autre.",
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-restore-defaults-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Vous êtes dans le mode de configuration de l'interface de R1 qui porte le groupe HSRP 3, configuré avec « standby 3 priority 130 » et « standby 3 preempt ». Rendez à R1 la priorité par défaut et désactivez sa préemption dans ce groupe, dans l'ordre de votre choix, sans supprimer le groupe.",
+      "prompt": "R1(config-if)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "no standby 3 priority",
+          "no standby 3 priority 130",
+          "standby 3 priority 100"
+        ],
+        [
+          "no standby 3 preempt"
+        ]
+      ]
+    },
+    "explanation": "« no standby 3 priority » rétablit la priorité par défaut, 100 (« standby 3 priority 100 » donne le même résultat). « no standby 3 preempt » supprime la préemption, désactivée par défaut dans HSRP. Le groupe et son adresse virtuelle restent configurés. Attention : « no standby 3 » sans autre mot-clé supprimerait tout le groupe 3. Retirer la préemption ne fait pas basculer le rôle : si R1 est active, il le reste jusqu'à une panne.",
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-failover-sequence-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "R1 est le routeur active d'un groupe HSRP et R2 le routeur standby, avec les timers par défaut. Remettez dans l'ordre les événements qui suivent la panne de R1, jusqu'à ce que le trafic des hôtes passe par R2.",
+      "items": [
+        {
+          "id": "garp",
+          "text": "R2 envoie des ARP gratuits avec la MAC virtuelle du groupe."
+        },
+        {
+          "id": "fail",
+          "text": "R1 tombe en panne et cesse d'envoyer des Hello."
+        },
+        {
+          "id": "switch",
+          "text": "Le commutateur associe la MAC virtuelle au port relié à R2."
+        },
+        {
+          "id": "hold",
+          "text": "Le hold time expire sur R2 sans qu'aucun Hello de R1 n'ait été reçu."
+        },
+        {
+          "id": "active",
+          "text": "R2 passe de l'état Standby à l'état Active."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "fail",
+        "hold",
+        "active",
+        "garp",
+        "switch"
+      ]
+    },
+    "explanation": "Après la panne de R1, R2 ne reçoit plus de Hello ; il attend l'expiration du hold time (10 s par défaut) pour déclarer l'active hors service, puis passe à l'état Active et reprend l'adresse IP et la MAC virtuelles. Il envoie alors des ARP gratuits dont la MAC source est la MAC virtuelle : les commutateurs mettent à jour leur table d'adresses MAC et dirigent vers le port de R2 les trames que les hôtes envoient à la MAC virtuelle. Les hôtes, eux, n'ont rien à changer.",
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-election-ranking-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Cinq routeurs forment un groupe HSRP sur le sous-réseau 10.0.0.0/24 ; tous sont configurés avec la préemption et démarrent en même temps. Classez-les dans l'ordre de préférence de l'élection, du premier (qui devient active) au dernier.",
+      "items": [
+        {
+          "id": "r1",
+          "text": "R1 : 10.0.0.2, priorité 120"
+        },
+        {
+          "id": "r2",
+          "text": "R2 : 10.0.0.3, priorité non configurée"
+        },
+        {
+          "id": "r3",
+          "text": "R3 : 10.0.0.4, priorité 120"
+        },
+        {
+          "id": "r4",
+          "text": "R4 : 10.0.0.5, priorité 90"
+        },
+        {
+          "id": "r5",
+          "text": "R5 : 10.0.0.6, priorité non configurée"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "r3",
+        "r1",
+        "r5",
+        "r2",
+        "r4"
+      ]
+    },
+    "explanation": "HSRP compare d'abord la priorité, la plus haute l'emportant, puis, à priorité égale, l'adresse IP de l'interface, la plus haute l'emportant. Une priorité non configurée vaut 100. R1 et R3 sont à 120 : R3 (10.0.0.4) passe devant R1 (10.0.0.2) ; il devient active et R1 standby. Viennent ensuite les deux routeurs à 100, R5 (10.0.0.6) devant R2 (10.0.0.3), puis R4, dont la priorité 90 est la plus basse malgré une adresse plus haute que celles de R1, R2 et R3.",
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-glbp-arp-sequence-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "PC1 utilise comme passerelle 10.1.1.1, l'adresse IP virtuelle d'un groupe GLBP, et son cache ARP est vide. Remettez dans l'ordre les étapes qui mènent son premier paquet vers un réseau distant jusqu'au routeur qui le transmet.",
+      "items": [
+        {
+          "id": "cache",
+          "text": "PC1 enregistre la MAC reçue pour 10.1.1.1 dans son cache ARP."
+        },
+        {
+          "id": "forward",
+          "text": "L'AVF qui possède cette MAC virtuelle route le paquet."
+        },
+        {
+          "id": "request",
+          "text": "PC1 diffuse une requête ARP pour l'adresse 10.1.1.1."
+        },
+        {
+          "id": "frame",
+          "text": "PC1 envoie le paquet dans une trame adressée à cette MAC virtuelle."
+        },
+        {
+          "id": "reply",
+          "text": "L'AVG répond avec la MAC virtuelle de l'un des AVF."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "request",
+        "reply",
+        "cache",
+        "frame",
+        "forward"
+      ]
+    },
+    "explanation": "Pour joindre un réseau distant, PC1 doit connaître la MAC de sa passerelle : il diffuse une requête ARP pour 10.1.1.1. Dans GLBP, c'est l'AVG qui répond, avec la MAC virtuelle d'un des AVF (à tour de rôle par défaut). PC1 garde cette association dans son cache ARP et envoie le paquet dans une trame dont la MAC de destination est cette MAC virtuelle ; l'AVF qui la possède, éventuellement l'AVG lui-même, route le paquet. D'autres PC reçoivent d'autres MAC virtuelles, ce qui répartit la charge.",
+    "reference": "Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-fhrp-virtual-mac-matching-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque protocole et numéro de groupe à l'adresse MAC virtuelle qu'il utilise.",
+      "left": [
+        {
+          "id": "hsrp1",
+          "text": "HSRP version 1, groupe 10"
+        },
+        {
+          "id": "hsrp2",
+          "text": "HSRP version 2, groupe 10"
+        },
+        {
+          "id": "vrrp",
+          "text": "VRRP (IPv4), groupe 10"
+        },
+        {
+          "id": "glbp",
+          "text": "GLBP, groupe 10, AVF numéro 1"
+        }
+      ],
+      "right": [
+        {
+          "id": "m5e",
+          "text": "0000.5e00.010a"
+        },
+        {
+          "id": "mac10",
+          "text": "0000.0c07.ac10"
+        },
+        {
+          "id": "m9f",
+          "text": "0000.0c9f.f00a"
+        },
+        {
+          "id": "mb4",
+          "text": "0007.b400.0a01"
+        },
+        {
+          "id": "mac0a",
+          "text": "0000.0c07.ac0a"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "hsrp1": "mac0a",
+        "hsrp2": "m9f",
+        "vrrp": "m5e",
+        "glbp": "mb4"
+      }
+    },
+    "explanation": "Le numéro de groupe s'écrit en hexadécimal : 10 = 0x0A. HSRP version 1 utilise 0000.0c07.acXX (0000.0c07.ac0a), HSRP version 2 0000.0c9f.fXXX sur trois chiffres (0000.0c9f.f00a), VRRP pour IPv4 0000.5e00.01XX, sous le préfixe de l'IANA (0000.5e00.010a). GLBP utilise 0007.b400.XXYY, où XX est le groupe et YY le numéro de l'AVF : 0007.b400.0a01 pour l'AVF 1 du groupe 10.",
+    "distractorNotes": {
+      "mac10": "0000.0c07.ac10 code le groupe 0x10, soit 16 en décimal ; c'est l'erreur qui consiste à recopier le numéro de groupe sans le convertir en hexadécimal."
+    },
+    "reference": "RFC 2281 ; RFC 9568 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-fhrp-multicast-matching-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque protocole à l'adresse de destination et au transport de ses messages de contrôle pour IPv4.",
+      "left": [
+        {
+          "id": "hsrp1",
+          "text": "HSRP version 1"
+        },
+        {
+          "id": "hsrp2",
+          "text": "HSRP version 2"
+        },
+        {
+          "id": "vrrp",
+          "text": "VRRP"
+        },
+        {
+          "id": "glbp",
+          "text": "GLBP"
+        }
+      ],
+      "right": [
+        {
+          "id": "udp3222",
+          "text": "224.0.0.102, UDP 3222"
+        },
+        {
+          "id": "ip112",
+          "text": "224.0.0.18, protocole IP 112"
+        },
+        {
+          "id": "udp1985b",
+          "text": "224.0.0.2, UDP 1985"
+        },
+        {
+          "id": "ip88",
+          "text": "224.0.0.10, protocole IP 88"
+        },
+        {
+          "id": "udp1985h",
+          "text": "224.0.0.102, UDP 1985"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "hsrp1": "udp1985b",
+        "hsrp2": "udp1985h",
+        "vrrp": "ip112",
+        "glbp": "udp3222"
+      }
+    },
+    "explanation": "HSRP version 1 envoie ses Hello à 224.0.0.2 (tous les routeurs du segment) et la version 2 à 224.0.0.102, toutes deux sur le port UDP 1985. GLBP utilise aussi 224.0.0.102, mais sur le port UDP 3222. VRRP est encapsulé directement dans IP, avec le numéro de protocole 112, et ses annonces partent vers 224.0.0.18. Une ACL qui protège l'interface doit laisser passer ces messages, sans quoi chaque routeur se croit seul et devient active ou master.",
+    "distractorNotes": {
+      "ip88": "224.0.0.10 et le protocole IP 88 sont ceux d'EIGRP, un protocole de routage, pas un FHRP."
+    },
+    "reference": "RFC 2281 ; RFC 9568 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-fhrp-roles-matching-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque description au nom du rôle correspondant.",
+      "left": [
+        {
+          "id": "hact",
+          "text": "HSRP : routeur qui transmet le trafic envoyé à la passerelle virtuelle"
+        },
+        {
+          "id": "hsb",
+          "text": "HSRP : routeur désigné pour prendre le relais du premier en cas de panne"
+        },
+        {
+          "id": "vmas",
+          "text": "VRRP : routeur qui transmet le trafic envoyé à la passerelle virtuelle"
+        },
+        {
+          "id": "avg",
+          "text": "GLBP : routeur qui répond aux requêtes ARP et attribue les MAC virtuelles"
+        },
+        {
+          "id": "avf",
+          "text": "GLBP : routeur qui transmet le trafic envoyé à la MAC virtuelle qui lui est attribuée"
+        }
+      ],
+      "right": [
+        {
+          "id": "standby",
+          "text": "Standby"
+        },
+        {
+          "id": "avf_r",
+          "text": "AVF"
+        },
+        {
+          "id": "listen",
+          "text": "Listen"
+        },
+        {
+          "id": "active",
+          "text": "Active"
+        },
+        {
+          "id": "backup",
+          "text": "Backup"
+        },
+        {
+          "id": "master",
+          "text": "Master"
+        },
+        {
+          "id": "avg_r",
+          "text": "AVG"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "hact": "active",
+        "hsb": "standby",
+        "vmas": "master",
+        "avg": "avg_r",
+        "avf": "avf_r"
+      }
+    },
+    "explanation": "HSRP élit un routeur active, qui sert l'adresse virtuelle, et un routeur standby, prêt à le remplacer. VRRP parle de master et de backup. GLBP sépare deux fonctions : l'AVG (Active Virtual Gateway) répond aux requêtes ARP pour l'adresse virtuelle et attribue les MAC virtuelles, et chaque AVF (Active Virtual Forwarder) transmet le trafic envoyé à sa MAC. Un même routeur GLBP peut être à la fois AVG et AVF.",
+    "distractorNotes": {
+      "listen": "Listen est l'état HSRP des routeurs qui ne sont ni active ni standby ; ils ne sont pas désignés pour le relais immédiat.",
+      "backup": "Backup est le rôle VRRP des routeurs de secours ; HSRP appelle Standby le routeur désigné pour le relais."
+    },
+    "reference": "RFC 2281 ; RFC 9568 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.5-hsrp-commands-matching-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque commande, saisie sur l'interface de R1 qui porte le groupe HSRP 5, à son effet.",
+      "left": [
+        {
+          "id": "ip",
+          "text": "standby 5 ip 10.5.5.1"
+        },
+        {
+          "id": "pri",
+          "text": "standby 5 priority 150"
+        },
+        {
+          "id": "pre",
+          "text": "standby 5 preempt"
+        },
+        {
+          "id": "ver",
+          "text": "standby version 2"
+        },
+        {
+          "id": "trk",
+          "text": "standby 5 track 1 decrement 40"
+        }
+      ],
+      "right": [
+        {
+          "id": "e_trk",
+          "text": "Abaisse la priorité de R1 quand un objet surveillé passe à down"
+        },
+        {
+          "id": "e_ip",
+          "text": "Définit l'adresse que les hôtes utilisent comme passerelle"
+        },
+        {
+          "id": "e_lb",
+          "text": "Répartit les hôtes entre plusieurs routeurs active du groupe"
+        },
+        {
+          "id": "e_pre",
+          "text": "Permet à R1 de prendre le rôle active à un routeur moins prioritaire"
+        },
+        {
+          "id": "e_ver",
+          "text": "Autorise les groupes jusqu'à 4095 et change la MAC virtuelle"
+        },
+        {
+          "id": "e_pri",
+          "text": "Rend R1 plus favorisé que la valeur par défaut lors de l'élection"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "ip": "e_ip",
+        "pri": "e_pri",
+        "pre": "e_pre",
+        "ver": "e_ver",
+        "trk": "e_trk"
+      }
+    },
+    "explanation": "« standby 5 ip » définit l'adresse IP virtuelle, la passerelle des hôtes. « standby 5 priority 150 » place R1 au-dessus de la valeur par défaut (100) ; « standby 5 preempt » lui permet de prendre le rôle active à un routeur de priorité inférieure déjà en place. « standby version 2 » passe à la version 2 : groupes 0 à 4095, MAC 0000.0c9f.fXXX, multicast 224.0.0.102. « standby 5 track 1 decrement 40 » retire 40 à la priorité quand l'objet 1 est down.",
+    "distractorNotes": {
+      "e_lb": "Un groupe HSRP n'a qu'un routeur active ; aucune commande standby ne répartit les hôtes d'un groupe entre plusieurs routeurs (c'est le rôle de GLBP)."
+    },
+    "reference": "RFC 2281 ; Cisco IOS First Hop Redundancy Protocols Configuration Guide"
+  }
+]
