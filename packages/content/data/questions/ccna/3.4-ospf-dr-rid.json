@@ -1,0 +1,1259 @@
+[
+  {
+    "slug": "ccna-3.4-ospf-priority-zero-effect-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R5 partage un segment Ethernet (type BROADCAST) avec trois autres routeurs OSPF. L'administrateur configure « ip ospf priority 0 » sur l'interface G0/0 de R5, reliée à ce segment. Quel est l'effet de cette commande ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R5 devient le candidat préféré au rôle de DR, la plus petite priorité l'emportant."
+        },
+        {
+          "id": "b",
+          "text": "R5 cesse d'envoyer des Hello sur G0/0, comme avec « passive-interface »."
+        },
+        {
+          "id": "c",
+          "text": "R5 ne peut être élu ni DR ni BDR, mais forme une adjacence FULL avec le DR et le BDR."
+        },
+        {
+          "id": "d",
+          "text": "R5 ne forme plus d'adjacence FULL et reste à l'état 2-WAY avec tous ses voisins."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La priorité OSPF d'interface (0 à 255, 1 par défaut) ne sert qu'à l'élection du DR et du BDR : la plus haute l'emporte, et la valeur 0 rend le routeur inéligible sur ce segment. R5 reste pourtant un routeur OSPF à part entière : il envoie ses Hello, devient voisin de tous les routeurs du segment et forme une adjacence complète (FULL) avec le DR et le BDR, comme tout DROTHER. Avec les autres DROTHER, il reste en 2-WAY. Ses voisins l'affichent avec l'état FULL/DROTHER ou 2WAY/DROTHER.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : la priorité la plus élevée gagne l'élection, et 0 exclut le routeur de l'élection.",
+      "b": "Les Hello continuent d'être envoyés : seule « passive-interface » les supprime. La priorité 0 ne touche que l'éligibilité au rôle de DR ou de BDR.",
+      "d": "Un DROTHER forme toujours une adjacence FULL avec le DR et le BDR ; il ne reste en 2-WAY qu'avec les autres DROTHER."
+    },
+    "reference": "RFC 2328, section 9.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-dr-clear-process-sequence-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un segment Ethernet (type BROADCAST), R1 (router ID 10.0.0.1) est DR, R2 (10.0.0.2) est BDR et R3 (10.0.0.3) est DROTHER ; les trois ont la priorité par défaut. L'administrateur configure « ip ospf priority 100 » sur l'interface de R3 reliée au segment. Quelle opération fait ensuite de R3 le DR, sans modifier d'autre paramètre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aucune : R3 devient DR dès que ses Hello annoncent sa nouvelle priorité."
+        },
+        {
+          "id": "b",
+          "text": "Saisir « clear ip ospf process » sur R1, puis sur R2 une fois le réseau reconvergé."
+        },
+        {
+          "id": "c",
+          "text": "Saisir « clear ip ospf process » sur R1, puis attendre la reconvergence du réseau."
+        },
+        {
+          "id": "d",
+          "text": "Saisir « clear ip ospf process » sur R3, puis attendre la reconvergence du réseau."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'élection n'est pas préemptive : tant que le DR et le BDR en place fonctionnent, une priorité plus élevée ne change rien. Si le processus de R1 (DR) est réinitialisé, le BDR R2 devient DR et un nouveau BDR est élu : R3, grâce à sa priorité 100. R1, de retour, trouve un DR et un BDR déjà annoncés et devient DROTHER. Il faut alors réinitialiser R2 : le BDR R3 est promu DR et un nouveau BDR est élu parmi les autres. Il faut donc faire tomber successivement le DR puis le nouveau DR pour qu'un routeur de priorité plus haute obtienne le rôle.",
+    "distractorNotes": {
+      "a": "L'élection n'est pas préemptive : un DR en place garde son rôle même si un voisin annonce une priorité plus élevée.",
+      "c": "Quand le DR tombe, c'est le BDR R2 qui est promu DR ; R3 ne devient que BDR, et il le reste après la reconvergence.",
+      "d": "R3 revient sur un segment dont le DR et le BDR sont déjà annoncés : il reste DROTHER, quelle que soit sa priorité."
+    },
+    "reference": "RFC 2328, section 9.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-dr-wait-timer-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 est le premier routeur OSPF actif sur un nouveau segment Ethernet (type BROADCAST) et utilise les timers par défaut. Aucun autre routeur ne lui envoie de Hello. Combien de temps après l'activation d'OSPF sur cette interface, R1 se déclare-t-il DR ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Environ 40 s, à l'expiration du Wait timer"
+        },
+        {
+          "id": "b",
+          "text": "Environ 10 s, au premier Hello envoyé"
+        },
+        {
+          "id": "c",
+          "text": "Aussitôt, puisqu'il est seul sur le segment"
+        },
+        {
+          "id": "d",
+          "text": "Environ 120 s, à l'expiration du Wait timer"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Quand une interface OSPF de type broadcast s'active, elle passe d'abord par l'état Waiting : le routeur écoute les Hello pour découvrir un éventuel DR ou BDR déjà en place, ce qui évite de bouleverser une élection existante. Cette attente dure le Wait timer, égal au Dead interval (40 s par défaut sur Ethernet, affiché « Wait 40 » par « show ip ospf interface »). Si rien n'est reçu, R1 lance l'élection à l'expiration du timer et, seul candidat, se déclare DR ; aucun BDR n'est alors désigné.",
+    "distractorNotes": {
+      "b": "10 s est le Hello interval par défaut ; le routeur attend un Dead interval complet avant d'élire le DR.",
+      "c": "L'interface reste d'abord dans l'état Waiting pour ne pas prendre le rôle d'un DR déjà présent qu'elle n'aurait pas encore entendu.",
+      "d": "120 s est le Dead interval par défaut des réseaux NON_BROADCAST ou POINT_TO_MULTIPOINT ; sur Ethernet, le Wait timer vaut 40 s."
+    },
+    "reference": "RFC 2328, sections 9 et 9.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-router-id-change-pending-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 a des adjacences FULL avec deux voisins OSPF, et « show ip protocols » indique « Router ID 172.16.1.1 », l'adresse de sa Loopback0. L'administrateur saisit « router-id 1.1.1.1 » sous « router ospf 1 », puis aucune autre commande. Quel est le résultat ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le router ID passe aussitôt à 1.1.1.1, et les adjacences restent FULL."
+        },
+        {
+          "id": "b",
+          "text": "IOS rejette la commande tant que Loopback0 porte une adresse IPv4."
+        },
+        {
+          "id": "c",
+          "text": "Le router ID passe aussitôt à 1.1.1.1, et les adjacences sont réinitialisées."
+        },
+        {
+          "id": "d",
+          "text": "Le router ID reste 172.16.1.1 jusqu'à « clear ip ospf process » ou un redémarrage."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le router ID est choisi au démarrage du processus OSPF. Si « router-id » est saisi sur un processus déjà actif qui a des voisins, IOS conserve l'ancien router ID et prévient qu'il faut redémarrer le routeur ou réinitialiser le processus avec « clear ip ospf process ». Cette réinitialisation fait tomber puis reformer toutes les adjacences, d'où l'intérêt de fixer le router ID dès la création du processus. Une fois la commande appliquée, elle l'emporte sur toute adresse de loopback.",
+    "distractorNotes": {
+      "a": "Un processus qui a déjà des voisins ne change pas de router ID à chaud : la nouvelle valeur n'est prise en compte qu'après réinitialisation du processus ou redémarrage.",
+      "b": "La commande est acceptée : une valeur configurée avec « router-id » est même prioritaire sur les adresses de loopback.",
+      "c": "IOS ne réinitialise pas les adjacences de lui-même : c'est l'administrateur qui doit lancer « clear ip ospf process » pour appliquer le nouveau router ID."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (router-id)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-reference-bandwidth-default-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Aucune commande « auto-cost reference-bandwidth » n'est configurée sur R1. Quelle bande passante de référence IOS utilise-t-il pour calculer le coût OSPF de ses interfaces ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "10 Mb/s"
+        },
+        {
+          "id": "b",
+          "text": "1 Gb/s"
+        },
+        {
+          "id": "c",
+          "text": "10 Gb/s"
+        },
+        {
+          "id": "d",
+          "text": "100 Mb/s"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "IOS calcule le coût OSPF d'une interface en divisant la bande passante de référence par la bande passante de l'interface, avec un minimum de 1. La référence vaut 100 Mb/s par défaut : un lien Ethernet à 10 Mb/s coûte 10, et tous les liens à 100 Mb/s ou plus coûtent 1. Pour distinguer les liens Gigabit ou 10 Gigabit, on augmente la référence avec « auto-cost reference-bandwidth », exprimée en Mb/s, sur tous les routeurs du domaine OSPF.",
+    "distractorNotes": {
+      "a": "10 Mb/s est la bande passante d'un lien Ethernet classique, de coût 10 avec la référence par défaut, et non la référence elle-même.",
+      "b": "1 Gb/s n'est pas la référence par défaut : il faut « auto-cost reference-bandwidth 1000 » pour l'obtenir.",
+      "c": "10 Gb/s correspond à « auto-cost reference-bandwidth 10000 », une valeur qu'il faut configurer explicitement."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (auto-cost)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-path-cost-selection-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Par quel chemin et avec quelle métrique R1 installe-t-il la route OSPF vers 10.9.9.0/24 ?",
+      "exhibit": "Tous les routeurs : auto-cost reference-bandwidth 10000 (router ospf 1)\nAucune commande bandwidth.\n\nR1 G0/0 ------ G0/0 R2 F0/1 ---- F0/1 R4\nR1 G0/1 ------ G0/0 R3 G0/1 ---- G0/2 R4\nR1 Te0/1/0 -- Te0/1/0 R5 G0/1 -- G0/3 R4\nR4 G0/1 : LAN 10.9.9.0/24\n\nG = GigabitEthernet (1 Gb/s), F = FastEthernet (100 Mb/s),\nTe = TenGigabitEthernet (10 Gb/s)\n\nSeules commandes ip ospf cost :\nR1 Te0/1/0 : ip ospf cost 25\nR3 G0/0    : ip ospf cost 200",
+      "options": [
+        {
+          "id": "a",
+          "text": "Via R5, métrique 45"
+        },
+        {
+          "id": "b",
+          "text": "Via R3, métrique 20"
+        },
+        {
+          "id": "c",
+          "text": "Via R2 et R3 en partage de charge, métrique 3"
+        },
+        {
+          "id": "d",
+          "text": "Via R3, métrique 30"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Avec une référence de 10000 Mb/s, un lien 10 Gb/s coûte 1, un lien Gigabit 10 et un FastEthernet 100. Le coût d'une route est la somme des coûts des interfaces de sortie, du routeur local jusqu'à l'interface qui relie le dernier routeur au réseau de destination. Via R2 : 10 + 100 + 10 = 120. Via R3 : 10 (R1 G0/1) + 10 (R3 G0/1) + 10 (R4 G0/1) = 30 ; le coût 200 de R3 G0/0 ne compte que pour le trafic sortant de R3 vers R1. Via R5 : 25 + 10 + 10 = 45. R1 retient donc le chemin via R3, de métrique 30.",
+    "distractorNotes": {
+      "a": "Ce résultat suppose que le coût 200 de R3 G0/0 s'ajoute au chemin via R3 (230). Or cette interface est une interface d'entrée pour le trafic de R1 : seul le coût des interfaces de sortie compte.",
+      "b": "20 oublie le coût de l'interface G0/1 de R4 qui relie le LAN de destination : il fait partie du coût de la route (10 + 10 + 10 = 30).",
+      "c": "Ce serait le cas avec la référence par défaut de 100 Mb/s (tous les liens à 1). Avec une référence de 10000, le FastEthernet de R2 coûte 100 et le chemin via R2 en coûte 120."
+    },
+    "reference": "RFC 2328, section 16.1"
+  },
+  {
+    "slug": "ccna-3.4-ospf-reference-bandwidth-10g-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avec la bande passante de référence par défaut, R1 dispose de deux chemins OSPF de même structure vers un serveur : l'un passe par un lien de 10 Gb/s, l'autre par un lien de 1 Gb/s ; tous les autres liens sont identiques. OSPF partage la charge entre les deux. Quelle action fait préférer le chemin à 10 Gb/s ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Configurer « auto-cost reference-bandwidth 1000 » sur tous les routeurs OSPF"
+        },
+        {
+          "id": "b",
+          "text": "Configurer « auto-cost reference-bandwidth 10000 » sur tous les routeurs OSPF"
+        },
+        {
+          "id": "c",
+          "text": "Configurer « bandwidth 10000000 » sur l'interface du lien à 10 Gb/s"
+        },
+        {
+          "id": "d",
+          "text": "Configurer « ip ospf priority 255 » sur l'interface du lien à 10 Gb/s"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Avec la référence par défaut (100 Mb/s), 100 / 10000 et 100 / 1000 donnent tous deux un résultat inférieur à 1, ramené au minimum de 1 : les deux liens ont le même coût, d'où le partage de charge. Avec une référence de 10000 Mb/s, le lien à 10 Gb/s coûte 10000 / 10000 = 1 et le lien à 1 Gb/s 10000 / 1000 = 10 : le chemin à 10 Gb/s devient le moins coûteux. La référence doit être la même sur tous les routeurs, sinon les coûts annoncés ne sont pas comparables entre eux.",
+    "distractorNotes": {
+      "a": "Avec 1000 Mb/s, le lien à 1 Gb/s coûte 1000 / 1000 = 1 et le lien à 10 Gb/s 1000 / 10000, ramené à 1 : l'égalité subsiste.",
+      "c": "10 000 000 kb/s est déjà la bande passante d'une interface 10 Gb/s, et son coût vaut déjà le minimum de 1 : rien ne change.",
+      "d": "La priorité OSPF ne sert qu'à l'élection du DR et du BDR ; elle n'intervient pas dans le calcul du coût des routes."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (auto-cost)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-cost-asymmetric-link-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Quelles métriques OSPF R1 et R2 affichent-ils pour la route vers le LAN de l'autre routeur ?",
+      "exhibit": "LAN1 10.1.1.0/24 --- G0/1 R1 G0/0 ------ G0/0 R2 G0/1 --- LAN2 10.2.2.0/24\n\nToutes les interfaces : GigabitEthernet (1 Gb/s)\nBande passante de référence par défaut, aucune commande bandwidth\nR1 G0/0 : ip ospf cost 50 (seule commande ip ospf cost)",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 vers LAN2 : 51 ; R2 vers LAN1 : 2"
+        },
+        {
+          "id": "b",
+          "text": "R1 vers LAN2 : 50 ; R2 vers LAN1 : 1"
+        },
+        {
+          "id": "c",
+          "text": "R1 vers LAN2 : 51 ; R2 vers LAN1 : 51"
+        },
+        {
+          "id": "d",
+          "text": "R1 vers LAN2 : 2 ; R2 vers LAN1 : 51"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le coût OSPF est attaché à une interface et ne vaut que pour le trafic qui en sort : un même lien peut donc avoir un coût différent dans chaque sens. R1 sort par G0/0 (coût 50) puis R2 sort vers LAN2 par G0/1 (coût 1, car 100 / 1000 est ramené à 1) : métrique 51. En sens inverse, R2 sort par sa propre G0/0, qui a gardé le coût 1, puis R1 sort vers LAN1 par G0/1 (coût 1) : métrique 2. Pour pénaliser le lien dans les deux sens, il faut configurer « ip ospf cost » aux deux extrémités.",
+    "distractorNotes": {
+      "b": "La métrique inclut aussi le coût de l'interface qui relie le routeur distant à son LAN (1), d'où 51 et 2.",
+      "c": "Le coût de R1 G0/0 ne s'applique qu'au trafic sortant de R1 ; R2 calcule sa route avec le coût de sa propre interface G0/0, resté à 1.",
+      "d": "C'est l'inverse : le coût 50 est configuré sur R1 et pénalise le trafic sortant de R1, donc la route de R1 vers LAN2."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf cost)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-p2p-no-network-lsa-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 et R2 sont reliés directement par un lien Ethernet, et « ip ospf network point-to-point » est configuré sur leurs deux interfaces. Quel routeur génère un LSA de type 2 (Network LSA) pour ce lien ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Celui des deux routeurs dont le router ID est le plus élevé"
+        },
+        {
+          "id": "b",
+          "text": "Celui des deux routeurs dont la priorité OSPF est la plus élevée"
+        },
+        {
+          "id": "c",
+          "text": "Chacun des deux routeurs, pour sa propre interface"
+        },
+        {
+          "id": "d",
+          "text": "Ni R1 ni R2, faute de DR élu sur ce lien"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le LSA de type 2 est généré par le DR d'un segment multiaccès (broadcast ou NBMA) pour décrire ce segment et les routeurs qui y sont attachés. Sur un lien de type point-to-point, aucun DR n'est élu, donc aucun Network LSA n'existe : chaque routeur décrit le lien dans son propre LSA de type 1 (Router LSA), par une liaison point à point vers le router ID du voisin et une liaison stub vers le sous-réseau. La LSDB est ainsi plus petite, et le SPF n'a pas de pseudo-nœud à traiter.",
+    "distractorNotes": {
+      "a": "Le router ID départage l'élection du DR sur un segment broadcast ; or le type point-to-point supprime l'élection, et avec elle le LSA de type 2.",
+      "b": "La priorité ne sert qu'à élire le DR, absent sur un lien point-to-point ; sans DR, aucun Network LSA n'est généré.",
+      "c": "Chaque routeur décrit bien son interface, mais dans son LSA de type 1 (Router LSA), pas dans un LSA de type 2."
+    },
+    "reference": "RFC 2328, sections 12.4.1 et 12.4.2"
+  },
+  {
+    "slug": "ccna-3.4-ospf-network-type-ethernet-default-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel type de réseau OSPF IOS attribue-t-il par défaut à une interface GigabitEthernet d'un routeur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "BROADCAST"
+        },
+        {
+          "id": "b",
+          "text": "POINT_TO_POINT"
+        },
+        {
+          "id": "c",
+          "text": "NON_BROADCAST"
+        },
+        {
+          "id": "d",
+          "text": "POINT_TO_MULTIPOINT"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Ethernet est un réseau multiaccès qui sait diffuser : IOS lui applique par défaut le type BROADCAST, avec élection d'un DR et d'un BDR, Hello toutes les 10 s et Dead interval de 40 s. Le DR est élu même si le lien ne relie que deux routeurs ; c'est pourquoi on configure souvent « ip ospf network point-to-point » sur un lien Ethernet routeur à routeur, pour supprimer cette élection inutile et le LSA de type 2 qui l'accompagne.",
+    "distractorNotes": {
+      "b": "POINT_TO_POINT est le type par défaut des liaisons série HDLC ou PPP ; sur Ethernet, il faut le configurer avec « ip ospf network point-to-point ».",
+      "c": "NON_BROADCAST est le type par défaut d'une interface Frame Relay physique, pas d'Ethernet ; il impose des voisins déclarés et des timers de 30/120 s.",
+      "d": "POINT_TO_MULTIPOINT n'est jamais appliqué par défaut : il faut le configurer explicitement sur l'interface."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide (OSPF network types)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-dr-election-rules-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur l'élection du DR et du BDR sur un segment Ethernet (type BROADCAST) sont vraies ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "À priorité égale, le routeur dont l'adresse IP d'interface est la plus basse l'emporte."
+        },
+        {
+          "id": "b",
+          "text": "À priorité égale, le routeur dont le router ID est le plus élevé l'emporte."
+        },
+        {
+          "id": "c",
+          "text": "La priorité par défaut vaut 0, et seul le router ID départage alors les routeurs."
+        },
+        {
+          "id": "d",
+          "text": "Un routeur qui rejoint le segment avec une priorité supérieure à celle du DR ne le remplace pas."
+        },
+        {
+          "id": "e",
+          "text": "Si le DR tombe en panne, tous les routeurs, BDR compris, refont l'élection du DR sur la seule priorité."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "L'élection compare d'abord la priorité d'interface (0 à 255, 1 par défaut) : la plus haute l'emporte, et 0 rend le routeur inéligible. En cas d'égalité, le router ID le plus élevé départage les candidats. L'élection n'est pas préemptive : un DR et un BDR en place gardent leur rôle quand un routeur mieux placé arrive. Si le DR tombe, le BDR est promu DR et seul le rôle de BDR est remis en jeu. Pour un DR précis, on règle donc les priorités avant la mise en service.",
+    "distractorNotes": {
+      "a": "Le critère de départage est le router ID, pas l'adresse de l'interface, et c'est la valeur la plus élevée qui l'emporte.",
+      "c": "La priorité par défaut vaut 1 ; une priorité de 0 interdit au contraire au routeur de devenir DR ou BDR.",
+      "e": "Le BDR existe justement pour prendre le relais : il est promu DR, et seule l'élection d'un nouveau BDR a lieu."
+    },
+    "reference": "RFC 2328, section 9.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-bdr-interface-output-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le réseau est stable. Quelles deux affirmations sont vraies ? (Choisissez-en deux.)",
+      "exhibit": "R3# show ip ospf interface GigabitEthernet0/0\nGigabitEthernet0/0 is up, line protocol is up\n  Internet Address 10.1.1.3/24, Area 0, Attached via Network Statement\n  Process ID 1, Router ID 3.3.3.3, Network Type BROADCAST, Cost: 1\n  Transmit Delay is 1 sec, State BDR, Priority 1\n  Designated Router (ID) 4.4.4.4, Interface address 10.1.1.4\n  Backup Designated router (ID) 3.3.3.3, Interface address 10.1.1.3\n  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5\n  Neighbor Count is 3, Adjacent neighbor count is 3",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Si R4 tombe en panne, R3 prend le rôle de DR du segment."
+        },
+        {
+          "id": "b",
+          "text": "R4 a forcément une priorité OSPF supérieure à 1 sur ce segment."
+        },
+        {
+          "id": "c",
+          "text": "Saisir « ip ospf priority 255 » sur G0/0 fait aussitôt de R3 le DR."
+        },
+        {
+          "id": "d",
+          "text": "R3 a une adjacence complète avec chacun de ses voisins du segment."
+        },
+        {
+          "id": "e",
+          "text": "Le segment ne compte que deux routeurs OSPF, R3 et R4."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "La sortie montre que R3 est BDR (State BDR) et que le DR est 4.4.4.4. Le BDR forme une adjacence complète avec tous les routeurs du segment, comme le DR : « Adjacent neighbor count is 3 » pour 3 voisins le confirme. Le segment compte donc quatre routeurs. Si le DR tombe, le BDR est promu DR et un nouveau BDR est élu parmi les autres. Rien ne permet en revanche de connaître la priorité de R4 : il a pu gagner par un router ID plus élevé à priorité égale, ou parce qu'il était déjà en place.",
+    "distractorNotes": {
+      "b": "À priorité égale (1), R4 gagne grâce à son router ID 4.4.4.4, plus élevé que 3.3.3.3 ; il a aussi pu être élu avant l'arrivée de R3. Sa priorité n'est pas forcément supérieure.",
+      "c": "L'élection n'est pas préemptive : une nouvelle priorité ne sert qu'à la prochaine élection, R4 reste DR tant qu'il fonctionne.",
+      "e": "« Neighbor Count is 3 » indique trois voisins sur ce segment : avec R3, il compte quatre routeurs OSPF."
+    },
+    "reference": "RFC 2328, section 9.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-router-id-properties-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur le router ID OSPF d'un routeur Cisco IOS sont vraies ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Sans commande router-id, IOS retient la plus basse adresse IPv4 de ses interfaces actives."
+        },
+        {
+          "id": "b",
+          "text": "Une valeur fixée par la commande router-id est prioritaire sur les adresses des loopbacks."
+        },
+        {
+          "id": "c",
+          "text": "Le router ID doit être l'adresse d'une interface annoncée dans l'area 0."
+        },
+        {
+          "id": "d",
+          "text": "La valeur fixée par router-id n'a pas besoin d'être configurée sur une interface du routeur."
+        },
+        {
+          "id": "e",
+          "text": "Le router ID est un nombre de 16 bits, écrit comme un numéro de processus OSPF."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le router ID est un identifiant de 32 bits écrit en décimal pointé, unique dans le domaine OSPF. IOS prend d'abord la valeur de la commande « router-id », qui peut être quelconque (1.1.1.1 par exemple) sans correspondre à une adresse du routeur ni être joignable. Sans elle, il retient la plus haute adresse IPv4 d'une loopback active, puis la plus haute adresse d'une autre interface active, que cette interface participe ou non à OSPF. Fixer le router ID à la main le rend prévisible et stable.",
+    "distractorNotes": {
+      "a": "IOS retient la plus haute adresse IPv4, celle d'une loopback active en priorité, et non la plus basse.",
+      "c": "Le router ID n'est qu'un identifiant : il n'a pas à être annoncé dans OSPF, ni même à être une adresse du routeur.",
+      "e": "Le router ID fait 32 bits et s'écrit en décimal pointé, comme une adresse IPv4 ; le numéro de processus est une valeur locale distincte."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (router-id)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-cost-three-methods-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "L'interface G0/1 de R1 est un lien de 1 Gb/s. Le processus OSPF 1 utilise la bande passante de référence par défaut, et aucune commande « bandwidth » ni « ip ospf cost » n'est configurée : G0/1 a un coût de 1. Quelles trois commandes, chacune utilisée seule, font passer le coût OSPF de G0/1 à 10 ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "« ip ospf cost 10 » sur G0/1"
+        },
+        {
+          "id": "b",
+          "text": "« bandwidth 10 » sur G0/1"
+        },
+        {
+          "id": "c",
+          "text": "« bandwidth 10000 » sur G0/1"
+        },
+        {
+          "id": "d",
+          "text": "« auto-cost reference-bandwidth 1000 » sous router ospf 1"
+        },
+        {
+          "id": "e",
+          "text": "« auto-cost reference-bandwidth 10000 » sous router ospf 1"
+        },
+        {
+          "id": "f",
+          "text": "« ip ospf priority 10 » sur G0/1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Le coût d'une interface vaut, sauf « ip ospf cost », la bande passante de référence divisée par la bande passante de l'interface, arrondie à l'entier inférieur avec un minimum de 1. « ip ospf cost 10 » impose directement la valeur. « bandwidth » s'exprime en kb/s : avec 10000 kb/s, 100 000 / 10 000 = 10. La référence s'exprime en Mb/s : avec 10000, 10000 / 1000 = 10, mais pour toutes les interfaces du routeur. « bandwidth » modifie aussi la valeur vue par d'autres fonctions (EIGRP, QoS) ; « ip ospf cost » ne touche qu'OSPF.",
+    "distractorNotes": {
+      "b": "« bandwidth » s'exprime en kb/s : 10 kb/s donnerait 100 000 / 10 = 10 000.",
+      "d": "Avec 1000 Mb/s de référence, une interface à 1 Gb/s coûte 1000 / 1000 = 1 : rien ne change.",
+      "f": "La priorité OSPF ne sert qu'à l'élection du DR et du BDR, sans effet sur le coût."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf cost, auto-cost)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-dr-interfaces-network-type-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 utilise la configuration OSPF par défaut, sauf mention contraire, sur les interfaces suivantes, toutes actives et dans l'area 0. Sur quelles deux interfaces de R1 un DR est-il élu ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "G0/0, lien Ethernet direct vers le seul routeur R2"
+        },
+        {
+          "id": "b",
+          "text": "G0/1, reliée à un commutateur auquel sont aussi connectés R3 et R4"
+        },
+        {
+          "id": "c",
+          "text": "G0/2, lien Ethernet vers R5, avec « ip ospf network point-to-point » aux deux extrémités"
+        },
+        {
+          "id": "d",
+          "text": "S0/1/0, liaison série HDLC vers R6"
+        },
+        {
+          "id": "e",
+          "text": "Loopback0, dont le réseau est annoncé dans OSPF"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b"
+      ]
+    },
+    "explanation": "Un DR n'est élu que sur les réseaux multiaccès : types BROADCAST (Ethernet par défaut) et NON_BROADCAST. Le nombre de routeurs ne change rien : sur G0/0, R1 et R2 élisent un DR et un BDR même s'ils ne sont que deux, et sur G0/1 l'élection a lieu entre R1, R3 et R4. G0/2, passée en point-to-point, et la liaison série HDLC, point-to-point par défaut, n'ont pas de DR. Une loopback, de type LOOPBACK, n'a aucun voisin et est annoncée comme une route hôte en /32.",
+    "distractorNotes": {
+      "c": "« ip ospf network point-to-point » supprime précisément l'élection du DR et du BDR sur ce lien.",
+      "d": "Une liaison série HDLC utilise par défaut le type POINT_TO_POINT, sans DR ni BDR.",
+      "e": "Une loopback est de type LOOPBACK : elle n'a pas de voisin, donc pas d'élection."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide (OSPF network types)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-router-id-loopback-added-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "R2 démarre avec deux interfaces actives, G0/0 (192.168.12.2/24) et G0/1 (10.20.0.1/24), sans loopback ni commande « router-id » ; le processus OSPF 1 démarre et forme ses adjacences. Plus tard, l'administrateur crée Loopback0 avec l'adresse 10.255.255.2/32, sans autre modification. Donnez le router ID OSPF de R2 à chaque étape.",
+      "fields": [
+        {
+          "id": "before",
+          "label": "Router ID juste après la création de Loopback0 (en décimal pointé)"
+        },
+        {
+          "id": "after",
+          "label": "Router ID après « clear ip ospf process » (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "before": {
+          "accepted": [
+            "192.168.12.2"
+          ],
+          "normalize": "ipv4"
+        },
+        "after": {
+          "accepted": [
+            "10.255.255.2"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Au démarrage du processus, sans « router-id » ni loopback active, IOS retient la plus haute adresse IPv4 des autres interfaces actives : 192.168.12.2, supérieure à 10.20.0.1. Le router ID ne change plus ensuite tant que le processus tourne : créer Loopback0 ne le modifie pas. « clear ip ospf process » relance la sélection, et une loopback active passe alors avant toute interface physique, même avec une adresse plus basse : le router ID devient 10.255.255.2. Fixer la valeur avec « router-id » évite ce genre de changement imprévu.",
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-path-metric-sum-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Tous les routeurs utilisent « auto-cost reference-bandwidth 10000 », sans commande « bandwidth » ni « ip ospf cost ». R1 joint 172.16.30.0/24 par un seul chemin : R1 sort par une interface 10 Gb/s vers R2, R2 sort par une interface GigabitEthernet (1 Gb/s) vers R3, et R3 est relié au LAN 172.16.30.0/24 par une interface FastEthernet (100 Mb/s). Calculez la métrique OSPF de cette route sur R1.",
+      "fields": [
+        {
+          "id": "ref10000",
+          "label": "Métrique avec la référence de 10000 Mb/s (nombre entier)"
+        },
+        {
+          "id": "ref100",
+          "label": "Métrique si la référence par défaut était restée en place (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "ref10000": {
+          "accepted": [
+            "111"
+          ],
+          "normalize": "int"
+        },
+        "ref100": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La métrique OSPF d'une route est la somme des coûts des interfaces de sortie, jusqu'à celle qui relie le dernier routeur au réseau de destination. Avec une référence de 10000 Mb/s : 10 Gb/s = 10000 / 10000 = 1, 1 Gb/s = 10000 / 1000 = 10, 100 Mb/s = 10000 / 100 = 100, soit 1 + 10 + 100 = 111. Avec la référence par défaut de 100 Mb/s, chacune de ces interfaces coûte 1 (le résultat est ramené au minimum de 1) : 1 + 1 + 1 = 3, et OSPF ne distingue plus les débits.",
+    "reference": "RFC 2328, section 16.1"
+  },
+  {
+    "slug": "ccna-3.4-ospf-priority-values-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Donnez les valeurs de la priorité OSPF d'une interface sur Cisco IOS.",
+      "fields": [
+        {
+          "id": "def",
+          "label": "Priorité par défaut (nombre entier)"
+        },
+        {
+          "id": "max",
+          "label": "Priorité la plus élevée configurable (nombre entier)"
+        },
+        {
+          "id": "never",
+          "label": "Priorité qui interdit de devenir DR ou BDR (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "def": {
+          "accepted": [
+            "1"
+          ],
+          "normalize": "int"
+        },
+        "max": {
+          "accepted": [
+            "255"
+          ],
+          "normalize": "int"
+        },
+        "never": {
+          "accepted": [
+            "0"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La priorité OSPF se règle par interface avec « ip ospf priority », de 0 à 255 (champ d'un octet dans les Hello), et vaut 1 par défaut. Lors de l'élection, la priorité la plus haute l'emporte, puis le router ID le plus élevé en cas d'égalité. Une priorité de 0 rend le routeur inéligible : il reste DROTHER sur ce segment, tout en formant ses adjacences avec le DR et le BDR. Une priorité modifiée ne compte qu'à la prochaine élection, car un DR en place n'est pas détrôné.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf priority)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-priority-interface-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Les autres routeurs du segment de GigabitEthernet0/1 de R1 ont la priorité OSPF par défaut, et R1 doit l'emporter aux prochaines élections DR/BDR sur ce segment. En partant du mode de configuration globale, entrez dans cette interface et fixez sa priorité OSPF à 200.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/1"
+        ],
+        [
+          "ip ospf priority 200"
+        ]
+      ]
+    },
+    "explanation": "La priorité OSPF est un paramètre d'interface : « ip ospf priority 200 » s'entre dans le mode de configuration de GigabitEthernet0/1, pas sous « router ospf ». Elle est annoncée dans les Hello de cette interface et ne vaut que pour le segment correspondant ; un routeur peut donc être DR sur un segment et DROTHER sur un autre. L'élection n'étant pas préemptive, la nouvelle valeur ne joue qu'à la prochaine élection : si un DR est déjà en place, il garde son rôle.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf priority)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-clear-process-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "L'administrateur vient de configurer « router-id 1.1.1.1 » sous « router ospf 1 » sur R1, qui a déjà des voisins. Depuis le mode privilégié, réinitialisez le processus OSPF pour que ce router ID soit pris en compte (la confirmation demandée par IOS ne compte pas comme une ligne).",
+      "prompt": "R1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "clear ip ospf process",
+          "clear ip ospf 1 process"
+        ]
+      ]
+    },
+    "explanation": "Sur un processus OSPF déjà actif avec des voisins, un nouveau router ID n'est appliqué qu'après un redémarrage du routeur ou une réinitialisation du processus. « clear ip ospf process » (ou « clear ip ospf 1 process » pour ce seul processus) demande une confirmation, puis fait tomber toutes les adjacences, relance la sélection du router ID et reforme les adjacences. L'opération coupe brièvement le routage OSPF : on la planifie, ou on fixe le router ID dès la création du processus.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (clear ip ospf)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-reference-bandwidth-100g-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le réseau de R1 comporte des liens à 100 Gb/s et à 10 Gb/s. En partant du mode de configuration globale, entrez dans le processus OSPF 1 et réglez sa bande passante de référence pour qu'un lien à 100 Gb/s ait un coût de 1 et un lien à 10 Gb/s un coût de 10.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "router ospf 1"
+        ],
+        [
+          "auto-cost reference-bandwidth 100000"
+        ]
+      ]
+    },
+    "explanation": "Le coût vaut la bande passante de référence divisée par celle de l'interface. Pour qu'un lien à 100 Gb/s (100 000 Mb/s) coûte 1, la référence doit valoir 100 000 Mb/s ; un lien à 10 Gb/s coûte alors 100000 / 10000 = 10, et un lien Gigabit 100. La valeur de « auto-cost reference-bandwidth » s'exprime en Mb/s. IOS rappelle de configurer la même référence sur tous les routeurs, faute de quoi les coûts annoncés ne seraient plus cohérents.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (auto-cost)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-interface-cost-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le lien de GigabitEthernet0/2 de R1 doit devenir un lien de secours pour OSPF. En partant du mode de configuration globale, entrez dans cette interface et imposez-lui un coût OSPF de 50.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/2"
+        ],
+        [
+          "ip ospf cost 50"
+        ]
+      ]
+    },
+    "explanation": "« ip ospf cost » fixe directement le coût OSPF de l'interface (1 à 65535), sans tenir compte de la bande passante ni de la référence. Avec un coût de 50 au lieu de 1, les chemins qui sortent par G0/2 deviennent plus coûteux que les autres : R1 ne les utilise que si les chemins principaux disparaissent. Ce coût ne vaut que pour le trafic sortant de R1 : pour pénaliser le lien dans les deux sens, il faut le configurer aussi sur le routeur d'en face.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf cost)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-priority-zero-range-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R3 ne doit jamais pouvoir devenir DR ni BDR sur les segments de GigabitEthernet0/0 et GigabitEthernet0/1. En partant du mode de configuration globale, sélectionnez ces deux interfaces ensemble en une seule commande, puis appliquez-leur la priorité OSPF qui les exclut de l'élection.",
+      "prompt": "R3(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface range GigabitEthernet0/0 - 1",
+          "interface range GigabitEthernet0/0 , GigabitEthernet0/1"
+        ],
+        [
+          "ip ospf priority 0"
+        ]
+      ]
+    },
+    "explanation": "« interface range » applique les commandes suivantes à plusieurs interfaces à la fois, sous la forme d'une plage (G0/0 - 1) ou d'une liste séparée par des virgules. « ip ospf priority 0 » rend R3 inéligible au rôle de DR et de BDR sur ces deux segments : il reste DROTHER, forme une adjacence FULL avec le DR et le BDR, et reste en 2-WAY avec les autres DROTHER. On l'utilise par exemple sur un routeur peu puissant ou sur un routeur d'agence qui ne doit pas porter la charge du DR.",
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf priority)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-bandwidth-cost-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "L'interface GigabitEthernet0/1 de R1 est reliée à un circuit dont l'opérateur limite le débit à 20 Mb/s. La bande passante de référence OSPF est celle par défaut. En partant du mode de configuration globale, entrez dans l'interface et déclarez-y la bande passante de 20 Mb/s, pour qu'OSPF en tienne compte dans le calcul du coût.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/1"
+        ],
+        [
+          "bandwidth 20000"
+        ]
+      ]
+    },
+    "explanation": "La commande d'interface « bandwidth » s'exprime en kb/s : 20 Mb/s s'écrit « bandwidth 20000 ». Elle ne change pas le débit réel du port, mais la valeur que les protocoles utilisent dans leurs calculs. OSPF en déduit le coût : 100 000 kb/s de référence / 20 000 kb/s = 5, au lieu de 1 pour le port Gigabit. Contrairement à « ip ospf cost », cette valeur sert aussi à d'autres fonctions (EIGRP, QoS, statistiques d'utilisation de l'interface).",
+    "reference": "Cisco IOS Interface and Hardware Component Command Reference (bandwidth)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-router-id-criteria-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Remettez dans l'ordre les critères qu'IOS applique pour choisir le router ID d'un processus OSPF, du premier examiné au dernier.",
+      "items": [
+        {
+          "id": "ifaddr",
+          "text": "La plus haute adresse IPv4 d'une autre interface active"
+        },
+        {
+          "id": "none",
+          "text": "Aucune adresse IPv4 active : le processus OSPF ne peut pas démarrer"
+        },
+        {
+          "id": "cmd",
+          "text": "La valeur configurée par la commande router-id"
+        },
+        {
+          "id": "loop",
+          "text": "La plus haute adresse IPv4 d'une interface loopback active"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "cmd",
+        "loop",
+        "ifaddr",
+        "none"
+      ]
+    },
+    "explanation": "IOS prend d'abord la valeur de « router-id » sous « router ospf ». À défaut, il retient la plus haute adresse IPv4 d'une loopback active, puis, sans loopback, la plus haute adresse IPv4 d'une autre interface active, qu'elle soit annoncée ou non dans OSPF. Si aucune adresse IPv4 n'est disponible, le processus ne peut pas choisir de router ID et ne démarre pas. Ce choix est fait au démarrage du processus : l'ajout ultérieur d'une loopback ne le modifie pas, et une commande « router-id » saisie alors que le processus a des voisins n'est appliquée qu'après « clear ip ospf process » ou un redémarrage.",
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-path-cost-ranking-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Tous les routeurs utilisent « auto-cost reference-bandwidth 1000 ». Chaque chemin de R1 vers 10.50.0.0/24 est décrit par les interfaces de sortie traversées, dans l'ordre, y compris celle qui relie le dernier routeur au LAN de destination ; sauf mention contraire, aucune commande « bandwidth » ni « ip ospf cost » n'est configurée. Classez ces chemins du coût OSPF le plus faible au plus élevé.",
+      "items": [
+        {
+          "id": "a",
+          "text": "1 Gb/s, puis 1 Gb/s, puis 1 Gb/s"
+        },
+        {
+          "id": "b",
+          "text": "100 Mb/s, puis 1 Gb/s"
+        },
+        {
+          "id": "c",
+          "text": "1 Gb/s avec « ip ospf cost 7 », puis 1 Gb/s"
+        },
+        {
+          "id": "d",
+          "text": "1 Gb/s avec « bandwidth 200000 », puis 1 Gb/s"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "a",
+        "d",
+        "c",
+        "b"
+      ]
+    },
+    "explanation": "Avec une référence de 1000 Mb/s, une interface à 1 Gb/s coûte 1000 / 1000 = 1 et une interface à 100 Mb/s 1000 / 100 = 10. Trois liens Gigabit : 1 + 1 + 1 = 3. « bandwidth 200000 » déclare 200 000 kb/s, soit 200 Mb/s : 1000 / 200 = 5, puis 1, total 6. « ip ospf cost 7 » impose 7, puis 1, total 8. Le FastEthernet coûte 10, puis 1, total 11. Le nombre de sauts ne compte pas : le chemin à trois liens est le moins coûteux, celui à deux liens dont un FastEthernet le plus cher.",
+    "reference": "RFC 2328, section 16.1"
+  },
+  {
+    "slug": "ccna-3.4-ospf-default-cost-by-bandwidth-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "R1 utilise la bande passante de référence OSPF par défaut. Associez chaque interface au coût OSPF qu'IOS lui attribue. Un même coût peut convenir à plusieurs interfaces.",
+      "left": [
+        {
+          "id": "eth",
+          "text": "Ethernet à 10 Mb/s"
+        },
+        {
+          "id": "fast",
+          "text": "FastEthernet à 100 Mb/s"
+        },
+        {
+          "id": "t1",
+          "text": "Liaison série T1 (1544 kb/s)"
+        },
+        {
+          "id": "gig",
+          "text": "GigabitEthernet à 1 Gb/s"
+        },
+        {
+          "id": "slow",
+          "text": "Liaison série avec « bandwidth 512 »"
+        }
+      ],
+      "right": [
+        {
+          "id": "c1",
+          "text": "1"
+        },
+        {
+          "id": "c10",
+          "text": "10"
+        },
+        {
+          "id": "c64",
+          "text": "64"
+        },
+        {
+          "id": "c65",
+          "text": "65"
+        },
+        {
+          "id": "c195",
+          "text": "195"
+        },
+        {
+          "id": "c0",
+          "text": "0"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "eth": "c10",
+        "fast": "c1",
+        "t1": "c64",
+        "gig": "c1",
+        "slow": "c195"
+      }
+    },
+    "explanation": "IOS calcule le coût en divisant la référence (100 Mb/s, soit 100 000 kb/s) par la bande passante de l'interface en kb/s, garde la partie entière et applique un minimum de 1. Ethernet : 100 000 / 10 000 = 10. FastEthernet : 100 000 / 100 000 = 1. T1 : 100 000 / 1544 = 64,77, tronqué à 64. GigabitEthernet : 0,1, ramené à 1, comme tous les liens plus rapides. « bandwidth 512 » : 100 000 / 512 = 195,3, soit 195. Le FastEthernet et le Gigabit ont donc le même coût.",
+    "distractorNotes": {
+      "c65": "Ce serait le coût du T1 avec un arrondi au plus proche ; IOS garde la partie entière de 64,77, soit 64.",
+      "c0": "Le coût OSPF d'une interface vaut au moins 1 : le résultat 0,1 d'un lien Gigabit est ramené à 1, jamais à 0."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (ip ospf cost, auto-cost)"
+  },
+  {
+    "slug": "ccna-3.4-ospf-dr-election-late-joiners-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Reportez-vous à l'exhibit. Aucun routeur ne tombe en panne. Associez chaque routeur au rôle qu'il occupe sur le segment une fois le réseau stable. Un même rôle peut convenir à plusieurs routeurs.",
+      "exhibit": "Segment Ethernet 10.20.0.0/24 (type BROADCAST)\n\nRouteur  Router ID   Priorité  Activation d'OSPF sur le segment\nR1       10.1.1.1    1         en premier, en même temps que R2\nR2       10.2.2.2    1         en premier, en même temps que R1\nR3       10.3.3.3    100       après la fin de l'élection\nR4       10.4.4.4    0         après la fin de l'élection\nR5       10.5.5.5    1         après la fin de l'élection",
+      "left": [
+        {
+          "id": "r1",
+          "text": "R1"
+        },
+        {
+          "id": "r2",
+          "text": "R2"
+        },
+        {
+          "id": "r3",
+          "text": "R3"
+        },
+        {
+          "id": "r4",
+          "text": "R4"
+        },
+        {
+          "id": "r5",
+          "text": "R5"
+        }
+      ],
+      "right": [
+        {
+          "id": "dr",
+          "text": "DR"
+        },
+        {
+          "id": "bdr",
+          "text": "BDR"
+        },
+        {
+          "id": "drother",
+          "text": "DROTHER"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "r1": "bdr",
+        "r2": "dr",
+        "r3": "drother",
+        "r4": "drother",
+        "r5": "drother"
+      }
+    },
+    "explanation": "R1 et R2 s'élisent entre eux : priorités égales (1), le router ID le plus élevé gagne, donc R2 devient DR et R1 BDR. L'élection n'étant pas préemptive, les routeurs arrivés ensuite trouvent un DR et un BDR déjà annoncés dans les Hello et les gardent. R3, malgré sa priorité 100, et R5, malgré son router ID le plus élevé, deviennent DROTHER ; R4, de priorité 0, ne pourrait de toute façon jamais être élu. R3 ne deviendrait BDR qu'à la prochaine élection, par exemple si R2 ou R1 tombait.",
+    "reference": "RFC 2328, section 9.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-dr-rid-cost-commands-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'administrateur de R1 règle le router ID, l'élection DR/BDR et les coûts OSPF. Associez chaque objectif de configuration à la commande qui permet de l'atteindre.",
+      "left": [
+        {
+          "id": "n1",
+          "text": "Fixer manuellement le router ID du processus OSPF"
+        },
+        {
+          "id": "n2",
+          "text": "Appliquer un nouveau router ID sans redémarrer le routeur"
+        },
+        {
+          "id": "n3",
+          "text": "Rendre le routeur inéligible au rôle de DR et de BDR sur un segment partagé par plusieurs routeurs"
+        },
+        {
+          "id": "n4",
+          "text": "Supprimer l'élection DR/BDR sur un lien Ethernet entre deux routeurs"
+        },
+        {
+          "id": "n5",
+          "text": "Imposer le coût OSPF d'une interface, quelle que soit sa bande passante"
+        }
+      ],
+      "right": [
+        {
+          "id": "c_rid",
+          "text": "router-id"
+        },
+        {
+          "id": "c_clear",
+          "text": "clear ip ospf process"
+        },
+        {
+          "id": "c_prio",
+          "text": "ip ospf priority 0"
+        },
+        {
+          "id": "c_p2p",
+          "text": "ip ospf network point-to-point"
+        },
+        {
+          "id": "c_cost",
+          "text": "ip ospf cost"
+        },
+        {
+          "id": "c_auto",
+          "text": "auto-cost reference-bandwidth"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "n1": "c_rid",
+        "n2": "c_clear",
+        "n3": "c_prio",
+        "n4": "c_p2p",
+        "n5": "c_cost"
+      }
+    },
+    "explanation": "« router-id », sous « router ospf », fixe le router ID ; sur un processus qui a déjà des voisins, il faut ensuite « clear ip ospf process » (ou un redémarrage) pour l'appliquer. « ip ospf priority 0 » laisse l'interface dans un segment broadcast où un DR est élu, mais retire le routeur des candidats. « ip ospf network point-to-point » change le type de réseau : sur un lien à deux routeurs, il n'y a plus d'élection du tout. « ip ospf cost » fixe le coût de l'interface sans calcul à partir de la bande passante.",
+    "distractorNotes": {
+      "c_auto": "« auto-cost reference-bandwidth » change la référence de calcul pour toutes les interfaces du processus : il modifie les coûts indirectement, sans imposer une valeur à une interface donnée."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference"
+  }
+]
