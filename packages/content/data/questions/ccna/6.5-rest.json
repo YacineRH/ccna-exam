@@ -1,0 +1,799 @@
+[
+  {
+    "slug": "ccna-6.5-oauth-role-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une application tierce doit accéder à l'API REST d'un contrôleur au nom d'un utilisateur, sans jamais connaître le mot de passe de celui-ci. Quel mécanisme répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'authentification HTTP Basic avec le compte de l'utilisateur"
+        },
+        {
+          "id": "b",
+          "text": "Une clé d'API unique partagée par toutes les applications"
+        },
+        {
+          "id": "c",
+          "text": "Un cookie de session ouvert avec le mot de passe de l'utilisateur"
+        },
+        {
+          "id": "d",
+          "text": "OAuth 2.0, qui délivre à l'application un jeton d'accès limité"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "OAuth 2.0 est un cadre d'autorisation déléguée : l'utilisateur s'authentifie auprès d'un serveur d'autorisation, qui délivre à l'application cliente un jeton d'accès (access token) limité en portée et en durée. L'application présente ensuite ce jeton à l'API, en général dans l'en-tête Authorization: Bearer <jeton>. Elle n'a jamais connaissance du mot de passe, et l'accès peut être révoqué en invalidant le jeton sans changer les identifiants de l'utilisateur.",
+    "distractorNotes": {
+      "a": "Avec Basic, l'application doit connaître et envoyer l'identifiant et le mot de passe de l'utilisateur.",
+      "b": "Une clé d'API identifie une application, pas un utilisateur ; partagée, elle ne délègue rien et ne se révoque pas finement.",
+      "c": "Ouvrir la session exige de fournir le mot de passe de l'utilisateur, ce que le besoin interdit."
+    },
+    "reference": "RFC 6749 (OAuth 2.0) ; RFC 6750 (Bearer Token Usage)"
+  },
+  {
+    "slug": "ccna-6.5-uniform-interface-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle contrainte de l'architecture REST impose que chaque ressource soit identifiée par un URI et manipulée au moyen de représentations et de méthodes standard, communes à toutes les ressources ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le système en couches"
+        },
+        {
+          "id": "b",
+          "text": "L'interface uniforme"
+        },
+        {
+          "id": "c",
+          "text": "La séparation client-serveur"
+        },
+        {
+          "id": "d",
+          "text": "L'absence d'état"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'interface uniforme est la contrainte centrale de REST définie par Roy Fielding : les ressources sont identifiées par des URI, le client les manipule au travers de représentations (JSON, XML…), chaque message est autodescriptif (méthode, Content-Type) et les mêmes méthodes (GET, POST, PUT, DELETE…) s'appliquent à toutes les ressources. Elle découple le client de l'implémentation du serveur : un client qui sait lire /api/v1/vlans sait, de la même manière, lire /api/v1/interfaces.",
+    "distractorNotes": {
+      "a": "Le système en couches permet d'intercaler des intermédiaires (proxy, répartiteur de charge) invisibles pour le client ; il ne concerne pas l'identification des ressources.",
+      "c": "La séparation client-serveur sépare l'interface utilisateur du stockage des données, sans imposer d'identification par URI.",
+      "d": "L'absence d'état impose que chaque requête porte tout le contexte nécessaire ; elle ne définit pas comment les ressources sont nommées."
+    },
+    "reference": "R. Fielding, Architectural Styles and the Design of Network-based Software Architectures (thèse, 2000), chapitre 5"
+  },
+  {
+    "slug": "ccna-6.5-stateless-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Que signifie la contrainte « sans état » (stateless) de l'architecture REST ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le serveur ne stocke aucune donnée de façon persistante, même dans une base"
+        },
+        {
+          "id": "b",
+          "text": "Le client ne doit jamais mettre une réponse en cache"
+        },
+        {
+          "id": "c",
+          "text": "Chaque requête contient toutes les informations nécessaires à son traitement"
+        },
+        {
+          "id": "d",
+          "text": "Le serveur ne renvoie jamais de code de statut dans ses réponses"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sans état signifie que le serveur ne conserve pas de contexte de session entre deux requêtes d'un même client : chaque requête doit être compréhensible seule et porter tout ce qui est nécessaire, y compris l'authentification (jeton, clé d'API ou identifiants à chaque appel). Cela facilite la montée en charge, puisque n'importe quel serveur d'un groupe peut traiter n'importe quelle requête. L'état des ressources (VLAN, équipements…) reste évidemment stocké côté serveur : c'est l'état de la conversation qui ne l'est pas.",
+    "distractorNotes": {
+      "a": "Les ressources restent stockées côté serveur ; seul le contexte de session entre requêtes est proscrit.",
+      "b": "La mise en cache est au contraire une autre contrainte REST : les réponses doivent indiquer si elles peuvent être mises en cache.",
+      "d": "Toute réponse HTTP contient une ligne de statut avec son code ; la contrainte sans état n'a rien à voir avec cela."
+    },
+    "reference": "R. Fielding, Architectural Styles and the Design of Network-based Software Architectures (thèse, 2000), chapitre 5"
+  },
+  {
+    "slug": "ccna-6.5-bearer-token-expired-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un script interroge l'API REST d'un contrôleur avec un jeton obtenu à 10 h 00, valable 3600 secondes. La même requête, réussie à 10 h 30, échoue à 11 h 05. Quelle action corrige le problème ?",
+      "exhibit": "GET /api/v1/devices HTTP/1.1\nHost: 192.0.2.20\nAuthorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJzY3JpcHQifQ...\nAccept: application/json\n\nHTTP/1.1 401 Unauthorized\nWWW-Authenticate: Bearer error=\"invalid_token\",\n  error_description=\"The access token expired\"\nContent-Length: 0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter l'en-tête Accept: application/json à la requête"
+        },
+        {
+          "id": "b",
+          "text": "Obtenir un nouveau jeton d'accès, puis renvoyer la requête"
+        },
+        {
+          "id": "c",
+          "text": "Demander à l'administrateur d'attribuer un rôle plus élevé au compte"
+        },
+        {
+          "id": "d",
+          "text": "Attendre le délai indiqué par le serveur, puis renvoyer la même requête"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le code 401 Unauthorized signale une authentification absente ou invalide, et l'en-tête WWW-Authenticate en précise la cause : error=\"invalid_token\" et la description indiquent que le jeton a expiré. C'est cohérent avec la chronologie : obtenu à 10 h 00 pour 3600 s, il n'est plus valable après 11 h 00. La requête elle-même est correcte (elle a fonctionné à 10 h 30) ; le script doit redemander un jeton au point d'authentification, puis rejouer la requête avec Authorization: Bearer <nouveau jeton>.",
+    "distractorNotes": {
+      "a": "L'en-tête Accept agit sur le format de la réponse ; un format refusé ne produirait pas un 401 avec invalid_token.",
+      "c": "Un manque de droits donnerait 403 Forbidden pour un client authentifié ; ici c'est le jeton lui-même qui est rejeté.",
+      "d": "Aucun Retry-After n'est fourni, et attendre ne rend pas valide un jeton expiré ; ce conseil vaut pour un 503."
+    },
+    "reference": "RFC 6750 (Bearer Token Usage), section 3 ; RFC 9110 (HTTP Semantics)"
+  },
+  {
+    "slug": "ccna-6.5-put-partial-body-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'administrateur veut seulement changer la description de l'interface, sans toucher aux autres attributs de la ressource. Quel est le risque de cette requête, et quelle correction convient ?",
+      "exhibit": "PUT /api/v1/interfaces/42 HTTP/1.1\nHost: 192.0.2.20\nAuthorization: Bearer eyJhbGciOiJIUzI1NiJ9...\nContent-Type: application/json\n\n{\"description\": \"Lien vers SW2\"}\n\n(Représentation actuelle de /api/v1/interfaces/42 :\n {\"name\": \"GigabitEthernet0/1\", \"description\": \"\", \"enabled\": true,\n  \"ipv4\": \"10.1.1.1/30\", \"mtu\": 1500})",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aucun risque : PUT ne modifie que les champs présents dans le corps"
+        },
+        {
+          "id": "b",
+          "text": "La requête crée une seconde interface ; il faut utiliser GET"
+        },
+        {
+          "id": "c",
+          "text": "Le serveur refusera le JSON ; il faut envoyer le corps en XML"
+        },
+        {
+          "id": "d",
+          "text": "PUT remplace toute la ressource ; il faut utiliser PATCH"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Selon la RFC 9110, PUT demande que l'état de la ressource ciblée soit remplacé par la représentation envoyée. Le corps ne contient que description : un serveur conforme remplace la ressource entière, et les attributs absents (enabled, adresse IPv4, MTU…) peuvent être réinitialisés ou supprimés, d'où une interface potentiellement désactivée. Pour une modification partielle, la méthode prévue est PATCH (RFC 5789), qui applique seulement les changements décrits. Avec PUT, il faudrait envoyer la représentation complète, champs inchangés compris.",
+    "distractorNotes": {
+      "a": "C'est le comportement de PATCH ; PUT porte la représentation complète de la ressource.",
+      "b": "PUT vise un URI précis et le remplace ou le crée à cet URI ; il ne crée pas de seconde ressource, et GET ne modifie rien.",
+      "c": "Content-Type: application/json est cohérent avec le corps ; le format n'est pas en cause."
+    },
+    "reference": "RFC 9110, section 9.3.4 (PUT) ; RFC 5789 (PATCH)"
+  },
+  {
+    "slug": "ccna-6.5-status-503-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un script reçoit de l'API REST d'un contrôleur la réponse « HTTP/1.1 503 Service Unavailable » accompagnée de l'en-tête « Retry-After: 120 ». Quelle interprétation est correcte ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le serveur est temporairement indisponible ; réessayer après 120 secondes"
+        },
+        {
+          "id": "b",
+          "text": "Le jeton du script a expiré ; il faut se réauthentifier dans 120 secondes"
+        },
+        {
+          "id": "c",
+          "text": "L'URI demandé n'existe pas ; il sera créé dans 120 secondes"
+        },
+        {
+          "id": "d",
+          "text": "La requête est mal formée ; le serveur l'ignorera pendant 120 secondes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "503 Service Unavailable est un code 5xx : le problème vient du serveur, pas de la requête. Il indique une indisponibilité temporaire, par exemple une surcharge ou une maintenance. L'en-tête facultatif Retry-After donne le délai (ici 120 secondes) après lequel le client peut réessayer. Un script bien conçu attend ce délai avant de renvoyer la requête plutôt que de la répéter en boucle. À distinguer de 500 Internal Server Error, qui signale une erreur inattendue du serveur sans notion de délai.",
+    "distractorNotes": {
+      "b": "Un jeton expiré donne 401 Unauthorized, un code 4xx d'erreur côté client.",
+      "c": "Une ressource inexistante donne 404 Not Found ; aucun code ne promet sa création.",
+      "d": "Une requête mal formée donne 400 Bad Request ; Retry-After n'a pas ce sens."
+    },
+    "reference": "RFC 9110 (HTTP Semantics)"
+  },
+  {
+    "slug": "ccna-6.5-uri-query-string-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un script envoie la requête « GET https://192.0.2.10/api/v1/vlans?status=active ». Quelle partie de cet URI est la chaîne de requête (query string) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "/api/v1/vlans"
+        },
+        {
+          "id": "b",
+          "text": "192.0.2.10"
+        },
+        {
+          "id": "c",
+          "text": "status=active"
+        },
+        {
+          "id": "d",
+          "text": "https"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un URI se décompose en schéma (https), autorité (hôte 192.0.2.10, éventuellement un port), chemin (/api/v1/vlans) puis, après le point d'interrogation, la chaîne de requête (status=active). Dans une API REST, le chemin identifie la ressource ou la collection, ici la collection des VLAN, et la chaîne de requête sert généralement à filtrer, trier ou paginer le résultat : la requête demande seulement les VLAN actifs. Plusieurs paramètres se séparent par « & ».",
+    "distractorNotes": {
+      "a": "/api/v1/vlans est le chemin, qui identifie la collection de ressources.",
+      "b": "192.0.2.10 est l'hôte, partie de l'autorité de l'URI.",
+      "d": "https est le schéma, qui désigne le protocole utilisé."
+    },
+    "reference": "RFC 3986 (URI Generic Syntax), section 3"
+  },
+  {
+    "slug": "ccna-6.5-basic-auth-facts-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur l'authentification HTTP Basic sont vraies ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'identifiant et le mot de passe sont seulement encodés en Base64, pas chiffrés"
+        },
+        {
+          "id": "b",
+          "text": "Le mot de passe est chiffré en AES avant d'être placé dans l'en-tête"
+        },
+        {
+          "id": "c",
+          "text": "Elle exige un serveur d'autorisation qui délivre des jetons"
+        },
+        {
+          "id": "d",
+          "text": "Les identifiants sont envoyés dans l'en-tête Authorization"
+        },
+        {
+          "id": "e",
+          "text": "Les identifiants sont transmis dans la ligne de requête, après le chemin"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Avec Basic, le client concatène identifiant et mot de passe séparés par « : », encode le tout en Base64 et l'envoie dans l'en-tête Authorization: Basic <valeur>. Base64 est un simple encodage, réversible par n'importe qui : sans TLS, les identifiants circulent en clair. Basic doit donc toujours être utilisé sur HTTPS. Simple à mettre en œuvre, il sert souvent à obtenir un jeton auprès d'un point d'authentification, comme sur Cisco Catalyst Center.",
+    "distractorNotes": {
+      "b": "Basic n'applique aucun chiffrement ; seul TLS (HTTPS) protège les identifiants en transit.",
+      "c": "Un serveur d'autorisation délivrant des jetons relève d'OAuth 2.0, pas de Basic.",
+      "e": "Les identifiants vont dans l'en-tête Authorization, pas dans la ligne de requête ni dans l'URI."
+    },
+    "reference": "RFC 7617 (The 'Basic' HTTP Authentication Scheme)"
+  },
+  {
+    "slug": "ccna-6.5-rest-constraints-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles trois caractéristiques font partie des contraintes de l'architecture REST ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une séparation entre client et serveur"
+        },
+        {
+          "id": "b",
+          "text": "Un contexte de session conservé par le serveur entre les requêtes"
+        },
+        {
+          "id": "c",
+          "text": "Des réponses qui indiquent si elles peuvent être mises en cache"
+        },
+        {
+          "id": "d",
+          "text": "Une connexion TCP unique maintenue ouverte pour toute la session"
+        },
+        {
+          "id": "e",
+          "text": "Une interface uniforme pour manipuler les ressources"
+        },
+        {
+          "id": "f",
+          "text": "Un format de données imposé : XML exclusivement"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Roy Fielding définit REST par six contraintes : client-serveur, sans état, mise en cache, interface uniforme, système en couches et, facultativement, code à la demande. La séparation client-serveur permet de faire évoluer chaque côté indépendamment ; les réponses doivent se déclarer cacheables ou non ; l'interface uniforme (URI, méthodes standard, représentations) rend toutes les ressources manipulables de la même façon. REST n'impose aucun format : JSON est le plus courant, XML et YAML sont possibles.",
+    "distractorNotes": {
+      "b": "C'est l'inverse de la contrainte sans état : chaque requête doit porter tout son contexte.",
+      "d": "REST n'impose aucune connexion persistante ; chaque requête est indépendante.",
+      "f": "REST n'impose aucun format de représentation ; JSON est le plus courant."
+    },
+    "reference": "R. Fielding, Architectural Styles and the Design of Network-based Software Architectures (thèse, 2000), chapitre 5"
+  },
+  {
+    "slug": "ccna-6.5-exhibit-api-key-cache-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Quelles deux affirmations sur cet échange sont vraies ? (Choisissez-en deux.)",
+      "exhibit": "GET /api/v1/devices?type=switch HTTP/1.1\nHost: 192.0.2.30\nX-API-Key: 7f3c9a1e5b2d4f60\nAccept: application/json\n\nHTTP/1.1 200 OK\nContent-Type: application/json\nCache-Control: max-age=60\n\n[{\"hostname\": \"SW1\", \"type\": \"switch\"},\n {\"hostname\": \"SW2\", \"type\": \"switch\"}]",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le client s'authentifie avec une clé d'API placée dans un en-tête dédié"
+        },
+        {
+          "id": "b",
+          "text": "La requête crée un nouvel équipement de type switch"
+        },
+        {
+          "id": "c",
+          "text": "Le corps de la réponse est un document XML"
+        },
+        {
+          "id": "d",
+          "text": "La réponse peut être réutilisée depuis un cache pendant 60 secondes"
+        },
+        {
+          "id": "e",
+          "text": "Le client s'authentifie avec un jeton OAuth au format Bearer"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "La requête est un GET, méthode de lecture : elle demande la collection des équipements filtrée par la chaîne de requête type=switch, sans rien créer. L'authentification passe par l'en-tête X-API-Key, mécanisme de clé d'API propre au serveur, et non par Authorization. La réponse 200 OK est en JSON (Content-Type: application/json, tableau entre crochets) et l'en-tête Cache-Control: max-age=60 autorise sa réutilisation depuis un cache pendant 60 secondes, illustration de la contrainte REST de mise en cache.",
+    "distractorNotes": {
+      "b": "GET lit une ressource sans la modifier ; type=switch est un filtre, pas une donnée à créer.",
+      "c": "Content-Type: application/json et la syntaxe (crochets, accolades) montrent un corps JSON.",
+      "e": "Un jeton Bearer irait dans l'en-tête Authorization: Bearer ; ici c'est une clé dans X-API-Key."
+    },
+    "reference": "RFC 9110 (HTTP Semantics) ; RFC 9111 (HTTP Caching)"
+  },
+  {
+    "slug": "ccna-6.5-status-405-allow-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Le contrôleur n'autorise pas la suppression de cette ressource : seules les méthodes listées dans l'en-tête Allow sont prises en charge sur cet URI. Quel code de statut HTTP remplace « ??? » dans la ligne de statut de la réponse ?",
+      "exhibit": "DELETE /api/v1/system/hostname HTTP/1.1\nHost: 192.0.2.10\nAuthorization: Bearer eyJhbGciOiJIUzI1NiJ9...\n\nHTTP/1.1 ???\nAllow: GET, PUT\nContent-Length: 0",
+      "fields": [
+        {
+          "id": "code",
+          "label": "Code de statut (nombre entier à trois chiffres)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "code": {
+          "accepted": [
+            "405"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "405 Method Not Allowed indique que la méthode de la requête est connue du serveur mais n'est pas prise en charge par la ressource ciblée. La RFC 9110 impose au serveur d'accompagner ce code d'un en-tête Allow qui liste les méthodes acceptées, ici GET et PUT : le nom d'hôte peut être lu ou remplacé, pas supprimé. À distinguer de 404 (aucune ressource à cet URI), de 403 (client non autorisé pour l'action) et de 501 Not Implemented (méthode inconnue du serveur).",
+    "distractorNotes": {},
+    "reference": "RFC 9110, section 15.5.6 (405 Method Not Allowed)"
+  },
+  {
+    "slug": "ccna-6.5-http-request-structure-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Mettez dans l'ordre les éléments d'un message de requête HTTP/1.1 envoyé à une API REST, du premier au dernier transmis.",
+      "items": [
+        {
+          "id": "body",
+          "text": "Le corps du message, par exemple un document JSON"
+        },
+        {
+          "id": "line",
+          "text": "La ligne de requête : méthode, cible et version HTTP"
+        },
+        {
+          "id": "blank",
+          "text": "Une ligne vide (CRLF seul)"
+        },
+        {
+          "id": "headers",
+          "text": "Les champs d'en-tête, comme Host et Content-Type"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "line",
+        "headers",
+        "blank",
+        "body"
+      ]
+    },
+    "explanation": "Un message HTTP/1.1 commence par la ligne de départ ; pour une requête, c'est la ligne de requête (par exemple POST /api/v1/vlans HTTP/1.1). Suivent les champs d'en-tête, un par ligne (Host est obligatoire en HTTP/1.1). Une ligne vide marque la fin des en-têtes, puis vient le corps facultatif, dont la longueur est donnée par Content-Length ou le codage chunked. Une réponse a la même structure, avec une ligne de statut (HTTP/1.1 201 Created) à la place de la ligne de requête.",
+    "distractorNotes": {},
+    "reference": "RFC 9112 (HTTP/1.1), section 2.1"
+  },
+  {
+    "slug": "ccna-6.5-headers-roles-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque en-tête HTTP à son rôle dans un échange avec une API REST.",
+      "left": [
+        {
+          "id": "ct",
+          "text": "Content-Type"
+        },
+        {
+          "id": "acc",
+          "text": "Accept"
+        },
+        {
+          "id": "auth",
+          "text": "Authorization"
+        },
+        {
+          "id": "loc",
+          "text": "Location"
+        },
+        {
+          "id": "allow",
+          "text": "Allow"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Indique le type de média du corps du message"
+        },
+        {
+          "id": "r2",
+          "text": "Annonce les types de média que le client accepte en réponse"
+        },
+        {
+          "id": "r3",
+          "text": "Transporte les informations d'authentification du client"
+        },
+        {
+          "id": "r4",
+          "text": "Donne l'URI d'une ressource, par exemple celle qui vient d'être créée"
+        },
+        {
+          "id": "r5",
+          "text": "Liste les méthodes prises en charge par la ressource ciblée"
+        },
+        {
+          "id": "r6",
+          "text": "Indique la version du protocole HTTP utilisée par le client"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "ct": "r1",
+        "acc": "r2",
+        "auth": "r3",
+        "loc": "r4",
+        "allow": "r5"
+      }
+    },
+    "explanation": "Content-Type décrit le format du corps (application/json, application/xml) et Accept les formats que le client veut recevoir : c'est la négociation de contenu. Authorization porte les identifiants (Basic, Bearer). Location, dans une réponse 201 Created ou une redirection, donne l'URI de la ressource. Allow liste les méthodes acceptées par la ressource et accompagne obligatoirement une réponse 405 Method Not Allowed.",
+    "distractorNotes": {
+      "r6": "Aucun des cinq en-têtes ne joue ce rôle : la version HTTP figure dans la ligne de requête (par exemple GET /api/v1/vlans HTTP/1.1) et dans la ligne de statut de la réponse."
+    },
+    "reference": "RFC 9110 (HTTP Semantics) ; RFC 9112 (HTTP/1.1)"
+  },
+  {
+    "slug": "ccna-6.5-data-formats-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Reportez-vous à l'exhibit. Associez chaque extrait de données renvoyé par une API à son format d'encodage.",
+      "left": [
+        {
+          "id": "j1",
+          "text": "Extrait 1"
+        },
+        {
+          "id": "x1",
+          "text": "Extrait 2"
+        },
+        {
+          "id": "y1",
+          "text": "Extrait 3"
+        },
+        {
+          "id": "j2",
+          "text": "Extrait 4"
+        }
+      ],
+      "right": [
+        {
+          "id": "json",
+          "text": "JSON"
+        },
+        {
+          "id": "xml",
+          "text": "XML"
+        },
+        {
+          "id": "yaml",
+          "text": "YAML"
+        },
+        {
+          "id": "csv",
+          "text": "CSV"
+        }
+      ],
+      "exhibit": "Extrait 1 :\n{\"vlan\": {\"id\": 10, \"name\": \"DATA\"}}\n\nExtrait 2 :\n<vlan><id>10</id><name>DATA</name></vlan>\n\nExtrait 3 :\nvlan:\n  id: 10\n  name: DATA\n\nExtrait 4 :\n[{\"id\": 10}, {\"id\": 20}]"
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "j1": "json",
+        "x1": "xml",
+        "y1": "yaml",
+        "j2": "json"
+      }
+    },
+    "explanation": "JSON utilise des objets entre accolades, faits de paires « clé »: valeur avec des clés entre guillemets, et des tableaux entre crochets : ce sont les extraits 1 et 4. XML encadre chaque donnée par des balises ouvrantes et fermantes (extrait 2). YAML, dans son style en blocs le plus courant, repose sur l'indentation et le caractère « : », sans guillemets obligatoires ni balises (extrait 3) ; il est très utilisé par Ansible. YAML 1.2 accepte aussi la syntaxe JSON, mais les extraits 1 et 4 sont écrits en JSON. Les API REST renvoient le plus souvent du JSON, signalé par Content-Type: application/json.",
+    "distractorNotes": {
+      "csv": "CSV présente des valeurs séparées par des virgules, ligne par ligne, sans clés imbriquées ; aucun extrait n'a cette forme."
+    },
+    "reference": "RFC 8259 (JSON) ; W3C XML 1.0 ; YAML 1.2 specification"
+  },
+  {
+    "slug": "ccna-6.5-scenario-status-codes-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque situation rencontrée par un script qui utilise l'API REST d'un contrôleur au code de statut HTTP le plus approprié.",
+      "left": [
+        {
+          "id": "s1",
+          "text": "Un compte en lecture seule, correctement authentifié, envoie un DELETE"
+        },
+        {
+          "id": "s2",
+          "text": "Un POST tente de créer un VLAN dont l'identifiant existe déjà"
+        },
+        {
+          "id": "s3",
+          "text": "Le contrôleur est en maintenance et refuse temporairement les appels"
+        },
+        {
+          "id": "s4",
+          "text": "Une exception non gérée survient dans le code du contrôleur"
+        },
+        {
+          "id": "s5",
+          "text": "Un GET réussi renvoie la représentation JSON d'un VLAN"
+        }
+      ],
+      "right": [
+        {
+          "id": "c200",
+          "text": "200 OK"
+        },
+        {
+          "id": "c403",
+          "text": "403 Forbidden"
+        },
+        {
+          "id": "c409",
+          "text": "409 Conflict"
+        },
+        {
+          "id": "c500",
+          "text": "500 Internal Server Error"
+        },
+        {
+          "id": "c503",
+          "text": "503 Service Unavailable"
+        },
+        {
+          "id": "c401",
+          "text": "401 Unauthorized"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "c403",
+        "s2": "c409",
+        "s3": "c503",
+        "s4": "c500",
+        "s5": "c200"
+      }
+    },
+    "explanation": "Le compte est authentifié mais n'a pas le droit de supprimer : 403 Forbidden. Créer un VLAN déjà existant entre en conflit avec l'état de la ressource : 409 Conflict. Une indisponibilité temporaire donne 503, souvent avec Retry-After, alors qu'une erreur inattendue du serveur donne 500. Un GET réussi avec un corps renvoie 200 OK. Il faut lire chaque cas en deux temps : qui est en cause (client 4xx ou serveur 5xx), puis la nature précise du problème.",
+    "distractorNotes": {
+      "c401": "401 signale une authentification absente ou invalide ; aucun cas ne présente ce problème, le compte en lecture seule étant correctement authentifié."
+    },
+    "reference": "RFC 9110 (HTTP Semantics)"
+  },
+  {
+    "slug": "ccna-6.5-methods-safe-idempotent-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque méthode HTTP selon ses propriétés définies par la RFC 9110.",
+      "left": [
+        {
+          "id": "get",
+          "text": "GET"
+        },
+        {
+          "id": "head",
+          "text": "HEAD"
+        },
+        {
+          "id": "put",
+          "text": "PUT"
+        },
+        {
+          "id": "delete",
+          "text": "DELETE"
+        },
+        {
+          "id": "post",
+          "text": "POST"
+        }
+      ],
+      "right": [
+        {
+          "id": "both",
+          "text": "Sûre et idempotente"
+        },
+        {
+          "id": "idem",
+          "text": "Idempotente, mais non sûre"
+        },
+        {
+          "id": "none",
+          "text": "Ni sûre ni idempotente"
+        },
+        {
+          "id": "safe",
+          "text": "Sûre, mais non idempotente"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "get": "both",
+        "head": "both",
+        "put": "idem",
+        "delete": "idem",
+        "post": "none"
+      }
+    },
+    "explanation": "Une méthode sûre ne demande aucune modification de l'état du serveur : GET, HEAD, OPTIONS et TRACE. Une méthode idempotente produit le même effet qu'elle soit envoyée une ou plusieurs fois : toutes les méthodes sûres, plus PUT et DELETE. POST n'a aucune de ces deux propriétés, ce qui interdit de le rejouer automatiquement après une coupure. PATCH n'est pas idempotent par définition, même si une requête PATCH particulière peut l'être.",
+    "distractorNotes": {
+      "safe": "Cette catégorie est vide : une méthode sûre ne modifie rien, donc la répéter ne change rien, et elle est forcément idempotente."
+    },
+    "reference": "RFC 9110, sections 9.2.1 et 9.2.2"
+  }
+]
