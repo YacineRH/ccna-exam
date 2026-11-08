@@ -1,0 +1,970 @@
+[
+  {
+    "slug": "ccna-2.9-wlan-new-default-state-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un WLC AireOS, vous créez un WLAN depuis WLANs > Create New, saisissez Profile Name, SSID et ID, puis cliquez « Apply » sans rien modifier d'autre dans la page d'édition qui s'ouvre. Dans quel état se trouve ce WLAN ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Activé, et associé à l'interface management"
+        },
+        {
+          "id": "b",
+          "text": "Désactivé, et associé à l'interface management"
+        },
+        {
+          "id": "c",
+          "text": "Désactivé, et associé à aucune interface"
+        },
+        {
+          "id": "d",
+          "text": "Activé, et associé à l'interface virtual"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un WLAN tout juste créé n'est pas diffusé : dans l'onglet General de « WLANs > Edit », la case Enabled en regard de Status est décochée, ce qui laisse le temps de régler la sécurité, la QoS et les options avancées avant de publier le SSID. Le champ « Interface/Interface Group(G) » vaut par défaut management : tant qu'on ne choisit pas une interface dynamique, les clients seraient placés dans le VLAN de gestion. Il faut donc associer la bonne interface, puis cocher Enabled et cliquer « Apply ».",
+    "distractorNotes": {
+      "a": "L'interface par défaut est bien management, mais le WLAN est créé désactivé : il faut cocher Enabled en regard de Status.",
+      "c": "Le WLAN est bien désactivé, mais il est toujours associé à une interface : management par défaut.",
+      "d": "Le WLAN n'est pas activé à sa création, et l'interface virtual (portail web, relais DHCP) ne transporte jamais le trafic des clients d'un WLAN."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Creating WLANs (GUI)"
+  },
+  {
+    "slug": "ccna-2.9-wlan-ssid-vs-profile-name-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors de la création d'un WLAN sur un WLC AireOS, quel paramètre détermine le nom de réseau que les utilisateurs voient dans la liste des Wi-Fi de leur appareil ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Profile Name"
+        },
+        {
+          "id": "b",
+          "text": "NAS-ID"
+        },
+        {
+          "id": "c",
+          "text": "WLAN ID"
+        },
+        {
+          "id": "d",
+          "text": "SSID"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le SSID est le nom du réseau annoncé par les AP dans leurs beacons et leurs probe responses : c'est lui qu'affiche le client. Le Profile Name n'est qu'un nom interne au WLC, qui identifie la configuration du WLAN ; il doit être unique, alors que plusieurs WLAN peuvent annoncer le même SSID avec des sécurités Layer 2 différentes. Profile Name et SSID sont souvent identiques par commodité, mais ce sont deux champs distincts de la page « WLANs > New ».",
+    "distractorNotes": {
+      "a": "Le Profile Name identifie le WLAN dans la configuration du contrôleur ; il n'est pas annoncé aux clients.",
+      "b": "Le NAS-ID est envoyé au serveur RADIUS (attribut NAS-Identifier) dans les requêtes d'authentification ; il n'apparaît pas côté client.",
+      "c": "L'ID numérote le WLAN sur le contrôleur ; il n'est pas annoncé aux clients et n'a aucun lien avec un VLAN."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Creating WLANs (GUI)"
+  },
+  {
+    "slug": "ccna-2.9-wlan-qos-bronze-ceiling-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un WLC AireOS, le WLAN INVITES utilise le profil QoS « Bronze (background) ». Un invité lance une application de visiophonie qui marque ses paquets en DSCP EF (46). Quel traitement le WLC et les AP appliquent-ils à ce trafic, dans le tunnel CAPWAP et vers le client ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ils lui donnent la priorité voix, car le marquage EF du client est respecté."
+        },
+        {
+          "id": "b",
+          "text": "Ils le rejettent, car le profil Bronze n'accepte que du trafic non marqué."
+        },
+        {
+          "id": "c",
+          "text": "Ils plafonnent sa priorité au niveau background, celui du profil Bronze."
+        },
+        {
+          "id": "d",
+          "text": "Ils le ramènent en best effort, le niveau appliqué à tout trafic trop marqué."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le profil QoS choisi dans l'onglet QoS d'un WLAN fixe la priorité maximale accordée à son trafic : Platinum autorise jusqu'à la voix, Gold jusqu'à la vidéo, Silver jusqu'au best effort et Bronze seulement l'arrière-plan. Un marquage plus élevé que ce plafond est ramené au niveau du profil, pour le marquage de l'en-tête CAPWAP comme pour la priorité WMM des trames envoyées au client. C'est voulu : un invité ne doit pas pouvoir s'octroyer la priorité voix en marquant lui-même ses paquets.",
+    "distractorNotes": {
+      "a": "Le marquage du client n'est respecté que dans la limite du profil du WLAN ; avec Bronze, le plafond est l'arrière-plan.",
+      "b": "Le profil ne filtre pas le trafic : il le transmet en ramenant sa priorité au plafond autorisé.",
+      "d": "Le trafic est ramené au plafond du profil du WLAN, ici background, et non à un niveau fixe best effort (plafond du seul profil Silver)."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — QoS Profiles"
+  },
+  {
+    "slug": "ccna-2.9-wlan-aaa-override-vlan-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les employés du WLAN CORP s'authentifient en 802.1X et sont placés dans le VLAN 20. Pour les comptables, le serveur RADIUS renvoie désormais dans son Access-Accept les attributs Tunnel-Type (VLAN), Tunnel-Medium-Type (802) et Tunnel-Private-Group-ID (50). Pourtant, les comptables restent dans le VLAN 20. Quelle modification, dans la GUI du WLC, corrige le problème ?",
+      "exhibit": "Controller > Interfaces\n\nInterface Name     VLAN Identifier   IP Address     Interface Type\ncompta-vlan50      50                10.0.50.2      Dynamic\ncorp-vlan20        20                10.0.20.2      Dynamic\nmanagement         10                10.0.10.5      Static\nvirtual            N/A               192.0.2.1      Static\n\n(Cisco Controller) >show wlan 1\n\nWLAN Identifier.................................. 1\nProfile Name..................................... CORP\nNetwork Name (SSID).............................. CORP\nStatus........................................... Enabled\nMAC Filtering.................................... Disabled\nBroadcast SSID................................... Enabled\nAAA Policy Override.............................. Disabled\n...\nInterface........................................ corp-vlan20",
+      "options": [
+        {
+          "id": "a",
+          "text": "Créer dans Controller > Interfaces l'interface dynamique du VLAN 50."
+        },
+        {
+          "id": "b",
+          "text": "Choisir compta-vlan50 dans « Interface/Interface Group(G) » du WLAN CORP."
+        },
+        {
+          "id": "c",
+          "text": "Cocher « FlexConnect Local Switching » dans l'onglet Advanced de CORP."
+        },
+        {
+          "id": "d",
+          "text": "Cocher « Allow AAA Override » dans l'onglet Advanced du WLAN CORP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Par défaut, le WLC ignore les attributs d'autorisation renvoyés par RADIUS et applique les réglages du WLAN, dont son interface (corp-vlan20). L'exhibit le confirme : AAA Policy Override est à Disabled. La case « Allow AAA Override » de l'onglet Advanced autorise les attributs RADIUS (VLAN, QoS, ACL) à remplacer ceux du WLAN, client par client. Il faut aussi que le WLC dispose d'une interface dynamique dans le VLAN renvoyé : c'est le cas, compta-vlan50 existe dans le VLAN 50. Une fois l'option cochée, les comptables sont placés dans le VLAN 50 et les autres employés restent dans le VLAN 20.",
+    "distractorNotes": {
+      "a": "L'exhibit montre que l'interface dynamique compta-vlan50 existe déjà dans le VLAN 50 ; le blocage vient de l'override désactivé.",
+      "b": "Tous les employés de CORP, et pas seulement les comptables, seraient alors placés dans le VLAN 50.",
+      "c": "La commutation locale ne concerne que les AP FlexConnect et ne fait pas appliquer les attributs RADIUS : sans AAA override, le WLC les ignore toujours."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Configuring AAA Override (GUI) ; RFC 3580"
+  },
+  {
+    "slug": "ccna-2.9-wlan-webauth-authentication-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un WLC AireOS, le WLAN INVITES doit rester ouvert au niveau 802.11, mais chaque invité doit saisir sur une page web l'identifiant et le mot de passe remis à l'accueil avant d'accéder à Internet. Quelle configuration de l'onglet Security choisir ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Layer 2 Security : None ; Layer 3 : Web Policy, option Passthrough"
+        },
+        {
+          "id": "b",
+          "text": "Layer 2 Security : None ; Layer 3 : Web Policy, option Authentication"
+        },
+        {
+          "id": "c",
+          "text": "Layer 2 Security : WPA2 avec PSK ; Layer 3 : None"
+        },
+        {
+          "id": "d",
+          "text": "Layer 2 Security : WPA2 avec 802.1X ; Layer 3 : None"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un WLAN « ouvert au niveau 802.11 » n'a pas de sécurité Layer 2 : Layer 2 Security vaut None. L'authentification se fait alors au niveau 3, par un portail web (web authentication) : avec Web Policy et l'option Authentication, le WLC redirige le navigateur du client vers une page de connexion et vérifie l'identifiant et le mot de passe saisis, dans sa base locale ou auprès d'un serveur RADIUS. Tant que l'invité ne s'est pas authentifié, seuls DHCP et DNS passent.",
+    "distractorNotes": {
+      "a": "Passthrough affiche une page (conditions d'utilisation, parfois une adresse e-mail à saisir) que l'invité accepte, sans vérifier d'identifiant ni de mot de passe.",
+      "c": "Une clé PSK chiffre et protège le WLAN au niveau 802.11, qui ne serait plus ouvert, et aucun identifiant personnel n'est demandé sur une page web.",
+      "d": "802.1X authentifie au niveau 2, par EAP, avant toute adresse IP : le WLAN ne serait plus ouvert et aucune page web n'intervient."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Web Authentication (GUI)"
+  },
+  {
+    "slug": "ccna-2.9-flexconnect-local-switching-local-mode-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un WLC AireOS installé au siège, le WLAN CORP est associé à l'interface corp-vlan20 (VLAN 20) et « FlexConnect Local Switching » est coché dans son onglet Advanced. AP-SIEGE, en mode local au siège, et AP-AGENCE, en mode FlexConnect dans une agence, diffusent tous deux CORP. Comment est acheminé le trafic d'un client associé à AP-SIEGE ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "AP-SIEGE le commute lui-même sur le commutateur auquel il est raccordé."
+        },
+        {
+          "id": "b",
+          "text": "AP-SIEGE refuse ce client, car le WLAN est réservé aux AP FlexConnect."
+        },
+        {
+          "id": "c",
+          "text": "AP-SIEGE l'envoie au WLC par CAPWAP, et le WLC le dépose dans le VLAN 20."
+        },
+        {
+          "id": "d",
+          "text": "AP-SIEGE le commute dans le VLAN natif de son port, faute de VLAN mappé."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La case « FlexConnect Local Switching » n'a d'effet que sur les AP en mode FlexConnect : AP-AGENCE commute le trafic de ses clients CORP directement sur le réseau local de l'agence. Un AP en mode local fonctionne toujours en commutation centrale : AP-SIEGE encapsule le trafic de ses clients dans le tunnel CAPWAP de données (UDP 5247) vers le WLC, qui le dépose dans le VLAN de l'interface du WLAN, ici le VLAN 20. Un même WLAN peut donc être commuté localement dans les agences et centralement au siège.",
+    "distractorNotes": {
+      "a": "Seuls les AP en mode FlexConnect commutent localement ; un AP en mode local envoie tout le trafic de ses clients au WLC.",
+      "b": "Un WLAN en commutation locale reste diffusé par les AP en mode local, qui l'acheminent simplement en commutation centrale.",
+      "d": "Un AP en mode local ne commute jamais le trafic de ses clients sur son port : il le tunnelise vers le WLC."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — FlexConnect (Configuring a WLAN for Local Switching)"
+  },
+  {
+    "slug": "ccna-2.9-client-exclusion-timeout-zero-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans l'onglet Advanced du WLAN CORP d'un WLC AireOS, Client Exclusion est activé avec un Timeout Value de 0. Un portable échoue plusieurs fois de suite à l'authentification 802.1X et le WLC l'exclut. Que se passe-t-il ensuite ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il reste exclu jusqu'à ce qu'un administrateur le retire de la liste d'exclusion."
+        },
+        {
+          "id": "b",
+          "text": "Il peut retenter l'association aussitôt, car la valeur 0 désactive l'exclusion."
+        },
+        {
+          "id": "c",
+          "text": "Il reste exclu 60 secondes, la valeur par défaut appliquée quand le délai vaut 0."
+        },
+        {
+          "id": "d",
+          "text": "Il reste exclu jusqu'au prochain redémarrage de l'AP auquel il était associé."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Client Exclusion met à l'écart un client qui déclenche une politique d'exclusion (échecs répétés d'association, d'authentification 802.11, 802.1X ou web, vol d'adresse IP). Le Timeout Value fixe la durée de l'exclusion en secondes : 60 par défaut. La valeur 0 a un sens particulier : l'exclusion devient permanente et seule une intervention de l'administrateur (retrait du client de la liste des clients exclus) permet au client de revenir. C'est un moyen de bloquer durablement un poste suspect, au prix d'une intervention manuelle.",
+    "distractorNotes": {
+      "b": "Pour désactiver l'exclusion, on décoche Client Exclusion ; un délai de 0 rend au contraire l'exclusion permanente.",
+      "c": "60 secondes est la valeur par défaut du champ, mais 0 n'y renvoie pas : 0 signifie une exclusion sans limite de durée.",
+      "d": "La liste d'exclusion est tenue par le WLC, et non par l'AP : un redémarrage de l'AP ne lève pas l'exclusion."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Configuring Client Exclusion Policies ; Creating WLANs (GUI), onglet Advanced"
+  },
+  {
+    "slug": "ccna-2.9-broadcast-ssid-disabled-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un WLC, un administrateur décoche l'option Broadcast SSID du WLAN LABO, qui reste activé. Quel est l'effet de ce réglage ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les AP cessent de diffuser le WLAN : plus aucun client ne peut s'y associer."
+        },
+        {
+          "id": "b",
+          "text": "Les AP chiffrent le SSID dans leurs beacons : seuls les clients qui ont la clé le voient."
+        },
+        {
+          "id": "c",
+          "text": "Les AP n'envoient plus de trames broadcast (ARP, DHCP) aux clients du WLAN."
+        },
+        {
+          "id": "d",
+          "text": "Les AP retirent le SSID de leurs beacons, mais un client qui le connaît peut s'associer."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Sans Broadcast SSID, les AP émettent toujours des beacons pour ce WLAN, mais avec un SSID vide, et ne répondent plus aux probe requests génériques. Le réseau n'apparaît donc plus dans la liste des Wi-Fi ; un client configuré avec le nom exact l'indique dans sa probe request, l'AP lui répond et l'association se déroule normalement. Ce n'est pas une mesure de sécurité : le SSID circule en clair dans les probe requests et les association requests des clients, qu'une simple capture révèle.",
+    "distractorNotes": {
+      "a": "C'est l'effet de la case Status décochée (WLAN désactivé) ; un SSID masqué reste joignable par les clients qui le connaissent.",
+      "b": "Le SSID n'est jamais chiffré dans les trames de gestion : il est simplement retiré des beacons, et visible dans les probe requests des clients.",
+      "c": "Broadcast SSID ne concerne que l'annonce du nom du réseau ; le trafic broadcast des clients (ARP, DHCP) n'est pas affecté."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Creating WLANs (GUI) ; IEEE 802.11-2020"
+  },
+  {
+    "slug": "ccna-2.9-interface-group-guest-capacity-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le WLAN INVITES d'un WLC AireOS est associé à l'interface dynamique guest-vlan30 (172.16.30.0/24). Il doit désormais accueillir jusqu'à 600 invités simultanés. Le plan d'adressage impose des /24 ; dans chacun, la passerelle et l'interface dynamique du WLC prennent une adresse, et toutes les autres vont au pool DHCP. Quelle solution répond au besoin sans changer de SSID ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Créer l'interface du VLAN 31, la grouper avec guest-vlan30 et choisir ce groupe dans « Interface/Interface Group(G) »."
+        },
+        {
+          "id": "b",
+          "text": "Créer les interfaces des VLAN 31 et 32, les grouper avec guest-vlan30 et choisir ce groupe dans « Interface/Interface Group(G) »."
+        },
+        {
+          "id": "c",
+          "text": "Créer deux autres WLAN de même SSID et de même sécurité, associés aux interfaces des VLAN 31 et 32."
+        },
+        {
+          "id": "d",
+          "text": "Fixer « Maximum Allowed Clients » à 600 dans l'onglet Advanced du WLAN INVITES."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un /24 offre 254 adresses utilisables ; une fois la passerelle et l'interface du WLC retirées, il en reste 252 pour les clients. Deux VLAN donnent 504 adresses, moins que 600 ; trois en donnent 756, ce qui suffit. Un groupe d'interfaces (Controller > Interface Groups) réunit plusieurs interfaces dynamiques ; choisi dans le champ « Interface/Interface Group(G) » de l'onglet General, il répartit les clients du WLAN entre ces VLAN, sous un seul SSID. Il faut donc créer les interfaces des VLAN 31 et 32 et les grouper avec guest-vlan30.",
+    "distractorNotes": {
+      "a": "Deux /24 n'offrent que 2 × 252 = 504 adresses pour les clients, moins que les 600 invités attendus.",
+      "c": "Le WLC n'accepte plusieurs WLAN de même SSID que si leurs sécurités Layer 2 diffèrent ; de toute façon, le groupe d'interfaces est l'outil prévu pour répartir un WLAN sur plusieurs VLAN.",
+      "d": "Ce champ limite le nombre de clients du WLAN ; il n'ajoute aucune adresse au sous-réseau, qui reste limité à 252 clients."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Interface Groups (GUI)"
+  },
+  {
+    "slug": "ccna-2.9-c9800-policy-tag-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un Catalyst 9800, vous avez créé le profil WLAN CORP et le profil PP-CORP, qui place ses clients dans le VLAN 20. Quel objet devez-vous créer pour associer ces deux profils, puis attribuer aux AP du bâtiment B pour qu'ils diffusent CORP avec ces réglages ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un Site Tag"
+        },
+        {
+          "id": "b",
+          "text": "Un RF Tag"
+        },
+        {
+          "id": "c",
+          "text": "Un Policy Tag"
+        },
+        {
+          "id": "d",
+          "text": "Un AP Join Profile"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le Catalyst 9800 sépare la configuration en profils et en tags. Le profil WLAN décrit le SSID et sa sécurité ; le policy profile décrit ce qui s'applique aux clients (VLAN, QoS, ACL, commutation). Le Policy Tag contient les associations « profil WLAN ↔ policy profile » ; attribué à un AP, il lui indique quels SSID diffuser et avec quelle politique. Chaque AP reçoit ainsi trois tags : Policy Tag, Site Tag et RF Tag.",
+    "distractorNotes": {
+      "a": "Le Site Tag porte l'AP Join Profile et, pour un site distant, le Flex Profile : il ne contient aucune association de WLAN.",
+      "b": "Le RF Tag regroupe les profils RF de chaque bande (débits, puissance, canaux), sans lien avec les WLAN.",
+      "d": "L'AP Join Profile règle la relation de l'AP avec le contrôleur (CAPWAP, accès de gestion à l'AP) ; il est référencé par le Site Tag."
+    },
+    "reference": "Cisco Catalyst 9800 Series Wireless Controller Software Configuration Guide — Configuring Policy Tags ; Understand Catalyst 9800 Wireless Controllers Configuration Model"
+  },
+  {
+    "slug": "ccna-2.9-dynamic-interface-vs-wlan-settings-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur un WLC AireOS, vous préparez un WLAN invité dont les clients seront placés dans le VLAN 30. Quels deux paramètres se configurent sur l'interface dynamique (Controller > Interfaces), et non dans le WLAN ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le SSID annoncé aux invités"
+        },
+        {
+          "id": "b",
+          "text": "Le numéro de VLAN (VLAN Identifier) 30"
+        },
+        {
+          "id": "c",
+          "text": "Le profil QoS Bronze (background)"
+        },
+        {
+          "id": "d",
+          "text": "L'adresse de la passerelle (Gateway) du VLAN 30"
+        },
+        {
+          "id": "e",
+          "text": "La sécurité Layer 3 Web Policy"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "L'interface dynamique est la présence du WLC dans un VLAN : on y saisit son nom, le VLAN Identifier, l'adresse IP du WLC dans ce VLAN, le masque, la passerelle et le serveur DHCP. Le WLAN, lui, décrit le service sans fil : SSID, sécurité, QoS, options avancées, et l'interface à laquelle il est associé dans l'onglet General. C'est ce lien WLAN → interface qui place les clients dans le VLAN 30 ; l'interface doit donc exister avant de pouvoir être choisie.",
+    "distractorNotes": {
+      "a": "Le SSID se saisit dans le WLAN (page « WLANs > New », puis onglet General).",
+      "c": "Le profil QoS se choisit dans l'onglet QoS du WLAN.",
+      "e": "La sécurité Layer 3 (web authentication) se règle dans l'onglet Security > Layer 3 du WLAN."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Configuring Dynamic Interfaces (GUI) ; Creating WLANs (GUI)"
+  },
+  {
+    "slug": "ccna-2.9-guest-wlan-config-analysis-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit, qui résume la configuration du WLAN GUEST d'un WLC AireOS. L'interface guest-vlan30 est dans le VLAN 30. Quelles trois affirmations sont exactes ?",
+      "exhibit": "WLANs > Edit 'GUEST'   (SSID : Invites, WLAN ID 3)\n\nGeneral   Status ............................ Enabled\n          Interface/Interface Group(G) ...... guest-vlan30\n          Broadcast SSID .................... Enabled\nSecurity  Layer 2 Security .................. None\n          Layer 3 Security .................. Web Policy\n                                              (Authentication)\nQoS       Quality of Service (QoS) .......... Bronze (background)\nAdvanced  Enable Session Timeout ............ Enabled, 3600 secs",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les trames de données échangées entre les invités et les AP ne sont pas chiffrées au niveau 802.11."
+        },
+        {
+          "id": "b",
+          "text": "Avant de s'authentifier sur la page web, un invité peut obtenir une adresse IP du VLAN 30 par DHCP."
+        },
+        {
+          "id": "c",
+          "text": "Au bout d'une heure de session, un invité doit de nouveau s'authentifier sur la page web."
+        },
+        {
+          "id": "d",
+          "text": "Les invités doivent saisir une clé pré-partagée avant d'atteindre la page de connexion."
+        },
+        {
+          "id": "e",
+          "text": "Le trafic des invités est servi avant celui d'un WLAN d'employés en profil Silver."
+        },
+        {
+          "id": "f",
+          "text": "Le SSID Invites n'apparaît pas dans la liste des réseaux ; les invités doivent le saisir."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "Layer 2 Security à None : le WLAN est ouvert, sans chiffrement 802.11 (a). La sécurité est assurée au niveau 3 par la web authentication : le client s'associe, obtient une adresse par DHCP dans le VLAN de l'interface guest-vlan30 (le WLC laisse passer DHCP et DNS avant l'authentification), puis son navigateur est redirigé vers la page de connexion (b). Le délai de session de 3600 secondes limite la durée d'une session : à son expiration, le client doit se réauthentifier (c). Le profil Bronze plafonne le trafic des invités au niveau arrière-plan, le plus bas.",
+    "distractorNotes": {
+      "d": "Layer 2 Security vaut None : aucune clé n'est demandée, l'association est ouverte et l'authentification se fait sur la page web.",
+      "e": "Bronze (background) est le profil le moins prioritaire : le trafic des invités passe après celui d'un WLAN Silver (best effort).",
+      "f": "Broadcast SSID est activé : le SSID figure dans les beacons et apparaît dans la liste des réseaux."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Web Authentication ; Creating WLANs (GUI) ; QoS Profiles"
+  },
+  {
+    "slug": "ccna-2.9-wlan-8021x-radius-config-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur un WLC AireOS dont les AP sont en mode local, le serveur RADIUS 10.10.10.50 est déjà déclaré dans Security > AAA > RADIUS > Authentication. Le WLAN CORP doit authentifier chaque employé avec son compte personnel, vérifié par ce serveur. Quelles deux actions font partie de la configuration du WLAN ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Dans Security > Layer 2, choisir WPA2 avec AES et la gestion de clés (Auth Key Mgmt) 802.1X."
+        },
+        {
+          "id": "b",
+          "text": "Dans Security > Layer 2, choisir la gestion de clés PSK et saisir comme clé le secret partagé RADIUS."
+        },
+        {
+          "id": "c",
+          "text": "Dans Security > AAA Servers, choisir 10.10.10.50 comme serveur d'authentification."
+        },
+        {
+          "id": "d",
+          "text": "Dans Security > Layer 3, choisir Web Policy avec l'option Passthrough."
+        },
+        {
+          "id": "e",
+          "text": "Dans l'onglet Advanced, cocher FlexConnect Local Auth pour que l'AP interroge le serveur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Une authentification par utilisateur au niveau 2 correspond à WPA2-Enterprise : dans l'onglet Security > Layer 2, la politique WPA2, le chiffrement AES et la gestion de clés (Auth Key Mgmt) 802.1X. Le WLC joue alors le rôle d'authenticator : il relaie les échanges EAP du client vers le serveur RADIUS choisi dans l'onglet Security > AAA Servers. Le serveur doit au préalable être déclaré globalement (adresse, port 1812, secret partagé), ce qui est déjà fait ici.",
+    "distractorNotes": {
+      "b": "PSK utilise une clé commune à tous les clients, sans serveur RADIUS ; le secret partagé RADIUS ne sert qu'entre le WLC et le serveur.",
+      "d": "Passthrough affiche une page d'accueil que l'utilisateur accepte, sans vérifier aucun identifiant.",
+      "e": "FlexConnect Local Auth ne concerne que les AP FlexConnect ; avec des AP en mode local, c'est le WLC qui relaie l'authentification vers le serveur."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Configuring RADIUS (GUI) ; Creating WLANs (GUI), WPA2 802.1X"
+  },
+  {
+    "slug": "ccna-2.9-wlan-profile-name-ssid-rules-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur un WLC AireOS, quelles deux affirmations sur les champs Profile Name, SSID et ID de la page « WLANs > New » sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'ID du WLAN doit être égal au numéro du VLAN dans lequel ses clients seront placés."
+        },
+        {
+          "id": "b",
+          "text": "Deux WLAN peuvent annoncer le même SSID si leurs sécurités Layer 2 sont différentes."
+        },
+        {
+          "id": "c",
+          "text": "Le SSID ignore la casse : « Labo » et « LABO » désignent le même réseau sans fil."
+        },
+        {
+          "id": "d",
+          "text": "Le SSID peut compter jusqu'à 64 caractères, comme une clé PSK en hexadécimal."
+        },
+        {
+          "id": "e",
+          "text": "Le Profile Name doit être unique sur le WLC, même pour deux WLAN de même SSID."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Le WLC accepte plusieurs WLAN de même SSID, par exemple l'un en 802.1X et l'autre en PSK, à condition que leurs politiques de sécurité Layer 2 diffèrent : le client choisit alors d'après la sécurité annoncée dans les beacons et les probe responses. Pour les distinguer, chaque WLAN doit avoir un Profile Name unique, nom interne au contrôleur. L'ID ne fait que numéroter le WLAN ; le VLAN dépend de l'interface choisie dans l'onglet General.",
+    "distractorNotes": {
+      "a": "L'ID numérote le WLAN sur le contrôleur ; le VLAN des clients dépend de l'interface (ou du groupe d'interfaces) associée au WLAN.",
+      "c": "Le SSID est sensible à la casse : « Labo » et « LABO » sont deux réseaux différents.",
+      "d": "Un SSID compte au plus 32 octets (IEEE 802.11) ; ce sont les clés PSK hexadécimales qui comptent 64 caractères."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — WLANs (restrictions, same SSID) ; IEEE 802.11-2020, section 9.4.2.2"
+  },
+  {
+    "slug": "ccna-2.9-dynamic-interface-addressing-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur un WLC AireOS, vous créez dans Controller > Interfaces l'interface dynamique guest-vlan40 pour le WLAN invité. Le VLAN 40 utilise le sous-réseau 10.40.8.0/22 ; la passerelle est la première adresse utilisable et l'interface du WLC doit prendre la dernière adresse utilisable. Complétez les champs de l'interface.",
+      "fields": [
+        {
+          "id": "ip",
+          "label": "IP Address de l'interface (en décimal pointé)"
+        },
+        {
+          "id": "mask",
+          "label": "Netmask (en décimal pointé)"
+        },
+        {
+          "id": "gw",
+          "label": "Gateway (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "ip": {
+          "accepted": [
+            "10.40.11.254"
+          ],
+          "normalize": "ipv4"
+        },
+        "mask": {
+          "accepted": [
+            "255.255.252.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "gw": {
+          "accepted": [
+            "10.40.8.1"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Un /22 laisse 10 bits d'hôte : le bloc compte 1 024 adresses, de 10.40.8.0 (réseau) à 10.40.11.255 (broadcast). Le 3ᵉ octet du masque vaut 11111100, soit 252 : Netmask 255.255.252.0. La première adresse utilisable, 10.40.8.1, est la passerelle ; la dernière, 10.40.11.254, est l'adresse de l'interface dynamique. Le WLC relaie les requêtes DHCP des invités depuis cette adresse ; le WLAN invité, associé à guest-vlan40 dans son onglet General, place ses clients dans ce sous-réseau.",
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Configuring Dynamic Interfaces (GUI) ; RFC 4632"
+  },
+  {
+    "slug": "ccna-2.9-webauth-guest-flow-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Sur un WLC AireOS, le WLAN INVITES est configuré avec Layer 2 Security à None et Layer 3 Security à Web Policy (Authentication). Ordonnez les étapes que suit un invité, de son arrivée à l'accès à Internet.",
+      "items": [
+        {
+          "id": "creds",
+          "text": "L'invité saisit son identifiant et son mot de passe, que le WLC vérifie dans sa base locale ou auprès d'un serveur RADIUS."
+        },
+        {
+          "id": "assoc",
+          "text": "Le client s'associe au SSID, ouvert au niveau 802.11."
+        },
+        {
+          "id": "run",
+          "text": "Le WLC fait passer le client à l'état RUN : tout son trafic est désormais autorisé."
+        },
+        {
+          "id": "dhcp",
+          "text": "Le client obtient une adresse IP par DHCP, trafic que le WLC laisse passer avant l'authentification."
+        },
+        {
+          "id": "redirect",
+          "text": "L'invité ouvre son navigateur : le WLC intercepte la requête HTTP et le redirige vers la page de connexion."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "assoc",
+        "dhcp",
+        "redirect",
+        "creds",
+        "run"
+      ]
+    },
+    "explanation": "Sans sécurité Layer 2, l'association est ouverte. Le client est alors dans l'état WEBAUTH_REQD : le WLC ne laisse passer que DHCP et DNS, ce qui permet d'obtenir une adresse IP et de résoudre le nom du site demandé. Une adresse est indispensable à la suite : la première requête HTTP du navigateur est interceptée et l'invité est redirigé vers la page de connexion, servie par le WLC sur l'adresse de son interface virtual. Après vérification des identifiants, le client passe à l'état RUN et son trafic est transmis normalement.",
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Web Authentication ; Web Authentication on Wireless LAN Controllers Configuration Example"
+  },
+  {
+    "slug": "ccna-2.9-central-switching-data-path-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Sur un WLC AireOS, le WLAN CORP est associé à l'interface dynamique corp-vlan20 (VLAN 20). Un client associé à un AP en mode local envoie un paquet vers sa passerelle, une SVI du VLAN 20 sur le commutateur de distribution. Ordonnez les étapes du trajet de ce paquet.",
+      "items": [
+        {
+          "id": "wlc",
+          "text": "Le WLC retire l'encapsulation CAPWAP et émet la trame en Ethernet, étiquetée VLAN 20, sur son port de distribution en trunk."
+        },
+        {
+          "id": "air",
+          "text": "Le client émet la trame 802.11 vers l'AP auquel il est associé."
+        },
+        {
+          "id": "svi",
+          "text": "Le commutateur de distribution remet la trame à la SVI du VLAN 20, la passerelle du client."
+        },
+        {
+          "id": "capwap",
+          "text": "L'AP encapsule la trame dans le tunnel CAPWAP de données (UDP 5247) à destination du WLC."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "air",
+        "capwap",
+        "wlc",
+        "svi"
+      ]
+    },
+    "explanation": "Avec un AP en mode local, la commutation est centrale : l'AP ne dépose jamais le trafic des clients sur son propre port. Il l'encapsule dans le tunnel CAPWAP de données (UDP 5247), qui traverse le réseau jusqu'au WLC dans le VLAN de l'AP. Le WLC décapsule la trame et la transmet dans le VLAN de l'interface associée au WLAN, choisie dans l'onglet General : ici corp-vlan20, d'où l'étiquette 802.1Q VLAN 20 sur le trunk qui le relie au commutateur. La trame atteint enfin la passerelle du sous-réseau.",
+    "reference": "RFC 5415 (CAPWAP), section 4 ; Cisco Wireless Controller Configuration Guide, Release 8.10 — Interfaces"
+  },
+  {
+    "slug": "ccna-2.9-qos-profiles-wmm-matching-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque profil QoS de l'onglet QoS d'un WLAN AireOS au type de trafic et à la catégorie d'accès WMM qui lui correspondent.",
+      "left": [
+        {
+          "id": "bronze",
+          "text": "Bronze"
+        },
+        {
+          "id": "gold",
+          "text": "Gold"
+        },
+        {
+          "id": "platinum",
+          "text": "Platinum"
+        },
+        {
+          "id": "silver",
+          "text": "Silver"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Voix (AC_VO)"
+        },
+        {
+          "id": "r2",
+          "text": "Best effort (AC_BE)"
+        },
+        {
+          "id": "r3",
+          "text": "Contrôle réseau (DSCP CS6)"
+        },
+        {
+          "id": "r4",
+          "text": "Arrière-plan (AC_BK)"
+        },
+        {
+          "id": "r5",
+          "text": "Vidéo (AC_VI)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "platinum": "r1",
+        "gold": "r5",
+        "silver": "r2",
+        "bronze": "r4"
+      }
+    },
+    "explanation": "Les quatre profils QoS d'AireOS suivent les quatre catégories d'accès WMM (IEEE 802.11e) : Platinum pour la voix (AC_VO), Gold pour la vidéo (AC_VI), Silver pour le best effort (AC_BE) et Bronze pour l'arrière-plan (AC_BK). Le profil fixe la priorité maximale accordée au trafic du WLAN, sur la radio comme dans le marquage de l'en-tête CAPWAP. Silver est le profil d'un nouveau WLAN ; on choisit Platinum pour un SSID de téléphones IP et Bronze, par exemple, pour un WLAN invité.",
+    "distractorNotes": {
+      "r3": "Aucun profil QoS de WLAN ne correspond au contrôle réseau : les quatre profils suivent les quatre catégories d'accès WMM, et CS6 sert au trafic de routage des équipements, pas aux clients."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — QoS Profiles ; IEEE 802.11-2020 (EDCA)"
+  },
+  {
+    "slug": "ccna-2.9-wlan-edit-tabs-matching-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Sur un WLC AireOS, associez chaque réglage à l'onglet de la page « WLANs > Edit » où il se configure.",
+      "left": [
+        {
+          "id": "status",
+          "text": "Cocher Enabled en regard de Status"
+        },
+        {
+          "id": "iface",
+          "text": "Choisir l'interface dans « Interface/Interface Group(G) »"
+        },
+        {
+          "id": "webauth",
+          "text": "Choisir Web Policy (Authentication) en sécurité Layer 3"
+        },
+        {
+          "id": "gold",
+          "text": "Choisir le profil Gold (video)"
+        },
+        {
+          "id": "excl",
+          "text": "Activer Client Exclusion et régler son délai"
+        }
+      ],
+      "right": [
+        {
+          "id": "t1",
+          "text": "General"
+        },
+        {
+          "id": "t2",
+          "text": "Security"
+        },
+        {
+          "id": "t3",
+          "text": "QoS"
+        },
+        {
+          "id": "t4",
+          "text": "Policy-Mapping"
+        },
+        {
+          "id": "t5",
+          "text": "Advanced"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "status": "t1",
+        "iface": "t1",
+        "webauth": "t2",
+        "gold": "t3",
+        "excl": "t5"
+      }
+    },
+    "explanation": "L'onglet General porte l'identité et l'état du WLAN : Profile Name, SSID, Status, Radio Policy, interface ou groupe d'interfaces, Broadcast SSID. L'onglet Security regroupe ses sous-onglets Layer 2 (WPA2/WPA3, PSK ou 802.1X), Layer 3 (web authentication) et AAA Servers. L'onglet QoS fixe le profil Platinum, Gold, Silver ou Bronze et la politique WMM. L'onglet Advanced rassemble les options de comportement : AAA override, délai de session, Client Exclusion, FlexConnect Local Switching, DHCP, Aironet IE.",
+    "distractorNotes": {
+      "t4": "L'onglet Policy-Mapping associe au WLAN des politiques locales (Local Policies) ; aucun des réglages de la liste ne s'y trouve."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Creating WLANs (GUI)"
+  },
+  {
+    "slug": "ccna-2.9-advanced-tab-options-matching-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque option de l'onglet Advanced d'un WLAN AireOS à son effet.",
+      "left": [
+        {
+          "id": "flex",
+          "text": "FlexConnect Local Switching"
+        },
+        {
+          "id": "session",
+          "text": "Enable Session Timeout"
+        },
+        {
+          "id": "aironet",
+          "text": "Aironet IE"
+        },
+        {
+          "id": "dhcpreq",
+          "text": "DHCP Addr. Assignment Required"
+        },
+        {
+          "id": "p2p",
+          "text": "P2P Blocking Action : Drop"
+        }
+      ],
+      "right": [
+        {
+          "id": "e1",
+          "text": "Oblige les clients à obtenir leur adresse par DHCP : un client en adresse statique ne peut pas transmettre."
+        },
+        {
+          "id": "e2",
+          "text": "Retire le nom du réseau des beacons émis par les AP."
+        },
+        {
+          "id": "e3",
+          "text": "Fait commuter le trafic des clients directement sur le réseau local par les AP en mode FlexConnect."
+        },
+        {
+          "id": "e4",
+          "text": "Limite la durée d'une session : à son expiration, le client doit se réauthentifier."
+        },
+        {
+          "id": "e5",
+          "text": "Plafonne la priorité accordée au trafic des clients du WLAN."
+        },
+        {
+          "id": "e6",
+          "text": "Ajoute aux beacons et aux probe responses un élément d'information propriétaire Cisco, exploité par les clients CCX."
+        },
+        {
+          "id": "e7",
+          "text": "Bloque le trafic échangé directement entre deux clients du WLAN."
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "flex": "e3",
+        "session": "e4",
+        "aironet": "e6",
+        "dhcpreq": "e1",
+        "p2p": "e7"
+      }
+    },
+    "explanation": "FlexConnect Local Switching fait commuter localement le trafic des clients par les AP FlexConnect ; les AP en mode local restent en commutation centrale. Le délai de session (en secondes) borne la durée d'une session avant une nouvelle authentification. Aironet IE ajoute un élément d'information propre à Cisco (nom de l'AP, par exemple) aux trames de gestion ; on le désactive parfois pour d'anciens pilotes qui le gèrent mal. DHCP Addr. Assignment Required refuse le trafic des clients qui n'ont pas obtenu leur adresse par DHCP. P2P Blocking à Drop fait rejeter par le WLC le trafic d'un client vers un autre client.",
+    "distractorNotes": {
+      "e2": "C'est l'effet de Broadcast SSID décoché, un réglage de l'onglet General, et non de l'onglet Advanced.",
+      "e5": "C'est le rôle du profil QoS (Platinum, Gold, Silver, Bronze), choisi dans l'onglet QoS."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Creating WLANs (GUI), onglet Advanced ; Peer-to-Peer Blocking"
+  }
+]

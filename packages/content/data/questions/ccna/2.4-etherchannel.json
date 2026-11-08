@@ -1,0 +1,1409 @@
+[
+  {
+    "slug": "ccna-2.4-lacp-passive-behavior-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un port de commutateur est configuré avec « channel-group 1 mode passive ». Comment se comporte-t-il vis-à-vis de LACP ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il envoie des LACPDU de sa propre initiative pour lancer la négociation."
+        },
+        {
+          "id": "b",
+          "text": "Il agrège le lien sans échanger de LACPDU, comme un port en mode on."
+        },
+        {
+          "id": "c",
+          "text": "Il ne lance pas la négociation, mais répond aux LACPDU reçues du voisin."
+        },
+        {
+          "id": "d",
+          "text": "Il bascule sur une négociation PAgP s'il ne reçoit aucune LACPDU."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "En mode passive, le port écoute : il n'envoie de LACPDU qu'après en avoir reçu d'un voisin en mode active, puis négocie normalement. Le mode active, lui, émet des LACPDU de sa propre initiative (toutes les 30 secondes avec la cadence lente par défaut). C'est pourquoi active–active et active–passive forment un canal, mais pas passive–passive : aucun des deux côtés ne commence l'échange. Le mode passive permet de n'agréger les liens que si le voisin le demande.",
+    "distractorNotes": {
+      "a": "C'est le comportement du mode active : il émet des LACPDU sans attendre le voisin.",
+      "b": "Le mode passive négocie avec LACP ; c'est le mode on qui agrège sans aucun échange de LACPDU.",
+      "d": "LACP et PAgP ne se remplacent jamais automatiquement : un port en mode passive ne parle que LACP."
+    },
+    "reference": "IEEE 802.1AX ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-static-mode-on-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel mot-clé de la commande « channel-group 1 mode … » crée un EtherChannel statique, sans aucun protocole de négociation ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "desirable"
+        },
+        {
+          "id": "b",
+          "text": "passive"
+        },
+        {
+          "id": "c",
+          "text": "auto"
+        },
+        {
+          "id": "d",
+          "text": "on"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le mode on place le port dans le canal sans envoyer ni attendre de message LACP ou PAgP. Il ne fonctionne qu'en face d'un port lui aussi en mode on : face à un mode négocié (active, passive, desirable, auto), aucun canal ne se forme, car le côté on n'émet aucune trame de négociation. Comme rien ne vérifie la configuration du voisin, une erreur de câblage ou de configuration passe inaperçue : on préfère donc un mode négocié. Dans show etherchannel summary, la colonne Protocol affiche « - » pour un tel canal.",
+    "distractorNotes": {
+      "a": "desirable est un mode PAgP : le port lance lui-même la négociation PAgP.",
+      "b": "passive est un mode LACP : le port répond aux LACPDU d'un voisin en mode active.",
+      "c": "auto est un mode PAgP : le port répond aux messages PAgP d'un voisin en mode desirable."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-channel-group-number-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "SW1 relie ses ports Gi1/0/1 et Gi1/0/2 à SW2 avec « channel-group 1 mode active ». Sur SW2, les ports correspondants, configurés de façon identique (trunk, mêmes VLAN), sont placés dans « channel-group 7 mode passive ». Quel est le résultat ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le canal ne se forme pas : le numéro de channel-group doit être le même des deux côtés."
+        },
+        {
+          "id": "b",
+          "text": "Le canal se forme : le numéro de channel-group n'a qu'une portée locale à chaque commutateur."
+        },
+        {
+          "id": "c",
+          "text": "Le canal se forme, mais STP bloque l'un des deux liens parce que les numéros diffèrent."
+        },
+        {
+          "id": "d",
+          "text": "Le canal se forme, et SW2 renomme son interface Port-channel7 en Port-channel1."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le numéro de channel-group, donc de l'interface Port-channel, est un identifiant local : SW1 peut utiliser Po1 et SW2 Po7 pour le même lien agrégé. Pour décider quels liens agréger, LACP s'appuie sur l'identifiant système et la clé annoncés par le partenaire, qui doivent seulement être les mêmes sur tous les liens du canal, pas sur une égalité des numéros. Ici, active–passive avec des paramètres identiques suffit : le canal se forme et STP voit une seule interface logique de chaque côté. Garder le même numéro reste une bonne pratique, pour la lisibilité.",
+    "distractorNotes": {
+      "a": "LACP ne compare pas les numéros de groupe des deux côtés : ce numéro n'est significatif que localement.",
+      "c": "Une fois le canal formé, STP ne voit que l'interface Port-channel : il n'a aucun lien membre à bloquer, et le numéro de groupe ne joue aucun rôle dans STP.",
+      "d": "Rien n'est renommé : chaque commutateur garde son numéro, Po1 et Po7 désignent le même lien agrégé vu de chaque côté."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels ; IEEE 802.1AX"
+  },
+  {
+    "slug": "ccna-2.4-mode-on-vs-active-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les ports Gi1/0/1 et Gi1/0/2 de SW1 sont configurés avec « channel-group 1 mode on ». En face, les ports de SW2 sont configurés avec « channel-group 1 mode active ». Quel est le résultat ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aucun EtherChannel négocié ne se forme : SW1 n'émet ni ne traite de LACPDU."
+        },
+        {
+          "id": "b",
+          "text": "Un EtherChannel LACP se forme : SW2 lance la négociation et SW1 l'accepte."
+        },
+        {
+          "id": "c",
+          "text": "Un EtherChannel se forme, mais en PAgP, protocole employé par le mode on."
+        },
+        {
+          "id": "d",
+          "text": "Un EtherChannel se forme sur l'un des deux liens, l'autre reste autonome."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le mode on ne fait tourner aucun protocole : SW1 agrège ses ports d'office, sans envoyer ni interpréter de LACPDU. SW2, en mode active, émet des LACPDU mais ne reçoit jamais de réponse ; faute de partenaire LACP, ses ports ne sont pas agrégés (par défaut, ils restent autonomes, drapeau I). Le lien est donc incohérent, groupé d'un côté seulement, ce qui peut provoquer des boucles, des pertes ou une mise en err-disabled par l'EtherChannel guard de STP. Le mode on ne fonctionne qu'avec on en face ; pour négocier, il faut active–active ou active–passive.",
+    "distractorNotes": {
+      "b": "Le mode on ne parle pas LACP : il ne répond pas aux LACPDU de SW2, et aucune négociation n'aboutit.",
+      "c": "Le mode on n'utilise aucun protocole, ni LACP ni PAgP ; de plus, un port LACP ne négocie jamais avec PAgP.",
+      "d": "Faute de LACPDU en retour, aucun des ports de SW2 n'est agrégé : les deux liens sont touchés, pas un seul."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-config-on-port-channel-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur SW1, Po1 est formé de Gi1/0/1 et Gi1/0/2, en trunk. Vous devez retirer le VLAN 30 de la liste des VLAN autorisés sur ce lien agrégé. Où appliquer la modification pour que les deux membres restent compatibles ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur Gi1/0/1 seulement : le premier port membre transmet sa configuration aux autres."
+        },
+        {
+          "id": "b",
+          "text": "Sur l'un des ports membres : IOS recopie ensuite la modification sur Port-channel1."
+        },
+        {
+          "id": "c",
+          "text": "Sur l'interface Port-channel1 : IOS applique la modification à tous les ports membres."
+        },
+        {
+          "id": "d",
+          "text": "En mode de configuration globale, avec la commande « no vlan 30 »."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une fois le canal formé, la configuration se fait sur l'interface logique : une commande saisie sur Port-channel1 (ici « switchport trunk allowed vlan remove 30 ») est appliquée à tous les ports membres, qui restent identiques. Une commande saisie sur un port physique ne touche que ce port : il devient incompatible avec l'autre (liste de VLAN autorisés différente) et peut être suspendu, drapeau s dans show etherchannel summary. Supprimer le VLAN de la base retirerait le VLAN 30 de tout le commutateur, pas seulement de ce lien.",
+    "distractorNotes": {
+      "a": "Il n'y a pas de port « maître » : une commande saisie sur Gi1/0/1 ne s'applique qu'à Gi1/0/1, qui devient incompatible avec Gi1/0/2.",
+      "b": "La recopie va seulement du port-channel vers les membres ; une modification faite sur un port physique reste sur ce port.",
+      "d": "« no vlan 30 » supprime le VLAN de la base VLAN : ses ports d'accès deviennent inactifs et le VLAN disparaît de tous les liens, pas seulement de Po1."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (EtherChannel Configuration Guidelines)"
+  },
+  {
+    "slug": "ccna-2.4-load-balance-per-flow-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "PC1 copie un gros fichier vers le serveur SRV1 à travers Po1, un EtherChannel de quatre liens Gigabit Ethernet entre deux commutateurs, configurés avec « port-channel load-balance src-dst-ip ». Le transfert plafonne vers 1 Gbit/s. Pourquoi ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "LACP n'active qu'un lien membre à la fois et garde les trois autres en hot-standby."
+        },
+        {
+          "id": "b",
+          "text": "Un EtherChannel n'agrège les liens que pour la redondance : son débit total reste de 1 Gbit/s."
+        },
+        {
+          "id": "c",
+          "text": "Les trames sont réparties à tour de rôle sur les quatre liens, puis SRV1 doit les remettre en ordre."
+        },
+        {
+          "id": "d",
+          "text": "Le hachage des adresses IP source et destination envoie tout ce flux sur le même lien membre."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un EtherChannel ne répartit pas les trames une à une : il calcule un hachage sur les champs choisis par port-channel load-balance (ici les adresses IP source et destination), et chaque résultat désigne un lien membre. Toutes les trames entre PC1 et SRV1 donnent le même résultat et empruntent donc le même lien : l'ordre des trames est préservé, mais un flux unique ne dépasse jamais le débit d'un membre. Les 4 Gbit/s agrégés ne sont utilisés qu'avec de nombreux couples d'adresses différents.",
+    "distractorNotes": {
+      "a": "LACP peut agréger jusqu'à 8 liens actifs : avec quatre membres compatibles, les quatre sont actifs (drapeau P).",
+      "b": "Tous les membres actifs transportent du trafic : la capacité totale atteint 4 Gbit/s, partagée entre plusieurs flux.",
+      "c": "Il n'y a pas de répartition à tour de rôle : le lien dépend du hachage des adresses, justement pour ne pas désordonner les trames."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (EtherChannel Load Balancing)"
+  },
+  {
+    "slug": "ccna-2.4-load-balance-dst-mac-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les 150 postes du VLAN 10 sont raccordés à SW1, qui les relie par Po1 au commutateur multicouche DSW1, leur passerelle par défaut. Le trafic montant va presque entièrement vers un serveur unique, situé derrière DSW1. Sur SW1, tout le trafic montant de Po1 passe par Gi1/0/1. Quelle commande, saisie sur SW1, répartirait le mieux ce trafic sur les deux liens ?",
+      "exhibit": "SW1# show running-config | include load-balance\nport-channel load-balance dst-mac\nSW1# show etherchannel summary | include Po1\n1      Po1(SU)         LACP      Gi1/0/1(P)  Gi1/0/2(P)",
+      "options": [
+        {
+          "id": "a",
+          "text": "port-channel load-balance dst-ip"
+        },
+        {
+          "id": "b",
+          "text": "port-channel load-balance src-mac"
+        },
+        {
+          "id": "c",
+          "text": "channel-group 1 mode on, sur Gi1/0/1 et Gi1/0/2"
+        },
+        {
+          "id": "d",
+          "text": "lacp port-priority 100, sur Gi1/0/2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La répartition se décide à l'émission, sur chaque commutateur, d'après les champs choisis. Vers DSW1, toutes les trames montantes portent la même adresse MAC de destination, celle de la passerelle : avec dst-mac, le hachage donne toujours le même lien. dst-ip ne ferait guère mieux, puisque ce trafic vise une seule adresse IP. Les adresses MAC source, elles, prennent 150 valeurs : avec src-mac, les flux des postes se répartissent entre Gi1/0/1 et Gi1/0/2. La commande est globale et ne concerne que le trafic émis par SW1 ; DSW1 garde sa propre méthode pour le trafic descendant.",
+    "distractorNotes": {
+      "a": "Ce trafic vise presque uniquement l'adresse IP du serveur : avec dst-ip, le hachage donne presque toujours le même lien.",
+      "c": "Le mode on supprime la négociation LACP sans changer la méthode de répartition ; face à DSW1, en LACP, le canal ne se formerait même plus.",
+      "d": "La priorité de port LACP ne sert qu'à choisir les liens actifs quand tous ne peuvent pas l'être ; ici, les deux liens sont déjà actifs (P)."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (EtherChannel Load Balancing)"
+  },
+  {
+    "slug": "ccna-2.4-summary-member-down-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Quelle affirmation décrit la situation de Po2 ?",
+      "exhibit": "SW1# show etherchannel summary | begin Group\nGroup  Port-channel  Protocol    Ports\n------+-------------+-----------+-----------------------------------------------\n2      Po2(SU)         LACP      Gi1/0/3(P)  Gi1/0/4(D)  Gi1/0/5(P)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Po2 est en service ; Gi1/0/4 est hors service et le trafic passe par Gi1/0/3 et Gi1/0/5."
+        },
+        {
+          "id": "b",
+          "text": "Po2 est hors service tant que Gi1/0/4 n'est pas rétabli, faute de quoi aucun trafic ne passe."
+        },
+        {
+          "id": "c",
+          "text": "Gi1/0/4 a une configuration incompatible avec les autres membres et a été suspendu."
+        },
+        {
+          "id": "d",
+          "text": "Po2 est un port-channel de niveau 3, qui route le trafic par Gi1/0/3 et Gi1/0/5."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Les deux lettres de Po2(SU) qualifient le port-channel : S pour Layer2, U pour « in use ». Le canal reste en service tant qu'au moins un membre est agrégé. Gi1/0/3 et Gi1/0/5 portent le drapeau P (bundled) et se partagent le trafic ; Gi1/0/4 porte le drapeau D (down) : le lien physique est tombé (câble, port en shutdown, port voisin éteint). Ses flux sont redistribués sur les membres restants, sans recalcul STP puisque Po2 ne change pas d'état. Un port écarté pour incompatibilité porterait le drapeau s.",
+    "distractorNotes": {
+      "b": "U (in use) indique que Po2 est en service : un port-channel reste up tant qu'au moins un membre est agrégé.",
+      "c": "Un port suspendu porte le drapeau s ; D signifie que le lien lui-même est down.",
+      "d": "S signale un port-channel de niveau 2 ; un port-channel de niveau 3 serait affiché Po2(RU)."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-lacp-hot-standby-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les dix ports ont une configuration identique, compatible avec celle de SW2, et les priorités LACP sont à leur valeur par défaut. Le lien Gi1/0/4 tombe. Que se passe-t-il ?",
+      "exhibit": "SW1# show etherchannel summary | begin Group\nGroup  Port-channel  Protocol    Ports\n------+-------------+-----------+-----------------------------------------------\n1      Po1(SU)         LACP      Gi1/0/1(P)  Gi1/0/2(P)  Gi1/0/3(P)\n                                 Gi1/0/4(P)  Gi1/0/5(P)  Gi1/0/6(P)\n                                 Gi1/0/7(P)  Gi1/0/8(P)  Gi1/0/9(H)\n                                 Gi1/0/10(H)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Po1 passe down le temps que STP recalcule la topologie, puis repart avec sept liens."
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/9 et Gi1/0/10 sont tous deux agrégés et Po1 passe à neuf liens actifs."
+        },
+        {
+          "id": "c",
+          "text": "Po1 reste à sept liens actifs jusqu'à un « shutdown » puis « no shutdown » de Po1."
+        },
+        {
+          "id": "d",
+          "text": "L'un des deux ports en hot-standby est agrégé (P) et Po1 retrouve huit liens actifs."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "LACP accepte jusqu'à 16 ports dans un canal, mais n'en agrège que 8 à la fois : les ports en surnombre sont mis en attente, drapeau H (hot-standby). Ici, 8 ports sont actifs (P) ; Gi1/0/9 et Gi1/0/10 attendent. Quand Gi1/0/4 tombe, LACP active automatiquement un port en attente, choisi par le commutateur à l'identifiant système le plus bas d'après la priorité de port puis le numéro de port : Po1 retrouve 8 liens actifs. Le port-channel ne passe jamais down, donc STP n'a rien à recalculer ; seuls les flux qui passaient par Gi1/0/4 changent de lien.",
+    "distractorNotes": {
+      "a": "Po1 garde des membres actifs : il reste up, et STP, qui ne voit que Po1, ne recalcule rien.",
+      "b": "LACP n'agrège jamais plus de 8 ports à la fois : un seul port en attente est activé, l'autre reste en H.",
+      "c": "Le passage de H à P est automatique dès qu'un membre actif tombe : aucune intervention n'est nécessaire."
+    },
+    "reference": "IEEE 802.1AX ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (LACP hot-standby ports)"
+  },
+  {
+    "slug": "ccna-2.4-lacp-passive-passive-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Gi1/0/2 de SW1 et Gi1/0/24 de SW2 ont la même configuration que les ports affichés, et les deux liens sont up à 1 Gbit/s en full duplex. Quelle modification permet de former le canal ?",
+      "exhibit": "SW1# show etherchannel summary | begin Group\nGroup  Port-channel  Protocol    Ports\n------+-------------+-----------+-----------------------------------------------\n1      Po1(SD)         LACP      Gi1/0/1(I)  Gi1/0/2(I)\n\nSW1# show running-config interface GigabitEthernet1/0/1\n!\ninterface GigabitEthernet1/0/1\n switchport mode trunk\n channel-group 1 mode passive\nend\n\nSW2# show running-config interface GigabitEthernet1/0/23\n!\ninterface GigabitEthernet1/0/23\n switchport mode trunk\n channel-group 4 mode passive\nend",
+      "options": [
+        {
+          "id": "a",
+          "text": "Placer les ports de SW2 dans le channel-group 1, pour que les numéros correspondent."
+        },
+        {
+          "id": "b",
+          "text": "Passer les ports de SW1 en « channel-group 1 mode on »."
+        },
+        {
+          "id": "c",
+          "text": "Passer les ports de l'un des deux commutateurs en mode active."
+        },
+        {
+          "id": "d",
+          "text": "Passer les ports de SW1 en « channel-group 1 mode desirable »."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sur SW1, les ports sont autonomes (I, stand-alone) et Po1 est down (SD) : aucun partenaire LACP n'a été trouvé. La configuration en donne la cause : les deux côtés sont en mode passive, et un port passive ne fait que répondre aux LACPDU ; personne ne lance l'échange. Il suffit de passer l'un des deux côtés en mode active (active–passive) ou les deux (active–active). Le numéro de groupe différent (1 sur SW1, 4 sur SW2) n'est pas un problème : il n'a qu'une portée locale. Le mode on, ou un mode PAgP, face à un port LACP ne forme aucun canal.",
+    "distractorNotes": {
+      "a": "Le numéro de channel-group n'a qu'une portée locale : Po1 d'un côté et Po4 de l'autre forment très bien un canal.",
+      "b": "Le mode on n'envoie pas de LACPDU : face à des ports passive, il n'y a toujours aucune négociation.",
+      "d": "desirable est un mode PAgP : SW2 reste en LACP passive, et les deux protocoles ne négocient pas entre eux."
+    },
+    "reference": "IEEE 802.1AX ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-lacp-vs-mode-on-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Par rapport à un EtherChannel configuré en mode on, quel avantage apporte LACP ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il permet d'avoir jusqu'à 16 liens actifs dans un même canal, contre 8."
+        },
+        {
+          "id": "b",
+          "text": "Il vérifie avec le voisin que chaque lien aboutit au même partenaire avant de l'agréger."
+        },
+        {
+          "id": "c",
+          "text": "Il répartit les trames une à une, à tour de rôle, sur tous les liens membres."
+        },
+        {
+          "id": "d",
+          "text": "Il permet de regrouper dans un même canal des ports de vitesses différentes."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Avec LACP, chaque port échange des LACPDU qui portent l'identifiant système de son commutateur (priorité et adresse MAC) et une clé d'agrégation. Un lien n'est agrégé que si le partenaire répond et annonce le même identifiant et la même clé que sur les autres liens : un câble branché sur le mauvais commutateur ou un voisin non configuré est écarté. En mode on, rien n'est vérifié : une erreur de câblage ou de configuration côté voisin peut créer une boucle ou faire perdre du trafic. Le nombre de liens actifs (8) et la répartition par flux sont les mêmes dans les deux cas.",
+    "distractorNotes": {
+      "a": "LACP accepte jusqu'à 16 ports par canal, mais 8 seulement sont actifs ; les autres restent en hot-standby.",
+      "c": "La répartition ne dépend pas du protocole : elle se fait toujours par hachage des adresses, flux par flux.",
+      "d": "Tous les membres doivent avoir la même vitesse et le même duplex, quel que soit le mode de négociation."
+    },
+    "reference": "IEEE 802.1AX ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-etherchannel-mode-pairs-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Deux commutateurs Catalyst sont reliés par deux liens aux paramètres identiques. Chaque option donne le mode « channel-group » configuré de chaque côté. Quelles trois combinaisons forment un EtherChannel ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "on – on"
+        },
+        {
+          "id": "b",
+          "text": "auto – auto"
+        },
+        {
+          "id": "c",
+          "text": "desirable – auto"
+        },
+        {
+          "id": "d",
+          "text": "passive – passive"
+        },
+        {
+          "id": "e",
+          "text": "active – active"
+        },
+        {
+          "id": "f",
+          "text": "active – desirable"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Un canal se forme si les deux côtés utilisent la même méthode et qu'au moins l'un d'eux lance la négociation. En LACP, active envoie des LACPDU et passive se contente de répondre : active–active et active–passive fonctionnent, pas passive–passive. En PAgP, desirable lance et auto répond : desirable–desirable et desirable–auto fonctionnent, pas auto–auto. Le mode on ne négocie rien et ne fonctionne qu'avec on en face. Mélanger LACP et PAgP, ou un mode négocié avec on, ne forme aucun canal.",
+    "distractorNotes": {
+      "b": "Deux ports en auto attendent chacun un message PAgP de l'autre : personne ne lance la négociation.",
+      "d": "Deux ports en passive attendent chacun une LACPDU de l'autre : aucun échange ne commence.",
+      "f": "active est un mode LACP et desirable un mode PAgP : les deux protocoles ne négocient pas entre eux."
+    },
+    "reference": "IEEE 802.1AX ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-member-parameters-trunk-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur SW1, Gi1/0/1 et Gi1/0/2 doivent former un EtherChannel de niveau 2 en trunk 802.1Q. Outre la vitesse et le duplex, quels deux paramètres doivent être identiques sur les deux ports pour qu'ils soient agrégés ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La description de l'interface"
+        },
+        {
+          "id": "b",
+          "text": "Le VLAN natif"
+        },
+        {
+          "id": "c",
+          "text": "La priorité de port LACP"
+        },
+        {
+          "id": "d",
+          "text": "La liste des VLAN autorisés"
+        },
+        {
+          "id": "e",
+          "text": "Le coût STP configuré sur le port"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Les membres d'un EtherChannel doivent être interchangeables : même vitesse, même duplex, même mode (access ou trunk) et, en trunk, même VLAN natif et même liste de VLAN autorisés (en accès, même VLAN d'accès). Un port qui diffère n'est pas agrégé, ou est suspendu (drapeau s). En revanche, la description, la priorité de port LACP (qui sert justement à départager les ports) et le coût STP peuvent différer : un coût STP différent n'empêche pas l'agrégation, STP ne travaillant que sur l'interface Port-channel. Le plus sûr est de configurer ces paramètres sur l'interface Port-channel, qui les applique à tous les membres.",
+    "distractorNotes": {
+      "a": "La description n'est qu'un commentaire : elle n'a aucun effet sur l'agrégation.",
+      "c": "La priorité de port LACP peut différer d'un port à l'autre : elle sert à choisir les ports actifs quand il y a plus de candidats que de places.",
+      "e": "Un coût STP différent sur les ports n'empêche pas l'agrégation : STP ne calcule de coût que pour l'interface Port-channel."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (EtherChannel Configuration Guidelines)"
+  },
+  {
+    "slug": "ccna-2.4-l3-etherchannel-routing-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "DSW1 et DSW2 sont reliés par Po1, un EtherChannel de niveau 3 de deux liens, avec « no switchport » et une adresse IP en /30 sur l'interface Port-channel1 de chaque côté. OSPF est activé sur Po1. Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque lien membre forme sa propre adjacence OSPF, soit deux adjacences entre DSW1 et DSW2."
+        },
+        {
+          "id": "b",
+          "text": "OSPF répartit le trafic entre les deux liens membres, vus comme deux routes de coût égal."
+        },
+        {
+          "id": "c",
+          "text": "DSW1 et DSW2 forment une seule adjacence OSPF, sur l'interface Port-channel1."
+        },
+        {
+          "id": "d",
+          "text": "Une SVI est nécessaire sur chaque commutateur pour porter l'adresse IP du lien."
+        },
+        {
+          "id": "e",
+          "text": "Port-channel1 n'appartient à aucun VLAN et ne participe pas à STP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Un EtherChannel de niveau 3 est un port routé logique : l'adresse IP est sur Port-channel1 et les membres n'en ont pas. OSPF ne voit donc qu'une interface et un seul voisin de chaque côté : une adjacence au lieu de deux, et une seule route via Po1. Comme tout port routé, Po1 ne fait partie d'aucun VLAN et ne participe pas à STP. La répartition du trafic entre les deux membres est assurée par le hachage EtherChannel (port-channel load-balance), pas par OSPF, et aucune SVI n'est nécessaire.",
+    "distractorNotes": {
+      "a": "Les membres n'ont pas d'adresse IP et OSPF ne les voit pas : il ne connaît que Port-channel1.",
+      "b": "OSPF n'a qu'une route via Port-channel1 ; le partage entre les membres vient du hachage EtherChannel, pas de routes de coût égal.",
+      "d": "L'adresse se configure directement sur Port-channel1, port routé ; une SVI ne servirait qu'avec un port-channel de niveau 2."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (Layer 3 EtherChannels)"
+  },
+  {
+    "slug": "ccna-2.4-etherchannel-benefits-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux avantages apporte l'agrégation de quatre liens Gigabit Ethernet en un EtherChannel entre deux commutateurs ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La capacité totale entre les commutateurs atteint 4 Gbit/s, partagée entre les flux."
+        },
+        {
+          "id": "b",
+          "text": "Un flux unique entre deux hôtes peut atteindre 4 Gbit/s."
+        },
+        {
+          "id": "c",
+          "text": "Les quatre liens peuvent avoir des vitesses différentes, par exemple 1 et 10 Gbit/s."
+        },
+        {
+          "id": "d",
+          "text": "Si un lien membre tombe, le trafic continue sur les autres sans recalcul STP."
+        },
+        {
+          "id": "e",
+          "text": "Le trafic qui traverse le canal est chiffré entre les deux commutateurs."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Un EtherChannel regroupe des liens parallèles en une interface logique. Les flux sont répartis entre les membres par hachage d'adresses : la capacité totale s'additionne (4 × 1 Gbit/s), même si chaque flux reste limité au débit d'un membre. La redondance est immédiate : si un membre tombe, ses flux passent sur les autres ; le port-channel reste up, donc STP ne voit aucun changement de topologie. Les membres doivent avoir la même vitesse et le même duplex, et l'agrégation n'apporte aucun chiffrement.",
+    "distractorNotes": {
+      "b": "Chaque flux est haché vers un seul membre : il ne dépasse pas 1 Gbit/s, même si le total peut atteindre 4 Gbit/s.",
+      "c": "Tous les membres doivent avoir la même vitesse et le même duplex ; un port différent n'est pas agrégé.",
+      "e": "EtherChannel agrège des liens sans modifier le contenu des trames : il n'apporte aucun chiffrement."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-member-not-bundled-access-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur SW1, Po2 est un EtherChannel LACP de niveau 2 en mode accès, dans le VLAN 10, formé de Gi1/0/5 et Gi1/0/6. Un technicien ajoute Gi1/0/7, câblé vers le même voisin et configuré avec « channel-group 2 mode active », mais ce port n'est pas agrégé alors que les deux autres le restent. Quelles deux causes peuvent l'expliquer ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi1/0/7 est raccordé au port Gi1/0/20 du voisin, non contigu aux deux autres."
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/7 a « switchport access vlan 20 » au lieu du VLAN 10."
+        },
+        {
+          "id": "c",
+          "text": "Gi1/0/7 a « switchport mode trunk » au lieu de « switchport mode access »."
+        },
+        {
+          "id": "d",
+          "text": "Gi1/0/7 est en mode active face à un port du voisin en mode passive."
+        },
+        {
+          "id": "e",
+          "text": "Gi1/0/7 n'a pas de description, contrairement à Gi1/0/5 et Gi1/0/6."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "Un port n'est agrégé que si sa configuration est compatible avec celle des membres existants : même vitesse et même duplex, même mode switchport et, en accès, même VLAN d'accès (en trunk : même VLAN natif et mêmes VLAN autorisés). Un Gi1/0/7 dans le VLAN 20, ou en trunk, n'est pas interchangeable avec Gi1/0/5 et Gi1/0/6 : il reste hors du canal, typiquement suspendu (s). La description ne compte pas, la numérotation des ports du voisin non plus, et active face à passive négocie normalement. Bonne pratique : configurer le port à l'identique avant de l'ajouter, ou appliquer la configuration sur Port-channel2.",
+    "distractorNotes": {
+      "a": "Les numéros des ports du voisin n'ont aucune importance : seuls comptent le partenaire (le même commutateur) et la compatibilité des paramètres.",
+      "d": "active face à passive est une combinaison LACP valide : Gi1/0/7 lance la négociation et le voisin répond.",
+      "e": "La description est un simple commentaire, sans effet sur la compatibilité des ports."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (EtherChannel Configuration Guidelines)"
+  },
+  {
+    "slug": "ccna-2.4-pagp-facts-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur PAgP sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Il est défini par la norme IEEE 802.3ad."
+        },
+        {
+          "id": "b",
+          "text": "Deux ports en mode auto forment un canal."
+        },
+        {
+          "id": "c",
+          "text": "Il peut négocier un canal avec un port LACP en mode active."
+        },
+        {
+          "id": "d",
+          "text": "C'est un protocole propriétaire Cisco."
+        },
+        {
+          "id": "e",
+          "text": "Ses modes de négociation sont desirable et auto."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "PAgP (Port Aggregation Protocol) est le protocole d'agrégation propriétaire de Cisco. Ses deux modes sont desirable, qui lance la négociation, et auto, qui ne fait que répondre : desirable–desirable et desirable–auto forment un canal, auto–auto non. La norme IEEE, 802.3ad puis 802.1AX, définit LACP (modes active et passive), seul protocole de négociation utilisable face à un équipement d'un autre constructeur (le mode on, statique, reste possible). LACP et PAgP ne négocient jamais entre eux.",
+    "distractorNotes": {
+      "a": "802.3ad, aujourd'hui intégrée à 802.1AX, définit LACP, pas PAgP.",
+      "b": "auto ne fait que répondre aux messages PAgP : deux ports en auto attendent chacun l'autre et aucun canal ne se forme.",
+      "c": "PAgP et LACP sont deux protocoles distincts : un port PAgP ne négocie pas avec un port LACP."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-summary-mode-on-group-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Donnez, en nombre entier, le numéro de groupe correspondant à chaque description.",
+      "exhibit": "SW1# show etherchannel summary | begin Group\nGroup  Port-channel  Protocol    Ports\n------+-------------+-----------+-----------------------------------------------\n1      Po1(SU)         LACP      Gi1/0/1(P)  Gi1/0/2(P)\n2      Po2(SD)         PAgP      Gi1/0/3(D)  Gi1/0/4(D)\n4      Po4(SU)          -        Gi1/0/5(P)  Gi1/0/6(P)",
+      "fields": [
+        {
+          "id": "static",
+          "label": "Groupe formé sans protocole de négociation (mode on)"
+        },
+        {
+          "id": "down",
+          "label": "Groupe dont le port-channel est hors service"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "static": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        },
+        "down": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La colonne Protocol indique comment chaque groupe a été formé : LACP, PAgP, ou « - » quand aucun protocole n'est utilisé, c'est-à-dire en mode on. Le groupe 4 est donc statique. Les deux lettres entre parenthèses après le port-channel donnent son niveau (S pour Layer2, R pour Layer3) et son état (U pour in use, D pour down) : Po2(SD) est un port-channel de niveau 2 hors service, car ses deux membres sont down (D). Po1 et Po4 sont en service, avec leurs membres agrégés (P).",
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-lacp-port-limits-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Pour un seul EtherChannel LACP, répondez par des nombres entiers.",
+      "fields": [
+        {
+          "id": "active",
+          "label": "Nombre maximal de ports agrégés et actifs en même temps"
+        },
+        {
+          "id": "total",
+          "label": "Nombre maximal de ports configurés dans le canal, ports en hot-standby compris"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "active": {
+          "accepted": [
+            "8"
+          ],
+          "normalize": "int"
+        },
+        "total": {
+          "accepted": [
+            "16"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "LACP accepte jusqu'à 16 ports compatibles dans un même canal, mais n'en agrège que 8 à la fois (drapeau P dans show etherchannel summary). Les 8 autres sont en hot-standby (drapeau H) : ils ne transportent rien et remplacent automatiquement un port actif qui tombe. Le commutateur dont l'identifiant système LACP est le plus bas choisit les ports actifs, d'après la priorité de port puis le numéro de port. PAgP et le mode on se limitent à 8 ports, sans ports d'attente.",
+    "reference": "IEEE 802.1AX ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-lacp-default-priority-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur un commutateur Catalyst, donnez en nombre entier la valeur par défaut de chaque paramètre LACP.",
+      "fields": [
+        {
+          "id": "sys",
+          "label": "Priorité système LACP (commande lacp system-priority)"
+        },
+        {
+          "id": "port",
+          "label": "Priorité de port LACP (commande lacp port-priority)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "sys": {
+          "accepted": [
+            "32768"
+          ],
+          "normalize": "int"
+        },
+        "port": {
+          "accepted": [
+            "32768"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Les deux priorités valent 32768 par défaut et se règlent de 1 à 65535 ; la plus petite valeur l'emporte. La priorité système, suivie de l'adresse MAC, forme l'identifiant système : le commutateur dont l'identifiant est le plus bas décide des ports actifs quand il y a plus de 8 candidats. La priorité de port, suivie du numéro de port, forme l'identifiant de port : sur ce commutateur, les ports aux identifiants les plus bas sont agrégés, les autres restent en hot-standby. Avec les valeurs par défaut, tout se joue donc sur l'adresse MAC et le numéro de port.",
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (LACP system priority, LACP port priority)"
+  },
+  {
+    "slug": "ccna-2.4-pagp-desirable-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, les ports Gi1/0/3 et Gi1/0/4 sont déjà sélectionnés avec « interface range ». Placez-les dans le channel-group 2 avec PAgP, de façon que SW1 lance lui-même la négociation.",
+      "prompt": "SW1(config-if-range)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "channel-group 2 mode desirable",
+          "channel-group 2 mode desirable non-silent"
+        ]
+      ]
+    },
+    "explanation": "« channel-group 2 mode desirable » crée au besoin l'interface Port-channel2 et y rattache les ports sélectionnés. desirable est le mode PAgP qui lance la négociation : le port envoie des paquets PAgP et forme un canal avec un voisin en desirable ou en auto. Le mode auto, lui, ne fait que répondre. PAgP est propriétaire Cisco : pour négocier un canal avec un équipement d'un autre constructeur, il faut LACP (active ou passive). On vérifie avec « show etherchannel summary », où la colonne Protocol affiche PAgP.",
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-load-balance-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, en mode de configuration globale, configurez la répartition de charge des EtherChannel d'après les adresses IP source et destination.",
+      "prompt": "SW1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "port-channel load-balance src-dst-ip"
+        ]
+      ]
+    },
+    "explanation": "« port-channel load-balance » est une commande globale : elle s'applique à tous les EtherChannel du commutateur, et seulement au trafic qu'il émet. Avec src-dst-ip, le commutateur combine les adresses IP source et destination de chaque paquet pour choisir le lien membre : un même couple d'adresses emprunte toujours le même lien, ce qui préserve l'ordre des trames, et des couples différents se répartissent sur les membres. Le voisin applique sa propre méthode au trafic qu'il renvoie. On vérifie avec « show etherchannel load-balance ».",
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (EtherChannel Load Balancing)"
+  },
+  {
+    "slug": "ccna-2.4-static-on-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "SW2 est relié par Gi1/0/23 et Gi1/0/24 à un commutateur configuré en EtherChannel statique, sans LACP ni PAgP. Depuis le mode de configuration globale, sélectionnez les deux ports en une seule commande (interface range), puis placez-les dans le channel-group 5 avec le mode compatible avec ce voisin.",
+      "prompt": "SW2(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface range gigabitethernet1/0/23 - 24",
+          "interface range gigabitethernet1/0/23 , gigabitethernet1/0/24"
+        ],
+        [
+          "channel-group 5 mode on"
+        ]
+      ]
+    },
+    "explanation": "« interface range gigabitethernet1/0/23 - 24 » sélectionne les deux ports, puis « channel-group 5 mode on » les agrège sans négociation et crée l'interface Port-channel5. Le mode on est le seul compatible avec un voisin statique : active, passive, desirable et auto attendent des LACPDU ou des paquets PAgP que ce voisin n'enverra jamais. Contrepartie : rien ne vérifie la configuration du voisin ni le câblage. Dans show etherchannel summary, la colonne Protocol de ce groupe affiche « - ».",
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-port-channel-trunk-params-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, Po1 est un EtherChannel de niveau 2 en trunk 802.1Q. Pour que ses membres restent identiques, configurez le lien agrégé lui-même : depuis le mode de configuration globale, entrez dans l'interface Port-channel1, puis, dans l'ordre de votre choix, fixez le VLAN natif à 99 et limitez les VLAN autorisés aux VLAN 10, 20 et 99.",
+      "prompt": "SW1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "interface port-channel1",
+          "interface port-channel 1"
+        ],
+        [
+          "switchport trunk native vlan 99"
+        ],
+        [
+          "switchport trunk allowed vlan 10,20,99",
+          "switchport trunk allowed vlan 10,99,20",
+          "switchport trunk allowed vlan 20,10,99",
+          "switchport trunk allowed vlan 20,99,10",
+          "switchport trunk allowed vlan 99,10,20",
+          "switchport trunk allowed vlan 99,20,10"
+        ]
+      ]
+    },
+    "explanation": "Après « interface port-channel1 », les commandes s'appliquent à l'interface logique et IOS les recopie sur chaque port membre : les membres gardent une configuration identique et restent agrégés. « switchport trunk native vlan 99 » fait passer le VLAN 99 sans étiquette ; « switchport trunk allowed vlan 10,20,99 » remplace la liste des VLAN autorisés. Les mêmes valeurs doivent être appliquées sur le Port-channel du voisin, sinon CDP signale un native VLAN mismatch. Saisies sur un seul port membre, ces commandes le rendraient incompatible avec les autres.",
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels ; IEEE 802.1Q"
+  },
+  {
+    "slug": "ccna-2.4-l3-etherchannel-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur le commutateur multicouche DSW1, créez un EtherChannel LACP de niveau 3 vers DSW2 avec Gi1/0/1 et Gi1/0/2. Depuis le mode de configuration globale : créez d'abord l'interface Port-channel1, faites-en un port routé et donnez-lui l'adresse 10.0.12.1/30 ; sélectionnez ensuite les deux ports en une seule commande (interface range), faites-en des ports routés et placez-les dans le channel-group 1 de façon que DSW1 lance la négociation.",
+      "prompt": "DSW1(config)#",
+      "lines": 6
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface port-channel1",
+          "interface port-channel 1"
+        ],
+        [
+          "no switchport"
+        ],
+        [
+          "ip address 10.0.12.1 255.255.255.252"
+        ],
+        [
+          "interface range gigabitethernet1/0/1 - 2",
+          "interface range gigabitethernet1/0/1 , gigabitethernet1/0/2"
+        ],
+        [
+          "no switchport"
+        ],
+        [
+          "channel-group 1 mode active"
+        ]
+      ]
+    },
+    "explanation": "Un EtherChannel de niveau 3 est un port routé logique. « interface port-channel1 » crée l'interface, « no switchport » en fait un port routé et « ip address 10.0.12.1 255.255.255.252 » lui donne l'adresse du /30. Les membres doivent eux aussi être routés (« no switchport ») avant « channel-group 1 mode active » : IOS refuse de rattacher des ports de niveau 2 à un port-channel de niveau 3. Le mode active fait lancer la négociation LACP par DSW1. Les membres n'ont pas d'adresse IP ; erreur fréquente : la mettre sur un port physique. Dans show etherchannel summary, Po1 doit apparaître en Po1(RU).",
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (Layer 3 EtherChannels)"
+  },
+  {
+    "slug": "ccna-2.4-lacp-port-priority-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Po1 de SW1 compte dix ports LACP, Gi1/0/1 à Gi1/0/10, tous à la priorité de port par défaut : Gi1/0/9 et Gi1/0/10 sont en hot-standby. SW1 a l'identifiant système LACP le plus bas et choisit donc les ports actifs. Depuis le mode de configuration globale, entrez dans l'interface Gi1/0/9 et donnez-lui la priorité de port LACP 100, pour qu'elle soit préférée aux ports restés à la valeur par défaut.",
+      "prompt": "SW1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface gigabitethernet1/0/9"
+        ],
+        [
+          "lacp port-priority 100"
+        ]
+      ]
+    },
+    "explanation": "« lacp port-priority 100 », en mode interface, abaisse la priorité de port LACP de Gi1/0/9 : plus la valeur est basse, plus le port est prioritaire. La valeur par défaut est 32768 ; à égalité, c'est le numéro de port le plus bas qui l'emporte, d'où Gi1/0/9 et Gi1/0/10 en attente au départ. Le choix des 8 ports actifs revient au commutateur dont l'identifiant système (priorité système, puis adresse MAC) est le plus bas, ici SW1 : c'est donc sur SW1 qu'il faut agir. Les ports non retenus restent en hot-standby (drapeau H).",
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (LACP port priority) ; IEEE 802.1AX"
+  },
+  {
+    "slug": "ccna-2.4-lacp-active-port-selection-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Po1 relie SW1 à SW2 par 12 ports LACP compatibles, dont 8 seulement peuvent être actifs. Remettez dans l'ordre les critères qui déterminent les ports actifs, du premier critère appliqué au dernier départage.",
+      "items": [
+        {
+          "id": "portnum",
+          "text": "Numéro de port des ports du commutateur retenu"
+        },
+        {
+          "id": "sysmac",
+          "text": "Adresse MAC système de chaque commutateur"
+        },
+        {
+          "id": "portprio",
+          "text": "Priorité de port LACP des ports du commutateur retenu"
+        },
+        {
+          "id": "sysprio",
+          "text": "Priorité système LACP de chaque commutateur"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "sysprio",
+        "sysmac",
+        "portprio",
+        "portnum"
+      ]
+    },
+    "explanation": "LACP désigne d'abord le commutateur qui décide : celui dont l'identifiant système est le plus bas, comparé sur la priorité système (32768 par défaut, « lacp system-priority »), puis sur l'adresse MAC système. Ce commutateur classe ensuite ses propres ports selon leur identifiant de port : priorité de port la plus basse d'abord (32768 par défaut, « lacp port-priority »), puis numéro de port le plus bas. Les 8 premiers sont agrégés (P), les suivants restent en hot-standby (H), et l'autre commutateur suit ce choix.",
+    "reference": "IEEE 802.1AX ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-lacp-negotiation-sequence-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Les ports de SW1 sont en LACP active et ceux de SW2 en LACP passive, avec des paramètres identiques. Remettez dans l'ordre les étapes de la formation de Po1, de la première à la dernière.",
+      "items": [
+        {
+          "id": "bundle",
+          "text": "Les ports sont agrégés (drapeau P) et l'interface Po1 passe up."
+        },
+        {
+          "id": "reply",
+          "text": "SW2 reçoit ces LACPDU et répond par ses propres LACPDU."
+        },
+        {
+          "id": "stp",
+          "text": "STP traite Po1 comme un seul port et lui attribue un rôle."
+        },
+        {
+          "id": "send",
+          "text": "SW1 envoie des LACPDU sur ses ports membres."
+        },
+        {
+          "id": "check",
+          "text": "Chaque commutateur constate que les liens mènent au même partenaire, avec des paramètres compatibles."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "send",
+        "reply",
+        "check",
+        "bundle",
+        "stp"
+      ]
+    },
+    "explanation": "En mode active, SW1 émet des LACPDU de sa propre initiative ; SW2, en passive, attend d'en recevoir avant de répondre. Les LACPDU échangées portent l'identifiant système et la clé de chaque côté : chaque commutateur vérifie ainsi que tous les liens mènent au même partenaire et peuvent être agrégés ensemble. Les ports passent alors à l'état bundled (P) et l'interface logique Po1 devient up. C'est seulement alors que STP voit Po1, comme une seule interface, et lui donne un rôle et un état ; les ports membres n'ont pas de rôle STP propre.",
+    "reference": "IEEE 802.1AX ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-frame-forwarding-po-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "PC1 est raccordé à SW1 et PC2 à SW2 ; SW1 et SW2 sont reliés par Po1, un EtherChannel de niveau 2. La table MAC de SW1 connaît PC2 ; celle de SW2 ne connaît pas encore PC1. Remettez dans l'ordre le traitement d'une trame de PC1 vers PC2, jusqu'à l'apprentissage par SW2.",
+      "items": [
+        {
+          "id": "member",
+          "text": "SW1 choisit un lien membre de Po1 par hachage des champs définis par port-channel load-balance."
+        },
+        {
+          "id": "learn",
+          "text": "SW2 associe l'adresse MAC de PC1 à Po1, et non au port physique de réception."
+        },
+        {
+          "id": "send",
+          "text": "PC1 envoie une trame à destination de l'adresse MAC de PC2."
+        },
+        {
+          "id": "lookup",
+          "text": "SW1 trouve dans sa table MAC l'adresse de PC2 associée à Po1."
+        },
+        {
+          "id": "wire",
+          "text": "La trame traverse le lien membre choisi jusqu'à SW2."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "send",
+        "lookup",
+        "member",
+        "wire",
+        "learn"
+      ]
+    },
+    "explanation": "Pour la table MAC comme pour STP, Po1 est une seule interface : SW1 trouve PC2 derrière Po1, sans savoir encore quel lien physique utiliser. Le choix du membre vient ensuite, par hachage des champs retenus (adresses MAC ou IP source et destination, selon la méthode) : tous les paquets d'un même flux prennent donc le même lien, ce qui évite tout désordre. À l'arrivée, SW2 enregistre l'adresse source de PC1 sur Po1 et non sur un port physique : si ce lien tombe, l'entrée reste valable et les trames passent par un autre membre.",
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-channel-modes-protocol-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque mode de la commande « channel-group … mode » au protocole qu'il utilise.",
+      "left": [
+        {
+          "id": "m1",
+          "text": "active"
+        },
+        {
+          "id": "m2",
+          "text": "passive"
+        },
+        {
+          "id": "m3",
+          "text": "desirable"
+        },
+        {
+          "id": "m4",
+          "text": "auto"
+        },
+        {
+          "id": "m5",
+          "text": "on"
+        }
+      ],
+      "right": [
+        {
+          "id": "lacp",
+          "text": "LACP (IEEE 802.3ad / 802.1AX)"
+        },
+        {
+          "id": "pagp",
+          "text": "PAgP (propriétaire Cisco)"
+        },
+        {
+          "id": "none",
+          "text": "Aucun protocole : canal statique"
+        },
+        {
+          "id": "dtp",
+          "text": "DTP (Dynamic Trunking Protocol)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "m1": "lacp",
+        "m2": "lacp",
+        "m3": "pagp",
+        "m4": "pagp",
+        "m5": "none"
+      }
+    },
+    "explanation": "LACP, normalisé par l'IEEE (802.3ad, intégré depuis à 802.1AX), a deux modes : active, qui lance la négociation, et passive, qui y répond. PAgP, propriétaire Cisco, a leurs équivalents : desirable et auto. Le mode on n'utilise aucun protocole : il force l'agrégation et ne fonctionne qu'en face d'un autre port en on. Les mots desirable et auto existent aussi pour DTP (« switchport mode dynamic … »), mais c'est un autre protocole, qui négocie le trunk et non l'agrégation.",
+    "distractorNotes": {
+      "dtp": "DTP négocie le passage d'un port en trunk (switchport mode dynamic desirable ou auto), pas l'agrégation de liens : ne pas le confondre avec les modes PAgP desirable et auto."
+    },
+    "reference": "IEEE 802.1AX ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  },
+  {
+    "slug": "ccna-2.4-l2-l3-etherchannel-match-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque élément au type d'EtherChannel auquel il correspond sur un commutateur multicouche Catalyst.",
+      "left": [
+        {
+          "id": "x1",
+          "text": "Po1(RU) dans la sortie de show etherchannel summary"
+        },
+        {
+          "id": "x2",
+          "text": "« switchport mode trunk » sur l'interface Port-channel1"
+        },
+        {
+          "id": "x3",
+          "text": "« ip address 10.0.12.1 255.255.255.252 » sur l'interface Port-channel1"
+        },
+        {
+          "id": "x4",
+          "text": "« channel-group 1 mode active » sur les ports membres"
+        },
+        {
+          "id": "x5",
+          "text": "Po1(SU) dans la sortie de show etherchannel summary"
+        }
+      ],
+      "right": [
+        {
+          "id": "l2",
+          "text": "EtherChannel de niveau 2"
+        },
+        {
+          "id": "l3",
+          "text": "EtherChannel de niveau 3"
+        },
+        {
+          "id": "both",
+          "text": "Les deux types"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "x1": "l3",
+        "x2": "l2",
+        "x3": "l3",
+        "x4": "both",
+        "x5": "l2"
+      }
+    },
+    "explanation": "Un EtherChannel de niveau 2 regroupe des ports de commutation : l'interface Port-channel se configure en access ou en trunk, et show etherchannel summary l'affiche avec S (Layer2), par exemple Po1(SU). Un EtherChannel de niveau 3 est un port routé : « no switchport » sur Port-channel1 et sur les membres, l'adresse IP sur Port-channel1, et le drapeau R (Layer3), par exemple Po1(RU). La négociation, elle, ne dépend pas du niveau : « channel-group 1 mode active » (LACP) s'emploie dans les deux cas.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels (Layer 2 and Layer 3 EtherChannels)"
+  },
+  {
+    "slug": "ccna-2.4-summary-flags-match-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque drapeau de port membre, tel qu'il apparaît dans la sortie de « show etherchannel summary », à sa signification.",
+      "left": [
+        {
+          "id": "f1",
+          "text": "Gi1/0/1(P)"
+        },
+        {
+          "id": "f2",
+          "text": "Gi1/0/2(I)"
+        },
+        {
+          "id": "f3",
+          "text": "Gi1/0/3(s)"
+        },
+        {
+          "id": "f4",
+          "text": "Gi1/0/4(H)"
+        },
+        {
+          "id": "f5",
+          "text": "Gi1/0/5(D)"
+        }
+      ],
+      "right": [
+        {
+          "id": "bundled",
+          "text": "Agrégé au port-channel, il transporte du trafic"
+        },
+        {
+          "id": "alone",
+          "text": "Autonome : non agrégé, il fonctionne comme un port isolé"
+        },
+        {
+          "id": "susp",
+          "text": "Suspendu, par exemple pour une configuration incompatible"
+        },
+        {
+          "id": "standby",
+          "text": "En attente (hot-standby), prêt à remplacer un membre actif"
+        },
+        {
+          "id": "down",
+          "text": "Lien physique hors service"
+        },
+        {
+          "id": "static",
+          "text": "Agrégé en mode on, sans protocole de négociation"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "f1": "bundled",
+        "f2": "alone",
+        "f3": "susp",
+        "f4": "standby",
+        "f5": "down"
+      }
+    },
+    "explanation": "P (bundled in port-channel) désigne un membre agrégé et actif. I (stand-alone) un port qui n'a pas trouvé de partenaire, par exemple faute de LACPDU en retour : il fonctionne comme un port ordinaire, hors du canal. s (suspended) un port écarté, typiquement parce que sa configuration diffère de celle des autres membres (VLAN, mode, VLAN autorisés). H (hot-standby, LACP uniquement) un port compatible mais en surnombre, par exemple au-delà de 8 actifs. D (down) un lien physiquement hors service. Attention à la casse : S et R qualifient le port-channel (Layer2, Layer3), s un port suspendu.",
+    "distractorNotes": {
+      "static": "Aucun drapeau de port ne signale le mode on : un membre d'un canal statique est affiché (P) ; c'est la colonne Protocol, avec « - », qui révèle l'absence de protocole."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring EtherChannels"
+  }
+]

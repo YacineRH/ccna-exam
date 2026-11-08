@@ -1,0 +1,1642 @@
+[
+  {
+    "slug": "ccna-1.2-hierarchical-layer-roles-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Dans un campus conçu selon le modèle hiérarchique à trois niveaux, associez chaque fonction à la couche qui l'assure.",
+      "left": [
+        {
+          "id": "f1",
+          "text": "Raccorder les postes de travail, les téléphones IP et les points d'accès Wi-Fi"
+        },
+        {
+          "id": "f2",
+          "text": "Fournir l'alimentation PoE et appliquer la port security sur les ports des utilisateurs"
+        },
+        {
+          "id": "f3",
+          "text": "Agréger les liaisons montantes de tous les commutateurs d'accès d'un bâtiment"
+        },
+        {
+          "id": "f4",
+          "text": "Appliquer les politiques (ACL, résumé de routes) entre un bâtiment et le reste du réseau"
+        },
+        {
+          "id": "f5",
+          "text": "Interconnecter les blocs de distribution par une commutation très rapide, sans filtrage coûteux"
+        }
+      ],
+      "right": [
+        {
+          "id": "acc",
+          "text": "Accès"
+        },
+        {
+          "id": "dist",
+          "text": "Distribution"
+        },
+        {
+          "id": "core",
+          "text": "Cœur"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "f1": "acc",
+        "f2": "acc",
+        "f3": "dist",
+        "f4": "dist",
+        "f5": "core"
+      }
+    },
+    "explanation": "Dans le modèle hiérarchique, la couche accès raccorde les terminaux et assure les services de bord : PoE, port security, 802.1X, marquage QoS. La couche distribution agrège les commutateurs d'accès d'un bâtiment, sert de frontière entre couche 2 et couche 3 et applique les politiques : ACL, résumé de routes, passerelles des VLAN. La couche cœur interconnecte les blocs de distribution : elle doit commuter le plus vite possible et rester très disponible, d'où l'absence de traitements coûteux comme le filtrage.",
+    "reference": "Cisco Enterprise Campus 3.0 Architecture: Overview and Framework"
+  },
+  {
+    "slug": "ccna-1.2-three-tier-path-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Dans un campus à trois niveaux, chaque bâtiment possède ses commutateurs d'accès et sa paire de commutateurs de distribution, et les blocs de distribution sont reliés entre eux par une couche cœur. Un PC du bâtiment A imprime sur une imprimante réseau du bâtiment B. Ordonnez les équipements traversés par ses paquets, du premier au dernier.",
+      "items": [
+        {
+          "id": "core",
+          "text": "Commutateur de cœur"
+        },
+        {
+          "id": "accB",
+          "text": "Commutateur d'accès auquel est raccordée l'imprimante (bâtiment B)"
+        },
+        {
+          "id": "distA",
+          "text": "Commutateur de distribution du bâtiment A"
+        },
+        {
+          "id": "prn",
+          "text": "Imprimante du bâtiment B"
+        },
+        {
+          "id": "accA",
+          "text": "Commutateur d'accès auquel est raccordé le PC (bâtiment A)"
+        },
+        {
+          "id": "distB",
+          "text": "Commutateur de distribution du bâtiment B"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "accA",
+        "distA",
+        "core",
+        "distB",
+        "accB",
+        "prn"
+      ]
+    },
+    "explanation": "Dans un campus à trois niveaux, un terminal est toujours raccordé à la couche accès, qui remonte vers la distribution de son bâtiment. Les blocs de distribution ne sont pas reliés directement entre eux : ils passent par le cœur. Le paquet suit donc accès A, distribution A, cœur, distribution B, accès B, puis atteint l'imprimante. Ce chemin, de même longueur entre deux bâtiments quelconques, évite le maillage complet des commutateurs de distribution, qui deviendrait ingérable à mesure que les bâtiments s'ajoutent.",
+    "reference": "Cisco Enterprise Campus 3.0 Architecture: Overview and Framework"
+  },
+  {
+    "slug": "ccna-1.2-distribution-gateway-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un campus à trois niveaux, les commutateurs d'accès travaillent uniquement en couche 2 et transportent les VLAN des utilisateurs vers la distribution par des trunks. Les liaisons entre la distribution et le cœur sont des liaisons routées. Où sont configurées les passerelles par défaut des VLAN des utilisateurs ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur les commutateurs d'accès, une SVI par VLAN"
+        },
+        {
+          "id": "b",
+          "text": "Sur les commutateurs de cœur, une SVI par VLAN"
+        },
+        {
+          "id": "c",
+          "text": "Sur les commutateurs de distribution, une SVI par VLAN"
+        },
+        {
+          "id": "d",
+          "text": "Sur le routeur de périphérie WAN, une sous-interface par VLAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Quand les commutateurs d'accès ne travaillent qu'en couche 2, la frontière entre couche 2 et couche 3 se trouve sur la distribution : chaque VLAN y possède une SVI, et la paire de commutateurs de distribution partage une adresse de passerelle virtuelle grâce à un FHRP (HSRP, VRRP ou GLBP). Les liaisons routées vers le cœur arrêtent les VLAN à la distribution : les domaines de broadcast et les boucles de couche 2 restent confinés au bâtiment. Dans un design à accès routé, ce seraient au contraire les commutateurs d'accès qui routeraient.",
+    "distractorNotes": {
+      "a": "Les commutateurs d'accès ne font ici que de la couche 2 : ils n'hébergent pas les passerelles des VLAN (ce serait un design à accès routé).",
+      "b": "Les liaisons entre distribution et cœur sont routées : les VLAN des utilisateurs n'arrivent pas jusqu'au cœur, qui ne peut donc pas porter leurs passerelles.",
+      "d": "Le routeur WAN se trouve au-delà du cœur et de liaisons routées : les VLAN du campus ne l'atteignent pas. Le « router-on-a-stick » se rencontre plutôt dans les petits réseaux."
+    },
+    "reference": "Cisco Enterprise Campus 3.0 Architecture: Overview and Framework ; Campus Network for High Availability Design Guide"
+  },
+  {
+    "slug": "ccna-1.2-three-tier-design-errors-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Un auditeur compare ce campus aux recommandations de Cisco pour un design hiérarchique à trois niveaux. Quels deux raccordements s'en écartent ?",
+      "exhibit": "Liaisons du campus (design à trois niveaux)\n\nBâtiment A\n  ACC-A1   -> DIST-A1, DIST-A2\n  ACC-A2   -> DIST-A1, DIST-A2\nBâtiment B\n  ACC-B1   -> DIST-B1, DIST-B2\n  ACC-B2   -> CORE-1\nDistribution\n  DIST-A1, DIST-A2, DIST-B1, DIST-B2 -> CORE-1, CORE-2\nCœur\n  CORE-1   -> CORE-2\n  CORE-2   -> SRV-FICHIERS (serveur de fichiers)",
+      "options": [
+        {
+          "id": "a",
+          "text": "ACC-A1 relié à DIST-A1 et à DIST-A2"
+        },
+        {
+          "id": "b",
+          "text": "ACC-B2 relié directement à CORE-1"
+        },
+        {
+          "id": "c",
+          "text": "Chaque commutateur de distribution relié à CORE-1 et à CORE-2"
+        },
+        {
+          "id": "d",
+          "text": "CORE-2 relié au serveur de fichiers"
+        },
+        {
+          "id": "e",
+          "text": "CORE-1 relié à CORE-2"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le cœur ne doit interconnecter que des blocs de distribution, y compris ceux des modules datacenter, WAN ou Internet. Il ne reçoit ni commutateur d'accès ni terminal : il reste simple, stable et rapide. ACC-B2, raccordé directement à CORE-1, contourne la distribution du bâtiment B, qui porte ses passerelles et ses politiques, et étend un domaine de couche 2 jusqu'au cœur. Le serveur de fichiers doit rejoindre un bloc serveurs ou datacenter, avec sa propre couche d'accès et de distribution. Les autres raccordements suivent les recommandations : double raccordement des commutateurs d'accès, triangles entre distribution et cœur, liaison entre les deux cœurs.",
+    "distractorNotes": {
+      "a": "Raccorder un commutateur d'accès aux deux commutateurs de distribution de son bâtiment est recommandé : cela supprime le point unique de panne.",
+      "c": "Relier chaque commutateur de distribution aux deux cœurs forme des triangles, recommandés car la reprise sur panne ne dépend pas d'un seul lien.",
+      "e": "La liaison entre les deux commutateurs de cœur est courante et conforme : elle relie les cœurs sans faire transiter le trafic par la distribution."
+    },
+    "reference": "Cisco Enterprise Campus 3.0 Architecture: Overview and Framework ; Campus Network for High Availability Design Guide"
+  },
+  {
+    "slug": "ccna-1.2-spine-leaf-east-west-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un datacenter, pour quel type de trafic l'architecture spine-leaf est-elle avant tout conçue ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le trafic nord-sud, entre les utilisateurs externes et les serveurs"
+        },
+        {
+          "id": "b",
+          "text": "Le trafic est-ouest, entre les serveurs du datacenter"
+        },
+        {
+          "id": "c",
+          "text": "Le trafic WAN, entre le datacenter et les sites distants"
+        },
+        {
+          "id": "d",
+          "text": "Le trafic de gestion, entre les administrateurs et les équipements"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Dans un datacenter moderne, l'essentiel du trafic circule entre serveurs : virtualisation, applications réparties en plusieurs tiers, réplication du stockage. C'est le trafic est-ouest. L'architecture spine-leaf relie chaque leaf à chaque spine : entre deux serveurs de leafs différents, le chemin compte toujours le même nombre de sauts et la charge se répartit sur tous les spines. Le modèle à trois niveaux, hérité des campus, était surtout pensé pour le trafic nord-sud, des utilisateurs vers les serveurs.",
+    "distractorNotes": {
+      "a": "Le trafic nord-sud, qui entre dans le datacenter ou en sort, est celui qu'optimisait le modèle à trois niveaux ; spine-leaf vise d'abord le trafic entre serveurs.",
+      "c": "Le trafic vers les sites distants sort du fabric par des équipements de bordure : c'est du trafic nord-sud, pas celui qui a motivé spine-leaf.",
+      "d": "Le trafic de gestion passe en général par un réseau hors bande dédié, indépendant du fabric spine-leaf."
+    },
+    "reference": "Cisco Data Center Spine-and-Leaf Architecture: Design Overview (white paper)"
+  },
+  {
+    "slug": "ccna-1.2-spine-leaf-add-leaf-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un datacenter spine-leaf compte 4 spines et 10 leafs. Les leafs n'ont plus de ports libres et 40 nouveaux serveurs doivent être raccordés ; un nouveau commutateur de 48 ports est disponible. Comment l'intégrer en respectant l'architecture ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le relier à chacun des 4 spines et y raccorder les serveurs"
+        },
+        {
+          "id": "b",
+          "text": "Le relier à un seul spine et y raccorder les serveurs"
+        },
+        {
+          "id": "c",
+          "text": "Raccorder les serveurs aux spines et le garder en réserve"
+        },
+        {
+          "id": "d",
+          "text": "Le relier à deux leafs existants et y raccorder les serveurs"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Dans un fabric spine-leaf, on ajoute des ports serveurs en ajoutant des leafs. Le nouveau leaf doit être relié à chacun des 4 spines, comme les 10 autres : ses serveurs restent alors à trois commutateurs (leaf, spine, leaf) de tous les serveurs des autres leafs, et leur trafic se répartit sur les 4 spines. Aucune liaison existante n'est modifiée : c'est l'extension horizontale (scale-out) propre à cette architecture, qui conserve une latence prévisible quelle que soit la taille du fabric.",
+    "distractorNotes": {
+      "b": "Relié à un seul spine, le leaf n'aurait ni redondance ni répartition de charge : la panne de ce spine isolerait tous ses serveurs.",
+      "c": "Les spines ne servent qu'à interconnecter les leafs : on n'y raccorde jamais de serveurs.",
+      "d": "Les leafs ne sont jamais reliés entre eux : le trafic traverserait un leaf de plus et le nombre de sauts ne serait plus constant."
+    },
+    "reference": "Cisco Data Center Spine-and-Leaf Architecture: Design Overview (white paper)"
+  },
+  {
+    "slug": "ccna-1.2-spine-leaf-link-count-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un fabric spine-leaf compte 6 spines et 20 leafs, avec une seule liaison entre chaque leaf et chaque spine. Complétez.",
+      "fields": [
+        {
+          "id": "links",
+          "label": "Nombre total de liaisons leaf-spine (nombre entier)"
+        },
+        {
+          "id": "spinePorts",
+          "label": "Nombre de ports de chaque spine utilisés pour les leafs (nombre entier)"
+        },
+        {
+          "id": "switches",
+          "label": "Nombre de commutateurs traversés par un paquet entre deux serveurs de leafs différents (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "links": {
+          "accepted": [
+            "120"
+          ],
+          "normalize": "int"
+        },
+        "spinePorts": {
+          "accepted": [
+            "20"
+          ],
+          "normalize": "int"
+        },
+        "switches": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Chaque leaf est relié à chaque spine : le nombre de liaisons est le produit 6 × 20 = 120. Chaque spine a donc une liaison, et un port, par leaf, soit 20 ports ; chaque leaf a de même 6 liaisons montantes, une par spine. Entre deux serveurs raccordés à des leafs différents, un paquet traverse le leaf de départ, un seul spine, puis le leaf d'arrivée : 3 commutateurs, quel que soit le spine choisi. Cette régularité rend la latence prévisible.",
+    "reference": "Cisco Data Center Spine-and-Leaf Architecture: Design Overview (white paper)"
+  },
+  {
+    "slug": "ccna-1.2-spine-leaf-ecmp-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un datacenter compte 4 spines et 16 leafs ; chaque leaf est relié à chaque spine par une liaison routée. Quelles deux affirmations sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Spanning Tree bloque 3 des 4 liaisons montantes de chaque leaf pour éviter les boucles."
+        },
+        {
+          "id": "b",
+          "text": "Chaque leaf répartit son trafic vers les autres leafs sur ses 4 liaisons montantes (ECMP)."
+        },
+        {
+          "id": "c",
+          "text": "Un paquet entre deux leafs traverse au moins deux des 4 spines."
+        },
+        {
+          "id": "d",
+          "text": "Deux serveurs du même VLAN raccordés au même leaf communiquent en passant par un spine."
+        },
+        {
+          "id": "e",
+          "text": "Ajouter un cinquième spine, relié aux 16 leafs, augmente la capacité entre les leafs."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Les liaisons leaf-spine étant routées, Spanning Tree n'y bloque rien : chaque leaf voit autant de chemins de coût égal vers un autre leaf qu'il y a de spines, ici 4, et le routage répartit les flux sur tous ces chemins (ECMP). Pour augmenter la capacité entre leafs, on ajoute un spine que l'on relie à chaque leaf : chaque leaf gagne un chemin de plus, sans toucher aux liaisons existantes. Un paquet entre deux leafs ne traverse jamais qu'un seul spine, et le trafic entre deux ports d'un même leaf reste sur ce leaf.",
+    "distractorNotes": {
+      "a": "Spanning Tree ne s'applique pas à des liaisons routées : les 4 liaisons montantes restent actives et le routage les utilise en parallèle.",
+      "c": "Le chemin entre deux leafs est leaf, spine, leaf : un seul spine est traversé, puisque les spines ne sont pas reliés entre eux.",
+      "d": "Le leaf commute localement les trames entre deux de ses ports du même VLAN : ce trafic ne remonte pas vers les spines."
+    },
+    "reference": "Cisco Data Center Spine-and-Leaf Architecture: Design Overview (white paper)"
+  },
+  {
+    "slug": "ccna-1.2-spine-failure-paths-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un fabric spine-leaf compte 4 spines (S1 à S4) et 12 leafs (L1 à L12). Chaque leaf est relié à chaque spine par une liaison de 100 Gbit/s, et le routage répartit le trafic sur tous les chemins de coût égal. S3 tombe en panne. Une fois le routage reconvergé, combien de chemins de coût égal relient L2 à L9, et quelle capacité totale offrent-ils dans un sens ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "4 chemins, soit 400 Gbit/s au total"
+        },
+        {
+          "id": "b",
+          "text": "2 chemins, soit 200 Gbit/s au total"
+        },
+        {
+          "id": "c",
+          "text": "3 chemins, soit 300 Gbit/s au total"
+        },
+        {
+          "id": "d",
+          "text": "6 chemins, soit 600 Gbit/s au total"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Chaque chemin de coût égal entre L2 et L9 passe par un seul spine : L2, Sx, L9. Avec 4 spines, il y en a 4. La panne de S3 coupe les liaisons L2-S3 et S3-L9, qui appartiennent au même chemin : il reste 3 chemins, via S1, S2 et S4. Chacun est limité par ses liaisons de 100 Gbit/s : la capacité totale dans un sens vaut 3 × 100 = 300 Gbit/s, soit un quart de moins qu'avant la panne. Un détour par un autre leaf serait plus long et ne ferait pas partie des chemins de coût égal.",
+    "distractorNotes": {
+      "a": "C'est la situation avant la panne : le chemin qui passait par S3 n'existe plus.",
+      "b": "La panne coupe deux liaisons, mais elles forment un seul chemin (L2-S3-L9) : on ne perd qu'un chemin sur quatre.",
+      "d": "6 est le nombre de liaisons restantes entre L2, L9 et les spines ; chaque chemin en utilise deux, une montante et une descendante."
+    },
+    "reference": "Cisco Data Center Spine-and-Leaf Architecture: Design Overview (white paper) (ECMP)"
+  },
+  {
+    "slug": "ccna-1.2-wan-technologies-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque technologie WAN ou d'accès Internet à sa description.",
+      "left": [
+        {
+          "id": "mpls",
+          "text": "VPN MPLS de couche 3 (L3VPN)"
+        },
+        {
+          "id": "metro",
+          "text": "Metro Ethernet"
+        },
+        {
+          "id": "ipsec",
+          "text": "VPN IPsec site à site"
+        },
+        {
+          "id": "dsl",
+          "text": "DSL"
+        },
+        {
+          "id": "cable",
+          "text": "Câble (DOCSIS)"
+        }
+      ],
+      "right": [
+        {
+          "id": "rMetro",
+          "text": "L'opérateur fournit un service de couche 2 auquel chaque site se raccorde en Ethernet"
+        },
+        {
+          "id": "rDsl",
+          "text": "Le signal emprunte la paire téléphonique en cuivre jusqu'au DSLAM de l'opérateur"
+        },
+        {
+          "id": "r4g",
+          "text": "Un modem radio se raccorde au réseau d'un opérateur mobile"
+        },
+        {
+          "id": "rMpls",
+          "text": "Le réseau de l'opérateur route les paquets IP entre les sites du client"
+        },
+        {
+          "id": "rCable",
+          "text": "Le signal emprunte le réseau de télévision par câble jusqu'au CMTS de l'opérateur"
+        },
+        {
+          "id": "rIpsec",
+          "text": "Un tunnel chiffré relie deux sites à travers Internet, sans garantie de qualité de service"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "mpls": "rMpls",
+        "metro": "rMetro",
+        "ipsec": "rIpsec",
+        "dsl": "rDsl",
+        "cable": "rCable"
+      }
+    },
+    "explanation": "Le VPN MPLS de couche 3 est un service routé : le réseau de l'opérateur participe au routage IP des sites du client. Metro Ethernet est un service de couche 2 : l'opérateur se comporte comme un grand commutateur et chaque site s'y raccorde par une interface Ethernet. Un VPN IPsec site à site chiffre le trafic à travers Internet : peu coûteux, mais sans garantie de qualité de service. DSL et câble sont des accès Internet : le DSL utilise la paire téléphonique jusqu'au DSLAM, le câble le réseau de télévision (souvent hybride fibre-coaxial) jusqu'au CMTS.",
+    "distractorNotes": {
+      "r4g": "Cette description correspond à l'accès cellulaire 4G/LTE ou 5G, souvent choisi en secours ; aucune des technologies de gauche ne se définit par un accès radio."
+    },
+    "reference": "RFC 4364 (MPLS L3VPN) ; MEF 6.2 (services Metro Ethernet) ; RFC 4301 (IPsec) ; CableLabs DOCSIS 3.1"
+  },
+  {
+    "slug": "ccna-1.2-soho-router-functions-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Dans un réseau SOHO, un seul boîtier fourni par l'opérateur réunit souvent plusieurs fonctions. Quelles trois fonctions ce routeur intégré assure-t-il en général ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Contrôleur WLAN qui gère des centaines d'AP lightweight"
+        },
+        {
+          "id": "b",
+          "text": "Point d'accès Wi-Fi pour les appareils du bureau"
+        },
+        {
+          "id": "c",
+          "text": "Commutation de labels MPLS dans le cœur de l'opérateur"
+        },
+        {
+          "id": "d",
+          "text": "Serveur DHCP qui attribue les adresses du LAN"
+        },
+        {
+          "id": "e",
+          "text": "NAT/PAT vers l'adresse publique fournie par l'opérateur"
+        },
+        {
+          "id": "f",
+          "text": "Couche cœur reliant les blocs de distribution d'un campus"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Dans un petit bureau ou à domicile (SOHO, Small Office/Home Office), un seul boîtier réunit en général un routeur, un petit commutateur, un point d'accès Wi-Fi, un pare-feu et souvent le modem DSL, câble ou fibre. Il attribue les adresses privées du LAN par DHCP et les traduit en une seule adresse publique (PAT, ou NAT overload). Les contrôleurs WLAN, la commutation MPLS et la couche cœur relèvent de réseaux d'entreprise ou d'opérateur bien plus grands.",
+    "distractorNotes": {
+      "a": "Un contrôleur WLAN pilote les nombreux AP d'une entreprise ; dans un SOHO, le point d'accès intégré fonctionne seul, en mode autonome.",
+      "c": "La commutation de labels MPLS est assurée par les routeurs P et PE du réseau de l'opérateur, pas par l'équipement du client.",
+      "f": "La couche cœur relie les blocs de distribution d'un grand campus ; un SOHO n'a ni distribution ni cœur."
+    },
+    "reference": "RFC 3022 (NAT traditionnel et NAPT) ; RFC 2131 (DHCP)"
+  },
+  {
+    "slug": "ccna-1.2-mpls-l3vpn-path-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une entreprise relie ses sites de Lyon et de Lille par un VPN MPLS de couche 3. Les deux PE concernés ne sont pas reliés directement : le chemin traverse le cœur du réseau de l'opérateur. Un PC de Lyon envoie un paquet à un serveur de Lille. Ordonnez les équipements traversés, du premier au dernier.",
+      "items": [
+        {
+          "id": "peB",
+          "text": "Routeur PE de l'opérateur, côté Lille"
+        },
+        {
+          "id": "ceA",
+          "text": "Routeur CE du site de Lyon"
+        },
+        {
+          "id": "p",
+          "text": "Routeur P du cœur de l'opérateur"
+        },
+        {
+          "id": "ceB",
+          "text": "Routeur CE du site de Lille"
+        },
+        {
+          "id": "peA",
+          "text": "Routeur PE de l'opérateur, côté Lyon"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "ceA",
+        "peA",
+        "p",
+        "peB",
+        "ceB"
+      ]
+    },
+    "explanation": "Dans un VPN MPLS de couche 3, le routeur CE (Customer Edge) du site remet le paquet IP au PE (Provider Edge) auquel il est raccordé. Ce PE d'entrée consulte la table de la VRF du client et ajoute des labels ; les routeurs P (Provider) du cœur commutent ensuite le paquet selon ses labels, sans connaître les routes du client. Le PE de sortie retire le dernier label et remet le paquet IP au CE de Lille, qui le transmet au LAN du site. Pour le client, l'opérateur participe au routage : c'est un service de couche 3.",
+    "reference": "RFC 4364 (BGP/MPLS IP VPNs) ; RFC 3031 (architecture MPLS)"
+  },
+  {
+    "slug": "ccna-1.2-wan-backup-4g-vpn-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une agence est reliée au siège par une liaison MPLS. On cherche une liaison de secours qui ne dépende d'aucun câble entre l'agence et l'opérateur, qui puisse être mise en service sans travaux, et dont les échanges avec le siège soient chiffrés. Quelle solution convient ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un accès DSL, avec un tunnel VPN IPsec vers le siège"
+        },
+        {
+          "id": "b",
+          "text": "Un accès 4G/LTE, avec un tunnel VPN IPsec vers le siège"
+        },
+        {
+          "id": "c",
+          "text": "Un accès câble (DOCSIS), avec un tunnel VPN IPsec vers le siège"
+        },
+        {
+          "id": "d",
+          "text": "Un accès 4G/LTE, avec un trafic routé vers le siège sans tunnel"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'accès 4G/LTE passe par la radio jusqu'à l'antenne de l'opérateur mobile : il ne dépend d'aucun câble desservant l'agence et se met en service avec un simple modem ou un module LTE sur le routeur, d'où son usage fréquent en secours. Comme ce lien donne accès à Internet, il faut un tunnel VPN IPsec vers le siège pour chiffrer et authentifier les échanges. Le DSL et le câble arrivent au contraire par une ligne filaire (paire de cuivre, coaxial), qu'une coupure ou des travaux peuvent affecter.",
+    "distractorNotes": {
+      "a": "Le DSL arrive par la paire téléphonique en cuivre : il dépend d'un câble entre l'agence et l'opérateur.",
+      "c": "Le câble arrive par le réseau coaxial (ou hybride fibre-coaxial) de l'opérateur : il dépend lui aussi d'un câble.",
+      "d": "Sans tunnel, rien ne chiffre au niveau du réseau les échanges entre l'agence et le siège : l'exigence de chiffrement n'est pas remplie."
+    },
+    "reference": "RFC 4301 (architecture IPsec)"
+  },
+  {
+    "slug": "ccna-1.2-metro-ethernet-evc-count-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise veut relier ses 12 sites par Metro Ethernet, de sorte que chaque site puisse joindre directement tous les autres. Combien de connexions virtuelles Ethernet (EVC) faut-il avec des services E-Line point à point, et combien avec un service E-LAN ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "66 EVC E-Line, ou 12 EVC E-LAN"
+        },
+        {
+          "id": "b",
+          "text": "132 EVC E-Line, ou une seule EVC E-LAN"
+        },
+        {
+          "id": "c",
+          "text": "11 EVC E-Line, ou une seule EVC E-LAN"
+        },
+        {
+          "id": "d",
+          "text": "66 EVC E-Line, ou une seule EVC E-LAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une EVC (Ethernet Virtual Connection) associe les sites qui peuvent échanger des trames entre eux. Une EVC E-Line ne relie que deux sites : un maillage complet de 12 sites en demande une par paire, soit 12 × 11 / 2 = 66. Une EVC E-LAN est multipoint : une seule EVC associe les 12 sites, chacun par son raccordement (UNI), et chaque site joint directement tous les autres. E-LAN se prête donc au maillage complet, alors qu'E-Line convient aux liaisons point à point ou à une étoile autour du siège.",
+    "distractorNotes": {
+      "a": "12 est le nombre de raccordements (UNI) au service E-LAN, mais ils appartiennent tous à la même EVC multipoint.",
+      "b": "132 = 12 × 11 compte chaque paire de sites deux fois ; il faut diviser par 2.",
+      "c": "11 EVC suffisent pour une étoile autour du siège, pas pour un maillage complet où chaque site joint directement tous les autres."
+    },
+    "reference": "MEF 6.2, EVC Ethernet Services Definitions (E-Line, E-LAN)"
+  },
+  {
+    "slug": "ccna-1.2-cloud-service-models-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque situation au modèle de service cloud correspondant, selon les définitions du NIST (SP 800-145).",
+      "left": [
+        {
+          "id": "s1",
+          "text": "Une équipe loue des machines virtuelles et installe elle-même le système d'exploitation et ses correctifs"
+        },
+        {
+          "id": "s2",
+          "text": "Les salariés utilisent une messagerie en ligne dans leur navigateur, sans rien installer ni administrer"
+        },
+        {
+          "id": "s3",
+          "text": "Des développeurs déploient leur code ; le fournisseur gère les serveurs, le système d'exploitation et l'environnement d'exécution"
+        },
+        {
+          "id": "s4",
+          "text": "Un administrateur crée à la demande des réseaux virtuels, des volumes de stockage et des serveurs virtuels"
+        },
+        {
+          "id": "s5",
+          "text": "Les commerciaux utilisent un CRM en ligne, entièrement géré par le fournisseur"
+        }
+      ],
+      "right": [
+        {
+          "id": "iaas",
+          "text": "IaaS"
+        },
+        {
+          "id": "paas",
+          "text": "PaaS"
+        },
+        {
+          "id": "saas",
+          "text": "SaaS"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "iaas",
+        "s2": "saas",
+        "s3": "paas",
+        "s4": "iaas",
+        "s5": "saas"
+      }
+    },
+    "explanation": "Le NIST distingue trois modèles de service selon ce que gère le client. En IaaS, il obtient des ressources de base (VM, stockage, réseaux virtuels) et gère lui-même le système d'exploitation et les applications. En PaaS, il déploie son code sur une plateforme dont le fournisseur gère les serveurs, le système d'exploitation et l'environnement d'exécution. En SaaS, il utilise simplement une application gérée de bout en bout par le fournisseur, comme une messagerie ou un CRM en ligne.",
+    "reference": "NIST SP 800-145, The NIST Definition of Cloud Computing, section 2"
+  },
+  {
+    "slug": "ccna-1.2-nist-cloud-characteristics-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Selon la définition du NIST (SP 800-145), laquelle de ces propriétés fait partie des cinq caractéristiques essentielles du cloud computing ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Libre-service à la demande, sans intervention humaine du fournisseur"
+        },
+        {
+          "id": "b",
+          "text": "Matériel physique dédié à chaque client, pour isoler ses données"
+        },
+        {
+          "id": "c",
+          "text": "Hébergement obligatoire dans un datacenter du fournisseur"
+        },
+        {
+          "id": "d",
+          "text": "Capacité fixe, réservée par un contrat de longue durée"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le NIST retient cinq caractéristiques essentielles : libre-service à la demande, accès par le réseau depuis des clients variés, mutualisation des ressources entre clients, élasticité rapide et service mesuré (facturé à l'usage). Le libre-service signifie que le client obtient lui-même serveurs ou stockage, par un portail ou une API, sans attendre l'intervention d'un employé du fournisseur. Ces caractéristiques valent quel que soit le modèle de déploiement, public, privé, communautaire ou hybride.",
+    "distractorNotes": {
+      "b": "Le cloud repose au contraire sur la mutualisation : les ressources physiques sont partagées entre clients et attribuées dynamiquement.",
+      "c": "Un cloud privé ou communautaire peut être hébergé sur site : le NIST n'impose aucun emplacement.",
+      "d": "L'élasticité rapide et le service mesuré permettent d'ajuster la capacité à tout moment et de payer à l'usage, à l'opposé d'une capacité fixe."
+    },
+    "reference": "NIST SP 800-145, The NIST Definition of Cloud Computing, section 2"
+  },
+  {
+    "slug": "ccna-1.2-hybrid-cloud-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise garde ses bases de données réglementées dans un cloud privé installé dans son propre datacenter. Lors des pics de fréquentation, son site web lance automatiquement des instances supplémentaires chez un fournisseur de cloud public, et les deux environnements s'échangent données et applications. Selon le NIST, quel modèle de déploiement décrit l'ensemble ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cloud public"
+        },
+        {
+          "id": "b",
+          "text": "Cloud privé"
+        },
+        {
+          "id": "c",
+          "text": "Cloud communautaire"
+        },
+        {
+          "id": "d",
+          "text": "Cloud hybride"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Selon le NIST, un cloud hybride est la composition de deux infrastructures cloud distinctes ou plus (privée, communautaire ou publique), qui restent séparées mais sont reliées par une technologie permettant la portabilité des données et des applications. Le NIST cite justement le débordement vers le cloud public pour absorber les pics de charge (cloud bursting). Ici, le cloud privé sur site et le cloud public forment ensemble un cloud hybride.",
+    "distractorNotes": {
+      "a": "Une partie seulement tourne dans le cloud public : les bases réglementées restent dans le cloud privé de l'entreprise.",
+      "b": "Le cloud privé ne décrit que la partie sur site ; l'ensemble inclut aussi des ressources d'un cloud public.",
+      "c": "Un cloud communautaire est réservé à plusieurs organisations aux préoccupations communes ; ici, une seule entreprise est concernée."
+    },
+    "reference": "NIST SP 800-145, The NIST Definition of Cloud Computing, section 2"
+  },
+  {
+    "slug": "ccna-1.2-on-premises-vs-iaas-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise hésite entre garder ses serveurs sur site et les migrer vers un cloud public en IaaS. Quelles deux affirmations sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur site, l'entreprise doit dimensionner et acquérir à l'avance la capacité matérielle dont elle aura besoin."
+        },
+        {
+          "id": "b",
+          "text": "En IaaS, le client doit acheter les serveurs physiques qui hébergent ses VM."
+        },
+        {
+          "id": "c",
+          "text": "En IaaS, le client reste responsable du système d'exploitation de ses VM et de ses correctifs."
+        },
+        {
+          "id": "d",
+          "text": "Un cloud public n'est joignable que par une liaison privée de type MPLS ou Metro Ethernet."
+        },
+        {
+          "id": "e",
+          "text": "Sur site, la capacité s'ajuste en quelques minutes, sans achat de matériel."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Sur site, l'entreprise possède l'infrastructure : elle doit acheter à l'avance du matériel dimensionné pour sa charge future (dépense d'investissement), puis l'exploiter et le renouveler. En IaaS, le fournisseur possède et maintient le matériel et la couche de virtualisation, et le client paie à l'usage. Le client garde en revanche la responsabilité de tout ce qu'il installe : système d'exploitation des VM, correctifs, applications et données. On joint un cloud public par Internet, par un VPN ou par une liaison privée, au choix.",
+    "distractorNotes": {
+      "b": "En IaaS, le matériel appartient au fournisseur : le client loue des VM et paie à l'usage.",
+      "d": "Un cloud public se joint en général par Internet, avec ou sans VPN ; une liaison privée est une option, pas une obligation.",
+      "e": "Cette élasticité caractérise le cloud ; sur site, ajouter de la capacité suppose d'acheter et d'installer du matériel."
+    },
+    "reference": "NIST SP 800-145, The NIST Definition of Cloud Computing ; NIST SP 800-146, Cloud Computing Synopsis and Recommendations"
+  },
+  {
+    "slug": "ccna-1.2-community-cloud-iaas-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quatre collectivités territoriales, organisations distinctes soumises aux mêmes exigences de sécurité, financent une infrastructure exploitée par un prestataire et réservée à leur seul usage. Chaque collectivité y crée ses propres machines virtuelles, puis y installe son système d'exploitation et ses applications. Selon le NIST (SP 800-145), quels modèles de déploiement et de service s'appliquent ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cloud privé, en IaaS"
+        },
+        {
+          "id": "b",
+          "text": "Cloud communautaire, en IaaS"
+        },
+        {
+          "id": "c",
+          "text": "Cloud communautaire, en PaaS"
+        },
+        {
+          "id": "d",
+          "text": "Cloud hybride, en IaaS"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Deux classements se combinent. Pour le déploiement, l'infrastructure est réservée à plusieurs organisations distinctes qui partagent les mêmes exigences : le NIST parle de cloud communautaire, qu'il soit exploité par l'une d'elles ou par un tiers, sur site ou non. Un cloud privé serait réservé à une seule organisation. Pour le service, chaque collectivité crée ses VM et gère elle-même leur système d'exploitation et ses applications : c'est de l'IaaS. En PaaS, le fournisseur gérerait le système d'exploitation et l'environnement d'exécution.",
+    "distractorNotes": {
+      "a": "Un cloud privé est réservé à une seule organisation ; ici, quatre organisations distinctes se partagent l'infrastructure.",
+      "c": "En PaaS, le client ne gère pas le système d'exploitation ; ici, chaque collectivité installe le sien : c'est de l'IaaS.",
+      "d": "Un cloud hybride combine plusieurs infrastructures distinctes ; ici, il n'y en a qu'une, partagée par les quatre collectivités."
+    },
+    "reference": "NIST SP 800-145, The NIST Definition of Cloud Computing, section 2"
+  },
+  {
+    "slug": "ccna-1.12-type1-hypervisors-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux produits sont des hyperviseurs de type 1 (bare metal) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Oracle VirtualBox"
+        },
+        {
+          "id": "b",
+          "text": "VMware ESXi"
+        },
+        {
+          "id": "c",
+          "text": "VMware Workstation"
+        },
+        {
+          "id": "d",
+          "text": "Parallels Desktop"
+        },
+        {
+          "id": "e",
+          "text": "Microsoft Hyper-V"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Un hyperviseur de type 1 (bare metal) s'exécute directement sur le matériel du serveur et répartit lui-même le CPU, la mémoire et les entrées-sorties entre les VM : c'est le cas de VMware ESXi et de Microsoft Hyper-V, courants dans les datacenters. Hyper-V reste de type 1 même lorsqu'on l'active comme rôle de Windows : l'hyperviseur se place sous Windows, qui devient sa partition parente. Un hyperviseur de type 2 (hosted) s'exécute comme une application sur un système d'exploitation hôte : VirtualBox, VMware Workstation, Parallels Desktop.",
+    "distractorNotes": {
+      "a": "VirtualBox s'installe comme une application sur Windows, macOS ou Linux : c'est un hyperviseur de type 2.",
+      "c": "VMware Workstation s'exécute sur un OS hôte Windows ou Linux : c'est un hyperviseur de type 2 ; chez VMware, le produit de type 1 est ESXi.",
+      "d": "Parallels Desktop s'exécute comme une application sur macOS : c'est un hyperviseur de type 2."
+    },
+    "reference": "NIST SP 800-125, Guide to Security for Full Virtualization Technologies"
+  },
+  {
+    "slug": "ccna-1.12-virtualization-components-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque élément d'un serveur de virtualisation à son rôle.",
+      "left": [
+        {
+          "id": "hyp",
+          "text": "Hyperviseur"
+        },
+        {
+          "id": "vm",
+          "text": "Machine virtuelle"
+        },
+        {
+          "id": "vnic",
+          "text": "Carte réseau virtuelle (vNIC)"
+        },
+        {
+          "id": "vsw",
+          "text": "Commutateur virtuel (vSwitch)"
+        },
+        {
+          "id": "pnic",
+          "text": "Carte réseau physique de l'hôte"
+        }
+      ],
+      "right": [
+        {
+          "id": "rVsw",
+          "text": "Relie en couche 2 les VM entre elles et vers l'extérieur de l'hôte"
+        },
+        {
+          "id": "rCont",
+          "text": "Partage le noyau du système d'exploitation hôte avec d'autres instances isolées"
+        },
+        {
+          "id": "rHyp",
+          "text": "Répartit le CPU, la mémoire et les entrées-sorties du serveur entre les VM"
+        },
+        {
+          "id": "rPnic",
+          "text": "Sert de liaison montante vers un commutateur du réseau physique"
+        },
+        {
+          "id": "rVm",
+          "text": "Ensemble isolé de matériel virtuel sur lequel s'exécute un système d'exploitation invité"
+        },
+        {
+          "id": "rVnic",
+          "text": "Interface Ethernet, avec sa propre adresse MAC, que voit le système d'exploitation invité"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "hyp": "rHyp",
+        "vm": "rVm",
+        "vnic": "rVnic",
+        "vsw": "rVsw",
+        "pnic": "rPnic"
+      }
+    },
+    "explanation": "L'hyperviseur partage les ressources physiques du serveur entre les VM. Chaque VM est un ensemble isolé de matériel virtuel (vCPU, mémoire, disques, vNIC) sur lequel s'installe un système d'exploitation invité. Celui-ci voit chaque vNIC comme une carte Ethernet ordinaire, avec sa propre adresse MAC. Le vSwitch, logiciel intégré à l'hyperviseur, commute les trames entre les vNIC et vers les cartes physiques de l'hôte, qui servent de liaisons montantes vers le réseau physique.",
+    "distractorNotes": {
+      "rCont": "Partager le noyau de l'OS hôte entre instances isolées décrit un conteneur, absent de la liste de gauche ; une VM exécute son propre noyau."
+    },
+    "reference": "NIST SP 800-125, Guide to Security for Full Virtualization Technologies ; VMware vSphere Networking (vSphere Standard Switch, étiquetage VLAN en mode VST)"
+  },
+  {
+    "slug": "ccna-1.12-vm-characteristics-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les machines virtuelles exécutées par un hyperviseur sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Toutes les VM d'un hôte partagent le noyau du système d'exploitation de l'hôte."
+        },
+        {
+          "id": "b",
+          "text": "Des VM sous Windows et sous Linux peuvent tourner en même temps sur un même hôte."
+        },
+        {
+          "id": "c",
+          "text": "Une VM ne peut posséder qu'une seule carte réseau virtuelle."
+        },
+        {
+          "id": "d",
+          "text": "Une VM est stockée sous forme de fichiers, ce qui facilite sa copie et sa sauvegarde."
+        },
+        {
+          "id": "e",
+          "text": "Chaque VM doit disposer de sa propre carte réseau physique sur l'hôte."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Chaque VM exécute son propre système d'exploitation invité sur du matériel virtuel : un même hôte peut donc faire tourner en même temps des VM Windows et Linux. Une VM n'est qu'un ensemble de fichiers (configuration, disques virtuels, état de la mémoire), ce qui facilite sa copie, sa sauvegarde, son clonage et sa migration vers un autre hôte. Une VM peut avoir plusieurs vNIC, et les vNIC de toutes les VM se partagent les cartes physiques de l'hôte par l'intermédiaire du vSwitch.",
+    "distractorNotes": {
+      "a": "Partager le noyau de l'hôte est le propre des conteneurs ; chaque VM exécute son propre noyau, dans son OS invité.",
+      "c": "Une VM peut posséder plusieurs vNIC, par exemple une par réseau ou par VLAN.",
+      "e": "Les vNIC de toutes les VM se partagent les cartes physiques de l'hôte grâce au vSwitch : une carte par VM n'est pas nécessaire."
+    },
+    "reference": "NIST SP 800-125, Guide to Security for Full Virtualization Technologies"
+  },
+  {
+    "slug": "ccna-1.12-vswitch-local-switching-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. VM1 envoie un fichier à VM2, puis un autre à VM3. Lequel de ces deux flux passe par la liaison entre vmnic0 et Gi1/0/5 ?",
+      "exhibit": "Hôte ESXi : un vSwitch standard (couche 2), une carte physique vmnic0\n  VM1 : port group VLAN 10, 10.10.10.11/24, passerelle 10.10.10.1\n  VM2 : port group VLAN 10, 10.10.10.12/24, passerelle 10.10.10.1\n  VM3 : port group VLAN 20, 10.10.20.13/24, passerelle 10.10.20.1\n\nvmnic0 <-> SW1 Gi1/0/5 : trunk 802.1Q, VLAN 10 et 20 autorisés\nSW1 : interface Vlan10 (10.10.10.1/24), interface Vlan20 (10.10.20.1/24)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les deux flux"
+        },
+        {
+          "id": "b",
+          "text": "Seulement le flux vers VM2"
+        },
+        {
+          "id": "c",
+          "text": "Seulement le flux vers VM3"
+        },
+        {
+          "id": "d",
+          "text": "Aucun des deux flux"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le vSwitch standard est un commutateur de couche 2. VM1 et VM2 sont dans le même VLAN et le même sous-réseau : VM1 envoie ses trames directement à l'adresse MAC de VM2, et le vSwitch les commute en mémoire, sans les envoyer sur vmnic0. VM3 est dans un autre sous-réseau : VM1 envoie les paquets à sa passerelle 10.10.10.1, la SVI de SW1. Les trames montent par le trunk avec l'étiquette VLAN 10, SW1 les route, puis les renvoie par le même trunk avec l'étiquette VLAN 20 : ce flux traverse la liaison deux fois.",
+    "distractorNotes": {
+      "a": "Entre deux VM du même VLAN sur le même vSwitch, les trames unicast sont commutées dans l'hôte et ne sortent pas par vmnic0.",
+      "b": "C'est l'inverse : le flux vers VM2 reste dans le vSwitch, celui vers VM3 doit être routé par SW1.",
+      "d": "Un vSwitch standard ne route pas : le trafic entre VLAN doit remonter jusqu'à la SVI de SW1."
+    },
+    "reference": "VMware vSphere Networking (vSphere Standard Switch, étiquetage VLAN en mode VST)"
+  },
+  {
+    "slug": "ccna-1.12-vswitch-trunk-vlan-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'interface Gi1/0/12 de SW2 est reliée à la carte physique d'un hôte ESXi dont le vSwitch porte trois port groups : VLAN 110, VLAN 120 et VLAN 130. Les VM des VLAN 110 et 120 fonctionnent. Une nouvelle VM du VLAN 130 ne joint pas sa passerelle 10.1.130.1, une SVI de SW2 qui dessert déjà des serveurs physiques du VLAN 130. Que faut-il faire ?",
+      "exhibit": "SW2#show interfaces GigabitEthernet1/0/12 trunk\n\nPort        Mode             Encapsulation  Status        Native vlan\nGi1/0/12    on               802.1q         trunking      1\n\nPort        Vlans allowed on trunk\nGi1/0/12    110,120\n\nPort        Vlans allowed and active in management domain\nGi1/0/12    110,120\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi1/0/12    110,120",
+      "options": [
+        {
+          "id": "a",
+          "text": "Passer Gi1/0/12 en mode access dans le VLAN 130"
+        },
+        {
+          "id": "b",
+          "text": "Faire du VLAN 130 le VLAN natif de Gi1/0/12"
+        },
+        {
+          "id": "c",
+          "text": "Créer sur l'hôte un second vSwitch, sans carte physique, pour le VLAN 130"
+        },
+        {
+          "id": "d",
+          "text": "Ajouter le VLAN 130 à la liste des VLAN autorisés sur Gi1/0/12"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le vSwitch étiquette les trames de chaque port group avec son VLAN (802.1Q) et les envoie par la carte physique. L'exhibit montre que Gi1/0/12 est bien un trunk, mais que seuls les VLAN 110 et 120 y sont autorisés : SW2 rejette les trames étiquetées 130. Il faut ajouter le VLAN à la liste, avec « switchport trunk allowed vlan add 130 ». Sans le mot-clé add, la commande remplacerait la liste entière et couperait les VLAN 110 et 120.",
+    "distractorNotes": {
+      "a": "En mode access, le port ne transporterait plus qu'un seul VLAN : les VM des VLAN 110 et 120 perdraient le réseau.",
+      "b": "Le VLAN natif ne concerne que les trames non étiquetées ; or le vSwitch étiquette celles du VLAN 130, qui resteraient rejetées tant que ce VLAN n'est pas autorisé sur le trunk.",
+      "c": "Un vSwitch sans carte physique ne relie les VM qu'entre elles, à l'intérieur de l'hôte : la VM ne pourrait plus du tout joindre SW2."
+    },
+    "reference": "VMware vSphere Networking (vSphere Standard Switch, étiquetage VLAN en mode VST) ; Cisco Catalyst 9300 VLAN Configuration Guide (switchport trunk allowed vlan)"
+  },
+  {
+    "slug": "ccna-1.12-container-orchestrator-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel est le rôle principal d'un orchestrateur de conteneurs tel que Kubernetes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Déployer les conteneurs sur un ensemble d'hôtes, les répliquer et les relancer en cas de panne"
+        },
+        {
+          "id": "b",
+          "text": "Virtualiser le matériel pour exécuter des systèmes d'exploitation invités complets"
+        },
+        {
+          "id": "c",
+          "text": "Stocker les images de conteneurs et les distribuer aux hôtes qui les demandent"
+        },
+        {
+          "id": "d",
+          "text": "Fournir à chaque hôte le noyau que partagent ses conteneurs"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un orchestrateur comme Kubernetes gère des conteneurs sur un ensemble d'hôtes (un cluster) : il choisit l'hôte où lancer chaque conteneur, maintient le nombre d'instances demandé, en ajoute ou en retire selon la charge et relance ailleurs les conteneurs d'un hôte en panne. Il s'appuie pour cela sur le moteur de conteneurs de chaque hôte, qui récupère les images dans un registre. Sans orchestrateur, ces opérations se font hôte par hôte, à la main.",
+    "distractorNotes": {
+      "b": "Virtualiser le matériel pour des OS invités est le rôle d'un hyperviseur, comme ESXi ou Hyper-V.",
+      "c": "Stocker et distribuer les images est le rôle d'un registre, comme Docker Hub.",
+      "d": "Le noyau partagé est celui du système d'exploitation de chaque hôte ; l'orchestrateur ne le fournit pas."
+    },
+    "reference": "Kubernetes documentation, Overview ; NIST SP 800-190, Application Container Security Guide"
+  },
+  {
+    "slug": "ccna-1.12-container-terms-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque terme lié aux conteneurs à sa définition.",
+      "left": [
+        {
+          "id": "img",
+          "text": "Image de conteneur"
+        },
+        {
+          "id": "ctr",
+          "text": "Conteneur"
+        },
+        {
+          "id": "reg",
+          "text": "Registre (par exemple Docker Hub)"
+        },
+        {
+          "id": "eng",
+          "text": "Moteur de conteneurs (par exemple Docker Engine)"
+        }
+      ],
+      "right": [
+        {
+          "id": "rReg",
+          "text": "Dépôt à partir duquel les hôtes téléchargent les modèles d'application"
+        },
+        {
+          "id": "rImg",
+          "text": "Modèle en lecture seule qui réunit une application et ses dépendances"
+        },
+        {
+          "id": "rHyp",
+          "text": "Logiciel qui présente un matériel virtuel complet à des systèmes d'exploitation invités"
+        },
+        {
+          "id": "rEng",
+          "text": "Logiciel d'un hôte qui crée et exécute les instances en s'appuyant sur son noyau"
+        },
+        {
+          "id": "rCtr",
+          "text": "Instance isolée, en cours d'exécution, créée à partir d'un modèle"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "img": "rImg",
+        "ctr": "rCtr",
+        "reg": "rReg",
+        "eng": "rEng"
+      }
+    },
+    "explanation": "Une image est un modèle en lecture seule qui contient l'application, ses bibliothèques et ses fichiers, mais pas de noyau. Un conteneur est une instance de cette image en cours d'exécution, isolée des autres par le noyau de l'hôte (namespaces et cgroups sous Linux). Les images sont publiées dans un registre, public comme Docker Hub ou privé, d'où les hôtes les téléchargent. Sur chaque hôte, le moteur de conteneurs (Docker Engine, containerd…) crée et exécute les conteneurs.",
+    "distractorNotes": {
+      "rHyp": "Présenter un matériel virtuel complet à des OS invités est le rôle d'un hyperviseur, qui n'intervient pas dans le fonctionnement des conteneurs."
+    },
+    "reference": "NIST SP 800-190, Application Container Security Guide"
+  },
+  {
+    "slug": "ccna-1.12-docker-host-facts-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un serveur Linux exécute Docker Engine. Quelles deux affirmations sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une modification faite dans un conteneur en cours d'exécution est enregistrée dans son image."
+        },
+        {
+          "id": "b",
+          "text": "Plusieurs conteneurs peuvent être lancés à partir d'une même image."
+        },
+        {
+          "id": "c",
+          "text": "Un conteneur Windows peut s'y exécuter directement, sur le noyau Linux de l'hôte."
+        },
+        {
+          "id": "d",
+          "text": "Ce serveur pourrait tout aussi bien être une VM hébergée par un hyperviseur."
+        },
+        {
+          "id": "e",
+          "text": "Un conteneur ne peut démarrer que sur l'hôte où son image a été construite."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Une image est un modèle en lecture seule : on peut en lancer autant de conteneurs que nécessaire, chacun recevant sa propre couche inscriptible. Les modifications faites dans un conteneur vont dans cette couche, pas dans l'image ; pour changer l'image, on en construit une nouvelle version. Un moteur de conteneurs n'a besoin que d'un OS hôte, qui peut tourner sur un serveur physique ou dans une VM, ce qui est très courant. Enfin, les conteneurs utilisent le noyau de l'hôte : un conteneur Windows exige un noyau Windows.",
+    "distractorNotes": {
+      "a": "L'image est en lecture seule : les écritures d'un conteneur vont dans sa propre couche inscriptible, et l'image reste intacte.",
+      "c": "Un conteneur utilise le noyau de l'hôte : un conteneur Windows a besoin d'un noyau Windows et ne peut pas s'exécuter sur un hôte Linux.",
+      "e": "Une image publiée dans un registre peut être téléchargée et lancée sur n'importe quel hôte compatible : c'est la portabilité des conteneurs."
+    },
+    "reference": "NIST SP 800-190, Application Container Security Guide ; Docker documentation (images, conteneurs et couches de stockage)"
+  },
+  {
+    "slug": "ccna-1.12-container-host-kernel-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le serveur srv1, sous Ubuntu 22.04, exécute trois conteneurs avec Docker Engine, dans sa configuration par défaut. L'image du conteneur app est basée sur Ubuntu 20.04, distribution livrée à l'origine avec un noyau de la série 5.4. Quelle version de noyau affiche la commande uname -r exécutée dans le conteneur app ?",
+      "exhibit": "admin@srv1:~$ uname -r\n5.15.0-91-generic\nadmin@srv1:~$ docker ps --format \"table {{.Names}}\\t{{.Image}}\"\nNAMES     IMAGE\nweb       nginx:1.25-alpine\napp       ubuntu:20.04\ndb        postgres:16-bookworm",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une version 5.4, celle du noyau d'Ubuntu 20.04 fourni par l'image"
+        },
+        {
+          "id": "b",
+          "text": "Aucune : la commande échoue, car un conteneur n'a pas de noyau"
+        },
+        {
+          "id": "c",
+          "text": "Celle du noyau d'une VM légère que Docker Engine crée pour le conteneur"
+        },
+        {
+          "id": "d",
+          "text": "5.15.0-91-generic, la version du noyau de srv1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un conteneur n'embarque pas de noyau : son image ne contient que l'espace utilisateur d'une distribution (bibliothèques, outils) et l'application. Les trois conteneurs de srv1, qu'ils soient basés sur Alpine, Ubuntu ou Debian, s'exécutent sur le noyau de l'hôte, qui les isole grâce aux namespaces et aux cgroups. uname -r interroge ce noyau partagé et affiche donc 5.15.0-91-generic dans chacun d'eux. C'est aussi pourquoi un conteneur ne peut pas utiliser une fonction absente du noyau de l'hôte.",
+    "distractorNotes": {
+      "a": "L'image ubuntu:20.04 ne contient que l'espace utilisateur d'Ubuntu 20.04, pas son noyau : le conteneur utilise celui de l'hôte.",
+      "b": "Un conteneur adresse ses appels système au noyau de l'hôte : uname fonctionne et affiche la version de ce noyau.",
+      "c": "Docker Engine ne crée aucune VM : un conteneur est un ensemble de processus isolés, exécutés directement sur le noyau de l'hôte. Une VM n'intervient qu'avec Docker Desktop, qui fait tourner le moteur dans une VM, ou avec des environnements d'exécution particuliers."
+    },
+    "reference": "NIST SP 800-190, Application Container Security Guide"
+  },
+  {
+    "slug": "ccna-1.12-container-image-workflow-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une équipe publie une nouvelle version de son application conteneurisée, qui sera lancée sur un autre serveur que celui où elle est construite. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "pull",
+          "text": "Télécharger l'image depuis le registre sur le serveur cible (docker pull)"
+        },
+        {
+          "id": "df",
+          "text": "Écrire le Dockerfile qui décrit l'image"
+        },
+        {
+          "id": "run",
+          "text": "Lancer un conteneur à partir de l'image (docker run)"
+        },
+        {
+          "id": "push",
+          "text": "Envoyer l'image vers un registre (docker push)"
+        },
+        {
+          "id": "build",
+          "text": "Construire l'image (docker build)"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "df",
+        "build",
+        "push",
+        "pull",
+        "run"
+      ]
+    },
+    "explanation": "On décrit d'abord l'image dans un Dockerfile (image de base, fichiers à copier, commande à lancer), puis « docker build » construit l'image sur la machine de construction. « docker push » la publie dans un registre, d'où le serveur cible la récupère par « docker pull ». « docker run » crée enfin un conteneur à partir de l'image locale, en la téléchargeant d'abord si elle manque. Le registre est le point de passage qui rend l'image portable d'un hôte à l'autre ; un orchestrateur automatise les dernières étapes sur tout un cluster.",
+    "reference": "Docker documentation (docker build, docker push, docker pull, docker run) ; NIST SP 800-190, Application Container Security Guide"
+  },
+  {
+    "slug": "ccna-1.12-vrf-purpose-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Que permet la fonction VRF sur un routeur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Exécuter une instance de Spanning Tree par VLAN"
+        },
+        {
+          "id": "b",
+          "text": "Transporter plusieurs VLAN sur une seule liaison physique"
+        },
+        {
+          "id": "c",
+          "text": "Partager une adresse de passerelle virtuelle entre deux routeurs"
+        },
+        {
+          "id": "d",
+          "text": "Maintenir plusieurs tables de routage isolées les unes des autres"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une VRF (Virtual Routing and Forwarding) est une table de routage et de transfert propre à un ensemble d'interfaces. Un routeur peut en héberger plusieurs, en plus de la table globale : chaque interface ou sous-interface est placée dans une seule VRF, et les paquets ne passent pas d'une VRF à l'autre sans configuration explicite. Les tables étant isolées, deux clients peuvent utiliser les mêmes sous-réseaux sur le même routeur, comme s'ils disposaient de deux routeurs distincts.",
+    "distractorNotes": {
+      "a": "Une instance STP par VLAN, c'est PVST+ ou Rapid PVST+, une fonction de couche 2 sans rapport avec les VRF.",
+      "b": "Transporter plusieurs VLAN sur une liaison est le rôle d'un trunk 802.1Q.",
+      "c": "Partager une passerelle virtuelle entre routeurs est le rôle d'un FHRP comme HSRP ou VRRP."
+    },
+    "reference": "Cisco IOS XE IP Routing Configuration Guide (VRF-lite) ; Cisco IOS XE MPLS Layer 3 VPNs Configuration Guide (vrf definition, vrf forwarding)"
+  },
+  {
+    "slug": "ccna-1.12-vrf-table-count-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit, qui montre toutes les VRF et toutes les interfaces de R2. Complétez.",
+      "exhibit": "R2#show vrf\n  Name                             Default RD            Protocols   Interfaces\n  BLUE                             <not set>             ipv4        Gi0/0/2\n                                                                     Gi0/1/0\n  RED                              <not set>             ipv4        Gi0/0/1\n                                                                     Gi0/1/1\n\nR2#show ip interface brief\nInterface              IP-Address      OK? Method Status                Protocol\nGigabitEthernet0/0/0   198.51.100.1    YES manual up                    up\nGigabitEthernet0/0/1   192.168.10.1    YES manual up                    up\nGigabitEthernet0/0/2   192.168.10.1    YES manual up                    up\nGigabitEthernet0/1/0   192.168.20.1    YES manual up                    up\nGigabitEthernet0/1/1   192.168.30.1    YES manual up                    up",
+      "fields": [
+        {
+          "id": "tables",
+          "label": "Nombre de tables de routage IPv4 de R2, table globale comprise (nombre entier)"
+        },
+        {
+          "id": "blue",
+          "label": "Nombre de routes de code C dans la table de la VRF BLUE (nombre entier)"
+        },
+        {
+          "id": "global",
+          "label": "Nombre de routes de code C dans la table globale (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "tables": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        },
+        "blue": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        },
+        "global": {
+          "accepted": [
+            "1"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "R2 maintient une table globale et une table par VRF, RED et BLUE : 3 tables IPv4. Chaque interface appartient à une seule table : Gi0/0/2 et Gi0/1/0 à BLUE, Gi0/0/1 et Gi0/1/1 à RED, et Gi0/0/0, absente de show vrf, à la table globale. Toutes étant up/up, BLUE contient 2 routes connectées, les réseaux de Gi0/0/2 et de Gi0/1/0, et la table globale une seule, celle du réseau de Gi0/0/0. L'adresse 192.168.10.1 figure dans RED et dans BLUE sans conflit, car les tables sont indépendantes ; « show ip route vrf BLUE » le confirme.",
+    "reference": "Cisco IOS XE IP Routing Configuration Guide (VRF-lite) ; Cisco IOS XE MPLS Layer 3 VPNs Configuration Guide (vrf definition, vrf forwarding)"
+  },
+  {
+    "slug": "ccna-1.12-vrf-lite-facts-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur VRF-lite sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les routes de chaque VRF sont aussi copiées dans la table globale."
+        },
+        {
+          "id": "b",
+          "text": "VRF-lite sépare les tables de routage sans utiliser MPLS entre les routeurs."
+        },
+        {
+          "id": "c",
+          "text": "Une VRF ne peut contenir qu'une seule interface."
+        },
+        {
+          "id": "d",
+          "text": "VRF-lite n'existe que sur les commutateurs multicouches, pas sur les routeurs."
+        },
+        {
+          "id": "e",
+          "text": "Un processus OSPF distinct peut tourner dans chaque VRF."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "VRF-lite désigne l'usage des VRF sans MPLS : chaque routeur ou commutateur multicouche maintient localement ses tables séparées, et la séparation se prolonge de proche en proche, avec une interface ou une sous-interface par VRF sur chaque lien. Un protocole de routage peut être lancé séparément dans chaque VRF, par exemple « router ospf 10 vrf RED ». Les tables restent isolées : rien n'est copié dans la table globale ni d'une VRF à l'autre sans configuration explicite (fuite de routes). Une VRF peut regrouper autant d'interfaces que nécessaire.",
+    "distractorNotes": {
+      "a": "Les tables sont isolées : les routes d'une VRF n'apparaissent pas dans la table globale, sauf fuite de routes configurée explicitement.",
+      "c": "Une VRF peut regrouper plusieurs interfaces ; c'est une interface qui n'appartient qu'à une seule VRF.",
+      "d": "VRF-lite fonctionne sur les routeurs comme sur les commutateurs multicouches."
+    },
+    "reference": "Cisco IOS XE IP Routing Configuration Guide (VRF-lite) ; Cisco IOS XE MPLS Layer 3 VPNs Configuration Guide (vrf definition, vrf forwarding)"
+  },
+  {
+    "slug": "ccna-1.12-vrf-forwarding-ip-removed-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sur R1, l'administrateur a configuré l'adresse 172.16.30.1/24 sur Gi0/0/3, puis a placé l'interface dans la VRF CLIENT-C. Depuis, les hôtes du client C, raccordés derrière Gi0/0/3, ne joignent plus leur passerelle 172.16.30.1. Quelle est la cause ?",
+      "exhibit": "R1#show running-config | section interface GigabitEthernet0/0/3\ninterface GigabitEthernet0/0/3\n vrf forwarding CLIENT-C\n no ip address\n negotiation auto",
+      "options": [
+        {
+          "id": "a",
+          "text": "La commande vrf forwarding a effacé l'adresse IP, qu'il faut saisir de nouveau"
+        },
+        {
+          "id": "b",
+          "text": "La VRF CLIENT-C n'a pas de route par défaut pour joindre les hôtes"
+        },
+        {
+          "id": "c",
+          "text": "Une interface physique ne peut pas entrer dans une VRF, seule une sous-interface le peut"
+        },
+        {
+          "id": "d",
+          "text": "L'adresse 172.16.30.1/24 chevauche un sous-réseau de la table globale"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Sur IOS, la commande « vrf forwarding » efface les adresses IP déjà configurées sur l'interface et le signale par un message à la console au moment où elle est saisie. L'adresse appartenait à la table globale : IOS la retire au lieu de la déplacer dans la nouvelle table. La configuration montre bien « no ip address » ; il faut ressaisir « ip address 172.16.30.1 255.255.255.0 », qui place alors l'adresse dans la VRF CLIENT-C. Pour éviter le piège, on tape toujours « vrf forwarding » avant « ip address ».",
+    "distractorNotes": {
+      "b": "La passerelle est sur le réseau directement connecté à Gi0/0/3 : aucune route par défaut n'est nécessaire pour la joindre.",
+      "c": "Une interface physique peut appartenir à une VRF ; les sous-interfaces servent à transporter plusieurs VRF sur un même lien.",
+      "d": "Un chevauchement n'est refusé qu'à l'intérieur d'une même table ; et l'interface n'a plus d'adresse du tout, comme le montre « no ip address »."
+    },
+    "reference": "Cisco IOS XE IP Routing Configuration Guide (VRF-lite) ; Cisco IOS XE MPLS Layer 3 VPNs Configuration Guide (vrf definition, vrf forwarding)"
+  },
+  {
+    "slug": "ccna-1.12-vrf-lite-subinterfaces-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.12",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 et R2 utilisent VRF-lite pour séparer les trafics des clients A et B, qui doivent rester isolés de bout en bout. Les deux routeurs ne sont reliés que par un seul lien physique. Comment transporter les deux VRF sur ce lien ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Placer de chaque côté l'interface physique dans les deux VRF à la fois"
+        },
+        {
+          "id": "b",
+          "text": "Créer de chaque côté une sous-interface 802.1Q par VRF, placée dans sa VRF"
+        },
+        {
+          "id": "c",
+          "text": "Laisser le lien dans la table globale : R2 retrouve la VRF d'origine des paquets"
+        },
+        {
+          "id": "d",
+          "text": "Configurer les VRF sur R1 seulement : R2 les apprend par le protocole de routage"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "VRF-lite n'ajoute aux paquets aucun label qui identifie la VRF : un routeur déduit la VRF d'un paquet de l'interface par laquelle il arrive. Pour transporter deux VRF sur un même lien physique, on crée donc de chaque côté une sous-interface par VRF, chacune avec son VLAN 802.1Q (« encapsulation dot1Q ») et sa commande « vrf forwarding ». Chaque VRF est configurée sur les deux routeurs, avec son propre sous-réseau de liaison et, au besoin, son propre processus de routage. C'est la différence avec MPLS, où un label identifie le VPN.",
+    "distractorNotes": {
+      "a": "Une interface n'appartient qu'à une seule VRF : elle ne peut pas être placée dans deux VRF à la fois.",
+      "c": "Dans la table globale, les paquets ne portent aucune trace de leur VRF d'origine : R2 ne pourrait pas les séparer, et les adresses qui se chevauchent entreraient en conflit.",
+      "d": "Une VRF est locale à chaque routeur : R2 doit avoir ses propres VRF, car un protocole de routage échange des routes, pas des définitions de VRF."
+    },
+    "reference": "Cisco IOS XE IP Routing Configuration Guide (VRF-lite) ; Cisco IOS XE MPLS Layer 3 VPNs Configuration Guide (vrf definition, vrf forwarding)"
+  }
+]

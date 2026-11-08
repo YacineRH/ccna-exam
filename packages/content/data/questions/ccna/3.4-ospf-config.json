@@ -1,0 +1,1323 @@
+[
+  {
+    "slug": "ccna-3.4-ospf-network-wildcard-28-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'interface G0/1 de R1 a l'adresse 172.16.4.33/28. Sous « router ospf 1 », quelle commande active OSPF dans l'area 0 sur toutes les adresses du sous-réseau de G0/1, et sur celles-là seulement ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "network 172.16.4.32 0.0.0.31 area 0"
+        },
+        {
+          "id": "b",
+          "text": "network 172.16.4.0 0.0.0.15 area 0"
+        },
+        {
+          "id": "c",
+          "text": "network 172.16.4.32 0.0.0.15 area 0"
+        },
+        {
+          "id": "d",
+          "text": "network 172.16.4.48 0.0.0.15 area 0"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un /28 compte 16 adresses : le masque 255.255.255.240 a pour wildcard 0.0.0.15 (255 − 240 = 15). L'adresse 172.16.4.33 tombe dans le bloc 172.16.4.32 à 172.16.4.47 (32 est le multiple de 16 juste en dessous de 33). La commande « network 172.16.4.32 0.0.0.15 area 0 » compare les 28 premiers bits de chaque adresse d'interface à ceux de 172.16.4.32 : elle couvre exactement ce sous-réseau et active OSPF sur G0/1. Le wildcard sert seulement à choisir les interfaces ; le préfixe annoncé reste celui de l'interface.",
+    "distractorNotes": {
+      "a": "Le wildcard 0.0.0.31 couvre 32 adresses, de 172.16.4.32 à 172.16.4.63 : il active bien G0/1, mais déborde du sous-réseau /28.",
+      "b": "Cette plage va de 172.16.4.0 à 172.16.4.15 et ne contient pas 172.16.4.33 : G0/1 n'est pas activée.",
+      "d": "Cette plage va de 172.16.4.48 à 172.16.4.63 : c'est le /28 suivant, qui ne contient pas 172.16.4.33."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-network-match-exhibit-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sur quelle interface de R1 OSPF n'est-il pas activé ?",
+      "exhibit": "R1# show ip interface brief\nInterface              IP-Address      OK? Method Status                Protocol\nGigabitEthernet0/0     10.10.1.1       YES manual up                    up\nGigabitEthernet0/1     10.10.4.1       YES manual up                    up\nGigabitEthernet0/2     172.16.31.254   YES manual up                    up\nLoopback0              192.168.255.1   YES manual up                    up\n\nR1# show running-config | section router ospf\nrouter ospf 1\n network 10.10.0.0 0.0.3.255 area 0\n network 172.16.16.0 0.0.15.255 area 0\n network 192.168.255.1 0.0.0.0 area 0",
+      "options": [
+        {
+          "id": "a",
+          "text": "GigabitEthernet0/0"
+        },
+        {
+          "id": "b",
+          "text": "GigabitEthernet0/1"
+        },
+        {
+          "id": "c",
+          "text": "GigabitEthernet0/2"
+        },
+        {
+          "id": "d",
+          "text": "Loopback0"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une commande network active OSPF sur une interface si son adresse est égale à l'adresse de la commande sur tous les bits où le wildcard vaut 0. « 10.10.0.0 0.0.3.255 » couvre 10.10.0.0 à 10.10.3.255 : G0/0 (10.10.1.1) est activée, mais pas G0/1, car 4 dépasse la plage 0 à 3 du troisième octet. « 172.16.16.0 0.0.15.255 » couvre 172.16.16.0 à 172.16.31.255 et inclut donc 172.16.31.254 (G0/2). « 192.168.255.1 0.0.0.0 » ne couvre qu'une adresse, exactement celle de Loopback0. Il faudrait par exemple « network 10.10.4.0 0.0.0.255 area 0 » pour G0/1.",
+    "distractorNotes": {
+      "a": "10.10.1.1 est dans la plage 10.10.0.0 à 10.10.3.255 de la première commande network : OSPF est actif sur G0/0.",
+      "c": "Le wildcard 0.0.15.255 couvre 172.16.16.0 à 172.16.31.255 (troisième octet de 16 à 31) : 172.16.31.254 est dans cette plage, donc G0/2 est activée.",
+      "d": "Avec le wildcard 0.0.0.0, la commande ne couvre qu'une seule adresse, 192.168.255.1, qui est justement celle de Loopback0."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-interface-mode-command-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Laquelle de ces commandes OSPFv2 se saisit en mode de configuration d'interface (invite R1(config-if)#) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "passive-interface GigabitEthernet0/1"
+        },
+        {
+          "id": "b",
+          "text": "default-information originate"
+        },
+        {
+          "id": "c",
+          "text": "network 10.1.1.0 0.0.0.255 area 0"
+        },
+        {
+          "id": "d",
+          "text": "ip ospf 1 area 0"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "« ip ospf 1 area 0 » est la méthode par interface : saisie sous une interface, elle l'attache au processus OSPF 1 dans l'area 0, sans commande network. Les trois autres commandes se saisissent dans le mode du processus (R1(config-router)#, après « router ospf 1 ») : passive-interface, default-information originate et network agissent sur le processus et désignent, le cas échéant, l'interface ou la plage d'adresses visée. Les deux méthodes d'activation peuvent coexister sur un même routeur.",
+    "distractorNotes": {
+      "a": "passive-interface est une commande du mode router : on y nomme l'interface concernée, au lieu de se placer dans celle-ci.",
+      "b": "default-information originate s'applique à tout le processus OSPF ; elle se saisit après « router ospf 1 ».",
+      "c": "La commande network appartient au mode router : elle désigne les interfaces par leur adresse et un wildcard."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-passive-default-effect-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 a trois voisins OSPF FULL, sur G0/0, G0/1 et G0/2. Un administrateur saisit « passive-interface default » sous « router ospf 1 », sans autre commande. Quelle est la conséquence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les adjacences existantes restent FULL ; seules les nouvelles adjacences sont empêchées."
+        },
+        {
+          "id": "b",
+          "text": "R1 cesse d'envoyer des Hello sur toutes ses interfaces et perd ses trois adjacences."
+        },
+        {
+          "id": "c",
+          "text": "R1 retire de sa LSDB les sous-réseaux de ses interfaces, qui ne sont plus annoncés."
+        },
+        {
+          "id": "d",
+          "text": "Seules les interfaces loopback de R1 deviennent passives ; les interfaces physiques ne changent pas."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« passive-interface default » rend passives toutes les interfaces du processus, y compris celles qui ont déjà des voisins. Une interface passive n'envoie plus de Hello et n'en traite plus : IOS fait tomber les adjacences de R1 sur G0/0, G0/1 et G0/2. Les sous-réseaux de ces interfaces restent dans le LSA de type 1 de R1, mais sans voisin, ils ne sont plus diffusés aux autres routeurs. C'est pourquoi on fait suivre cette commande de « no passive-interface » sur chaque interface qui doit garder un voisin OSPF.",
+    "distractorNotes": {
+      "a": "Une adjacence vit des Hello échangés ; sur une interface passive, R1 n'en envoie plus et ne traite plus ceux du voisin, donc l'adjacence tombe.",
+      "c": "Une interface passive reste dans OSPF : son sous-réseau reste dans le LSA de type 1 de R1, il n'est pas retiré de la LSDB.",
+      "d": "Le mot-clé default vise toutes les interfaces du processus, physiques comme loopback."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-default-info-route-lost-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. G0/1 relie R1 au FAI (203.0.113.1). Hier, R2, voisin de R1 par G0/0, avait la route « O*E2 0.0.0.0/0 » vers R1. Aujourd'hui, sans que la configuration ait changé, l'adjacence R1–R2 est toujours FULL, mais cette route a disparu de la table de R2. Quelle est la cause ?",
+      "exhibit": "R1# show running-config | section router ospf\nrouter ospf 1\n network 10.0.0.0 0.255.255.255 area 0\n default-information originate\nR1# show running-config | include ip route\nip route 0.0.0.0 0.0.0.0 203.0.113.1\nR1# show ip interface brief\nInterface              IP-Address      OK? Method Status                Protocol\nGigabitEthernet0/0     10.0.12.1       YES manual up                    up\nGigabitEthernet0/1     203.0.113.2     YES manual down                  down",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2 n'a pas « default-information originate » et refuse donc le LSA de la route par défaut."
+        },
+        {
+          "id": "b",
+          "text": "Aucune commande network ne couvre 203.0.113.2, si bien que R1 ne peut pas annoncer de route par défaut."
+        },
+        {
+          "id": "c",
+          "text": "La panne de G0/1 a arrêté le processus OSPF de R1, qui ne diffuse plus aucun LSA."
+        },
+        {
+          "id": "d",
+          "text": "La route statique par défaut de R1 a quitté sa table, et sans « always » R1 cesse d'annoncer 0.0.0.0/0."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "G0/1 est down : le réseau 203.0.113.0 disparaît de la table de R1, le next hop 203.0.113.1 devient injoignable et la route statique par défaut n'est plus installée. Or, sans le mot-clé always, « default-information originate » ne génère le LSA de type 5 pour 0.0.0.0/0 que tant qu'une route par défaut figure dans la table de routage de R1. R1 retire donc ce LSA (en le faisant vieillir jusqu'à MaxAge), et R2 supprime sa route O*E2. Avec « default-information originate always », l'annonce resterait en place, mais R1 attirerait alors un trafic qu'il ne pourrait plus acheminer.",
+    "distractorNotes": {
+      "a": "Seul le routeur qui génère la route par défaut a besoin de cette commande ; R2 l'avait d'ailleurs apprise hier avec la même configuration.",
+      "b": "default-information originate ne demande pas que le lien vers le FAI soit dans OSPF ; la route était annoncée hier avec ces mêmes commandes network.",
+      "c": "Le processus OSPF reste actif : l'adjacence avec R2 par G0/0 est toujours FULL, et R1 continue d'annoncer ses autres réseaux."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide ; RFC 2328, section 12.4.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-default-e2-metric-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les routeurs forment la chaîne R1 – R2 – R3 dans l'area 0, avec des liens Gigabit Ethernet de coût OSPF 1. R1, relié au FAI, a « default-information originate » et une route statique par défaut ; R2 n'a aucune configuration particulière. Pourquoi la route par défaut a-t-elle la métrique 1 sur R3 ?",
+      "exhibit": "R3# show ip route | begin Gateway\nGateway of last resort is 10.0.23.1 to network 0.0.0.0\n\nO*E2  0.0.0.0/0 [110/1] via 10.0.23.1, 00:08:15, GigabitEthernet0/0\n      10.0.0.0/8 is variably subnetted, 3 subnets, 2 masks\nO        10.0.12.0/30 [110/2] via 10.0.23.1, 00:08:15, GigabitEthernet0/0\nC        10.0.23.0/30 is directly connected, GigabitEthernet0/0\nL        10.0.23.2/32 is directly connected, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2 génère lui-même une nouvelle route par défaut vers R3, à partir de celle que R1 lui annonce."
+        },
+        {
+          "id": "b",
+          "text": "Le coût des liens Gigabit Ethernet est compté 0 pour une route par défaut, quel que soit le chemin suivi."
+        },
+        {
+          "id": "c",
+          "text": "Une route E2 garde la métrique externe fixée par l'ASBR, 1 par défaut, sans le coût interne jusqu'à lui."
+        },
+        {
+          "id": "d",
+          "text": "La métrique d'une route externe compte les sauts au-delà de l'ASBR, ici un seul : le FAI."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Avec « default-information originate », R1 (l'ASBR) annonce 0.0.0.0/0 dans un LSA de type 5, par défaut en métrique externe de type 2 et de valeur 1. Pour une route E2, chaque routeur affiche cette métrique externe telle quelle, sans y ajouter le coût interne jusqu'à l'ASBR : R3 voit donc [110/1], alors que le lien 10.0.12.0/30 de R1, route interne, coûte bien 2 (deux liens de coût 1). Le coût interne ne sert qu'à départager deux routes E2 de même métrique externe. Avec « metric-type 1 », la route deviendrait O*E1 et sa métrique additionnerait le coût interne.",
+    "distractorNotes": {
+      "a": "R2 ne fait que relayer le LSA de type 5 de R1 sans le modifier ; il n'est pas ASBR et ne génère aucune route par défaut.",
+      "b": "Le coût d'un lien GigabitEthernet vaut 1 avec la référence par défaut, et l'exhibit montre que la route interne 10.0.12.0/30 coûte 2 sur R3.",
+      "d": "La métrique OSPF est un coût, pas un nombre de sauts ; la valeur 1 est la métrique externe par défaut fixée par R1."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide ; RFC 2328, section 16.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-show-ip-ospf-output-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit, dont le nom de la commande a été masqué. Quelle commande a produit cette sortie ?",
+      "exhibit": "R1# <commande masquée>\n Routing Process \"ospf 1\" with ID 1.1.1.1\n (...)\n Number of areas in this router is 1. 1 normal 0 stub 0 nssa\n (...)\n    Area BACKBONE(0)\n        Number of interfaces in this area is 3 (1 loopback)\n        Area has no authentication\n        SPF algorithm last executed 00:41:12.508 ago\n        SPF algorithm executed 7 times",
+      "options": [
+        {
+          "id": "a",
+          "text": "show ip protocols"
+        },
+        {
+          "id": "b",
+          "text": "show ip ospf"
+        },
+        {
+          "id": "c",
+          "text": "show ip ospf interface"
+        },
+        {
+          "id": "d",
+          "text": "show ip ospf database"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« show ip ospf » décrit le processus OSPF lui-même : la ligne « Routing Process \"ospf 1\" with ID 1.1.1.1 », le nombre et le type d'areas, puis un bloc par area (ici « Area BACKBONE(0) ») avec le nombre d'interfaces, le mode d'authentification et les statistiques SPF : date de la dernière exécution et nombre d'exécutions. Un compteur SPF qui augmente sans cesse signale un réseau instable, par exemple un lien qui oscille. Aucune des autres commandes n'affiche ces compteurs SPF.",
+    "distractorNotes": {
+      "a": "« show ip protocols » commence par « Routing Protocol is \"ospf 1\" » et liste les commandes network, les interfaces passives et les sources de routage, sans statistiques SPF.",
+      "c": "« show ip ospf interface » décrit chaque interface : adresse, type de réseau, coût, timers, DR et BDR, voisins.",
+      "d": "« show ip ospf database » liste les LSA de la LSDB par type (Router Link States, Net Link States…), avec leur âge et leur numéro de séquence."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-database-router-link-id-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans la section « Router Link States (Area 0) » de la sortie « show ip ospf database », que contient la colonne Link ID de chaque ligne ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'adresse IP de l'interface du DR du segment décrit"
+        },
+        {
+          "id": "b",
+          "text": "L'adresse du sous-réseau d'un des liens du routeur"
+        },
+        {
+          "id": "c",
+          "text": "Le router ID du routeur qui a généré ce LSA"
+        },
+        {
+          "id": "d",
+          "text": "L'adresse de l'interface par laquelle le LSA est arrivé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Chaque routeur génère un LSA de type 1 (Router LSA) par area où il a des interfaces ; ce LSA décrit tous ses liens dans l'area. Son Link State ID est le router ID de son auteur, d'où des lignes où Link ID et ADV Router sont identiques (1.1.1.1 et 1.1.1.1, par exemple). Il y a donc autant de lignes dans cette section que de routeurs dans l'area. Le détail des liens (réseaux stub, liens transit, voisins point-to-point) s'affiche avec « show ip ospf database router ».",
+    "distractorNotes": {
+      "a": "C'est le Link ID d'un LSA de type 2 (Net Link States) : l'adresse de l'interface du DR sur le segment.",
+      "b": "Les sous-réseaux des liens figurent dans le contenu du LSA, visible avec « show ip ospf database router », pas dans la colonne Link ID.",
+      "d": "La LSDB ne garde pas trace de l'interface de réception : le LSA est identifié par son type, son Link ID et son ADV Router."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide ; RFC 2328, section 12.4.1"
+  },
+  {
+    "slug": "ccna-3.4-ospf-network-wildcard-not-mask-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'interface G0/0 de R1 a l'adresse 10.1.5.1/24, et le processus OSPF 1 de R1 contient la seule commande « network 10.0.0.0 0.255.255.255 area 0 ». Une fois l'adjacence formée, quel préfixe les voisins de R1 apprennent-ils pour le réseau de G0/0 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "10.0.0.0/8"
+        },
+        {
+          "id": "b",
+          "text": "10.1.0.0/16"
+        },
+        {
+          "id": "c",
+          "text": "10.1.5.1/32"
+        },
+        {
+          "id": "d",
+          "text": "10.1.5.0/24"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La commande network ne fait que choisir les interfaces sur lesquelles OSPF est activé : toute interface dont l'adresse commence par 10 est retenue. Elle ne fixe jamais le préfixe annoncé. R1 décrit dans son LSA de type 1 le sous-réseau réellement configuré sur G0/0, c'est-à-dire l'adresse et le masque de l'interface : 10.1.5.0/24. Un wildcard large ne résume donc rien ; OSPF annonce autant de préfixes que d'interfaces activées.",
+    "distractorNotes": {
+      "a": "Le wildcard 0.255.255.255 sert à sélectionner les interfaces ; il n'est pas converti en masque /8 pour l'annonce.",
+      "b": "Aucune commande ne crée de préfixe /16 : ni la commande network, ni le masque de l'interface ne correspondent à ce préfixe.",
+      "c": "Une interface Ethernet est annoncée avec son sous-réseau ; seule une interface loopback est annoncée par défaut comme route hôte /32."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-loopback-host-route-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Pourquoi R2 apprend-il la loopback de R1 sous la forme d'un préfixe /32 et non de 172.16.100.0/24 ?",
+      "exhibit": "R1# show running-config interface Loopback0\ninterface Loopback0\n ip address 172.16.100.1 255.255.255.0\nR1# show running-config | section router ospf\nrouter ospf 1\n network 10.0.12.0 0.0.0.3 area 0\n network 172.16.100.0 0.0.0.255 area 0\n\nR2# show ip route | begin Gateway\nGateway of last resort is not set\n\n      10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks\nC        10.0.12.0/30 is directly connected, GigabitEthernet0/0\nL        10.0.12.2/32 is directly connected, GigabitEthernet0/0\n      172.16.0.0/32 is subnetted, 1 subnets\nO        172.16.100.1 [110/2] via 10.0.12.1, 00:03:27, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "OSPF annonce par défaut une interface loopback comme route hôte /32, quel que soit son masque."
+        },
+        {
+          "id": "b",
+          "text": "R1 a configuré « ip ospf network point-to-point » sur Loopback0, ce qui annonce l'adresse seule."
+        },
+        {
+          "id": "c",
+          "text": "R1 annonce l'adresse de chaque interface OSPF comme route hôte /32, quel que soit son type."
+        },
+        {
+          "id": "d",
+          "text": "Le wildcard 0.0.0.255 de la commande network fixe un masque /32 pour les loopbacks."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le type de réseau OSPF d'une interface loopback est LOOPBACK : IOS l'annonce dans le LSA de type 1 comme une route hôte, l'adresse 172.16.100.1 avec le masque 255.255.255.255, même si l'interface est en /24. R2 installe donc 172.16.100.1/32 (l'en-tête « 172.16.0.0/32 is subnetted » donne le masque), avec un coût de 2 : 1 pour le lien et 1 pour la loopback. Pour qu'OSPF annonce le sous-réseau /24, il suffit de saisir « ip ospf network point-to-point » sous Loopback0. Cette distinction compte en laboratoire, où des loopbacks simulent souvent des LAN.",
+    "distractorNotes": {
+      "b": "Ce serait l'effet inverse : « ip ospf network point-to-point » sur une loopback fait annoncer son sous-réseau /24 ; l'exhibit ne montre d'ailleurs pas cette commande.",
+      "c": "Seules les loopbacks sont annoncées en /32 : une interface Ethernet est annoncée avec son sous-réseau, par exemple 10.0.12.0/30 pour G0/0 de R1.",
+      "d": "Le wildcard ne fait que sélectionner les interfaces ; il n'intervient pas dans le masque annoncé, qui dépend ici du type de réseau LOOPBACK."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-area-0-backbone-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un réseau OSPF mono-zone, toutes les interfaces des routeurs sont placées dans l'area 0. Comment s'appelle cette area ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'area stub"
+        },
+        {
+          "id": "b",
+          "text": "L'area backbone"
+        },
+        {
+          "id": "c",
+          "text": "L'area NSSA"
+        },
+        {
+          "id": "d",
+          "text": "L'area totally stubby"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'area 0 est l'area backbone (dorsale) : dans une conception multizone, toutes les autres areas doivent s'y raccorder par un ABR. Dans un réseau mono-zone, on utilise normalement l'area 0, ce qui permet d'ajouter plus tard d'autres areas sans renuméroter. IOS l'affiche sous la forme « Area BACKBONE(0) » dans « show ip ospf ». L'identifiant d'area est un nombre de 32 bits : « area 0 » et « area 0.0.0.0 » désignent la même area.",
+    "distractorNotes": {
+      "a": "Une area stub est une area non backbone qui refuse les LSA externes de type 5 ; l'area 0 ne peut pas être stub.",
+      "c": "Une NSSA est une variante d'area stub qui peut importer des routes externes ; l'area 0 ne peut pas l'être.",
+      "d": "Une area totally stubby, propre à Cisco, refuse les LSA de types 3, 4 et 5, sauf la route par défaut de type 3 injectée par l'ABR ; ce statut est interdit pour l'area 0."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide ; RFC 2328"
+  },
+  {
+    "slug": "ccna-3.4-ospf-passive-interface-facts-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sous « router ospf 1 », R1 a la commande « network 192.168.20.0 0.0.0.255 area 0 », qui couvre l'adresse de G0/1 (192.168.20.1/24). L'administrateur ajoute « passive-interface GigabitEthernet0/1 ». Quelles deux affirmations sont vraies ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 cesse d'envoyer des Hello OSPF sur G0/1."
+        },
+        {
+          "id": "b",
+          "text": "R1 désactive OSPF sur G0/1 et retire ce sous-réseau de son LSA de type 1."
+        },
+        {
+          "id": "c",
+          "text": "R1 forme encore des adjacences sur G0/1, mais n'y envoie plus de LSU."
+        },
+        {
+          "id": "d",
+          "text": "Cette commande se saisit dans le mode de configuration de l'interface G0/1."
+        },
+        {
+          "id": "e",
+          "text": "Le sous-réseau 192.168.20.0/24 reste annoncé aux voisins OSPF de R1."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Une interface passive reste dans OSPF, mais R1 n'y envoie plus de Hello : aucun voisin ne peut s'y découvrir, donc aucune adjacence ne s'y forme. Son sous-réseau, toujours couvert par la commande network, reste décrit comme réseau stub dans le LSA de type 1 de R1 et donc annoncé par ses autres interfaces. C'est la configuration conseillée pour un LAN d'utilisateurs : on y évite des Hello inutiles et l'apparition d'un faux routeur OSPF, sans perdre la route vers ce LAN.",
+    "distractorNotes": {
+      "b": "Passive ne veut pas dire désactivée : l'interface reste dans OSPF et son sous-réseau dans le LSA de type 1.",
+      "c": "En OSPF, sans Hello aucune adjacence n'est possible ; ce mode « écoute seule » correspond à RIP, pas à OSPF.",
+      "d": "passive-interface est une commande du mode router (R1(config-router)#), suivie du nom de l'interface."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-default-info-asbr-lsa5-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 possède la route « ip route 0.0.0.0 0.0.0.0 203.0.113.1 ». L'administrateur saisit « default-information originate » sous « router ospf 1 ». Quelles deux affirmations sont vraies ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 ajoute 0.0.0.0/0 à son LSA de type 1, comme un réseau stub."
+        },
+        {
+          "id": "b",
+          "text": "R1 devient un ASBR."
+        },
+        {
+          "id": "c",
+          "text": "Les autres routeurs installent cette route avec une distance administrative de 1."
+        },
+        {
+          "id": "d",
+          "text": "La route par défaut est annoncée dans un LSA de type 5."
+        },
+        {
+          "id": "e",
+          "text": "Chaque routeur qui doit apprendre la route doit aussi recevoir cette commande."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Une route par défaut injectée par « default-information originate » est une information externe à OSPF : R1 la place dans un LSA de type 5 (AS External) pour 0.0.0.0/0, ce qui fait de lui un ASBR (« show ip ospf » l'indique : « It is an autonomous system boundary router »). Ce LSA est diffusé à tout le domaine OSPF ; les autres routeurs installent la route en O*E2, avec la distance administrative d'OSPF, 110, en direction de R1. La commande ne se saisit que sur le routeur qui génère la route.",
+    "distractorNotes": {
+      "a": "Le LSA de type 1 ne décrit que les liens du routeur dans l'area ; une route externe comme celle-ci passe par un LSA de type 5.",
+      "c": "La distance 1 est celle de la route statique sur R1 ; une route apprise par OSPF a la distance 110 chez les autres routeurs.",
+      "e": "Seul le routeur qui génère la route reçoit la commande ; les autres apprennent la route par le LSA de type 5 de R1, sans configuration supplémentaire."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide ; RFC 2328, section 12.4.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-show-ip-protocols-analysis-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Les interfaces de R1 ont les adresses suivantes : G0/0 10.1.12.1/30, G0/1 10.1.13.1/30, G0/2 192.168.10.1/24 et G0/3 172.16.0.1/24. Quelles deux affirmations sont vraies ? (Choisissez-en deux.)",
+      "exhibit": "R1# show ip protocols\nRouting Protocol is \"ospf 1\"\n  Outgoing update filter list for all interfaces is not set\n  Incoming update filter list for all interfaces is not set\n  Router ID 1.1.1.1\n  Number of areas in this router is 1. 1 normal 0 stub 0 nssa\n  Maximum path: 4\n  Routing for Networks:\n    10.1.0.0 0.0.255.255 area 0\n    192.168.10.0 0.0.0.255 area 0\n  Passive Interface(s):\n    GigabitEthernet0/2\n  Routing Information Sources:\n    Gateway         Distance      Last Update\n    2.2.2.2              110      00:12:41\n    3.3.3.3              110      00:12:38\n  Distance: (default is 110)",
+      "options": [
+        {
+          "id": "a",
+          "text": "OSPF est désactivé sur G0/2, car cette interface est passive."
+        },
+        {
+          "id": "b",
+          "text": "R1 utilise le processus OSPF numéro 110."
+        },
+        {
+          "id": "c",
+          "text": "R1 annonce le sous-réseau de G0/2, mais ne peut former aucune adjacence sur cette interface."
+        },
+        {
+          "id": "d",
+          "text": "G0/2 envoie des Hello, mais R1 ignore ceux qu'il reçoit sur cette interface."
+        },
+        {
+          "id": "e",
+          "text": "R1 n'annonce pas le sous-réseau de G0/3 à ses voisins OSPF."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "La rubrique « Routing for Networks » liste les commandes network : 10.1.0.0 0.0.255.255 couvre G0/0 et G0/1, 192.168.10.0 0.0.0.255 couvre G0/2 ; aucune ne couvre 172.16.0.1, si bien qu'OSPF n'est pas actif sur G0/3 et que son sous-réseau n'est pas annoncé. « Passive Interface(s) » montre que G0/2, bien que dans OSPF, n'envoie pas de Hello : son sous-réseau est annoncé, mais aucun voisin ne peut s'y découvrir. Le numéro de processus figure dans « Routing Protocol is \"ospf 1\" » ; 110 est la distance administrative.",
+    "distractorNotes": {
+      "a": "Une interface passive reste dans OSPF : elle est couverte par la commande network et son sous-réseau est annoncé.",
+      "b": "Le processus est « ospf 1 » ; 110 est la distance administrative des routes OSPF, affichée dans la colonne Distance.",
+      "d": "Une interface passive OSPF n'envoie aucun Hello ; elle ne joue pas un rôle d'écoute seule comme en RIP."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-network-match-candidates-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "L'interface G0/0 de R1 a l'adresse 10.10.5.1/24. Sous « router ospf 1 », quelles trois commandes, saisies seules, activent OSPF sur G0/0 ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "network 10.10.4.0 0.0.0.255 area 0"
+        },
+        {
+          "id": "b",
+          "text": "network 10.10.5.0 0.0.0.255 area 0"
+        },
+        {
+          "id": "c",
+          "text": "network 10.10.5.128 0.0.0.127 area 0"
+        },
+        {
+          "id": "d",
+          "text": "network 10.10.0.0 0.0.255.255 area 0"
+        },
+        {
+          "id": "e",
+          "text": "network 10.10.6.0 0.0.1.255 area 0"
+        },
+        {
+          "id": "f",
+          "text": "network 10.10.5.1 0.0.0.0 area 0"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "f"
+      ]
+    },
+    "explanation": "Pour chaque commande, on garde les bits où le wildcard vaut 0 et l'on compare. « 10.10.5.0 0.0.0.255 » couvre 10.10.5.0 à 10.10.5.255 ; « 10.10.0.0 0.0.255.255 » couvre tout 10.10.0.0 à 10.10.255.255 ; « 10.10.5.1 0.0.0.0 » ne couvre que 10.10.5.1, l'adresse exacte de G0/0. Les trois activent donc OSPF sur G0/0, avec la même area. La forme avec le wildcard 0.0.0.0 est précise : elle n'active que cette interface, même si l'on ajoute plus tard d'autres adresses proches.",
+    "distractorNotes": {
+      "a": "Cette commande couvre 10.10.4.0 à 10.10.4.255 : le troisième octet de G0/0 vaut 5, elle ne correspond pas.",
+      "c": "Cette plage va de 10.10.5.128 à 10.10.5.255 ; l'adresse 10.10.5.1 est dans la première moitié du /24, hors de la plage.",
+      "e": "Le wildcard 0.0.1.255 couvre 10.10.6.0 à 10.10.7.255, qui ne contient pas 10.10.5.1."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-passive-default-edge-analysis-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. R1 a trois interfaces : G0/0 (10.0.12.1/30) vers R2, voisin OSPF de R1 ; G0/1 (10.20.0.1/24) vers le LAN des utilisateurs ; G0/2 (203.0.113.2/30) vers le FAI, qui est joignable. Quelles deux affirmations sont vraies ? (Choisissez-en deux.)",
+      "exhibit": "R1# show running-config | section router ospf\nrouter ospf 1\n passive-interface default\n no passive-interface GigabitEthernet0/0\n network 10.0.0.0 0.255.255.255 area 0\n default-information originate\nR1# show running-config | include ip route\nip route 0.0.0.0 0.0.0.0 203.0.113.1",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 envoie des Hello sur G0/1, car la commande network couvre son adresse."
+        },
+        {
+          "id": "b",
+          "text": "R2 apprend le sous-réseau 10.20.0.0/24 par OSPF."
+        },
+        {
+          "id": "c",
+          "text": "R2 apprend le sous-réseau 203.0.113.0/30 par OSPF."
+        },
+        {
+          "id": "d",
+          "text": "R1 ne peut former d'adjacence OSPF que par G0/0."
+        },
+        {
+          "id": "e",
+          "text": "R2 installe la route par défaut de R1 avec le code O*IA."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La commande network couvre toute adresse en 10.x.x.x : OSPF est actif sur G0/0 et G0/1, pas sur G0/2 (203.0.113.2). « passive-interface default » rend passives toutes les interfaces, puis « no passive-interface » rétablit les Hello sur G0/0 seule : c'est la seule interface où une adjacence peut se former. G0/1, passive mais active dans OSPF, voit son sous-réseau annoncé à R2. Enfin, la route statique par défaut étant installée, default-information originate génère un LSA de type 5 : R2 installe 0.0.0.0/0 en O*E2, sans que le lien vers le FAI soit dans OSPF.",
+    "distractorNotes": {
+      "a": "« passive-interface default » a rendu G0/1 passive, et seule G0/0 en est exemptée : G0/1 n'envoie pas de Hello, même si elle est dans OSPF.",
+      "c": "203.0.113.2 n'est couverte par aucune commande network : OSPF n'est pas actif sur G0/2 et son sous-réseau n'est pas annoncé.",
+      "e": "La route générée par default-information originate est externe (LSA de type 5) : elle apparaît en O*E2, pas en O*IA."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-default-ad-110-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Dans la sortie de « show ip protocols », la dernière ligne du bloc OSPF indique la distance administrative par défaut qu'IOS attribue aux routes OSPF. Quelle est cette valeur ?",
+      "fields": [
+        {
+          "id": "ad",
+          "label": "Distance administrative (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "ad": {
+          "accepted": [
+            "110"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La ligne « Distance: (default is 110) » rappelle qu'IOS donne la distance administrative 110 aux routes OSPF, qu'elles soient intra-area, inter-area ou externes. Cette valeur départage des routes vers le même préfixe venant de sources différentes : une route statique (1) ou EIGRP interne (90) l'emporte sur OSPF, alors qu'OSPF l'emporte sur RIP (120). On la retrouve dans la table de routage, en premier nombre entre crochets : « O 10.1.2.0/24 [110/2] ». La commande « distance » du mode router permet de la modifier.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-network-summary-wildcard-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "R1 a quatre LAN : 10.4.8.1/24, 10.4.9.1/24, 10.4.10.1/24 et 10.4.11.1/24, ainsi qu'un LAN invités 10.4.12.1/24 qui doit rester hors d'OSPF. Sous « router ospf 1 », une seule commande « network <adresse> <wildcard> area 0 » doit activer OSPF sur les quatre premiers LAN, sur la plage d'adresses la plus petite possible. Donnez l'adresse et le wildcard.",
+      "fields": [
+        {
+          "id": "addr",
+          "label": "Adresse : première adresse de la plage couverte, en décimal pointé"
+        },
+        {
+          "id": "wc",
+          "label": "Wildcard, en décimal pointé"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "addr": {
+          "accepted": [
+            "10.4.8.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "wc": {
+          "accepted": [
+            "0.0.3.255"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Les troisièmes octets 8, 9, 10 et 11 s'écrivent 000010 suivi de 00, 01, 10 et 11 : seuls les deux derniers bits varient. Le bloc commun est donc 10.4.8.0/22, de 10.4.8.0 à 10.4.11.255, et le wildcard d'un /22 vaut 0.0.3.255 (255.255.252.0 inversé). La commande est « network 10.4.8.0 0.0.3.255 area 0 ». Le LAN invités (troisième octet 12, soit 00001100) diffère dans les bits fixés : il reste hors d'OSPF. Chaque LAN reste annoncé avec son propre /24 : le wildcard ne résume pas les routes.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-database-lsa-count-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Le réseau OSPF est mono-zone et stable. Répondez à partir de la LSDB de R1.",
+      "exhibit": "R1# show ip ospf database\n\n            OSPF Router with ID (1.1.1.1) (Process ID 1)\n\n                Router Link States (Area 0)\n\nLink ID         ADV Router      Age         Seq#       Checksum Link count\n1.1.1.1         1.1.1.1         642         0x80000006 0x00B2C1 2\n2.2.2.2         2.2.2.2         655         0x80000005 0x004D1E 2\n3.3.3.3         3.3.3.3         601         0x80000004 0x00F37A 2\n4.4.4.4         4.4.4.4         598         0x80000007 0x0091D4 3\n\n                Net Link States (Area 0)\n\nLink ID         ADV Router      Age         Seq#       Checksum\n10.0.123.2      2.2.2.2         655         0x80000002 0x003E8B\n10.0.34.4       4.4.4.4         598         0x80000001 0x00A7C5",
+      "fields": [
+        {
+          "id": "routers",
+          "label": "Nombre de routeurs OSPF dans l'area 0 (nombre entier)"
+        },
+        {
+          "id": "segments",
+          "label": "Nombre de segments multiaccès décrits par un LSA de type 2 (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "routers": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        },
+        "segments": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Chaque routeur de l'area génère un seul LSA de type 1 (Router LSA) pour cette area, identifié par son router ID : les quatre lignes de « Router Link States » correspondent à quatre routeurs, 1.1.1.1 à 4.4.4.4. Un LSA de type 2 (Network LSA) est généré par le DR de chaque segment multiaccès où il a au moins un voisin FULL ; son Link ID est l'adresse de l'interface du DR. Les deux lignes de « Net Link States » décrivent donc deux segments : celui où 2.2.2.2 est DR (interface 10.0.123.2) et celui où 4.4.4.4 est DR (interface 10.0.34.4).",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide ; RFC 2328, section 12.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-passive-default-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Vous êtes dans le mode de configuration du processus OSPF 1 de R1. Seule l'interface GigabitEthernet0/0 relie R1 à un autre routeur OSPF ; R1 a de nombreuses autres interfaces, toutes couvertes par des commandes network. En deux commandes, quel que soit le nombre d'interfaces, rendez d'abord toutes les interfaces passives, puis rétablissez l'envoi de Hello sur GigabitEthernet0/0 seulement.",
+      "prompt": "R1(config-router)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "passive-interface default"
+        ],
+        [
+          "no passive-interface GigabitEthernet0/0"
+        ]
+      ]
+    },
+    "explanation": "« passive-interface default » rend passives toutes les interfaces du processus, y compris celles qui seront créées plus tard : aucune n'envoie de Hello, mais leurs sous-réseaux restent annoncés. « no passive-interface GigabitEthernet0/0 » lève ensuite l'exception pour le lien vers l'autre routeur, seul endroit où une adjacence doit se former. L'ordre compte : saisie en second, « passive-interface default » rendrait aussi G0/0 passive. Cette méthode est plus sûre que de nommer une à une les interfaces de LAN, car un nouveau LAN est passif dès sa création. La configuration courante affiche alors ces deux lignes.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-default-info-always-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 doit annoncer une route par défaut à tous les routeurs OSPF, même lorsqu'il n'a lui-même aucune route par défaut dans sa table de routage. En partant du mode de configuration globale, entrez dans le processus OSPF 1, puis configurez cette annonce inconditionnelle.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "router ospf 1"
+        ],
+        [
+          "default-information originate always"
+        ]
+      ]
+    },
+    "explanation": "Sans mot-clé, « default-information originate » ne génère le LSA de type 5 pour 0.0.0.0/0 que si une route par défaut figure dans la table de routage de R1 (statique ou apprise). Le mot-clé always supprime cette condition : R1 annonce la route en permanence, et les autres routeurs l'installent en O*E2. Le revers est que, si le lien vers Internet tombe, R1 continue d'attirer le trafic par défaut qu'il ne peut plus acheminer ; on réserve donc always aux cas où R1 a toujours une sortie, ou dispose d'une solution de secours.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-show-ip-protocols-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode privilégié de R1, affichez les paramètres des protocoles de routage IP actifs : pour OSPF, le router ID, les commandes network en vigueur, les interfaces passives, les sources d'informations de routage et la distance administrative.",
+      "prompt": "R1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show ip protocols"
+        ]
+      ]
+    },
+    "explanation": "« show ip protocols » résume chaque protocole de routage actif. Pour OSPF : « Routing Protocol is \"ospf 1\" », le router ID, le nombre d'areas, la rubrique « Routing for Networks » (les commandes network, avec wildcard et area), « Passive Interface(s) », la liste des sources de routage (router ID des routeurs dont proviennent les routes, avec leur distance) et la distance par défaut, 110. C'est la commande à utiliser pour vérifier rapidement les commandes network et les interfaces passives sans parcourir la configuration courante.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-database-router-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode privilégié de R1, affichez le contenu détaillé des seuls LSA de type 1 (Router LSA) de la LSDB, avec la liste des liens annoncés par chaque routeur : réseaux stub, réseaux de transit et voisins point-to-point.",
+      "prompt": "R1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show ip ospf database router",
+          "show ip ospf 1 database router"
+        ]
+      ]
+    },
+    "explanation": "« show ip ospf database » ne donne qu'un résumé, une ligne par LSA. Le mot-clé qui suit choisit un type de LSA et affiche son contenu complet : router pour le type 1, network pour le type 2. Pour chaque Router LSA, IOS affiche le router ID de l'auteur, le nombre de liens, puis chaque lien avec son type (stub network, transit network, point-to-point), son identifiant et sa métrique. On peut préciser le numéro du processus (« show ip ospf 1 database router ») ou un router ID en fin de commande pour ne voir qu'un seul LSA.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-network-host-wildcard-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 a les interfaces GigabitEthernet0/0 (10.1.1.1/24) et Loopback0 (192.168.255.1/24), ainsi que d'autres interfaces, en 10.1.x.x et en 192.168.x.x, qui doivent rester hors d'OSPF. En partant du mode de configuration globale, démarrez le processus OSPF 1. Ensuite, dans l'ordre de votre choix, activez OSPF dans l'area 0 sur ces deux interfaces, avec une commande network par interface dont le wildcard ne couvre que l'adresse de l'interface.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "router ospf 1"
+        ],
+        [
+          "network 10.1.1.1 0.0.0.0 area 0",
+          "network 10.1.1.1 0.0.0.0 area 0.0.0.0"
+        ],
+        [
+          "network 192.168.255.1 0.0.0.0 area 0",
+          "network 192.168.255.1 0.0.0.0 area 0.0.0.0"
+        ]
+      ]
+    },
+    "explanation": "Le wildcard 0.0.0.0 impose la correspondance des 32 bits : « network 10.1.1.1 0.0.0.0 area 0 » n'active que l'interface dont l'adresse est exactement 10.1.1.1. C'est la forme la plus précise de la commande network : elle ne capture aucune autre interface, même proche dans le plan d'adressage, ni celles qui seront ajoutées plus tard. Le préfixe annoncé reste celui de l'interface : 10.1.1.0/24 pour G0/0 et, pour la loopback, la route hôte 192.168.255.1/32, qu'OSPF annonce par défaut pour toute loopback.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-network-16-block-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Toutes les interfaces de R1 dont l'adresse appartient au bloc 10.20.0.0/16 doivent participer à OSPF dans l'area 0. En partant du mode de configuration globale, démarrez le processus OSPF 5, puis activez ces interfaces avec une seule commande network qui couvre exactement ce bloc, en indiquant l'adresse 10.20.0.0.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "router ospf 5"
+        ],
+        [
+          "network 10.20.0.0 0.0.255.255 area 0",
+          "network 10.20.0.0 0.0.255.255 area 0.0.0.0"
+        ]
+      ]
+    },
+    "explanation": "« router ospf 5 » crée le processus 5, dont le numéro n'a qu'une portée locale. Pour un /16 (masque 255.255.0.0), le wildcard est 0.0.255.255 : les deux premiers octets doivent valoir 10.20, les deux derniers sont libres. Toute interface en 10.20.x.x, actuelle ou future, rejoint alors OSPF dans l'area 0. Chaque interface reste annoncée avec son propre sous-réseau (par exemple 10.20.7.0/24) : la commande network choisit les interfaces, elle ne résume pas les routes.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-default-route-propagation-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "R1, relié au FAI, a déjà une route statique par défaut, et R2 est son voisin OSPF FULL dans l'area 0. Remettez dans l'ordre les étapes qui aboutissent à l'installation d'une route par défaut OSPF sur R2.",
+      "items": [
+        {
+          "id": "lsu",
+          "text": "R1 envoie à R2 un paquet LSU qui contient ce LSA."
+        },
+        {
+          "id": "cmd",
+          "text": "L'administrateur saisit « default-information originate » sous « router ospf 1 » sur R1."
+        },
+        {
+          "id": "install",
+          "text": "R2 installe O*E2 0.0.0.0/0 et sa Gateway of last resort pointe vers R1."
+        },
+        {
+          "id": "lsa5",
+          "text": "R1 génère un LSA de type 5 pour 0.0.0.0/0."
+        },
+        {
+          "id": "spf",
+          "text": "R2 ajoute le LSA à sa LSDB et recalcule ses routes."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "cmd",
+        "lsa5",
+        "lsu",
+        "spf",
+        "install"
+      ]
+    },
+    "explanation": "La commande fait de R1 un ASBR : comme une route par défaut est dans sa table, il génère un LSA de type 5 (AS External) pour 0.0.0.0/0. Ce LSA est inondé à tous les voisins dans des paquets LSU, que R2 acquitte. R2 range le LSA dans sa LSDB, puis recalcule ses routes : la route externe est rattachée à l'ASBR R1, joint par le chemin intra-area le plus court. R2 installe enfin O*E2 0.0.0.0/0, de distance 110 et de métrique 1 par défaut, qui devient sa Gateway of last resort.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide ; RFC 2328, section 12.4.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-wildcard-coverage-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Classez ces commandes network, de celle dont le wildcard couvre le moins d'adresses à celle qui en couvre le plus.",
+      "items": [
+        {
+          "id": "w16",
+          "text": "network 10.1.0.0 0.0.255.255 area 0"
+        },
+        {
+          "id": "wall",
+          "text": "network 0.0.0.0 255.255.255.255 area 0"
+        },
+        {
+          "id": "w30",
+          "text": "network 10.1.1.0 0.0.0.3 area 0"
+        },
+        {
+          "id": "w24",
+          "text": "network 10.1.1.0 0.0.0.255 area 0"
+        },
+        {
+          "id": "w32",
+          "text": "network 10.1.1.1 0.0.0.0 area 0"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "w32",
+        "w30",
+        "w24",
+        "w16",
+        "wall"
+      ]
+    },
+    "explanation": "Chaque bit à 1 du wildcard est un bit libre : la plage couverte compte 2 puissance (nombre de bits à 1) adresses. 0.0.0.0 n'a aucun bit libre, soit une seule adresse ; 0.0.0.3 en a 2, soit 4 adresses (un /30) ; 0.0.0.255 en a 8, soit 256 adresses ; 0.0.255.255 en a 16, soit 65 536 adresses ; 255.255.255.255 libère les 32 bits et couvre toutes les adresses IPv4. Cette dernière commande active donc OSPF sur toutes les interfaces du routeur qui ont une adresse IPv4.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-route-codes-match-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque code de la table de routage IPv4 d'IOS au type de route qu'il désigne.",
+      "left": [
+        {
+          "id": "o",
+          "text": "O"
+        },
+        {
+          "id": "oia",
+          "text": "O IA"
+        },
+        {
+          "id": "oe1",
+          "text": "O E1"
+        },
+        {
+          "id": "oe2",
+          "text": "O E2"
+        },
+        {
+          "id": "ostar",
+          "text": "O*E2"
+        }
+      ],
+      "right": [
+        {
+          "id": "r_intra",
+          "text": "Route OSPF vers un réseau de la même area que le routeur"
+        },
+        {
+          "id": "r_inter",
+          "text": "Route OSPF vers un réseau d'une autre area, annoncé par un ABR"
+        },
+        {
+          "id": "r_e1",
+          "text": "Route externe vers un réseau précis, dont la métrique ajoute le coût interne jusqu'à l'ASBR"
+        },
+        {
+          "id": "r_ext",
+          "text": "Route externe vers un réseau précis, dont la métrique reste celle fixée par l'ASBR"
+        },
+        {
+          "id": "r_def",
+          "text": "Route par défaut apprise par OSPF, par exemple générée par default-information originate"
+        },
+        {
+          "id": "r_static",
+          "text": "Route par défaut configurée localement par « ip route 0.0.0.0 0.0.0.0 »"
+        },
+        {
+          "id": "r_conn",
+          "text": "Réseau directement connecté à une interface du routeur"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "o": "r_intra",
+        "oia": "r_inter",
+        "oe1": "r_e1",
+        "oe2": "r_ext",
+        "ostar": "r_def"
+      }
+    },
+    "explanation": "« O » seul désigne une route intra-area, calculée à partir des LSA de types 1 et 2 de l'area. « O IA » (inter-area) provient d'un LSA de type 3 généré par un ABR. « E1 » et « E2 » signalent des routes externes, issues d'un LSA de type 5 d'un ASBR : en E1, la métrique additionne le coût interne jusqu'à l'ASBR ; en E2 (le type par défaut), elle reste la métrique externe fixée par l'ASBR. L'astérisque marque une route candidate par défaut : « O*E2 » est la route 0.0.0.0/0 apprise par OSPF, typiquement générée par « default-information originate ».",
+    "distractorNotes": {
+      "r_static": "Une route statique par défaut configurée localement porte le code « S* », absent de la colonne de gauche.",
+      "r_conn": "Un réseau directement connecté porte le code C (et son adresse locale le code L), aucun des codes proposés."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.4-ospf-database-sections-match-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque section de la sortie « show ip ospf database » au type de LSA qu'elle liste.",
+      "left": [
+        {
+          "id": "router",
+          "text": "Router Link States (Area 0)"
+        },
+        {
+          "id": "net",
+          "text": "Net Link States (Area 0)"
+        },
+        {
+          "id": "summ",
+          "text": "Summary Net Link States (Area 0)"
+        },
+        {
+          "id": "ext",
+          "text": "Type-5 AS External Link States"
+        }
+      ],
+      "right": [
+        {
+          "id": "t1",
+          "text": "LSA de type 1, un par routeur de l'area"
+        },
+        {
+          "id": "t2",
+          "text": "LSA de type 2, généré par le DR d'un segment multiaccès"
+        },
+        {
+          "id": "t3",
+          "text": "LSA de type 3, généré par un ABR pour un réseau d'une autre area"
+        },
+        {
+          "id": "t4",
+          "text": "LSA de type 4, généré par un ABR pour annoncer un ASBR"
+        },
+        {
+          "id": "t5",
+          "text": "LSA de type 5, généré par un ASBR pour une route externe"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "router": "t1",
+        "net": "t2",
+        "summ": "t3",
+        "ext": "t5"
+      }
+    },
+    "explanation": "IOS regroupe la LSDB par type de LSA. « Router Link States » liste les LSA de type 1 : un par routeur, identifié par son router ID. « Net Link States » liste les LSA de type 2, générés par le DR de chaque segment multiaccès et identifiés par l'adresse de son interface. « Summary Net Link States » contient les LSA de type 3 d'un ABR. « Type-5 AS External Link States » regroupe les routes externes des ASBR, dont la route 0.0.0.0/0 de « default-information originate ». Dans un réseau mono-zone sans route externe, seules les deux premières sections peuvent apparaître (la seconde s'il existe au moins un segment multiaccès avec un DR).",
+    "distractorNotes": {
+      "t4": "Les LSA de type 4 apparaissent dans une section distincte, « Summary ASB Link States », absente de la colonne de gauche."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide ; RFC 2328, section 12.4"
+  },
+  {
+    "slug": "ccna-3.4-ospf-config-commands-effects-match-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque commande de configuration OSPFv2 à son effet.",
+      "left": [
+        {
+          "id": "pdef",
+          "text": "passive-interface default"
+        },
+        {
+          "id": "nopass",
+          "text": "no passive-interface GigabitEthernet0/0"
+        },
+        {
+          "id": "netall",
+          "text": "network 0.0.0.0 255.255.255.255 area 0"
+        },
+        {
+          "id": "always",
+          "text": "default-information originate always"
+        },
+        {
+          "id": "ifarea",
+          "text": "ip ospf 1 area 0 (en mode interface)"
+        }
+      ],
+      "right": [
+        {
+          "id": "r_pdef",
+          "text": "Supprime l'envoi de Hello sur toutes les interfaces, sauf exception explicite"
+        },
+        {
+          "id": "r_nopass",
+          "text": "Rétablit l'envoi de Hello sur une seule interface"
+        },
+        {
+          "id": "r_netall",
+          "text": "Active OSPF sur toutes les interfaces qui ont une adresse IPv4"
+        },
+        {
+          "id": "r_always",
+          "text": "Annonce une route par défaut, même sans route par défaut dans la table"
+        },
+        {
+          "id": "r_ifarea",
+          "text": "Active OSPF sur l'interface courante, sans commande network"
+        },
+        {
+          "id": "r_redis",
+          "text": "Injecte les routes statiques du routeur dans OSPF"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "pdef": "r_pdef",
+        "nopass": "r_nopass",
+        "netall": "r_netall",
+        "always": "r_always",
+        "ifarea": "r_ifarea"
+      }
+    },
+    "explanation": "« passive-interface default » rend toutes les interfaces passives, et « no passive-interface » rétablit les Hello sur l'interface nommée. Le wildcard 255.255.255.255 ne fixe aucun bit : « network 0.0.0.0 255.255.255.255 area 0 » active OSPF sur toutes les interfaces qui ont une adresse IPv4. « default-information originate always » annonce 0.0.0.0/0 sans condition. Enfin, « ip ospf 1 area 0 », saisie sous une interface, l'active dans l'area 0 sans passer par une commande network.",
+    "distractorNotes": {
+      "r_redis": "Injecter les routes statiques demande « redistribute static » ; aucune commande de la colonne de gauche ne le fait."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide"
+  }
+]

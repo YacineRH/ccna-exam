@@ -1,0 +1,1161 @@
+[
+  {
+    "slug": "ccna-2.6-autonomous-ap-traffic-path-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une architecture à AP autonomes, un AP raccordé par câble à un commutateur d'accès diffuse le SSID « BUREAU », mappé sur le VLAN 10. Quel chemin suit le trafic d'un client sans fil vers un serveur du réseau filaire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'AP l'encapsule dans un tunnel CAPWAP jusqu'à un contrôleur, qui le dépose dans le VLAN 10."
+        },
+        {
+          "id": "b",
+          "text": "L'AP convertit lui-même la trame 802.11 et la remet au commutateur, dans le VLAN 10."
+        },
+        {
+          "id": "c",
+          "text": "L'AP l'envoie au service de gestion dans le cloud, qui le renvoie vers le réseau du site."
+        },
+        {
+          "id": "d",
+          "text": "L'AP le remet au commutateur, qui lit le SSID dans la trame pour choisir le VLAN 10."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un AP autonome fait tout lui-même : il porte la configuration des SSID, de la sécurité et des VLAN, et sert de pont entre le 802.11 et l'Ethernet. Il convertit la trame du client en trame Ethernet et la remet directement au commutateur, dans le VLAN associé au SSID (sur un trunk 802.1Q s'il diffuse plusieurs SSID mappés sur des VLAN différents). Il n'y a ni contrôleur ni tunnel : le trafic suit le chemin le plus court. La contrepartie est une gestion AP par AP, sans coordination centrale de la RF.",
+    "distractorNotes": {
+      "a": "C'est le fonctionnement d'un AP lightweight en mode local, qui dépend d'un WLC ; un AP autonome n'utilise pas CAPWAP.",
+      "c": "Un AP autonome ne dépend d'aucun service cloud : il commute lui-même le trafic. Même avec Meraki, seul le trafic de gestion part vers le Dashboard, pas les données des clients.",
+      "d": "Une trame Ethernet ne contient pas de SSID : c'est l'AP qui associe le SSID au VLAN et, sur un trunk, étiquette la trame en 802.1Q."
+    },
+    "reference": "Cisco Wireless LAN Controller Configuration Guide, Release 8.10 — Cisco Wireless Solution Overview ; Cisco Aironet Access Point Software Configuration Guide (mode autonome)"
+  },
+  {
+    "slug": "ccna-2.6-cloud-managed-choice-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME de dix agences veut gérer tous ses AP depuis un tableau de bord web que le constructeur héberge et maintient, sans exploiter elle-même de contrôleur, ni sur site ni dans un data center. Quelle architecture répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des AP lightweight gérés par un Catalyst 9800-CL dans son data center"
+        },
+        {
+          "id": "b",
+          "text": "Des AP autonomes, configurés un par un depuis leur interface web"
+        },
+        {
+          "id": "c",
+          "text": "Des AP Meraki, gérés depuis le Meraki Dashboard"
+        },
+        {
+          "id": "d",
+          "text": "Des AP Catalyst 9100, dont l'un exécute l'Embedded Wireless Controller"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Dans l'architecture cloud de Cisco Meraki, les AP joignent par Internet le cloud Meraki, d'où viennent leur configuration, leur supervision et leurs mises à jour logicielles. L'administrateur travaille dans le Meraki Dashboard, une application web hébergée et maintenue par Cisco : l'entreprise n'a aucun contrôleur à installer, à dimensionner ni à mettre à jour. Seul le trafic de gestion part vers le cloud ; les données des clients restent sur le réseau local de chaque agence.",
+    "distractorNotes": {
+      "a": "Le Catalyst 9800-CL est un vrai contrôleur, sous forme de machine virtuelle, que l'entreprise doit installer et exploiter dans son data center.",
+      "b": "Des AP autonomes n'ont pas de tableau de bord central : il faudrait configurer et mettre à jour chaque AP de chaque agence séparément.",
+      "d": "L'EWC est un contrôleur, hébergé sur l'un des AP du site, que l'entreprise doit configurer et exploiter elle-même."
+    },
+    "reference": "Cisco Meraki Documentation — Meraki Cloud Architecture"
+  },
+  {
+    "slug": "ccna-2.6-default-ap-mode-local-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un AP lightweight d'intérieur neuf rejoint un WLC AireOS sans que l'administrateur ait modifié sa configuration. Dans quel mode d'AP fonctionne-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Monitor"
+        },
+        {
+          "id": "b",
+          "text": "FlexConnect"
+        },
+        {
+          "id": "c",
+          "text": "Bridge"
+        },
+        {
+          "id": "d",
+          "text": "Local"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le mode local est le mode par défaut d'un AP lightweight d'intérieur. L'AP sert les clients sur son canal et envoie tout leur trafic au WLC dans le tunnel CAPWAP ; entre deux émissions, il quitte brièvement son canal pour écouter les autres et alimenter la gestion RF (RRM) et la détection des rogues. Les autres modes, comme FlexConnect pour les agences, Monitor pour les capteurs dédiés ou Bridge pour le mesh, se choisissent explicitement sur le WLC.",
+    "distractorNotes": {
+      "a": "Le mode Monitor transforme l'AP en capteur qui ne sert aucun client ; il faut le configurer explicitement.",
+      "b": "FlexConnect est conçu pour les agences reliées au WLC par un WAN ; ce n'est pas le mode par défaut d'un AP d'intérieur.",
+      "c": "Le mode Bridge sert au maillage radio (mesh) entre AP ; un AP d'intérieur n'y passe que sur configuration explicite."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — modes d'AP"
+  },
+  {
+    "slug": "ccna-2.6-local-mode-client-to-client-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux portables sont associés au même AP en mode local et au même WLAN, mappé sur le VLAN 20 du WLC. Aucun blocage peer-to-peer n'est configuré. Quel chemin suit une trame envoyée par l'un des portables à l'autre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'AP l'envoie au WLC dans le tunnel CAPWAP ; le WLC la renvoie à l'AP par le même tunnel."
+        },
+        {
+          "id": "b",
+          "text": "L'AP la retransmet directement par radio au second portable, sans la faire sortir de l'AP."
+        },
+        {
+          "id": "c",
+          "text": "L'AP la remet au commutateur d'accès, qui la lui renvoie aussitôt dans le VLAN 20."
+        },
+        {
+          "id": "d",
+          "text": "L'AP la place dans le canal de contrôle CAPWAP (UDP 5246) ; le WLC la renvoie par ce canal."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "En mode local, l'AP ne commute jamais lui-même le trafic des clients : chaque trame part, encapsulée dans le canal de données CAPWAP (UDP 5247), vers le WLC. C'est le WLC qui fait le pont entre le 802.11 et le réseau filaire et qui décide de la suite : la destination étant un autre client sans fil associé à ce même AP, il lui renvoie la trame par le tunnel. Ce trajet en épingle explique pourquoi, sur un site distant, on préfère FlexConnect en commutation locale.",
+    "distractorNotes": {
+      "b": "Un AP en mode local ne fait pas de pont entre ses clients : toute décision de commutation revient au WLC.",
+      "c": "Le commutateur d'accès ne voit que les datagrammes CAPWAP de l'AP ; le VLAN 20 est défini sur le WLC et n'a pas besoin d'exister sur ce port.",
+      "d": "Le trafic des clients emprunte le canal de données CAPWAP (UDP 5247) ; le canal de contrôle (UDP 5246) transporte la configuration et la gestion de l'AP."
+    },
+    "reference": "RFC 5415 (CAPWAP) ; Cisco Wireless Controller Configuration Guide, Release 8.10"
+  },
+  {
+    "slug": "ccna-2.6-split-mac-ack-timing-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "En architecture split-MAC, pourquoi l'acquittement (ACK) des trames 802.11 reçues d'un client est-il émis par l'AP lightweight plutôt que par le WLC ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Parce que le tunnel CAPWAP transporte des paquets IP et ne peut pas encapsuler de trames 802.11."
+        },
+        {
+          "id": "b",
+          "text": "Parce que le WLC ignore les adresses MAC des clients associés aux AP qu'il gère."
+        },
+        {
+          "id": "c",
+          "text": "Parce que l'ACK doit partir quelques microsecondes après la trame, bien moins qu'un aller-retour au WLC."
+        },
+        {
+          "id": "d",
+          "text": "Parce que l'ACK doit être chiffré avec la clé de la session DTLS, que seul l'AP connaît."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le split-MAC répartit les fonctions de la couche MAC 802.11 selon leurs contraintes de temps. Un ACK doit partir un SIFS après la fin de la trame reçue, soit 10 µs en 2,4 GHz et 16 µs en 5 GHz : aucun aller-retour par le réseau jusqu'au WLC ne tient dans ce délai. L'AP garde donc les fonctions temps réel : beacons, réponses aux probes, ACK, retransmissions, mise en tampon pour les clients en économie d'énergie. Le WLC prend la gestion, moins pressée : authentification, associations, itinérance, RRM et politiques.",
+    "distractorNotes": {
+      "a": "CAPWAP transporte justement les trames 802.11 des clients dans son canal de données ; le problème n'est pas le format mais le délai.",
+      "b": "Le WLC traite les associations : il connaît chaque client, son adresse MAC et l'AP auquel il est associé.",
+      "d": "La session DTLS protège le canal CAPWAP entre l'AP et le WLC, pas l'air ; l'ACK est une trame de contrôle 802.11 qui n'est pas chiffrée."
+    },
+    "reference": "RFC 5416 (CAPWAP binding IEEE 802.11) — Split MAC ; IEEE 802.11-2020 (SIFS)"
+  },
+  {
+    "slug": "ccna-2.6-sniffer-mode-capture-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un entrepôt distant, les clients du canal 36 se déconnectent sans cesse. Depuis son poste au siège, l'ingénieur veut analyser dans Wireshark les trames 802.11 échangées sur ce canal. Quel mode faut-il donner à un AP de l'entrepôt ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Monitor"
+        },
+        {
+          "id": "b",
+          "text": "SE-Connect"
+        },
+        {
+          "id": "c",
+          "text": "Rogue Detector"
+        },
+        {
+          "id": "d",
+          "text": "Sniffer"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "En mode Sniffer, l'AP cesse de servir les clients et consacre sa radio à la capture des trames 802.11 sur le canal choisi. Il les encapsule et les envoie à l'adresse IP d'un poste qui exécute un analyseur comme Wireshark ou Omnipeek : l'ingénieur voit les trames de gestion, de contrôle et de données comme s'il était sur place. Comme l'AP ne sert plus de clients pendant la capture, on choisit un AP dont la zone reste couverte par ses voisins, ou un AP de réserve.",
+    "distractorNotes": {
+      "a": "Le mode Monitor balaie tous les canaux pour le wIPS, la détection des rogues et la localisation ; il ne transmet pas les trames capturées à un analyseur.",
+      "b": "Le mode SE-Connect transmet des mesures brutes du spectre RF à une application d'analyse de spectre, pas des trames 802.11 décodables dans Wireshark.",
+      "c": "Le mode Rogue Detector coupe les radios et écoute le réseau filaire pour repérer les rogues : il ne capture rien dans l'air."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — modes d'AP (Sniffer)"
+  },
+  {
+    "slug": "ccna-2.6-se-connect-interference-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une cafétéria, le débit Wi-Fi s'effondre chaque fois que les fours à micro-ondes fonctionnent. L'ingénieur veut observer cette source d'interférence dans une application d'analyse de spectre installée sur son poste. Quel mode faut-il donner à un AP CleanAir proche ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "SE-Connect"
+        },
+        {
+          "id": "b",
+          "text": "Sniffer"
+        },
+        {
+          "id": "c",
+          "text": "Monitor"
+        },
+        {
+          "id": "d",
+          "text": "Local"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un four à micro-ondes rayonne dans la bande des 2,4 GHz sans émettre la moindre trame 802.11 : seul un analyseur de spectre le voit. En mode SE-Connect (Spectrum Expert Connect), un AP équipé de CleanAir cesse de servir les clients et consacre ses radios à l'analyse de spectre sur tous les canaux ; il envoie les mesures brutes à une application distante, comme Cisco Spectrum Expert ou MetaGeek Chanalyzer, qui affiche et classe les sources d'interférence, Wi-Fi ou non.",
+    "distractorNotes": {
+      "b": "Le mode Sniffer capture des trames 802.11 pour un analyseur de protocoles ; un four à micro-ondes n'émet aucune trame, il n'y aurait rien à capturer.",
+      "c": "Le mode Monitor sert au wIPS, à la détection des rogues et à la localisation ; il n'envoie pas les mesures brutes du spectre à une application sur le poste.",
+      "d": "En mode local, l'AP sert ses clients et ne quitte son canal que brièvement ; il ne fournit pas de données de spectre à une application distante."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — CleanAir et modes d'AP (SE-Connect)"
+  },
+  {
+    "slug": "ccna-2.6-bridge-mode-building-link-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Deux bâtiments d'un même site sont séparés par une route qu'aucun câble ne peut traverser. Le réseau filaire du bâtiment B doit être relié à celui du bâtiment A, où se trouve le WLC, par une liaison radio entre deux AP lightweight, un dans chaque bâtiment. Quel mode faut-il donner à ces deux AP ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "FlexConnect"
+        },
+        {
+          "id": "b",
+          "text": "Bridge"
+        },
+        {
+          "id": "c",
+          "text": "Monitor"
+        },
+        {
+          "id": "d",
+          "text": "Local"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "En mode Bridge, un AP lightweight forme avec d'autres AP une liaison radio point à point, point à multipoint ou un maillage (mesh). L'AP du bâtiment A, raccordé par câble au réseau du WLC, joue le rôle de Root AP (RAP) ; celui du bâtiment B, Mesh AP (MAP), rejoint le WLC à travers cette liaison radio. Avec le pontage Ethernet activé sur le MAP, les équipements branchés sur son port filaire, ici le commutateur du bâtiment B, communiquent avec le bâtiment A à travers le lien radio.",
+    "distractorNotes": {
+      "a": "FlexConnect permet à un AP d'agence de commuter localement le trafic de ses clients ; il suppose un câble vers le réseau et ne crée pas de liaison radio entre bâtiments.",
+      "c": "Le mode Monitor transforme l'AP en capteur qui ne sert aucun client ; il ne peut pas servir de lien entre deux réseaux.",
+      "d": "En mode local, l'AP sert des clients et joint le WLC par son port filaire ; il ne relaie pas un réseau filaire par radio."
+    },
+    "reference": "Cisco Mesh Access Points, Design and Deployment Guide"
+  },
+  {
+    "slug": "ccna-2.6-virtual-wlc-9800-cl-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise veut exécuter son contrôleur sans fil comme machine virtuelle sur les serveurs VMware ESXi de son data center. Quel produit Cisco correspond à ce déploiement ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Catalyst 9800-CL"
+        },
+        {
+          "id": "b",
+          "text": "Catalyst 9800-80"
+        },
+        {
+          "id": "c",
+          "text": "EWC sur un AP Catalyst 9100"
+        },
+        {
+          "id": "d",
+          "text": "Mobility Express sur un AP Aironet"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le Catalyst 9800-CL (Cloud) est la version logicielle du contrôleur Catalyst 9800 : le même logiciel IOS XE, livré comme machine virtuelle. Il s'installe sur un hyperviseur du data center (VMware ESXi, KVM, Microsoft Hyper-V) ou dans un cloud public, et offre les mêmes fonctions que les appliances 9800, dont la gestion des AP en CAPWAP. C'est le déploiement virtuel du WLC : l'entreprise réutilise ses serveurs au lieu d'acheter un équipement dédié.",
+    "distractorNotes": {
+      "b": "Le Catalyst 9800-80 est une appliance matérielle, le modèle haut de gamme du déploiement centralisé ; il ne s'exécute pas sur un hyperviseur.",
+      "c": "L'EWC s'exécute sur un AP Catalyst 9100 du site, qui sert de contrôleur aux autres AP ; ce n'est pas une machine virtuelle de data center.",
+      "d": "Mobility Express est un contrôleur AireOS intégré à certains AP Aironet ; il ne s'exécute pas sur un hyperviseur."
+    },
+    "reference": "Cisco Catalyst 9800-CL Wireless Controller for Cloud — Data Sheet"
+  },
+  {
+    "slug": "ccna-2.6-ewc-small-site-choice-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un site isolé compte 30 AP Catalyst 9120AX. Contraintes : aucun serveur ni hyperviseur sur place, pas de budget pour un contrôleur matériel, et une gestion des AP sur place, sans service de gestion dans le cloud et sans passer par le lien WAN vers le siège. Quelle solution répond à toutes ces contraintes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Activer Mobility Express sur l'un des AP Catalyst 9120AX"
+        },
+        {
+          "id": "b",
+          "text": "Activer l'Embedded Wireless Controller sur l'un des AP Catalyst 9120AX"
+        },
+        {
+          "id": "c",
+          "text": "Installer un Catalyst 9800-CL sur un serveur du site"
+        },
+        {
+          "id": "d",
+          "text": "Passer les AP en FlexConnect, gérés par le WLC du siège"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'Embedded Wireless Controller (EWC) exécute le logiciel du contrôleur Catalyst 9800 directement sur un AP Catalyst 9100 compatible, comme le 9120AX : cet AP sert de contrôleur aux autres AP du site tout en servant lui-même des clients. Il n'y a ni appliance à acheter, ni serveur à installer, ni service cloud, et la gestion reste locale, indépendante du WAN. Mobility Express jouait ce rôle sur les AP Aironet 802.11ac Wave 2 ; sur les AP Catalyst 9100, c'est l'EWC qui l'a remplacé.",
+    "distractorNotes": {
+      "a": "Mobility Express ne fonctionne que sur des AP Aironet 802.11ac Wave 2 (séries 1800, 2800 ou 3800, par exemple) ; les AP Catalyst 9100 utilisent l'EWC.",
+      "c": "Le 9800-CL est une machine virtuelle : il lui faut un hyperviseur, et le site n'a ni serveur ni hyperviseur.",
+      "d": "En FlexConnect, les AP restent gérés par le WLC du siège, à travers le WAN : la gestion n'est ni locale ni indépendante du lien WAN."
+    },
+    "reference": "Cisco Embedded Wireless Controller on Catalyst Access Points Configuration Guide ; Cisco Mobility Express Deployment Guide"
+  },
+  {
+    "slug": "ccna-2.6-wan-outage-architecture-impact-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quatre sites perdent pendant une heure leur lien WAN, et donc tout accès au siège et à Internet ; leur réseau local continue de fonctionner. Tous les WLAN sont en WPA2-PSK, et les serveurs utilisés par les clients, DHCP compris, sont sur chaque site. Sur quel site les clients Wi-Fi perdent-ils l'accès à ces serveurs pendant la panne ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Site A : AP autonomes, configurés un par un"
+        },
+        {
+          "id": "b",
+          "text": "Site B : AP Meraki, gérés depuis le Meraki Dashboard"
+        },
+        {
+          "id": "c",
+          "text": "Site C : AP en mode local, rattachés au WLC du siège"
+        },
+        {
+          "id": "d",
+          "text": "Site D : AP FlexConnect rattachés au WLC du siège, WLAN en commutation locale"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Il faut se demander, pour chaque architecture, si le service des clients dépend de l'équipement de gestion. Un AP en mode local tunnelise tout le trafic vers le WLC et ne sert plus aucun client quand il perd son contrôleur : il les déconnecte et repart à la recherche d'un WLC. Les AP autonomes n'ont aucun contrôleur. Les AP Meraki ne perdent que la gestion : le trafic des clients reste local. Un AP FlexConnect passe en mode standalone et maintient les WLAN commutés et authentifiés localement, comme un WLAN WPA2-PSK.",
+    "distractorNotes": {
+      "a": "Un AP autonome porte toute sa configuration et commute lui-même le trafic : la perte du WAN ne change rien pour les clients du site.",
+      "b": "Avec Meraki, seul le trafic de gestion part vers le cloud ; sans le Dashboard, les AP continuent de servir les clients avec leur dernière configuration.",
+      "d": "En mode standalone, un AP FlexConnect continue de servir les WLAN en commutation locale dont l'authentification se fait sur l'AP, ce qui est le cas en WPA2-PSK."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — FlexConnect ; Cisco Meraki Documentation — Meraki Cloud Architecture"
+  },
+  {
+    "slug": "ccna-2.6-split-mac-wlc-functions-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "En architecture split-MAC, quelles trois fonctions sont assurées par le WLC plutôt que par l'AP lightweight en mode local ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'émission des beacons qui annoncent les SSID"
+        },
+        {
+          "id": "b",
+          "text": "Le choix du canal et de la puissance d'émission de chaque AP (RRM)"
+        },
+        {
+          "id": "c",
+          "text": "La retransmission d'une trame que le client n'a pas acquittée"
+        },
+        {
+          "id": "d",
+          "text": "Le traitement des associations et de l'itinérance des clients entre AP"
+        },
+        {
+          "id": "e",
+          "text": "La mise en tampon des trames destinées à un client en économie d'énergie"
+        },
+        {
+          "id": "f",
+          "text": "Le relais de l'authentification 802.1X des clients vers le serveur RADIUS"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "f"
+      ]
+    },
+    "explanation": "Le split-MAC partage la couche MAC 802.11 entre l'AP et le WLC selon les contraintes de temps. Le WLC prend les fonctions de gestion, qui supportent un aller-retour par le réseau : traitement des demandes d'association et de réassociation (donc l'itinérance), rôle d'authentificateur 802.1X face au serveur RADIUS, gestion RF (RRM : affectation des canaux, réglage des puissances, détection des trous de couverture), politiques de sécurité et de QoS. L'AP garde ce qui doit se faire en quelques microsecondes ou au rythme de l'air.",
+    "distractorNotes": {
+      "a": "Les beacons partent à intervalle fixe (100 TU, soit 102,4 ms par défaut), à heure précise : leur émission reste sur l'AP.",
+      "c": "Une retransmission se décide dès que l'ACK attendu manque, dans un délai très court : seul l'AP, présent sur le canal, peut la gérer.",
+      "e": "L'AP conserve les trames d'un client endormi, les signale dans le champ TIM de ses beacons et les lui remet à son réveil : c'est une fonction temps réel."
+    },
+    "reference": "RFC 5416 (CAPWAP binding IEEE 802.11) — Split MAC ; Cisco Wireless Controller Configuration Guide, Release 8.10 — Radio Resource Management"
+  },
+  {
+    "slug": "ccna-2.6-flexconnect-characteristics-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur un AP en mode FlexConnect sont correctes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il exige un WLC installé dans l'agence, sur le même sous-réseau que lui."
+        },
+        {
+          "id": "b",
+          "text": "Il garde un canal de contrôle CAPWAP vers le WLC, même si celui-ci est au siège, au-delà du WAN."
+        },
+        {
+          "id": "c",
+          "text": "Il ne sert aucun client et se contente de surveiller les canaux de l'agence."
+        },
+        {
+          "id": "d",
+          "text": "Il commute toujours localement le trafic des clients, sans pouvoir le tunneliser vers le WLC."
+        },
+        {
+          "id": "e",
+          "text": "Chaque WLAN qu'il diffuse peut être en commutation locale ou en commutation centrale."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "FlexConnect est conçu pour les agences dont les AP joignent un WLC central par le WAN. L'AP garde avec ce WLC un canal de contrôle CAPWAP, par lequel il reçoit sa configuration et remonte ses informations. Pour les données, le choix se fait WLAN par WLAN : en commutation centrale, le trafic part au WLC dans le canal de données CAPWAP, comme en mode local ; en commutation locale, l'AP le dépose lui-même sur un VLAN de l'agence, ce qui évite l'aller-retour par le siège.",
+    "distractorNotes": {
+      "a": "Tout l'intérêt de FlexConnect est de se passer de contrôleur en agence : le WLC est central et joint à travers le WAN, par un chemin routé.",
+      "c": "C'est la description du mode Monitor ; un AP FlexConnect sert les clients.",
+      "d": "La commutation locale est une option par WLAN : un WLAN peut rester en commutation centrale, son trafic étant alors tunnelisé vers le WLC."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — FlexConnect"
+  },
+  {
+    "slug": "ccna-2.6-meraki-cloud-dependency-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise déploie des AP Meraki gérés depuis le Meraki Dashboard. Quelles deux affirmations sur ce déploiement sont correctes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un WLC sur site reste nécessaire pour authentifier les clients et gérer leur itinérance."
+        },
+        {
+          "id": "b",
+          "text": "Les AP établissent un tunnel CAPWAP vers le Dashboard, qui joue le rôle de WLC."
+        },
+        {
+          "id": "c",
+          "text": "Les AP joignent le cloud Meraki par Internet pour leur configuration et leurs mises à jour."
+        },
+        {
+          "id": "d",
+          "text": "Chaque AP se configure individuellement depuis sa propre interface web, comme un AP autonome."
+        },
+        {
+          "id": "e",
+          "text": "Une coupure d'Internet empêche la gestion des AP, pas le trafic local des clients."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Avec Meraki, la gestion se fait hors bande : chaque AP ouvre par Internet une connexion chiffrée vers le cloud Meraki, d'où il reçoit sa configuration et ses mises à jour logicielles, et vers lequel il remonte ses statistiques. L'administrateur configure tout le réseau, une seule fois, dans le Dashboard. Comme le trafic des clients ne transite pas par le cloud, une coupure d'Internet empêche de gérer et de superviser les AP, mais ceux-ci continuent de servir les clients avec leur dernière configuration.",
+    "distractorNotes": {
+      "a": "Il n'y a pas de WLC dans une architecture Meraki : les AP authentifient eux-mêmes les clients (PSK, ou 802.1X auprès d'un serveur RADIUS) selon la configuration reçue du cloud.",
+      "b": "Les AP Meraki n'utilisent pas CAPWAP : ils joignent le cloud par leur propre tunnel de gestion chiffré, et le Dashboard n'est pas un WLC.",
+      "d": "La configuration se fait de façon centralisée dans le Dashboard, pour tout le réseau à la fois : c'est l'opposé de la gestion AP par AP des AP autonomes."
+    },
+    "reference": "Cisco Meraki Documentation — Meraki Cloud Architecture"
+  },
+  {
+    "slug": "ccna-2.6-capwap-routed-encapsulation-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. AP1, en mode local, a rejoint WLC1. R-B et R-DC sont reliés par une liaison routée. PC1, associé au WLAN CORP, a obtenu l'adresse 172.16.130.42. Quelles deux affirmations sur le trafic de PC1 sont correctes ?",
+      "exhibit": "Bâtiment B                                    Data center\n\nPC1 )))  AP1 ---- SW-B ---- R-B ======= R-DC ---- SW-DC ---- WLC1\n         10.60.0.21                                          10.1.1.10\n         (VLAN 60)                                           (gestion)\n\nWLAN CORP -> VLAN 130 (172.16.130.0/24), défini sur SW-DC et WLC1 seulement",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sa requête DHCP est relayée par R-B, passerelle du VLAN 60, vers le serveur DHCP."
+        },
+        {
+          "id": "b",
+          "text": "Entre AP1 et WLC1, ses paquets voyagent dans des datagrammes UDP de 10.60.0.21 vers 10.1.1.10."
+        },
+        {
+          "id": "c",
+          "text": "R-B doit avoir une route vers 172.16.130.0/24 passant par AP1 pour acheminer les réponses destinées à PC1."
+        },
+        {
+          "id": "d",
+          "text": "WLC1 retire l'encapsulation CAPWAP et émet ses trames dans le VLAN 130, vers SW-DC."
+        },
+        {
+          "id": "e",
+          "text": "Ses paquets empruntent le canal de contrôle CAPWAP, protégé par DTLS, sur UDP 5246."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "En mode local, l'AP encapsule chaque trame de PC1 dans le canal de données CAPWAP (UDP 5247) : l'en-tête externe porte l'adresse de l'AP (10.60.0.21) en source et celle de l'interface de gestion du WLC (10.1.1.10) en destination. SW-B, R-B et R-DC acheminent ces datagrammes comme n'importe quel trafic IP entre deux hôtes, sans rien savoir de 172.16.130.0/24. WLC1 décapsule, convertit la trame en Ethernet et l'émet dans le VLAN 130 vers SW-DC ; les réponses suivent le chemin inverse, par WLC1 puis le tunnel.",
+    "distractorNotes": {
+      "a": "La requête DHCP de PC1 voyage dans le tunnel CAPWAP : R-B ne voit qu'un datagramme UDP entre AP1 et WLC1. Elle n'est traitée qu'au data center, une fois sortie de WLC1.",
+      "c": "Les réponses destinées à 172.16.130.42 rejoignent WLC1 dans le VLAN 130, au data center, puis le tunnel ; R-B doit seulement savoir joindre 10.1.1.10.",
+      "e": "Le canal de contrôle (UDP 5246) transporte la configuration et la gestion de l'AP ; le trafic des clients emprunte le canal de données, sur UDP 5247."
+    },
+    "reference": "RFC 5415 (CAPWAP) ; Cisco Wireless Controller Configuration Guide, Release 8.10"
+  },
+  {
+    "slug": "ccna-2.6-capwap-protocol-basics-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur le protocole CAPWAP sont correctes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il s'appuie sur TCP pour garantir la remise des trames des clients."
+        },
+        {
+          "id": "b",
+          "text": "C'est un standard de l'IETF, dérivé du protocole LWAPP de Cisco."
+        },
+        {
+          "id": "c",
+          "text": "Il relie les AP Meraki au Meraki Dashboard."
+        },
+        {
+          "id": "d",
+          "text": "Il sépare le contrôle et les données sur deux ports UDP distincts."
+        },
+        {
+          "id": "e",
+          "text": "Il ne fonctionne que si l'AP et le WLC sont dans le même VLAN."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "CAPWAP (Control And Provisioning of Wireless Access Points) est normalisé par l'IETF dans la RFC 5415, complétée par la RFC 5416 pour le 802.11 ; il reprend les principes de LWAPP, le protocole propriétaire que Cisco utilisait auparavant. Il fonctionne sur UDP/IP avec deux canaux : le contrôle sur UDP 5246, protégé par DTLS dès la session établie (seuls les messages de découverte circulent en clair), et les données des clients sur UDP 5247. Comme c'est du trafic IP ordinaire, l'AP et le WLC peuvent être séparés par des routeurs, sur le même site ou à travers un WAN.",
+    "distractorNotes": {
+      "a": "CAPWAP utilise UDP : le canal de contrôle gère lui-même sa fiabilité (requêtes, réponses et retransmissions), et les trames des clients ne sont pas retransmises par le tunnel.",
+      "c": "Les AP Meraki joignent le cloud par leur propre tunnel de gestion ; CAPWAP relie des AP lightweight à un WLC.",
+      "e": "CAPWAP circule sur IP : l'AP et le WLC peuvent être dans des sous-réseaux différents, séparés par des routeurs ou un WAN, comme en FlexConnect."
+    },
+    "reference": "RFC 5415 (CAPWAP) ; RFC 5416 (CAPWAP binding IEEE 802.11)"
+  },
+  {
+    "slug": "ccna-2.6-wan-crossings-by-switching-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un AP d'agence est rattaché au WLC du siège par un lien WAN. Deux portables, associés à cet AP et au même WLAN, s'échangent des fichiers ; aucun blocage peer-to-peer n'est configuré. Pour chaque configuration de l'AP, combien de fois une trame envoyée par un portable à l'autre traverse-t-elle le lien WAN ?",
+      "fields": [
+        {
+          "id": "local",
+          "label": "AP en mode local (nombre entier)"
+        },
+        {
+          "id": "central",
+          "label": "AP en mode FlexConnect, WLAN en commutation centrale (nombre entier)"
+        },
+        {
+          "id": "flexlocal",
+          "label": "AP en mode FlexConnect, WLAN en commutation locale (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "local": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        },
+        "central": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        },
+        "flexlocal": {
+          "accepted": [
+            "0"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "En mode local comme en FlexConnect avec commutation centrale, l'AP ne commute pas lui-même le trafic : il envoie la trame au WLC dans le canal de données CAPWAP, ce qui fait une première traversée du WAN. Le WLC constate que la destination est un client sans fil de ce même AP et la lui renvoie par le tunnel : deuxième traversée. En commutation locale, l'AP FlexConnect dépose le trafic sur le VLAN de l'agence : la trame reste sur le site et ne traverse jamais le WAN.",
+    "distractorNotes": {},
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — FlexConnect"
+  },
+  {
+    "slug": "ccna-2.6-mesh-rap-map-roles-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Des AP Cisco en mode Bridge forment un réseau mesh qui couvre un parking. Un seul d'entre eux est raccordé par câble au réseau du WLC ; les autres le rejoignent uniquement par radio, directement ou à travers d'autres AP du maillage. Donnez le rôle de chaque type d'AP, sous la forme du sigle Cisco.",
+      "fields": [
+        {
+          "id": "wired",
+          "label": "AP raccordé par câble au réseau du WLC (sigle de trois lettres)"
+        },
+        {
+          "id": "radio",
+          "label": "AP qui rejoint le réseau uniquement par radio (sigle de trois lettres)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "wired": {
+          "accepted": [
+            "RAP",
+            "Root AP",
+            "Root Access Point"
+          ],
+          "normalize": "text"
+        },
+        "radio": {
+          "accepted": [
+            "MAP",
+            "Mesh AP",
+            "Mesh Access Point"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Dans un réseau mesh Cisco, le Root AP (RAP) est l'AP en mode Bridge qui a une liaison filaire vers le réseau du WLC : il sert de racine au maillage. Les Mesh AP (MAP) n'ont pas de liaison filaire vers ce réseau ; ils rejoignent le RAP par une liaison radio (le backhaul), éventuellement en plusieurs sauts à travers d'autres MAP, et le protocole AWPP leur fait choisir le meilleur chemin vers le RAP. Leur trafic CAPWAP vers le WLC passe par ce backhaul, puis par le RAP.",
+    "distractorNotes": {},
+    "reference": "Cisco Mesh Access Points, Design and Deployment Guide"
+  },
+  {
+    "slug": "ccna-2.6-capwap-ap-join-sequence-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un AP lightweight neuf, dont l'image logicielle est déjà à jour, est raccordé à un port d'accès dans un autre sous-réseau que celui du WLC. Remettez dans l'ordre les étapes qui le mènent jusqu'à l'état où il sert les clients.",
+      "items": [
+        {
+          "id": "conf",
+          "text": "Il reçoit du WLC sa configuration : WLAN et paramètres radio."
+        },
+        {
+          "id": "disc",
+          "text": "Il envoie une Discovery Request CAPWAP au WLC, qui lui répond par une Discovery Response."
+        },
+        {
+          "id": "run",
+          "text": "Il passe à l'état Run et active ses radios pour diffuser les SSID."
+        },
+        {
+          "id": "dhcp",
+          "text": "Il obtient son adresse IP par DHCP, avec l'adresse du WLC dans l'option 43."
+        },
+        {
+          "id": "join",
+          "text": "Il envoie une Join Request au WLC, qui l'accepte par une Join Response."
+        },
+        {
+          "id": "dtls",
+          "text": "Il établit une session DTLS avec le WLC qu'il a choisi."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "dhcp",
+        "disc",
+        "dtls",
+        "join",
+        "conf",
+        "run"
+      ]
+    },
+    "explanation": "L'AP a d'abord besoin d'une adresse IP ; dans un autre sous-réseau que le WLC, la découverte par broadcast ne franchit pas le routeur par défaut, et l'option 43 du DHCP (ou un nom DNS) lui fournit l'adresse du contrôleur. Il envoie alors une Discovery Request en clair, choisit un WLC parmi les réponses, puis établit avec lui la session DTLS qui protégera tout le canal de contrôle. La Join Request et la Join Response circulent dans cette session. Viennent ensuite la configuration (précédée, si besoin, du téléchargement d'une nouvelle image) puis l'état Run.",
+    "distractorNotes": {},
+    "reference": "RFC 5415 (CAPWAP) — établissement de session et machine d'états ; Cisco Wireless Controller Configuration Guide, Release 8.10"
+  },
+  {
+    "slug": "ccna-2.6-local-mode-upstream-path-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un client associé à un AP en mode local envoie un paquet à un serveur du data center. Le WLAN est mappé sur le VLAN 40 du WLC. Remettez dans l'ordre les étapes du trajet, du client jusqu'au réseau du serveur.",
+      "items": [
+        {
+          "id": "route",
+          "text": "Le WLC émet la trame Ethernet dans le VLAN 40, vers la passerelle qui route le paquet vers le serveur."
+        },
+        {
+          "id": "tx",
+          "text": "Le client émet une trame 802.11 vers l'AP, qui l'acquitte."
+        },
+        {
+          "id": "decap",
+          "text": "Le WLC retire l'encapsulation CAPWAP et convertit la trame 802.11 en trame Ethernet."
+        },
+        {
+          "id": "encap",
+          "text": "L'AP encapsule la trame dans un datagramme CAPWAP de données (UDP 5247) adressé au WLC."
+        },
+        {
+          "id": "transit",
+          "text": "Les commutateurs et routeurs entre l'AP et le WLC acheminent ce datagramme comme tout paquet IP."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "tx",
+        "encap",
+        "transit",
+        "decap",
+        "route"
+      ]
+    },
+    "explanation": "En mode local, l'AP traite la partie temps réel : il reçoit la trame 802.11 et l'acquitte aussitôt. Il ne la commute pas : il l'encapsule, en-tête 802.11 compris, dans le canal de données CAPWAP vers l'interface de gestion du WLC. Le réseau entre les deux ne voit qu'un datagramme UDP entre l'AP et le WLC. Le WLC décapsule, fait la traduction 802.11 vers 802.3 et dépose la trame dans le VLAN associé au WLAN ; à partir de là, le paquet est routé normalement jusqu'au serveur.",
+    "distractorNotes": {},
+    "reference": "RFC 5415 (CAPWAP) ; RFC 5416 (CAPWAP binding IEEE 802.11)"
+  },
+  {
+    "slug": "ccna-2.6-architecture-traits-classification-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque caractéristique selon l'architecture sans fil à laquelle elle correspond.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Chaque AP porte toute sa configuration (SSID, VLAN, sécurité) et se gère individuellement."
+        },
+        {
+          "id": "l2",
+          "text": "Le trafic des clients peut être encapsulé dans CAPWAP jusqu'au contrôleur."
+        },
+        {
+          "id": "l3",
+          "text": "La configuration se saisit dans un tableau de bord hébergé par le constructeur, que les AP joignent par Internet."
+        },
+        {
+          "id": "l4",
+          "text": "Les fonctions temps réel restent sur l'AP, et la gestion (associations, RRM, sécurité) est centralisée : c'est le split-MAC."
+        },
+        {
+          "id": "l5",
+          "text": "Les mises à jour logicielles des AP se planifient depuis un service hébergé sur Internet par le constructeur."
+        }
+      ],
+      "right": [
+        {
+          "id": "auto",
+          "text": "AP autonomes"
+        },
+        {
+          "id": "lw",
+          "text": "AP lightweight avec WLC"
+        },
+        {
+          "id": "cloud",
+          "text": "AP gérés dans le cloud (Meraki)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "auto",
+        "l2": "lw",
+        "l3": "cloud",
+        "l4": "lw",
+        "l5": "cloud"
+      }
+    },
+    "explanation": "Un AP autonome est un équipement complet : il porte sa configuration, commute lui-même le trafic et se gère individuellement. Un AP lightweight dépend d'un WLC : en split-MAC, il garde le temps réel (beacons, ACK, retransmissions), le WLC gère associations, sécurité et RRM, et le trafic des clients peut être tunnelisé en CAPWAP. Un AP Meraki est configuré et mis à jour depuis le Dashboard, hébergé par Cisco et joint par Internet ; seul le trafic de gestion va vers le cloud.",
+    "distractorNotes": {},
+    "reference": "RFC 5416 (CAPWAP binding IEEE 802.11) — Split MAC ; Cisco Meraki Documentation — Meraki Cloud Architecture"
+  },
+  {
+    "slug": "ccna-2.6-wlc-deployment-models-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque modèle de déploiement de contrôleur sans fil Cisco à sa description.",
+      "left": [
+        {
+          "id": "central",
+          "text": "Contrôleur centralisé"
+        },
+        {
+          "id": "virtual",
+          "text": "Contrôleur virtuel"
+        },
+        {
+          "id": "ewc",
+          "text": "Embedded Wireless Controller (EWC)"
+        },
+        {
+          "id": "me",
+          "text": "Mobility Express"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Contrôleur AireOS intégré à un AP Aironet 802.11ac Wave 2, qui gère les autres AP du site"
+        },
+        {
+          "id": "r2",
+          "text": "Appliance dédiée, comme un Catalyst 9800-40 ou 9800-80, installée au data center ou au cœur du campus"
+        },
+        {
+          "id": "r3",
+          "text": "Tableau de bord hébergé par le constructeur, que les AP joignent par Internet"
+        },
+        {
+          "id": "r4",
+          "text": "Catalyst 9800-CL, exécuté sur un hyperviseur (ESXi, KVM, Hyper-V) ou dans un cloud public"
+        },
+        {
+          "id": "r5",
+          "text": "Contrôleur Catalyst 9800 (IOS XE) intégré à un AP Catalyst 9100, qui gère les autres AP du site"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "central": "r2",
+        "virtual": "r4",
+        "ewc": "r5",
+        "me": "r1"
+      }
+    },
+    "explanation": "Le déploiement centralisé repose sur des appliances dédiées, placées au data center ou au cœur du réseau, capables de gérer des milliers d'AP. Le contrôleur virtuel, le Catalyst 9800-CL, exécute le même logiciel IOS XE sur un hyperviseur ou dans un cloud public. Pour un petit site, le contrôleur peut s'exécuter sur un AP qui gère aussi les autres : c'est l'EWC sur les AP Catalyst 9100, successeur de Mobility Express, qui jouait ce rôle avec du code AireOS sur les AP Aironet 802.11ac Wave 2.",
+    "distractorNotes": {
+      "r3": "Décrit l'architecture cloud Meraki, qui n'a pas de contrôleur : les AP sont gérés depuis le Dashboard."
+    },
+    "reference": "Cisco Catalyst 9800 Series Wireless Controllers — Data Sheet ; Cisco Embedded Wireless Controller on Catalyst Access Points Configuration Guide ; Cisco Mobility Express Deployment Guide"
+  },
+  {
+    "slug": "ccna-2.6-ap-mode-by-need-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque besoin au mode d'AP Cisco qui y répond.",
+      "left": [
+        {
+          "id": "branch",
+          "text": "Agence reliée au siège par un WAN : le trafic des clients vers le serveur de fichiers de l'agence ne doit pas remonter jusqu'au WLC du siège."
+        },
+        {
+          "id": "wired",
+          "text": "Trouver le segment filaire où est branché un AP pirate, en cherchant dans les paquets ARP du réseau filaire les adresses MAC vues dans l'air."
+        },
+        {
+          "id": "sensor",
+          "text": "Placer à chaque étage un capteur dédié, qui ne sert aucun client et surveille en permanence tous les canaux pour le wIPS et la localisation."
+        },
+        {
+          "id": "office",
+          "text": "Servir les clients d'un bureau du siège, dont tout le trafic doit être traité par le WLC voisin."
+        }
+      ],
+      "right": [
+        {
+          "id": "local",
+          "text": "Local"
+        },
+        {
+          "id": "flex",
+          "text": "FlexConnect"
+        },
+        {
+          "id": "monitor",
+          "text": "Monitor"
+        },
+        {
+          "id": "rogue",
+          "text": "Rogue Detector"
+        },
+        {
+          "id": "sniffer",
+          "text": "Sniffer"
+        },
+        {
+          "id": "se",
+          "text": "SE-Connect"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "branch": "flex",
+        "wired": "rogue",
+        "sensor": "monitor",
+        "office": "local"
+      }
+    },
+    "explanation": "Le mode local convient aux AP proches du WLC : il sert les clients et tunnelise tout leur trafic vers le contrôleur. FlexConnect s'impose en agence, car il peut commuter localement le trafic d'un WLAN et éviter l'aller-retour par le WAN. Monitor fait de l'AP un capteur qui balaie tous les canaux pour le wIPS, la détection des rogues et la localisation. Rogue Detector coupe ses radios et écoute le réseau filaire : il compare les adresses MAC vues dans les ARP à la liste des rogues que lui fournit le WLC.",
+    "distractorNotes": {
+      "sniffer": "Le mode Sniffer capture les trames 802.11 d'un canal pour un analyseur distant comme Wireshark ; aucun besoin de la liste ne demande une capture de trames.",
+      "se": "Le mode SE-Connect fournit des mesures brutes du spectre à une application d'analyse de spectre ; aucun besoin de la liste ne porte sur les interférences RF."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — modes d'AP"
+  },
+  {
+    "slug": "ccna-2.6-flexconnect-capwap-flows-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un AP FlexConnect d'agence a rejoint le WLC du siège. Il diffuse le WLAN STAFF, en commutation locale sur le VLAN 30 de l'agence, et le WLAN GUEST, en commutation centrale. Le lien WAN fonctionne. Associez chaque flux au transport qu'il emprunte.",
+      "left": [
+        {
+          "id": "config",
+          "text": "Configuration des WLAN envoyée par le WLC quand l'AP le rejoint"
+        },
+        {
+          "id": "channel",
+          "text": "Changement de canal radio ordonné par le WLC (RRM)"
+        },
+        {
+          "id": "staff",
+          "text": "Trafic des clients du WLAN STAFF"
+        },
+        {
+          "id": "guest",
+          "text": "Trafic des clients du WLAN GUEST"
+        }
+      ],
+      "right": [
+        {
+          "id": "ctrl",
+          "text": "Canal de contrôle CAPWAP (UDP 5246), protégé par DTLS"
+        },
+        {
+          "id": "data",
+          "text": "Canal de données CAPWAP (UDP 5247)"
+        },
+        {
+          "id": "local",
+          "text": "Aucun tunnel : l'AP dépose le trafic sur un VLAN de l'agence"
+        },
+        {
+          "id": "https",
+          "text": "Session HTTPS (TCP 443) entre l'AP et le WLC"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "config": "ctrl",
+        "channel": "ctrl",
+        "staff": "local",
+        "guest": "data"
+      }
+    },
+    "explanation": "Un AP FlexConnect reste géré par le WLC central : configuration, ordres RRM comme un changement de canal, et supervision passent par le canal de contrôle CAPWAP, sur UDP 5246, protégé par DTLS. Pour les données, tout dépend du WLAN : GUEST, en commutation centrale, est tunnelisé jusqu'au WLC dans le canal de données (UDP 5247), comme en mode local ; STAFF, en commutation locale, ne passe pas par le tunnel : l'AP dépose ses trames sur le VLAN 30 de l'agence.",
+    "distractorNotes": {
+      "https": "Aucun de ces flux ne passe par HTTPS, qui sert surtout à l'administrateur pour l'interface graphique du WLC : configuration et ordres RRM passent par le canal de contrôle CAPWAP."
+    },
+    "reference": "RFC 5415 (CAPWAP) ; Cisco Wireless Controller Configuration Guide, Release 8.10 — FlexConnect"
+  }
+]

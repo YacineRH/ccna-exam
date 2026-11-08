@@ -47,6 +47,9 @@ export const questionBodySchema = z.discriminatedUnion('type', [
 
 export const fieldNormalizers = ['text', 'ipv4', 'int'] as const;
 
+export const QUESTION_SOURCES = ['manual', 'import', 'ai'] as const;
+export type QuestionSource = (typeof QUESTION_SOURCES)[number];
+
 export const answerKeySchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('mcq_single'), correct: z.string() }),
   z.object({ type: z.literal('mcq_multi'), correct: z.array(z.string()).min(2) }),
@@ -89,6 +92,11 @@ export const questionSchema = z
     /** Pourquoi chaque distracteur est faux (id d'option -> raison). */
     distractorNotes: z.record(z.string()).default({}),
     reference: z.string().optional(),
+    /**
+     * Origine de la question : écrite à la main, importée, ou rédigée par une IA puis relue
+     * (génération en lots). Sans valeur, l'import la range en `import`.
+     */
+    source: z.enum(QUESTION_SOURCES).optional(),
   })
   .superRefine((q, ctx) => {
     for (const issue of checkQuestionConsistency(q)) ctx.addIssue({ code: 'custom', message: issue });

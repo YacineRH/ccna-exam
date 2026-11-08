@@ -97,6 +97,26 @@ Le workflow se connecte en SSH, se place sur le commit testé, reconstruit les i
 
 Les conteneurs sont plafonnés : 512 Mo pour PostgreSQL, 384 Mo pour l'API, 128 Mo pour le web. Vérifier la marge restante à côté d'Hydre avec `docker stats` et `free -h`.
 
+## Contenus : banque, labs et série d'examens
+
+**Voie retenue : l'import au démarrage depuis `packages/content`.** À chaque démarrage, l'API importe la configuration des certifications, la banque de questions (`data/questions/`), les labs et challenges (`data/labs/`) et la série d'examens blancs figés (`data/exams/<code>.json`) contenus dans son image Docker. Les contenus arrivent donc sur le VPS avec le code, par le même `git pull && docker compose up -d --build` (ou le déploiement automatique), après être passés par les mêmes tests que lui en CI.
+
+Pourquoi pas les outils MCP sur l'API de production : ils servent à ajouter quelques questions à la volée, pas à charger 1 500 questions et 100 examens. Ils demanderaient le jeton de service hors du VPS, des milliers d'appels sans transaction d'ensemble, et un contenu de production qui ne serait plus celui du dépôt (ni revu, ni testé, ni sauvegardé par git). Avec l'import, le dépôt reste la source de vérité et la base peut être reconstruite à l'identique.
+
+L'import est **idempotent** :
+- **questions** : rangées par slug ; une question inchangée n'est pas réécrite, une question modifiée est mise à jour, une nouvelle est ajoutée ; un doublon d'énoncé est refusé (le démarrage échoue, comme les tests de contenu) ;
+- **examens** : rangés par numéro ; un examen absent est créé, un examen identique (mêmes questions, même ordre) n'est pas touché. Un second import ne crée donc ni doublon ni nouvel examen ;
+- **examens déjà passés** : un examen que quelqu'un a commencé **ne change jamais de contenu**. Si le fichier de la série a changé depuis (série régénérée après un ajout de questions), l'examen passé garde ses questions et son ordre, et le journal le signale : `ccna : 100 examens blancs (0 créés, 3 mis à jour, 95 inchangés, 2 déjà passés gardés tels quels : n° 12, 42)`. Seuls les examens jamais commencés suivent le nouveau fichier. Le test `apps/api/test/exams.test.ts` le vérifie.
+
+Le premier démarrage avec la banque complète importe environ 1 500 questions et 10 200 places d'examen en quelques secondes ; les suivants ne font que comparer. Pour vérifier après un déploiement :
+
+```sh
+docker compose logs api | grep -E "questions|examens blancs"
+curl -s https://ccna.yratech.fr/api/v1/certifications/ccna | jq '.bank.questions, .bank.exams'   # 1523, 100
+```
+
+Une question corrigée (faute, explication) est mise à jour en place : les post-mortems la montrent corrigée, sans changer la composition d'aucun examen. Une question retirée du dépôt reste en base pour l'historique.
+
 ## Mise à jour manuelle
 
 ```sh

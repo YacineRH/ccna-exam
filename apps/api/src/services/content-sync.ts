@@ -1,22 +1,16 @@
 import { createHash } from 'node:crypto';
-import { and, eq } from 'drizzle-orm';
-import type { CertificationConfig, Lab, Question } from '@examforge/core';
+import { and, asc, eq, inArray, isNotNull } from 'drizzle-orm';
+import { contentKey, type CertificationConfig, type ExamSeries, type Lab, type Question } from '@examforge/core';
 import type { Db } from '../db/client.js';
-import { certifications, domains, labs, questions, subtopics } from '../db/schema.js';
+import { attempts, certifications, domains, examQuestions, exams, labs, questions, subtopics } from '../db/schema.js';
 
 /**
- * Empreinte d'une question : énoncé, exhibit et textes des choix, normalisés.
- * Deux questions qui ne diffèrent que par la casse, les espaces ou l'ordre des options ont la même.
+ * Empreinte d'une question : SHA-256 de sa clé d'unicité (`contentKey` : énoncé, exhibit et textes
+ * des choix, normalisés). Deux questions qui ne diffèrent que par la casse, les espaces ou l'ordre
+ * des options ont la même.
  */
 export function contentHash(q: Pick<Question, 'body'>): string {
-  const norm = (s: string) => s.toLowerCase().replace(/\s+/g, ' ').trim();
-  const body = q.body;
-  const parts: string[] = [body.type, norm(body.stem), norm(body.exhibit ?? '')];
-  if (body.type === 'mcq_single' || body.type === 'mcq_multi') parts.push(...body.options.map((o) => norm(o.text)).sort());
-  if (body.type === 'ordering') parts.push(...body.items.map((o) => norm(o.text)).sort());
-  if (body.type === 'matching') parts.push(...[...body.left, ...body.right].map((o) => norm(o.text)).sort());
-  if (body.type === 'fill_blank') parts.push(...body.fields.map((f) => norm(f.label)).sort());
-  return createHash('sha256').update(parts.join('␟')).digest('hex');
+  return createHash('sha256').update(contentKey(q.body)).digest('hex');
 }
 
 /** Crée ou met à jour une certification et ses domaines à partir de sa configuration. */
@@ -176,4 +170,167 @@ export async function upsertLab(
   }
   const [row] = await db.insert(labs).values(values).returning({ id: labs.id });
   return { id: (row as { id: string }).id, created: true };
+}
+
+/** Sérialisation à clés triées : jsonb ne garde pas l'ordre des clés, la comparaison ne doit pas en dépendre. */
+function stable(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stable).join(',')}]`;
+  if (value && typeof value === 'object') {
+    return `{${Object.keys(value as Record<string, unknown>)
+      .sort()
+      .filter((k) => (value as Record<string, unknown>)[k] !== undefined)
+      .map((k) => `${JSON.stringify(k)}:${stable((value as Record<string, unknown>)[k])}`)
+      .join(',')}}`;
+  }
+  return JSON.stringify(value ?? null);
+}
+
+export interface SyncQuestionsResult {
+  created: number;
+  updated: number;
+  unchanged: number;
+}
+
+/**
+ * Importe toute la banque d'une certification d'un bloc, avec les règles d'`upsertQuestion` (doublon
+ * d'empreinte refusé, domaine et sous-thème existants) : l'existant est lu en une requête, les nouvelles
+ * questions sont insérées par paquets et seules les questions modifiées sont réécrites. Un second import
+ * du même contenu n'écrit rien.
+ */
+export async function syncQuestions(
+  db: Db,
+  certId: string,
+  list: readonly Question[],
+  options: Omit<UpsertQuestionOptions, 'source'> = {},
+): Promise<SyncQuestionsResult> {
+  const domRows = await db.select({ id: domains.id, code: domains.code }).from(domains).where(eq(domains.certificationId, certId));
+  const domainId = new Map(domRows.map((d) => [d.code, d.id]));
+  const subRows = domRows.length
+    ? await db
+        .select({ id: subtopics.id, code: subtopics.code, domainId: subtopics.domainId })
+        .from(subtopics)
+        .where(inArray(subtopics.domainId, domRows.map((d) => d.id)))
+    : [];
+  const subtopicId = new Map(subRows.map((s) => [`${s.domainId}|${s.code}`, s.id]));
+  const existing = await db.select().from(questions).where(eq(questions.certificationId, certId));
+  const bySlug = new Map(existing.map((r) => [r.slug, r]));
+  const byHash = new Map(existing.map((r) => [r.contentHash, r.slug]));
+
+  const fields = ['domainId', 'subtopicId', 'type', 'difficulty', 'body', 'answerKey', 'explanation', 'distractorNotes', 'reference', 'contentHash', 'status', 'source'] as const;
+  const toInsert: (typeof questions.$inferInsert)[] = [];
+  const toUpdate: { id: string; values: typeof questions.$inferInsert }[] = [];
+  let unchanged = 0;
+  for (const q of list) {
+    const dom = domainId.get(q.domain);
+    if (!dom) throw new Error(`Domaine ${q.domain} inconnu`);
+    let sub: string | null = null;
+    if (q.subtopic) {
+      sub = subtopicId.get(`${dom}|${q.subtopic}`) ?? null;
+      if (!sub) throw new Error(`Sous-thème ${q.subtopic} inconnu`);
+    }
+    const hash = contentHash(q);
+    const twin = byHash.get(hash);
+    if (twin && twin !== q.slug) throw new DuplicateQuestionError(q.slug, twin);
+    byHash.set(hash, q.slug);
+    const values = {
+      certificationId: certId,
+      slug: q.slug,
+      domainId: dom,
+      subtopicId: sub,
+      type: q.body.type,
+      difficulty: q.difficulty,
+      body: q.body,
+      answerKey: q.key,
+      explanation: q.explanation,
+      distractorNotes: q.distractorNotes,
+      reference: q.reference ?? null,
+      contentHash: hash,
+      status: options.status ?? ('published' as const),
+      source: q.source ?? ('import' as const),
+    };
+    const row = bySlug.get(q.slug);
+    if (!row) toInsert.push(values);
+    else if (fields.some((f) => stable(row[f]) !== stable(values[f]))) toUpdate.push({ id: row.id, values });
+    else unchanged++;
+  }
+  for (let i = 0; i < toInsert.length; i += 200) await db.insert(questions).values(toInsert.slice(i, i + 200));
+  for (const u of toUpdate) await db.update(questions).set({ ...u.values, updatedAt: new Date() }).where(eq(questions.id, u.id));
+  return { created: toInsert.length, updated: toUpdate.length, unchanged };
+}
+
+export interface SyncSeriesResult {
+  created: number;
+  updated: number;
+  unchanged: number;
+  /** Examens dont le fichier diffère mais qui ont déjà été passés : ils restent tels quels. */
+  frozen: number[];
+}
+
+/**
+ * Importe la série d'examens figés d'une certification. Idempotent : un second import du même fichier
+ * ne crée ni doublon ni nouvel examen. Un examen absent est créé ; un examen identique (mêmes questions,
+ * même ordre) est laissé tel quel ; un examen qui diffère du fichier est réécrit **seulement si personne ne
+ * l'a jamais commencé**. Un examen déjà passé ne change jamais de contenu : il est gardé et signalé (`frozen`).
+ */
+export async function syncExamSeries(db: Db, certId: string, series: ExamSeries): Promise<SyncSeriesResult> {
+  const qRows = await db.select({ id: questions.id, slug: questions.slug }).from(questions).where(eq(questions.certificationId, certId));
+  const idOf = new Map(qRows.map((r) => [r.slug, r.id]));
+  const examRows = await db.select().from(exams).where(eq(exams.certificationId, certId));
+  const byNumber = new Map(examRows.map((e) => [e.number, e]));
+  const current = new Map<string, string[]>();
+  if (examRows.length) {
+    const rows = await db
+      .select({ examId: examQuestions.examId, questionId: examQuestions.questionId })
+      .from(examQuestions)
+      .where(inArray(examQuestions.examId, examRows.map((e) => e.id)))
+      .orderBy(asc(examQuestions.examId), asc(examQuestions.position));
+    for (const r of rows) current.set(r.examId, [...(current.get(r.examId) ?? []), r.questionId]);
+  }
+  const taken = new Set(
+    (
+      await db
+        .selectDistinct({ examId: attempts.examId })
+        .from(attempts)
+        .where(and(eq(attempts.certificationId, certId), isNotNull(attempts.examId)))
+    ).map((r) => r.examId as string),
+  );
+
+  const result: SyncSeriesResult = { created: 0, updated: 0, unchanged: 0, frozen: [] };
+  for (const exam of series.exams) {
+    const ids = exam.questions.map((slug) => {
+      const id = idOf.get(slug);
+      if (!id) throw new Error(`Examen n°${exam.number} : question inconnue ${slug}`);
+      return id;
+    });
+    const row = byNumber.get(exam.number);
+    const rows = (examId: string) => ids.map((questionId, position) => ({ examId, questionId, position }));
+    if (!row) {
+      await db.transaction(async (tx) => {
+        const [created] = await tx
+          .insert(exams)
+          .values({ certificationId: certId, number: exam.number, title: exam.title, seed: series.seed, source: 'import' })
+          .returning({ id: exams.id });
+        await tx.insert(examQuestions).values(rows(created!.id));
+      });
+      result.created++;
+      continue;
+    }
+    const before = current.get(row.id) ?? [];
+    if (before.length === ids.length && before.every((id, i) => id === ids[i])) {
+      if (row.title !== exam.title) await db.update(exams).set({ title: exam.title, updatedAt: new Date() }).where(eq(exams.id, row.id));
+      result.unchanged++;
+      continue;
+    }
+    if (taken.has(row.id)) {
+      result.frozen.push(exam.number);
+      continue;
+    }
+    await db.transaction(async (tx) => {
+      await tx.delete(examQuestions).where(eq(examQuestions.examId, row.id));
+      await tx.insert(examQuestions).values(rows(row.id));
+      await tx.update(exams).set({ title: exam.title, seed: series.seed, source: 'import', updatedAt: new Date() }).where(eq(exams.id, row.id));
+    });
+    result.updated++;
+  }
+  return result;
 }

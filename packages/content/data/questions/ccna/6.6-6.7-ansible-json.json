@@ -1,0 +1,1754 @@
+[
+  {
+    "slug": "ccna-6.6-ansible-inventory-role-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans Ansible, quel fichier liste les équipements gérés, éventuellement regroupés (par exemple [routeurs], [commutateurs]), avec les paramètres de connexion ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le playbook"
+        },
+        {
+          "id": "b",
+          "text": "Le module"
+        },
+        {
+          "id": "c",
+          "text": "L'inventaire"
+        },
+        {
+          "id": "d",
+          "text": "Le fichier d'état"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'inventaire (souvent hosts.ini ou un fichier YAML) indique à Ansible sur quels hôtes travailler. Il contient les noms ou adresses des équipements, leur regroupement en sections comme [routeurs] ou [commutateurs], et des variables comme ansible_network_os ou ansible_user. Le playbook, lui, cible un groupe ou un hôte de l'inventaire par sa ligne hosts: et décrit les tâches à exécuter. Sans inventaire, Ansible ne sait pas vers quels équipements ouvrir ses connexions SSH.",
+    "distractorNotes": {
+      "a": "Le playbook décrit les tâches à exécuter et désigne les hôtes visés par un nom de groupe, mais la liste des équipements est dans l'inventaire.",
+      "b": "Un module est l'unité de code qui réalise une action (par exemple ios_config) ; il ne recense pas les équipements.",
+      "d": "Le fichier d'état (terraform.tfstate) appartient à Terraform ; Ansible n'en tient pas."
+    },
+    "reference": "Documentation Ansible, Network Automation"
+  },
+  {
+    "slug": "ccna-6.6-puppet-pull-model-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Comment un nœud géré par Puppet obtient-il sa configuration ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un nœud de contrôle se connecte au nœud par SSH sans agent et y pousse des tâches YAML."
+        },
+        {
+          "id": "b",
+          "text": "Un agent installé sur le nœud contacte périodiquement le serveur Puppet et tire sa configuration."
+        },
+        {
+          "id": "c",
+          "text": "Le nœud télécharge un fichier HCL et l'applique avec les commandes plan et apply."
+        },
+        {
+          "id": "d",
+          "text": "Le serveur Puppet envoie la configuration par des messages SNMP Set à chaque modification."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Puppet suit un modèle pull avec agent : un agent Puppet tourne sur le nœud géré et contacte à intervalles réguliers (30 minutes par défaut) le serveur Puppet. Il lui envoie ses faits, reçoit un catalogue compilé à partir des manifestes, l'applique et renvoie un rapport. Chef fonctionne de la même façon avec son chef-client. C'est l'inverse d'Ansible, qui pousse les changements par SSH depuis un nœud de contrôle sans rien installer sur les équipements.",
+    "distractorNotes": {
+      "a": "C'est le fonctionnement d'Ansible (push, sans agent, SSH, playbooks YAML), pas celui de Puppet.",
+      "c": "HCL et le couple plan/apply relèvent de Terraform, qui ne s'exécute pas sur le nœud géré.",
+      "d": "Puppet n'utilise pas SNMP pour configurer les nœuds ; c'est l'agent qui tire le catalogue depuis le serveur."
+    },
+    "reference": "Documentation Puppet, Overview of Puppet's architecture"
+  },
+  {
+    "slug": "ccna-6.6-ansible-idempotence-recap-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le même playbook a été exécuté deux fois de suite sans modification de l'équipement entre les deux. Quelle propriété d'Ansible le second récapitulatif illustre-t-il ?",
+      "exhibit": "Premier passage :\nPLAY RECAP *********************************************************\nR1    : ok=2    changed=2    unreachable=0    failed=0    skipped=0\n\nSecond passage :\nPLAY RECAP *********************************************************\nR1    : ok=2    changed=0    unreachable=0    failed=0    skipped=0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le fonctionnement sans agent"
+        },
+        {
+          "id": "b",
+          "text": "Le modèle pull"
+        },
+        {
+          "id": "c",
+          "text": "L'idempotence"
+        },
+        {
+          "id": "d",
+          "text": "Le suivi d'un fichier d'état"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une tâche idempotente ne modifie l'équipement que si son état réel diffère de l'état demandé. Au premier passage, les deux tâches ont changé la configuration (changed=2). Au second, l'équipement est déjà conforme : les tâches réussissent (ok=2) sans rien changer (changed=0). On peut donc relancer un playbook autant de fois que nécessaire sans effet de bord. Les modules réseau comme ios_config comparent la configuration en cours avec les lignes demandées pour obtenir ce comportement.",
+    "distractorNotes": {
+      "a": "Ansible fonctionne bien sans agent, mais ce récapitulatif ne le montre pas : il montre qu'une seconde exécution ne change rien.",
+      "b": "Ansible suit un modèle push depuis le nœud de contrôle ; le modèle pull est celui de Puppet et Chef.",
+      "d": "Ansible ne tient pas de fichier d'état (c'est une notion de Terraform) : changed=0 vient de la comparaison, à chaque exécution, entre l'état réel de l'équipement et l'état demandé."
+    },
+    "reference": "Documentation Ansible, Network Automation"
+  },
+  {
+    "slug": "ccna-6.6-terraform-state-file-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel est le rôle du fichier terraform.tfstate dans un projet Terraform ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il contient les playbooks YAML que Terraform exécute dans l'ordre sur chaque équipement."
+        },
+        {
+          "id": "b",
+          "text": "Il mémorise les ressources que Terraform a créées et leurs attributs, pour les comparer à la configuration."
+        },
+        {
+          "id": "c",
+          "text": "Il liste les équipements et leurs groupes, comme un inventaire, pour ouvrir les sessions SSH."
+        },
+        {
+          "id": "d",
+          "text": "Il contient l'agent que chaque équipement installe pour tirer sa configuration."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Terraform est déclaratif : les fichiers .tf en HCL décrivent l'état souhaité. Le fichier d'état terraform.tfstate enregistre les ressources réellement gérées par Terraform, leurs identifiants et leurs attributs. Lors d'un terraform plan, Terraform rafraîchit cet état, le compare à la configuration et en déduit les créations, modifications et suppressions nécessaires. Sans état, il ne saurait pas quelles ressources existantes lui appartiennent.",
+    "distractorNotes": {
+      "a": "Les playbooks YAML sont propres à Ansible ; Terraform lit des fichiers .tf écrits en HCL.",
+      "c": "La liste d'équipements par groupes est l'inventaire d'Ansible, pas l'état de Terraform.",
+      "d": "Terraform n'installe pas d'agent ; le modèle avec agent et pull est celui de Puppet et Chef."
+    },
+    "reference": "Documentation HashiCorp Terraform, State"
+  },
+  {
+    "slug": "ccna-6.6-terraform-plan-role-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Que fait la commande terraform plan ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle applique immédiatement les changements décrits dans les fichiers .tf."
+        },
+        {
+          "id": "b",
+          "text": "Elle télécharge les providers et prépare le répertoire de travail."
+        },
+        {
+          "id": "c",
+          "text": "Elle supprime toutes les ressources gérées par la configuration."
+        },
+        {
+          "id": "d",
+          "text": "Elle compare la configuration à l'état et affiche les changements prévus, sans les appliquer."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "terraform plan calcule le plan d'exécution : Terraform lit les fichiers .tf, rafraîchit l'état des ressources existantes et affiche ce qu'il créerait (+), modifierait (~) ou détruirait (-) pour atteindre l'état décrit. Rien n'est modifié à ce stade : l'opérateur relit le plan avant de lancer terraform apply, qui exécute les changements. Ce cycle init, plan, apply est le flux de travail normal de Terraform.",
+    "distractorNotes": {
+      "a": "C'est le rôle de terraform apply ; plan ne fait qu'afficher les changements prévus.",
+      "b": "C'est le rôle de terraform init, à lancer avant plan.",
+      "c": "C'est le rôle de terraform destroy."
+    },
+    "reference": "Documentation HashiCorp Terraform, CLI commands"
+  },
+  {
+    "slug": "ccna-6.6-terraform-drift-plan-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un VLAN a été créé avec Terraform, avec le nom « DATA » dans le fichier .tf. Un technicien renomme ensuite ce VLAN « TEST » directement sur l'équipement. Le fichier .tf n'est pas modifié. Que montre le terraform plan suivant ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Rien, car le fichier d'état indique toujours que le VLAN s'appelle « DATA »."
+        },
+        {
+          "id": "b",
+          "text": "Une modification qui remet le nom « DATA », car Terraform rafraîchit l'état et le compare à la configuration."
+        },
+        {
+          "id": "c",
+          "text": "Une mise à jour du fichier .tf, qui reprend le nom « TEST » relevé sur l'équipement."
+        },
+        {
+          "id": "d",
+          "text": "Une erreur, car Terraform refuse de gérer une ressource modifiée hors de Terraform."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Par défaut, terraform plan rafraîchit l'état : il interroge l'infrastructure réelle par le provider et constate que le nom est devenu « TEST ». Il compare ensuite cet état à la configuration déclarée, qui demande « DATA », et propose une modification pour revenir à la configuration. C'est la logique déclarative : le code est la source de vérité et Terraform corrige la dérive au prochain apply. Terraform ne réécrit jamais les fichiers .tf à partir de l'équipement.",
+    "distractorNotes": {
+      "a": "plan ne se fie pas aveuglément à l'état enregistré : il le rafraîchit d'abord et détecte la dérive.",
+      "c": "Terraform ne modifie pas les fichiers de configuration ; c'est l'état réel qui est ramené vers le code, pas l'inverse.",
+      "d": "Une modification manuelle ne produit pas d'erreur : Terraform la traite comme une dérive à corriger."
+    },
+    "reference": "Documentation HashiCorp Terraform, plan"
+  },
+  {
+    "slug": "ccna-6.6-ansible-traits-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux caractéristiques s'appliquent à Ansible ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il ne nécessite aucun agent sur les équipements gérés."
+        },
+        {
+          "id": "b",
+          "text": "Les équipements gérés tirent périodiquement leur configuration depuis un serveur maître."
+        },
+        {
+          "id": "c",
+          "text": "Les configurations sont décrites dans des recettes écrites en Ruby."
+        },
+        {
+          "id": "d",
+          "text": "Ses playbooks sont écrits en YAML."
+        },
+        {
+          "id": "e",
+          "text": "Il tient un fichier d'état obligatoire des ressources qu'il a créées."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Ansible est sans agent : le nœud de contrôle se connecte aux équipements par SSH (ou par une API comme NETCONF) et pousse les changements, modèle push. Les playbooks sont des fichiers YAML qui listent des plays et des tâches, chaque tâche appelant un module. Ansible ne garde pas de fichier d'état : à chaque exécution, les modules idempotents constatent l'état réel de l'équipement avant d'agir.",
+    "distractorNotes": {
+      "b": "Le modèle pull avec un serveur maître est celui de Puppet et Chef ; Ansible pousse depuis le nœud de contrôle.",
+      "c": "Les recettes en Ruby sont propres à Chef.",
+      "e": "Le fichier d'état est une notion de Terraform ; Ansible n'en tient pas."
+    },
+    "reference": "Documentation Ansible, Network Automation"
+  },
+  {
+    "slug": "ccna-6.6-puppet-chef-traits-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sont vraies à la fois pour Puppet et pour Chef ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ils se connectent aux équipements par SSH sans rien y installer."
+        },
+        {
+          "id": "b",
+          "text": "Ils décrivent les ressources dans des fichiers HCL."
+        },
+        {
+          "id": "c",
+          "text": "Ils reposent sur un agent installé sur les nœuds gérés."
+        },
+        {
+          "id": "d",
+          "text": "Ils suivent un modèle pull : les nœuds gérés contactent un serveur central."
+        },
+        {
+          "id": "e",
+          "text": "Leurs tâches sont rédigées dans des playbooks YAML."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "Puppet et Chef suivent une architecture client-serveur : un agent (agent Puppet, chef-client) tourne sur chaque nœud géré et contacte périodiquement le serveur pour récupérer sa configuration, c'est le modèle pull. Puppet décrit l'état dans des manifestes écrits dans son propre langage déclaratif ; Chef utilise des recettes et cookbooks en Ruby. Pour des équipements réseau sur lesquels on ne peut pas installer d'agent, Ansible, sans agent, est plus adapté.",
+    "distractorNotes": {
+      "a": "La connexion SSH sans agent caractérise Ansible ; Puppet et Chef exigent un agent.",
+      "b": "HCL est le langage de Terraform.",
+      "e": "Les playbooks YAML sont propres à Ansible."
+    },
+    "reference": "Documentation Puppet ; documentation Chef Infra"
+  },
+  {
+    "slug": "ccna-6.6-iac-benefits-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux avantages l'infrastructure as code apporte-t-elle à une équipe réseau ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle permet de versionner, relire et restaurer les configurations avec Git."
+        },
+        {
+          "id": "b",
+          "text": "Elle supprime le besoin d'identifiants pour accéder aux équipements."
+        },
+        {
+          "id": "c",
+          "text": "Elle produit des configurations identiques à chaque redéploiement du même code, ce qui limite la dérive."
+        },
+        {
+          "id": "d",
+          "text": "Elle ne s'applique qu'aux ressources cloud, jamais aux équipements réseau."
+        },
+        {
+          "id": "e",
+          "text": "Elle impose que tous les équipements soient du même constructeur."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "L'infrastructure as code décrit l'infrastructure dans des fichiers texte (playbooks, fichiers .tf…). Ces fichiers vivent dans un dépôt Git : chaque changement est tracé, relu avant fusion et peut être annulé. Le même code appliqué à plusieurs sites produit des configurations cohérentes et reproductibles, et une nouvelle exécution ramène un équipement modifié à la main vers l'état décrit. L'automatisation a toujours besoin d'identifiants pour se connecter aux équipements.",
+    "distractorNotes": {
+      "b": "Les outils doivent toujours s'authentifier (SSH, jetons d'API) ; l'IaC ne supprime pas les identifiants.",
+      "d": "Ansible et Terraform gèrent aussi des équipements réseau, par exemple Cisco IOS XE.",
+      "e": "Les outils gèrent des équipements de constructeurs variés grâce à leurs modules ou providers."
+    },
+    "reference": "Cisco, CCNA 200-301 Exam Topics v1.1, 6.6"
+  },
+  {
+    "slug": "ccna-6.6-terraform-traits-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent Terraform ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il est déclaratif : on décrit l'état final souhaité des ressources."
+        },
+        {
+          "id": "b",
+          "text": "Un agent installé sur chaque équipement tire la configuration toutes les 30 minutes."
+        },
+        {
+          "id": "c",
+          "text": "Ses configurations sont rédigées dans des playbooks YAML."
+        },
+        {
+          "id": "d",
+          "text": "Il conserve un fichier d'état des ressources qu'il gère."
+        },
+        {
+          "id": "e",
+          "text": "Il exige que les équipements contactent un serveur maître pour se configurer."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Terraform, de HashiCorp, est un outil déclaratif : les fichiers .tf, écrits en HCL, décrivent les ressources voulues, et Terraform calcule lui-même les actions pour y parvenir. Il garde un fichier d'état (terraform.tfstate) qui associe chaque ressource du code à l'objet réel, ce qui lui permet de planifier les changements (terraform plan) puis de les appliquer (terraform apply). Il passe par les API des providers, sans agent sur les équipements.",
+    "distractorNotes": {
+      "b": "Le modèle avec agent et pull périodique est celui de Puppet (30 minutes par défaut), pas de Terraform.",
+      "c": "Les playbooks YAML sont propres à Ansible ; Terraform utilise HCL.",
+      "e": "Aucun serveur maître : Terraform s'exécute depuis le poste ou le pipeline de l'opérateur et appelle les API."
+    },
+    "reference": "Documentation HashiCorp Terraform"
+  },
+  {
+    "slug": "ccna-6.6-puppet-agent-cycle-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Mettez dans l'ordre les étapes d'un cycle d'exécution de l'agent Puppet sur un nœud géré.",
+      "items": [
+        {
+          "id": "i1",
+          "text": "Le serveur compile un catalogue à partir des manifestes et des faits reçus."
+        },
+        {
+          "id": "i2",
+          "text": "L'agent applique le catalogue sur le nœud."
+        },
+        {
+          "id": "i3",
+          "text": "L'agent contacte le serveur et lui envoie les faits du nœud."
+        },
+        {
+          "id": "i4",
+          "text": "L'agent envoie un rapport d'exécution au serveur."
+        },
+        {
+          "id": "i5",
+          "text": "Le serveur renvoie le catalogue à l'agent."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "i3",
+        "i1",
+        "i5",
+        "i2",
+        "i4"
+      ]
+    },
+    "explanation": "Puppet fonctionne en pull : c'est l'agent qui initie l'échange. Il collecte les faits du nœud (système, adresses…) et les envoie au serveur en demandant son catalogue. Le serveur compile le catalogue, c'est-à-dire l'état souhaité propre à ce nœud, à partir des manifestes et des faits, puis le renvoie. L'agent l'applique en ne corrigeant que ce qui diffère, puis envoie un rapport. Le cycle recommence à intervalle régulier, ce qui corrige la dérive.",
+    "distractorNotes": {},
+    "reference": "Documentation Puppet, Overview of Puppet's architecture"
+  },
+  {
+    "slug": "ccna-6.6-ansible-playbook-run-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un administrateur lance ansible-playbook depuis le nœud de contrôle. Mettez dans l'ordre ce qui se passe.",
+      "items": [
+        {
+          "id": "j1",
+          "text": "Ansible exécute les tâches du play dans l'ordre où elles sont écrites."
+        },
+        {
+          "id": "j2",
+          "text": "Ansible affiche le récapitulatif PLAY RECAP avec les compteurs ok, changed et failed."
+        },
+        {
+          "id": "j3",
+          "text": "Ansible lit le playbook et l'inventaire pour déterminer les hôtes visés."
+        },
+        {
+          "id": "j4",
+          "text": "Ansible ouvre une connexion SSH vers chaque hôte visé."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "j3",
+        "j4",
+        "j1",
+        "j2"
+      ]
+    },
+    "explanation": "Ansible part du playbook, dont la ligne hosts: désigne un groupe, et de l'inventaire qui dit quels équipements composent ce groupe et comment s'y connecter. Il ouvre ensuite des connexions SSH vers ces hôtes, sans agent, depuis le nœud de contrôle : c'est le modèle push. Les tâches s'exécutent dans l'ordre du playbook, chacune appelant un module. À la fin, le PLAY RECAP résume pour chaque hôte le nombre de tâches ok, changed, unreachable et failed.",
+    "distractorNotes": {},
+    "reference": "Documentation Ansible, Network Automation"
+  },
+  {
+    "slug": "ccna-6.6-tools-language-match-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque outil de gestion de configuration au langage dans lequel on décrit la configuration.",
+      "left": [
+        {
+          "id": "t1",
+          "text": "Ansible"
+        },
+        {
+          "id": "t2",
+          "text": "Terraform"
+        },
+        {
+          "id": "t3",
+          "text": "Puppet"
+        },
+        {
+          "id": "t4",
+          "text": "Chef"
+        }
+      ],
+      "right": [
+        {
+          "id": "lx",
+          "text": "XML"
+        },
+        {
+          "id": "lr",
+          "text": "Ruby, dans des recettes et cookbooks"
+        },
+        {
+          "id": "ly",
+          "text": "YAML, dans des playbooks"
+        },
+        {
+          "id": "lp",
+          "text": "Langage déclaratif propre à l'outil, dans des manifestes .pp"
+        },
+        {
+          "id": "lh",
+          "text": "HCL, dans des fichiers .tf"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "t1": "ly",
+        "t2": "lh",
+        "t3": "lp",
+        "t4": "lr"
+      }
+    },
+    "explanation": "Chaque outil a son format : Ansible décrit des plays et des tâches dans des playbooks YAML ; Terraform décrit des ressources dans des fichiers .tf en HCL (HashiCorp Configuration Language) ; Puppet utilise des manifestes .pp écrits dans son propre langage déclaratif ; Chef s'appuie sur des recettes regroupées en cookbooks, écrites en Ruby. Ces formats sont lisibles par un humain et se versionnent dans Git, ce qui est le principe de l'infrastructure as code.",
+    "distractorNotes": {
+      "lx": "Aucun de ces outils n'utilise XML pour décrire la configuration ; XML apparaît plutôt dans NETCONF."
+    },
+    "reference": "Documentations Ansible, HashiCorp Terraform, Puppet et Chef Infra"
+  },
+  {
+    "slug": "ccna-6.6-ansible-concepts-match-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque notion d'Ansible à sa définition.",
+      "left": [
+        {
+          "id": "n1",
+          "text": "Inventaire"
+        },
+        {
+          "id": "n2",
+          "text": "Playbook"
+        },
+        {
+          "id": "n3",
+          "text": "Tâche"
+        },
+        {
+          "id": "n4",
+          "text": "Module"
+        }
+      ],
+      "right": [
+        {
+          "id": "d1",
+          "text": "Unité de code qui réalise une action précise, comme ios_config"
+        },
+        {
+          "id": "d2",
+          "text": "Fichier qui liste les hôtes gérés et leurs groupes"
+        },
+        {
+          "id": "d3",
+          "text": "Fichier qui mémorise les ressources déjà créées"
+        },
+        {
+          "id": "d4",
+          "text": "Appel d'un module avec ses paramètres, au sein d'un play"
+        },
+        {
+          "id": "d5",
+          "text": "Fichier YAML qui associe des groupes d'hôtes à une suite de tâches"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "n1": "d2",
+        "n2": "d5",
+        "n3": "d4",
+        "n4": "d1"
+      }
+    },
+    "explanation": "L'inventaire dit sur quels hôtes travailler. Le playbook, en YAML, contient un ou plusieurs plays ; chaque play vise des hôtes (hosts:) et liste des tâches. Une tâche appelle un module en lui passant des paramètres, par exemple ios_config avec les lignes à ajouter. Le module est le code qui fait réellement le travail et rend un résultat ok ou changed, ce qui permet l'idempotence.",
+    "distractorNotes": {
+      "d3": "Un fichier d'état des ressources créées est une notion de Terraform (terraform.tfstate) ; Ansible n'en a pas."
+    },
+    "reference": "Documentation Ansible, Network Automation"
+  },
+  {
+    "slug": "ccna-6.6-tools-classify-match-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque caractéristique selon l'outil, ou la famille d'outils, auquel elle appartient.",
+      "left": [
+        {
+          "id": "c1",
+          "text": "Fichier d'état qui associe le code aux ressources réelles"
+        },
+        {
+          "id": "c2",
+          "text": "Agent qui contacte périodiquement un serveur pour tirer sa configuration"
+        },
+        {
+          "id": "c3",
+          "text": "Connexions SSH ouvertes depuis un nœud de contrôle, sans agent"
+        },
+        {
+          "id": "c4",
+          "text": "Commandes plan puis apply pour prévisualiser et appliquer les changements"
+        },
+        {
+          "id": "c5",
+          "text": "Playbooks qui enchaînent des tâches écrites en YAML"
+        }
+      ],
+      "right": [
+        {
+          "id": "ra",
+          "text": "Ansible"
+        },
+        {
+          "id": "rt",
+          "text": "Terraform"
+        },
+        {
+          "id": "rp",
+          "text": "Puppet et Chef"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "c1": "rt",
+        "c2": "rp",
+        "c3": "ra",
+        "c4": "rt",
+        "c5": "ra"
+      }
+    },
+    "explanation": "Terraform est déclaratif, écrit en HCL, et tient un fichier d'état qui lui permet de calculer un plan (terraform plan) avant de l'appliquer (terraform apply). Ansible est sans agent : il pousse depuis le nœud de contrôle, par SSH, des playbooks YAML composés de tâches. Puppet et Chef reposent sur un agent installé sur chaque nœud, qui tire sa configuration du serveur à intervalle régulier : modèle pull.",
+    "distractorNotes": {},
+    "reference": "Documentations Ansible, HashiCorp Terraform, Puppet et Chef Infra"
+  },
+  {
+    "slug": "ccna-6.6-terraform-init-command-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un ingénieur vient de cloner un dépôt contenant des fichiers .tf. Avant tout plan, il doit préparer le répertoire de travail et télécharger les providers déclarés. Quelle commande Terraform doit-il lancer ?",
+      "fields": [
+        {
+          "id": "cmd",
+          "label": "Commande complète (par exemple « terraform xxx »)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "cmd": {
+          "accepted": [
+            "terraform init"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "terraform init initialise le répertoire de travail : il lit les blocs required_providers et provider des fichiers .tf, télécharge les plug-ins de providers correspondants, configure le backend où sera stocké l'état et crée le fichier de verrouillage des versions. C'est la première commande à exécuter dans un nouveau répertoire ou après l'ajout d'un provider. Viennent ensuite terraform plan, qui affiche les changements prévus, et terraform apply, qui les exécute.",
+    "distractorNotes": {},
+    "reference": "Documentation HashiCorp Terraform, init"
+  },
+  {
+    "slug": "ccna-6.7-json-boolean-literal-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Laquelle de ces valeurs est un booléen JSON valide ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "on"
+        },
+        {
+          "id": "b",
+          "text": "yes"
+        },
+        {
+          "id": "c",
+          "text": "1"
+        },
+        {
+          "id": "d",
+          "text": "true"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "JSON ne connaît que deux littéraux booléens, true et false, écrits en minuscules et sans guillemets. Écrits entre guillemets (\"true\"), ils deviennent des chaînes. Les écritures on ou yes, acceptées comme booléens par YAML 1.1, ne sont pas valides en JSON, et 1 y est un nombre, pas un booléen. Le troisième et dernier littéral de JSON est null ; comme les nombres, il s'écrit lui aussi sans guillemets.",
+    "distractorNotes": {
+      "a": "on est un booléen dans YAML 1.1, pas en JSON, où il serait rejeté hors guillemets.",
+      "b": "yes est un booléen dans YAML 1.1, pas en JSON, où il serait rejeté hors guillemets.",
+      "c": "1 est une valeur JSON valide, mais de type nombre : JSON ne confond pas 1 et true."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-array-delimiters-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "En JSON, quels caractères délimitent un tableau (liste ordonnée de valeurs) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les accolades { }"
+        },
+        {
+          "id": "b",
+          "text": "Les crochets [ ]"
+        },
+        {
+          "id": "c",
+          "text": "Les parenthèses ( )"
+        },
+        {
+          "id": "d",
+          "text": "Les chevrons < >"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un tableau JSON est une liste ordonnée de valeurs placée entre crochets et séparées par des virgules, par exemple [\"Gi0/0\", \"Gi0/1\"]. Les valeurs peuvent être de types différents, y compris des objets ou d'autres tableaux. Les accolades délimitent un objet, c'est-à-dire un ensemble de paires clé/valeur. Les parenthèses et les chevrons n'ont aucun rôle dans la syntaxe JSON.",
+    "distractorNotes": {
+      "a": "Les accolades délimitent un objet (paires clé/valeur), pas un tableau.",
+      "c": "Les parenthèses ne font pas partie de la syntaxe JSON.",
+      "d": "Les chevrons servent aux balises XML, pas à JSON."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-string-quotes-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Comment une chaîne de caractères doit-elle être délimitée en JSON ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Par des guillemets doubles uniquement"
+        },
+        {
+          "id": "b",
+          "text": "Par des apostrophes uniquement"
+        },
+        {
+          "id": "c",
+          "text": "Par des guillemets doubles ou des apostrophes"
+        },
+        {
+          "id": "d",
+          "text": "Par aucun délimiteur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "En JSON, une chaîne est toujours entourée de guillemets doubles (\"). Cela vaut aussi pour les noms de clés, qui sont des chaînes. Les apostrophes, acceptées par JavaScript ou Python, rendent un document JSON invalide. Un guillemet double à l'intérieur d'une chaîne s'échappe avec une barre oblique inverse (\\\"). Les nombres, booléens et null s'écrivent, eux, sans guillemets.",
+    "distractorNotes": {
+      "b": "Les apostrophes ne sont pas valides en JSON, contrairement à JavaScript ou Python.",
+      "c": "Seuls les guillemets doubles sont admis ; une chaîne entre apostrophes est rejetée.",
+      "d": "Une chaîne sans délimiteur n'est pas valide ; seuls true, false, null et les nombres s'écrivent sans guillemets."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-trailing-comma-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyseur JSON rejette ce document. Pourquoi ?",
+      "exhibit": "{\n  \"hostname\": \"SW1\",\n  \"vlans\": [10, 20, 30],\n  \"stp_mode\": \"rapid-pvst\",\n}",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les numéros de VLAN ne sont pas entre guillemets."
+        },
+        {
+          "id": "b",
+          "text": "La valeur « rapid-pvst » contient un tiret."
+        },
+        {
+          "id": "c",
+          "text": "Une virgule suit la dernière paire de l'objet."
+        },
+        {
+          "id": "d",
+          "text": "Un objet ne peut pas contenir de tableau."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "En JSON, la virgule sépare les membres d'un objet ou les éléments d'un tableau : elle ne peut pas suivre le dernier. Ici, la virgule après \"rapid-pvst\" annonce un membre qui n'existe pas, et l'analyseur rencontre l'accolade fermante à la place d'un nom de clé. Il suffit de supprimer cette virgule finale pour que le document soit valide. JavaScript tolère cette virgule, JSON non.",
+    "distractorNotes": {
+      "a": "Les numéros de VLAN sont des nombres ; ils s'écrivent justement sans guillemets.",
+      "b": "Une chaîne entre guillemets doubles peut contenir un tiret sans problème.",
+      "d": "Un objet peut contenir n'importe quelle valeur, y compris un tableau."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-key-value-pair-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Laquelle de ces paires clé/valeur respecte la syntaxe JSON ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "'mtu': 1500"
+        },
+        {
+          "id": "b",
+          "text": "mtu: 1500"
+        },
+        {
+          "id": "c",
+          "text": "\"mtu\" = 1500"
+        },
+        {
+          "id": "d",
+          "text": "\"mtu\": 1500"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Dans un objet JSON, chaque membre s'écrit nom, deux-points, valeur. Le nom est une chaîne, donc entre guillemets doubles, et la valeur 1500 est un nombre, écrit sans guillemets. La paire \"mtu\": 1500 est donc correcte. Les noms sans guillemets ou entre apostrophes sont admis par JavaScript ou YAML, mais pas par JSON, et le signe égal n'a aucun rôle dans sa syntaxe.",
+    "distractorNotes": {
+      "a": "Le nom de clé est entre apostrophes ; JSON exige des guillemets doubles.",
+      "b": "Le nom de clé n'est pas entre guillemets : valide en YAML, invalide en JSON.",
+      "c": "JSON sépare la clé de la valeur par un deux-points, pas par un signe égal."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-nested-mask-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Quelle est la valeur de la clé « mask » dans l'objet « ipv4 » du second élément du tableau « interfaces » ?",
+      "exhibit": "{\n  \"device\": \"R1\",\n  \"interfaces\": [\n    {\n      \"name\": \"GigabitEthernet0/0\",\n      \"ipv4\": {\"address\": \"10.1.1.1\", \"mask\": \"255.255.255.0\"}\n    },\n    {\n      \"name\": \"GigabitEthernet0/1\",\n      \"ipv4\": {\"address\": \"10.2.2.1\", \"mask\": \"255.255.255.252\"}\n    }\n  ]\n}",
+      "options": [
+        {
+          "id": "a",
+          "text": "255.255.255.0"
+        },
+        {
+          "id": "b",
+          "text": "255.255.255.252"
+        },
+        {
+          "id": "c",
+          "text": "10.2.2.1"
+        },
+        {
+          "id": "d",
+          "text": "10.1.1.1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le tableau \"interfaces\" contient deux objets, dans l'ordre : GigabitEthernet0/0 puis GigabitEthernet0/1. Le second élément est donc celui de GigabitEthernet0/1. Son membre \"ipv4\" est lui-même un objet, dont la clé \"mask\" vaut \"255.255.255.252\". Pour lire une valeur imbriquée, on suit le chemin clé par clé et, dans un tableau, on choisit l'élément par sa position.",
+    "distractorNotes": {
+      "a": "255.255.255.0 est le masque du premier élément (GigabitEthernet0/0).",
+      "c": "10.2.2.1 est la valeur de la clé « address », pas de « mask », dans le second élément.",
+      "d": "10.1.1.1 est l'adresse du premier élément."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-null-type-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Que représente la valeur de la clé « description » ?",
+      "exhibit": "{\n  \"name\": \"GigabitEthernet0/2\",\n  \"description\": null,\n  \"mtu\": 1500\n}",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une chaîne de caractères vide"
+        },
+        {
+          "id": "b",
+          "text": "Le booléen false"
+        },
+        {
+          "id": "c",
+          "text": "L'absence de valeur (type null)"
+        },
+        {
+          "id": "d",
+          "text": "Une erreur de syntaxe du document"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "null est l'un des littéraux de JSON, avec true et false. Écrit en minuscules et sans guillemets, il est de type null et signifie explicitement « pas de valeur » : la clé existe, mais rien n'y est associé, ici une interface sans description. Ce n'est ni une chaîne vide (\"\"), ni le booléen false, ni une chaîne \"null\". Le document est parfaitement valide.",
+    "distractorNotes": {
+      "a": "Une chaîne vide s'écrirait \"\" ; null est un type distinct.",
+      "b": "false est un booléen ; null n'est pas un booléen.",
+      "d": "null est une valeur valide ; le document est correct."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-count-string-values-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sans compter les noms de clés, combien de valeurs de type chaîne ce document contient-il ?",
+      "exhibit": "{\n  \"vlans\": [\n    {\"id\": 10, \"name\": \"DATA\", \"ports\": [\"Gi1/0/1\", \"Gi1/0/2\"]},\n    {\"id\": 20, \"name\": \"VOICE\", \"ports\": []},\n    {\"id\": 99, \"name\": \"MGMT\", \"ports\": [\"Gi1/0/48\"]}\n  ]\n}",
+      "options": [
+        {
+          "id": "a",
+          "text": "3"
+        },
+        {
+          "id": "b",
+          "text": "6"
+        },
+        {
+          "id": "c",
+          "text": "9"
+        },
+        {
+          "id": "d",
+          "text": "15"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Les chaînes sont les valeurs entre guillemets doubles. Les valeurs de \"name\" en donnent trois (DATA, VOICE, MGMT). Les tableaux \"ports\" en ajoutent trois : Gi1/0/1 et Gi1/0/2 pour le VLAN 10, aucune pour le VLAN 20 dont le tableau est vide, Gi1/0/48 pour le VLAN 99. Total : 6. Les valeurs de \"id\" (10, 20, 99) sont des nombres, sans guillemets, et les noms de clés sont exclus par l'énoncé.",
+    "distractorNotes": {
+      "a": "3 ne compte que les valeurs de « name » et oublie les éléments des tableaux « ports ».",
+      "c": "9 compte aussi les valeurs de « id », qui sont des nombres et non des chaînes.",
+      "d": "15 ajoute aux 6 chaînes les 9 noms de clés des objets du tableau (id, name et ports, trois fois), exclus par l'énoncé."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-types-quoted-values-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un script compare ces valeurs à des booléens et à des nombres. Quelle affirmation sur les types est exacte ?",
+      "exhibit": "{\n  \"interface\": \"GigabitEthernet1/0/5\",\n  \"access_vlan\": \"20\",\n  \"voice_vlan\": 150,\n  \"portfast\": \"false\",\n  \"bpdu_guard\": true,\n  \"description\": null\n}",
+      "options": [
+        {
+          "id": "a",
+          "text": "La valeur de « access_vlan » est un nombre."
+        },
+        {
+          "id": "b",
+          "text": "La valeur de « voice_vlan » est une chaîne."
+        },
+        {
+          "id": "c",
+          "text": "La valeur de « portfast » est une chaîne, pas un booléen."
+        },
+        {
+          "id": "d",
+          "text": "La valeur de « bpdu_guard » est une chaîne."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "En JSON, le type se lit à l'écriture : entre guillemets doubles, c'est une chaîne, quel que soit le contenu. \"20\" et \"false\" sont donc des chaînes, alors que 150 est un nombre, true un booléen et null le type null. Un script qui teste portfast == false obtiendrait un résultat faux, puisque la chaîne \"false\" n'est pas le booléen false. C'est une erreur fréquente quand une API renvoie des valeurs mal typées.",
+    "distractorNotes": {
+      "a": "\"20\" est entre guillemets : c'est une chaîne, pas un nombre.",
+      "b": "150 est écrit sans guillemets : c'est un nombre.",
+      "d": "true sans guillemets est le booléen true, pas une chaîne."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-xml-tags-trait-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle caractéristique distingue XML de JSON ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "XML encadre les données par des balises ouvrantes et fermantes."
+        },
+        {
+          "id": "b",
+          "text": "XML délimite les objets par des accolades."
+        },
+        {
+          "id": "c",
+          "text": "XML structure les données uniquement par l'indentation."
+        },
+        {
+          "id": "d",
+          "text": "XML ne peut pas représenter de données imbriquées."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "XML décrit les données avec des balises : <hostname>R1</hostname>, une balise ouvrante et une fermante autour de chaque valeur, imbriquées pour former une arborescence. JSON utilise des accolades pour les objets, des crochets pour les tableaux et des paires clé/valeur, ce qui le rend plus compact. YAML, lui, s'appuie sur l'indentation. XML est le format de NETCONF, alors que RESTCONF accepte XML ou JSON.",
+    "distractorNotes": {
+      "b": "Les accolades sont la syntaxe des objets JSON, pas de XML.",
+      "c": "La structure par l'indentation est propre à YAML ; en XML, l'indentation est purement cosmétique.",
+      "d": "XML représente très bien l'imbrication, par des éléments contenus dans d'autres éléments."
+    },
+    "reference": "W3C, Extensible Markup Language (XML) 1.0 ; RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-yaml-indentation-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel format de données structure l'information par l'indentation et marque les éléments d'une liste par un tiret, comme dans les playbooks Ansible ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "JSON"
+        },
+        {
+          "id": "b",
+          "text": "XML"
+        },
+        {
+          "id": "c",
+          "text": "YAML"
+        },
+        {
+          "id": "d",
+          "text": "CSV"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "YAML (YAML Ain't Markup Language) se veut très lisible : la hiérarchie se lit à l'indentation, avec des espaces, les paires s'écrivent clé: valeur et chaque élément de liste commence par un tiret. Les guillemets autour des chaînes sont le plus souvent facultatifs. C'est le format des playbooks et souvent des inventaires d'Ansible. YAML 1.2 est d'ailleurs un sur-ensemble de JSON.",
+    "distractorNotes": {
+      "a": "JSON structure les données par des accolades et des crochets ; l'indentation n'y a aucune signification.",
+      "b": "XML structure les données par des balises imbriquées, pas par l'indentation.",
+      "d": "CSV est un format tabulaire de lignes et de colonnes séparées par des virgules, sans hiérarchie."
+    },
+    "reference": "YAML Ain't Markup Language, version 1.2"
+  },
+  {
+    "slug": "ccna-6.7-json-data-types-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux éléments font partie des types de données définis par JSON ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Date"
+        },
+        {
+          "id": "b",
+          "text": "Booléen"
+        },
+        {
+          "id": "c",
+          "text": "Commentaire"
+        },
+        {
+          "id": "d",
+          "text": "Nombre"
+        },
+        {
+          "id": "e",
+          "text": "Entier hexadécimal"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "JSON définit quatre types simples (chaîne, nombre, booléen, null) et deux types structurés (objet et tableau). Un nombre s'écrit en décimal, éventuellement avec signe, partie fractionnaire et exposant. Les booléens sont true et false. Il n'existe pas de type date : une date est transportée dans une chaîne, par exemple au format ISO 8601. JSON n'autorise pas non plus les commentaires.",
+    "distractorNotes": {
+      "a": "JSON n'a pas de type date ; on écrit une date dans une chaîne.",
+      "c": "JSON ne prévoit aucun commentaire ; un « // » ou « /* */ » rend le document invalide.",
+      "e": "Les nombres JSON sont décimaux ; une écriture 0x1F est invalide."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-two-errors-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Ce document JSON est refusé par l'API. Quelles deux erreurs faut-il corriger ? (Choisissez-en deux.)",
+      "exhibit": "{\n  \"hostname\": 'R2',\n  \"ntp_servers\": [\"10.0.0.1\", \"10.0.0.2\"],\n  \"logging\": true,\n  \"snmp\": {\"location\": \"Lyon\", \"contact\": \"noc\"},\n}",
+      "options": [
+        {
+          "id": "a",
+          "text": "La valeur de « hostname » est entourée d'apostrophes."
+        },
+        {
+          "id": "b",
+          "text": "La valeur de « ntp_servers » est un tableau de chaînes."
+        },
+        {
+          "id": "c",
+          "text": "La valeur de « logging » est écrite sans guillemets."
+        },
+        {
+          "id": "d",
+          "text": "La valeur de « snmp » est un objet imbriqué."
+        },
+        {
+          "id": "e",
+          "text": "Une virgule suit l'objet « snmp », dernier membre du document."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Deux règles sont enfreintes. Les chaînes JSON exigent des guillemets doubles : 'R2' doit devenir \"R2\". Et aucune virgule ne peut suivre le dernier membre d'un objet : celle qui suit l'objet \"snmp\" doit disparaître. Le reste est correct : un tableau peut contenir des chaînes, true est un booléen qui s'écrit sans guillemets, et un objet peut en contenir un autre. Une fois ces deux corrections faites, le document est valide.",
+    "distractorNotes": {
+      "b": "Un tableau de chaînes entre guillemets doubles est parfaitement valide.",
+      "c": "true est un booléen : il s'écrit justement sans guillemets ; \"true\" serait une chaîne.",
+      "d": "Les objets imbriqués sont autorisés en JSON."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-uplinks-read-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Quelles deux affirmations sur ce document sont exactes ? (Choisissez-en deux.)",
+      "exhibit": "{\n  \"switch\": \"SW-CORE\",\n  \"uplinks\": [\n    {\"port\": \"Te1/1/1\", \"neighbor\": \"SW-DIST1\", \"speed\": 10000},\n    {\"port\": \"Te1/1/2\", \"neighbor\": \"SW-DIST2\", \"speed\": 10000}\n  ],\n  \"stack\": {\"members\": 2, \"master\": 1},\n  \"snmp_enabled\": false\n}",
+      "options": [
+        {
+          "id": "a",
+          "text": "La valeur de « uplinks » est un tableau de deux objets."
+        },
+        {
+          "id": "b",
+          "text": "La valeur de « stack » est un tableau de deux éléments."
+        },
+        {
+          "id": "c",
+          "text": "La valeur de « speed » est une chaîne de caractères."
+        },
+        {
+          "id": "d",
+          "text": "La valeur de « neighbor » dans le second élément de « uplinks » est SW-DIST2."
+        },
+        {
+          "id": "e",
+          "text": "Le document contient trois objets au total, objet racine compris."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "\"uplinks\" est entre crochets : c'est un tableau, qui contient deux objets entre accolades. Le second, celui de Te1/1/2, a pour \"neighbor\" la valeur \"SW-DIST2\". \"stack\" est entre accolades : c'est un objet de deux membres, pas un tableau. \"speed\" vaut 10000 sans guillemets, donc un nombre. On compte quatre objets : la racine, les deux éléments de \"uplinks\" et \"stack\".",
+    "distractorNotes": {
+      "b": "« stack » est entre accolades : c'est un objet de deux paires clé/valeur, pas un tableau.",
+      "c": "10000 est écrit sans guillemets : c'est un nombre.",
+      "e": "Il y a quatre objets : la racine, les deux objets de « uplinks » et l'objet « stack »."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-syntax-facts-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur la syntaxe JSON sont exactes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les noms de clés sont des chaînes entre guillemets doubles."
+        },
+        {
+          "id": "b",
+          "text": "Les commentaires s'écrivent après « // »."
+        },
+        {
+          "id": "c",
+          "text": "Chaque valeur est encadrée par une balise ouvrante et une balise fermante."
+        },
+        {
+          "id": "d",
+          "text": "La valeur d'une clé peut être un objet ou un tableau."
+        },
+        {
+          "id": "e",
+          "text": "L'indentation détermine l'imbrication des données."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Un objet JSON est un ensemble de paires dont le nom est toujours une chaîne entre guillemets doubles. La valeur peut être de n'importe quel type, y compris un objet ou un tableau, ce qui permet d'imbriquer les données à volonté. L'imbrication se lit aux accolades et aux crochets ; les espaces et retours à la ligne sont ignorés. JSON n'a pas de commentaires, et les balises appartiennent à XML.",
+    "distractorNotes": {
+      "b": "JSON n'admet aucun commentaire ; « // » rend le document invalide.",
+      "c": "Les balises ouvrantes et fermantes sont la syntaxe de XML.",
+      "e": "En JSON, l'indentation est cosmétique ; c'est en YAML qu'elle porte la structure."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-path-order-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Reportez-vous à l'exhibit. Un script doit lire le statut de Gi0/0. Mettez dans l'ordre, depuis l'objet racine, les éléments qu'il traverse.",
+      "exhibit": "{\n  \"response\": {\n    \"device\": {\n      \"interfaces\": [\n        {\"name\": \"Gi0/0\", \"status\": \"up\"}\n      ]\n    }\n  }\n}",
+      "items": [
+        {
+          "id": "p1",
+          "text": "La clé « interfaces »"
+        },
+        {
+          "id": "p2",
+          "text": "La clé « response »"
+        },
+        {
+          "id": "p3",
+          "text": "La clé « status »"
+        },
+        {
+          "id": "p4",
+          "text": "Le premier élément du tableau"
+        },
+        {
+          "id": "p5",
+          "text": "La clé « device »"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "p2",
+        "p5",
+        "p1",
+        "p4",
+        "p3"
+      ]
+    },
+    "explanation": "On lit une valeur imbriquée de l'extérieur vers l'intérieur. L'objet racine contient \"response\", dont la valeur est un objet contenant \"device\". Celui-ci contient \"interfaces\", dont la valeur est un tableau : on y prend le premier élément (indice 0 dans la plupart des langages), un objet dont la clé \"status\" vaut \"up\". En Python, cela donne data[\"response\"][\"device\"][\"interfaces\"][0][\"status\"].",
+    "distractorNotes": {},
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-sort-cpu-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Reportez-vous à l'exhibit, renvoyé par l'API d'un outil de supervision. Classez les équipements de la charge CPU la plus élevée à la plus faible.",
+      "exhibit": "[\n  {\"name\": \"R1\",  \"stats\": {\"cpu_pct\": 42, \"mem_pct\": 80}},\n  {\"name\": \"R2\",  \"stats\": {\"cpu_pct\": 7,  \"mem_pct\": 91}},\n  {\"name\": \"SW1\", \"stats\": {\"cpu_pct\": 65, \"mem_pct\": 30}},\n  {\"name\": \"SW2\", \"stats\": {\"cpu_pct\": 18, \"mem_pct\": 55}}\n]",
+      "items": [
+        {
+          "id": "e1",
+          "text": "R1"
+        },
+        {
+          "id": "e2",
+          "text": "R2"
+        },
+        {
+          "id": "e3",
+          "text": "SW1"
+        },
+        {
+          "id": "e4",
+          "text": "SW2"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "e3",
+        "e1",
+        "e4",
+        "e2"
+      ]
+    },
+    "explanation": "Le document est un tableau d'objets ; pour chaque équipement, la charge CPU se trouve dans l'objet imbriqué \"stats\", clé \"cpu_pct\". Les valeurs sont SW1 65, R1 42, SW2 18 et R2 7, d'où l'ordre SW1, R1, SW2, R2. Il ne faut pas confondre avec \"mem_pct\", qui donnerait R2, R1, SW2, SW1. Ce sont des nombres : ils se comparent numériquement, 7 étant bien inférieur à 18.",
+    "distractorNotes": {},
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-value-types-match-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque valeur JSON à son type.",
+      "left": [
+        {
+          "id": "v1",
+          "text": "\"GigabitEthernet0/1\""
+        },
+        {
+          "id": "v2",
+          "text": "1500"
+        },
+        {
+          "id": "v3",
+          "text": "false"
+        },
+        {
+          "id": "v4",
+          "text": "null"
+        },
+        {
+          "id": "v5",
+          "text": "[\"10.0.0.1\", \"10.0.0.2\"]"
+        }
+      ],
+      "right": [
+        {
+          "id": "tn",
+          "text": "Nombre"
+        },
+        {
+          "id": "tt",
+          "text": "Tableau"
+        },
+        {
+          "id": "to",
+          "text": "Objet"
+        },
+        {
+          "id": "ts",
+          "text": "Chaîne"
+        },
+        {
+          "id": "tb",
+          "text": "Booléen"
+        },
+        {
+          "id": "tz",
+          "text": "Null"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "v1": "ts",
+        "v2": "tn",
+        "v3": "tb",
+        "v4": "tz",
+        "v5": "tt"
+      }
+    },
+    "explanation": "Le type d'une valeur JSON se reconnaît à son écriture : entre guillemets doubles, une chaîne ; des chiffres sans guillemets, un nombre ; true ou false, un booléen ; null, le type null ; entre crochets, un tableau, ici de deux chaînes. Le sixième type, l'objet, s'écrit entre accolades avec des paires clé/valeur : aucune des valeurs proposées n'en est un.",
+    "distractorNotes": {
+      "to": "Un objet s'écrit entre accolades avec des paires clé/valeur ; aucune valeur de la liste n'est un objet."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-formats-traits-match-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque caractéristique au format de données qu'elle décrit.",
+      "left": [
+        {
+          "id": "f1",
+          "text": "Données encadrées par des balises ouvrantes et fermantes"
+        },
+        {
+          "id": "f2",
+          "text": "Objets entre accolades et tableaux entre crochets"
+        },
+        {
+          "id": "f3",
+          "text": "Hiérarchie portée par l'indentation, listes marquées par un tiret"
+        },
+        {
+          "id": "f4",
+          "text": "Format des playbooks Ansible"
+        },
+        {
+          "id": "f5",
+          "text": "Format utilisé par NETCONF pour encoder les données"
+        }
+      ],
+      "right": [
+        {
+          "id": "rj",
+          "text": "JSON"
+        },
+        {
+          "id": "rx",
+          "text": "XML"
+        },
+        {
+          "id": "ry",
+          "text": "YAML"
+        },
+        {
+          "id": "rc",
+          "text": "CSV"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "f1": "rx",
+        "f2": "rj",
+        "f3": "ry",
+        "f4": "ry",
+        "f5": "rx"
+      }
+    },
+    "explanation": "XML structure les données par des balises imbriquées ; c'est l'encodage de NETCONF (RFC 6241). JSON utilise des accolades pour les objets, des crochets pour les tableaux et des paires clé/valeur ; c'est le format le plus courant des API REST et l'un des deux encodages de RESTCONF. YAML s'appuie sur l'indentation et les tirets, ce qui le rend très lisible : Ansible l'utilise pour ses playbooks.",
+    "distractorNotes": {
+      "rc": "CSV est un format tabulaire sans hiérarchie ; il n'est concerné par aucune de ces caractéristiques."
+    },
+    "reference": "RFC 8259 ; RFC 6241 ; W3C, XML 1.0"
+  },
+  {
+    "slug": "ccna-6.7-json-symbols-match-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque élément de syntaxe JSON à son rôle.",
+      "left": [
+        {
+          "id": "s1",
+          "text": "Accolades { }"
+        },
+        {
+          "id": "s2",
+          "text": "Crochets [ ]"
+        },
+        {
+          "id": "s3",
+          "text": "Deux-points :"
+        },
+        {
+          "id": "s4",
+          "text": "Virgule ,"
+        },
+        {
+          "id": "s5",
+          "text": "Guillemets doubles \" \""
+        }
+      ],
+      "right": [
+        {
+          "id": "ra",
+          "text": "Séparer le nom d'une clé de sa valeur"
+        },
+        {
+          "id": "rb",
+          "text": "Délimiter une chaîne"
+        },
+        {
+          "id": "rc",
+          "text": "Délimiter un objet"
+        },
+        {
+          "id": "rd",
+          "text": "Délimiter un commentaire"
+        },
+        {
+          "id": "re",
+          "text": "Séparer deux membres ou deux éléments"
+        },
+        {
+          "id": "rf",
+          "text": "Délimiter un tableau"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "rc",
+        "s2": "rf",
+        "s3": "ra",
+        "s4": "re",
+        "s5": "rb"
+      }
+    },
+    "explanation": "Toute la syntaxe JSON tient en quelques caractères : les accolades entourent un objet, les crochets un tableau, le deux-points sépare un nom de clé de sa valeur, la virgule sépare deux membres d'un objet ou deux éléments d'un tableau (jamais après le dernier), et les guillemets doubles délimitent les chaînes, noms de clés compris. Les espaces et sauts de ligne entre ces éléments sont ignorés.",
+    "distractorNotes": {
+      "rd": "JSON ne prévoit aucun commentaire ; aucun caractère n'a ce rôle."
+    },
+    "reference": "RFC 8259"
+  },
+  {
+    "slug": "ccna-6.7-json-count-boolean-true-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Combien d'interfaces ont pour valeur de « enabled » le booléen true ?",
+      "exhibit": "{\n  \"interfaces\": [\n    {\"name\": \"Gi0/0\", \"enabled\": true},\n    {\"name\": \"Gi0/1\", \"enabled\": false},\n    {\"name\": \"Gi0/2\", \"enabled\": true},\n    {\"name\": \"Gi0/3\", \"enabled\": \"true\"},\n    {\"name\": \"Lo0\",   \"enabled\": true}\n  ]\n}",
+      "fields": [
+        {
+          "id": "n",
+          "label": "Nombre d'interfaces (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "n": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le tableau \"interfaces\" contient cinq objets. Gi0/0, Gi0/2 et Lo0 ont \"enabled\": true sans guillemets, donc le booléen true. Gi0/1 vaut false. Gi0/3 vaut \"true\" entre guillemets : c'est une chaîne, pas un booléen, et un script qui teste enabled == true ne la retiendrait pas. La réponse est donc 3. Le type d'une valeur JSON se lit à son écriture, pas à son contenu.",
+    "distractorNotes": {},
+    "reference": "RFC 8259"
+  }
+]

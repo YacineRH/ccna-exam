@@ -82,6 +82,13 @@
    "parent": "config",
    "config": true,
    "helpTitle": "Ext Access List configuration commands:"
+  },
+  {
+   "id": "config-radius-server",
+   "prompt": "{hostname}(config-radius-server)#",
+   "parent": "config",
+   "config": true,
+   "helpTitle": "RADIUS server sub-mode commands:"
   }
  ],
  "messages": {
@@ -927,6 +934,20 @@
    }
   },
   {
+   "syntax": "show ntp {associations [detail]|status}",
+   "modes": [
+    "user",
+    "privileged"
+   ],
+   "output": "% Sortie non simulée dans ce lab : vérifiez la configuration avec show running-config.",
+   "help": {
+    "ntp": "Network time protocol",
+    "associations": "NTP associations",
+    "status": "NTP status",
+    "detail": "Show detail"
+   }
+  },
+  {
    "syntax": "{ping|traceroute} [ipv6] <word> [source {<interface>|<ipv4>}]",
    "modes": [
     "user",
@@ -946,6 +967,27 @@
    ],
    "help": {
     "terminal": "Set terminal line parameters"
+   }
+  },
+  {
+   "syntax": "terminal monitor",
+   "modes": [
+    "privileged"
+   ],
+   "help": {
+    "terminal": "Set terminal line parameters",
+    "monitor": "Copy debug output to the current terminal line"
+   }
+  },
+  {
+   "syntax": "terminal no monitor",
+   "modes": [
+    "privileged"
+   ],
+   "help": {
+    "terminal": "Set terminal line parameters",
+    "no": "Negate a command or set its defaults",
+    "monitor": "Copy debug output to the current terminal line"
    }
   },
   {
@@ -1108,6 +1150,16 @@
   {
    "syntax": "exit",
    "modes": [
+    "config-radius-server"
+   ],
+   "exit": true,
+   "help": {
+    "exit": "Exit from RADIUS server configuration mode"
+   }
+  },
+  {
+   "syntax": "exit",
+   "modes": [
     "config"
    ],
    "exit": true,
@@ -1126,7 +1178,8 @@
     "config-vlan",
     "dhcp-config",
     "config-std-nacl",
-    "config-ext-nacl"
+    "config-ext-nacl",
+    "config-radius-server"
    ],
    "end": true
   },
@@ -1648,11 +1701,139 @@
    "rank": 31
   },
   {
+   "syntax": "aaa new-model",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "aaa": "Authentication, Authorization and Accounting.",
+    "new-model": "Enable NEW access control commands and functions.(Disables OLD commands.)"
+   },
+   "rank": 33
+  },
+  {
+   "syntax": "aaa authentication login default {local|local-case|enable|line|none|group {radius|tacacs+|<word>}} [{local|local-case|enable|line|none|group {radius|tacacs+|<word>}} [{local|local-case|enable|line|none|group {radius|tacacs+|<word>}} [{local|local-case|enable|line|none|group {radius|tacacs+|<word>}}]]]",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "requires": [
+    {
+     "config": "^aaa new-model$",
+     "invalidAtWord": 2
+    }
+   ],
+   "help": {
+    "aaa": "Authentication, Authorization and Accounting.",
+    "authentication": "Authentication configurations parameters.",
+    "login": "Set authentication lists for logins.",
+    "default": "The default authentication list.",
+    "local": "Use local username authentication.",
+    "local-case": "Use case-sensitive local username authentication.",
+    "enable": "Use enable password for authentication.",
+    "line": "Use line password for authentication.",
+    "none": "NO authentication.",
+    "group": "Use Server-group",
+    "radius": "Use list of all Radius hosts.",
+    "tacacs+": "Use list of all Tacacs+ hosts.",
+    "<word>": "Server-group name"
+   },
+   "rank": 34,
+   "negateKey": true
+  },
+  {
+   "syntax": "aaa authentication login <word> {local|local-case|enable|line|none|group {radius|tacacs+|<word>}} [{local|local-case|enable|line|none|group {radius|tacacs+|<word>}} [{local|local-case|enable|line|none|group {radius|tacacs+|<word>}} [{local|local-case|enable|line|none|group {radius|tacacs+|<word>}}]]]",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "requires": [
+    {
+     "config": "^aaa new-model$",
+     "invalidAtWord": 2
+    }
+   ],
+   "help": {
+    "aaa": "Authentication, Authorization and Accounting.",
+    "authentication": "Authentication configurations parameters.",
+    "login": "Set authentication lists for logins.",
+    "default": "The default authentication list.",
+    "local": "Use local username authentication.",
+    "local-case": "Use case-sensitive local username authentication.",
+    "enable": "Use enable password for authentication.",
+    "line": "Use line password for authentication.",
+    "none": "NO authentication.",
+    "group": "Use Server-group",
+    "radius": "Use list of all Radius hosts.",
+    "tacacs+": "Use list of all Tacacs+ hosts.",
+    "<word>": "Named authentication list (max 31 characters, longer will be rejected)."
+   },
+   "rank": 34
+  },
+  {
    "syntax": "service password-encryption",
    "modes": [
     "config"
    ],
    "rank": 10
+  },
+  {
+   "syntax": "service timestamps debug {datetime [msec] [localtime] [show-timezone] [year]|uptime}",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "timestamps": "Timestamp debug/log messages",
+    "debug": "Timestamp debug messages",
+    "log": "Timestamp log messages",
+    "datetime": "Timestamp with date and time",
+    "uptime": "Timestamp with system uptime",
+    "msec": "Include milliseconds in timestamp",
+    "localtime": "Use local time zone for timestamps",
+    "show-timezone": "Add time zone information to timestamp",
+    "year": "Include year in timestamp"
+   },
+   "rank": 5,
+   "negateKey": true
+  },
+  {
+   "syntax": "service timestamps log {datetime [msec] [localtime] [show-timezone] [year]|uptime}",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "timestamps": "Timestamp debug/log messages",
+    "debug": "Timestamp debug messages",
+    "log": "Timestamp log messages",
+    "datetime": "Timestamp with date and time",
+    "uptime": "Timestamp with system uptime",
+    "msec": "Include milliseconds in timestamp",
+    "localtime": "Use local time zone for timestamps",
+    "show-timezone": "Add time zone information to timestamp",
+    "year": "Include year in timestamp"
+   },
+   "rank": 6,
+   "negateKey": true
   },
   {
    "syntax": "banner motd <line>",
@@ -1928,6 +2109,171 @@
     "skip": 2
    },
    "rank": 125
+  },
+  {
+   "syntax": "snmp-server group <word> v3 {noauth|auth|priv}",
+   "modes": [
+    "config"
+   ],
+   "help": {
+    "snmp-server": "Modify SNMP engine parameters",
+    "group": "Define a User Security Model group",
+    "<word>": "Name of the group",
+    "v3": "group using the User Security Model (SNMPv3)",
+    "noauth": "group using the noAuthNoPriv Security Level",
+    "auth": "group using the authNoPriv Security Level",
+    "priv": "group using SNMPv3 authPriv security level"
+   },
+   "rank": 126
+  },
+  {
+   "syntax": "snmp-server community <word> ro [{<1-99>|<1300-1999>|<word>}]",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "keyGroup": "snmp-community",
+   "display": "snmp-server community {$2} RO {$4}",
+   "help": {
+    "snmp-server": "Modify SNMP engine parameters",
+    "community": "Enable SNMP; set community string and access privs",
+    "<word>": "SNMP community string",
+    "ro": "Read-only access with this community string",
+    "rw": "Read-write access with this community string",
+    "<1-99>": "Std IP accesslist allowing access with this community string",
+    "<1300-1999>": "Expanded IP accesslist allowing access with this community string"
+   },
+   "rank": 126.1
+  },
+  {
+   "syntax": "snmp-server community <word> rw [{<1-99>|<1300-1999>|<word>}]",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "keyGroup": "snmp-community",
+   "display": "snmp-server community {$2} RW {$4}",
+   "help": {
+    "snmp-server": "Modify SNMP engine parameters",
+    "community": "Enable SNMP; set community string and access privs",
+    "<word>": "SNMP community string",
+    "ro": "Read-only access with this community string",
+    "rw": "Read-write access with this community string",
+    "<1-99>": "Std IP accesslist allowing access with this community string",
+    "<1300-1999>": "Expanded IP accesslist allowing access with this community string"
+   },
+   "rank": 126.1
+  },
+  {
+   "syntax": "snmp-server location <line>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "snmp-server": "Modify SNMP engine parameters",
+    "location": "Text for mib object sysLocation",
+    "<line>": "The text describing the system location"
+   },
+   "rank": 126.3
+  },
+  {
+   "syntax": "snmp-server contact <line>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "snmp-server": "Modify SNMP engine parameters",
+    "contact": "Text for mib object sysContact",
+    "<line>": "identification of the contact person for this managed node"
+   },
+   "rank": 126.4
+  },
+  {
+   "syntax": "snmp-server enable traps {config|syslog|snmp [authentication] [linkdown] [linkup] [coldstart] [warmstart]}",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "rewrite": {
+    "pattern": "^snmp-server enable traps snmp$",
+    "replace": "snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart"
+   },
+   "help": {
+    "snmp-server": "Modify SNMP engine parameters",
+    "enable": "Enable SNMP Traps or Informs",
+    "traps": "Enable SNMP Traps",
+    "config": "Enable SNMP config traps",
+    "syslog": "Enable SNMP syslog traps",
+    "snmp": "Enable SNMP traps",
+    "authentication": "Enable authentication trap",
+    "linkdown": "Enable linkDown trap",
+    "linkup": "Enable linkUp trap",
+    "coldstart": "Enable coldStart trap",
+    "warmstart": "Enable warmStart trap"
+   },
+   "rank": 126.5
+  },
+  {
+   "syntax": "snmp-server host <ipv4> [traps] [version 2c] <word>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1,
+    2,
+    -1
+   ],
+   "rewrite": {
+    "pattern": "^(snmp-server host \\S+) traps ",
+    "replace": "$1 "
+   },
+   "help": {
+    "snmp-server": "Modify SNMP engine parameters",
+    "host": "Specify hosts to receive SNMP notifications",
+    "<ipv4>": "IP/IPV6 address of SNMP notification host",
+    "traps": "Send Trap messages to this host",
+    "version": "SNMP version to use for notification messages",
+    "2c": "Use SNMPv2c",
+    "<word>": "SNMPv1/v2c community string or SNMPv3 user name"
+   },
+   "rank": 126.6
+  },
+  {
+   "syntax": "radius server <word>",
+   "modes": [
+    "config"
+   ],
+   "enter": {
+    "mode": "config-radius-server"
+   },
+   "help": {
+    "radius": "RADIUS server configuration commands",
+    "server": "Server configuration",
+    "<word>": "Name for the radius server configuration"
+   },
+   "rank": 127
   },
   {
    "syntax": "ip access-list standard {<1-99>|<1300-1999>|<word>}",
@@ -2474,6 +2820,44 @@
    "rank": 57
   },
   {
+   "syntax": "cdp timer <5-254>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "defaults": [
+    "^cdp timer 60$"
+   ],
+   "help": {
+    "cdp": "Global CDP configuration subcommands",
+    "timer": "Specify the rate at which CDP packets are sent (in sec)",
+    "<5-254>": "Rate at which CDP packets are sent (in  sec)"
+   },
+   "rank": 56.6
+  },
+  {
+   "syntax": "cdp holdtime <10-255>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "defaults": [
+    "^cdp holdtime 180$"
+   ],
+   "help": {
+    "cdp": "Global CDP configuration subcommands",
+    "holdtime": "Specify the holdtime (in sec) to be sent in packets",
+    "<10-255>": "Length  of time  (in sec) that receiver must keep this packet"
+   },
+   "rank": 56.7
+  },
+  {
    "syntax": "lldp run",
    "modes": [
     "config"
@@ -2485,18 +2869,402 @@
    "rank": 58
   },
   {
-   "syntax": "ntp server <ipv4>",
+   "syntax": "lldp timer <5-65534>",
    "modes": [
     "config"
    ],
-   "rank": 150
+   "key": [
+    0,
+    1
+   ],
+   "defaults": [
+    "^lldp timer 30$"
+   ],
+   "help": {
+    "lldp": "Global LLDP configuration subcommands",
+    "timer": "Specify the rate at which LLDP packets are sent (in sec)",
+    "<5-65534>": "Rate at which LLDP packets are sent (in  sec)"
+   },
+   "rank": 57.6
+  },
+  {
+   "syntax": "lldp holdtime <0-65535>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "defaults": [
+    "^lldp holdtime 120$"
+   ],
+   "help": {
+    "lldp": "Global LLDP configuration subcommands",
+    "holdtime": "Specify the holdtime (in sec) to be sent in packets",
+    "<0-65535>": "Length  of time  (in sec) that receiver must keep this packet"
+   },
+   "rank": 57.7
+  },
+  {
+   "syntax": "ntp server <ipv4> [prefer]",
+   "modes": [
+    "config"
+   ],
+   "rank": 150,
+   "key": [
+    0,
+    1,
+    2
+   ],
+   "help": {
+    "server": "Configure NTP server",
+    "<ipv4>": "IP address of peer",
+    "prefer": "Prefer this peer when possible"
+   }
+  },
+  {
+   "syntax": "ntp master [<1-15>]",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "master": "Act as NTP master clock",
+    "<1-15>": "Stratum number"
+   },
+   "rank": 149.5
+  },
+  {
+   "syntax": "ntp source <interface>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "source": "Configure interface for source address"
+   },
+   "rank": 149
+  },
+  {
+   "syntax": "ntp update-calendar",
+   "modes": [
+    "config"
+   ],
+   "devices": [
+    "router"
+   ],
+   "help": {
+    "update-calendar": "Periodically update calendar with NTP time"
+   },
+   "rank": 149.7
+  },
+  {
+   "syntax": "clock timezone <word> <-23-23> [<0-59>]",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "rewrite": {
+    "pattern": "^(clock timezone \\S+ -?\\d+)$",
+    "replace": "$1 0"
+   },
+   "help": {
+    "clock": "Configure time-of-day clock",
+    "timezone": "Configure time zone",
+    "<word>": "name of time zone",
+    "<-23-23>": "Hours offset from UTC",
+    "<0-59>": "Minutes offset from UTC"
+   },
+   "rank": 37
   },
   {
    "syntax": "logging host <ipv4>",
    "modes": [
     "config"
    ],
+   "rank": 120,
+   "help": {
+    "host": "Set syslog server IP address and parameters",
+    "<ipv4>": "IP address of the syslog server"
+   }
+  },
+  {
+   "syntax": "logging <ipv4>",
+   "modes": [
+    "config"
+   ],
+   "rewrite": {
+    "pattern": "^logging (\\S+)$",
+    "replace": "logging host $1"
+   },
+   "help": {
+    "<ipv4>": "IP address of the logging host"
+   },
    "rank": 120
+  },
+  {
+   "syntax": "logging trap [{<0-7>|emergencies|alerts|critical|errors|warnings|notifications|informational|debugging}]",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "rewrite": [
+    {
+     "pattern": " 0$",
+     "replace": " emergencies"
+    },
+    {
+     "pattern": " 1$",
+     "replace": " alerts"
+    },
+    {
+     "pattern": " 2$",
+     "replace": " critical"
+    },
+    {
+     "pattern": " 3$",
+     "replace": " errors"
+    },
+    {
+     "pattern": " 4$",
+     "replace": " warnings"
+    },
+    {
+     "pattern": " 5$",
+     "replace": " notifications"
+    },
+    {
+     "pattern": " 6$",
+     "replace": " informational"
+    },
+    {
+     "pattern": " 7$",
+     "replace": " debugging"
+    }
+   ],
+   "defaults": [
+    "^logging trap( informational)?$"
+   ],
+   "help": {
+    "trap": "Set syslog server logging level",
+    "<0-7>": "Logging severity level",
+    "emergencies": "System is unusable                (severity=0)",
+    "alerts": "Immediate action needed           (severity=1)",
+    "critical": "Critical conditions               (severity=2)",
+    "errors": "Error conditions                  (severity=3)",
+    "warnings": "Warning conditions                (severity=4)",
+    "notifications": "Normal but significant conditions (severity=5)",
+    "informational": "Informational messages            (severity=6)",
+    "debugging": "Debugging messages                (severity=7)"
+   },
+   "rank": 119.1
+  },
+  {
+   "syntax": "logging buffered [<4096-2147483647>] [{<0-7>|emergencies|alerts|critical|errors|warnings|notifications|informational|debugging}]",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "rewrite": [
+    {
+     "pattern": " 0$",
+     "replace": " emergencies"
+    },
+    {
+     "pattern": " 1$",
+     "replace": " alerts"
+    },
+    {
+     "pattern": " 2$",
+     "replace": " critical"
+    },
+    {
+     "pattern": " 3$",
+     "replace": " errors"
+    },
+    {
+     "pattern": " 4$",
+     "replace": " warnings"
+    },
+    {
+     "pattern": " 5$",
+     "replace": " notifications"
+    },
+    {
+     "pattern": " 6$",
+     "replace": " informational"
+    },
+    {
+     "pattern": " 7$",
+     "replace": " debugging"
+    }
+   ],
+   "help": {
+    "buffered": "Set buffered logging parameters",
+    "<4096-2147483647>": "Logging buffer size",
+    "<0-7>": "Logging severity level",
+    "emergencies": "System is unusable                (severity=0)",
+    "alerts": "Immediate action needed           (severity=1)",
+    "critical": "Critical conditions               (severity=2)",
+    "errors": "Error conditions                  (severity=3)",
+    "warnings": "Warning conditions                (severity=4)",
+    "notifications": "Normal but significant conditions (severity=5)",
+    "informational": "Informational messages            (severity=6)",
+    "debugging": "Debugging messages                (severity=7)"
+   },
+   "rank": 22
+  },
+  {
+   "syntax": "logging console [{<0-7>|emergencies|alerts|critical|errors|warnings|notifications|informational|debugging}]",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "negate": "disable",
+   "rewrite": [
+    {
+     "pattern": " 0$",
+     "replace": " emergencies"
+    },
+    {
+     "pattern": " 1$",
+     "replace": " alerts"
+    },
+    {
+     "pattern": " 2$",
+     "replace": " critical"
+    },
+    {
+     "pattern": " 3$",
+     "replace": " errors"
+    },
+    {
+     "pattern": " 4$",
+     "replace": " warnings"
+    },
+    {
+     "pattern": " 5$",
+     "replace": " notifications"
+    },
+    {
+     "pattern": " 6$",
+     "replace": " informational"
+    },
+    {
+     "pattern": " 7$",
+     "replace": " debugging"
+    }
+   ],
+   "defaults": [
+    "^logging console( debugging)?$"
+   ],
+   "help": {
+    "console": "Set console logging parameters",
+    "<0-7>": "Logging severity level",
+    "emergencies": "System is unusable                (severity=0)",
+    "alerts": "Immediate action needed           (severity=1)",
+    "critical": "Critical conditions               (severity=2)",
+    "errors": "Error conditions                  (severity=3)",
+    "warnings": "Warning conditions                (severity=4)",
+    "notifications": "Normal but significant conditions (severity=5)",
+    "informational": "Informational messages            (severity=6)",
+    "debugging": "Debugging messages                (severity=7)"
+   },
+   "rank": 23
+  },
+  {
+   "syntax": "logging monitor [{<0-7>|emergencies|alerts|critical|errors|warnings|notifications|informational|debugging}]",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "negate": "disable",
+   "rewrite": [
+    {
+     "pattern": " 0$",
+     "replace": " emergencies"
+    },
+    {
+     "pattern": " 1$",
+     "replace": " alerts"
+    },
+    {
+     "pattern": " 2$",
+     "replace": " critical"
+    },
+    {
+     "pattern": " 3$",
+     "replace": " errors"
+    },
+    {
+     "pattern": " 4$",
+     "replace": " warnings"
+    },
+    {
+     "pattern": " 5$",
+     "replace": " notifications"
+    },
+    {
+     "pattern": " 6$",
+     "replace": " informational"
+    },
+    {
+     "pattern": " 7$",
+     "replace": " debugging"
+    }
+   ],
+   "defaults": [
+    "^logging monitor( debugging)?$"
+   ],
+   "help": {
+    "monitor": "Set terminal line (monitor) logging parameters",
+    "<0-7>": "Logging severity level",
+    "emergencies": "System is unusable                (severity=0)",
+    "alerts": "Immediate action needed           (severity=1)",
+    "critical": "Critical conditions               (severity=2)",
+    "errors": "Error conditions                  (severity=3)",
+    "warnings": "Warning conditions                (severity=4)",
+    "notifications": "Normal but significant conditions (severity=5)",
+    "informational": "Informational messages            (severity=6)",
+    "debugging": "Debugging messages                (severity=7)"
+   },
+   "rank": 24
+  },
+  {
+   "syntax": "logging source-interface <interface>",
+   "modes": [
+    "config"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "source-interface": "Specify interface for source address in logging transactions"
+   },
+   "rank": 119.5
   },
   {
    "syntax": "security passwords min-length <0-16>",
@@ -3600,6 +4368,172 @@
    "rank": 66
   },
   {
+   "syntax": "spanning-tree guard {root|loop|none}",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 66.5,
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "spanning-tree": "Spanning Tree Subsystem",
+    "guard": "Change an interface's spanning tree guard mode",
+    "root": "Set guard mode to root guard on interface",
+    "loop": "Set guard mode to loop guard on interface",
+    "none": "Set guard mode to none"
+   },
+   "negateKey": true
+  },
+  {
+   "syntax": "spanning-tree cost <1-200000000>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 67,
+   "key": [
+    0,
+    1
+   ],
+   "help": {
+    "spanning-tree": "Spanning Tree Subsystem",
+    "cost": "Change an interface's spanning tree port path cost",
+    "<1-200000000>": "port path cost"
+   }
+  },
+  {
+   "syntax": "spanning-tree port-priority <0-240>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 67.5,
+   "key": [
+    0,
+    1
+   ],
+   "defaults": [
+    "^spanning-tree port-priority 128$"
+   ],
+   "requires": [
+    {
+     "param": 1,
+     "notMatch": "^(?!(0|16|32|48|64|80|96|112|128|144|160|176|192|208|224|240)$)",
+     "message": "% Port Priority in increments of 16 is required\n% Allowed values are:\n  0   16  32  48  64  80  96  112 128 144 160 176 192 208 224 240"
+    }
+   ],
+   "help": {
+    "spanning-tree": "Spanning Tree Subsystem",
+    "port-priority": "Change an interface's spanning tree port priority",
+    "<0-240>": "port priority in increments of 16"
+   }
+  },
+  {
+   "syntax": "spanning-tree vlan <vlan-list> cost <1-200000000>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 68,
+   "key": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "help": {
+    "spanning-tree": "Spanning Tree Subsystem",
+    "vlan": "VLAN Switch Spanning Tree",
+    "<vlan-list>": "vlan range, example: 1,3-5,7,9-11",
+    "cost": "Change an interface's per VLAN spanning tree path cost",
+    "<1-200000000>": "Change an interface's per VLAN spanning tree path cost"
+   }
+  },
+  {
+   "syntax": "spanning-tree vlan <vlan-list> port-priority <0-240>",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "devices": [
+    "switch"
+   ],
+   "onInterfaces": {
+    "switch": [
+     "FastEthernet",
+     "GigabitEthernet",
+     "Port-channel"
+    ]
+   },
+   "rank": 68.5,
+   "key": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "defaults": [
+    "^spanning-tree vlan \\S+ port-priority 128$"
+   ],
+   "requires": [
+    {
+     "param": 2,
+     "notMatch": "^(?!(0|16|32|48|64|80|96|112|128|144|160|176|192|208|224|240)$)",
+     "message": "% Port Priority in increments of 16 is required\n% Allowed values are:\n  0   16  32  48  64  80  96  112 128 144 160 176 192 208 224 240"
+    }
+   ],
+   "help": {
+    "spanning-tree": "Spanning Tree Subsystem",
+    "vlan": "VLAN Switch Spanning Tree",
+    "<vlan-list>": "vlan range, example: 1,3-5,7,9-11",
+    "port-priority": "Change an interface's spanning tree port priority",
+    "<0-240>": "port priority in increments of 16"
+   }
+  },
+  {
    "syntax": "channel-group <1-6> mode {active|passive|on|auto|desirable}",
    "modes": [
     "config-if",
@@ -4252,6 +5186,44 @@
    "rank": 70
   },
   {
+   "syntax": "lldp transmit",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "negate": "store",
+   "onInterfaces": {
+    "*": [
+     "GigabitEthernet",
+     "FastEthernet"
+    ]
+   },
+   "help": {
+    "lldp": "LLDP interface subcommands",
+    "transmit": "Enable LLDP transmission on interface"
+   },
+   "rank": 71
+  },
+  {
+   "syntax": "lldp receive",
+   "modes": [
+    "config-if",
+    "config-if-range"
+   ],
+   "negate": "store",
+   "onInterfaces": {
+    "*": [
+     "GigabitEthernet",
+     "FastEthernet"
+    ]
+   },
+   "help": {
+    "lldp": "LLDP interface subcommands",
+    "receive": "Enable LLDP reception on interface"
+   },
+   "rank": 72
+  },
+  {
    "syntax": "password <line>",
    "modes": [
     "config-line"
@@ -4273,6 +5245,31 @@
     0
    ],
    "rank": 50
+  },
+  {
+   "syntax": "login authentication {default|<word>}",
+   "modes": [
+    "config-line"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "requires": [
+    {
+     "config": "^aaa new-model$",
+     "invalidAtWord": 2
+    }
+   ],
+   "defaults": [
+    "^login authentication default$"
+   ],
+   "help": {
+    "authentication": "Authentication parameters.",
+    "default": "Use the default list.",
+    "<word>": "Use an authentication list with this name."
+   },
+   "rank": 51
   },
   {
    "syntax": "transport input {ssh|telnet|all|none|ssh telnet|telnet ssh}",
@@ -4759,6 +5756,53 @@
     "traceroute": "Traceroute",
     "administratively-prohibited": "Administratively prohibited"
    }
+  },
+  {
+   "syntax": "address ipv4 <ipv4> [auth-port <0-65535>] [acct-port <0-65535>]",
+   "modes": [
+    "config-radius-server"
+   ],
+   "key": [
+    0,
+    1
+   ],
+   "rewrite": [
+    {
+     "pattern": "^(address ipv4 \\S+)$",
+     "replace": "$1 auth-port 1645 acct-port 1646"
+    },
+    {
+     "pattern": "^(address ipv4 \\S+ auth-port \\d+)$",
+     "replace": "$1 acct-port 1646"
+    },
+    {
+     "pattern": "^(address ipv4 \\S+) (acct-port \\d+)$",
+     "replace": "$1 auth-port 1645 $2"
+    }
+   ],
+   "help": {
+    "address": "Specify the radius server address",
+    "ipv4": "IPv4 address or Hostname",
+    "<ipv4>": "IPv4 address or Hostname",
+    "auth-port": "UDP port for RADIUS authentication server (default is 1645)",
+    "acct-port": "UDP port for RADIUS accounting server (default is 1646)",
+    "<0-65535>": "Port number"
+   },
+   "rank": 10
+  },
+  {
+   "syntax": "key <line>",
+   "modes": [
+    "config-radius-server"
+   ],
+   "key": [
+    0
+   ],
+   "help": {
+    "key": "Per-server encryption key",
+    "<line>": "The UNENCRYPTED (cleartext) shared key"
+   },
+   "rank": 20
   }
  ]
 }

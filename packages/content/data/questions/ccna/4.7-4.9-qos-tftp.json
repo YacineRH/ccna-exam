@@ -1,0 +1,1140 @@
+[
+  {
+    "slug": "ccna-4.7-voice-one-way-delay-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pour qu'une communication téléphonique sur IP reste de bonne qualité, quel délai maximal en sens unique (de la bouche à l'oreille) Cisco recommande-t-il de ne pas dépasser ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "15 ms"
+        },
+        {
+          "id": "b",
+          "text": "30 ms"
+        },
+        {
+          "id": "c",
+          "text": "150 ms"
+        },
+        {
+          "id": "d",
+          "text": "400 ms"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les recommandations de conception de Cisco pour la voix sont : un délai de bout en bout en sens unique d'au plus 150 ms, une gigue d'au plus 30 ms et moins de 1 % de pertes. Au-delà de 150 ms, les interlocuteurs commencent à se couper la parole. Ce budget comprend le codage, la paquétisation, la sérialisation, la propagation et l'attente dans les files : c'est pourquoi la voix est placée dans une file à priorité stricte (LLQ) sur chaque saut congestionné.",
+    "distractorNotes": {
+      "a": "15 ms est bien en dessous de la limite : un tel délai est confortable, mais ce n'est pas la valeur maximale recommandée.",
+      "b": "30 ms est la limite recommandée pour la gigue (variation du délai), pas pour le délai lui-même.",
+      "d": "400 ms est la limite au-delà de laquelle l'UIT-T juge le délai inacceptable pour la planification ; la qualité est déjà dégradée bien avant."
+    },
+    "reference": "Cisco Enterprise QoS Solution Reference Network Design Guide ; ITU-T G.114"
+  },
+  {
+    "slug": "ccna-4.7-voice-cos-value-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Par défaut, quelle valeur CoS (802.1p) un téléphone IP Cisco inscrit-il dans l'étiquette 802.1Q des trames de voix qu'il émet dans le VLAN voix ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "3"
+        },
+        {
+          "id": "b",
+          "text": "6"
+        },
+        {
+          "id": "c",
+          "text": "7"
+        },
+        {
+          "id": "d",
+          "text": "5"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le CoS occupe les 3 bits PCP de l'étiquette 802.1Q : il n'existe donc que sur une trame étiquetée, ce qui est le cas du trafic du VLAN voix. Les téléphones IP Cisco marquent le flux audio (RTP) en CoS 5 et, au niveau 3, en DSCP EF (46), dont les trois bits de poids fort valent aussi 5. La signalisation d'appel est marquée CoS 3 (DSCP CS3). Le commutateur d'accès peut ensuite faire confiance à ces marquages et les traduire d'un niveau à l'autre.",
+    "distractorNotes": {
+      "a": "CoS 3 correspond à la signalisation d'appel (SCCP, SIP) émise par le téléphone, pas au flux audio.",
+      "b": "CoS 6 est réservé au contrôle du réseau, par exemple aux protocoles de routage.",
+      "c": "CoS 7 est réservé et n'est pas utilisé pour le trafic des utilisateurs."
+    },
+    "reference": "IEEE 802.1Q ; Cisco Enterprise QoS Solution Reference Network Design Guide"
+  },
+  {
+    "slug": "ccna-4.7-voice-requirements-multi-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les caractéristiques et les exigences du trafic voix sur un réseau convergé sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La voix utilise TCP, dont les retransmissions compensent les paquets perdus."
+        },
+        {
+          "id": "b",
+          "text": "La gigue doit rester inférieure à 30 ms environ."
+        },
+        {
+          "id": "c",
+          "text": "La voix produit des rafales imprévisibles, comme un transfert de fichiers."
+        },
+        {
+          "id": "d",
+          "text": "Un appel G.711 consomme environ 1 Mbit/s dans chaque sens."
+        },
+        {
+          "id": "e",
+          "text": "Le taux de perte de paquets doit rester inférieur à 1 %."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "La voix est un trafic régulier (un petit paquet toutes les 20 ms en général), peu gourmand en débit mais très sensible au délai (au plus 150 ms en sens unique), à la gigue (au plus 30 ms) et aux pertes (moins de 1 %). Elle est transportée en RTP sur UDP : un paquet retransmis arriverait trop tard pour être joué. Sur un réseau convergé, où elle partage les liens avec les données, la QoS doit donc lui garantir une file prioritaire et un débit suffisant.",
+    "distractorNotes": {
+      "a": "La voix est transportée en RTP sur UDP : une retransmission arriverait trop tard pour être utile.",
+      "c": "Le trafic voix est régulier et prévisible (débit constant par appel) ; ce sont la vidéo et les données qui sont en rafales.",
+      "d": "G.711 produit 64 kbit/s de charge utile, soit de l'ordre de 80 à 90 kbit/s par sens avec les en-têtes, très loin de 1 Mbit/s."
+    },
+    "reference": "Cisco Enterprise QoS Solution Reference Network Design Guide"
+  },
+  {
+    "slug": "ccna-4.7-trust-boundary-placement-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un réseau de campus où chaque poste est branché derrière un téléphone IP Cisco relié à un commutateur d'accès, où Cisco recommande-t-il de placer la frontière de confiance (trust boundary) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur le PC, qui marque lui-même le trafic de ses applications"
+        },
+        {
+          "id": "b",
+          "text": "Sur les commutateurs de cœur, qui remarquent tout le trafic du campus"
+        },
+        {
+          "id": "c",
+          "text": "Sur le téléphone IP, dont le commutateur d'accès accepte les marquages"
+        },
+        {
+          "id": "d",
+          "text": "Sur le routeur WAN, qui classe le trafic avant de l'envoyer au FAI"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La frontière de confiance est le point à partir duquel les marquages reçus sont acceptés tels quels. Cisco la place aussi près que possible de la source, sur un équipement maîtrisé : avec la voix, le commutateur d'accès étend sa confiance au téléphone IP, qui marque correctement sa voix (CoS 5, DSCP EF) et remet à 0 le CoS des trames du PC branché derrière lui. Plus en amont, le trafic traverserait l'accès et la distribution avec des marquages non vérifiés.",
+    "distractorNotes": {
+      "a": "Le PC n'est pas un équipement de confiance : l'utilisateur ou une application pourrait marquer tout son trafic en EF pour s'attribuer la priorité.",
+      "b": "Au cœur, le trafic a déjà traversé l'accès et la distribution sans marquage fiable ; la frontière doit être au plus près de la source.",
+      "d": "Le routeur WAN est le point le plus éloigné de la source : tout le campus fonctionnerait avec des marquages non vérifiés."
+    },
+    "reference": "Cisco Enterprise QoS Solution Reference Network Design Guide"
+  },
+  {
+    "slug": "ccna-4.7-llq-excess-voice-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. La liaison série de R1 vers le WAN est congestionnée. Pendant cette congestion, les téléphones émettent 1 500 kbit/s de trafic marqué DSCP EF vers le WAN. Que devient ce trafic sur R1 ?",
+      "exhibit": "class-map match-all VOICE\n match dscp ef\nclass-map match-all VIDEO\n match dscp af41\n!\npolicy-map WAN-OUT\n class VOICE\n  priority 1000\n class VIDEO\n  bandwidth 2000\n class class-default\n  fair-queue\n!\ninterface Serial0/1/0\n bandwidth 4000\n service-policy output WAN-OUT",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les 1 500 kbit/s sont tous servis en priorité stricte, au détriment des classes VIDEO et class-default."
+        },
+        {
+          "id": "b",
+          "text": "Les 1 000 premiers kbit/s sont servis en priorité stricte ; l'excédent est placé dans class-default."
+        },
+        {
+          "id": "c",
+          "text": "Les 1 000 premiers kbit/s sont servis en priorité stricte ; l'excédent est rejeté."
+        },
+        {
+          "id": "d",
+          "text": "Les 1 000 premiers kbit/s sont servis en priorité stricte ; l'excédent est remarqué AF41 et traité par VIDEO."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La commande « priority 1000 » fait de VOICE une classe LLQ : ses paquets passent avant toutes les autres files. Pour éviter qu'elle n'affame les autres classes, IOS applique à la file prioritaire un policer implicite au débit configuré lorsque l'interface est congestionnée : au-delà de 1 000 kbit/s, le trafic voix est rejeté. Le paquet reste dans la classe où il a été classé ; il n'est ni reclassé ni remarqué. Il faut donc dimensionner la file prioritaire d'après le nombre d'appels simultanés (ou limiter les appels par CAC).",
+    "distractorNotes": {
+      "a": "La priorité stricte est bornée : en congestion, le policer implicite de LLQ limite la file prioritaire à 1 000 kbit/s pour protéger les autres classes.",
+      "b": "Un paquet classé dans VOICE y reste : la classification n'est pas refaite et l'excédent n'est pas reporté dans class-default.",
+      "d": "Le policer implicite de « priority » rejette l'excédent ; un remarquage exigerait une commande « police » explicite avec une action set-dscp-transmit."
+    },
+    "reference": "QoS: Congestion Management Configuration Guide (Cisco IOS XE), Configuring Low Latency Queueing"
+  },
+  {
+    "slug": "ccna-4.7-ds-byte-hex-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une capture, l'octet DS (ancien octet ToS) d'un paquet IPv4 vaut 0xB8. Quelle classe DiffServ ce marquage désigne-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "CS5"
+        },
+        {
+          "id": "b",
+          "text": "EF"
+        },
+        {
+          "id": "c",
+          "text": "AF41"
+        },
+        {
+          "id": "d",
+          "text": "CS6"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "0xB8 s'écrit 1011 1000 en binaire. Le DSCP occupe les 6 bits de poids fort (101110) et les 2 bits de poids faible sont le champ ECN (00). 101110 vaut 32 + 8 + 4 + 2 = 46, c'est-à-dire EF (Expedited Forwarding), le marquage de la voix. Les trois premiers bits (101) donnent l'IP Precedence 5, ce qui assure la compatibilité avec les équipements qui ne lisent que la précédence. Il faut d'abord décaler de deux bits : lire 0xB8 = 184 comme un DSCP serait une erreur.",
+    "distractorNotes": {
+      "a": "CS5 vaut 101000 (40), soit un octet DS de 0xA0 : il partage avec EF la précédence 5, mais pas les trois bits suivants.",
+      "c": "AF41 vaut 100010 (34), soit un octet DS de 0x88.",
+      "d": "CS6 vaut 110000 (48), soit un octet DS de 0xC0."
+    },
+    "reference": "RFC 2474 ; RFC 3246"
+  },
+  {
+    "slug": "ccna-4.7-af41-precedence-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un paquet est marqué AF41. Un ancien routeur du chemin ne lit que l'IP Precedence, c'est-à-dire les trois bits de poids fort de l'octet DS. Donnez la valeur DSCP du paquet et la précédence que lit ce routeur.",
+      "fields": [
+        {
+          "id": "dscp",
+          "label": "Valeur DSCP de AF41 (nombre entier, en décimal)"
+        },
+        {
+          "id": "prec",
+          "label": "IP Precedence lue par l'ancien routeur (nombre entier de 0 à 7)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "dscp": {
+          "accepted": [
+            "34"
+          ],
+          "normalize": "int"
+        },
+        "prec": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Pour une classe AFxy, les trois bits de poids fort du DSCP codent la classe x et les deux suivants la priorité de rejet y, le sixième bit restant à 0 : la valeur vaut 8x + 2y. AF41 vaut donc 32 + 2 = 34, soit 100010 en binaire. Les trois premiers bits (100) donnent l'IP Precedence 4 : c'est voulu, le DSCP a été conçu pour que la classe AF4x reste comprise comme précédence 4 par les équipements anciens. Les bits de priorité de rejet, eux, leur sont invisibles.",
+    "reference": "RFC 2597 ; RFC 2474"
+  },
+  {
+    "slug": "ccna-4.7-wred-behavior-multi-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur WRED (Weighted Random Early Detection) sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Il n'agit qu'une fois la file d'attente entièrement remplie."
+        },
+        {
+          "id": "b",
+          "text": "Il garantit une bande passante minimale à chaque classe de trafic."
+        },
+        {
+          "id": "c",
+          "text": "Sa probabilité de rejet augmente avec la profondeur moyenne de la file."
+        },
+        {
+          "id": "d",
+          "text": "Il est surtout efficace pour protéger la voix, transportée sur UDP."
+        },
+        {
+          "id": "e",
+          "text": "Basé sur le DSCP, il rejette AF13 plus tôt que AF11 dans une même file."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "WRED est un outil d'évitement de congestion. Sous un seuil minimal de profondeur moyenne, il ne rejette rien ; entre le seuil minimal et le seuil maximal, il rejette des paquets au hasard avec une probabilité croissante ; au-delà, il rejette tout. Les sources TCP touchées réduisent leur fenêtre, ce qui évite la synchronisation globale du tail drop. Le « W » vient des profils par marquage : en mode DSCP, AF13 (priorité de rejet élevée) a des seuils plus bas que AF11 et est rejeté en premier.",
+    "distractorNotes": {
+      "a": "Rejeter seulement quand la file est pleine, c'est le tail drop ; WRED rejette justement avant d'en arriver là.",
+      "b": "Garantir un débit minimal par classe est le rôle de CBWFQ (commande « bandwidth »), pas de WRED.",
+      "d": "UDP ne ralentit pas après une perte : WRED ne fait que dégrader la voix, qui doit aller dans la file prioritaire LLQ."
+    },
+    "reference": "QoS: Congestion Avoidance Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.7-shaping-direction-multi-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations comparant le shaping et le policing sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le shaping ne s'applique qu'au trafic sortant d'une interface."
+        },
+        {
+          "id": "b",
+          "text": "Le policing ne s'applique qu'au trafic entrant d'une interface."
+        },
+        {
+          "id": "c",
+          "text": "Le policing met l'excédent en tampon pour l'émettre plus tard."
+        },
+        {
+          "id": "d",
+          "text": "Le shaping ajoute du délai et de la gigue au trafic qu'il retient."
+        },
+        {
+          "id": "e",
+          "text": "Un FAI fait respecter le débit souscrit par un shaping en entrée."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Le shaping retient l'excédent dans une file pour lisser le débit sous une limite : il ne peut agir qu'en sortie, là où se trouvent les files d'émission, et il ajoute du délai (et de la gigue) aux paquets retenus, mais limite les pertes. Le policing mesure le débit sans mettre en tampon : l'excédent est rejeté ou remarqué. Il s'applique en entrée comme en sortie, d'où son usage par les FAI à l'entrée de leur réseau pour faire respecter le CIR.",
+    "distractorNotes": {
+      "b": "Le policing s'applique aussi bien en entrée qu'en sortie d'une interface.",
+      "c": "Le policing ne met rien en tampon : l'excédent est rejeté ou remarqué immédiatement ; c'est le shaping qui retient.",
+      "e": "Le shaping est impossible en entrée ; un FAI utilise un policing en entrée pour faire respecter le CIR."
+    },
+    "reference": "QoS: Policing and Shaping Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.7-dscp-value-order-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Classez ces marquages DSCP de la plus petite à la plus grande valeur décimale.",
+      "items": [
+        {
+          "id": "cs3",
+          "text": "CS3"
+        },
+        {
+          "id": "ef",
+          "text": "EF"
+        },
+        {
+          "id": "af12",
+          "text": "AF12"
+        },
+        {
+          "id": "af43",
+          "text": "AF43"
+        },
+        {
+          "id": "cs2",
+          "text": "CS2"
+        },
+        {
+          "id": "af33",
+          "text": "AF33"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "af12",
+        "cs2",
+        "cs3",
+        "af33",
+        "af43",
+        "ef"
+      ]
+    },
+    "explanation": "Une classe CSx vaut 8x (les trois bits de précédence suivis de 000) : CS2 = 16, CS3 = 24. Une classe AFxy vaut 8x + 2y : AF12 = 8 + 4 = 12, AF33 = 24 + 6 = 30, AF43 = 32 + 6 = 38. EF vaut 46. L'ordre est donc AF12 (12), CS2 (16), CS3 (24), AF33 (30), AF43 (38), EF (46). On retient qu'à classe égale, AFx1 à AFx3 se placent juste au-dessus de CSx, et que la priorité de rejet y ne change pas le traitement en file, seulement l'ordre de rejet.",
+    "reference": "RFC 2474 ; RFC 2597 ; RFC 3246"
+  },
+  {
+    "slug": "ccna-4.7-marking-fields-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque champ de marquage QoS à son emplacement dans la trame ou le paquet.",
+      "left": [
+        {
+          "id": "cos",
+          "text": "CoS (802.1p)"
+        },
+        {
+          "id": "dscp",
+          "text": "DSCP"
+        },
+        {
+          "id": "ipp",
+          "text": "IP Precedence"
+        },
+        {
+          "id": "ecn",
+          "text": "ECN"
+        }
+      ],
+      "right": [
+        {
+          "id": "tag",
+          "text": "3 bits de l'étiquette 802.1Q d'une trame Ethernet"
+        },
+        {
+          "id": "six",
+          "text": "6 bits de poids fort de l'octet DS de l'en-tête IP"
+        },
+        {
+          "id": "three",
+          "text": "3 bits de poids fort de l'ancien octet ToS de l'en-tête IP"
+        },
+        {
+          "id": "two",
+          "text": "2 bits de poids faible de l'octet DS de l'en-tête IP"
+        },
+        {
+          "id": "ttl",
+          "text": "8 bits du champ TTL de l'en-tête IP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "cos": "tag",
+        "dscp": "six",
+        "ipp": "three",
+        "ecn": "two"
+      }
+    },
+    "explanation": "Au niveau 2, le CoS (champ PCP, 3 bits, valeurs 0 à 7) n'existe que dans l'étiquette 802.1Q : une trame non étiquetée, sur un port d'accès, n'en porte pas. Au niveau 3, l'ancien octet ToS a été redéfini en octet DS : ses 6 bits de poids fort forment le DSCP (64 valeurs), dont les 3 premiers correspondent à l'ancienne IP Precedence, et ses 2 bits de poids faible forment le champ ECN, qui signale la congestion sans rejeter. Le marquage de niveau 3 survit au routage, celui de niveau 2 non.",
+    "distractorNotes": {
+      "ttl": "Le TTL limite le nombre de sauts d'un paquet ; il ne porte aucune information de QoS."
+    },
+    "reference": "IEEE 802.1Q ; RFC 2474 ; RFC 3168"
+  },
+  {
+    "slug": "ccna-4.7-traffic-class-marking-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.7",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque type de trafic au marquage DSCP que lui attribuent les recommandations Cisco (et la RFC 4594).",
+      "left": [
+        {
+          "id": "voice",
+          "text": "Voix (flux audio RTP)"
+        },
+        {
+          "id": "video",
+          "text": "Visioconférence interactive"
+        },
+        {
+          "id": "routing",
+          "text": "Mises à jour du protocole de routage OSPF"
+        },
+        {
+          "id": "default",
+          "text": "Trafic non classé (best effort)"
+        }
+      ],
+      "right": [
+        {
+          "id": "ef",
+          "text": "EF (46)"
+        },
+        {
+          "id": "af41",
+          "text": "AF41 (34)"
+        },
+        {
+          "id": "cs6",
+          "text": "CS6 (48)"
+        },
+        {
+          "id": "df",
+          "text": "DF (0)"
+        },
+        {
+          "id": "cs1",
+          "text": "CS1 (8)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "voice": "ef",
+        "video": "af41",
+        "routing": "cs6",
+        "default": "df"
+      }
+    },
+    "explanation": "La voix, sensible au délai et à la gigue, reçoit EF et la file prioritaire. La visioconférence interactive (multimedia conferencing) reçoit AF41 : une classe AF avec débit garanti, la priorité de rejet 1 protégeant les paquets conformes. Le contrôle du réseau, comme les paquets OSPF, est marqué CS6 pour ne pas perdre les adjacences en congestion. Le trafic non classé reste en DF (0) et partage la file par défaut.",
+    "distractorNotes": {
+      "cs1": "CS1 marque le trafic scavenger (moins que best effort, par exemple des téléchargements non professionnels) : aucun des trafics proposés ne lui correspond."
+    },
+    "reference": "RFC 4594 ; Cisco Enterprise QoS Solution Reference Network Design Guide"
+  },
+  {
+    "slug": "ccna-4.9-copy-tftp-flash-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle commande copie une nouvelle image IOS depuis un serveur TFTP vers la mémoire flash du routeur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "copy flash: tftp:"
+        },
+        {
+          "id": "b",
+          "text": "copy tftp: flash:"
+        },
+        {
+          "id": "c",
+          "text": "copy tftp: startup-config"
+        },
+        {
+          "id": "d",
+          "text": "copy tftp: running-config"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La commande copy s'écrit toujours « copy <source> <destination> ». Pour récupérer une image depuis un serveur TFTP, la source est tftp: et la destination flash: ; IOS demande ensuite l'adresse du serveur, le nom du fichier source et le nom à lui donner en flash. Il faut vérifier au préalable qu'il reste assez de place dans la flash (show flash:), puis désigner la nouvelle image avec « boot system » avant de redémarrer.",
+    "distractorNotes": {
+      "a": "« copy flash: tftp: » fait l'inverse : il sauvegarde un fichier de la flash, par exemple l'image actuelle, sur le serveur TFTP.",
+      "c": "Copier vers startup-config écrase la configuration de démarrage en NVRAM : une image IOS n'est pas un fichier de configuration.",
+      "d": "Copier vers running-config fusionne des commandes de configuration dans la configuration en cours ; ce n'est pas l'emplacement d'une image."
+    },
+    "reference": "Loading and Managing System Images Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.9-copy-run-tftp-prompts-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un administrateur saisit « copy running-config tftp: » sur un routeur. Quelles informations IOS lui demande-t-il ensuite ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un nom d'utilisateur et un mot de passe pour le serveur"
+        },
+        {
+          "id": "b",
+          "text": "Le port UDP du serveur et la taille des blocs à envoyer"
+        },
+        {
+          "id": "c",
+          "text": "Le nom du fichier source en NVRAM et une clé de chiffrement"
+        },
+        {
+          "id": "d",
+          "text": "L'adresse du serveur et le nom du fichier de destination"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "TFTP n'a ni authentification ni chiffrement : pour envoyer la configuration en cours, IOS a seulement besoin de savoir où l'envoyer (l'adresse ou le nom du serveur) et sous quel nom l'enregistrer (il propose un nom dérivé du nom d'hôte). La source est implicite : c'est la configuration en RAM. Le transfert utilise le port UDP 69 du serveur, sans que l'administrateur ait à le préciser. Avec FTP, il faudrait en plus des identifiants, dans l'URL ou par « ip ftp username » et « ip ftp password ».",
+    "distractorNotes": {
+      "a": "TFTP n'authentifie pas l'utilisateur : aucun identifiant n'est demandé, contrairement à FTP.",
+      "b": "Le port (UDP 69) et la taille des blocs (512 octets par défaut) sont fixés par le protocole ; IOS ne les demande pas.",
+      "c": "La source est la configuration en cours (en RAM), pas la NVRAM, et TFTP ne chiffre rien."
+    },
+    "reference": "Configuration Fundamentals Configuration Guide (Cisco IOS XE), Managing Configuration Files"
+  },
+  {
+    "slug": "ccna-4.9-copy-run-tftp-cli-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode privilégié de R1, lancez avec la commande copy la sauvegarde de la configuration en cours vers un serveur TFTP. L'adresse du serveur et le nom du fichier seront saisis aux invites qui suivent la commande.",
+      "prompt": "R1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "copy running-config tftp:",
+          "copy system:running-config tftp:",
+          "copy running-config tftp",
+          "copy system:running-config tftp"
+        ]
+      ]
+    },
+    "explanation": "« copy running-config tftp: » copie la configuration en cours (en RAM) vers un serveur TFTP ; IOS demande ensuite l'adresse du serveur et le nom du fichier de destination. Pour sauvegarder plutôt la configuration enregistrée en NVRAM, la source serait startup-config. La commande s'exécute en mode privilégié, pas en configuration globale (sauf précédée de « do »). Comme TFTP ne chiffre rien, la configuration, mots de passe de type 7 compris, circule en clair : à réserver à un réseau d'administration maîtrisé.",
+    "reference": "Configuration Fundamentals Configuration Guide (Cisco IOS XE), Managing Configuration Files"
+  },
+  {
+    "slug": "ccna-4.9-ftp-active-data-port-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "En mode actif, depuis quel port TCP le serveur FTP ouvre-t-il la connexion de données vers le client ?",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Numéro de port TCP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "20"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "FTP sépare le contrôle et les données. La connexion de contrôle est ouverte par le client vers le port TCP 21 du serveur et reste ouverte pendant toute la session. En mode actif, le client annonce par la commande PORT l'adresse et le port sur lesquels il écoute, puis c'est le serveur qui ouvre chaque connexion de données, depuis son port TCP 20. En mode passif, c'est le client qui ouvre la connexion de données vers un port annoncé par le serveur.",
+    "reference": "RFC 959"
+  },
+  {
+    "slug": "ccna-4.9-verify-md5-image-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après avoir copié une nouvelle image IOS dans la flash, l'administrateur veut calculer l'empreinte cryptographique du fichier pour la comparer à celle publiée par Cisco sur son site de téléchargement. Quelle commande utilise-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "show flash:"
+        },
+        {
+          "id": "b",
+          "text": "verify /md5 flash:<nom de l'image>"
+        },
+        {
+          "id": "c",
+          "text": "show version"
+        },
+        {
+          "id": "d",
+          "text": "dir /all flash:"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une image corrompue pendant le transfert (TFTP n'a qu'un contrôle d'erreur minimal) peut empêcher le routeur de redémarrer. « verify /md5 flash:<image> » calcule l'empreinte MD5 du fichier ; on peut aussi passer la valeur attendue en argument pour qu'IOS indique directement si elles correspondent. La comparaison se fait avec l'empreinte affichée sur la page de téléchargement de Cisco, avant de modifier « boot system » et de redémarrer.",
+    "distractorNotes": {
+      "a": "« show flash: » liste les fichiers avec leur taille ; une taille identique ne garantit pas que le contenu soit intact, et aucune empreinte n'est calculée.",
+      "c": "« show version » décrit l'image en cours d'exécution, pas le fichier qui vient d'être copié, et ne calcule pas d'empreinte.",
+      "d": "« dir /all flash: » liste aussi les fichiers supprimés, mais n'affiche aucune empreinte MD5."
+    },
+    "reference": "Cisco IOS Configuration Fundamentals Command Reference (verify)"
+  },
+  {
+    "slug": "ccna-4.9-ftp-url-credentials-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 doit copier l'image isr4300-universalk9.17.09.04a.SPA.bin depuis le serveur FTP 192.0.2.25 avec le compte netops (mot de passe Ft9xQ2), sans configurer « ip ftp username » ni « ip ftp password ». Quelle commande convient ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "copy ftp://192.0.2.25@netops:Ft9xQ2/isr4300-universalk9.17.09.04a.SPA.bin flash:"
+        },
+        {
+          "id": "b",
+          "text": "copy tftp://netops:Ft9xQ2@192.0.2.25/isr4300-universalk9.17.09.04a.SPA.bin flash:"
+        },
+        {
+          "id": "c",
+          "text": "copy ftp://netops:Ft9xQ2@192.0.2.25/isr4300-universalk9.17.09.04a.SPA.bin flash:"
+        },
+        {
+          "id": "d",
+          "text": "copy ftp://netops@Ft9xQ2:192.0.2.25/isr4300-universalk9.17.09.04a.SPA.bin flash:"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les URL du système de fichiers IOS suivent la forme ftp://utilisateur:motdepasse@serveur/chemin/fichier : les identifiants précèdent l'arobase, le serveur la suit. Placés dans l'URL, ils ont priorité sur « ip ftp username » et « ip ftp password » ; sans aucun des deux, IOS se connecte en anonymous. L'inconvénient est que le mot de passe apparaît en clair à l'écran et peut rester dans l'historique des commandes.",
+    "distractorNotes": {
+      "a": "L'ordre est inversé : les identifiants doivent précéder l'arobase et le serveur la suivre ; cette URL désigne un autre serveur et un autre compte.",
+      "b": "TFTP ne connaît pas d'identifiants : le compte netops n'aurait aucun effet et le serveur FTP n'écoute pas sur UDP 69.",
+      "d": "Le séparateur entre utilisateur et mot de passe est le deux-points, et l'arobase sépare les identifiants du serveur ; cette URL ne respecte aucun des deux."
+    },
+    "reference": "Configuration Fundamentals Configuration Guide (Cisco IOS XE), Managing Configuration Files (Understanding the FTP Username and Password)"
+  },
+  {
+    "slug": "ccna-4.9-tftp-source-interface-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le serveur TFTP 10.10.50.5 n'accepte que les requêtes dont l'adresse source est 10.255.0.1, l'adresse de l'interface Loopback0 de R1. Sur R1, « copy running-config tftp: » échoue : la requête part par GigabitEthernet0/0/1 avec la source 10.0.12.1. Quelle commande globale corrige le problème sans modifier le serveur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ip ftp source-interface Loopback0"
+        },
+        {
+          "id": "b",
+          "text": "ip route 10.10.50.5 255.255.255.255 Loopback0"
+        },
+        {
+          "id": "c",
+          "text": "tftp-server flash:running-config"
+        },
+        {
+          "id": "d",
+          "text": "ip tftp source-interface Loopback0"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Par défaut, un paquet émis par le routeur prend comme source l'adresse de l'interface de sortie, ici 10.0.12.1. « ip tftp source-interface Loopback0 » impose l'adresse de Loopback0 comme source de toutes les sessions du client TFTP d'IOS, quelle que soit l'interface de sortie. La boucle locale est souvent choisie parce qu'elle reste active tant que le routeur est joignable par un chemin quelconque, ce qui simplifie les filtres des serveurs d'administration. FTP dispose d'une commande équivalente distincte.",
+    "distractorNotes": {
+      "a": "« ip ftp source-interface » ne s'applique qu'au client FTP ; une copie vers tftp: n'est pas concernée.",
+      "b": "Une route vers une interface de boucle locale ne fait sortir aucun paquet sur le réseau : la requête n'atteindrait plus du tout le serveur.",
+      "c": "« tftp-server » fait de R1 un serveur TFTP qui met un fichier à disposition ; il ne change pas l'adresse source de R1 en tant que client."
+    },
+    "reference": "Cisco IOS Configuration Fundamentals Command Reference (ip tftp source-interface)"
+  },
+  {
+    "slug": "ccna-4.9-tftp-wan-throughput-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un routeur récupère une image IOS par TFTP à travers un WAN de 100 Mbit/s dont le RTT est de 50 ms. Les blocs font 512 octets (valeur par défaut, aucune option négociée) et le temps de traitement est négligeable. Quel débit utile maximal ce transfert peut-il atteindre, environ ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "41 kbit/s"
+        },
+        {
+          "id": "b",
+          "text": "82 kbit/s"
+        },
+        {
+          "id": "c",
+          "text": "8,2 Mbit/s"
+        },
+        {
+          "id": "d",
+          "text": "100 Mbit/s"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "TFTP fonctionne en « stop-and-wait » : l'émetteur envoie un bloc puis attend son acquittement avant d'envoyer le suivant. Un bloc de 512 octets coûte donc un aller-retour complet : 512 × 8 = 4 096 bits toutes les 50 ms, soit 4 096 / 0,05 = 81 920 bit/s, environ 82 kbit/s, quel que soit le débit du lien. C'est pourquoi on préfère FTP (sur TCP, avec une fenêtre de plusieurs segments en vol) ou une option de taille de bloc plus grande pour les images volumineuses à travers un WAN.",
+    "distractorNotes": {
+      "a": "41 kbit/s supposerait deux allers-retours par bloc ; or l'envoi du bloc et le retour de son acquittement forment un seul RTT.",
+      "c": "8,2 Mbit/s est cent fois trop élevé : il correspondrait à un RTT de 0,5 ms.",
+      "d": "Le débit du lien n'est jamais atteint : avec un seul bloc en vol, c'est le RTT qui limite le transfert."
+    },
+    "reference": "RFC 1350"
+  },
+  {
+    "slug": "ccna-4.9-tftp-operation-multi-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur le fonctionnement de TFTP sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "TFTP s'appuie sur TCP pour retransmettre les blocs perdus."
+        },
+        {
+          "id": "b",
+          "text": "Un bloc de données de moins de 512 octets signale la fin du transfert."
+        },
+        {
+          "id": "c",
+          "text": "TFTP ouvre une connexion de contrôle et une connexion de données distinctes."
+        },
+        {
+          "id": "d",
+          "text": "Le serveur répond depuis un nouveau port, et non depuis le port 69."
+        },
+        {
+          "id": "e",
+          "text": "TFTP chiffre le contenu du fichier, mais pas son nom."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le client envoie sa requête de lecture ou d'écriture vers le port UDP 69 du serveur ; celui-ci choisit un nouveau port (TID) pour la suite du transfert, ce qui oblige les pare-feu à suivre l'échange. Les données circulent par blocs numérotés de 512 octets, chacun acquitté avant le suivant ; un bloc plus court (éventuellement vide) marque la fin du fichier. La fiabilité est assurée par TFTP lui-même, avec acquittements et retransmissions sur expiration de délai.",
+    "distractorNotes": {
+      "a": "TFTP fonctionne sur UDP ; il gère lui-même acquittements et retransmissions.",
+      "c": "Les connexions de contrôle et de données séparées sont propres à FTP ; TFTP n'a qu'un seul échange UDP.",
+      "e": "TFTP ne chiffre rien : nom et contenu du fichier circulent en clair."
+    },
+    "reference": "RFC 1350"
+  },
+  {
+    "slug": "ccna-4.9-ftp-modes-multi-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les modes actif et passif de FTP sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Dans les deux modes, les fichiers circulent sur la connexion de contrôle."
+        },
+        {
+          "id": "b",
+          "text": "En mode actif, le client ouvre la connexion de données vers le port 20 du serveur."
+        },
+        {
+          "id": "c",
+          "text": "En mode actif, c'est le serveur qui ouvre la connexion de données."
+        },
+        {
+          "id": "d",
+          "text": "Le mode passif convient mieux à un client situé derrière un pare-feu ou du NAT."
+        },
+        {
+          "id": "e",
+          "text": "En mode passif, la connexion de données utilise UDP plutôt que TCP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "Dans les deux modes, le client ouvre une connexion de contrôle vers le port TCP 21 et les fichiers passent sur des connexions de données TCP séparées. En mode actif, le client annonce un port avec PORT et le serveur ouvre la connexion de données depuis son port 20 : un pare-feu ou un NAT devant le client bloque souvent cette connexion entrante. En mode passif (PASV), le serveur annonce un port et c'est le client qui ouvre la connexion de données, comme la connexion de contrôle : il passe donc mieux le filtrage côté client.",
+    "distractorNotes": {
+      "a": "La connexion de contrôle ne transporte que les commandes et les réponses ; les fichiers passent sur des connexions de données séparées.",
+      "b": "En mode actif, c'est le serveur qui ouvre la connexion de données depuis son port 20 vers le port annoncé par le client.",
+      "e": "FTP utilise TCP pour toutes ses connexions, en mode actif comme en mode passif."
+    },
+    "reference": "RFC 959 ; RFC 1579"
+  },
+  {
+    "slug": "ccna-4.9-ftp-passive-sequence-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un client télécharge un fichier depuis un serveur FTP en mode passif. Remettez dans l'ordre les étapes de la session.",
+      "items": [
+        {
+          "id": "pasv",
+          "text": "Le client envoie la commande PASV."
+        },
+        {
+          "id": "data",
+          "text": "Le client ouvre la connexion de données vers le port annoncé."
+        },
+        {
+          "id": "ctrl",
+          "text": "Le client ouvre une connexion TCP vers le port 21 du serveur."
+        },
+        {
+          "id": "reply",
+          "text": "Le serveur répond en indiquant une adresse IP et un port d'écoute."
+        },
+        {
+          "id": "auth",
+          "text": "Le client s'authentifie avec les commandes USER et PASS."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "ctrl",
+        "auth",
+        "pasv",
+        "reply",
+        "data"
+      ]
+    },
+    "explanation": "Toute session FTP commence par la connexion de contrôle, ouverte par le client vers le port TCP 21, sur laquelle il s'authentifie (USER puis PASS). Avant un transfert en mode passif, il envoie PASV ; le serveur se met à l'écoute sur un port et le lui annonce dans sa réponse (code 227, avec adresse et port). Le client ouvre alors la connexion de données vers ce port, puis le fichier y circule. Les deux connexions étant ouvertes par le client, ce mode traverse bien un pare-feu ou un NAT placé devant lui.",
+    "reference": "RFC 959"
+  },
+  {
+    "slug": "ccna-4.9-ios-upgrade-steps-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un administrateur met à jour l'IOS d'un routeur à partir d'un serveur TFTP, en conservant l'ancienne image dans la flash. Remettez les étapes dans l'ordre.",
+      "items": [
+        {
+          "id": "boot",
+          "text": "Désigner la nouvelle image avec la commande boot system."
+        },
+        {
+          "id": "reload",
+          "text": "Redémarrer le routeur."
+        },
+        {
+          "id": "space",
+          "text": "Vérifier l'espace libre dans la mémoire flash."
+        },
+        {
+          "id": "save",
+          "text": "Enregistrer la configuration en cours dans la NVRAM."
+        },
+        {
+          "id": "copy",
+          "text": "Copier la nouvelle image du serveur TFTP vers la flash."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "space",
+        "copy",
+        "boot",
+        "save",
+        "reload"
+      ]
+    },
+    "explanation": "On vérifie d'abord la place disponible (show flash:), sans quoi la copie échoue. On copie ensuite l'image depuis le serveur TFTP. Comme l'ancienne image reste présente, il faut indiquer au routeur laquelle charger avec « boot system flash:<nouvelle image> » ; cette commande se trouve dans la configuration en cours et doit être enregistrée en NVRAM (copy running-config startup-config) pour être lue au démarrage. Le redémarrage vient en dernier : il charge alors la nouvelle image.",
+    "reference": "Loading and Managing System Images Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.9-config-copy-commands-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un serveur TFTP sert à la sauvegarde et à la restauration des configurations d'un routeur. Associez chaque commande copy à l'opération qu'elle réalise sur les fichiers de configuration.",
+      "left": [
+        {
+          "id": "run2t",
+          "text": "copy running-config tftp:"
+        },
+        {
+          "id": "start2t",
+          "text": "copy startup-config tftp:"
+        },
+        {
+          "id": "t2run",
+          "text": "copy tftp: running-config"
+        },
+        {
+          "id": "t2start",
+          "text": "copy tftp: startup-config"
+        }
+      ],
+      "right": [
+        {
+          "id": "saverun",
+          "text": "Sauvegarder sur le serveur la configuration active en RAM"
+        },
+        {
+          "id": "savenv",
+          "text": "Sauvegarder sur le serveur la configuration enregistrée en NVRAM"
+        },
+        {
+          "id": "merge",
+          "text": "Fusionner les commandes du fichier dans la configuration active"
+        },
+        {
+          "id": "overwrite",
+          "text": "Écraser la configuration de démarrage avec le fichier du serveur"
+        },
+        {
+          "id": "replace",
+          "text": "Remplacer entièrement la configuration active par le fichier du serveur"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "run2t": "saverun",
+        "start2t": "savenv",
+        "t2run": "merge",
+        "t2start": "overwrite"
+      }
+    },
+    "explanation": "La syntaxe est toujours « copy <source> <destination> ». Vers tftp:, on sauvegarde la configuration en cours (RAM) ou celle de démarrage (NVRAM). Dans l'autre sens, la destination change tout : copier vers running-config exécute les commandes du fichier comme si on les tapait, ce qui fusionne avec l'existant ; copier vers startup-config remplace le fichier en NVRAM, pris en compte au prochain redémarrage. Pour restaurer exactement une configuration sauvegardée, on passe donc par startup-config puis un redémarrage.",
+    "distractorNotes": {
+      "replace": "Aucune de ces commandes ne remplace la configuration active : « copy tftp: running-config » ajoute les commandes à l'existant, sans retirer les lignes absentes du fichier (le remplacement relève de « configure replace »)."
+    },
+    "reference": "Configuration Fundamentals Configuration Guide (Cisco IOS XE), Managing Configuration Files"
+  }
+]

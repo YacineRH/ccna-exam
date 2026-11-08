@@ -410,3 +410,105 @@ describe('objectifs : ordre absent, commande après une autre', () => {
     expect(ok.achieved()).toEqual(['pas-de-refus-avant', 'reactive']);
   });
 });
+
+describe('valeurs signées, défauts, réécritures multiples, formes no à clé (bloc 6)', () => {
+  const p = parseTerminalProfile({
+    ...PROFILE,
+    commands: [
+      ...PROFILE.commands,
+      // Bornes signées, réécriture qui complète la forme canonique.
+      { syntax: 'clock timezone <word> <-23-23> [<0-59>]', modes: ['config'], key: [0, 1], rewrite: { pattern: '^(clock timezone \\S+ -?\\d+)$', replace: '$1 0' } },
+      // Liste de règles : la première qui correspond ; valeur par défaut non affichée ; no actif par défaut.
+      {
+        syntax: 'logging console [{<0-7>|warnings|debugging}]',
+        modes: ['config'],
+        key: [0, 1],
+        negate: 'disable',
+        rewrite: [
+          { pattern: ' 4$', replace: ' warnings' },
+          { pattern: ' 7$', replace: ' debugging' },
+        ],
+        defaults: ['^logging console( debugging)?$'],
+      },
+      { syntax: 'cdp timer <5-254>', modes: ['config'], key: [0, 1], defaults: ['^cdp timer 60$'] },
+      // Mot-clé avec « + », forme no arrêtée à la clé, condition signalée sous un mot-clé.
+      { syntax: 'aaa new-model', modes: ['config'] },
+      {
+        syntax: 'aaa authentication login default {local|group {radius|tacacs+}}',
+        modes: ['config'],
+        key: [0, 1, 2, 3],
+        negateKey: true,
+        requires: [{ config: '^aaa new-model$', invalidAtWord: 2 }],
+      },
+      { syntax: 'guard {root|loop}', modes: IF, key: [0], negateKey: true },
+      // Affichage dont le dernier mot est facultatif.
+      { syntax: 'community <word> ro [<1-99>]', modes: ['config'], key: [0, 1], display: 'community {$1} RO {$3}' },
+    ],
+  });
+  const dev = () => new TerminalDevice(p, { id: 'R1', type: 'router', interfaces: ['GigabitEthernet0/0-1'], startupConfig: 'hostname R1' });
+
+  it('un entier signé dans ses bornes, réécrit pour afficher les minutes', () => {
+    const d = dev();
+    const r = conf(d, ['clock timezone EST -5', 'clock timezone X -24', 'clock timezone X 24']);
+    expect(r.map((x) => x.status)).toEqual(['ok', 'ok', 'error', 'error']);
+    expect(d.linesOf()).toContain('clock timezone EST -5 0');
+    expect(d.execute('clock timezone CET ?').output).toContain('<-23-23>');
+  });
+
+  it('rewrite en liste : la première règle qui correspond, forme no comprise', () => {
+    const d = dev();
+    conf(d, ['logging console 4']);
+    expect(d.linesOf()).toContain('logging console warnings');
+    expect(d.history.at(-1)?.canonical).toBe('logging console warnings');
+  });
+
+  it('defaults : la valeur par défaut retire le réglage au lieu de s’afficher', () => {
+    const d = dev();
+    conf(d, ['cdp timer 30']);
+    expect(d.linesOf()).toContain('cdp timer 30');
+    d.execute('cdp timer 60');
+    expect(d.linesOf().some((l) => l.startsWith('cdp'))).toBe(false);
+    expect(d.history.at(-1)?.changed).toBe(true);
+  });
+
+  it('negate disable : no garde la seule clé, la forme positive l’efface, le défaut aussi', () => {
+    const d = dev();
+    conf(d, ['logging console warnings', 'no logging console 4']);
+    expect(d.linesOf().filter((l) => l.includes('logging'))).toEqual(['no logging console']);
+    d.execute('no logging console');
+    expect(d.linesOf().filter((l) => l.includes('logging'))).toEqual(['no logging console']);
+    d.execute('logging console warnings');
+    expect(d.linesOf().filter((l) => l.includes('logging'))).toEqual(['logging console warnings']);
+    run(d, ['no logging console', 'logging console 7']);
+    expect(d.linesOf().filter((l) => l.includes('logging'))).toEqual([]);
+  });
+
+  it('invalidAtWord : marqueur sous un mot-clé tant qu’une condition manque ; mot-clé avec « + »', () => {
+    const d = dev();
+    const r = conf(d, ['aaa authentication login default group tacacs+']);
+    expect(r[1]?.output).toBe(`${' '.repeat('R1(config)#aaa '.length)}^\n% Invalid input detected at '^' marker.`);
+    run(d, ['aaa new-model', 'aaa authentication login default group tacacs+']);
+    expect(d.linesOf()).toContain('aaa authentication login default group tacacs+');
+    expect(d.execute('aaa authentication login default group t?').output).toBe('tacacs+');
+  });
+
+  it('negateKey : la forme no s’arrête après la clé, ailleurs elle reste incomplète', () => {
+    const d = dev();
+    run(d, ['configure terminal', 'aaa new-model', 'aaa authentication login default local', 'no aaa authentication login default']);
+    expect(d.linesOf().some((l) => l.startsWith('aaa authentication'))).toBe(false);
+    run(d, ['interface g0/0', 'guard root']);
+    expect(d.linesOf('interface GigabitEthernet0/0')).toContain('guard root');
+    expect(d.execute('no guard').status).toBe('ok');
+    expect(d.linesOf('interface GigabitEthernet0/0')).not.toContain('guard root');
+    // Sans negateKey, `no switchport mode` reste incomplet.
+    const s = sw();
+    run(s, ['configure terminal', 'interface fa0/1', 'switchport mode access']);
+    expect(s.execute('no switchport mode').output).toBe('% Incomplete command.');
+  });
+
+  it('display : un mot facultatif absent ne laisse pas d’espace final', () => {
+    const d = dev();
+    conf(d, ['community public ro', 'community private ro 10']);
+    expect(d.renderConfig()).toEqual(expect.arrayContaining(['community public RO', 'community private RO 10']));
+  });
+});

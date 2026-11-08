@@ -1,0 +1,194 @@
+{
+  "slug": "ccna-challenge-4.5-syslog-ntp-supervision",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "4.0",
+  "subtopic": "4.5",
+  "difficulty": "easy",
+  "title": "Contre la montre : raccorder R1 à la supervision (syslog et NTP)",
+  "statement": "La supervision centralise les journaux et l'heure de tous les routeurs. R1 n'y est pas encore raccordé : ses messages restent en local et sont horodatés avec le temps de fonctionnement du routeur. Les serveurs sont sur le LAN de supervision, derrière G0/0/0.\n\nConfigurez R1 :\n1. Envoyez ses messages syslog au serveur 10.0.99.50.\n2. Le serveur ne reçoit que les messages de gravité 0 à 4 (jusqu'à warnings inclus).\n3. Les messages envoyés au serveur ont pour adresse source celle de Loopback0 (10.255.0.1), l'identifiant stable de R1.\n4. Les messages de journalisation sont horodatés avec la date et l'heure, à la milliseconde.\n5. R1 se synchronise par NTP sur 10.0.99.10, serveur préféré, et sur 10.0.99.11 en secours. R1 reste client : il ne s'annonce pas lui-même comme source de temps de référence.\n6. Les paquets NTP de R1 partent eux aussi de Loopback0.\n\nLe chronomètre tourne.",
+  "topology": "   Serveur syslog 10.0.99.50     NTP 10.0.99.10 (préféré)     NTP 10.0.99.11\n              \\                        |                         /\n               +------------- LAN supervision 10.0.99.0/24 -----+\n                                       |\n                              G0/0/0 10.0.99.1/24\n                                     [R1]   Loopback0 10.255.0.1/32\n                              G0/0/1 10.0.0.1/30\n                                       |\n                                 cœur de réseau",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "service timestamps debug uptime\nservice timestamps log uptime\nhostname R1\nno ip domain-lookup\ninterface Loopback0\n ip address 10.255.0.1 255.255.255.255\ninterface GigabitEthernet0/0/0\n description LAN supervision\n ip address 10.0.99.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Vers le coeur\n ip address 10.0.0.1 255.255.255.252\n no shutdown"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "syslog-serveur",
+      "description": "Les messages de R1 sont envoyés au serveur syslog 10.0.99.50.",
+      "check": { "type": "line", "line": "logging host 10.0.99.50" }
+    },
+    {
+      "id": "syslog-gravite",
+      "description": "Le serveur syslog reçoit les messages de gravité 0 à 4 (warnings inclus), et eux seuls.",
+      "check": { "type": "line", "line": "logging trap warnings" }
+    },
+    {
+      "id": "syslog-source",
+      "description": "Les messages syslog partent de l'adresse de Loopback0.",
+      "check": {
+        "type": "all",
+        "checks": [{ "type": "line", "line": "logging source-interface Loopback0" }, { "type": "line", "section": "interface Loopback0", "line": "ip address 10.255.0.1 255.255.255.255" }]
+      }
+    },
+    {
+      "id": "horodatage",
+      "description": "Les messages de journalisation portent la date et l'heure, à la milliseconde.",
+      "check": { "type": "regex", "pattern": "^service timestamps log datetime msec( localtime)?( show-timezone)?$" }
+    },
+    {
+      "id": "ntp-client",
+      "description": "R1 se synchronise sur 10.0.99.10 (préféré) et 10.0.99.11 (secours), sans s'annoncer lui-même comme source de référence.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "line": "ntp server 10.0.99.10 prefer" },
+          { "type": "line", "line": "ntp server 10.0.99.11" },
+          { "type": "regex", "pattern": "^ntp master", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "ntp-source",
+      "description": "Les paquets NTP de R1 partent de l'adresse de Loopback0.",
+      "check": {
+        "type": "all",
+        "checks": [{ "type": "line", "line": "ntp source Loopback0" }, { "type": "line", "section": "interface Loopback0", "line": "ip address 10.255.0.1 255.255.255.255" }]
+      }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 5,
+    "timeLimitMinutes": 10,
+    "mode": "build",
+    "faults": []
+  },
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "logging host 10.0.99.50",
+        "logging trap warnings",
+        "logging source-interface Loopback0",
+        "service timestamps log datetime msec",
+        "ntp server 10.0.99.10 prefer",
+        "ntp server 10.0.99.11",
+        "ntp source Loopback0",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Formes courtes : logging <adresse>, niveau en chiffre, abréviations ; horodatage en heure locale avec le fuseau",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "ntp source lo0",
+            "ntp server 10.0.99.11",
+            "ntp server 10.0.99.10 prefer",
+            "service timestamps log datetime msec localtime show-timezone",
+            "logging 10.0.99.50",
+            "logging trap 4",
+            "logging source-interface lo0",
+            "\u001a"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Serveur préféré saisi d'abord sans prefer, puis corrigé ; horodatage des messages de débogage réglé aussi",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ntp server 10.0.99.10",
+            "ntp server 10.0.99.10 prefer",
+            "ntp server 10.0.99.11",
+            "ntp source Loopback0",
+            "service timestamps debug datetime msec",
+            "service timestamps log datetime msec localtime",
+            "logging host 10.0.99.50",
+            "logging trap warnings",
+            "logging source-interface Loopback0",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "logging trap notifications : le serveur reçoit aussi les messages de gravité 5",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "logging host 10.0.99.50", "logging trap notifications", "logging source-interface Loopback0", "service timestamps log datetime msec", "ntp server 10.0.99.10 prefer", "ntp server 10.0.99.11", "ntp source Loopback0", "end"] }
+      ],
+      "failing": ["syslog-gravite"]
+    },
+    {
+      "description": "logging trap 3 : les warnings (gravité 4) ne partent plus vers le serveur",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "logging host 10.0.99.50", "logging trap 3", "logging source-interface Loopback0", "service timestamps log datetime msec", "ntp server 10.0.99.10 prefer", "ntp server 10.0.99.11", "ntp source Loopback0", "end"] }
+      ],
+      "failing": ["syslog-gravite"]
+    },
+    {
+      "description": "Niveau réglé sur le tampon local (logging buffered warnings) au lieu du serveur : le serveur reçoit tout jusqu'à informational",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "logging host 10.0.99.50", "logging buffered warnings", "logging source-interface Loopback0", "service timestamps log datetime msec", "ntp server 10.0.99.10 prefer", "ntp server 10.0.99.11", "ntp source Loopback0", "end"] }
+      ],
+      "failing": ["syslog-gravite"]
+    },
+    {
+      "description": "Source syslog laissée sur l'interface de sortie G0/0/0",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "logging host 10.0.99.50", "logging trap warnings", "logging source-interface g0/0/0", "service timestamps log datetime msec", "ntp server 10.0.99.10 prefer", "ntp server 10.0.99.11", "ntp source Loopback0", "end"] }
+      ],
+      "failing": ["syslog-source"]
+    },
+    {
+      "description": "Horodatage réglé pour les messages de débogage seulement",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "logging host 10.0.99.50", "logging trap warnings", "logging source-interface Loopback0", "service timestamps debug datetime msec", "ntp server 10.0.99.10 prefer", "ntp server 10.0.99.11", "ntp source Loopback0", "end"] }
+      ],
+      "failing": ["horodatage"]
+    },
+    {
+      "description": "Horodatage date et heure sans les millisecondes",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "logging host 10.0.99.50", "logging trap warnings", "logging source-interface Loopback0", "service timestamps log datetime localtime", "ntp server 10.0.99.10 prefer", "ntp server 10.0.99.11", "ntp source Loopback0", "end"] }
+      ],
+      "failing": ["horodatage"]
+    },
+    {
+      "description": "ntp master ajouté « pour être sûr d'avoir l'heure » : R1 s'annonce comme source de référence sur sa propre horloge",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "logging host 10.0.99.50", "logging trap warnings", "logging source-interface Loopback0", "service timestamps log datetime msec", "ntp master 3", "ntp server 10.0.99.10 prefer", "ntp server 10.0.99.11", "ntp source Loopback0", "end"] }
+      ],
+      "failing": ["ntp-client"]
+    },
+    {
+      "description": "Serveur de secours marqué prefer à la place du serveur préféré",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "logging host 10.0.99.50", "logging trap warnings", "logging source-interface Loopback0", "service timestamps log datetime msec", "ntp server 10.0.99.10", "ntp server 10.0.99.11 prefer", "ntp source Loopback0", "end"] }
+      ],
+      "failing": ["ntp-client"]
+    }
+  ],
+  "explanation": "Syslog : logging host 10.0.99.50 (ou la forme courte logging 10.0.99.50) ajoute un serveur ; logging trap fixe la gravité maximale envoyée aux serveurs, informational (6) par défaut. Les gravités vont de 0 (emergencies) à 7 (debugging) et un niveau inclut tous ceux de plus petit numéro : warnings (4) envoie 0 à 4. notifications (5) en enverrait trop, errors (3) perdrait les warnings. logging buffered, logging console et logging monitor règlent les autres destinations (tampon local, console, sessions VTY avec terminal monitor), pas le serveur. logging source-interface Loopback0 donne à tous les messages la même adresse source, quelle que soit l'interface de sortie : le serveur identifie R1 par une adresse qui ne tombe pas avec un lien. service timestamps log datetime msec remplace l'horodatage uptime (temps depuis le démarrage) par la date et l'heure à la milliseconde ; localtime et show-timezone, facultatifs, affichent l'heure locale et le fuseau. service timestamps debug ne concerne que les messages de débogage. Cet horodatage n'a de valeur que si l'horloge est juste, d'où NTP : ntp server 10.0.99.10 prefer et ntp server 10.0.99.11 font de R1 un client de deux serveurs, prefer désignant celui à retenir quand les deux sont valides. ntp master ferait de R1 une source de référence fondée sur sa propre horloge, à proscrire quand de vrais serveurs existent. ntp source Loopback0 fixe l'adresse source des paquets NTP. Vérifications : show logging (Trap logging: level warnings, Logging to 10.0.99.50, Logging Source-Interface), show ntp associations (astérisque devant le serveur retenu) et show ntp status (Clock is synchronized, stratum).",
+  "reference": "Cisco IOS Network Management Configuration Guide — « Configuring System Message Logging » (logging host, logging trap, logging source-interface, service timestamps) ; Cisco IOS Basic System Management Configuration Guide — « Configuring NTP » (ntp server, prefer, ntp source, ntp master)",
+  "estimatedMinutes": 5
+}

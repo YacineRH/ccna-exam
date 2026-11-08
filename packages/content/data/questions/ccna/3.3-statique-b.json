@@ -1,0 +1,1638 @@
+[
+  {
+    "slug": "ccna-3.3-ipv6-unicast-routing-command-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle commande de configuration globale permet à un routeur Cisco IOS de transmettre des paquets IPv6 d'une interface à une autre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ipv6 enable"
+        },
+        {
+          "id": "b",
+          "text": "ip routing"
+        },
+        {
+          "id": "c",
+          "text": "ipv6 unicast-routing"
+        },
+        {
+          "id": "d",
+          "text": "ip cef"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sur IOS, le transfert des paquets IPv6 entre interfaces est désactivé par défaut, même si les interfaces ont des adresses IPv6. La commande globale « ipv6 unicast-routing » l'active : le routeur route alors l'IPv6, utilise ses routes statiques pour le trafic qui le traverse et envoie des messages Router Advertisement sur ses interfaces Ethernet. Sans elle, le routeur se comporte comme un simple hôte IPv6 : il répond pour ses propres adresses, mais ne relaie rien.",
+    "distractorNotes": {
+      "a": "« ipv6 enable » est une commande d'interface : elle active IPv6 et crée une adresse lien local, sans activer le routage entre interfaces.",
+      "b": "« ip routing » concerne IPv4 (et elle est active par défaut sur un routeur) ; elle n'a aucun effet sur le transfert des paquets IPv6.",
+      "d": "« ip cef » active Cisco Express Forwarding pour IPv4 ; elle n'active pas le routage IPv6."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — Implementing IPv6 Addressing and Basic Connectivity"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-link-local-why-interface-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pourquoi IOS exige-t-il l'interface de sortie dans une route statique IPv6 dont le next hop est une adresse lien local ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Parce qu'IOS convertit l'adresse lien local en adresse globale à partir du préfixe de l'interface."
+        },
+        {
+          "id": "b",
+          "text": "Parce que le préfixe FE80::/10 est réservé au multicast, qui impose une interface de sortie."
+        },
+        {
+          "id": "c",
+          "text": "Parce qu'une adresse lien local change à chaque redémarrage du routeur voisin."
+        },
+        {
+          "id": "d",
+          "text": "Parce que la même adresse lien local peut exister sur plusieurs liens du routeur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une adresse lien local (FE80::/10) n'a de sens que sur le lien où elle est configurée : rien n'empêche deux voisins, sur deux interfaces différentes, d'utiliser la même adresse, par exemple FE80::2. Le routeur ne peut donc pas savoir, avec l'adresse seule, sur quel lien chercher ce voisin, et une recherche récursive dans la table ne l'aiderait pas. IOS demande l'interface de sortie avant l'adresse : « ipv6 route préfixe/longueur interface FE80::x ». Il résout ensuite l'adresse MAC du voisin par NDP sur cette interface.",
+    "distractorNotes": {
+      "a": "IOS n'effectue aucune conversion : il utilise l'adresse lien local telle quelle comme next hop, sur l'interface indiquée.",
+      "b": "Le multicast IPv6 utilise FF00::/8 ; FE80::/10 est le bloc des adresses unicast lien local.",
+      "c": "Une adresse lien local d'un routeur Cisco, configurée à la main ou dérivée de l'adresse MAC (EUI-64), reste la même après un redémarrage."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-null0-packet-fate-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Que fait un routeur d'un paquet dont la meilleure correspondance dans sa table de routage est une route statique vers l'interface Null0 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il le transmet par sa route par défaut."
+        },
+        {
+          "id": "b",
+          "text": "Il le rejette."
+        },
+        {
+          "id": "c",
+          "text": "Il le renvoie au routeur qui le lui a transmis."
+        },
+        {
+          "id": "d",
+          "text": "Il le diffuse sur toutes ses interfaces actives."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Null0 est une interface virtuelle, toujours up, qui ne mène nulle part : un paquet transmis vers Null0 est simplement abandonné. Une route statique vers Null0 sert donc de route de rejet. Elle est utile avec un résumé : sur le routeur qui possède les sous-réseaux, « ip route 10.1.0.0 255.255.252.0 Null0 » rejette les paquets destinés aux parties inutilisées du bloc, tandis que les sous-réseaux réels, plus précis, restent joints par leurs propres routes grâce à la correspondance la plus longue.",
+    "distractorNotes": {
+      "a": "La route vers Null0 est la meilleure correspondance : le routeur l'applique et ne cherche pas de route moins précise, comme la route par défaut.",
+      "c": "Aucun mécanisme de routage ne renvoie le paquet à l'expéditeur ; Null0 abandonne le paquet.",
+      "d": "Un routeur ne diffuse jamais un paquet unicast sur ses interfaces ; Null0 n'est reliée à aucun réseau."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-summary-route-benefit-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel est l'intérêt principal d'une route statique de résumé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle a une distance administrative plus faible que les routes vers chaque réseau."
+        },
+        {
+          "id": "b",
+          "text": "Elle l'emporte sur les routes plus précises vers les mêmes réseaux."
+        },
+        {
+          "id": "c",
+          "text": "Elle remplace, par une seule entrée, plusieurs routes vers des réseaux contigus."
+        },
+        {
+          "id": "d",
+          "text": "Elle bascule seule vers un autre next hop si le premier tombe."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une route de résumé regroupe plusieurs réseaux contigus sous un préfixe plus court : par exemple 10.4.0.0/22 au lieu de 10.4.0.0/24, 10.4.1.0/24, 10.4.2.0/24 et 10.4.3.0/24. Le routeur a moins d'entrées dans sa table et l'administrateur moins de lignes à configurer et à maintenir. Elle suppose que tous les réseaux résumés sont joignables par le même chemin. Pour le reste, c'est une route statique ordinaire : distance 1 par défaut, et une route plus précise vers l'un des réseaux reste préférée.",
+    "distractorNotes": {
+      "a": "Une route de résumé statique a la distance par défaut des routes statiques, 1, comme les routes qu'elle remplace.",
+      "b": "C'est l'inverse : la correspondance la plus longue fait préférer toute route plus précise au résumé.",
+      "d": "Une route statique n'a qu'un next hop par commande ; le secours demande une autre route, par exemple flottante."
+    },
+    "reference": "RFC 4632 (CIDR) ; Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-default-link-local-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 joint Internet par son interface GigabitEthernet0/0, reliée au routeur du FAI, dont l'adresse lien local est FE80::1. Quelle commande crée sur R1 une route statique par défaut IPv6 qui utilise ce next hop ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ipv6 route ::/0 GigabitEthernet0/0 FE80::1"
+        },
+        {
+          "id": "b",
+          "text": "ipv6 route ::/0 FE80::1"
+        },
+        {
+          "id": "c",
+          "text": "ipv6 route ::/128 GigabitEthernet0/0 FE80::1"
+        },
+        {
+          "id": "d",
+          "text": "ipv6 route FE80::/10 GigabitEthernet0/0 FE80::1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La route par défaut IPv6 a pour préfixe ::/0 : aucun bit n'est comparé, elle correspond à toute destination qu'aucune route plus précise ne couvre. Le next hop étant une adresse lien local, il faut le faire précéder de l'interface de sortie, sinon IOS refuse la commande. On obtient une route entièrement spécifiée, affichée dans « show ipv6 route » sous la forme « S ::/0 [1/0] via FE80::1, GigabitEthernet0/0 ». R1 résout l'adresse MAC de FE80::1 par NDP sur G0/0.",
+    "distractorNotes": {
+      "b": "IOS refuse un next hop lien local sans interface de sortie, car la même adresse lien local peut exister sur plusieurs liens.",
+      "c": "::/128 désigne la seule adresse non spécifiée ::, pas toutes les destinations ; la route par défaut est ::/0.",
+      "d": "FE80::/10 est le bloc des adresses lien local, qui ne sont jamais routées ; ce n'est pas la route par défaut."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-floating-ospfv3-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 apprend 2001:db8:acad:50::/64 par OSPFv3, avec la distance administrative par défaut. Quelle commande ajoute une route statique de secours vers ce préfixe, via 2001:db8:acad:13::3, qui n'entre dans la table que si la route OSPFv3 disparaît ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ipv6 route 2001:db8:acad:50::/64 2001:db8:acad:13::3 90"
+        },
+        {
+          "id": "b",
+          "text": "ipv6 route 2001:db8:acad:50::/64 2001:db8:acad:13::3 255"
+        },
+        {
+          "id": "c",
+          "text": "ipv6 route 2001:db8:acad:50::/64 2001:db8:acad:13::3"
+        },
+        {
+          "id": "d",
+          "text": "ipv6 route 2001:db8:acad:50::/64 2001:db8:acad:13::3 120"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "OSPFv3 a, comme OSPFv2, une distance administrative de 110. Pour qu'une route statique IPv6 reste en attente derrière la route OSPFv3, sa distance, ajoutée en fin de commande, doit être supérieure à 110 et inférieure à 255 : 120 convient. Tant que la route OSPFv3 existe, elle seule est installée ; si elle disparaît, la route statique flottante via 2001:db8:acad:13::3 entre dans la table, puis s'efface quand OSPFv3 réapprend le préfixe.",
+    "distractorNotes": {
+      "a": "Avec une distance de 90, inférieure à 110, la route statique remplacerait la route OSPFv3 au lieu de l'attendre.",
+      "b": "Une distance de 255 signifie « source non fiable » : la route ne serait jamais installée, même après la perte d'OSPFv3.",
+      "c": "Sans valeur, la distance vaut 1 : la route statique l'emporterait aussitôt sur la route OSPFv3."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-return-route-router-ping-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 (LAN 192.168.10.0/24, PC-A en 192.168.10.10) est relié à R2 par le réseau 10.0.12.0/30 (R1 en .1, R2 en .2). PC-B (192.168.20.10) est dans le LAN de R2. R1 a la route « ip route 192.168.20.0 255.255.255.0 10.0.12.2 » ; R2 n'a ni route statique ni protocole de routage. Un ping lancé depuis R1 vers PC-B réussit, mais le ping de PC-A vers PC-B échoue. Pourquoi ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 n'applique sa route vers 192.168.20.0/24 qu'au trafic qu'il émet lui-même."
+        },
+        {
+          "id": "b",
+          "text": "PC-B ne répond qu'aux requêtes issues d'un réseau connecté à R2."
+        },
+        {
+          "id": "c",
+          "text": "R2 n'a aucune route vers 192.168.10.0/24 pour renvoyer les réponses."
+        },
+        {
+          "id": "d",
+          "text": "Le trafic de transit exige une route entièrement spécifiée sur R1."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un ping lancé depuis R1 prend pour adresse source celle de l'interface de sortie, 10.0.12.1. La réponse de PC-B part vers 10.0.12.1, qui appartient à un réseau connecté de R2 : R2 sait la livrer. Avec PC-A, la source est 192.168.10.10 : R2 reçoit la réponse et ne trouve aucune route vers 192.168.10.0/24, il la rejette. Le routage doit fonctionner dans les deux sens ; il manque sur R2 la route de retour « ip route 192.168.10.0 255.255.255.0 10.0.12.1 ».",
+    "distractorNotes": {
+      "a": "Une route s'applique à tout paquet vers 192.168.20.0/24, qu'il soit émis par R1 ou qu'il le traverse : la requête de PC-A atteint bien PC-B.",
+      "b": "Un hôte répond à toute requête ICMP reçue ; c'est R2 qui ne sait pas acheminer la réponse vers le LAN de R1.",
+      "d": "Une route avec next hop seul convient au trafic de transit ; elle est d'ailleurs bien utilisée par la requête de PC-A."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-return-route-three-routers-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Aucun routeur n'exécute de protocole de routage ni n'a de route par défaut. Les PC de LAN-A n'arrivent pas à pinguer ceux de LAN-C. Quelle est la cause ?",
+      "exhibit": "192.168.1.0/24  10.0.12.0/30          10.0.23.0/30  192.168.3.0/24\nLAN-A --- R1 .1 --------- .2 R2 .1 --------- .2 R3 --- LAN-C\n\nR1# show running-config | include ip route\nip route 192.168.3.0 255.255.255.0 10.0.12.2\n\nR2# show running-config | include ip route\nip route 192.168.3.0 255.255.255.0 10.0.23.2\n\nR3# show running-config | include ip route\nip route 192.168.1.0 255.255.255.0 10.0.23.1",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 n'a pas de route vers le réseau 10.0.23.0/30."
+        },
+        {
+          "id": "b",
+          "text": "R3 n'a pas de route vers le réseau 10.0.12.0/30."
+        },
+        {
+          "id": "c",
+          "text": "La route de R3 vers LAN-A doit avoir 10.0.12.1 pour next hop."
+        },
+        {
+          "id": "d",
+          "text": "R2 n'a pas de route vers le réseau 192.168.1.0/24."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Suivons les deux sens. Requête : R1 l'envoie à R2 (route vers 192.168.3.0/24 via 10.0.12.2), R2 la transmet à R3 (via 10.0.23.2), et R3 la remet sur LAN-C. Réponse vers 192.168.1.0/24 : R3 l'envoie à R2 (via 10.0.23.1), mais R2 n'a de route que vers LAN-C ; LAN-A n'est pas un de ses réseaux connectés, et il rejette la réponse. Il faut ajouter sur R2 « ip route 192.168.1.0 255.255.255.0 10.0.12.1 ». Chaque routeur du chemin a besoin d'une route vers chaque extrémité.",
+    "distractorNotes": {
+      "a": "Le trafic entre LAN-A et LAN-C n'est jamais adressé à 10.0.23.0/30 ; R1 n'a pas besoin de cette route pour le ping.",
+      "b": "Le trafic entre les deux LAN n'est jamais adressé à 10.0.12.0/30 ; R3 n'a pas besoin de cette route pour le ping.",
+      "c": "10.0.12.1 n'est pas sur un réseau connecté de R3 : le next hop de R3 doit être son voisin direct, R2 (10.0.23.1), ce qui est déjà le cas."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-summary-route-22-choice-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 joint les réseaux 10.4.0.0/24, 10.4.1.0/24, 10.4.2.0/24 et 10.4.3.0/24, tous situés derrière R2 (10.0.12.2). Quelle route statique unique couvre ces quatre réseaux, et eux seuls ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ip route 10.4.0.0 255.255.248.0 10.0.12.2"
+        },
+        {
+          "id": "b",
+          "text": "ip route 10.4.0.0 255.255.252.0 10.0.12.2"
+        },
+        {
+          "id": "c",
+          "text": "ip route 10.4.0.0 255.255.254.0 10.0.12.2"
+        },
+        {
+          "id": "d",
+          "text": "ip route 10.4.0.0 255.255.0.0 10.0.12.2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Quatre réseaux /24 contigus, dont le premier (troisième octet 0) est un multiple de 4, se résument en un /22 : on retire 2 bits au masque, car 2² = 4. Les troisièmes octets 0 à 3 (000000xx en binaire) partagent leurs six premiers bits. Le masque /22 vaut 255.255.252.0, et 10.4.0.0/22 couvre exactement 10.4.0.0 à 10.4.3.255. La route « ip route 10.4.0.0 255.255.252.0 10.0.12.2 » remplace donc les quatre routes, sans attirer d'autres réseaux vers R2.",
+    "distractorNotes": {
+      "a": "255.255.248.0 est un /21 : il couvre 10.4.0.0 à 10.4.7.255, soit huit réseaux /24, dont quatre ne sont pas derrière R2.",
+      "c": "255.255.254.0 est un /23 : il ne couvre que 10.4.0.0/24 et 10.4.1.0/24.",
+      "d": "255.255.0.0 est un /16 : il envoie vers R2 tout 10.4.0.0/16, soit 256 réseaux /24, bien au-delà des quatre."
+    },
+    "reference": "RFC 4632 (CIDR) ; Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-summary-route-unaligned-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 joint les réseaux 10.50.6.0/24, 10.50.7.0/24, 10.50.8.0/24 et 10.50.9.0/24, tous situés derrière R2 (10.0.12.2). Quelle route statique unique, la plus précise possible, couvre ces quatre réseaux ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ip route 10.50.6.0 255.255.252.0 10.0.12.2"
+        },
+        {
+          "id": "b",
+          "text": "ip route 10.50.0.0 255.255.248.0 10.0.12.2"
+        },
+        {
+          "id": "c",
+          "text": "ip route 10.50.0.0 255.255.240.0 10.0.12.2"
+        },
+        {
+          "id": "d",
+          "text": "ip route 10.50.8.0 255.255.248.0 10.0.12.2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "En binaire, les troisièmes octets valent 6 = 00000110, 7 = 00000111, 8 = 00001000 et 9 = 00001001. Ils ne partagent que leurs quatre premiers bits (0000), car 7 et 8 diffèrent dès le cinquième. Le résumé garde donc 16 + 4 = 20 bits : 10.50.0.0/20, masque 255.255.240.0, qui couvre 10.50.0.0 à 10.50.15.255. Ce bloc n'étant pas aligné sur les quatre réseaux, il en inclut douze autres (0 à 5 et 10 à 15) : c'est le prix d'un résumé unique.",
+    "distractorNotes": {
+      "a": "10.50.6.0 n'est pas une adresse de réseau pour un /22 (les blocs /22 commencent à 0, 4, 8…) : IOS refuse cette combinaison, et 10.50.4.0/22 ne couvrirait pas 8 et 9.",
+      "b": "10.50.0.0/21 s'arrête à 10.50.7.255 : 10.50.8.0/24 et 10.50.9.0/24 ne sont pas couverts.",
+      "d": "10.50.8.0/21 commence à 10.50.8.0 : 10.50.6.0/24 et 10.50.7.0/24 ne sont pas couverts."
+    },
+    "reference": "RFC 4632 (CIDR) ; Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-summary-default-loop-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 et R2 sont reliés par 10.0.12.0/30 (R1 en .1). R1 résume vers R2 le bloc 10.1.0.0/22, dont R2 n'utilise encore que deux réseaux. Un hôte du LAN de R1 envoie un paquet vers 10.1.3.9. Que devient ce paquet ?",
+      "exhibit": "R1# show running-config | include ip route\nip route 10.1.0.0 255.255.252.0 10.0.12.2\n\nR2# show ip route | begin Gateway\nGateway of last resort is 10.0.12.1 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 10.0.12.1\n      10.0.0.0/8 is variably subnetted, 6 subnets, 3 masks\nC        10.0.12.0/30 is directly connected, GigabitEthernet0/0\nL        10.0.12.2/32 is directly connected, GigabitEthernet0/0\nC        10.1.0.0/24 is directly connected, GigabitEthernet0/1\nL        10.1.0.1/32 is directly connected, GigabitEthernet0/1\nC        10.1.1.0/24 is directly connected, GigabitEthernet0/2\nL        10.1.1.1/32 is directly connected, GigabitEthernet0/2",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2 le rejette, car aucun de ses réseaux connectés ne contient 10.1.3.9."
+        },
+        {
+          "id": "b",
+          "text": "R1 le rejette, car 10.1.3.9 n'appartient à aucun réseau connecté de R2."
+        },
+        {
+          "id": "c",
+          "text": "Il fait des allers-retours entre R1 et R2 jusqu'à ce que son TTL atteigne 0."
+        },
+        {
+          "id": "d",
+          "text": "R2 le diffuse sur ses deux LAN, 10.1.0.0/24 et 10.1.1.0/24."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "R1 trouve 10.1.3.9 dans son résumé 10.1.0.0/22 et transmet le paquet à R2. Chez R2, ni 10.1.0.0/24 ni 10.1.1.0/24 ne contiennent 10.1.3.9 : la seule correspondance est la route par défaut, qui renvoie le paquet à R1. R1 le renvoie à R2, et ainsi de suite ; chaque routeur décrémente le TTL, et le paquet est abandonné quand celui-ci atteint 0. La parade classique : sur R2, « ip route 10.1.0.0 255.255.252.0 Null0 », qui rejette les adresses inutilisées du bloc sans gêner les /24 réels, plus précis.",
+    "distractorNotes": {
+      "a": "R2 ne rejette un paquet que s'il n'a aucune route ; ici la route par défaut correspond et renvoie le paquet vers R1.",
+      "b": "R1 ne connaît pas le détail des réseaux de R2 : son résumé 10.1.0.0/22 couvre 10.1.3.9, il transmet donc le paquet.",
+      "d": "Un routeur ne diffuse jamais un paquet unicast ; R2 ne le remet sur un LAN que si l'adresse appartient à ce réseau."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-summary-62-choice-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 joint les préfixes 2001:db8:acad:8::/64, 2001:db8:acad:9::/64, 2001:db8:acad:a::/64 et 2001:db8:acad:b::/64, tous situés derrière R2 (2001:db8:acad:12::2). Quelle route statique unique couvre ces quatre préfixes, et eux seuls ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ipv6 route 2001:db8:acad:8::/62 2001:db8:acad:12::2"
+        },
+        {
+          "id": "b",
+          "text": "ipv6 route 2001:db8:acad:8::/63 2001:db8:acad:12::2"
+        },
+        {
+          "id": "c",
+          "text": "ipv6 route 2001:db8:acad::/60 2001:db8:acad:12::2"
+        },
+        {
+          "id": "d",
+          "text": "ipv6 route 2001:db8:acad:8::/61 2001:db8:acad:12::2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Les quatre préfixes ne diffèrent que par le quatrième groupe : 8, 9, A et B, soit 1000, 1001, 1010 et 1011 dans ses quatre derniers bits. Seuls les deux derniers bits varient : on retire 2 bits à /64, ce qui donne /62. 2001:db8:acad:8::/62 couvre exactement les groupes 8 à B, car 8 est un multiple de 4. La route « ipv6 route 2001:db8:acad:8::/62 2001:db8:acad:12::2 » remplace les quatre routes /64.",
+    "distractorNotes": {
+      "b": "/63 ne laisse varier qu'un bit : 2001:db8:acad:8::/63 ne couvre que les groupes 8 et 9.",
+      "c": "/60 laisse varier quatre bits : 2001:db8:acad::/60 couvre les seize groupes 0 à F, dont douze ne sont pas derrière R2.",
+      "d": "/61 laisse varier trois bits : 2001:db8:acad:8::/61 couvre les huit groupes 8 à F, dont C à F en trop."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-show-route-to-command-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit, extrait de « show ipv6 route static » sur R1. Quelle commande a créé cette route ?",
+      "exhibit": "S   2001:DB8:ACAD:3::/64 [1/0]\n     via FE80::3, GigabitEthernet0/1",
+      "options": [
+        {
+          "id": "a",
+          "text": "ipv6 route 2001:db8:acad:3::/64 FE80::3"
+        },
+        {
+          "id": "b",
+          "text": "ipv6 route 2001:db8:acad:3::/64 GigabitEthernet0/1"
+        },
+        {
+          "id": "c",
+          "text": "ipv6 route 2001:db8:acad:3::/64 GigabitEthernet0/1 FE80::3"
+        },
+        {
+          "id": "d",
+          "text": "ipv6 route 2001:db8:acad:3::/64 GigabitEthernet0/1 FE80::3 110"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'entrée indique une route statique (S) vers 2001:DB8:ACAD:3::/64, de distance 1 et de métrique 0 ([1/0]), avec un next hop lien local et une interface : « via FE80::3, GigabitEthernet0/1 ». C'est une route entièrement spécifiée, qui s'écrit avec l'interface avant l'adresse : « ipv6 route 2001:db8:acad:3::/64 GigabitEthernet0/1 FE80::3 ». Sans distance explicite, IOS lui donne 1. Avec un next hop lien local, l'interface est d'ailleurs obligatoire.",
+    "distractorNotes": {
+      "a": "IOS refuse un next hop lien local sans interface de sortie : cette commande ne peut pas avoir créé la route.",
+      "b": "Sans next hop, l'entrée afficherait « via GigabitEthernet0/1, directly connected », sans l'adresse FE80::3.",
+      "d": "Le 110 final fixerait la distance administrative : l'entrée afficherait [110/0] et non [1/0]."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-unicast-routing-effects-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur un routeur Cisco IOS dont les interfaces ont des adresses IPv6, mais où « ipv6 unicast-routing » n'est pas configuré, quelles deux affirmations sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le routeur n'envoie pas de messages Router Advertisement sur ses interfaces."
+        },
+        {
+          "id": "b",
+          "text": "Les interfaces n'ont pas d'adresse lien local."
+        },
+        {
+          "id": "c",
+          "text": "Le routeur ne répond pas aux pings vers ses propres adresses IPv6."
+        },
+        {
+          "id": "d",
+          "text": "Le routeur ne transmet pas les paquets IPv6 d'une interface à une autre."
+        },
+        {
+          "id": "e",
+          "text": "Le routage IPv4 est lui aussi désactivé."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Sans « ipv6 unicast-routing », IOS traite IPv6 comme un hôte : chaque interface configurée a ses adresses (globale et lien local), répond aux pings et participe à NDP, mais le routeur ne relaie aucun paquet IPv6 d'une interface à une autre. Il n'envoie pas non plus de Router Advertisement, si bien que les hôtes en SLAAC ne reçoivent ni préfixe ni passerelle de sa part. La commande globale active les deux. Le routage IPv4, géré par « ip routing », n'en dépend pas.",
+    "distractorNotes": {
+      "b": "Une adresse lien local est créée dès qu'IPv6 est actif sur l'interface, par exemple par « ipv6 address », que le routage soit actif ou non.",
+      "c": "Le routeur reste un hôte IPv6 : il répond aux requêtes adressées à ses propres adresses.",
+      "e": "Le routage IPv4 dépend de « ip routing », actif par défaut, et non de la configuration IPv6."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — Implementing IPv6 Addressing and Basic Connectivity"
+  },
+  {
+    "slug": "ccna-3.3-null0-summary-forwarding-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R2 a les réseaux connectés 172.20.4.0/24 et 172.20.5.0/24, une route par défaut via R1 et la route « ip route 172.20.4.0 255.255.252.0 Null0 ». Quelles deux affirmations sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un paquet vers 172.20.6.20 suit la route par défaut vers R1."
+        },
+        {
+          "id": "b",
+          "text": "Un paquet vers 172.20.6.20 est rejeté par R2."
+        },
+        {
+          "id": "c",
+          "text": "Un paquet vers 172.20.5.20 est remis sur le réseau connecté 172.20.5.0/24."
+        },
+        {
+          "id": "d",
+          "text": "La route vers Null0 retire de la table les deux réseaux connectés /24."
+        },
+        {
+          "id": "e",
+          "text": "Un paquet vers 172.20.8.20 est rejeté par R2."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "La route vers Null0 couvre 172.20.4.0 à 172.20.7.255 (/22). Elle cohabite avec les réseaux connectés : 172.20.5.20 correspond à la fois au /22 et au /24, et la correspondance la plus longue choisit le /24, donc la remise sur le LAN. 172.20.6.20 n'appartient à aucun /24 de R2 : sa meilleure correspondance est le /22 vers Null0, plus précis que la route par défaut, et le paquet est rejeté. 172.20.8.20 est hors du bloc : seule la route par défaut correspond.",
+    "distractorNotes": {
+      "a": "Le /22 vers Null0 est plus précis que /0 : il l'emporte, et le paquet est rejeté au lieu d'être renvoyé à R1.",
+      "d": "Des préfixes de longueurs différentes coexistent dans la table ; les /24 connectés restent installés et plus précis.",
+      "e": "172.20.8.20 est hors de 172.20.4.0/22 (qui s'arrête à 172.20.7.255) : il suit la route par défaut vers R1."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-link-local-next-hop-facts-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 a la route « ipv6 route 2001:db8:acad:30::/64 GigabitEthernet0/0 FE80::3 », où FE80::3 est l'adresse lien local de R3 sur le lien de G0/0. Quelles deux affirmations sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 doit d'abord trouver une route vers FE80::3 dans sa table de routage."
+        },
+        {
+          "id": "b",
+          "text": "R1 résout l'adresse MAC de FE80::3 par une requête ARP sur G0/0."
+        },
+        {
+          "id": "c",
+          "text": "La route reste valable si les adresses globales du lien entre R1 et R3 changent."
+        },
+        {
+          "id": "d",
+          "text": "R1 résout l'adresse MAC de FE80::3 par NDP sur G0/0."
+        },
+        {
+          "id": "e",
+          "text": "Le next hop FE80::3 resterait valable par n'importe quelle interface de R1."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "Cette route est entièrement spécifiée : l'interface G0/0 et le next hop FE80::3 sont donnés, R1 n'a pas de recherche récursive à faire. Pour construire la trame, il cherche l'adresse MAC de FE80::3 dans son cache de voisins et, au besoin, envoie un Neighbor Solicitation (NDP) sur G0/0 ; ARP n'existe pas en IPv6. Comme l'adresse lien local ne dépend pas des préfixes globaux, la route survit à une renumérotation du lien, tant que R3 garde FE80::3.",
+    "distractorNotes": {
+      "a": "L'interface étant donnée, aucune recherche dans la table n'est nécessaire ; les adresses lien local ne sont d'ailleurs pas routées.",
+      "b": "IPv6 n'utilise pas ARP : la résolution d'adresse passe par les messages NDP Neighbor Solicitation et Neighbor Advertisement.",
+      "e": "Une adresse lien local n'est valable que sur son lien : FE80::3 désigne R3 seulement sur le lien de G0/0."
+    },
+    "reference": "RFC 4861 (Neighbor Discovery for IPv6) ; Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-return-route-both-directions-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 et R2 sont reliés par le réseau 10.0.0.0/30 (R1 en .1, R2 en .2). PC-A est dans le LAN 172.16.1.0/24 de R1, PC-B dans le LAN 172.16.2.0/24 de R2. Il n'y a ni protocole de routage ni route par défaut. Parmi les routes suivantes, quelles deux faut-il configurer pour que le ping de PC-A vers PC-B réussisse ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur R1, une route vers 10.0.0.0/30 via 10.0.0.2"
+        },
+        {
+          "id": "b",
+          "text": "Sur R2, une route vers 172.16.1.0/24 via 10.0.0.1"
+        },
+        {
+          "id": "c",
+          "text": "Sur R2, une route vers 172.16.2.0/24 via 10.0.0.1"
+        },
+        {
+          "id": "d",
+          "text": "Sur R2, une route vers 10.0.0.0/30 via 10.0.0.1"
+        },
+        {
+          "id": "e",
+          "text": "Sur R1, une route vers 172.16.2.0/24 via 10.0.0.2"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Un ping est un aller-retour. Pour l'aller, R1 doit savoir joindre 172.16.2.0/24 : sa route pointe vers R2, 10.0.0.2. Pour le retour, la réponse de PC-B est adressée à 172.16.1.10, par exemple ; R2 doit donc avoir une route vers 172.16.1.0/24 via R1, 10.0.0.1. Le lien 10.0.0.0/30 est un réseau connecté sur les deux routeurs, et chaque routeur connaît déjà son propre LAN : aucune route n'est à ajouter pour eux. Oublier la route de retour est une erreur classique du routage statique.",
+    "distractorNotes": {
+      "a": "10.0.0.0/30 est directement connecté à R1, qui le connaît déjà ; une route statique vers lui est inutile.",
+      "c": "172.16.2.0/24 est le LAN de R2, directement connecté ; l'envoyer vers R1 n'a pas de sens, et la route connectée l'emporterait de toute façon.",
+      "d": "10.0.0.0/30 est directement connecté à R2, qui le connaît déjà ; une route statique vers lui est inutile."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-floating-default-facts-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 a les routes « ipv6 route ::/0 2001:db8:a::1 » et « ipv6 route ::/0 2001:db8:b::1 10 », dont les next hops sont joignables. Quelles deux affirmations sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 répartit le trafic par défaut entre les deux next hops."
+        },
+        {
+          "id": "b",
+          "text": "La route via 2001:db8:b::1 n'entre dans la table que si l'autre disparaît."
+        },
+        {
+          "id": "c",
+          "text": "La route de distance 10 est préférée, car sa valeur est plus élevée."
+        },
+        {
+          "id": "d",
+          "text": "IOS refuse la seconde commande, car une route ::/0 existe déjà."
+        },
+        {
+          "id": "e",
+          "text": "Seule la route via 2001:db8:a::1 est dans la table, avec [1/0]."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Les deux commandes visent le même préfixe ::/0 : la distance administrative les départage, et la plus faible l'emporte. La première, sans valeur, a la distance 1 ; elle est installée et apparaît en « S ::/0 [1/0] via 2001:DB8:A::1 ». La seconde, de distance 10, est une route flottante : IOS la garde dans la configuration et ne l'installe que si la première disparaît, par exemple quand son next hop devient injoignable. Il n'y a partage de charge qu'entre des routes de même distance.",
+    "distractorNotes": {
+      "a": "Le partage de charge suppose deux routes de même distance ; ici 1 et 10 diffèrent, une seule est installée.",
+      "c": "C'est l'inverse : la distance administrative la plus faible est préférée.",
+      "d": "IOS accepte plusieurs routes vers le même préfixe avec des next hops différents ; c'est le principe de la route flottante."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-summary-longest-match-null0-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 a les routes statiques suivantes, dont les next hops sont joignables : « ip route 10.20.0.0 255.255.248.0 10.0.12.2 », « ip route 10.20.4.0 255.255.254.0 10.0.13.2 », « ip route 10.20.6.0 255.255.255.0 Null0 » et « ip route 0.0.0.0 0.0.0.0 10.0.14.2 ». Aucune autre route ne couvre ces destinations. Quelles deux destinations R1 transmet-il via 10.0.12.2 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "10.20.3.7"
+        },
+        {
+          "id": "b",
+          "text": "10.20.5.9"
+        },
+        {
+          "id": "c",
+          "text": "10.20.6.20"
+        },
+        {
+          "id": "d",
+          "text": "10.20.7.1"
+        },
+        {
+          "id": "e",
+          "text": "10.20.8.1"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Les routes couvrent : 10.20.0.0/21 (10.20.0.0 à 10.20.7.255) vers 10.0.12.2 ; 10.20.4.0/23 (10.20.4.0 à 10.20.5.255) vers 10.0.13.2 ; 10.20.6.0/24 vers Null0 ; tout le reste par défaut vers 10.0.14.2. Pour chaque destination, la correspondance la plus longue décide. 10.20.3.7 et 10.20.7.1 ne sont couverts que par le /21 (et la route par défaut) : ils partent vers 10.0.12.2. 10.20.5.9 prend le /23, 10.20.6.20 le /24 vers Null0, et 10.20.8.1, hors du /21, la route par défaut.",
+    "distractorNotes": {
+      "b": "10.20.5.9 correspond aussi au /23 10.20.4.0, plus précis que le /21 : il part vers 10.0.13.2.",
+      "c": "10.20.6.20 correspond au /24 vers Null0, plus précis que le /21 : R1 rejette le paquet.",
+      "e": "10.20.8.1 est hors de 10.20.0.0/21, qui s'arrête à 10.20.7.255 : il suit la route par défaut vers 10.0.14.2."
+    },
+    "reference": "RFC 4632 (CIDR) ; Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-static-valid-syntax-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux commandes sont acceptées par Cisco IOS comme routes statiques IPv6 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ipv6 route 2001:db8:acad:2::/64 FE80::2"
+        },
+        {
+          "id": "b",
+          "text": "ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:12::2"
+        },
+        {
+          "id": "c",
+          "text": "ip route 2001:db8:acad:2::/64 2001:db8:acad:12::2"
+        },
+        {
+          "id": "d",
+          "text": "ipv6 route 2001:db8:acad:2:: 2001:db8:acad:12::2"
+        },
+        {
+          "id": "e",
+          "text": "ipv6 route 2001:db8:acad:2::/64 Serial0/0/0"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Une route statique IPv6 s'écrit « ipv6 route préfixe/longueur » suivi d'un next hop, d'une interface de sortie, ou des deux. Un next hop global seul convient : IOS trouve l'interface par recherche récursive. Une interface seule convient aussi, surtout sur un lien série point à point, où il n'y a qu'un voisin. En revanche, un next hop lien local exige l'interface de sortie, la longueur de préfixe est obligatoire, et « ip route » ne prend que des adresses IPv4.",
+    "distractorNotes": {
+      "a": "IOS refuse un next hop lien local sans interface de sortie, car FE80::2 peut exister sur plusieurs liens.",
+      "c": "« ip route » n'accepte que des adresses IPv4 ; les routes IPv6 se configurent avec « ipv6 route ».",
+      "d": "La longueur de préfixe (/64) est obligatoire : IOS attend la forme préfixe/longueur."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-summary-route-21-values-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "R1 joint huit réseaux contigus, de 192.168.96.0/24 à 192.168.103.0/24, tous situés derrière le même voisin. Vous voulez les remplacer par une seule route statique de résumé, qui couvre ces huit réseaux et eux seuls. Donnez l'adresse de réseau et le masque de cette route.",
+      "fields": [
+        {
+          "id": "net",
+          "label": "Adresse de réseau (en décimal pointé)"
+        },
+        {
+          "id": "mask",
+          "label": "Masque (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "net": {
+          "accepted": [
+            "192.168.96.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "mask": {
+          "accepted": [
+            "255.255.248.0"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Huit réseaux /24 se résument en retirant 3 bits au masque (2³ = 8), soit un /21, à condition que le premier soit aligné. 96 = 01100000 et 103 = 01100111 en binaire : les cinq premiers bits du troisième octet sont communs, seuls les trois derniers varient. Le résumé est 192.168.96.0/21, masque 255.255.248.0 (248 = 11111000), qui couvre exactement 192.168.96.0 à 192.168.103.255. La route s'écrit « ip route 192.168.96.0 255.255.248.0 » suivi du next hop.",
+    "distractorNotes": {},
+    "reference": "RFC 4632 (CIDR) ; Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-summary-61-values-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "R1 joint huit préfixes contigus, de 2001:db8:cafe:20::/64 à 2001:db8:cafe:27::/64, tous situés derrière R2. Quelle route de résumé, la plus précise possible, couvre ces huit préfixes ? Donnez le préfixe et sa longueur.",
+      "fields": [
+        {
+          "id": "prefix",
+          "label": "Préfixe (forme compressée la plus courte, sans la longueur)"
+        },
+        {
+          "id": "len",
+          "label": "Longueur de préfixe (nombre entier, sans le /)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "prefix": {
+          "accepted": [
+            "2001:db8:cafe:20::"
+          ],
+          "normalize": "text"
+        },
+        "len": {
+          "accepted": [
+            "61"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Les huit préfixes ne diffèrent que par le quatrième groupe, de 0x20 à 0x27, soit 0000000000100000 à 0000000000100111 en binaire. Seuls les trois derniers bits de ce groupe varient (2³ = 8) : on garde 64 - 3 = 61 bits. Le résumé est 2001:db8:cafe:20::/61, qui couvre exactement les groupes 20 à 27, car 0x20 = 32 est un multiple de 8. En forme compressée, les groupes nuls finaux s'écrivent « :: » : 2001:db8:cafe:20::. La route s'écrit « ipv6 route 2001:db8:cafe:20::/61 » suivi du next hop.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-null0-interface-name-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Quel est le nom, sous Cisco IOS, de l'interface virtuelle, toujours active, vers laquelle on dirige une route statique pour rejeter les paquets qui lui correspondent ?",
+      "fields": [
+        {
+          "id": "iface",
+          "label": "Nom de l'interface (avec son numéro)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "iface": {
+          "accepted": [
+            "Null0",
+            "Null 0"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Null0 est une interface logique qui existe sur tout routeur IOS, toujours up, et qui abandonne tout ce qu'on lui envoie. « ip route 10.1.0.0 255.255.252.0 Null0 » ou « ipv6 route 2001:db8:acad::/48 Null0 » créent des routes de rejet. On s'en sert surtout avec un résumé, sur le routeur qui possède les sous-réseaux : les sous-réseaux réels, plus précis, sont joints normalement, et les adresses inutilisées du bloc sont rejetées au lieu de suivre une route par défaut, ce qui évite des boucles.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-default-global-next-hop-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le routage IPv6 est déjà activé sur R1. Depuis le mode de configuration globale, configurez une route statique par défaut IPv6 dont le next hop est l'adresse globale 2001:db8:acad:12::2.",
+      "prompt": "R1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ipv6 route ::/0 2001:db8:acad:12::2",
+          "ipv6 route ::/0 2001:db8:acad:12::2 1"
+        ]
+      ]
+    },
+    "explanation": "La route par défaut IPv6 a pour préfixe ::/0, l'équivalent de 0.0.0.0/0 en IPv4 : elle correspond à toute destination qu'aucune route plus précise ne couvre. Avec un next hop global, l'interface de sortie est facultative : IOS la trouve par une recherche récursive de 2001:db8:acad:12::2 dans sa table. La distance vaut 1 par défaut. La route apparaît dans « show ipv6 route » sous la forme « S ::/0 [1/0] via 2001:DB8:ACAD:12::2 ».",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-host-route-serial-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le routage IPv6 est déjà activé sur R1. Depuis le mode de configuration globale, configurez une route hôte IPv6 vers le serveur 2001:db8:acad:99::10, qui indique uniquement l'interface de sortie Serial0/0/0 (lien série point à point), sans next hop.",
+      "prompt": "R1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ipv6 route 2001:db8:acad:99::10/128 serial0/0/0",
+          "ipv6 route 2001:db8:acad:99::10/128 serial0/0/0 1"
+        ]
+      ]
+    },
+    "explanation": "Une route hôte IPv6 vise une seule adresse : sa longueur de préfixe est /128, comme /32 en IPv4. Sur un lien série point à point, il n'y a qu'un voisin possible : indiquer seulement l'interface de sortie suffit, sans résolution d'adresse à faire. La commande est « ipv6 route 2001:db8:acad:99::10/128 Serial0/0/0 », et l'entrée apparaît comme directement connectée à Serial0/0/0. Sur un lien Ethernet, on préférerait donner aussi un next hop.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-floating-default-link-local-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 a déjà une route statique par défaut IPv6 principale, de distance 1. Depuis le mode de configuration globale, ajoutez une route par défaut IPv6 de secours, entièrement spécifiée, par l'interface GigabitEthernet0/1 et l'adresse lien local FE80::2 du routeur de secours, avec une distance administrative de 200.",
+      "prompt": "R1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ipv6 route ::/0 gigabitethernet0/1 fe80::2 200"
+        ]
+      ]
+    },
+    "explanation": "La commande réunit trois règles. La route par défaut IPv6 vise ::/0. Le next hop lien local FE80::2 impose l'interface de sortie, placée avant lui : « GigabitEthernet0/1 FE80::2 ». Enfin, la distance 200, en fin de commande, en fait une route flottante : tant que la route principale (distance 1) existe, celle-ci reste dans la configuration sans entrer dans la table. Si la route principale disparaît, « S ::/0 [200/0] via FE80::2, GigabitEthernet0/1 » prend le relais.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-null0-summary-discard-route-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R2 possède le bloc 10.32.0.0/21, résumé vers lui par R1, et une route par défaut vers R1. Pour que les paquets destinés aux réseaux inutilisés du bloc ne bouclent pas entre R1 et R2, configurez sur R2, depuis le mode de configuration globale, une route statique qui rejette le trafic vers 10.32.0.0/21 par l'interface Null0.",
+      "prompt": "R2(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ip route 10.32.0.0 255.255.248.0 null0",
+          "ip route 10.32.0.0 255.255.248.0 null 0"
+        ]
+      ]
+    },
+    "explanation": "La commande est « ip route 10.32.0.0 255.255.248.0 Null0 » : le /21 s'écrit 255.255.248.0. Elle apparaît en « S 10.32.0.0/21 is directly connected, Null0 ». Les réseaux réellement utilisés, par exemple 10.32.0.0/24 et 10.32.1.0/24, restent joints par leurs routes connectées, plus précises. Un paquet vers 10.32.5.9, en revanche, ne correspond qu'à ce /21 et à la route par défaut : le /21, plus précis, l'emporte et R2 rejette le paquet, au lieu de le renvoyer à R1.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-return-route-config-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 (LAN 172.31.10.0/24) et R2 (LAN 172.31.20.0/24) sont reliés par le réseau 10.0.21.0/30 : R1 en 10.0.21.1, R2 en 10.0.21.2. R1 a une route vers 172.31.20.0/24, mais les réponses des hôtes de R2 n'atteignent pas le LAN de R1. Depuis le mode de configuration globale de R2, configurez la route statique de retour, avec un next hop.",
+      "prompt": "R2(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ip route 172.31.10.0 255.255.255.0 10.0.21.1",
+          "ip route 172.31.10.0 255.255.255.0 10.0.21.1 1"
+        ]
+      ]
+    },
+    "explanation": "Les requêtes arrivent grâce à la route de R1, mais les réponses partent de R2 vers 172.31.10.0/24, que R2 ne connaît pas : il les rejette. La route de retour doit donc viser le LAN de R1, 172.31.10.0 avec le masque 255.255.255.0, et avoir pour next hop l'adresse de R1 sur le lien commun, 10.0.21.1, que R2 joint par son réseau connecté 10.0.21.0/30. Erreur fréquente : donner sa propre adresse, 10.0.21.2, ou le réseau du lien au lieu de celui du LAN.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-summary-route-config-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 joint les préfixes 2001:db8:acad:4::/64, 2001:db8:acad:5::/64, 2001:db8:acad:6::/64 et 2001:db8:acad:7::/64, tous situés derrière R2. Le routage IPv6 est activé. Depuis le mode de configuration globale, configurez une seule route statique de résumé, la plus précise possible, dont le next hop est 2001:db8:acad:12::2.",
+      "prompt": "R1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ipv6 route 2001:db8:acad:4::/62 2001:db8:acad:12::2",
+          "ipv6 route 2001:db8:acad:4::/62 2001:db8:acad:12::2 1"
+        ]
+      ]
+    },
+    "explanation": "Le quatrième groupe vaut 4, 5, 6 et 7, soit 0100, 0101, 0110 et 0111 dans ses quatre derniers bits : seuls les deux derniers bits varient. On retire donc 2 bits à /64 : /62. Comme 4 est un multiple de 4, 2001:db8:acad:4::/62 couvre exactement ces quatre préfixes. La commande est « ipv6 route 2001:db8:acad:4::/62 2001:db8:acad:12::2 » ; IOS trouve l'interface de sortie par recherche récursive du next hop global.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-summary-route-20-config-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 joint les seize réseaux contigus 172.16.16.0/24 à 172.16.31.0/24, tous situés derrière R2. Depuis le mode de configuration globale, configurez une seule route statique de résumé qui couvre ces seize réseaux et eux seuls, dont le next hop est 10.0.12.2. Le masque doit être saisi en décimal pointé.",
+      "prompt": "R1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ip route 172.16.16.0 255.255.240.0 10.0.12.2",
+          "ip route 172.16.16.0 255.255.240.0 10.0.12.2 1"
+        ]
+      ]
+    },
+    "explanation": "Seize réseaux /24 se résument en retirant 4 bits (2⁴ = 16), soit un /20, si le premier est aligné. En binaire, 16 = 00010000 et 31 = 00011111 : les quatre premiers bits du troisième octet sont communs. Le résumé est 172.16.16.0/20, masque 255.255.240.0, de 172.16.16.0 à 172.16.31.255. La commande est « ip route 172.16.16.0 255.255.240.0 10.0.12.2 ». Avec 255.255.248.0, on ne couvrirait que la moitié (16 à 23).",
+    "distractorNotes": {},
+    "reference": "RFC 4632 (CIDR) ; Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-return-route-link-local-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Reportez-vous à l'exhibit. R1 et R2 sont reliés par le lien 2001:db8:acad:12::/64 ; chacun a un LAN sur son autre interface. Le routage IPv6 est activé sur les deux routeurs et R1 a déjà une route vers le LAN de R2. Depuis le mode de configuration globale de R2, configurez la route statique de retour vers le LAN de R1, en utilisant comme next hop l'adresse lien local de R1.",
+      "exhibit": "R1# show ipv6 interface brief\nGigabitEthernet0/0     [up/up]\n    FE80::1\n    2001:DB8:ACAD:1::1\nGigabitEthernet0/1     [up/up]\n    FE80::1\n    2001:DB8:ACAD:12::1\n\nR2# show ipv6 interface brief\nGigabitEthernet0/0     [up/up]\n    FE80::2\n    2001:DB8:ACAD:12::2\nGigabitEthernet0/1     [up/up]\n    FE80::2\n    2001:DB8:ACAD:2::1",
+      "prompt": "R2(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ipv6 route 2001:db8:acad:1::/64 gigabitethernet0/0 fe80::1",
+          "ipv6 route 2001:db8:acad:1::/64 gigabitethernet0/0 fe80::1 1"
+        ]
+      ]
+    },
+    "explanation": "Il faut lire l'exhibit en trois temps. Le LAN de R1 est sur G0/0 de R1 : 2001:db8:acad:1::/64. Le lien vers R1 est, côté R2, l'interface qui porte 2001:DB8:ACAD:12::2, soit G0/0 (G0/1 porte le LAN de R2). L'adresse lien local de R1 est FE80::1. Le next hop étant lien local, l'interface de sortie de R2 doit le précéder : « ipv6 route 2001:db8:acad:1::/64 GigabitEthernet0/0 FE80::1 ». Indiquer G0/1, ou l'interface de R1, ferait chercher FE80::1 sur le mauvais lien.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-fully-specified-syntax-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Remettez dans l'ordre les éléments de la commande qui crée une route statique IPv6 flottante et entièrement spécifiée vers 2001:db8:acad:30::/64, par l'interface GigabitEthernet0/1 et l'adresse lien local FE80::3, avec une distance administrative de 150.",
+      "items": [
+        {
+          "id": "ll",
+          "text": "FE80::3"
+        },
+        {
+          "id": "ad",
+          "text": "150"
+        },
+        {
+          "id": "cmd",
+          "text": "ipv6 route"
+        },
+        {
+          "id": "intf",
+          "text": "GigabitEthernet0/1"
+        },
+        {
+          "id": "pfx",
+          "text": "2001:db8:acad:30::/64"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "cmd",
+        "pfx",
+        "intf",
+        "ll",
+        "ad"
+      ]
+    },
+    "explanation": "La syntaxe est « ipv6 route préfixe/longueur [interface] [next hop] [distance] ». Le préfixe s'écrit avec sa longueur, sans masque. Dans une route entièrement spécifiée, l'interface de sortie précède le next hop ; avec une adresse lien local, elle est même obligatoire. La distance administrative vient en dernier : 150 fait de cette route une route de secours. Commande complète : « ipv6 route 2001:db8:acad:30::/64 GigabitEthernet0/1 FE80::3 150 ».",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-return-route-ping-sequence-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "PC-A est dans le LAN de R1, PC-B dans celui de R2 ; R1 et R2 sont directement reliés et ont chacun une route statique vers le LAN de l'autre. Remettez dans l'ordre les étapes d'un ping réussi de PC-A vers PC-B, aller et retour.",
+      "items": [
+        {
+          "id": "r2rep",
+          "text": "R2 trouve sa route vers le LAN de R1 et transmet la réponse à R1."
+        },
+        {
+          "id": "pca",
+          "text": "PC-A envoie l'Echo Request à sa passerelle, R1."
+        },
+        {
+          "id": "r1del",
+          "text": "R1 remet l'Echo Reply à PC-A sur son LAN."
+        },
+        {
+          "id": "r2del",
+          "text": "R2 remet l'Echo Request à PC-B sur son LAN."
+        },
+        {
+          "id": "r1req",
+          "text": "R1 trouve sa route vers le LAN de R2 et transmet la requête à R2."
+        },
+        {
+          "id": "pcb",
+          "text": "PC-B envoie l'Echo Reply à sa passerelle, R2."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "pca",
+        "r1req",
+        "r2del",
+        "pcb",
+        "r2rep",
+        "r1del"
+      ]
+    },
+    "explanation": "Un ping traverse le réseau deux fois. À l'aller, la requête de PC-A va à sa passerelle R1, qui utilise sa route vers le LAN de R2 ; R2 la remet à PC-B sur son réseau connecté. Au retour, la réponse a pour destination PC-A : PC-B l'envoie à sa passerelle R2, qui a besoin de sa propre route vers le LAN de R1, puis R1 la remet sur son réseau connecté. Si la route de R2 manque, la requête arrive bien, mais le ping échoue : c'est le problème du routage de retour.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-recursive-lookup-steps-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "R1 reçoit sur G0/0 un paquet destiné à 2001:db8:acad:2::10. Il a la route « ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:12::2 » et le réseau connecté 2001:db8:acad:12::/64 sur G0/1. Remettez dans l'ordre les étapes du traitement de ce paquet par R1.",
+      "items": [
+        {
+          "id": "nd",
+          "text": "R1 cherche l'adresse MAC de 2001:db8:acad:12::2 dans son cache de voisins (NDP)."
+        },
+        {
+          "id": "send",
+          "text": "R1 envoie par G0/1 une trame destinée à l'adresse MAC de R2."
+        },
+        {
+          "id": "lookup",
+          "text": "R1 trouve la route statique vers 2001:db8:acad:2::/64, via 2001:db8:acad:12::2."
+        },
+        {
+          "id": "rec",
+          "text": "R1 cherche 2001:db8:acad:12::2 et trouve le réseau connecté sur G0/1."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "lookup",
+        "rec",
+        "nd",
+        "send"
+      ]
+    },
+    "explanation": "Avec un next hop global seul, la route est récursive. R1 cherche d'abord la destination et trouve la route statique ; celle-ci ne donne pas d'interface, il cherche donc ensuite le next hop 2001:db8:acad:12::2, couvert par le réseau connecté de G0/1. Il lui faut alors l'adresse MAC de R2 : il la prend dans son cache de voisins ou l'obtient par un Neighbor Solicitation. Enfin, il encapsule le paquet dans une trame destinée à cette adresse MAC et l'envoie par G0/1.",
+    "distractorNotes": {},
+    "reference": "RFC 4861 (Neighbor Discovery for IPv6) ; Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-static-route-forms-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque route statique IPv6 configurée sur R1 à sa description.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:12::2"
+        },
+        {
+          "id": "l2",
+          "text": "ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:13::3 200"
+        },
+        {
+          "id": "l3",
+          "text": "ipv6 route 2001:db8:acad:2::/64 Serial0/0/0"
+        },
+        {
+          "id": "l4",
+          "text": "ipv6 route 2001:db8:acad:2::/64 GigabitEthernet0/0 FE80::2"
+        },
+        {
+          "id": "l5",
+          "text": "ipv6 route 2001:db8:acad::/48 Null0"
+        }
+      ],
+      "right": [
+        {
+          "id": "r_rec1",
+          "text": "Route récursive, de distance administrative 1"
+        },
+        {
+          "id": "r_host",
+          "text": "Route hôte vers une seule adresse IPv6"
+        },
+        {
+          "id": "r_full",
+          "text": "Route entièrement spécifiée, avec un next hop lien local"
+        },
+        {
+          "id": "r_null",
+          "text": "Route de rejet, qui abandonne les paquets correspondants"
+        },
+        {
+          "id": "r_p2p",
+          "text": "Route vers une interface point à point, sans next hop"
+        },
+        {
+          "id": "r_float",
+          "text": "Route récursive de secours (flottante)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "r_rec1",
+        "l2": "r_float",
+        "l3": "r_p2p",
+        "l4": "r_full",
+        "l5": "r_null"
+      }
+    },
+    "explanation": "Un next hop global seul donne une route récursive : IOS cherche ensuite comment joindre ce next hop. Sans valeur finale, sa distance est 1 ; avec 200, elle devient une route flottante, installée seulement si une route meilleure disparaît. Une interface série seule suffit sur un lien point à point. L'interface suivie d'une adresse FE80:: forme une route entièrement spécifiée, obligatoire avec un next hop lien local. Enfin, Null0 rejette les paquets : on l'utilise pour un résumé comme 2001:db8:acad::/48.",
+    "distractorNotes": {
+      "r_host": "Une route hôte IPv6 a une longueur /128 ; aucune commande proposée n'utilise ce préfixe."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-need-to-command-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "R1 joint R2 par 2001:db8:acad:12::2 et R3 par 2001:db8:acad:13::3 (adresse lien local FE80::3, joignable par G0/1). R1 apprend 2001:db8:acad:70::/64 par OSPFv3, avec la distance par défaut. Associez chaque besoin à la commande de R1 qui y répond.",
+      "left": [
+        {
+          "id": "n1",
+          "text": "Envoyer à R2 tout trafic qui n'a pas de route plus précise"
+        },
+        {
+          "id": "n2",
+          "text": "Joindre uniquement le serveur 2001:db8:acad:70::10 par R2"
+        },
+        {
+          "id": "n3",
+          "text": "Prévoir par R3 un secours de la route OSPFv3, sans la remplacer"
+        },
+        {
+          "id": "n4",
+          "text": "Remplacer la route OSPFv3 par une route via l'adresse lien local de R3"
+        }
+      ],
+      "right": [
+        {
+          "id": "c_def",
+          "text": "ipv6 route ::/0 2001:db8:acad:12::2"
+        },
+        {
+          "id": "c_host",
+          "text": "ipv6 route 2001:db8:acad:70::10/128 2001:db8:acad:12::2"
+        },
+        {
+          "id": "c_float",
+          "text": "ipv6 route 2001:db8:acad:70::/64 2001:db8:acad:13::3 150"
+        },
+        {
+          "id": "c_full",
+          "text": "ipv6 route 2001:db8:acad:70::/64 GigabitEthernet0/1 FE80::3"
+        },
+        {
+          "id": "c_ll",
+          "text": "ipv6 route 2001:db8:acad:70::/64 FE80::3"
+        },
+        {
+          "id": "c_low",
+          "text": "ipv6 route 2001:db8:acad:70::/64 2001:db8:acad:13::3 100"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "n1": "c_def",
+        "n2": "c_host",
+        "n3": "c_float",
+        "n4": "c_full"
+      }
+    },
+    "explanation": "La route par défaut IPv6 vise ::/0 et la route hôte un /128. Une route statique de secours derrière OSPFv3, de distance 110, doit avoir une distance plus élevée, ici 150, pour attendre la disparition de la route OSPFv3. À l'inverse, une route statique de distance 1 vers le même préfixe la remplace aussitôt ; avec le next hop lien local FE80::3, elle doit nommer l'interface de sortie G0/1 avant l'adresse. Le choix se fait donc sur trois critères : préfixe, forme du next hop et distance.",
+    "distractorNotes": {
+      "c_ll": "IOS refuse cette commande : un next hop lien local exige l'interface de sortie avant l'adresse.",
+      "c_low": "Avec une distance de 100, inférieure à 110, cette route remplace la route OSPFv3 au lieu de l'attendre ; et elle passe par une adresse globale, pas lien local."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-static-symptom-to-cause-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Des incidents de routage statique sont signalés sur R1 et R2. Associez chaque observation à l'erreur de configuration qui l'explique.",
+      "left": [
+        {
+          "id": "s1",
+          "text": "Les PC de deux LAN IPv6 de R1, adressés à la main, pinguent R1 mais ne communiquent pas entre eux."
+        },
+        {
+          "id": "s2",
+          "text": "IOS refuse la commande « ipv6 route 2001:db8:acad:5::/64 FE80::5 »."
+        },
+        {
+          "id": "s3",
+          "text": "Les Echo Request de PC-A atteignent PC-B, sur le LAN de R2, mais les réponses n'atteignent jamais PC-A."
+        },
+        {
+          "id": "s4",
+          "text": "R1 résume vers R2 le bloc de R2, et R2 a une route par défaut vers R1 : les paquets vers une adresse inutilisée du bloc bouclent entre eux."
+        }
+      ],
+      "right": [
+        {
+          "id": "c_unicast",
+          "text": "« ipv6 unicast-routing » n'est pas configuré sur R1"
+        },
+        {
+          "id": "c_intf",
+          "text": "L'interface de sortie manque devant le next hop lien local"
+        },
+        {
+          "id": "c_return",
+          "text": "R2 n'a pas de route de retour vers le LAN de PC-A"
+        },
+        {
+          "id": "c_null",
+          "text": "R2 n'a pas de route de résumé vers Null0"
+        },
+        {
+          "id": "c_ad",
+          "text": "La route statique flottante a une distance trop élevée"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "c_unicast",
+        "s2": "c_intf",
+        "s3": "c_return",
+        "s4": "c_null"
+      }
+    },
+    "explanation": "Des hôtes qui joignent leur passerelle mais pas l'autre LAN du même routeur désignent le relais IPv6 : sans « ipv6 unicast-routing », IOS ne transfère rien entre interfaces. Un next hop FE80:: sans interface est refusé, car il est ambigu. Une requête qui arrive sans réponse en retour montre qu'un routeur du chemin retour ne connaît pas le réseau source. Enfin, un résumé face à une route par défaut fait boucler les adresses inutilisées, sauf si le propriétaire du bloc a une route de rejet vers Null0.",
+    "distractorNotes": {
+      "c_ad": "Une distance trop élevée (255) empêcherait seulement la route de secours de s'installer ; elle n'explique aucun des symptômes décrits."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  },
+  {
+    "slug": "ccna-3.3-ipv6-longest-match-summary-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "R1 a les routes statiques suivantes, dont les next hops sont joignables : « ipv6 route 2001:db8:acad::/48 2001:db8:f::2 » (R2), « ipv6 route 2001:db8:acad:4::/62 GigabitEthernet0/1 FE80::3 » (R3), « ipv6 route 2001:db8:acad:6::/64 Null0 » et « ipv6 route ::/0 2001:db8:f::6 » (R4). Aucune autre route ne couvre ces destinations. Associez chaque destination au traitement que lui applique R1.",
+      "left": [
+        {
+          "id": "d1",
+          "text": "2001:db8:acad:5::1"
+        },
+        {
+          "id": "d2",
+          "text": "2001:db8:acad:6::1"
+        },
+        {
+          "id": "d3",
+          "text": "2001:db8:acad:8::1"
+        },
+        {
+          "id": "d4",
+          "text": "2001:db8:acae::1"
+        },
+        {
+          "id": "d5",
+          "text": "2001:db8:acad:7::1"
+        }
+      ],
+      "right": [
+        {
+          "id": "t_r2",
+          "text": "Transmis à R2"
+        },
+        {
+          "id": "t_r3",
+          "text": "Transmis à R3"
+        },
+        {
+          "id": "t_null",
+          "text": "Rejeté (route vers Null0)"
+        },
+        {
+          "id": "t_r4",
+          "text": "Transmis à R4 (route par défaut)"
+        },
+        {
+          "id": "t_ecmp",
+          "text": "Réparti entre R2 et R3"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "d1": "t_r3",
+        "d2": "t_null",
+        "d3": "t_r2",
+        "d4": "t_r4",
+        "d5": "t_r3"
+      }
+    },
+    "explanation": "La correspondance la plus longue décide. 2001:db8:acad:4::/62 couvre les groupes 4 à 7 : 5::1 et 7::1 y entrent, ce /62 est plus précis que le /48, ils partent vers R3. 6::1 est aussi dans le /62, mais le /64 vers Null0 est encore plus précis : il est rejeté. 8::1 est hors du /62 et dans 2001:db8:acad::/48 : il va à R2. 2001:db8:acae::1 n'appartient pas au /48 (le troisième groupe vaut ACAE et non ACAD) : seule la route par défaut le couvre, il va à R4.",
+    "distractorNotes": {
+      "t_ecmp": "Le partage de charge ne se fait qu'entre routes vers le même préfixe et de même distance ; ici les préfixes de R2 et R3 diffèrent, la plus longue correspondance tranche toujours."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide — IPv6 Routing: Static Routing"
+  }
+]

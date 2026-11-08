@@ -1,0 +1,535 @@
+{
+  "slug": "ccna-lab-5.3-acces-console-vty",
+  "certification": "ccna",
+  "domain": "5.0",
+  "subtopic": "5.3",
+  "difficulty": "easy",
+  "title": "Verrouiller l'accès console, VTY et privilégié d'un commutateur",
+  "statement": "Le commutateur d'accès S1 sort d'un audit : le mode privilégié est protégé par un enable password en clair, la console ne demande rien, et les lignes VTY partagent le mot de passe de ligne « cisco ». Toutes les lignes portent exec-timeout 0 0 : une session oubliée reste ouverte indéfiniment.\n\nConfigurez S1 :\n1. Protégez le mode privilégié par le secret haché En4ble-Acc3s! et supprimez l'ancien enable password.\n2. Sur la console 0, exigez le mot de passe de ligne C0nsole-S1 et fermez la session après 5 minutes d'inactivité.\n3. Créez le compte local admin, de niveau de privilège 15, dont le mot de passe est stocké sous forme de secret haché (Adm1n-S1!).\n4. Sur toutes les lignes VTY (0 à 15), authentifiez les sessions par les comptes locaux et fermez-les après 15 minutes d'inactivité.\n5. Chiffrez les mots de passe qui restent stockés en clair dans la configuration.",
+  "topology": "  Poste d'administration ---- Fa0/1 [S1] Gi0/1 ---- (cœur de réseau)\n                                     |\n                              Console (câble RJ-45)\n\n  Configuration actuelle de S1 :\n    enable password cisco\n    line con 0 : exec-timeout 0 0, aucune authentification\n    line vty 0 4 et 5 15 : password cisco + login, exec-timeout 0 0",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "S1",
+      "type": "switch",
+      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "startupConfig": "hostname S1\nno ip domain-lookup\nenable password cisco\nline con 0\n exec-timeout 0 0\nline vty 0 4\n exec-timeout 0 0\n password cisco\n login\nline vty 5 15\n exec-timeout 0 0\n password cisco\n login"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "enable-secret",
+      "description": "Le mode privilégié est protégé par le secret haché En4ble-Acc3s!, et aucun enable password ne subsiste.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {"type": "regex", "pattern": "^enable secret (0 )?En4ble-Acc3s!$", "caseSensitive": true},
+          {"type": "regex", "pattern": "^enable password ", "absent": true}
+        ]
+      }
+    },
+    {
+      "id": "console-login",
+      "description": "La console 0 demande le mot de passe de ligne C0nsole-S1.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {"type": "regex", "sectionPattern": "^line con(sole)? 0$", "pattern": "^password (0 )?C0nsole-S1$", "caseSensitive": true},
+          {"type": "line", "sectionPattern": "^line con(sole)? 0$", "line": "login"}
+        ]
+      }
+    },
+    {
+      "id": "console-timeout",
+      "description": "Une session console inactive est fermée après 5 minutes.",
+      "check": {"type": "line", "sectionPattern": "^line con(sole)? 0$", "line": ["exec-timeout 5", "exec-timeout 5 0", "exec-timeout 0 300"]}
+    },
+    {
+      "id": "local-user",
+      "description": "Le compte local admin existe, de niveau 15, avec le secret haché Adm1n-S1!.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {"type": "regex", "pattern": "^username admin privilege 15 secret (0 )?Adm1n-S1!$", "caseSensitive": true},
+          {"type": "regex", "pattern": "^username admin .*password ", "absent": true}
+        ]
+      }
+    },
+    {
+      "id": "vty-login-local",
+      "description": "Toutes les lignes VTY (0 à 15) authentifient les sessions par les comptes locaux.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {"type": "line", "sectionPattern": "^line vty (0|0 1|0 2|0 3|0 4|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15)$", "line": "login local"},
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (1|0 1|0 2|0 3|0 4|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 2|1 3|1 4|1 5|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (2|0 2|0 3|0 4|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 2|1 3|1 4|1 5|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 3|2 4|2 5|2 6|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (3|0 3|0 4|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 3|1 4|1 5|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 3|2 4|2 5|2 6|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 4|3 5|3 6|3 7|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (4|0 4|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 4|1 5|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 4|2 5|2 6|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 4|3 5|3 6|3 7|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 5|4 6|4 7|4 8|4 9|4 10|4 11|4 12|4 13|4 14|4 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (5|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 5|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 5|2 6|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 5|3 6|3 7|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 5|4 6|4 7|4 8|4 9|4 10|4 11|4 12|4 13|4 14|4 15|5 6|5 7|5 8|5 9|5 10|5 11|5 12|5 13|5 14|5 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (6|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 6|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 6|3 7|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 6|4 7|4 8|4 9|4 10|4 11|4 12|4 13|4 14|4 15|5 6|5 7|5 8|5 9|5 10|5 11|5 12|5 13|5 14|5 15|6 7|6 8|6 9|6 10|6 11|6 12|6 13|6 14|6 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (7|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 7|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 7|4 8|4 9|4 10|4 11|4 12|4 13|4 14|4 15|5 7|5 8|5 9|5 10|5 11|5 12|5 13|5 14|5 15|6 7|6 8|6 9|6 10|6 11|6 12|6 13|6 14|6 15|7 8|7 9|7 10|7 11|7 12|7 13|7 14|7 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (8|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 8|4 9|4 10|4 11|4 12|4 13|4 14|4 15|5 8|5 9|5 10|5 11|5 12|5 13|5 14|5 15|6 8|6 9|6 10|6 11|6 12|6 13|6 14|6 15|7 8|7 9|7 10|7 11|7 12|7 13|7 14|7 15|8 9|8 10|8 11|8 12|8 13|8 14|8 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (9|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 9|4 10|4 11|4 12|4 13|4 14|4 15|5 9|5 10|5 11|5 12|5 13|5 14|5 15|6 9|6 10|6 11|6 12|6 13|6 14|6 15|7 9|7 10|7 11|7 12|7 13|7 14|7 15|8 9|8 10|8 11|8 12|8 13|8 14|8 15|9 10|9 11|9 12|9 13|9 14|9 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (10|0 10|0 11|0 12|0 13|0 14|0 15|1 10|1 11|1 12|1 13|1 14|1 15|2 10|2 11|2 12|2 13|2 14|2 15|3 10|3 11|3 12|3 13|3 14|3 15|4 10|4 11|4 12|4 13|4 14|4 15|5 10|5 11|5 12|5 13|5 14|5 15|6 10|6 11|6 12|6 13|6 14|6 15|7 10|7 11|7 12|7 13|7 14|7 15|8 10|8 11|8 12|8 13|8 14|8 15|9 10|9 11|9 12|9 13|9 14|9 15|10 11|10 12|10 13|10 14|10 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (11|0 11|0 12|0 13|0 14|0 15|1 11|1 12|1 13|1 14|1 15|2 11|2 12|2 13|2 14|2 15|3 11|3 12|3 13|3 14|3 15|4 11|4 12|4 13|4 14|4 15|5 11|5 12|5 13|5 14|5 15|6 11|6 12|6 13|6 14|6 15|7 11|7 12|7 13|7 14|7 15|8 11|8 12|8 13|8 14|8 15|9 11|9 12|9 13|9 14|9 15|10 11|10 12|10 13|10 14|10 15|11 12|11 13|11 14|11 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (12|0 12|0 13|0 14|0 15|1 12|1 13|1 14|1 15|2 12|2 13|2 14|2 15|3 12|3 13|3 14|3 15|4 12|4 13|4 14|4 15|5 12|5 13|5 14|5 15|6 12|6 13|6 14|6 15|7 12|7 13|7 14|7 15|8 12|8 13|8 14|8 15|9 12|9 13|9 14|9 15|10 12|10 13|10 14|10 15|11 12|11 13|11 14|11 15|12 13|12 14|12 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (13|0 13|0 14|0 15|1 13|1 14|1 15|2 13|2 14|2 15|3 13|3 14|3 15|4 13|4 14|4 15|5 13|5 14|5 15|6 13|6 14|6 15|7 13|7 14|7 15|8 13|8 14|8 15|9 13|9 14|9 15|10 13|10 14|10 15|11 13|11 14|11 15|12 13|12 14|12 15|13 14|13 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (14|0 14|0 15|1 14|1 15|2 14|2 15|3 14|3 15|4 14|4 15|5 14|5 15|6 14|6 15|7 14|7 15|8 14|8 15|9 14|9 15|10 14|10 15|11 14|11 15|12 14|12 15|13 14|13 15|14 15)$",
+            "line": "login local"
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (15|0 15|1 15|2 15|3 15|4 15|5 15|6 15|7 15|8 15|9 15|10 15|11 15|12 15|13 15|14 15)$",
+            "line": "login local"
+          }
+        ]
+      }
+    },
+    {
+      "id": "vty-timeout",
+      "description": "Toutes les lignes VTY (0 à 15) ferment une session inactive après 15 minutes.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (0|0 1|0 2|0 3|0 4|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (1|0 1|0 2|0 3|0 4|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 2|1 3|1 4|1 5|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (2|0 2|0 3|0 4|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 2|1 3|1 4|1 5|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 3|2 4|2 5|2 6|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (3|0 3|0 4|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 3|1 4|1 5|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 3|2 4|2 5|2 6|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 4|3 5|3 6|3 7|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (4|0 4|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 4|1 5|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 4|2 5|2 6|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 4|3 5|3 6|3 7|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 5|4 6|4 7|4 8|4 9|4 10|4 11|4 12|4 13|4 14|4 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (5|0 5|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 5|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 5|2 6|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 5|3 6|3 7|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 5|4 6|4 7|4 8|4 9|4 10|4 11|4 12|4 13|4 14|4 15|5 6|5 7|5 8|5 9|5 10|5 11|5 12|5 13|5 14|5 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (6|0 6|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 6|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 6|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 6|3 7|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 6|4 7|4 8|4 9|4 10|4 11|4 12|4 13|4 14|4 15|5 6|5 7|5 8|5 9|5 10|5 11|5 12|5 13|5 14|5 15|6 7|6 8|6 9|6 10|6 11|6 12|6 13|6 14|6 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (7|0 7|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 7|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 7|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 7|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 7|4 8|4 9|4 10|4 11|4 12|4 13|4 14|4 15|5 7|5 8|5 9|5 10|5 11|5 12|5 13|5 14|5 15|6 7|6 8|6 9|6 10|6 11|6 12|6 13|6 14|6 15|7 8|7 9|7 10|7 11|7 12|7 13|7 14|7 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (8|0 8|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 8|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 8|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 8|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 8|4 9|4 10|4 11|4 12|4 13|4 14|4 15|5 8|5 9|5 10|5 11|5 12|5 13|5 14|5 15|6 8|6 9|6 10|6 11|6 12|6 13|6 14|6 15|7 8|7 9|7 10|7 11|7 12|7 13|7 14|7 15|8 9|8 10|8 11|8 12|8 13|8 14|8 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (9|0 9|0 10|0 11|0 12|0 13|0 14|0 15|1 9|1 10|1 11|1 12|1 13|1 14|1 15|2 9|2 10|2 11|2 12|2 13|2 14|2 15|3 9|3 10|3 11|3 12|3 13|3 14|3 15|4 9|4 10|4 11|4 12|4 13|4 14|4 15|5 9|5 10|5 11|5 12|5 13|5 14|5 15|6 9|6 10|6 11|6 12|6 13|6 14|6 15|7 9|7 10|7 11|7 12|7 13|7 14|7 15|8 9|8 10|8 11|8 12|8 13|8 14|8 15|9 10|9 11|9 12|9 13|9 14|9 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (10|0 10|0 11|0 12|0 13|0 14|0 15|1 10|1 11|1 12|1 13|1 14|1 15|2 10|2 11|2 12|2 13|2 14|2 15|3 10|3 11|3 12|3 13|3 14|3 15|4 10|4 11|4 12|4 13|4 14|4 15|5 10|5 11|5 12|5 13|5 14|5 15|6 10|6 11|6 12|6 13|6 14|6 15|7 10|7 11|7 12|7 13|7 14|7 15|8 10|8 11|8 12|8 13|8 14|8 15|9 10|9 11|9 12|9 13|9 14|9 15|10 11|10 12|10 13|10 14|10 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (11|0 11|0 12|0 13|0 14|0 15|1 11|1 12|1 13|1 14|1 15|2 11|2 12|2 13|2 14|2 15|3 11|3 12|3 13|3 14|3 15|4 11|4 12|4 13|4 14|4 15|5 11|5 12|5 13|5 14|5 15|6 11|6 12|6 13|6 14|6 15|7 11|7 12|7 13|7 14|7 15|8 11|8 12|8 13|8 14|8 15|9 11|9 12|9 13|9 14|9 15|10 11|10 12|10 13|10 14|10 15|11 12|11 13|11 14|11 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (12|0 12|0 13|0 14|0 15|1 12|1 13|1 14|1 15|2 12|2 13|2 14|2 15|3 12|3 13|3 14|3 15|4 12|4 13|4 14|4 15|5 12|5 13|5 14|5 15|6 12|6 13|6 14|6 15|7 12|7 13|7 14|7 15|8 12|8 13|8 14|8 15|9 12|9 13|9 14|9 15|10 12|10 13|10 14|10 15|11 12|11 13|11 14|11 15|12 13|12 14|12 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (13|0 13|0 14|0 15|1 13|1 14|1 15|2 13|2 14|2 15|3 13|3 14|3 15|4 13|4 14|4 15|5 13|5 14|5 15|6 13|6 14|6 15|7 13|7 14|7 15|8 13|8 14|8 15|9 13|9 14|9 15|10 13|10 14|10 15|11 13|11 14|11 15|12 13|12 14|12 15|13 14|13 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (14|0 14|0 15|1 14|1 15|2 14|2 15|3 14|3 15|4 14|4 15|5 14|5 15|6 14|6 15|7 14|7 15|8 14|8 15|9 14|9 15|10 14|10 15|11 14|11 15|12 14|12 15|13 14|13 15|14 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          },
+          {
+            "type": "line",
+            "sectionPattern": "^line vty (15|0 15|1 15|2 15|3 15|4 15|5 15|6 15|7 15|8 15|9 15|10 15|11 15|12 15|13 15|14 15)$",
+            "line": ["exec-timeout 15", "exec-timeout 15 0", "exec-timeout 0 900"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "password-encryption",
+      "description": "Les mots de passe stockés en clair sont chiffrés dans la configuration.",
+      "check": {"type": "line", "line": "service password-encryption"}
+    }
+  ],
+  "hints": [
+    "Trois portes d'entrée, trois réglages : le mode privilégié (préférez la forme hachée à la forme en clair, et retirez l'ancienne), la console, et les lignes VTY. Sur une ligne, définir un mot de passe ne suffit pas : il faut aussi demander à IOS de le vérifier.",
+    "Sur la console, le mot de passe de ligne s'active par login ; sur les VTY, login local remplace le mot de passe de ligne par la base des comptes. Le délai d'inactivité s'exprime en minutes puis en secondes. Les lignes VTY d'un 2960 vont de 0 à 15 : une seule plage les couvre toutes.",
+    "enable secret … puis no enable password ; username admin privilege 15 secret … ; sous line console 0 : password …, login, exec-timeout 5 0 ; sous line vty 0 15 : login local, exec-timeout 15 0 ; enfin service password-encryption."
+  ],
+  "solution": [
+    {
+      "device": "S1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "enable secret En4ble-Acc3s!",
+        "no enable password",
+        "username admin privilege 15 secret Adm1n-S1!",
+        "line console 0",
+        "password C0nsole-S1",
+        "login",
+        "exec-timeout 5 0",
+        "exit",
+        "line vty 0 15",
+        "login local",
+        "exec-timeout 15 0",
+        "exit",
+        "service password-encryption",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations, délais en secondes, VTY en deux plages, secret de type 0 explicite",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "en",
+            "conf t",
+            "service password-encryption",
+            "line con 0",
+            "pass C0nsole-S1",
+            "exec-t 0 300",
+            "login",
+            "line vty 0 4",
+            "login local",
+            "exec-t 15",
+            "line vty 5 15",
+            "exec-timeout 0 900",
+            "login local",
+            "exit",
+            "username admin priv 15 secret Adm1n-S1!",
+            "enable secret 0 En4ble-Acc3s!",
+            "no enable pass",
+            "\u001a"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "enable password au lieu de enable secret : le mot de passe reste stocké en clair (ou en type 7 réversible)",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "enable password En4ble-Acc3s!",
+            "username admin privilege 15 secret Adm1n-S1!",
+            "line console 0",
+            "password C0nsole-S1",
+            "login",
+            "exec-timeout 5 0",
+            "line vty 0 15",
+            "login local",
+            "exec-timeout 15 0",
+            "exit",
+            "service password-encryption",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["enable-secret"]
+    },
+    {
+      "description": "enable secret ajouté mais l'ancien enable password cisco laissé dans la configuration",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "enable secret En4ble-Acc3s!",
+            "username admin privilege 15 secret Adm1n-S1!",
+            "line console 0",
+            "password C0nsole-S1",
+            "login",
+            "exec-timeout 5 0",
+            "line vty 0 15",
+            "login local",
+            "exec-timeout 15 0",
+            "exit",
+            "service password-encryption",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["enable-secret"]
+    },
+    {
+      "description": "Mot de passe console défini sans login : IOS ne le demande jamais",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "enable secret En4ble-Acc3s!",
+            "no enable password",
+            "username admin privilege 15 secret Adm1n-S1!",
+            "line console 0",
+            "password C0nsole-S1",
+            "exec-timeout 5 0",
+            "line vty 0 15",
+            "login local",
+            "exec-timeout 15 0",
+            "exit",
+            "service password-encryption",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["console-login"]
+    },
+    {
+      "description": "login au lieu de login local sur les VTY : le mot de passe de ligne partagé reste utilisé",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "enable secret En4ble-Acc3s!",
+            "no enable password",
+            "username admin privilege 15 secret Adm1n-S1!",
+            "line console 0",
+            "password C0nsole-S1",
+            "login",
+            "exec-timeout 5 0",
+            "line vty 0 15",
+            "login",
+            "exec-timeout 15 0",
+            "exit",
+            "service password-encryption",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["vty-login-local"]
+    },
+    {
+      "description": "Seules les lignes VTY 0 à 4 sont configurées : les lignes 5 à 15 acceptent encore le mot de passe cisco",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "enable secret En4ble-Acc3s!",
+            "no enable password",
+            "username admin privilege 15 secret Adm1n-S1!",
+            "line console 0",
+            "password C0nsole-S1",
+            "login",
+            "exec-timeout 5 0",
+            "line vty 0 4",
+            "login local",
+            "exec-timeout 15 0",
+            "exit",
+            "service password-encryption",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["vty-login-local", "vty-timeout"]
+    },
+    {
+      "description": "Délais mal lus : exec-timeout 0 5 (5 secondes) sur la console, exec-timeout 0 0 (jamais) sur les VTY",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "enable secret En4ble-Acc3s!",
+            "no enable password",
+            "username admin privilege 15 secret Adm1n-S1!",
+            "line console 0",
+            "password C0nsole-S1",
+            "login",
+            "exec-timeout 0 5",
+            "line vty 0 15",
+            "login local",
+            "exec-timeout 0 0",
+            "exit",
+            "service password-encryption",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["console-timeout", "vty-timeout"]
+    },
+    {
+      "description": "Compte admin créé avec password : service password-encryption ne le protège qu'en type 7, réversible",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "enable secret En4ble-Acc3s!",
+            "no enable password",
+            "username admin privilege 15 password Adm1n-S1!",
+            "line console 0",
+            "password C0nsole-S1",
+            "login",
+            "exec-timeout 5 0",
+            "line vty 0 15",
+            "login local",
+            "exec-timeout 15 0",
+            "exit",
+            "service password-encryption",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["local-user"]
+    },
+    {
+      "description": "Lignes VTY 5 à 15 supprimées (no line vty 5 15) au lieu d'être configurées : le travail demandé sur les lignes 0 à 15 n'est pas fait",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "enable secret En4ble-Acc3s!",
+            "no enable password",
+            "username admin privilege 15 secret Adm1n-S1!",
+            "line console 0",
+            "password C0nsole-S1",
+            "login",
+            "exec-timeout 5 0",
+            "exit",
+            "line vty 0 4",
+            "login local",
+            "exec-timeout 15 0",
+            "exit",
+            "no line vty 5 15",
+            "service password-encryption",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["vty-login-local", "vty-timeout"]
+    },
+    {
+      "description": "no exec-timeout sur les VTY : le délai revient à sa valeur par défaut, 10 minutes, et non aux 15 minutes demandées",
+      "solution": [
+        {
+          "device": "S1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "enable secret En4ble-Acc3s!",
+            "no enable password",
+            "username admin privilege 15 secret Adm1n-S1!",
+            "line console 0",
+            "password C0nsole-S1",
+            "login",
+            "exec-timeout 5 0",
+            "exit",
+            "line vty 0 15",
+            "login local",
+            "no exec-timeout",
+            "exit",
+            "service password-encryption",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["vty-timeout"]
+    }
+  ],
+  "explanation": "enable secret stocke le mot de passe du mode privilégié sous forme hachée (type 5 MD5, ou type 8/9 sur les versions récentes) ; enable password le stocke en clair. Quand les deux existent, IOS n'utilise que le secret, mais l'ancien mot de passe reste lisible dans la configuration : no enable password le retire. Sur une ligne, password ne fait que définir un mot de passe : c'est login qui demande à IOS de le vérifier (la console n'a pas de login par défaut, d'où un accès libre). login local ignore le mot de passe de ligne et authentifie chaque administrateur par la base des comptes (username … secret …), ce qui rend les connexions nominatives. Sur un 2960, les lignes VTY vont de 0 à 15 : ne configurer que 0 à 4 laisse les sessions suivantes sur l'ancien réglage. exec-timeout prend des minutes puis des secondes (défaut : 10 minutes, rétabli par no exec-timeout) ; exec-timeout 0 0, le réglage de départ de S1, désactive la déconnexion automatique, à proscrire. service password-encryption chiffre en type 7 les mots de passe stockés en clair (lignes, enable password, username … password) : c'est un algorithme réversible qui ne protège que d'un regard par-dessus l'épaule, d'où l'usage de secret pour les comptes. Il n'agit pas sur les secrets, déjà hachés.",
+  "reference": "Cisco IOS Security Configuration Guide: Securing User Services, « Configuring Security with Passwords, Privilege Levels, and Login Usernames for CLI Sessions on Networking Devices » ; Cisco IOS Security Command Reference (enable secret, username, service password-encryption) ; Cisco IOS Terminal Services Command Reference (login, exec-timeout)",
+  "estimatedMinutes": 10
+}

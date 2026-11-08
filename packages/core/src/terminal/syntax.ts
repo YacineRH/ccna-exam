@@ -30,7 +30,8 @@ type Node = SyntaxElem | { kind: 'opt'; alts: Node[][] } | { kind: 'alt'; alts: 
 
 function parseParam(raw: string): SyntaxElem {
   const inner = raw.slice(1, -1);
-  const range = /^(\d+)-(\d+)$/.exec(inner);
+  // Bornes signées permises : `<-23-23>` (décalage horaire).
+  const range = /^(-?\d+)-(-?\d+)$/.exec(inner);
   if (range) {
     const min = Number(range[1]);
     const max = Number(range[2]);
@@ -66,7 +67,7 @@ export function expandSyntax(syntax: string): SyntaxElem[][] {
       } else if (t.startsWith('<')) {
         seq.push(parseParam(t));
       } else {
-        if (!/^([a-z0-9][a-z0-9.:/-]*|\*)$/.test(t)) throw new Error(`mot-clé invalide « ${t} » : ${syntax}`);
+        if (!/^([a-z0-9][a-z0-9.:/+-]*|\*)$/.test(t)) throw new Error(`mot-clé invalide « ${t} » : ${syntax}`);
         seq.push({ kind: 'kw', word: t });
       }
     }

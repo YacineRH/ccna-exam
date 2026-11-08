@@ -1,0 +1,314 @@
+{
+  "slug": "ccna-lab-5.8-aaa-radius",
+  "certification": "ccna",
+  "domain": "5.0",
+  "subtopic": "5.8",
+  "difficulty": "hard",
+  "title": "Centraliser l'authentification des administrateurs sur RADIUS avec repli local",
+  "statement": "Le serveur Cisco ISE 10.1.99.10 authentifie désormais les administrateurs réseau. Le routeur R1 doit lui soumettre chaque connexion, sans risquer de devenir inaccessible si le serveur tombe, et la console doit rester utilisable en toute circonstance.\n\nConfigurez R1 :\n1. Activez le modèle AAA.\n2. Déclarez le serveur RADIUS nommé ISE : adresse 10.1.99.10, port UDP 1812 pour l'authentification et 1813 pour la comptabilité, clé partagée R4d!us-ISE-2026.\n3. Créez le compte local de secours secours, de niveau de privilège 15, dont le mot de passe est stocké sous forme de secret haché (S3cours-R1!).\n4. Par défaut, authentifiez les connexions par RADIUS, puis par la base locale si aucun serveur RADIUS ne répond.\n5. Créez la liste d'authentification CONSOLE, qui n'utilise que la base locale, et appliquez-la à la ligne console 0.",
+  "topology": "  [R1] G0/0/0 10.1.99.1/24 ---- VLAN d'administration ---- ISE 10.1.99.10\n                                                        (RADIUS UDP 1812/1813)\n   |\n  Console\n\n  Lignes VTY 0 à 4 : transport input ssh\n  Aucune configuration AAA, aucun compte local.",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\nip domain-name siege.lan\ninterface GigabitEthernet0/0/0\n description VLAN administration\n ip address 10.1.99.1 255.255.255.0\n no shutdown\nline vty 0 4\n transport input ssh"
+    }
+  ],
+  "objectives": [
+    {"id": "aaa-new-model", "description": "Le modèle AAA est activé.", "check": {"type": "line", "line": "aaa new-model"}},
+    {
+      "id": "radius-address",
+      "description": "Le serveur RADIUS ISE est joint en 10.1.99.10, sur les ports 1812 (authentification) et 1813 (comptabilité).",
+      "check": {"type": "line", "sectionPattern": "^radius server ISE$", "line": "address ipv4 10.1.99.10 auth-port 1812 acct-port 1813"}
+    },
+    {
+      "id": "radius-key",
+      "description": "La clé partagée du serveur ISE est R4d!us-ISE-2026.",
+      "check": {"type": "regex", "sectionPattern": "^radius server ISE$", "pattern": "^key (0 )?R4d!us-ISE-2026$", "caseSensitive": true}
+    },
+    {
+      "id": "local-user",
+      "description": "Le compte de secours secours existe, de niveau 15, avec le secret haché S3cours-R1!.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {"type": "regex", "pattern": "^username secours privilege 15 secret (0 )?S3cours-R1!$", "caseSensitive": true},
+          {"type": "regex", "pattern": "^username secours .*password ", "absent": true}
+        ]
+      }
+    },
+    {
+      "id": "default-list",
+      "description": "Par défaut, et donc sur les lignes VTY, les connexions sont authentifiées par RADIUS, puis par la base locale si aucun serveur ne répond.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {"type": "regex", "pattern": "^aaa authentication login default group radius local(-case)?$"},
+          {"type": "regex", "sectionPattern": "^line vty ", "pattern": "^login authentication ", "absent": true}
+        ]
+      }
+    },
+    {
+      "id": "console-list",
+      "description": "La console 0 utilise la liste CONSOLE, limitée à la base locale.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {"type": "regex", "pattern": "^aaa authentication login CONSOLE local(-case)?$", "caseSensitive": true},
+          {"type": "regex", "sectionPattern": "^line con(sole)? 0$", "pattern": "^login authentication CONSOLE$", "caseSensitive": true}
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "Aucune commande d'authentification AAA n'existe tant que le modèle AAA n'est pas activé. Une liste de méthodes se lit de gauche à droite : la méthode suivante n'est essayée que si la précédente ne répond pas, pas si elle refuse l'utilisateur.",
+    "Le serveur se déclare dans un sous-mode nommé, avec son adresse, ses ports (IOS prend 1645/1646 si on ne les précise pas, et non les ports officiels 1812/1813 demandés) et sa clé. La liste default s'applique à toutes les lignes ; une ligne peut en désigner une autre par son nom.",
+    "aaa new-model ; radius server ISE, puis address ipv4 … auth-port … acct-port … et key … ; username secours privilege 15 secret … ; aaa authentication login default group radius … ; aaa authentication login CONSOLE … ; sous line console 0 : login authentication CONSOLE."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "aaa new-model",
+        "radius server ISE",
+        "address ipv4 10.1.99.10 auth-port 1812 acct-port 1813",
+        "key R4d!us-ISE-2026",
+        "exit",
+        "username secours privilege 15 secret S3cours-R1!",
+        "aaa authentication login default group radius local",
+        "aaa authentication login CONSOLE local",
+        "line console 0",
+        "login authentication CONSOLE",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations, local-case, clé de type 0 explicite, login authentication default écrit sur les VTY",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "aaa new",
+            "username secours priv 15 secret S3cours-R1!",
+            "aaa authen login CONSOLE local-case",
+            "line con 0",
+            "login authen CONSOLE",
+            "line vty 0 4",
+            "login authentication default",
+            "exit",
+            "radius server ISE",
+            "addr ipv4 10.1.99.10 auth-port 1812 acct-port 1813",
+            "key 0 R4d!us-ISE-2026",
+            "exit",
+            "aaa authen login default group radius local-case",
+            "\u001a"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Liste default sans repli : group radius seul, le routeur devient inaccessible si ISE ne répond plus",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "aaa new-model",
+            "radius server ISE",
+            "address ipv4 10.1.99.10 auth-port 1812 acct-port 1813",
+            "key R4d!us-ISE-2026",
+            "exit",
+            "username secours privilege 15 secret S3cours-R1!",
+            "aaa authentication login default group radius",
+            "aaa authentication login CONSOLE local",
+            "line console 0",
+            "login authentication CONSOLE",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["default-list"]
+    },
+    {
+      "description": "Repli none : si ISE ne répond pas, n'importe qui se connecte sans authentification",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "aaa new-model",
+            "radius server ISE",
+            "address ipv4 10.1.99.10 auth-port 1812 acct-port 1813",
+            "key R4d!us-ISE-2026",
+            "exit",
+            "username secours privilege 15 secret S3cours-R1!",
+            "aaa authentication login default group radius none",
+            "aaa authentication login CONSOLE local",
+            "line console 0",
+            "login authentication CONSOLE",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["default-list"]
+    },
+    {
+      "description": "Méthodes inversées (local group radius) : la base locale passe avant le serveur central",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "aaa new-model",
+            "radius server ISE",
+            "address ipv4 10.1.99.10 auth-port 1812 acct-port 1813",
+            "key R4d!us-ISE-2026",
+            "exit",
+            "username secours privilege 15 secret S3cours-R1!",
+            "aaa authentication login default local group radius",
+            "aaa authentication login CONSOLE local",
+            "line console 0",
+            "login authentication CONSOLE",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["default-list"]
+    },
+    {
+      "description": "Adresse du serveur sans ports : IOS garde les ports historiques 1645/1646 au lieu des ports officiels 1812/1813 demandés",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "aaa new-model",
+            "radius server ISE",
+            "address ipv4 10.1.99.10",
+            "key R4d!us-ISE-2026",
+            "exit",
+            "username secours privilege 15 secret S3cours-R1!",
+            "aaa authentication login default group radius local",
+            "aaa authentication login CONSOLE local",
+            "line console 0",
+            "login authentication CONSOLE",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["radius-address"]
+    },
+    {
+      "description": "Liste CONSOLE créée mais jamais appliquée : la console suit la liste default, donc RADIUS d'abord",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "aaa new-model",
+            "radius server ISE",
+            "address ipv4 10.1.99.10 auth-port 1812 acct-port 1813",
+            "key R4d!us-ISE-2026",
+            "exit",
+            "username secours privilege 15 secret S3cours-R1!",
+            "aaa authentication login default group radius local",
+            "aaa authentication login CONSOLE local",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["console-list"]
+    },
+    {
+      "description": "aaa new-model oublié : IOS refuse aaa authentication et login authentication",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "radius server ISE",
+            "address ipv4 10.1.99.10 auth-port 1812 acct-port 1813",
+            "key R4d!us-ISE-2026",
+            "exit",
+            "username secours privilege 15 secret S3cours-R1!",
+            "aaa authentication login default group radius local",
+            "aaa authentication login CONSOLE local",
+            "line console 0",
+            "login authentication CONSOLE",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["aaa-new-model", "default-list", "console-list"]
+    },
+    {
+      "description": "Compte de secours créé avec password : mot de passe stocké en clair",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "aaa new-model",
+            "radius server ISE",
+            "address ipv4 10.1.99.10 auth-port 1812 acct-port 1813",
+            "key R4d!us-ISE-2026",
+            "exit",
+            "username secours privilege 15 password S3cours-R1!",
+            "aaa authentication login default group radius local",
+            "aaa authentication login CONSOLE local",
+            "line console 0",
+            "login authentication CONSOLE",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["local-user"]
+    },
+    {
+      "description": "Liste CONSOLE appliquée aussi aux lignes VTY : l'accès distant n'interroge plus jamais RADIUS",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "aaa new-model",
+            "radius server ISE",
+            "address ipv4 10.1.99.10 auth-port 1812 acct-port 1813",
+            "key R4d!us-ISE-2026",
+            "exit",
+            "username secours privilege 15 secret S3cours-R1!",
+            "aaa authentication login default group radius local",
+            "aaa authentication login CONSOLE local",
+            "line console 0",
+            "login authentication CONSOLE",
+            "line vty 0 4",
+            "login authentication CONSOLE",
+            "end"
+          ]
+        }
+      ],
+      "failing": ["default-list"]
+    }
+  ],
+  "explanation": "aaa new-model active AAA : ce sont désormais des listes de méthodes qui décident de l'authentification, et les commandes de ligne login et login local ne s'appliquent plus. Dès l'activation, et tant qu'aucune liste default n'est définie, les sessions VTY sont vérifiées contre la base locale : créer le compte de secours tout de suite évite de se couper soi-même l'accès distant. radius server ISE ouvre un sous-mode où address ipv4 donne l'adresse et les ports : sans auth-port ni acct-port, IOS garde 1645/1646, ports historiques antérieurs à l'attribution officielle de 1812/1813 (RFC 2865 et 2866) ; ISE accepte les deux paires par défaut, mais d'autres serveurs n'écoutent que sur les ports officiels, d'où l'intérêt de les préciser. La clé partagée doit être identique sur ISE (le routeur y est déclaré comme équipement réseau) ; elle sert à masquer le mot de passe dans Access-Request et à authentifier les réponses. aaa authentication login default group radius local essaie d'abord tous les serveurs RADIUS déclarés ; la base locale n'est consultée que si aucun ne répond (erreur), jamais si ISE refuse l'utilisateur. Sans repli, une panne d'ISE ferme le routeur ; avec none, elle l'ouvre à tous. local-case rend en plus le nom d'utilisateur sensible à la casse. La liste default couvre toutes les lignes qui n'en désignent pas une autre, console comprise : appliquer CONSOLE aux VTY ferait sortir RADIUS de l'accès distant ; login authentication CONSOLE sous line console 0 lui substitue la liste nommée, limitée à la base locale, pour que la console fonctionne même quand le réseau est coupé. login authentication default, implicite, n'apparaît pas dans la configuration.",
+  "reference": "Cisco IOS XE Security Configuration Guide: Authentication, Authorization, and Accounting — « Configuring Authentication » (aaa authentication login, login authentication) et « Configuring RADIUS » ; Cisco IOS Security Command Reference (aaa new-model, radius server, address ipv4, key)",
+  "estimatedMinutes": 14
+}

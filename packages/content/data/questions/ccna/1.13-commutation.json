@@ -1,0 +1,1303 @@
+[
+  {
+    "slug": "ccna-1.13-cam-table-name-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sous quel autre nom désigne-t-on couramment la table d'adresses MAC d'un commutateur Cisco ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Table TCAM"
+        },
+        {
+          "id": "b",
+          "text": "Table CAM"
+        },
+        {
+          "id": "c",
+          "text": "Table RIB"
+        },
+        {
+          "id": "d",
+          "text": "Table ARP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La table d'adresses MAC est couramment appelée table CAM (Content Addressable Memory), du nom de la mémoire associative employée pour la stocker : on lui présente une clé (VLAN et adresse MAC) et elle renvoie directement le port associé, par une recherche exacte. La TCAM (Ternary CAM) ajoute un état « indifférent » à chaque bit : elle sert aux recherches avec masque, comme les ACL, la QoS ou le routage au plus long préfixe. La table ARP associe adresses IP et adresses MAC, et la RIB est la table de routage.",
+    "distractorNotes": {
+      "a": "La TCAM sert aux recherches avec masque (ACL, QoS, plus long préfixe) ; la table MAC, consultée par correspondance exacte, est la table CAM.",
+      "c": "La RIB (Routing Information Base) est la table de routage IP, pas la table des adresses MAC.",
+      "d": "La table ARP associe des adresses IP à des adresses MAC ; elle n'indique pas par quel port joindre une adresse MAC."
+    },
+    "reference": "Cisco, note technique « Unicast Flooding in Switched Campus Networks » (table CAM)"
+  },
+  {
+    "slug": "ccna-1.13-cut-through-bad-fcs-path-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "PC1 est raccordé à SW1, qui commute en mode cut-through. SW1 est relié à SW2, qui commute en mode store-and-forward, et le serveur SRV1 est raccordé à SW2. Les deux commutateurs connaissent déjà les adresses MAC de PC1 et de SRV1. La carte réseau de PC1, défectueuse, envoie à SRV1 des trames de plus de 1 000 octets dont le FCS est incorrect. Où ces trames sont-elles supprimées ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dans SW1, qui vérifie le FCS avant de commencer à les retransmettre"
+        },
+        {
+          "id": "b",
+          "text": "Dans SW1, qui les supprime dès réception de leurs 64 premiers octets"
+        },
+        {
+          "id": "c",
+          "text": "Dans SW2, qui vérifie le FCS avant de les retransmettre vers SRV1"
+        },
+        {
+          "id": "d",
+          "text": "Dans SRV1 seulement, car aucun commutateur ne vérifie le FCS en transit"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "En cut-through, SW1 commence à retransmettre la trame vers SW2 dès qu'il a lu l'adresse MAC de destination : le FCS, placé à la fin de la trame, n'arrive qu'une fois la retransmission bien engagée, et SW1 ne peut plus que compter l'erreur. SW2, en store-and-forward, attend la trame entière, recalcule le CRC, constate qu'il ne correspond pas au FCS et supprime la trame : SRV1 ne la reçoit jamais. Conséquence pratique : les erreurs CRC apparaissent sur le port de SW2 relié à SW1, alors que ce lien est sain ; il faut remonter vers la source.",
+    "distractorNotes": {
+      "a": "Un commutateur cut-through retransmet dès la lecture de l'adresse de destination, bien avant d'avoir reçu le FCS : il ne peut pas filtrer sur ce critère.",
+      "b": "Attendre 64 octets est le principe du fragment-free, que SW1 n'utilise pas ; ce mode ne contrôle d'ailleurs pas le FCS et laisserait passer une longue trame corrompue.",
+      "d": "Un commutateur store-and-forward comme SW2 vérifie le FCS de chaque trame avant de la retransmettre et supprime celles qui sont corrompues."
+    },
+    "reference": "Cisco, livre blanc « Cut-Through and Store-and-Forward Ethernet Switching for Low-Latency Environments »"
+  },
+  {
+    "slug": "ccna-1.13-fragment-free-64-bytes-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un commutateur en mode fragment-free attend d'avoir reçu les 64 premiers octets d'une trame avant de commencer à la retransmettre. Pourquoi ce seuil de 64 octets ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une collision survient normalement dans les 64 premiers octets : un fragment de collision est plus court"
+        },
+        {
+          "id": "b",
+          "text": "Les 64 premiers octets contiennent le FCS, que le commutateur doit vérifier avant de retransmettre"
+        },
+        {
+          "id": "c",
+          "text": "L'en-tête Ethernet occupe 64 octets, et le commutateur en a besoin en entier pour décider"
+        },
+        {
+          "id": "d",
+          "text": "Au-delà du 64e octet, une erreur de transmission ne peut plus corrompre la trame"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "64 octets (512 bits) sont à la fois la taille minimale d'une trame Ethernet et, à 10 et 100 Mbit/s, le slot time du CSMA/CD : dans un réseau half duplex aux dimensions conformes, une station détecte toute collision avant d'avoir émis 64 octets. Les trames tronquées par une collision donnent donc des fragments (runts) de moins de 64 octets, que le mode fragment-free élimine tout en gardant une latence faible et constante. Il ne vérifie pas le FCS : une trame corrompue au-delà du 64e octet est retransmise. Une collision après 64 octets (late collision) signale un défaut, comme un duplex mismatch.",
+    "distractorNotes": {
+      "b": "Le FCS occupe les 4 derniers octets de la trame : il n'est dans les 64 premiers que pour une trame de taille minimale, et le mode fragment-free ne le vérifie pas.",
+      "c": "L'en-tête Ethernet ne fait que 14 octets (18 avec une étiquette 802.1Q) ; l'adresse de destination est lue dès les 6 premiers.",
+      "d": "Une erreur peut toucher n'importe quel octet : c'est pourquoi le FCS couvre la trame entière, et le fragment-free ne protège pas de ces erreurs."
+    },
+    "reference": "IEEE 802.3-2022, clause 4 (MAC CSMA/CD : slotTime et minFrameSize)"
+  },
+  {
+    "slug": "ccna-1.13-show-mac-uplink-exit-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Sur SW1, Gi1/0/1 à Gi1/0/4 sont des ports d'accès du VLAN 10, Gi1/0/5 à Gi1/0/8 des ports d'accès du VLAN 20, et Gi1/0/24 est un trunk 802.1Q vers SW2. PC2, raccordé à Gi1/0/2, envoie une trame unicast à l'adresse 00c0.9f3a.11e4. Sur quel(s) port(s) SW1 la transmet-il ?",
+      "exhibit": "SW1#show mac address-table dynamic\n          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  10    0050.7966.6801    DYNAMIC     Gi1/0/1\n  10    0050.7966.6802    DYNAMIC     Gi1/0/2\n  10    00c0.9f3a.11e4    DYNAMIC     Gi1/0/24\n  20    0050.7966.6805    DYNAMIC     Gi1/0/5\n  20    00c0.9f3a.22b7    DYNAMIC     Gi1/0/24\nTotal Mac Addresses for this criterion: 5",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur Gi1/0/1, Gi1/0/3, Gi1/0/4 et Gi1/0/24"
+        },
+        {
+          "id": "b",
+          "text": "Sur aucun port : SW1 supprime la trame"
+        },
+        {
+          "id": "c",
+          "text": "Sur tous les ports de SW1 sauf Gi1/0/2"
+        },
+        {
+          "id": "d",
+          "text": "Sur Gi1/0/24 seulement"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "SW1 cherche dans sa table le couple (VLAN 10, 00c0.9f3a.11e4) : l'adresse a été apprise sur Gi1/0/24. La destination est donc une unicast connue, et la trame sort par ce seul port, le trunk vers SW2, derrière lequel se trouve la station. Peu importe qu'elle ne soit pas raccordée directement à SW1 : une adresse apprise sur un trunk désigne une station joignable par ce lien. Au passage, SW1 rafraîchit l'entrée de PC2 (0050.7966.6802) sur Gi1/0/2. Seule une destination absente de la table du VLAN 10 serait inondée.",
+    "distractorNotes": {
+      "a": "Ce serait une inondation dans le VLAN 10, réservée aux destinations inconnues et aux diffusions ; ici l'entrée (VLAN 10, 00c0.9f3a.11e4) existe.",
+      "b": "Une destination connue n'est jamais supprimée : SW1 la transmet vers le port où l'adresse a été apprise, trunk compris, car la station se trouve derrière SW2.",
+      "c": "La destination est connue, donc pas d'inondation ; et même une inondation resterait confinée au VLAN 10, sans atteindre les ports du VLAN 20."
+    },
+    "reference": "IEEE 802.1Q-2018, section 8.6 (Forwarding Process) ; Catalyst 9300 System Management Configuration Guide (MAC address table)"
+  },
+  {
+    "slug": "ccna-1.13-two-switch-cleared-table-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. PC-A a l'adresse 0050.7966.6a01 et PC-D l'adresse 0050.7966.6a04. L'administrateur vient d'exécuter « clear mac address-table dynamic » sur SW2, et aucune trame n'a circulé depuis. PC-A envoie alors une trame unicast à PC-D. Quel est l'ensemble des hôtes dont la carte réseau reçoit cette trame ?",
+      "exhibit": "Topologie (tous les liens sont up)\n  SW1 Gi1/0/24 --- trunk 802.1Q (VLAN 10 et 20) --- SW2 Gi1/0/24\n  SW1 Gi1/0/1 : PC-A (VLAN 10)      SW2 Gi1/0/1 : PC-C (VLAN 10)\n  SW1 Gi1/0/2 : PC-B (VLAN 10)      SW2 Gi1/0/2 : PC-D (VLAN 10)\n                                    SW2 Gi1/0/3 : PC-E (VLAN 20)\n\nSW1#show mac address-table dynamic vlan 10\n          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  10    0050.7966.6a01    DYNAMIC     Gi1/0/1\n  10    0050.7966.6a02    DYNAMIC     Gi1/0/2\n  10    0050.7966.6a04    DYNAMIC     Gi1/0/24\nTotal Mac Addresses for this criterion: 3",
+      "options": [
+        {
+          "id": "a",
+          "text": "PC-D seulement"
+        },
+        {
+          "id": "b",
+          "text": "PC-B, PC-C et PC-D"
+        },
+        {
+          "id": "c",
+          "text": "PC-C et PC-D"
+        },
+        {
+          "id": "d",
+          "text": "PC-C, PC-D et PC-E"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La commande a été exécutée sur SW2 : SW1 connaît toujours (VLAN 10, 0050.7966.6a04) sur Gi1/0/24 et envoie la trame sur ce seul trunk ; PC-B ne la reçoit pas. SW2, lui, a vidé ses entrées dynamiques : il apprend l'adresse de PC-A sur Gi1/0/24, mais ne trouve pas celle de PC-D dans le VLAN 10. La trame est donc une unicast inconnue, inondée sur tous les ports du VLAN 10 sauf Gi1/0/24 : Gi1/0/1 (PC-C) et Gi1/0/2 (PC-D). La carte de PC-C l'ignore, car elle ne lui est pas adressée. Dès que PC-D émettra, SW2 réapprendra son adresse sur Gi1/0/2.",
+    "distractorNotes": {
+      "a": "Ce serait le cas si SW2 connaissait encore PC-D ; sa table a été vidée, et la trame est inondée dans le VLAN 10 de SW2.",
+      "b": "La commande a été exécutée sur SW2 seulement : SW1 connaît toujours PC-D sur Gi1/0/24 et ne transmet pas la trame vers PC-B.",
+      "d": "L'inondation reste confinée au VLAN 10 : PC-E, dans le VLAN 20, ne reçoit rien."
+    },
+    "reference": "IEEE 802.1Q-2018, sections 8.6 et 8.7 ; Cisco IOS XE Command Reference (clear mac address-table)"
+  },
+  {
+    "slug": "ccna-1.13-collision-domain-count-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Tous les ports des deux commutateurs sont dans le VLAN 1, et le réseau ne comporte aucun routeur. Combien de domaines de collision compte-t-il ?",
+      "exhibit": "SW1 Gi1/0/1  --- PC1\nSW1 Gi1/0/2  --- PC2\nSW1 Gi1/0/3  --- PC3\nSW1 Gi1/0/24 --- SW2 Gi1/0/24\nSW2 Gi1/0/1  --- PC4\nSW2 Gi1/0/2  --- HUB1 (concentrateur) --- PC5, PC6 et PC7",
+      "options": [
+        {
+          "id": "a",
+          "text": "1"
+        },
+        {
+          "id": "b",
+          "text": "6"
+        },
+        {
+          "id": "c",
+          "text": "7"
+        },
+        {
+          "id": "d",
+          "text": "9"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Chaque port de commutateur forme son propre domaine de collision. Sur SW1 : les liens vers PC1, PC2 et PC3, plus le lien vers SW2, soit 4. Sur SW2 : le lien vers PC4 et celui vers HUB1, soit 2 de plus ; le lien SW1-SW2 est un seul segment, déjà compté. Un concentrateur répète les bits sur tous ses ports : HUB1, PC5, PC6, PC7 et le port Gi1/0/2 de SW2 partagent un seul domaine. Total : 6. Par convention, un lien full duplex compte aussi pour un domaine, même s'il n'y survient aucune collision. Sans routeur ni second VLAN, le réseau ne forme qu'un domaine de diffusion.",
+    "distractorNotes": {
+      "a": "Il n'y a qu'un domaine de diffusion (un VLAN, aucun routeur) ; mais chaque port de commutateur délimite un domaine de collision.",
+      "c": "Le lien SW1-SW2 est un seul segment : le compter une fois par commutateur donne 7 au lieu de 6.",
+      "d": "Un concentrateur ne sépare pas les domaines de collision : HUB1 et ses trois PC forment un seul domaine avec le port de SW2."
+    },
+    "reference": "IEEE 802.3-2022, section 1.4 (définitions : collision domain) et clause 9 (répéteurs)"
+  },
+  {
+    "slug": "ccna-1.13-broadcast-mac-address-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle adresse MAC de destination identifie une trame de diffusion (broadcast) Ethernet ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "0100.5e00.0001"
+        },
+        {
+          "id": "b",
+          "text": "0180.c200.0000"
+        },
+        {
+          "id": "c",
+          "text": "0000.0000.0000"
+        },
+        {
+          "id": "d",
+          "text": "ffff.ffff.ffff"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une trame de diffusion a pour destination l'adresse dont les 48 bits valent 1 : ffff.ffff.ffff. Un commutateur l'inonde sur tous les ports du VLAN d'arrivée sauf celui d'arrivée, trunks transportant ce VLAN compris ; c'est le cas des requêtes ARP et des DHCP Discover. Les adresses de groupe (multicast) ont le bit I/G, bit de poids faible du premier octet, à 1 : 0100.5exx.xxxx pour le multicast IPv4, 0180.c200.0000 pour les BPDU du Spanning Tree IEEE. Une adresse dont ce bit vaut 0 est individuelle (unicast).",
+    "distractorNotes": {
+      "a": "0100.5e00.0001 est l'adresse multicast du groupe IPv4 224.0.0.1 (tous les hôtes) : une adresse de groupe, pas la diffusion.",
+      "b": "0180.c200.0000 est l'adresse de groupe réservée aux BPDU du Spanning Tree IEEE : les commutateurs la traitent sans la relayer.",
+      "c": "Une adresse dont tous les bits valent 0 a son bit I/G à 0 : c'est une adresse individuelle, qui ne désigne pas toutes les stations."
+    },
+    "reference": "IEEE 802.3-2022, clause 3 (format de la trame, champs d'adresse) ; RFC 1112"
+  },
+  {
+    "slug": "ccna-1.13-clear-dynamic-keeps-static-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'administrateur exécute « clear mac address-table dynamic » sur SW1. Juste après, avant qu'aucune nouvelle trame ne soit reçue, que contient la table d'adresses MAC de SW1 pour le VLAN 40 ?",
+      "exhibit": "SW1#show mac address-table vlan 40\n          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  40    0050.56b3.7e10    STATIC      Gi1/0/16\n  40    0050.7966.6811    DYNAMIC     Gi1/0/11\n  40    0050.7966.6812    DYNAMIC     Gi1/0/12\nTotal Mac Addresses for this criterion: 3",
+      "options": [
+        {
+          "id": "a",
+          "text": "Seulement l'entrée de 0050.56b3.7e10 sur Gi1/0/16"
+        },
+        {
+          "id": "b",
+          "text": "Aucune entrée : la table du VLAN 40 est entièrement vide"
+        },
+        {
+          "id": "c",
+          "text": "Seulement les entrées de 0050.7966.6811 et de 0050.7966.6812"
+        },
+        {
+          "id": "d",
+          "text": "Les trois entrées : la commande n'efface que les entrées expirées"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "« clear mac address-table dynamic », sans autre argument, efface immédiatement toutes les entrées dynamiques, dans tous les VLAN et sur tous les ports. Les entrées statiques, créées par « mac address-table static », ne sont concernées ni par cette commande ni par le vieillissement : celle de 0050.56b3.7e10 reste sur Gi1/0/16, et ne disparaît qu'avec « no mac address-table static ». Les deux autres hôtes seront réappris à leur prochaine trame ; d'ici là, les trames qui leur sont destinées seront inondées dans le VLAN 40. Pour cibler une entrée, la commande accepte les mots-clés address, interface et vlan.",
+    "distractorNotes": {
+      "b": "Une entrée statique n'est pas effacée par « clear mac address-table dynamic » : elle fait partie de la configuration et reste en place.",
+      "c": "C'est l'inverse : le mot-clé dynamic vise les entrées apprises, et l'entrée statique est conservée.",
+      "d": "La commande efface les entrées dynamiques tout de suite, quel que soit leur âge ; l'expiration au bout de 300 secondes relève du vieillissement, indépendant de cette commande."
+    },
+    "reference": "Catalyst 9300 System Management Configuration Guide (MAC address table) ; Cisco IOS XE Command Reference (clear mac address-table)"
+  },
+  {
+    "slug": "ccna-1.13-vm-migration-mac-move-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La machine virtuelle VM1 (0050.56aa.0101, VLAN 10) tourne sur l'hyperviseur HV1, raccordé au port Gi1/0/3 de SW1, qui a appris son adresse sur ce port. VM1 migre à chaud vers l'hyperviseur HV2, raccordé à Gi1/0/8 (VLAN 10), puis émet aussitôt une trame depuis HV2. Les deux liens restent up et aucune fonction de sécurité n'est configurée. Comment SW1 traite-t-il l'adresse de VM1 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il crée une seconde entrée sur Gi1/0/8 et garde celle de Gi1/0/3 jusqu'à son expiration"
+        },
+        {
+          "id": "b",
+          "text": "Il garde l'entrée sur Gi1/0/3 jusqu'à son expiration, puis apprend l'adresse sur Gi1/0/8"
+        },
+        {
+          "id": "c",
+          "text": "Il met à jour l'entrée existante, qui associe désormais l'adresse à Gi1/0/8"
+        },
+        {
+          "id": "d",
+          "text": "Il désactive Gi1/0/8 (err-disabled), l'adresse étant déjà apprise sur Gi1/0/3"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Dans un VLAN, la table ne contient qu'une entrée par adresse MAC. Quand une trame arrive avec une adresse source déjà apprise sur un autre port, le commutateur met l'entrée à jour sur-le-champ (MAC move) et relance son délai de vieillissement : les trames destinées à VM1 sortent désormais par Gi1/0/8. C'est pour cela que les hyperviseurs émettent une trame (RARP ou ARP gratuit) au nom de la VM dès la fin de la migration. Si une adresse bascule sans cesse entre deux ports, signe fréquent d'une boucle, un commutateur Catalyst journalise en général un message %SW_MATM-4-MACFLAP_NOTIF.",
+    "distractorNotes": {
+      "a": "Une adresse unicast n'a qu'une entrée par VLAN : elle ne peut pas désigner deux ports à la fois.",
+      "b": "Le commutateur n'attend pas l'expiration : la nouvelle trame met l'entrée à jour aussitôt, sinon VM1 resterait injoignable jusqu'à 5 minutes.",
+      "d": "Sans port security, un déplacement d'adresse se traduit par une simple mise à jour de l'entrée ; aucun port n'est désactivé."
+    },
+    "reference": "IEEE 802.1Q-2018, section 8.7 (Learning Process) ; Catalyst 9300 System Management Configuration Guide (MAC address table)"
+  },
+  {
+    "slug": "ccna-1.13-broadcast-frame-learning-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "SW1 reçoit sur Gi1/0/4 (VLAN 10) une trame dont l'adresse MAC source est 0050.7966.6804 et la destination ffff.ffff.ffff. L'adresse source ne figurait pas encore dans sa table. Que fait SW1 dans sa table d'adresses MAC à la réception de cette trame ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il ajoute une entrée pour ffff.ffff.ffff, associée à Gi1/0/4"
+        },
+        {
+          "id": "b",
+          "text": "Il ajoute une entrée pour 0050.7966.6804 sur Gi1/0/4, et une pour ffff.ffff.ffff sur les autres ports"
+        },
+        {
+          "id": "c",
+          "text": "Il n'ajoute aucune entrée, car une trame de diffusion ne donne lieu à aucun apprentissage"
+        },
+        {
+          "id": "d",
+          "text": "Il ajoute une entrée pour 0050.7966.6804, associée à Gi1/0/4"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'apprentissage ne regarde que l'adresse source, quelle que soit la destination (unicast, multicast ou diffusion) : SW1 ajoute l'entrée (VLAN 10, 0050.7966.6804) sur Gi1/0/4, avec un délai de vieillissement neuf. Une adresse de groupe comme ffff.ffff.ffff n'est jamais une adresse source valide (le bit I/G de la source vaut toujours 0) : elle n'entre jamais dynamiquement dans la table, et la trame est inondée sur tous les ports du VLAN 10 sauf Gi1/0/4. C'est ainsi qu'une requête ARP, diffusée, apprend au commutateur l'emplacement de son émetteur.",
+    "distractorNotes": {
+      "a": "La destination ne sert qu'à la décision de transmission : le commutateur n'apprend que des adresses source, jamais une adresse de groupe.",
+      "b": "Seule la source est apprise ; une adresse de diffusion n'est jamais une adresse source, elle n'a donc pas d'entrée dynamique.",
+      "c": "Toute trame reçue sans erreur sert à l'apprentissage de son adresse source, diffusion comprise."
+    },
+    "reference": "IEEE 802.1Q-2018, section 8.7 (Learning Process) ; IEEE 802.3-2022, clause 3 (champs d'adresse)"
+  },
+  {
+    "slug": "ccna-1.13-hub-shared-collision-domain-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel équipement place tous les hôtes qui lui sont raccordés dans un même domaine de collision ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un routeur"
+        },
+        {
+          "id": "b",
+          "text": "Un concentrateur (hub)"
+        },
+        {
+          "id": "c",
+          "text": "Un commutateur de couche 2"
+        },
+        {
+          "id": "d",
+          "text": "Un pont (bridge)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un concentrateur est un répéteur de couche 1 : il régénère le signal reçu sur un port et le répète, bit à bit, sur tous les autres. Tous les hôtes raccordés partagent donc le même support, en half duplex, sous CSMA/CD : deux émissions simultanées entrent en collision. Le pont, puis le commutateur (un pont multiport), délimitent un domaine de collision par port, ce qui permet le full duplex. Le routeur sépare à la fois les domaines de collision et les domaines de diffusion.",
+    "distractorNotes": {
+      "a": "Chaque interface de routeur délimite son propre domaine de collision, et aussi son propre domaine de diffusion.",
+      "c": "Chaque port d'un commutateur forme un domaine de collision distinct ; c'est ce qui permet le full duplex.",
+      "d": "Un pont sépare les domaines de collision : chacun de ses ports en délimite un."
+    },
+    "reference": "IEEE 802.3-2022, clause 9 (répéteurs) ; IEEE 802.1Q-2018, clause 8 (fonctionnement des ponts)"
+  },
+  {
+    "slug": "ccna-1.13-aging-time-zero-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un commutateur Catalyst, quel est l'effet de la commande « mac address-table aging-time 0 », saisie en mode de configuration globale ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les entrées dynamiques n'expirent plus jamais"
+        },
+        {
+          "id": "b",
+          "text": "Toutes les entrées dynamiques sont effacées sur-le-champ"
+        },
+        {
+          "id": "c",
+          "text": "Le délai revient à sa valeur par défaut, 300 s"
+        },
+        {
+          "id": "d",
+          "text": "Le commutateur n'apprend plus de nouvelles adresses"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La commande accepte 0 ou une valeur de 10 à 1 000 000 secondes. La valeur 0 désactive le vieillissement : une entrée dynamique n'expire plus, même si son hôte se tait. Elle n'est plus retirée que par d'autres événements, comme un « clear mac address-table dynamic » ou la coupure de son port, et elle est simplement mise à jour si l'adresse apparaît sur un autre port. Le délai par défaut de 300 secondes se rétablit avec « no mac address-table aging-time ». À utiliser avec prudence : des entrées périmées s'accumulent alors dans la table.",
+    "distractorNotes": {
+      "b": "La commande ne vide pas la table : c'est le rôle de « clear mac address-table dynamic ».",
+      "c": "La valeur par défaut se rétablit avec « no mac address-table aging-time » ; la valeur 0 désactive le vieillissement.",
+      "d": "Le commutateur continue d'apprendre les adresses source ; seul leur vieillissement est désactivé."
+    },
+    "reference": "Cisco IOS XE Command Reference (Catalyst 9300) : mac address-table aging-time"
+  },
+  {
+    "slug": "ccna-1.13-aging-refresh-rules-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur le vieillissement des entrées de la table d'adresses MAC d'un commutateur Catalyst sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque trame transmise vers une adresse de destination remet à zéro le délai de l'entrée de cette adresse"
+        },
+        {
+          "id": "b",
+          "text": "Chaque trame reçue avec une adresse source remet à zéro le délai de l'entrée de cette adresse"
+        },
+        {
+          "id": "c",
+          "text": "À l'expiration d'une entrée, les trames destinées à cette adresse sont supprimées jusqu'à ce qu'elle soit réapprise"
+        },
+        {
+          "id": "d",
+          "text": "Une entrée créée par « mac address-table static » ne vieillit pas"
+        },
+        {
+          "id": "e",
+          "text": "Le délai de vieillissement ne peut prendre qu'une seule valeur, commune à tous les VLAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le délai de vieillissement d'une entrée repart de zéro chaque fois qu'une trame arrive avec cette adresse comme source : c'est l'activité de l'hôte en émission qui maintient son entrée. Être la destination de trames ne la rafraîchit pas : un hôte qui ne fait que recevoir perd son entrée au bout de 300 secondes par défaut, et les trames qui lui sont destinées sont alors inondées dans son VLAN jusqu'à ce qu'il émette de nouveau. Les entrées statiques ne vieillissent jamais. Le délai se règle globalement ou par VLAN, avec « mac address-table aging-time <secondes> vlan <id> ».",
+    "distractorNotes": {
+      "a": "La recherche d'une destination ne rafraîchit pas l'entrée : seule la réception d'une trame portant cette adresse source le fait.",
+      "c": "Une destination absente de la table n'entraîne pas la suppression de la trame : elle est inondée dans le VLAN.",
+      "e": "Le mot-clé vlan de « mac address-table aging-time » permet de fixer un délai propre à un VLAN."
+    },
+    "reference": "IEEE 802.1Q-2018, sections 8.7 et 8.8 ; Catalyst 9300 System Management Configuration Guide (MAC address table)"
+  },
+  {
+    "slug": "ccna-1.13-broadcast-domain-rules-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les domaines de diffusion (broadcast) sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque interface d'un routeur délimite un domaine de diffusion distinct"
+        },
+        {
+          "id": "b",
+          "text": "Chaque port d'un commutateur délimite un domaine de diffusion distinct"
+        },
+        {
+          "id": "c",
+          "text": "Un concentrateur sépare les domaines de diffusion de ses ports"
+        },
+        {
+          "id": "d",
+          "text": "Un commutateur relaie une diffusion reçue dans le VLAN 10 vers les ports du VLAN 20"
+        },
+        {
+          "id": "e",
+          "text": "Chaque VLAN forme un domaine de diffusion distinct"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Un domaine de diffusion est l'ensemble des équipements atteints par une trame envoyée à ffff.ffff.ffff. Un commutateur inonde une diffusion sur tous les ports du VLAN d'arrivée : sans VLAN, tous ses ports forment un seul domaine, et chaque VLAN en forme un distinct. Un routeur ne relaie pas les diffusions d'une interface (ou sous-interface) à l'autre : chacune délimite son propre domaine. Le concentrateur, équipement de couche 1, ne sépare rien : ni les collisions ni les diffusions. Faire communiquer deux VLAN exige donc un routage.",
+    "distractorNotes": {
+      "b": "Les ports d'un commutateur séparent les domaines de collision ; tous ceux d'un même VLAN restent dans un seul domaine de diffusion.",
+      "c": "Un concentrateur répète tout ce qu'il reçoit sur tous ses ports : il ne sépare ni les domaines de collision ni ceux de diffusion.",
+      "d": "L'inondation reste confinée au VLAN d'arrivée : passer du VLAN 10 au VLAN 20 exige un routage."
+    },
+    "reference": "IEEE 802.1Q-2018 (VLAN et Forwarding Process) ; RFC 919"
+  },
+  {
+    "slug": "ccna-1.13-show-mac-roas-hub-forwarding-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Sur SW1, Gi1/0/1 à Gi1/0/4 sont des ports d'accès du VLAN 10 et Gi1/0/5 à Gi1/0/8 des ports d'accès du VLAN 20, tous up ; un concentrateur est branché sur Gi1/0/3. Gi1/0/24 est un trunk 802.1Q (VLAN natif 1) relié uniquement à R1, configuré en router-on-a-stick pour les VLAN 10 et 20. Quelles trois affirmations sont exactes ?",
+      "exhibit": "SW1#show mac address-table dynamic\n          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  10    001b.54c2.0a01    DYNAMIC     Gi1/0/1\n  10    001b.54c2.0a02    DYNAMIC     Gi1/0/2\n  10    001b.54c2.0a03    DYNAMIC     Gi1/0/3\n  10    001b.54c2.0a04    DYNAMIC     Gi1/0/3\n  10    0062.ec3d.8f10    DYNAMIC     Gi1/0/24\n  20    001b.54c2.0b05    DYNAMIC     Gi1/0/5\n  20    0062.ec3d.8f10    DYNAMIC     Gi1/0/24\nTotal Mac Addresses for this criterion: 7",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les deux entrées de 0062.ec3d.8f10 révèlent un conflit d'adresses MAC entre deux équipements"
+        },
+        {
+          "id": "b",
+          "text": "Une trame de 001b.54c2.0a01 vers 001b.54c2.0a04 sort de SW1 par Gi1/0/3 seulement"
+        },
+        {
+          "id": "c",
+          "text": "Une trame de 001b.54c2.0b05 vers 0062.ec3d.8f10 sort par Gi1/0/24 seulement, étiquetée VLAN 20"
+        },
+        {
+          "id": "d",
+          "text": "Une trame de 001b.54c2.0a01 vers 001b.54c2.0b05 sort par Gi1/0/5 seulement"
+        },
+        {
+          "id": "e",
+          "text": "SW1 inonde les trames destinées à 001b.54c2.0a03, car deux adresses sont apprises sur Gi1/0/3"
+        },
+        {
+          "id": "f",
+          "text": "Une diffusion émise par 001b.54c2.0a02 sort par Gi1/0/1, Gi1/0/3, Gi1/0/4 et Gi1/0/24"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c",
+        "f"
+      ]
+    },
+    "explanation": "SW1 cherche toujours le couple (VLAN, adresse de destination). Vers 001b.54c2.0a04 dans le VLAN 10 : entrée sur Gi1/0/3, la trame sort par ce seul port, et le concentrateur la répète vers ses hôtes ; plusieurs adresses sur un port sont normales derrière un concentrateur. Vers 0062.ec3d.8f10 dans le VLAN 20 : entrée sur Gi1/0/24, trame étiquetée 20 puisque le VLAN natif est 1. Seul R1 est derrière ce trunk : ses sous-interfaces partagent l'adresse MAC de l'interface physique, d'où une entrée par VLAN. Une diffusion du VLAN 10 sort par tous les ports du VLAN sauf celui d'arrivée, trunk compris. Enfin, 001b.54c2.0b05 n'est connue que dans le VLAN 20.",
+    "distractorNotes": {
+      "a": "Gi1/0/24 ne mène qu'à R1, dont les sous-interfaces utilisent la même adresse MAC dans chaque VLAN : la table, tenue par VLAN, a logiquement deux entrées.",
+      "d": "La recherche se fait dans le VLAN 10, où 001b.54c2.0b05 est inconnue : la trame serait inondée dans le VLAN 10 et n'atteindrait jamais Gi1/0/5.",
+      "e": "Un port peut porter plusieurs adresses (concentrateur, commutateur en cascade) : chacune est une destination connue, transmise sur Gi1/0/3."
+    },
+    "reference": "IEEE 802.1Q-2018, sections 8.6 et 8.8 ; Catalyst 9300 VLAN Configuration Guide (VLAN trunks)"
+  },
+  {
+    "slug": "ccna-1.13-clear-single-entry-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit, qui montre toutes les entrées dynamiques de SW1. L'administrateur veut supprimer l'entrée de 5c5a.c7e1.3307 sans effacer aucune autre entrée dynamique. Quelles deux commandes, saisies en mode privilégié, conviennent ?",
+      "exhibit": "SW1#show mac address-table dynamic\n          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  10    5c5a.c7e1.3301    DYNAMIC     Gi1/0/1\n  10    5c5a.c7e1.3302    DYNAMIC     Gi1/0/2\n  10    5c5a.c7e1.3307    DYNAMIC     Gi1/0/7\n  10    00a3.d1f2.4c80    DYNAMIC     Gi1/0/24\nTotal Mac Addresses for this criterion: 4",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "clear mac address-table dynamic vlan 10"
+        },
+        {
+          "id": "b",
+          "text": "clear arp-cache"
+        },
+        {
+          "id": "c",
+          "text": "clear mac address-table dynamic address 5c5a.c7e1.3307"
+        },
+        {
+          "id": "d",
+          "text": "clear mac address-table dynamic interface GigabitEthernet1/0/7"
+        },
+        {
+          "id": "e",
+          "text": "no mac address-table static 5c5a.c7e1.3307 vlan 10 interface GigabitEthernet1/0/7"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "« clear mac address-table dynamic » accepte un filtre : address pour une adresse précise, interface pour les entrées apprises sur un port, vlan pour celles d'un VLAN. Ici, 5c5a.c7e1.3307 est la seule adresse apprise sur Gi1/0/7 : le filtre par adresse comme le filtre par interface n'effacent qu'elle. Le filtre vlan 10 effacerait les quatre entrées de l'exhibit. L'adresse sera réapprise à la prochaine trame émise par l'hôte : vider une entrée permet par exemple de vérifier qu'un hôte émet encore, et sur quel port il est réappris.",
+    "distractorNotes": {
+      "a": "Le filtre vlan 10 efface toutes les entrées dynamiques du VLAN 10, soit les quatre entrées de l'exhibit.",
+      "b": "« clear arp-cache » vide la table ARP (correspondances IP-MAC) ; il ne touche pas à la table d'adresses MAC.",
+      "e": "L'entrée est dynamique, pas statique ; et « no mac address-table static » se saisit en configuration globale, pas en mode privilégié."
+    },
+    "reference": "Cisco IOS XE Command Reference (Catalyst 9300) : clear mac address-table"
+  },
+  {
+    "slug": "ccna-1.13-switch-vs-hub-behaviour-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent un commutateur de couche 2, par opposition à un concentrateur (hub) ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Il régénère le signal reçu sur un port et le répète bit à bit sur tous les autres ports"
+        },
+        {
+          "id": "b",
+          "text": "Il transmet une trame unicast de destination connue sur le seul port associé à cette adresse"
+        },
+        {
+          "id": "c",
+          "text": "Il consulte l'adresse IP de destination pour choisir le port de sortie"
+        },
+        {
+          "id": "d",
+          "text": "Il impose le half duplex à tous ses ports, comme l'exige le CSMA/CD"
+        },
+        {
+          "id": "e",
+          "text": "Il apprend les adresses MAC source des trames reçues pour construire sa table"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Un commutateur est un pont multiport : il apprend l'adresse MAC source de chaque trame reçue, avec son port d'arrivée, et s'en sert pour transmettre une unicast connue sur le seul port de la destination. Le reste du trafic (diffusion, destination inconnue) est inondé dans le VLAN. Chaque port étant un domaine de collision, le full duplex devient possible. Le concentrateur, équipement de couche 1, se contente de répéter chaque bit sur tous ses ports : il ne lit aucune adresse et impose le half duplex à ses hôtes.",
+    "distractorNotes": {
+      "a": "Répéter le signal bit à bit sur tous les ports est le fonctionnement du concentrateur, répéteur de couche 1.",
+      "c": "Un commutateur de couche 2 décide d'après l'adresse MAC de destination ; l'adresse IP est l'affaire d'un routeur ou d'un commutateur de couche 3.",
+      "d": "Un commutateur fonctionne en full duplex sur ses liens point à point ; c'est le concentrateur qui impose le half duplex."
+    },
+    "reference": "IEEE 802.1Q-2018, clause 8 (fonctionnement des ponts) ; IEEE 802.3-2022, clause 9 (répéteurs)"
+  },
+  {
+    "slug": "ccna-1.13-hub-vlan-router-reach-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. R1 route entre ses deux interfaces, et les tables d'adresses MAC des commutateurs sont à jour. Quelles trois affirmations sont exactes ?",
+      "exhibit": "R1 Gi0/0 ------------- SW1 Gi1/0/24 (port d'accès, VLAN 10)\nR1 Gi0/1 ------------- SW2 Gi1/0/24 (port d'accès, VLAN 1)\nSW1 Gi1/0/1 (VLAN 10) -- PC1, en full duplex\nSW1 Gi1/0/2 (VLAN 10) -- HUB1 (concentrateur) -- PC2 et PC3\nSW1 Gi1/0/3 (VLAN 20) -- PC4, en full duplex\nSW2 Gi1/0/1 (VLAN 1)  -- PC5, en full duplex",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Une diffusion émise par PC2 parvient à PC1 et à PC3"
+        },
+        {
+          "id": "b",
+          "text": "Une diffusion émise par PC2 parvient à PC4"
+        },
+        {
+          "id": "c",
+          "text": "Une diffusion émise par PC2 parvient à PC5"
+        },
+        {
+          "id": "d",
+          "text": "Les trames de PC2 et de PC3 peuvent entrer en collision"
+        },
+        {
+          "id": "e",
+          "text": "Une trame unicast de PC2 vers PC1 parvient aussi à la carte réseau de PC3"
+        },
+        {
+          "id": "f",
+          "text": "Les trames de PC1 et de PC2 peuvent entrer en collision"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Un concentrateur répète chaque bit sur tous ses ports : PC2, PC3 et le port Gi1/0/2 de SW1 partagent un domaine de collision, en half duplex. Deux trames émises en même temps par PC2 et PC3 entrent en collision, et toute trame de PC2, même unicast vers PC1, parvient aussi à la carte de PC3, qui l'ignore. PC1, seul sur un port full duplex, est dans un autre domaine de collision. Une diffusion de PC2 atteint tout le VLAN 10 : PC3 par le concentrateur, puis PC1 et l'interface Gi0/0 de R1, par l'inondation de SW1. Elle ne passe ni dans le VLAN 20 (PC4), ni au-delà de R1 (PC5), qui ne relaie pas les diffusions.",
+    "distractorNotes": {
+      "b": "PC4 est dans le VLAN 20 : SW1 n'inonde la diffusion que dans le VLAN 10.",
+      "c": "R1 ne relaie pas les diffusions d'une interface à l'autre : PC5 est dans un autre domaine de diffusion.",
+      "f": "PC1 est seul sur un port de commutateur en full duplex : ses trames ne peuvent pas entrer en collision avec celles du segment du concentrateur."
+    },
+    "reference": "IEEE 802.3-2022, section 1.4 (définitions) et clause 9 (répéteurs) ; IEEE 802.1Q-2018"
+  },
+  {
+    "slug": "ccna-1.13-domain-count-vlan-router-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. SW1 n'a pas d'autre port utilisé, et R1 route entre ses interfaces et sous-interfaces. Combien ce réseau compte-t-il de domaines de collision et de domaines de diffusion ?",
+      "exhibit": "R1 Gi0/0 --- trunk 802.1Q --- SW1 Gi1/0/24\n    (R1 : sous-interfaces Gi0/0.10 pour le VLAN 10, Gi0/0.20 pour le VLAN 20)\nR1 Gi0/1 --- HUB1 (concentrateur) --- PC5 et PC6\nSW1 Gi1/0/1 (port d'accès, VLAN 10) --- PC1\nSW1 Gi1/0/2 (port d'accès, VLAN 10) --- PC2\nSW1 Gi1/0/3 (port d'accès, VLAN 20) --- HUB2 (concentrateur) --- PC3 et PC4",
+      "fields": [
+        {
+          "id": "collision",
+          "label": "Nombre de domaines de collision (nombre entier)"
+        },
+        {
+          "id": "broadcast",
+          "label": "Nombre de domaines de diffusion (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "collision": {
+          "accepted": [
+            "5"
+          ],
+          "normalize": "int"
+        },
+        "broadcast": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Domaines de collision : chaque port utilisé de SW1 en forme un, soit Gi1/0/24 (le trunk vers R1), Gi1/0/1, Gi1/0/2 et Gi1/0/3, ce dernier englobant HUB2, PC3 et PC4 ; s'y ajoute le segment de Gi0/1 de R1, où HUB1, PC5 et PC6 partagent un seul domaine. Total : 5. Domaines de diffusion : le VLAN 10 (PC1, PC2, Gi0/0.10), le VLAN 20 (PC3, PC4, Gi0/0.20) et le segment de Gi0/1, soit 3. Le trunk est un seul domaine de collision mais transporte deux domaines de diffusion. Les concentrateurs ne séparent rien ; SW1 sépare les collisions ; les VLAN et R1 séparent les diffusions.",
+    "reference": "IEEE 802.3-2022, section 1.4 (définitions) et clause 9 (répéteurs) ; IEEE 802.1Q-2018"
+  },
+  {
+    "slug": "ccna-1.13-flooding-port-count-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Tous les ports listés sont connectés, up et en état forwarding pour STP. Pour chacune des deux trames suivantes, indiquez sur combien de ports SW1 la retransmet.",
+      "exhibit": "SW1#show vlan brief\n\nVLAN Name                             Status    Ports\n---- -------------------------------- --------- -------------------------------\n1    default                          active    Gi1/0/9, Gi1/0/10\n10   VENTES                           active    Gi1/0/1, Gi1/0/2, Gi1/0/3\n                                                Gi1/0/4\n20   COMPTA                           active    Gi1/0/5, Gi1/0/6, Gi1/0/7\n                                                Gi1/0/8\n1002 fddi-default                     act/unsup\n1003 token-ring-default               act/unsup\n1004 fddinet-default                  act/unsup\n1005 trnet-default                    act/unsup\nSW1#show interfaces trunk\n\nPort        Mode             Encapsulation  Status        Native vlan\nGi1/0/23    on               802.1q         trunking      1\nGi1/0/24    on               802.1q         trunking      1\n\nPort        Vlans allowed on trunk\nGi1/0/23    20,30\nGi1/0/24    1-4094\n\nPort        Vlans allowed and active in management domain\nGi1/0/23    20\nGi1/0/24    1,10,20\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi1/0/23    20\nGi1/0/24    1,10,20",
+      "fields": [
+        {
+          "id": "unknown",
+          "label": "Trame unicast reçue sur Gi1/0/1, dont la destination est absente de la table d'adresses MAC : nombre de ports (nombre entier)"
+        },
+        {
+          "id": "bcast",
+          "label": "Trame de diffusion reçue sur Gi1/0/6 : nombre de ports (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "unknown": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        },
+        "bcast": {
+          "accepted": [
+            "5"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Une unicast inconnue et une diffusion sont inondées sur tous les ports du VLAN d'arrivée sauf celui d'arrivée, trunks transportant ce VLAN compris. Gi1/0/1 est dans le VLAN 10 : la trame sort par Gi1/0/2, Gi1/0/3 et Gi1/0/4, plus le trunk Gi1/0/24 (VLAN 1 à 4094 autorisés), soit 4 ports ; Gi1/0/23 n'autorise que les VLAN 20 et 30. Gi1/0/6 est dans le VLAN 20 : la diffusion sort par Gi1/0/5, Gi1/0/7 et Gi1/0/8, plus les deux trunks, qui transportent tous deux le VLAN 20, soit 5 ports. Les ports du VLAN 1 (Gi1/0/9 et Gi1/0/10) ne sont concernés par aucune des deux trames.",
+    "reference": "IEEE 802.1Q-2018, section 8.6 (Forwarding Process) ; Catalyst 9300 VLAN Configuration Guide (VLAN trunks)"
+  },
+  {
+    "slug": "ccna-1.13-aging-time-global-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, en partant du mode de configuration globale, faites expirer les entrées dynamiques de la table d'adresses MAC au bout de 600 secondes sans aucune trame reçue de l'adresse concernée, pour l'ensemble des VLAN.",
+      "prompt": "SW1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "mac address-table aging-time 600"
+        ]
+      ]
+    },
+    "explanation": "« mac address-table aging-time 600 » se saisit en configuration globale et vaut pour l'ensemble des VLAN. La plage va de 10 à 1 000 000 secondes, la valeur 0 désactivant le vieillissement ; le défaut est de 300 secondes, rétabli par « no mac address-table aging-time ». Le mot-clé vlan permet de ne régler qu'un VLAN. Allonger le délai limite l'inondation d'unicast inconnues vers des hôtes peu bavards ; le raccourcir purge plus vite les adresses qui ne servent plus. Vérification : « show mac address-table aging-time ».",
+    "reference": "Cisco IOS XE Command Reference (Catalyst 9300) : mac address-table aging-time"
+  },
+  {
+    "slug": "ccna-1.13-show-dynamic-interface-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Un utilisateur signale que son poste, raccordé au port GigabitEthernet1/0/12 de SW1, ne communique plus. Depuis le mode privilégié, affichez uniquement les adresses MAC apprises dynamiquement sur ce port.",
+      "prompt": "SW1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show mac address-table dynamic interface GigabitEthernet1/0/12"
+        ]
+      ]
+    },
+    "explanation": "« show mac address-table dynamic » limite l'affichage aux entrées apprises, et le filtre « interface GigabitEthernet1/0/12 » à celles de ce port. Si l'adresse du poste apparaît, SW1 reçoit bien ses trames : le problème est ailleurs (adressage IP, passerelle), et la colonne Vlan permet de vérifier au passage que le port est dans le bon VLAN. Si la liste est vide, le poste n'émet rien ou ses trames n'arrivent pas : câble, carte réseau, état du port. Les autres filtres de la commande sont address <mac> et vlan <id>.",
+    "reference": "Cisco IOS XE Command Reference (Catalyst 9300) : show mac address-table ; Catalyst 9300 System Management Configuration Guide (MAC address table)"
+  },
+  {
+    "slug": "ccna-1.13-static-entry-vlan-aging-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Reportez-vous à l'exhibit. Le serveur SRV1 a l'adresse MAC 0050.56a1.0b2c. En partant du mode de configuration globale de SW1, rendez permanente l'association de cette adresse au port et au VLAN où SW1 l'a apprise, puis fixez à 1200 secondes le délai de vieillissement des entrées dynamiques de ce VLAN, sans modifier celui des autres VLAN. Une commande par ligne.",
+      "exhibit": "SW1#show mac address-table dynamic\n          Mac Address Table\n-------------------------------------------\n\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  10    0050.56a1.0b12    DYNAMIC     Gi1/0/4\n  10    3c08.f6d2.9a10    DYNAMIC     Gi1/0/24\n  20    0050.56a1.0b21    DYNAMIC     Gi1/0/9\n  30    0050.56a1.0b2c    DYNAMIC     Gi1/0/14\n  30    3c08.f6d2.9a10    DYNAMIC     Gi1/0/24\nTotal Mac Addresses for this criterion: 5",
+      "prompt": "SW1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "mac address-table static 0050.56a1.0b2c vlan 30 interface GigabitEthernet1/0/14"
+        ],
+        [
+          "mac address-table aging-time 1200 vlan 30"
+        ]
+      ]
+    },
+    "explanation": "L'exhibit montre 0050.56a1.0b2c apprise dans le VLAN 30 sur Gi1/0/14 (attention aux adresses voisines 0050.56a1.0b12 et 0050.56a1.0b21, dans d'autres VLAN). « mac address-table static 0050.56a1.0b2c vlan 30 interface GigabitEthernet1/0/14 » remplace l'entrée dynamique par une entrée statique : elle ne vieillit plus, résiste à « clear mac address-table dynamic » et figure dans la running-config. « mac address-table aging-time 1200 vlan 30 » ne change le délai que pour le VLAN 30 ; les autres gardent la valeur globale, 300 secondes par défaut. Les deux commandes sont indépendantes : leur ordre est libre.",
+    "reference": "Cisco IOS XE Command Reference (Catalyst 9300) : mac address-table static, mac address-table aging-time"
+  },
+  {
+    "slug": "ccna-1.13-arp-ping-learning-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "PC1 (Gi1/0/1) et PC2 (Gi1/0/2) sont dans le VLAN 10 de SW1, avec d'autres hôtes. La table d'adresses MAC de SW1 et les caches ARP des deux PC sont vides. PC1 envoie un seul ICMP Echo Request à PC2, puis les deux PC cessent d'émettre. Ordonnez les événements, du premier au dernier.",
+      "items": [
+        {
+          "id": "echo",
+          "text": "PC1 envoie l'Echo Request ; SW1 la transmet sur Gi1/0/2 seulement"
+        },
+        {
+          "id": "aging",
+          "text": "Au bout de 300 secondes environ, SW1 retire les entrées de PC1 et de PC2"
+        },
+        {
+          "id": "arprep",
+          "text": "PC2 envoie une réponse ARP unicast ; SW1 apprend l'adresse de PC2 sur Gi1/0/2 et transmet la trame sur Gi1/0/1 seulement"
+        },
+        {
+          "id": "reply",
+          "text": "PC2 envoie l'Echo Reply ; SW1 la transmet sur Gi1/0/1 seulement"
+        },
+        {
+          "id": "arpreq",
+          "text": "PC1 diffuse une requête ARP ; SW1 apprend l'adresse de PC1 sur Gi1/0/1 et inonde la trame dans le VLAN 10"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "arpreq",
+        "arprep",
+        "echo",
+        "reply",
+        "aging"
+      ]
+    },
+    "explanation": "PC1 ne connaît pas l'adresse MAC de PC2 : il diffuse une requête ARP, que SW1 inonde dans le VLAN 10 après avoir appris l'adresse source de PC1 sur Gi1/0/1. PC2 répond en unicast : SW1 apprend l'adresse de PC2 sur Gi1/0/2 et, connaissant déjà PC1, transmet la réponse sur Gi1/0/1 seulement. L'Echo Request et l'Echo Reply sont ensuite des unicast connues, transmises chacune sur un seul port ; PC2 connaît l'adresse de PC1 grâce à la requête ARP reçue. Enfin, faute de nouvelle trame, les deux entrées expirent après le délai par défaut de 300 secondes.",
+    "reference": "RFC 826 (ARP) ; IEEE 802.1Q-2018, sections 8.6 à 8.8"
+  },
+  {
+    "slug": "ccna-1.13-switching-method-timing-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une trame de 1 518 octets arrive sur un port de commutateur. Ordonnez ces instants de sa réception, du premier au dernier.",
+      "items": [
+        {
+          "id": "b64",
+          "text": "Réception du 64e octet de la trame : un commutateur fragment-free peut commencer à retransmettre"
+        },
+        {
+          "id": "src",
+          "text": "Réception complète de l'adresse MAC source"
+        },
+        {
+          "id": "fcs",
+          "text": "Réception et vérification du FCS : un commutateur store-and-forward peut commencer à retransmettre"
+        },
+        {
+          "id": "sfd",
+          "text": "Fin du préambule et du délimiteur de début de trame (SFD)"
+        },
+        {
+          "id": "dst",
+          "text": "Réception complète de l'adresse MAC de destination : un commutateur cut-through peut commencer à retransmettre"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "sfd",
+        "dst",
+        "src",
+        "b64",
+        "fcs"
+      ]
+    },
+    "explanation": "La trame est précédée du préambule et du SFD, puis commence par l'adresse MAC de destination (octets 1 à 6), que le commutateur lit en premier : un commutateur cut-through peut retransmettre dès ce moment. Vient l'adresse source (octets 7 à 12). Au 64e octet, taille minimale d'une trame, toute collision normale aurait déjà été détectée : c'est le seuil du fragment-free. Le FCS occupe les 4 derniers octets (1 515 à 1 518) : un commutateur store-and-forward attend de l'avoir reçu et vérifié avant de retransmettre, d'où une latence qui croît avec la longueur de la trame.",
+    "reference": "IEEE 802.3-2022, clause 3 (format de la trame) ; Cisco, livre blanc « Cut-Through and Store-and-Forward Ethernet Switching for Low-Latency Environments »"
+  },
+  {
+    "slug": "ccna-1.13-locate-host-procedure-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "L'administrateur cherche le port d'accès du poste 10.1.10.57. Connecté à SW1, qui a une SVI dans le VLAN 10 (10.1.10.2/24), il sait seulement que le poste n'est pas raccordé directement à SW1. Ordonnez ses actions, de la première à la dernière.",
+      "items": [
+        {
+          "id": "mac1",
+          "text": "Sur SW1, « show mac address-table address <MAC du poste> » : l'adresse est apprise sur Gi1/0/24"
+        },
+        {
+          "id": "cdp",
+          "text": "Sur SW1, « show cdp neighbors GigabitEthernet1/0/24 detail » : identifier le voisin SW2 et son adresse IP"
+        },
+        {
+          "id": "ping",
+          "text": "Sur SW1, « ping 10.1.10.57 » : provoquer une résolution ARP et une réponse du poste"
+        },
+        {
+          "id": "mac2",
+          "text": "Sur SW2, « show mac address-table address <MAC du poste> » : relever le port d'accès"
+        },
+        {
+          "id": "arp",
+          "text": "Sur SW1, « show ip arp 10.1.10.57 » : relever l'adresse MAC du poste"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "ping",
+        "arp",
+        "mac1",
+        "cdp",
+        "mac2"
+      ]
+    },
+    "explanation": "La table d'adresses MAC se consulte par adresse MAC : il faut d'abord obtenir celle du poste. Le ping depuis la SVI oblige SW1 à résoudre 10.1.10.57 par ARP et fait émettre le poste, ce qui rafraîchit les tables MAC sur le chemin ; « show ip arp » donne alors l'adresse MAC. « show mac address-table address » indique sur quel port SW1 l'a apprise : Gi1/0/24, un lien vers un autre commutateur. CDP identifie ce voisin et donne son adresse de gestion ; on se connecte à SW2 et on répète la recherche, jusqu'à tomber sur un port d'accès.",
+    "reference": "Catalyst 9300 System Management Configuration Guide (MAC address table) ; Cisco IOS XE Command Reference (show ip arp, show cdp neighbors)"
+  },
+  {
+    "slug": "ccna-1.13-frame-handling-matching-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "IGMP snooping est désactivé sur SW1. Chacune des trames suivantes arrive sur Gi1/0/1, un port d'accès du VLAN 10. Associez chaque trame au traitement que SW1 lui applique.",
+      "left": [
+        {
+          "id": "known",
+          "text": "Unicast vers une adresse apprise sur Gi1/0/5, dans le VLAN 10"
+        },
+        {
+          "id": "same",
+          "text": "Unicast vers une adresse apprise sur Gi1/0/1, dans le VLAN 10"
+        },
+        {
+          "id": "unknown",
+          "text": "Unicast vers une adresse absente de la table du VLAN 10"
+        },
+        {
+          "id": "bcast",
+          "text": "Trame à destination de ffff.ffff.ffff"
+        },
+        {
+          "id": "mcast",
+          "text": "Trame à destination de 0100.5e0a.0a0a (multicast IPv4)"
+        }
+      ],
+      "right": [
+        {
+          "id": "one",
+          "text": "Transmise sur le seul port où la destination a été apprise"
+        },
+        {
+          "id": "drop",
+          "text": "Supprimée sans être retransmise (filtrage)"
+        },
+        {
+          "id": "flood",
+          "text": "Inondée sur tous les ports du VLAN 10, sauf Gi1/0/1"
+        },
+        {
+          "id": "all",
+          "text": "Inondée sur tous les ports du commutateur, tous VLAN confondus, sauf Gi1/0/1"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "known": "one",
+        "same": "drop",
+        "unknown": "flood",
+        "bcast": "flood",
+        "mcast": "flood"
+      }
+    },
+    "explanation": "SW1 cherche la destination dans la table du VLAN 10. Connue sur un autre port : transmission sur ce seul port. Connue sur le port d'arrivée : la destination a déjà reçu la trame sur ce segment, et SW1 la filtre, car un commutateur ne renvoie jamais une trame sur son port d'arrivée. Inconnue : inondation dans le VLAN. Une diffusion est toujours inondée ; un multicast aussi, tant qu'IGMP snooping (actif par défaut sur les Catalyst) ne limite pas sa diffusion aux ports des abonnés. Dans tous les cas, l'inondation ne sort jamais du VLAN d'arrivée.",
+    "distractorNotes": {
+      "all": "L'inondation est confinée au VLAN d'arrivée : une trame du VLAN 10 ne sort jamais par un port d'accès d'un autre VLAN."
+    },
+    "reference": "IEEE 802.1Q-2018, section 8.6 (Forwarding Process) ; Catalyst 9300 IP Multicast Routing Configuration Guide (IGMP snooping)"
+  },
+  {
+    "slug": "ccna-1.13-switching-methods-matching-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque caractéristique à la méthode de commutation qu'elle décrit.",
+      "left": [
+        {
+          "id": "fcs",
+          "text": "Supprime toute trame dont le FCS est incorrect"
+        },
+        {
+          "id": "latency",
+          "text": "Latence qui augmente avec la longueur de la trame"
+        },
+        {
+          "id": "runts",
+          "text": "Latence minimale, mais retransmet aussi les fragments de collision"
+        },
+        {
+          "id": "longbad",
+          "text": "Élimine les fragments de collision, mais retransmet une longue trame dont le FCS est incorrect"
+        }
+      ],
+      "right": [
+        {
+          "id": "sf",
+          "text": "Store-and-forward"
+        },
+        {
+          "id": "ct",
+          "text": "Cut-through (fast-forward)"
+        },
+        {
+          "id": "ff",
+          "text": "Fragment-free"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "fcs": "sf",
+        "latency": "sf",
+        "runts": "ct",
+        "longbad": "ff"
+      }
+    },
+    "explanation": "Le store-and-forward reçoit la trame entière et vérifie son FCS avant de la retransmettre : il ne propage aucune trame corrompue, mais sa latence croît avec la longueur de la trame. Le cut-through (fast-forward) retransmet dès la lecture de l'adresse de destination : latence la plus faible et constante, mais il propage fragments de collision et trames corrompues. Le fragment-free attend 64 octets : il élimine les fragments de collision, toujours plus courts, mais ne vérifie pas le FCS, si bien qu'une longue trame corrompue au-delà du 64e octet passe.",
+    "reference": "Cisco, livre blanc « Cut-Through and Store-and-Forward Ethernet Switching for Low-Latency Environments »"
+  },
+  {
+    "slug": "ccna-1.13-mac-table-commands-matching-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.13",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque commande d'un commutateur Catalyst à son rôle.",
+      "left": [
+        {
+          "id": "addr",
+          "text": "show mac address-table address 0050.7966.6801"
+        },
+        {
+          "id": "count",
+          "text": "show mac address-table count"
+        },
+        {
+          "id": "aging",
+          "text": "show mac address-table aging-time"
+        },
+        {
+          "id": "clear",
+          "text": "clear mac address-table dynamic"
+        },
+        {
+          "id": "static",
+          "text": "mac address-table static 0050.7966.6801 vlan 10 interface Gi1/0/1"
+        }
+      ],
+      "right": [
+        {
+          "id": "where",
+          "text": "Indiquer le VLAN et le port où une adresse donnée a été apprise"
+        },
+        {
+          "id": "howmany",
+          "text": "Compter les adresses de la table, VLAN par VLAN"
+        },
+        {
+          "id": "delay",
+          "text": "Afficher le délai d'expiration des entrées dynamiques"
+        },
+        {
+          "id": "flush",
+          "text": "Vider la table des adresses apprises automatiquement"
+        },
+        {
+          "id": "pin",
+          "text": "Fixer une adresse sur un port, sans expiration"
+        },
+        {
+          "id": "arp",
+          "text": "Afficher les correspondances entre adresses IP et adresses MAC"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "addr": "where",
+        "count": "howmany",
+        "aging": "delay",
+        "clear": "flush",
+        "static": "pin"
+      }
+    },
+    "explanation": "« show mac address-table address » cherche une adresse précise et renvoie son VLAN, son type et son port. « show mac address-table count » donne, VLAN par VLAN, le nombre d'entrées dynamiques et statiques. « show mac address-table aging-time » affiche le délai de vieillissement en vigueur. « clear mac address-table dynamic », en mode privilégié, efface les entrées apprises, que le commutateur réapprend au fil des trames. « mac address-table static », en configuration globale, crée une entrée permanente qui ne vieillit pas et survit à cet effacement.",
+    "distractorNotes": {
+      "arp": "C'est le rôle de « show ip arp » : la table ARP associe adresses IP et MAC, alors que la table d'adresses MAC associe adresses MAC et ports."
+    },
+    "reference": "Cisco IOS XE Command Reference (Catalyst 9300) : commandes mac address-table"
+  }
+]

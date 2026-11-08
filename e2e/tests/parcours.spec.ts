@@ -1,7 +1,18 @@
 import { expect, test, type Browser, type BrowserContext, type Locator, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import pg from 'pg';
-import { anotherChallenge, bankOf, certificationOf, labOf, maxDrawableForTypes, questionByStem, shortExamPlan, troubleshootChallenge } from '../support/content';
+import {
+  anotherChallenge,
+  bankOf,
+  certificationOf,
+  labOf,
+  maxDrawableForTypes,
+  questionBySlug,
+  questionByStem,
+  seriesOf,
+  shortExamPlan,
+  troubleshootChallenge,
+} from '../support/content';
 
 /*
  * Parcours complet d'un candidat, dans l'ordre : chaque test s'appuie sur l'état laissé par
@@ -387,6 +398,62 @@ test('examen blanc complet : toutes les questions et le chrono officiel, soumis 
   };
   expect(result).toMatchObject({ status: 'submitted', totalCount: examFormat.questionCount });
   expect(result.review.filter((r) => r.response === null)).toHaveLength(unanswered);
+});
+
+test('examen n° 42 de la série : choisi au clavier, passé, puis retrouvé dans la progression', async () => {
+  const series = seriesOf(cert.code);
+  const total = series.exams.length;
+  const exam42 = series.exams[41]!;
+  await page.goto('/examen/nouveau?mode=exam');
+  const panel = page.getByRole('region', { name: `Série de ${total} examens blancs` });
+  await expect(panel).toBeVisible();
+  await expect(panel).toContainText(`0 / ${total} passé`);
+  await expect(panel.getByRole('button', { name: "Passer l'examen n° 1, jamais passé" })).toBeVisible();
+
+  // La grille est un groupe de boutons radio : on y entre au clavier, les flèches changent d'examen.
+  const n41 = panel.getByRole('radio', { name: 'Examen n° 41, jamais passé' });
+  await n41.focus();
+  await page.keyboard.press('Space');
+  await expect(n41).toBeChecked();
+  await page.keyboard.press('ArrowRight');
+  await expect(panel.getByRole('radio', { name: 'Examen n° 42, jamais passé' })).toBeChecked();
+  const number = panel.getByLabel('Ou choisir un numéro');
+  await expect(number).toHaveValue('42');
+  await expect(panel).toContainText(`Jamais passé · ${exam42.questions.length} questions.`);
+  // Entrée dans le champ du numéro lance l'examen choisi (pas le tirage du formulaire).
+  await number.focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/tentatives\/[0-9a-f-]{36}$/);
+  const id = page.url().split('/').pop()!;
+
+  const { examFormat } = certificationOf(cert.code);
+  await expect(page.getByText(`Question 1 / ${exam42.questions.length}`)).toBeVisible();
+  // Première question : celle du fichier de la série, dans l'ordre.
+  expect(await stemText()).toContain(questionBySlug(cert.code, exam42.questions[0]!).body.stem.trim().slice(0, 40));
+  const shown = clockSeconds((await page.getByRole('timer').textContent()) ?? '');
+  expect(shown).toBeGreaterThan(examFormat.durationMinutes * 60 - 60);
+  await page.getByRole('button', { name: "Terminer l'examen" }).click();
+  await page.getByRole('dialog', { name: "Terminer l'examen ?" }).getByRole('button', { name: 'Terminer et voir le résultat' }).click();
+  await expect(page).toHaveURL(new RegExp(`/tentatives/${id}/resultat$`));
+  await expect(page.getByText('Score final')).toBeVisible();
+  const { scaledScore } = (await (await page.request.get(`/api/v1/attempts/${id}/result`)).json()) as { scaledScore: number };
+
+  // Dans la progression : 1 / 100 passé, l'examen 42 avec son meilleur score, le prochain jamais passé reste le n° 1.
+  await page.goto('/examen/nouveau?mode=exam');
+  await expect(panel).toContainText(`1 / ${total} passé`);
+  await expect(panel.getByRole('radio', { name: `Examen n° 42, passé, meilleur score ${scaledScore}` })).toBeAttached();
+  await expect(panel.getByRole('button', { name: "Passer l'examen n° 1, jamais passé" })).toBeVisible();
+
+  await page.goto('/');
+  const card = page.getByRole('region', { name: "Série d'examens blancs" });
+  await expect(card).toContainText(`1 / ${total} passé`);
+  await expect(card.getByRole('img', { name: /Meilleur score de 1 examen passé/ })).toBeVisible();
+  await card.getByText('Meilleur score par examen (1)').click();
+  const row = card.getByRole('row', { name: /n° 42/ });
+  await expect(row).toContainText(String(scaledScore));
+  // Le lien de la ligne rouvre l'écran de lancement sur l'examen 42.
+  await row.getByRole('link', { name: 'Examen n° 42' }).click();
+  await expect(page.getByLabel('Ou choisir un numéro')).toHaveValue('42');
 });
 
 test('lab CLI au clavier : abréviations, erreur IOS, aide, indice, Ctrl+Z, fin avec la solution', async () => {

@@ -1,0 +1,967 @@
+[
+  {
+    "slug": "ccna-6.2-group-policy-user-move-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise exploite deux campus. Sur le campus A, traditionnel, l'accès des comptables au serveur de paie est filtré par des ACL étendues écrites pour le sous-réseau de chaque étage et configurées sur les commutateurs de distribution. Le campus B est une fabric SD-Access gérée par Catalyst Center : Cisco ISE attribue à chaque utilisateur, lors de son authentification 802.1X, un SGT de groupe, et une politique autorise le groupe « Compta » vers le groupe « Paie ». Sur chaque campus, un comptable change de bâtiment et reçoit une adresse d'un autre sous-réseau. Que faut-il modifier pour qu'il garde son accès au serveur de paie ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "A : les ACL, pour le nouveau sous-réseau ; B : la règle de groupe, pour le nouveau sous-réseau."
+        },
+        {
+          "id": "b",
+          "text": "A : rien, l'ACL suit l'utilisateur ; B : la règle de groupe, pour le nouveau sous-réseau."
+        },
+        {
+          "id": "c",
+          "text": "A : les ACL, pour le nouveau sous-réseau ; B : rien, la politique suit le groupe de l'utilisateur."
+        },
+        {
+          "id": "d",
+          "text": "A : rien, l'ACL suit l'utilisateur ; B : rien, la politique suit le groupe de l'utilisateur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sur un campus traditionnel, la politique est liée à la topologie : une ACL étendue filtre des adresses IP, donc des sous-réseaux. Quand l'utilisateur change de sous-réseau, il faut modifier les ACL, souvent sur plusieurs équipements. Dans SD-Access, la politique est liée à l'identité : ISE place l'utilisateur dans son groupe (SGT) à chaque authentification, quel que soit son point de raccordement, et la matrice de politique définie dans Catalyst Center s'applique entre groupes, indépendamment de l'adressage. Le comptable garde le SGT « Compta » et donc son accès, sans aucune modification.",
+    "distractorNotes": {
+      "a": "Sur B, la règle porte sur des groupes (SGT), pas sur des sous-réseaux : le nouvel adressage ne la touche pas.",
+      "b": "Sur A, une ACL étendue filtre des adresses : rien ne la fait suivre l'utilisateur dans un autre sous-réseau. Sur B, la règle de groupe n'a pas à changer.",
+      "d": "Sur A, l'ACL écrite pour l'ancien sous-réseau ne couvre pas la nouvelle adresse : elle doit être modifiée."
+    },
+    "reference": "Cisco Software-Defined Access Solution Design Guide (CVD)"
+  },
+  {
+    "slug": "ccna-6.2-plane-classification-match-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque action d'un routeur ou d'un commutateur multicouche selon le plan auquel elle appartient.",
+      "left": [
+        {
+          "id": "bpdu",
+          "text": "Échanger des BPDU avec les commutateurs voisins"
+        },
+        {
+          "id": "rewrite",
+          "text": "Réécrire les adresses MAC d'un paquet routé avant de le transmettre"
+        },
+        {
+          "id": "netconf",
+          "text": "Accepter une session NETCONF qui modifie la configuration"
+        },
+        {
+          "id": "arp",
+          "text": "Résoudre par ARP l'adresse MAC du prochain saut"
+        },
+        {
+          "id": "acl",
+          "text": "Rejeter un paquet en transit refusé par une ACL d'entrée"
+        }
+      ],
+      "right": [
+        {
+          "id": "ctrl",
+          "text": "Plan de contrôle"
+        },
+        {
+          "id": "data",
+          "text": "Plan de données"
+        },
+        {
+          "id": "mgmt",
+          "text": "Plan de gestion"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "bpdu": "ctrl",
+        "rewrite": "data",
+        "netconf": "mgmt",
+        "arp": "ctrl",
+        "acl": "data"
+      }
+    },
+    "explanation": "Le plan de données traite le trafic en transit : choix de l'interface de sortie, réécriture de l'en-tête Ethernet d'un paquet routé, filtrage par ACL, NAT, ajout ou retrait d'une étiquette 802.1Q. Le plan de contrôle produit les informations dont le plan de données a besoin, en échangeant avec les voisins : protocoles de routage, STP (BPDU), ARP et NDP. Le plan de gestion regroupe ce qui sert à administrer l'équipement : sessions SSH, NETCONF ou RESTCONF, SNMP, syslog. Dans une architecture SDN, c'est surtout le plan de contrôle qui peut être centralisé.",
+    "distractorNotes": {},
+    "reference": "RFC 7426 (SDN : couches et terminologie des plans) ; Cisco, CCNA 200-301 Official Cert Guide, Volume 2 : Introduction to Controller-Based Networking"
+  },
+  {
+    "slug": "ccna-6.2-controller-redundancy-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise abandonne la gestion équipement par équipement pour une architecture SDN : un contrôleur calcule le plan de contrôle et programme tous les commutateurs du site. Quel risque nouveau cette centralisation introduit-elle, et quelle mesure de conception y répond ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Perte de la vue d'ensemble du réseau : reconfigurer chaque commutateur en CLI."
+        },
+        {
+          "id": "b",
+          "text": "Incohérence des politiques entre commutateurs : définir chaque politique sur chacun d'eux."
+        },
+        {
+          "id": "c",
+          "text": "Hausse de la latence de chaque trame relayée par le contrôleur : accélérer son lien."
+        },
+        {
+          "id": "d",
+          "text": "Point unique de défaillance et cible d'attaque : déployer le contrôleur en cluster et le protéger."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "En regroupant le plan de contrôle et la gestion de tout le site, le contrôleur devient un élément critique : sa panne empêche les modifications (et, selon l'architecture, l'installation de nouveaux flux), et sa compromission donnerait la main sur tout le réseau. On le déploie donc en cluster redondant (Cisco Catalyst Center, par exemple, se déploie en cluster de trois nœuds pour la haute disponibilité), on le joint par des chemins redondants et on restreint strictement l'accès à ses interfaces d'administration et à ses API.",
+    "distractorNotes": {
+      "a": "La centralisation apporte au contraire une vue d'ensemble de la topologie en un point unique.",
+      "b": "Une politique définie une fois dans le contrôleur et déployée partout améliore la cohérence : c'est un avantage, pas un risque.",
+      "c": "Le contrôleur ne relaie pas le trafic des utilisateurs : les commutateurs gardent le plan de données et transfèrent les trames eux-mêmes."
+    },
+    "reference": "RFC 7426 (SDN : couches et terminologie) ; Cisco Catalyst Center High Availability Guide"
+  },
+  {
+    "slug": "ccna-6.2-pnp-onboarding-order-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un commutateur Catalyst neuf, sans configuration, est raccordé à un réseau géré par Cisco Catalyst Center, qui le provisionne par Plug and Play (PnP). Placez les étapes dans l'ordre.",
+      "items": [
+        {
+          "id": "claim",
+          "text": "L'administrateur l'affecte à un site (claim) ; Catalyst Center lui pousse image et configuration."
+        },
+        {
+          "id": "dhcp",
+          "text": "Il obtient une adresse IP par DHCP."
+        },
+        {
+          "id": "boot",
+          "text": "Il démarre sans configuration de démarrage et lance son agent PnP."
+        },
+        {
+          "id": "contact",
+          "text": "Il contacte Catalyst Center et apparaît dans la liste des équipements non réclamés (Unclaimed)."
+        },
+        {
+          "id": "disc",
+          "text": "Il découvre l'adresse de Catalyst Center, grâce à l'option 43 reçue par DHCP ou au nom DNS pnpserver."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "boot",
+        "dhcp",
+        "disc",
+        "contact",
+        "claim"
+      ]
+    },
+    "explanation": "Dans un réseau traditionnel, chaque nouvel équipement est préconfiguré à la console. Avec PnP, l'agent intégré à IOS XE démarre quand il n'existe pas de configuration de démarrage. L'équipement obtient une adresse par DHCP, puis découvre le serveur PnP : option DHCP 43, résolution DNS de pnpserver.<domaine>, ou redirection par le service cloud Cisco PnP Connect. Il se présente alors à Catalyst Center, qui le classe comme non réclamé. L'administrateur l'affecte à un site, et Catalyst Center lui applique l'image logicielle de référence et la configuration du site.",
+    "distractorNotes": {},
+    "reference": "Cisco, Solution Guide for Cisco Network Plug and Play ; Cisco Catalyst Center User Guide"
+  },
+  {
+    "slug": "ccna-6.2-openflow-first-packet-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le contrôleur C1 fonctionne en mode réactif. Avant le test, les caches ARP de h1 et de h2 contiennent déjà l'adresse MAC de l'autre hôte. Pourquoi la première réponse est-elle beaucoup plus lente que les suivantes ?",
+      "exhibit": "h1 (10.0.0.1) --- S1 --- h2 (10.0.0.2)\nS1 : commutateur OpenFlow, piloté par le contrôleur C1\nTable de flux de S1 avant le test : une seule entrée,\n  priority=0 (table-miss), actions=CONTROLLER\n\nh1$ ping -c 4 10.0.0.2\nPING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.\n64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=41.7 ms\n64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.388 ms\n64 bytes from 10.0.0.2: icmp_seq=3 ttl=64 time=0.402 ms\n64 bytes from 10.0.0.2: icmp_seq=4 ttl=64 time=0.371 ms",
+      "options": [
+        {
+          "id": "a",
+          "text": "S1 relaie chaque paquet ICMP par C1, qui le remet à l'hôte ; le cache de C1 accélère les suivants."
+        },
+        {
+          "id": "b",
+          "text": "Faute d'entrée correspondante, S1 envoie le paquet à C1, qui installe un flux ; S1 traite seul les suivants."
+        },
+        {
+          "id": "c",
+          "text": "h1 résout d'abord l'adresse MAC de 10.0.0.2 par ARP, ce qui retarde seulement le premier écho."
+        },
+        {
+          "id": "d",
+          "text": "S1 fait d'abord passer ses ports à l'état forwarding de STP, ce qui retarde seulement le premier écho."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le premier paquet ne correspond qu'à l'entrée table-miss : S1 l'envoie à C1 dans un message packet-in. C1 calcule le chemin, installe une entrée de flux dans S1 (flow-mod) et renvoie le paquet (packet-out) ; il en va de même pour la première réponse de h2. Ces allers-retours avec le contrôleur expliquent les 41,7 ms. Les paquets suivants correspondent aux entrées installées et sont transférés directement par S1, en moins d'une milliseconde. C'est un effet propre au plan de contrôle centralisé en mode réactif ; un mode proactif, qui installe les flux à l'avance, l'évite.",
+    "distractorNotes": {
+      "a": "Seul le premier paquet de chaque sens remonte au contrôleur ; les suivants sont transférés par S1 grâce aux entrées installées, sans passer par C1.",
+      "c": "L'énoncé précise que les caches ARP sont déjà remplis : aucune requête ARP ne précède le premier écho.",
+      "d": "Un commutateur OpenFlow n'exécute pas STP par défaut, et des ports déjà actifs ne repassent pas par les états STP à chaque nouveau flux ; une convergence STP durerait d'ailleurs bien plus de 40 ms."
+    },
+    "reference": "ONF, OpenFlow Switch Specification, version 1.3"
+  },
+  {
+    "slug": "ccna-6.3-sda-anycast-gateway-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un campus traditionnel, la passerelle par défaut d'un VLAN est assurée par deux commutateurs de distribution qui exécutent HSRP. Dans une fabric SD-Access, comment la passerelle par défaut des terminaux d'un même pool d'adresses est-elle fournie ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les nœuds border portent la passerelle et élisent par HSRP un routeur actif pour le pool."
+        },
+        {
+          "id": "b",
+          "text": "Chaque nœud edge porte la même adresse IP et la même adresse MAC de passerelle pour le pool."
+        },
+        {
+          "id": "c",
+          "text": "Le nœud de plan de contrôle répond aux requêtes ARP des terminaux et route leur trafic."
+        },
+        {
+          "id": "d",
+          "text": "Chaque nœud edge porte une adresse de passerelle distincte, annoncée aux terminaux par DHCP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "SD-Access utilise une passerelle anycast : la même interface SVI, avec la même adresse IP et la même adresse MAC, est configurée par Catalyst Center sur tous les nœuds edge où le pool est présent. Chaque terminal trouve ainsi sa passerelle sur le commutateur auquel il est raccordé, au premier saut, sans protocole FHRP. Un terminal qui se déplace d'un nœud edge à un autre garde la même passerelle et le même cache ARP. Le nœud edge route ensuite le trafic dans l'overlay, en VXLAN, après avoir interrogé le nœud de plan de contrôle.",
+    "distractorNotes": {
+      "a": "Les nœuds border relient la fabric aux réseaux extérieurs ; ils ne portent pas la passerelle des terminaux, et la fabric n'a pas besoin de FHRP.",
+      "c": "Le nœud de plan de contrôle tient la base LISP des emplacements des terminaux ; il ne sert pas de passerelle et ne route pas leur trafic.",
+      "d": "Les nœuds edge partagent la même adresse de passerelle ; des adresses distinctes obligeraient un terminal qui se déplace à changer de passerelle."
+    },
+    "reference": "Cisco Software-Defined Access Solution Design Guide (CVD)"
+  },
+  {
+    "slug": "ccna-6.3-vxlan-vni-count-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "VXLAN identifie chaque segment de l'overlay par un VNI (VXLAN Network Identifier) codé sur 24 bits, alors que l'identifiant de VLAN 802.1Q n'est codé que sur 12 bits. Combien de valeurs différentes un champ de 24 bits permet-il de coder ?",
+      "fields": [
+        {
+          "id": "count",
+          "label": "Nombre de valeurs (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "count": {
+          "accepted": [
+            "16777216"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Un champ de n bits code 2^n valeurs : 2^24 = 16 777 216 pour le VNI, contre 2^12 = 4 096 pour le VLAN ID (dont 4 094 utilisables, 0 et 4095 étant réservés). C'est l'une des raisons d'être de VXLAN (RFC 7348) : dépasser la limite des VLAN dans les centres de données et les fabrics multi-locataires. Dans SD-Access, les VNI identifient les segments de l'overlay, qu'il s'agisse d'un réseau virtuel (VN) de niveau 3 ou d'un segment de niveau 2.",
+    "distractorNotes": {},
+    "reference": "RFC 7348, section 5"
+  },
+  {
+    "slug": "ccna-6.3-sda-vn-sgt-segmentation-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "selectCount": 2,
+      "stem": "Une fabric SD-Access comprend deux réseaux virtuels (VN), CAMPUS et IOT. Dans CAMPUS, les groupes « Employés » et « Labo » ont chacun leur SGT. Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Deux groupes d'un même VN ne peuvent jamais communiquer, car chaque SGT dispose de sa propre VRF."
+        },
+        {
+          "id": "b",
+          "text": "Chaque VN est une VRF distincte : sans configuration supplémentaire, IOT ne joint pas CAMPUS."
+        },
+        {
+          "id": "c",
+          "text": "La séparation entre VN repose sur des VLAN 802.1Q transportés de bout en bout dans l'underlay."
+        },
+        {
+          "id": "d",
+          "text": "Le SGT du terminal est transporté dans le champ DSCP de l'en-tête IP interne."
+        },
+        {
+          "id": "e",
+          "text": "Dans CAMPUS, la politique de groupes (SGACL) de Catalyst Center autorise ou bloque Employés vers Labo."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "SD-Access segmente à deux niveaux. La macro-segmentation repose sur les VN : chaque VN est une VRF, avec sa propre table de routage, et le trafic d'un VN est identifié dans l'overlay par son VNI. Deux VN sont donc isolés par défaut ; pour les relier, le trafic doit sortir de la fabric par un nœud border vers un équipement de fusion, ou faire l'objet d'une fuite de routes. La micro-segmentation agit à l'intérieur d'un VN : les terminaux reçoivent un SGT, transporté dans l'en-tête VXLAN (champ Group Policy ID de VXLAN-GPO), et la matrice de politique de Catalyst Center, appliquée par des SGACL, autorise ou bloque le trafic entre groupes.",
+    "distractorNotes": {
+      "a": "Les groupes d'un même VN partagent la même VRF ; leurs échanges sont autorisés ou bloqués par la politique de groupes, pas par une séparation de VRF.",
+      "c": "L'underlay est un réseau IP routé ; les VN sont transportés dans des tunnels VXLAN et distingués par leur VNI, pas par des VLAN de bout en bout.",
+      "d": "Le SGT est transporté dans l'en-tête VXLAN-GPO (champ Group Policy ID), pas dans le DSCP, qui sert à la QoS."
+    },
+    "reference": "Cisco Software-Defined Access Solution Design Guide (CVD) ; draft-smith-vxlan-group-policy (VXLAN-GPO)"
+  },
+  {
+    "slug": "ccna-6.3-sda-endpoint-onboarding-order-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un terminal se raccorde pour la première fois à une fabric SD-Access qui authentifie les utilisateurs avec Cisco ISE. Placez dans l'ordre les étapes qui le rendent joignable dans la fabric.",
+      "items": [
+        {
+          "id": "reg",
+          "text": "Le nœud edge enregistre l'adresse IP du terminal (EID) et son propre RLOC auprès du nœud de plan de contrôle."
+        },
+        {
+          "id": "auth",
+          "text": "Le terminal se raccorde à un port du nœud edge et s'authentifie en 802.1X."
+        },
+        {
+          "id": "dhcp",
+          "text": "Le terminal obtient une adresse IP du pool par DHCP."
+        },
+        {
+          "id": "ise",
+          "text": "ISE autorise l'accès et renvoie le VLAN (associé à un pool du VN) et le SGT du terminal."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "auth",
+        "ise",
+        "dhcp",
+        "reg"
+      ]
+    },
+    "explanation": "Le nœud edge relaie l'authentification 802.1X vers ISE. Le résultat d'autorisation d'ISE place le terminal dans un VLAN, associé par Catalyst Center à un pool d'adresses d'un VN, et lui attribue un SGT. Le terminal demande alors une adresse par DHCP dans ce pool. Une fois son adresse apprise, le nœud edge l'enregistre comme EID, associée à son propre RLOC (son adresse de loopback dans l'underlay), auprès du nœud de plan de contrôle par un message LISP Map-Register. Les autres nœuds peuvent ensuite trouver le terminal en interrogeant ce nœud.",
+    "distractorNotes": {},
+    "reference": "Cisco Software-Defined Access Solution Design Guide (CVD) ; RFC 9301 (plan de contrôle LISP)"
+  },
+  {
+    "slug": "ccna-6.5-conditional-get-304-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Une minute plus tôt, un script de supervision a lu cette ressource et conservé la représentation JSON reçue, accompagnée de l'en-tête ETag: \"v42-9f1c\". Que doit-il conclure de cette nouvelle réponse ?",
+      "exhibit": "GET /api/v1/devices/17 HTTP/1.1\nHost: 192.0.2.40\nAuthorization: Bearer eyJhbGciOiJSUzI1NiJ9...\nAccept: application/json\nIf-None-Match: \"v42-9f1c\"\n\nHTTP/1.1 304 Not Modified\nETag: \"v42-9f1c\"",
+      "options": [
+        {
+          "id": "a",
+          "text": "La ressource a été supprimée ; il retire l'équipement de son inventaire."
+        },
+        {
+          "id": "b",
+          "text": "Le jeton a expiré ; il s'authentifie de nouveau, puis relance la requête."
+        },
+        {
+          "id": "c",
+          "text": "La ressource a changé ; il relance la requête sans If-None-Match pour la lire."
+        },
+        {
+          "id": "d",
+          "text": "La ressource n'a pas changé ; il réutilise la représentation qu'il a conservée."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'en-tête If-None-Match rend la requête conditionnelle : le client envoie l'ETag (identifiant de version) de la représentation qu'il possède déjà. Si la version actuelle a toujours cet ETag, le serveur répond 304 Not Modified, sans corps : la copie du client est à jour et il la réutilise. Si la ressource avait changé, le serveur aurait répondu 200 OK avec la nouvelle représentation et un nouvel ETag. Ce mécanisme de validation de cache économise la bande passante et la charge du contrôleur lors d'interrogations répétées.",
+    "distractorNotes": {
+      "a": "Une ressource supprimée donnerait 404 Not Found (ou 410 Gone), pas 304 avec l'ETag de la version connue.",
+      "b": "Un jeton expiré donnerait 401 Unauthorized ; 304 signifie que la requête a été authentifiée et évaluée.",
+      "c": "Si la ressource avait changé, son ETag ne correspondrait plus et le serveur aurait renvoyé 200 OK avec la nouvelle version."
+    },
+    "reference": "RFC 9110, sections 13.1.2 (If-None-Match) et 15.4.5 (304 Not Modified)"
+  },
+  {
+    "slug": "ccna-6.5-retry-idempotent-put-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un script envoie « POST /api/v1/vlans » avec le corps {\"id\": 50, \"name\": \"CAMERAS\"} pour créer un VLAN. La connexion est coupée avant la réception de la réponse : le script ignore si le VLAN a été créé. Le contrôleur accepte aussi « PUT /api/v1/vlans/50 » avec le même corps, qui crée la ressource à cet URI ou la remplace si elle existe. Quelle nouvelle tentative est la plus sûre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Renvoyer le même POST : POST est idempotente, une seconde création est sans effet."
+        },
+        {
+          "id": "b",
+          "text": "Envoyer le PUT vers /api/v1/vlans/50 : PUT est idempotente, le résultat est le même."
+        },
+        {
+          "id": "c",
+          "text": "Envoyer un PATCH vers /api/v1/vlans : PATCH est idempotente et crée ce qui manque."
+        },
+        {
+          "id": "d",
+          "text": "Renvoyer le même POST avec Cache-Control: no-cache : le serveur ignore le doublon."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une méthode est idempotente quand plusieurs requêtes identiques ont le même effet sur le serveur qu'une seule. La RFC 9110 classe PUT et DELETE (ainsi que les méthodes sûres) parmi les méthodes idempotentes, et précise qu'une telle requête peut être répétée sans risque après une coupure survenue avant la lecture de la réponse. Ici, que le premier POST ait abouti ou non, le PUT vers /api/v1/vlans/50 laisse le VLAN 50 dans l'état décrit par le corps. POST n'est pas idempotente : un second envoi pourrait créer un doublon ou échouer, par exemple avec 409 Conflict.",
+    "distractorNotes": {
+      "a": "POST n'est pas idempotente : la répéter peut produire un second effet, comme une ressource en double ou une erreur 409 Conflict.",
+      "c": "PATCH n'est ni sûre ni idempotente (RFC 5789) : rien ne garantit qu'une seconde exécution laisse le même état.",
+      "d": "Cache-Control règle la mise en cache des réponses ; il ne rend pas un POST idempotent et n'empêche pas une seconde création."
+    },
+    "reference": "RFC 9110, section 9.2.2 (Idempotent Methods) ; RFC 5789 (PATCH)"
+  },
+  {
+    "slug": "ccna-6.5-status-415-media-type-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. L'API du contrôleur n'accepte que des corps de requête en JSON ; elle refuse celui-ci à cause de son format. Quel code de statut HTTP, défini pour ce cas, remplace « ??? » dans la ligne de statut de la réponse ?",
+      "exhibit": "POST /api/v1/vlans HTTP/1.1\nHost: 192.0.2.10\nAuthorization: Bearer eyJhbGciOiJIUzI1NiJ9...\nContent-Type: application/xml\n\n<vlan><id>60</id><name>LABO</name></vlan>\n\nHTTP/1.1 ???\nContent-Length: 0",
+      "fields": [
+        {
+          "id": "code",
+          "label": "Code de statut (nombre entier à trois chiffres)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "code": {
+          "accepted": [
+            "415"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "415 Unsupported Media Type indique que le serveur refuse la requête parce que le contenu est dans un format qu'il ne prend pas en charge pour cette méthode et cette ressource. Le format du corps est annoncé par l'en-tête Content-Type, ici application/xml, alors que l'API attend application/json. Il faut le distinguer de 406 Not Acceptable, qui concerne le format de la réponse demandé dans l'en-tête Accept, et de 400 Bad Request, qui signale une requête mal formée (par exemple un JSON invalide).",
+    "distractorNotes": {},
+    "reference": "RFC 9110, section 15.5.16 (415 Unsupported Media Type)"
+  },
+  {
+    "slug": "ccna-6.5-auth-header-schemes-match-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque en-tête d'une requête envoyée à une API REST au mécanisme d'authentification qu'il met en œuvre.",
+      "left": [
+        {
+          "id": "basic",
+          "text": "Authorization: Basic bmV0b3BzOkMxc2NvMTIz"
+        },
+        {
+          "id": "bearer",
+          "text": "Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJuZXRvcHMifQ..."
+        },
+        {
+          "id": "apikey",
+          "text": "X-API-Key: 3f9a7c21e4b84d0f"
+        },
+        {
+          "id": "cookie",
+          "text": "Cookie: sessionid=8c41f0a2d7e3"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Identifiant et mot de passe encodés en Base64"
+        },
+        {
+          "id": "r2",
+          "text": "Jeton d'accès, par exemple délivré par OAuth 2.0"
+        },
+        {
+          "id": "r3",
+          "text": "Clé propre à l'application, dans un en-tête dédié"
+        },
+        {
+          "id": "r4",
+          "text": "Identifiant d'une session ouverte lors d'une connexion antérieure"
+        },
+        {
+          "id": "r5",
+          "text": "Certificat client présenté pour une authentification TLS mutuelle"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "basic": "r1",
+        "bearer": "r2",
+        "apikey": "r3",
+        "cookie": "r4"
+      }
+    },
+    "explanation": "Le schéma Basic place « identifiant:mot de passe » encodé en Base64 dans Authorization (ici netops:C1sco123) : il n'est sûr que sur HTTPS. Le schéma Bearer transporte un jeton d'accès, souvent un JWT délivré par OAuth 2.0 ; quiconque le détient peut l'utiliser jusqu'à son expiration. Une clé d'API identifie l'application et voyage dans un en-tête propre à l'API, comme X-API-Key. Un cookie de session renvoie l'identifiant de la session que le serveur a créée lors d'une authentification antérieure.",
+    "distractorNotes": {
+      "r5": "Un certificat client est présenté pendant la négociation TLS, avant tout échange HTTP ; il n'apparaît dans aucun des quatre en-têtes."
+    },
+    "reference": "RFC 7617 (Basic) ; RFC 6750 (Bearer Token Usage) ; RFC 6265 (HTTP State Management)"
+  },
+  {
+    "slug": "ccna-6.1-leaked-secret-git-history-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un ingénieur a validé (commit) dans le dépôt Git de l'équipe un script d'automatisation qui contient en clair le mot de passe du compte netops, utilisé sur 300 routeurs. Une semaine plus tard, il retire le mot de passe du script et valide cette correction. Plusieurs équipes ont cloné le dépôt entre-temps. Quelle suite donner ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aucune : le commit de correction a retiré le mot de passe du dépôt et de ses clones."
+        },
+        {
+          "id": "b",
+          "text": "Rendre le dépôt privé à l'équipe réseau, sans changer le mot de passe, jamais publié sur Internet."
+        },
+        {
+          "id": "c",
+          "text": "Changer le mot de passe sur les 300 routeurs, puis le stocker dans un coffre de secrets lu par le script."
+        },
+        {
+          "id": "d",
+          "text": "Activer service password-encryption sur les routeurs pour masquer le mot de passe dans le dépôt."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Git conserve tout l'historique : le commit d'origine contient toujours le mot de passe, et chaque clone en possède une copie complète. Le secret doit donc être considéré comme compromis et changé sur tous les équipements. L'automatisation concentre ce risque : un seul identifiant donne accès à tout le parc. Les bonnes pratiques consistent à ne jamais écrire un secret dans un dépôt, mais à le lire au moment de l'exécution depuis un coffre de secrets (HashiCorp Vault, Ansible Vault, variable d'environnement protégée), et à préférer des comptes dédiés aux droits limités.",
+    "distractorNotes": {
+      "a": "Le commit de correction ne modifie que la version courante : l'ancien commit, présent dans l'historique et dans chaque clone, contient toujours le mot de passe.",
+      "b": "Les équipes qui ont cloné le dépôt possèdent déjà le mot de passe ; restreindre l'accès ne rend pas le secret de nouveau confidentiel.",
+      "d": "service password-encryption chiffre (faiblement, en type 7) les mots de passe dans la configuration des routeurs ; il n'agit pas sur un fichier stocké dans Git."
+    },
+    "reference": "GitHub Docs, « Removing sensitive data from a repository » ; Ansible documentation, « Protecting sensitive data with Ansible vault »"
+  },
+  {
+    "slug": "ccna-6.1-automation-break-even-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une équipe applique régulièrement le même changement à un parc d'équipements. À la main, il lui faut 6 minutes par équipement. L'automatiser demande 15 heures de développement et de tests, après quoi le temps humain par équipement devient négligeable. Pour combien d'équipements traités le temps investi dans l'automatisation égale-t-il le temps du travail manuel ?",
+      "fields": [
+        {
+          "id": "n",
+          "label": "Nombre d'équipements (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "n": {
+          "accepted": [
+            "150"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "On convertit l'investissement dans la même unité : 15 h × 60 = 900 minutes. Le travail manuel coûte 6 minutes par équipement, donc les deux coûts s'égalent pour 900 / 6 = 150 équipements. Au-delà, chaque équipement supplémentaire est un gain net, et le script resservira aux changements suivants. Le calcul illustre pourquoi l'automatisation se rentabilise surtout sur un grand parc ou des tâches répétées, et rappelle qu'elle apporte aussi des gains non chiffrés ici : cohérence des configurations et moins d'erreurs de saisie.",
+    "distractorNotes": {},
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-incident-data-collection-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "selectCount": 2,
+      "stem": "Lors d'un incident, une équipe lance un script qui exécute en parallèle show interfaces, show logging et show ip route sur ses 200 routeurs, puis enregistre les sorties. Quels deux bénéfices en tire-t-elle par rapport à une collecte manuelle ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le script corrige lui-même la cause de l'incident."
+        },
+        {
+          "id": "b",
+          "text": "Les mêmes données sont relevées sur tous les routeurs en quelques minutes."
+        },
+        {
+          "id": "c",
+          "text": "Les ingénieurs n'ont plus à lire ni à interpréter les sorties."
+        },
+        {
+          "id": "d",
+          "text": "La collecte n'exige plus d'accès d'administration aux routeurs."
+        },
+        {
+          "id": "e",
+          "text": "Le diagnostic commence plus tôt, ce qui raccourcit l'incident."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Collecter à la main les mêmes commandes sur 200 routeurs prendrait des heures, avec le risque d'oublier un équipement ou une commande. Le script relève le même jeu de données partout, en parallèle et horodaté, ce qui permet de comparer les routeurs entre eux et de commencer l'analyse beaucoup plus tôt : le temps moyen de rétablissement (MTTR) diminue. Le script ne fait que collecter : l'interprétation reste humaine (ou confiée à un outil d'analyse), et il lui faut des identifiants d'accès, comme à un administrateur.",
+    "distractorNotes": {
+      "a": "Le script décrit ne lance que des commandes show : il collecte des informations sans rien modifier.",
+      "c": "Les sorties collectées doivent toujours être analysées ; l'automatisation accélère la collecte, pas le raisonnement.",
+      "d": "Le script se connecte aux routeurs (SSH, par exemple) avec un compte d'administration, comme un ingénieur."
+    },
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.4-genai-config-confidentiality-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "selectCount": 2,
+      "stem": "Un ingénieur veut demander à un service public d'IA générative d'expliquer la configuration d'un routeur de cœur. Elle contient des secrets (clés pré-partagées, communautés SNMP, mots de passe) et tout l'adressage interne. Quelles deux précautions sont appropriées ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Demander au modèle, dans la requête, d'oublier la configuration après sa réponse."
+        },
+        {
+          "id": "b",
+          "text": "Remplacer les mots de passe par leur forme de type 7, qui ne peut pas être inversée."
+        },
+        {
+          "id": "c",
+          "text": "Retirer ou masquer les secrets et les informations sensibles avant l'envoi."
+        },
+        {
+          "id": "d",
+          "text": "Envoyer la configuration complète : un modèle génératif ne conserve rien de ce qu'il reçoit."
+        },
+        {
+          "id": "e",
+          "text": "Préférer un service d'IA approuvé par l'entreprise, aux règles d'usage des données connues."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Tout ce qui est soumis à un service d'IA externe sort du périmètre de l'entreprise : selon ses conditions, il peut être journalisé, conservé ou réutilisé. Avant l'envoi, on retire ou remplace les secrets (clés, communautés, mots de passe, même chiffrés) et, si possible, les adresses et noms internes. On privilégie aussi un service validé par l'entreprise, dont les conditions de conservation et de réutilisation des données sont connues et contractuelles. Le NIST range ces fuites parmi les risques propres à l'IA générative (confidentialité des données, sécurité de l'information).",
+    "distractorNotes": {
+      "a": "Une consigne dans la requête n'agit pas sur la journalisation ni sur la conservation des données par le service.",
+      "b": "Le chiffrement de type 7 est réversible avec des outils courants : il ne protège pas un mot de passe transmis à un tiers.",
+      "d": "Selon le service et ses conditions, les requêtes peuvent être journalisées, conservées ou réutilisées : rien ne garantit leur oubli."
+    },
+    "reference": "NIST AI 600-1, Generative Artificial Intelligence Profile ; Cisco, « Cisco IOS Password Encryption Facts »"
+  },
+  {
+    "slug": "ccna-6.4-dynamic-baseline-vs-threshold-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "selectCount": 2,
+      "stem": "Reportez-vous à l'exhibit. L'outil d'analyse signale une anomalie quand la valeur observée sort de la référence apprise pour l'heure concernée. L'ancien système de supervision alertait dès que la durée dépassait un seuil fixe de 5,0 s. Quelles deux heures sont signalées comme anomalies par l'outil d'analyse, mais n'auraient déclenché aucune alerte de l'ancien système ? (Choisissez-en deux.)",
+      "exhibit": "Site de Lyon - durée moyenne d'association Wi-Fi (secondes)\n\nHeure   Référence apprise (min - max)   Valeur observée\n08:00   3,5 - 6,0                       5,6\n10:00   1,0 - 2,0                       3,8\n12:00   1,5 - 2,5                       2,1\n14:00   1,0 - 2,0                       4,4\n18:00   0,5 - 1,5                       0,9",
+      "options": [
+        {
+          "id": "a",
+          "text": "08:00"
+        },
+        {
+          "id": "b",
+          "text": "10:00"
+        },
+        {
+          "id": "c",
+          "text": "12:00"
+        },
+        {
+          "id": "d",
+          "text": "14:00"
+        },
+        {
+          "id": "e",
+          "text": "18:00"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Il faut appliquer les deux règles à chaque ligne. À 10:00 (3,8 s) et à 14:00 (4,4 s), la valeur dépasse nettement le maximum appris (2,0 s) : ce sont des anomalies, mais elles restent sous 5,0 s, donc invisibles pour le seuil fixe. À 08:00, 5,6 s dépasse le seuil fixe, mais reste dans la référence apprise de cette heure de pointe (3,5 à 6,0 s) : seul l'ancien système aurait alerté, à tort. À 12:00 et à 18:00, la valeur est dans la référence et sous le seuil. Une référence dynamique, propre au site et à l'heure, détecte des dégradations qu'un seuil unique manque, et évite des alertes inutiles.",
+    "distractorNotes": {
+      "a": "À 08:00, 5,6 s reste dans la référence apprise (3,5 à 6,0 s) : pas d'anomalie pour l'outil, seulement une alerte du seuil fixe.",
+      "c": "À 12:00, 2,1 s est dans la référence (1,5 à 2,5 s) et sous le seuil : aucune alerte d'aucun système.",
+      "e": "À 18:00, 0,9 s est dans la référence (0,5 à 1,5 s) et sous le seuil : aucune alerte d'aucun système."
+    },
+    "reference": "Cisco Catalyst Center Assurance User Guide (AI Network Analytics)"
+  },
+  {
+    "slug": "ccna-6.4-genai-terms-match-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque terme de l'IA générative, utilisé à propos des assistants réseau, à sa définition.",
+      "left": [
+        {
+          "id": "prompt",
+          "text": "Invite (prompt)"
+        },
+        {
+          "id": "rag",
+          "text": "Génération augmentée par récupération (RAG)"
+        },
+        {
+          "id": "ft",
+          "text": "Affinage (fine-tuning)"
+        },
+        {
+          "id": "ctx",
+          "text": "Fenêtre de contexte"
+        },
+        {
+          "id": "tok",
+          "text": "Jeton (token)"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Instructions et données fournies au modèle pour obtenir une réponse"
+        },
+        {
+          "id": "r2",
+          "text": "Ajout à la requête de documents pertinents, recherchés dans une base de connaissances"
+        },
+        {
+          "id": "r3",
+          "text": "Entraînement complémentaire d'un modèle existant sur des données d'un domaine"
+        },
+        {
+          "id": "r4",
+          "text": "Quantité maximale de texte que le modèle prend en compte à la fois"
+        },
+        {
+          "id": "r5",
+          "text": "Unité de texte, mot ou fragment de mot, que le modèle traite"
+        },
+        {
+          "id": "r6",
+          "text": "Réponse plausible mais fausse, présentée avec assurance par le modèle"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "prompt": "r1",
+        "rag": "r2",
+        "ft": "r3",
+        "ctx": "r4",
+        "tok": "r5"
+      }
+    },
+    "explanation": "Le prompt est l'entrée du modèle : consigne, question et données jointes (par exemple un extrait de configuration). Le RAG recherche d'abord des documents pertinents (documentation interne, configurations réelles) et les ajoute au prompt, pour ancrer la réponse dans des faits. L'affinage modifie le modèle lui-même par un entraînement complémentaire. La fenêtre de contexte, mesurée en jetons, limite la quantité de texte (prompt et réponse) que le modèle traite à la fois ; un jeton est un mot ou un fragment de mot.",
+    "distractorNotes": {
+      "r6": "Cette définition est celle d'une hallucination (confabulation), qui ne figure pas parmi les termes proposés."
+    },
+    "reference": "P. Lewis et al., « Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks », NeurIPS 2020 ; NIST AI 600-1, Generative Artificial Intelligence Profile"
+  },
+  {
+    "slug": "ccna-6.6-ansible-check-diff-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avant une fenêtre de maintenance, un administrateur veut voir quelles lignes le playbook acl.yml modifierait sur les routeurs, sans rien changer sur ceux-ci. Les modules utilisés par le playbook prennent en charge cette fonction. Quelle commande convient ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ansible-playbook -i hosts.ini acl.yml --syntax-check"
+        },
+        {
+          "id": "b",
+          "text": "ansible-playbook -i hosts.ini acl.yml --list-hosts --list-tasks"
+        },
+        {
+          "id": "c",
+          "text": "ansible-playbook -i hosts.ini acl.yml --step --diff"
+        },
+        {
+          "id": "d",
+          "text": "ansible-playbook -i hosts.ini acl.yml --check --diff"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'option --check exécute le playbook en mode vérification (dry run) : chaque module compare l'état voulu à l'état réel et indique s'il aurait fait un changement, sans rien appliquer. L'option --diff affiche en plus les différences ligne par ligne, lorsque le module le permet. Combinées, elles donnent l'équivalent d'un terraform plan : un aperçu des modifications à valider avant l'exécution réelle. Le récapitulatif PLAY RECAP signale alors comme « changed » les tâches qui modifieraient l'équipement.",
+    "distractorNotes": {
+      "a": "--syntax-check vérifie seulement la syntaxe du playbook, sans se connecter aux routeurs ni comparer leur configuration.",
+      "b": "--list-hosts et --list-tasks affichent les hôtes visés et les tâches du playbook, sans exécuter aucune tâche ni comparer les configurations.",
+      "c": "--step demande une confirmation avant chaque tâche, mais les tâches confirmées sont réellement exécutées : --diff montre alors des changements appliqués aux routeurs."
+    },
+    "reference": "Ansible documentation, « Validating tasks: check mode and diff mode »"
+  },
+  {
+    "slug": "ccna-6.6-terraform-plan-replace-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "selectCount": 2,
+      "stem": "Reportez-vous à l'exhibit, produit par terraform plan avec le provider netctl, qui gère les VLAN d'un contrôleur. Quelles deux affirmations décrivent ce que fera terraform apply ? (Choisissez-en deux.)",
+      "exhibit": "Terraform used the selected providers to generate the following\nexecution plan. Resource actions are indicated with the following symbols:\n  ~ update in-place\n-/+ destroy and then create replacement\n\nTerraform will perform the following actions:\n\n  # netctl_vlan.data will be updated in-place\n  ~ resource \"netctl_vlan\" \"data\" {\n        id      = \"10\"\n      ~ name    = \"DATA\" -> \"DATA-USERS\"\n        # (1 unchanged attribute hidden)\n    }\n\n  # netctl_vlan.voix must be replaced\n-/+ resource \"netctl_vlan\" \"voix\" {\n      ~ id      = \"30\" -> (known after apply)\n        name    = \"VOIX\"\n      ~ vlan_id = 30 -> 31 # forces replacement\n    }\n\nPlan: 1 to add, 1 to change, 1 to destroy.",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un troisième VLAN, absent de l'exhibit, sera créé : c'est le « 1 to add » du résumé."
+        },
+        {
+          "id": "b",
+          "text": "Le VLAN 30 sera renuméroté en 31 sur place, comme le VLAN 10 sera renommé."
+        },
+        {
+          "id": "c",
+          "text": "Le VLAN 30 sera supprimé, puis un VLAN 31 nommé VOIX sera créé à sa place."
+        },
+        {
+          "id": "d",
+          "text": "Le VLAN 10 sera renommé DATA-USERS sur place, sans être supprimé."
+        },
+        {
+          "id": "e",
+          "text": "Les changements sont déjà faits : apply mettra seulement à jour le fichier d'état."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "Le symbole ~ annonce une modification sur place : la ressource netctl_vlan.data garde son identité, seul son nom change. Le symbole -/+ annonce un remplacement : la modification de vlan_id est marquée « forces replacement », car cet attribut ne peut pas être modifié sur place ; Terraform détruira le VLAN 30 puis créera le VLAN 31. Un remplacement compte à la fois comme un ajout et une suppression, d'où le résumé « 1 to add, 1 to change, 1 to destroy » pour deux ressources seulement. terraform plan ne modifie rien : c'est apply qui appliquera ces actions.",
+    "distractorNotes": {
+      "a": "Le « 1 to add » est la création du VLAN 31 dans le remplacement -/+ ; le plan ne mentionne aucune autre ressource.",
+      "b": "Le symbole -/+ et la mention « forces replacement » indiquent une destruction suivie d'une création, pas une modification sur place.",
+      "e": "terraform plan n'applique rien : il affiche les actions prévues, que seul terraform apply exécutera."
+    },
+    "reference": "HashiCorp, Terraform documentation, « Command: plan »"
+  }
+]

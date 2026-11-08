@@ -1,0 +1,1306 @@
+[
+  {
+    "slug": "ccna-3.2-ttl-decrement-field-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel champ de l'en-tête IPv4 un routeur décrémente-t-il de 1 avant de transmettre un paquet vers le saut suivant ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Fragment Offset"
+        },
+        {
+          "id": "b",
+          "text": "Identification"
+        },
+        {
+          "id": "c",
+          "text": "Total Length"
+        },
+        {
+          "id": "d",
+          "text": "Time to Live (TTL)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "À chaque saut, le routeur retire 1 au champ Time to Live (TTL), puis recalcule la somme de contrôle de l'en-tête (Header Checksum), puisque l'en-tête a changé. Si le TTL tombe à 0, il abandonne le paquet et renvoie un ICMP Time Exceeded à la source : c'est ce qui empêche un paquet de tourner indéfiniment dans une boucle de routage, et c'est le mécanisme qu'exploite traceroute. Les adresses IP source et destination, elles, ne changent pas (hors NAT).",
+    "distractorNotes": {
+      "a": "Fragment Offset n'est modifié que si le routeur fragmente le paquet ; il n'est jamais décrémenté à chaque saut.",
+      "b": "Identification est fixé par la source et reste identique de bout en bout ; il sert à rassembler les fragments d'un même paquet.",
+      "c": "Total Length indique la taille du paquet ; il ne change qu'en cas de fragmentation, pas à chaque saut."
+    },
+    "reference": "RFC 791 ; RFC 1812"
+  },
+  {
+    "slug": "ccna-3.2-show-adjacency-command-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle commande affiche la table de CEF qui contient, pour chaque voisin directement joignable, l'interface de sortie et l'en-tête de couche 2 préparé pour le joindre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "show ip arp"
+        },
+        {
+          "id": "b",
+          "text": "show ip cef"
+        },
+        {
+          "id": "c",
+          "text": "show adjacency"
+        },
+        {
+          "id": "d",
+          "text": "show ip route"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "« show adjacency » liste les entrées de la table d'adjacence CEF : pour chaque voisin directement joignable, son adresse et l'interface de sortie ; « show adjacency detail » ajoute l'en-tête de couche 2 précalculé (MAC de destination, MAC source, EtherType) et des compteurs. Cette table complète la FIB : la FIB indique le next hop d'une destination, l'adjacence fournit de quoi construire la trame vers ce next hop. Elle est alimentée notamment par ARP sur les interfaces Ethernet.",
+    "distractorNotes": {
+      "a": "« show ip arp » affiche le cache ARP (adresse IPv4, adresse MAC, âge, interface), qui sert à construire les adjacences, mais n'est pas la table d'adjacence elle-même.",
+      "b": "« show ip cef » affiche la FIB : les préfixes et leurs next hops, pas la table d'adjacence.",
+      "d": "« show ip route » affiche la table de routage (RIB), issue du plan de contrôle, et non les tables de CEF."
+    },
+    "reference": "Cisco IOS IP Switching Command Reference (show adjacency)"
+  },
+  {
+    "slug": "ccna-3.2-floating-static-eigrp-external-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 apprend 172.16.0.0/16 par EIGRP de son voisin R2 (10.0.12.2), qui a redistribué ce réseau dans EIGRP depuis OSPF. L'administrateur voulait que la route statique ne serve qu'en secours de cette route EIGRP. Pourquoi R1 utilise-t-il la route statique ?",
+      "exhibit": "R1# show running-config | include ip route\nip route 172.16.0.0 255.255.0.0 10.0.13.2 100\nR1# show ip route | begin Gateway\nGateway of last resort is not set\n\n      10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks\nC        10.0.12.0/30 is directly connected, GigabitEthernet0/1\nL        10.0.12.1/32 is directly connected, GigabitEthernet0/1\nC        10.0.13.0/30 is directly connected, GigabitEthernet0/2\nL        10.0.13.1/32 is directly connected, GigabitEthernet0/2\nS     172.16.0.0/16 [100/0] via 10.0.13.2",
+      "options": [
+        {
+          "id": "a",
+          "text": "La route redistribuée garde la distance d'OSPF, 110, supérieure à celle de la statique"
+        },
+        {
+          "id": "b",
+          "text": "La route EIGRP est une route externe, dont la distance de 170 dépasse celle de la statique"
+        },
+        {
+          "id": "c",
+          "text": "Une route statique l'emporte toujours sur une route dynamique, quelle que soit sa distance"
+        },
+        {
+          "id": "d",
+          "text": "La distance de la statique, 100, est inférieure à la métrique EIGRP de la route"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une route qu'un routeur EIGRP a redistribuée depuis une autre source est une route externe (D EX), dont la distance administrative par défaut est 170, et non 90 comme pour une route interne. Face à la statique de distance 100 vers le même préfixe, la route EIGRP perd : R1 installe la statique, qui n'a donc rien de flottant. Pour en faire un vrai secours, il faut lui donner une distance supérieure à 170 (par exemple 200). Une distance de 100 n'aurait convenu que pour une route EIGRP interne.",
+    "distractorNotes": {
+      "a": "Une route redistribuée ne garde pas la distance de sa source d'origine : R1 lui applique celle du protocole qui la lui annonce, ici EIGRP externe, 170.",
+      "c": "Une statique de distance 100 perdrait face à une route EIGRP interne (90) : c'est la valeur de la distance qui compte, pas le type de route.",
+      "d": "La distance administrative se compare à la distance de l'autre route, jamais à sa métrique : la métrique EIGRP ne départage que des chemins EIGRP."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (ip route)"
+  },
+  {
+    "slug": "ccna-3.2-floating-static-ad-between-protocols-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 apprend 10.50.0.0/16 par EIGRP (route interne) via R2 et par OSPF via R3, avec les distances administratives par défaut. L'administrateur ajoute « ip route 10.50.0.0 255.255.0.0 10.0.14.4 115 », dont le next hop est R4. Tous les next hops sont joignables. Le voisin EIGRP R2 tombe et sa route vers 10.50.0.0/16 disparaît. Par quel routeur R1 joint-il alors 10.50.0.0/16 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Par R3, grâce à la route OSPF"
+        },
+        {
+          "id": "b",
+          "text": "Par R4, grâce à la route statique"
+        },
+        {
+          "id": "c",
+          "text": "Par R3 et R4, en partage de charge"
+        },
+        {
+          "id": "d",
+          "text": "Par aucun, jusqu'au retour de R2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Trois sources proposent le même préfixe 10.50.0.0/16 ; R1 installe celle de plus faible distance administrative. Au départ, EIGRP interne (90) l'emporte sur OSPF (110) et sur la statique (115). Quand la route EIGRP disparaît, il reste OSPF (110) et la statique (115) : OSPF gagne et R1 envoie le trafic à R3. La statique reste flottante, en réserve derrière les deux protocoles : elle ne sera installée que si la route OSPF disparaît à son tour.",
+    "distractorNotes": {
+      "b": "La statique a une distance de 115, supérieure à celle d'OSPF (110) : elle n'est pas installée tant que la route OSPF existe.",
+      "c": "Le partage de charge ne concerne que des chemins de même source et de même métrique ; deux routes de distances administratives différentes ne sont jamais installées ensemble.",
+      "d": "Il reste deux routes valides vers 10.50.0.0/16 ; R1 installe la meilleure, celle d'OSPF, sans attendre le retour d'EIGRP."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-next-hop-mac-from-arp-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. PC1 (192.168.1.10) envoie un paquet à 10.2.2.2. Pour 10.2.0.0/16, la table de routage de R1 indique le next hop 10.0.12.2 via GigabitEthernet0/1. Quelle adresse MAC de destination R1 place-t-il dans la trame qu'il émet ?",
+      "exhibit": "R1# show ip arp\nProtocol  Address          Age (min)  Hardware Addr   Type   Interface\nInternet  10.0.12.1               -   0c7e.11a0.0001  ARPA   GigabitEthernet0/1\nInternet  10.0.12.2              14   0c9b.42d1.0000  ARPA   GigabitEthernet0/1\nInternet  192.168.1.1             -   0c7e.11a0.0000  ARPA   GigabitEthernet0/0\nInternet  192.168.1.10            3   0050.7966.6810  ARPA   GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "0c7e.11a0.0001"
+        },
+        {
+          "id": "b",
+          "text": "0050.7966.6810"
+        },
+        {
+          "id": "c",
+          "text": "0c7e.11a0.0000"
+        },
+        {
+          "id": "d",
+          "text": "0c9b.42d1.0000"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "R1 ne connaît pas l'adresse MAC de 10.2.2.2, et n'en a pas besoin : cette machine n'est pas sur son segment. Il encapsule le paquet dans une trame adressée au next hop, 10.0.12.2, dont la table ARP donne l'adresse 0c9b.42d1.0000 (entrée apprise il y a 14 minutes). L'adresse MAC source sera celle de sa propre interface de sortie, 0c7e.11a0.0001 (les entrées à l'âge « - » sont les adresses du routeur lui-même). Le paquet IP, lui, garde 192.168.1.10 en source et 10.2.2.2 en destination.",
+    "distractorNotes": {
+      "a": "0c7e.11a0.0001 est l'adresse de GigabitEthernet0/1 de R1 (âge « - ») : c'est la MAC source de la nouvelle trame, pas sa destination.",
+      "b": "0050.7966.6810 est l'adresse de PC1, l'émetteur du paquet ; elle ne figure plus dans la trame émise par R1.",
+      "c": "0c7e.11a0.0000 est l'adresse de GigabitEthernet0/0 de R1 : c'était la MAC de destination de la trame reçue de PC1, pas de celle qu'il émet."
+    },
+    "reference": "RFC 826 ; RFC 1812"
+  },
+  {
+    "slug": "ccna-3.2-cef-fib-source-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un routeur Cisco qui utilise CEF (Cisco Express Forwarding), d'où provient le contenu de la FIB (Forwarding Information Base) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des meilleures routes de la table de routage, recopiées et tenues à jour à chaque changement"
+        },
+        {
+          "id": "b",
+          "text": "Des destinations des premiers paquets de chaque flux, mises en cache au fil du trafic"
+        },
+        {
+          "id": "c",
+          "text": "Des entrées de la table ARP, dont chacune devient un préfixe de destination"
+        },
+        {
+          "id": "d",
+          "text": "De la base topologique OSPF, sur laquelle CEF calcule ses propres plus courts chemins"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La FIB est une copie de la table de routage (RIB), organisée pour une recherche rapide de la correspondance la plus longue. Elle est construite à l'avance, avant tout trafic, et mise à jour dès qu'une route est ajoutée, modifiée ou retirée de la RIB. Les informations de couche 2 nécessaires pour joindre chaque next hop sont rangées à part, dans la table d'adjacence, alimentée notamment par ARP. CEF ne prend aucune décision de routage : il applique celles du plan de contrôle.",
+    "distractorNotes": {
+      "b": "Un cache construit à partir du premier paquet de chaque destination décrit l'ancien fast switching ; la FIB de CEF est remplie à l'avance à partir de la table de routage.",
+      "c": "La table ARP alimente la table d'adjacence (informations de couche 2 des voisins), pas la FIB, qui contient des préfixes de routage.",
+      "d": "CEF ne calcule aucun chemin : OSPF fait son calcul, la table de routage retient les routes, et la FIB se contente de les recopier."
+    },
+    "reference": "Cisco IOS IP Switching: Cisco Express Forwarding Configuration Guide (Cisco Express Forwarding Overview)"
+  },
+  {
+    "slug": "ccna-3.2-cef-vs-process-switching-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pourquoi CEF transmet-il les paquets plus rapidement que la commutation par processus (process switching) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il choisit des chemins plus courts que ceux retenus dans la table de routage"
+        },
+        {
+          "id": "b",
+          "text": "Il consulte des tables précalculées au lieu de traiter chaque paquet par un processus logiciel"
+        },
+        {
+          "id": "c",
+          "text": "Il ne décrémente plus le TTL et ne recalcule plus la somme de contrôle des paquets"
+        },
+        {
+          "id": "d",
+          "text": "Il réutilise l'en-tête de couche 2 de la trame reçue au lieu d'en construire un nouveau"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "En process switching, chaque paquet est confié à un processus du système qui consulte la table de routage, résout le next hop et construit l'en-tête de sortie : c'est lent et coûteux en CPU. CEF prépare tout à l'avance : la FIB (copie des routes, optimisée pour la recherche du préfixe le plus long) et la table d'adjacence (en-têtes de couche 2 prêts pour chaque next hop). Le transfert d'un paquet se réduit à deux consultations, sans passer par un processus. Les décisions de routage et les opérations sur le paquet restent les mêmes.",
+    "distractorNotes": {
+      "a": "CEF applique exactement les routes de la table de routage : il accélère le transfert, il ne change pas le chemin.",
+      "c": "Avec CEF comme sans lui, le routeur décrémente le TTL et recalcule la somme de contrôle de l'en-tête IPv4 de chaque paquet.",
+      "d": "Le routeur construit toujours une nouvelle trame pour l'interface de sortie ; CEF l'accélère en gardant l'en-tête prêt dans la table d'adjacence."
+    },
+    "reference": "Cisco IOS IP Switching: Cisco Express Forwarding Configuration Guide (Cisco Express Forwarding Overview)"
+  },
+  {
+    "slug": "ccna-3.2-prefix-length-before-ad-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La table de routage de R1 contient « S 10.1.0.0/16 [1/0] via 10.0.12.2 » et « R 10.1.4.0/22 [120/2] via 10.0.13.3 ». Vers quel next hop R1 transmet-il un paquet destiné à 10.1.6.20 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "10.0.12.2, car la distance administrative de la route statique est plus faible"
+        },
+        {
+          "id": "b",
+          "text": "10.0.12.2, car la métrique de la route statique est plus faible"
+        },
+        {
+          "id": "c",
+          "text": "10.0.13.3, car la route RIP est la correspondance la plus longue"
+        },
+        {
+          "id": "d",
+          "text": "10.0.12.2 et 10.0.13.3, en partage de charge, car les deux routes correspondent"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les deux routes contiennent 10.1.6.20 : la /16 couvre 10.1.0.0 à 10.1.255.255, et la /22 couvre 10.1.4.0 à 10.1.7.255. Ce sont deux préfixes différents, tous deux installés : la distance administrative n'a servi qu'à choisir, pour chaque préfixe, la source à installer. Lors du transfert, le routeur retient la correspondance la plus longue, ici la /22 apprise par RIP, vers 10.0.13.3. Un paquet destiné à 10.1.9.1, hors de la /22, suivrait la statique.",
+    "distractorNotes": {
+      "a": "La distance administrative ne départage que des routes vers le même préfixe ; entre une /16 et une /22, c'est la longueur de préfixe qui décide.",
+      "b": "Les métriques ne se comparent qu'entre routes d'une même source vers le même préfixe ; elles ne jouent aucun rôle ici.",
+      "d": "Le partage de charge suppose plusieurs chemins vers le même préfixe ; ici une seule route, la plus longue, est retenue."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-ttl-expiry-hop-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "PC1 envoie à SRV1 un paquet IPv4 avec un TTL de 3. Le chemin est PC1 → R1 → R2 → R3 → R4 → SRV1. Que devient ce paquet ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2 l'abandonne et envoie un ICMP Time Exceeded à PC1"
+        },
+        {
+          "id": "b",
+          "text": "R3 l'abandonne et envoie un ICMP Time Exceeded à R2"
+        },
+        {
+          "id": "c",
+          "text": "R3 l'abandonne et envoie un ICMP Time Exceeded à PC1"
+        },
+        {
+          "id": "d",
+          "text": "R4 l'abandonne et envoie un ICMP Time Exceeded à PC1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Chaque routeur décrémente le TTL avant de transmettre. R1 reçoit le paquet avec 3 et le transmet avec 2 ; R2 le reçoit avec 2 et le transmet avec 1 ; R3 le reçoit avec 1 : après décrément, le TTL vaut 0 et R3 abandonne le paquet. Il envoie alors un ICMP Time Exceeded (type 11) à l'adresse source du paquet, celle de PC1. C'est ainsi que traceroute découvre les routeurs : il envoie des paquets de TTL 1, 2, 3… et note qui répond.",
+    "distractorNotes": {
+      "a": "R2 reçoit le paquet avec un TTL de 2 ; après décrément il reste 1, donc R2 le transmet encore.",
+      "b": "Le message ICMP est envoyé à l'adresse IP source du paquet abandonné, celle de PC1, et non au routeur précédent.",
+      "d": "Le paquet n'atteint pas R4 : son TTL est épuisé dès R3, troisième routeur du chemin."
+    },
+    "reference": "RFC 1812 ; RFC 792"
+  },
+  {
+    "slug": "ccna-3.2-external-eigrp-longer-prefix-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 connaît les routes candidates suivantes, avec les distances administratives par défaut sauf mention contraire : 10.20.0.0/16 par EIGRP (route interne) via R2 ; 10.20.0.0/16 par OSPF via R3 ; 10.20.64.0/18 par EIGRP (route externe) via R3 ; 10.20.64.0/18 en statique de distance 180 via R4 ; 10.20.96.0/19 par OSPF via R2. Par quelle route R1 transmet-il un paquet destiné à 10.20.70.1 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La route EIGRP interne 10.20.0.0/16, via R2"
+        },
+        {
+          "id": "b",
+          "text": "La route statique 10.20.64.0/18, via R4"
+        },
+        {
+          "id": "c",
+          "text": "La route OSPF 10.20.96.0/19, via R2"
+        },
+        {
+          "id": "d",
+          "text": "La route EIGRP externe 10.20.64.0/18, via R3"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Première étape, pour chaque préfixe, la distance administrative choisit la route installée : 10.20.0.0/16 par EIGRP interne (90 contre 110) ; 10.20.64.0/18 par EIGRP externe (170 contre 180 pour la statique) ; 10.20.96.0/19 par OSPF, seule candidate. Deuxième étape, le transfert : 10.20.70.1 appartient à la /16 et à la /18 (10.20.64.0 à 10.20.127.255), mais pas à la /19 (10.20.96.0 à 10.20.127.255). La correspondance la plus longue est la /18 EIGRP externe, via R3, malgré sa distance élevée.",
+    "distractorNotes": {
+      "a": "La /16 est bien installée et correspond, mais la /18 correspond aussi et elle est plus longue : la faible distance de la /16 ne compte pas face à un autre préfixe.",
+      "b": "Pour le préfixe 10.20.64.0/18, la statique de distance 180 perd face à la route EIGRP externe (170) : elle n'est pas installée.",
+      "c": "La /19 couvre 10.20.96.0 à 10.20.127.255 ; 10.20.70.1 n'en fait pas partie."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-cef-per-destination-load-sharing-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 a deux chemins de même coût vers 10.30.0.0/16 et utilise CEF dans sa configuration par défaut. Comment répartit-il le trafic destiné à ce réseau entre les deux next hops ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Paquet par paquet, en alternant les deux chemins à tour de rôle"
+        },
+        {
+          "id": "b",
+          "text": "Selon les ports TCP ou UDP, chaque connexion étant affectée à un chemin"
+        },
+        {
+          "id": "c",
+          "text": "Par couple d'adresses source et destination, chaque couple suivant un chemin"
+        },
+        {
+          "id": "d",
+          "text": "Sur le premier chemin seulement, le second étant gardé en secours"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Par défaut, CEF fait un partage de charge par destination : il calcule un hachage des adresses IP source et destination et associe chaque couple à l'un des chemins. Tous les paquets d'un même couple suivent donc le même chemin, ce qui évite les arrivées dans le désordre, et des couples différents se répartissent entre les deux next hops. Le partage paquet par paquet existe (« ip load-sharing per-packet » sur l'interface), mais il n'est pas activé par défaut.",
+    "distractorNotes": {
+      "a": "Le partage paquet par paquet doit être activé explicitement ; il peut faire arriver les paquets d'un flux dans le désordre.",
+      "b": "Le hachage par défaut porte sur les adresses IP ; les ports n'y entrent que si on configure explicitement un algorithme qui les inclut.",
+      "d": "Deux chemins de même coût installés dans la table sont utilisés tous les deux ; aucun n'est réservé au secours."
+    },
+    "reference": "Cisco IOS IP Switching: Cisco Express Forwarding Configuration Guide (Configuring a Load-Balancing Scheme for Cisco Express Forwarding Traffic)"
+  },
+  {
+    "slug": "ccna-3.2-end-to-end-unchanged-fields-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "PC1 (192.168.1.10) envoie un paquet à SRV1 (172.16.5.20) à travers R1 puis R2 ; aucun NAT n'est configuré sur le chemin. Quelles deux valeurs sont identiques dans le paquet émis par PC1 et dans celui que reçoit SRV1 ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'adresse MAC source"
+        },
+        {
+          "id": "b",
+          "text": "L'adresse IP destination"
+        },
+        {
+          "id": "c",
+          "text": "Le TTL"
+        },
+        {
+          "id": "d",
+          "text": "L'adresse MAC destination"
+        },
+        {
+          "id": "e",
+          "text": "L'adresse IP source"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Les adresses IP identifient les extrémités du paquet : 192.168.1.10 en source et 172.16.5.20 en destination, de bout en bout tant qu'aucun NAT n'intervient. La trame Ethernet, elle, ne vit que sur un segment : chaque routeur retire la trame reçue et en construit une nouvelle, avec sa propre adresse MAC en source et celle du saut suivant en destination. Chaque routeur décrémente aussi le TTL : après R1 et R2, il a baissé de 2.",
+    "distractorNotes": {
+      "a": "La MAC source change à chaque saut : sur le dernier segment, c'est celle de l'interface de R2 tournée vers SRV1.",
+      "c": "R1 puis R2 décrémentent chacun le TTL de 1 : SRV1 reçoit une valeur inférieure de 2 à celle émise par PC1.",
+      "d": "PC1 adresse sa trame à la MAC de sa passerelle R1 ; seule la trame émise par R2 porte la MAC de SRV1."
+    },
+    "reference": "RFC 1812 ; RFC 826"
+  },
+  {
+    "slug": "ccna-3.2-floating-static-install-conditions-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 joint 10.9.0.0/16 par une route OSPF via GigabitEthernet0/1. L'administrateur a ajouté « ip route 10.9.0.0 255.255.0.0 10.0.13.3 200 », dont le next hop est sur le réseau de GigabitEthernet0/2. Quelles deux conditions doivent être réunies pour que R1 installe cette route statique dans sa table ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "La route OSPF vers 10.9.0.0/16 a disparu de la table de routage"
+        },
+        {
+          "id": "b",
+          "text": "Le coût OSPF vers 10.9.0.0/16 dépasse la valeur 200"
+        },
+        {
+          "id": "c",
+          "text": "Un ping de R1 vers une adresse de 10.9.0.0/16 a échoué"
+        },
+        {
+          "id": "d",
+          "text": "Le next hop 10.0.13.3 est joignable par une route de la table"
+        },
+        {
+          "id": "e",
+          "text": "Le next hop 10.0.13.3 forme lui aussi une adjacence OSPF avec R1"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "La distance 200 fait de cette statique une route flottante : tant que la route OSPF (distance 110) vers le même préfixe existe, elle l'emporte et la statique n'est pas installée. Il faut donc d'abord que la route OSPF disparaisse. Il faut aussi que la statique soit utilisable : son next hop 10.0.13.3 doit être résolu par une route de la table, en pratique le réseau connecté de GigabitEthernet0/2, qui doit être up. Les deux conditions réunies, R1 installe la statique avec [200/0].",
+    "distractorNotes": {
+      "b": "La distance administrative se compare à la distance de l'autre route (110), jamais à sa métrique : le coût OSPF n'y change rien.",
+      "c": "Une route statique simple ne surveille pas la joignabilité de la destination ; un ping qui échoue ne retire pas la route OSPF (il faudrait IP SLA et track).",
+      "e": "Une route statique ne dépend d'aucun protocole : il suffit que son next hop soit résolu par la table. Si R3 annonçait le préfixe par OSPF, c'est d'ailleurs une route OSPF qui prendrait le relais."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (ip route)"
+  },
+  {
+    "slug": "ccna-3.2-ecmp-destinations-exhibit-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Pour quels deux de ces paquets R1 dispose-t-il de deux next hops de même coût, entre lesquels il répartit le trafic ? (Choisissez-en deux.)",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is 203.0.113.1 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 203.0.113.1\n      10.0.0.0/8 is variably subnetted, 7 subnets, 4 masks\nC        10.0.12.0/30 is directly connected, GigabitEthernet0/1\nL        10.0.12.1/32 is directly connected, GigabitEthernet0/1\nC        10.0.13.0/30 is directly connected, GigabitEthernet0/2\nL        10.0.13.1/32 is directly connected, GigabitEthernet0/2\nO        10.60.0.0/16 [110/20] via 10.0.13.2, 00:07:51, GigabitEthernet0/2\n                      [110/20] via 10.0.12.2, 00:07:51, GigabitEthernet0/1\nO        10.60.32.0/19 [110/30] via 10.0.12.2, 00:07:51, GigabitEthernet0/1\nO        10.61.0.0/16 [110/40] via 10.0.12.2, 00:07:51, GigabitEthernet0/1\n                      [110/40] via 10.0.13.2, 00:07:51, GigabitEthernet0/2\n      203.0.113.0/24 is variably subnetted, 2 subnets, 2 masks\nC        203.0.113.0/30 is directly connected, GigabitEthernet0/0\nL        203.0.113.2/32 is directly connected, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un paquet destiné à 10.59.255.1"
+        },
+        {
+          "id": "b",
+          "text": "Un paquet destiné à 10.60.64.1"
+        },
+        {
+          "id": "c",
+          "text": "Un paquet destiné à 10.61.10.10"
+        },
+        {
+          "id": "d",
+          "text": "Un paquet destiné à 10.62.0.1"
+        },
+        {
+          "id": "e",
+          "text": "Un paquet destiné à 10.60.63.254"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "Deux routes ont deux next hops de même coût : 10.60.0.0/16 (coût 20) et 10.61.0.0/16 (coût 40). Il faut ensuite vérifier, pour chaque destination, que c'est bien cette route qui est la plus longue. 10.60.64.1 n'appartient pas à 10.60.32.0/19 (10.60.32.0 à 10.60.63.255) : elle suit la /16 et ses deux chemins. 10.61.10.10 suit 10.61.0.0/16, elle aussi à deux chemins. 10.60.63.254 tombe dans la /19, qui n'a qu'un next hop ; 10.59.255.1 et 10.62.0.1 ne correspondent qu'à la route par défaut.",
+    "distractorNotes": {
+      "a": "10.59.255.1 n'appartient ni à 10.60.0.0/16 ni à 10.61.0.0/16 : elle suit la route par défaut, qui n'a qu'un next hop.",
+      "d": "10.62.0.1 est hors des deux /16 : seule la route par défaut correspond, vers 203.0.113.1.",
+      "e": "10.60.63.254 appartient à 10.60.32.0/19, plus longue que la /16 : R1 utilise cette route, qui n'a qu'un next hop, 10.0.12.2."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-cef-adjacency-contents-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux informations une entrée de la table d'adjacence CEF fournit-elle pour joindre un next hop Ethernet ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "La distance administrative de la source de la route"
+        },
+        {
+          "id": "b",
+          "text": "L'en-tête de couche 2 à placer devant le paquet"
+        },
+        {
+          "id": "c",
+          "text": "Le préfixe le plus long qui contient la destination"
+        },
+        {
+          "id": "d",
+          "text": "L'interface de sortie qui mène à ce voisin"
+        },
+        {
+          "id": "e",
+          "text": "La liste des voisins de routage à l'état FULL"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "CEF s'appuie sur deux tables. La FIB, copie des routes, donne pour chaque destination le préfixe le plus long et le next hop. La table d'adjacence donne, pour chaque voisin directement joignable, l'interface de sortie et l'en-tête de couche 2 déjà construit (MAC de destination du voisin, MAC source de l'interface, EtherType), obtenu notamment grâce à ARP. Pour transférer un paquet, CEF trouve l'entrée FIB, suit le lien vers l'adjacence, place l'en-tête et émet la trame.",
+    "distractorNotes": {
+      "a": "La distance administrative sert à choisir les routes de la table de routage ; elle ne figure pas dans la table d'adjacence.",
+      "c": "La recherche du préfixe le plus long se fait dans la FIB ; l'adjacence intervient après, pour le next hop trouvé.",
+      "e": "Les voisins OSPF à l'état FULL relèvent du protocole de routage (show ip ospf neighbor), pas de la table d'adjacence CEF."
+    },
+    "reference": "Cisco IOS IP Switching: Cisco Express Forwarding Configuration Guide (Cisco Express Forwarding Overview)"
+  },
+  {
+    "slug": "ccna-3.2-admin-distance-properties-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur la distance administrative sont vraies sur un routeur Cisco ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Plus sa valeur est élevée, plus la source de la route est jugée fiable"
+        },
+        {
+          "id": "b",
+          "text": "Elle départage des routes vers un même préfixe apprises par des sources différentes"
+        },
+        {
+          "id": "c",
+          "text": "Elle est comparée avant la longueur de préfixe lors de la recherche d'une route"
+        },
+        {
+          "id": "d",
+          "text": "Elle départage deux chemins OSPF de coûts différents vers un même préfixe"
+        },
+        {
+          "id": "e",
+          "text": "Elle a une valeur locale au routeur et n'est pas transmise aux voisins"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "La distance administrative mesure la confiance qu'un routeur accorde à une source de routes : 0 pour une route connectée, 1 pour une statique, 90 pour EIGRP interne, 110 pour OSPF, 120 pour RIP. Quand plusieurs sources proposent exactement le même préfixe, la plus faible l'emporte et seule cette route est installée. C'est un réglage local, modifiable sur chaque routeur, que les protocoles n'annoncent jamais. Elle n'intervient ni entre préfixes de longueurs différentes, ni entre chemins d'un même protocole.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : la valeur la plus faible désigne la source la plus fiable (0 pour une route connectée).",
+      "c": "La longueur de préfixe passe en premier lors du transfert ; la distance ne départage que des routes vers exactement le même préfixe.",
+      "d": "Deux chemins OSPF ont la même distance (110) : c'est le coût, la métrique d'OSPF, qui les départage."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-ttl-per-hop-values-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "PC1 émet vers SRV1 un paquet IPv4 avec un TTL de 128. Le paquet traverse R1, puis R2, puis R3 avant d'arriver à SRV1.",
+      "fields": [
+        {
+          "id": "r2r3",
+          "label": "TTL du paquet sur la liaison entre R2 et R3 (nombre entier)"
+        },
+        {
+          "id": "srv",
+          "label": "TTL du paquet reçu par SRV1 (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "r2r3": {
+          "accepted": [
+            "126"
+          ],
+          "normalize": "int"
+        },
+        "srv": {
+          "accepted": [
+            "125"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Chaque routeur retire 1 au TTL avant de transmettre le paquet, et recalcule la somme de contrôle de l'en-tête. PC1 émet 128 ; R1 transmet 127 ; R2 transmet 126, valeur visible sur la liaison R2–R3 ; R3 transmet 125, valeur que reçoit SRV1. Le TTL reçu permet ainsi d'estimer le nombre de routeurs traversés quand on connaît la valeur initiale (souvent 64, 128 ou 255 selon le système). L'hôte destinataire ne décrémente pas le TTL : il ne transmet pas le paquet.",
+    "distractorNotes": {},
+    "reference": "RFC 791 ; RFC 1812"
+  },
+  {
+    "slug": "ccna-3.2-maximum-paths-defaults-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur un routeur Cisco IOS en configuration par défaut, combien de chemins de même coût vers un même préfixe chacun de ces protocoles peut-il installer au maximum dans la table de routage ?",
+      "fields": [
+        {
+          "id": "ospf",
+          "label": "OSPF (nombre entier)"
+        },
+        {
+          "id": "eigrp",
+          "label": "EIGRP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "ospf": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        },
+        "eigrp": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Par défaut, OSPF comme EIGRP installent jusqu'à 4 chemins de même coût vers un même préfixe ; le routeur répartit ensuite le trafic entre eux. La commande « maximum-paths <nombre> », sous « router ospf » ou « router eigrp », modifie cette limite (la valeur maximale dépend de la plateforme) ; « maximum-paths 1 » supprime le partage de charge. Les chemins doivent avoir exactement la même métrique : un chemin plus coûteux n'est jamais installé à côté des autres (sauf partage inégal d'EIGRP avec variance).",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (maximum-paths) ; Cisco IOS IP Routing: EIGRP Command Reference (maximum-paths)"
+  },
+  {
+    "slug": "ccna-3.2-prefix-ad-metric-next-hops-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "R1 connaît les routes candidates suivantes, avec les distances administratives par défaut sauf mention contraire : 172.16.0.0/16 par OSPF, coût 30, via 10.0.0.2 ; 172.16.0.0/16 par OSPF, coût 20, via 10.0.0.6 ; 172.16.0.0/16 par RIP, 1 saut, via 10.0.0.10 ; 172.16.8.0/21 en statique de distance 130 via 10.0.0.14 ; 172.16.8.0/21 par RIP, 2 sauts, via 10.0.0.10 ; 172.16.12.0/22 par OSPF, coût 50, via 10.0.0.2. Indiquez le next hop que R1 utilise pour chaque destination.",
+      "fields": [
+        {
+          "id": "d1",
+          "label": "Destination 172.16.9.1 : next hop en décimal pointé"
+        },
+        {
+          "id": "d2",
+          "label": "Destination 172.16.13.1 : next hop en décimal pointé"
+        },
+        {
+          "id": "d3",
+          "label": "Destination 172.16.40.1 : next hop en décimal pointé"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "d1": {
+          "accepted": [
+            "10.0.0.10"
+          ],
+          "normalize": "ipv4"
+        },
+        "d2": {
+          "accepted": [
+            "10.0.0.2"
+          ],
+          "normalize": "ipv4"
+        },
+        "d3": {
+          "accepted": [
+            "10.0.0.6"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "D'abord les routes installées. 172.16.0.0/16 : OSPF (110) bat RIP (120), et OSPF retient son chemin de coût 20, via 10.0.0.6. 172.16.8.0/21 : RIP (120) bat la statique de distance 130, via 10.0.0.10. 172.16.12.0/22 : seule la route OSPF, via 10.0.0.2. Puis la correspondance la plus longue : 172.16.9.1 est dans la /21 (172.16.8.0 à 172.16.15.255) mais pas dans la /22 (172.16.12.0 à 172.16.15.255) : 10.0.0.10. 172.16.13.1 est dans la /22 : 10.0.0.2, malgré son coût de 50. 172.16.40.1 n'est que dans la /16 : 10.0.0.6.",
+    "distractorNotes": {},
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-last-segment-frame-fields-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. PC1 envoie un paquet à SRV1 à travers R1 puis R2 ; aucun NAT n'est configuré. Donnez les valeurs de la trame que SRV1 reçoit.",
+      "exhibit": "PC1 --- Gi0/0 [R1] Gi0/1 --- Gi0/0 [R2] Gi0/2 --- SRV1\n\nEquipement   Adresse IP      Adresse MAC\nPC1          10.10.1.25      0050.56a1.0a19\nR1 Gi0/0     10.10.1.1       5254.0012.0a01\nR1 Gi0/1     10.0.12.1       5254.0012.0c01\nR2 Gi0/0     10.0.12.2       5254.0034.0c02\nR2 Gi0/2     10.30.3.1       5254.0034.1e01\nSRV1         10.30.3.30      0050.56a1.1e1e",
+      "fields": [
+        {
+          "id": "macsrc",
+          "label": "Adresse MAC source, au format xxxx.xxxx.xxxx"
+        },
+        {
+          "id": "macdst",
+          "label": "Adresse MAC destination, au format xxxx.xxxx.xxxx"
+        },
+        {
+          "id": "ipsrc",
+          "label": "Adresse IP source du paquet, en décimal pointé"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "macsrc": {
+          "accepted": [
+            "5254.0034.1e01",
+            "52:54:00:34:1e:01",
+            "52-54-00-34-1e-01",
+            "525400341e01"
+          ],
+          "normalize": "text"
+        },
+        "macdst": {
+          "accepted": [
+            "0050.56a1.1e1e",
+            "00:50:56:a1:1e:1e",
+            "00-50-56-a1-1e-1e",
+            "005056a11e1e"
+          ],
+          "normalize": "text"
+        },
+        "ipsrc": {
+          "accepted": [
+            "10.10.1.25"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "La trame que reçoit SRV1 a été construite par R2, le dernier routeur : la MAC source est celle de son interface de sortie Gi0/2 (5254.0034.1e01), la MAC destination celle de SRV1 (0050.56a1.1e1e), que R2 connaît par ARP sur son réseau connecté. Les adresses MAC de PC1 et de R1 ont disparu avec les trames des segments précédents. Le paquet IP, lui, est inchangé hors TTL : l'IP source reste 10.10.1.25, celle de PC1, et l'IP destination 10.30.3.30.",
+    "distractorNotes": {},
+    "reference": "RFC 1812 ; RFC 826"
+  },
+  {
+    "slug": "ccna-3.2-ospf-ecmp-path-count-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "R1 apprend 10.90.0.0/24 uniquement par OSPF, par quatre voisins différents ; le coût total vers ce préfixe vaut 20 par le premier voisin, 20 par le deuxième, 30 par le troisième et 20 par le quatrième.",
+      "fields": [
+        {
+          "id": "def",
+          "label": "Nombre de next hops installés pour 10.90.0.0/24 avec la configuration OSPF par défaut (nombre entier)"
+        },
+        {
+          "id": "mp2",
+          "label": "Nombre de next hops installés après « maximum-paths 2 » sous router ospf (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "def": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        },
+        "mp2": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "OSPF ne garde que les chemins de coût minimal : trois voisins offrent un coût de 20, le troisième (coût 30) est écarté. Par défaut, OSPF installe jusqu'à 4 chemins de même coût : les trois chemins de coût 20 sont tous installés et R1 répartit le trafic entre eux. Avec « maximum-paths 2 », la limite descend à deux : seuls deux des trois chemins de coût 20 sont installés. Le chemin de coût 30 n'est jamais utilisé tant qu'un chemin de coût 20 existe.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (maximum-paths)"
+  },
+  {
+    "slug": "ccna-3.2-ospf-maximum-paths-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale de R1, autorisez le processus OSPF 1 à installer jusqu'à 6 chemins de même coût vers un même préfixe.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "router ospf 1"
+        ],
+        [
+          "maximum-paths 6"
+        ]
+      ]
+    },
+    "explanation": "« maximum-paths » se configure dans le mode du processus de routage : on entre d'abord dans « router ospf 1 », puis on fixe la limite. Par défaut, OSPF installe jusqu'à 4 chemins de même coût ; avec 6, R1 peut répartir le trafic sur six next hops si autant de chemins de coût minimal existent. La valeur ne concerne que les chemins de même coût : un chemin plus coûteux n'est pas ajouté. « show ip protocols » affiche la valeur en vigueur (« Maximum path: 6 »).",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: OSPF Command Reference (maximum-paths)"
+  },
+  {
+    "slug": "ccna-3.2-show-ip-cef-address-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode d'exécution privilégié de R1, affichez l'entrée de la FIB que CEF utilise pour transmettre un paquet destiné à 10.44.7.9 (préfixe retenu, next hop et interface de sortie).",
+      "prompt": "R1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show ip cef 10.44.7.9",
+          "show ip cef 10.44.7.9 detail"
+        ]
+      ]
+    },
+    "explanation": "« show ip cef <adresse> » cherche dans la FIB l'entrée la plus longue qui contient l'adresse, exactement comme le fait CEF pour un paquet, et affiche le préfixe retenu avec son ou ses next hops et l'interface de sortie. C'est la vue du plan de données, à comparer à « show ip route <adresse> », qui montre la table de routage ; pour une route récursive, la FIB donne directement le next hop résolu et l'interface de sortie. Le mot-clé « detail » ajoute des informations sans changer l'entrée affichée.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Switching Command Reference (show ip cef)"
+  },
+  {
+    "slug": "ccna-3.2-rib-fib-pipeline-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "R1 exécute OSPF et EIGRP, qui connaissent tous deux 10.1.0.0/16, et transmet les paquets avec CEF. Remettez dans l'ordre les étapes qui mènent du calcul de la route à l'émission d'un paquet destiné à 10.1.2.3.",
+      "items": [
+        {
+          "id": "fib",
+          "text": "CEF recopie dans la FIB la route installée vers 10.1.0.0/16"
+        },
+        {
+          "id": "adj",
+          "text": "CEF prend dans la table d'adjacence l'en-tête de couche 2 du next hop et émet la trame"
+        },
+        {
+          "id": "ospf",
+          "text": "OSPF retient, d'après le coût, son meilleur chemin vers 10.1.0.0/16"
+        },
+        {
+          "id": "lookup",
+          "text": "Un paquet destiné à 10.1.2.3 arrive : CEF cherche dans la FIB l'entrée la plus longue qui le contient"
+        },
+        {
+          "id": "rib",
+          "text": "La table de routage compare la route d'OSPF à celle d'EIGRP et installe celle de plus faible distance administrative"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "ospf",
+        "rib",
+        "fib",
+        "lookup",
+        "adj"
+      ]
+    },
+    "explanation": "Chaque protocole choisit d'abord, avec sa propre métrique, son meilleur chemin vers le préfixe, puis le propose à la table de routage. Celle-ci départage les propositions de sources différentes par la distance administrative (une route EIGRP interne, de distance 90, l'emporterait sur OSPF, 110). CEF recopie ensuite la route installée dans la FIB. Ce n'est qu'à l'arrivée d'un paquet que la correspondance la plus longue est recherchée dans la FIB ; l'entrée trouvée pointe vers une adjacence, qui fournit l'en-tête de couche 2 du next hop.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Switching: Cisco Express Forwarding Configuration Guide (Cisco Express Forwarding Overview)"
+  },
+  {
+    "slug": "ccna-3.2-hop-by-hop-rewrite-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "PC1 envoie un paquet à SRV1 avec un TTL de 64. Le chemin est PC1 → R1 → R2 → SRV1, et tous les caches ARP sont déjà remplis. Remettez les étapes dans l'ordre.",
+      "items": [
+        {
+          "id": "r1out",
+          "text": "R1 émet une nouvelle trame, de la MAC de son interface de sortie vers la MAC de R2"
+        },
+        {
+          "id": "srv",
+          "text": "SRV1 reçoit le paquet, dont l'adresse IP source est toujours celle de PC1"
+        },
+        {
+          "id": "pc",
+          "text": "PC1 émet une trame adressée à la MAC de R1, avec l'adresse IP de SRV1 comme destination"
+        },
+        {
+          "id": "r2",
+          "text": "R2 ramène le TTL à 62 et émet une trame adressée à la MAC de SRV1"
+        },
+        {
+          "id": "r1in",
+          "text": "R1 retire l'en-tête Ethernet reçu, ramène le TTL à 63 et trouve la route vers SRV1"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "pc",
+        "r1in",
+        "r1out",
+        "r2",
+        "srv"
+      ]
+    },
+    "explanation": "PC1 constate que SRV1 est hors de son réseau : il adresse sa trame à la MAC de sa passerelle R1, mais le paquet garde l'IP de SRV1 en destination. R1 retire la trame, décrémente le TTL (63), cherche la route, puis encapsule le paquet dans une nouvelle trame : MAC source de son interface de sortie, MAC destination de R2. R2 fait de même (TTL 62) avec la MAC de SRV1 en destination. À chaque saut l'en-tête de couche 2 est reconstruit ; les adresses IP ne changent pas.",
+    "distractorNotes": {},
+    "reference": "RFC 1812 ; RFC 826"
+  },
+  {
+    "slug": "ccna-3.2-frame-fields-rewrite-matching-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Reportez-vous à l'exhibit. PC1 envoie à SRV1 un paquet avec un TTL de 128 ; aucun NAT n'est configuré. Associez chaque champ de la trame qui circule entre R1 et R2 à sa valeur.",
+      "exhibit": "PC1 --- Gi0/0 [R1] Gi0/1 --- Gi0/0 [R2] Gi0/1 --- SRV1\n\nEquipement   Adresse IP      Adresse MAC\nPC1          192.168.1.10    0050.7966.6800\nR1 Gi0/0     192.168.1.1     0c1a.2b3c.0100\nR1 Gi0/1     10.0.12.1       0c1a.2b3c.0101\nR2 Gi0/0     10.0.12.2       0c4d.5e6f.0200\nR2 Gi0/1     172.16.5.1      0c4d.5e6f.0201\nSRV1         172.16.5.20     0050.7966.6900",
+      "left": [
+        {
+          "id": "macsrc",
+          "text": "Adresse MAC source"
+        },
+        {
+          "id": "macdst",
+          "text": "Adresse MAC destination"
+        },
+        {
+          "id": "ipsrc",
+          "text": "Adresse IP source"
+        },
+        {
+          "id": "ipdst",
+          "text": "Adresse IP destination"
+        },
+        {
+          "id": "ttl",
+          "text": "TTL"
+        }
+      ],
+      "right": [
+        {
+          "id": "m0101",
+          "text": "0c1a.2b3c.0101"
+        },
+        {
+          "id": "m0200",
+          "text": "0c4d.5e6f.0200"
+        },
+        {
+          "id": "m6800",
+          "text": "0050.7966.6800"
+        },
+        {
+          "id": "pc1",
+          "text": "192.168.1.10"
+        },
+        {
+          "id": "srv",
+          "text": "172.16.5.20"
+        },
+        {
+          "id": "t127",
+          "text": "127"
+        },
+        {
+          "id": "t128",
+          "text": "128"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "macsrc": "m0101",
+        "macdst": "m0200",
+        "ipsrc": "pc1",
+        "ipdst": "srv",
+        "ttl": "t127"
+      }
+    },
+    "explanation": "Sur le segment R1–R2, la trame est construite par R1 : la MAC source est celle de son interface de sortie Gi0/1 (0c1a.2b3c.0101), la MAC destination celle du next hop, Gi0/0 de R2 (0c4d.5e6f.0200). Le paquet IP qu'elle transporte garde ses adresses de bout en bout : 192.168.1.10 en source, 172.16.5.20 en destination. R1 a décrémenté le TTL : 128 devient 127. R2 construira à son tour une nouvelle trame vers SRV1 et transmettra le paquet avec un TTL de 126.",
+    "distractorNotes": {
+      "m6800": "0050.7966.6800 est la MAC de PC1 : elle n'était présente que dans la trame du premier segment, que R1 a retirée.",
+      "t128": "128 est le TTL émis par PC1 ; R1 l'a décrémenté avant de transmettre le paquet vers R2."
+    },
+    "reference": "RFC 1812 ; RFC 826"
+  },
+  {
+    "slug": "ccna-3.2-cef-tables-matching-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque table d'un routeur Cisco qui utilise CEF à son contenu.",
+      "left": [
+        {
+          "id": "rib",
+          "text": "Table de routage (RIB)"
+        },
+        {
+          "id": "fib",
+          "text": "FIB"
+        },
+        {
+          "id": "adj",
+          "text": "Table d'adjacence"
+        },
+        {
+          "id": "arp",
+          "text": "Table ARP"
+        }
+      ],
+      "right": [
+        {
+          "id": "best",
+          "text": "Routes retenues après comparaison des distances administratives"
+        },
+        {
+          "id": "copy",
+          "text": "Copie des routes, consultée pour chaque paquet afin de trouver le préfixe le plus long"
+        },
+        {
+          "id": "l2",
+          "text": "En-têtes de couche 2 préparés pour joindre chaque next hop"
+        },
+        {
+          "id": "ipmac",
+          "text": "Correspondances entre adresses IPv4 et adresses MAC des voisins"
+        },
+        {
+          "id": "macport",
+          "text": "Correspondances entre adresses MAC et ports de commutation"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "rib": "best",
+        "fib": "copy",
+        "adj": "l2",
+        "arp": "ipmac"
+      }
+    },
+    "explanation": "La table de routage (RIB) est le résultat du plan de contrôle : pour chaque préfixe, la meilleure source selon la distance administrative. CEF en tire la FIB, une copie optimisée pour la recherche de la correspondance la plus longue à chaque paquet. La table d'adjacence contient, pour chaque voisin directement joignable, l'en-tête de couche 2 prêt à l'emploi ; elle est construite notamment à partir de la table ARP, qui associe les adresses IPv4 des voisins Ethernet à leurs adresses MAC.",
+    "distractorNotes": {
+      "macport": "L'association entre adresses MAC et ports est la table d'adresses MAC d'un commutateur (CAM) ; elle ne fait pas partie des tables de CEF."
+    },
+    "reference": "Cisco IOS IP Switching: Cisco Express Forwarding Configuration Guide (Cisco Express Forwarding Overview)"
+  },
+  {
+    "slug": "ccna-3.2-tiebreak-criterion-matching-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Dans chaque situation, R1 doit transmettre un paquet destiné à 10.1.1.10 et ne connaît que les deux routes indiquées, valides et avec les distances administratives par défaut sauf mention contraire. Associez chaque situation au critère qui détermine la façon dont R1 transmet ce paquet. Un critère peut servir plusieurs fois.",
+      "left": [
+        {
+          "id": "s1",
+          "text": "10.1.0.0/16 en statique et 10.1.1.0/24 apprise par OSPF"
+        },
+        {
+          "id": "s2",
+          "text": "10.1.1.0/24 apprise par OSPF et 10.1.1.0/24 apprise par EIGRP (route interne)"
+        },
+        {
+          "id": "s3",
+          "text": "10.1.1.0/24 apprise par OSPF via deux voisins, avec les coûts 20 et 30"
+        },
+        {
+          "id": "s4",
+          "text": "10.1.1.0/24 apprise par OSPF via deux voisins, avec les coûts 20 et 20"
+        },
+        {
+          "id": "s5",
+          "text": "10.1.0.0/16 apprise par EIGRP (route interne) et 10.1.1.0/25 en statique de distance 250"
+        }
+      ],
+      "right": [
+        {
+          "id": "pfx",
+          "text": "La longueur de préfixe"
+        },
+        {
+          "id": "ad",
+          "text": "La distance administrative"
+        },
+        {
+          "id": "metric",
+          "text": "La métrique"
+        },
+        {
+          "id": "ecmp",
+          "text": "Aucun départage : les deux chemins servent en partage de charge"
+        },
+        {
+          "id": "age",
+          "text": "L'ancienneté : la route apprise en premier"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "pfx",
+        "s2": "ad",
+        "s3": "metric",
+        "s4": "ecmp",
+        "s5": "pfx"
+      }
+    },
+    "explanation": "L'ordre des critères est fixe. Si les préfixes diffèrent, la correspondance la plus longue décide, quelles que soient les distances : la /24 OSPF bat la /16 statique, et la /25 statique de distance 250 bat la /16 EIGRP. Pour un même préfixe venant de sources différentes, la plus faible distance administrative gagne : EIGRP interne (90) devant OSPF (110). Pour un même préfixe et une même source, la métrique décide : le chemin de coût 20. À métrique égale, les deux chemins sont installés et le trafic est partagé.",
+    "distractorNotes": {
+      "age": "L'ordre d'apprentissage des routes n'est jamais un critère de sélection dans la table de routage d'IOS."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  }
+]

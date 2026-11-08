@@ -1,0 +1,823 @@
+{
+  "slug": "ccna-lab-2.5-rapid-pvst-racines",
+  "certification": "ccna",
+  "domain": "2.0",
+  "subtopic": "2.5",
+  "difficulty": "hard",
+  "title": "Rapid PVST+ : racines par VLAN, ports de bordure et root guard",
+  "statement": "Les trois commutateurs Catalyst 2960 tournent en PVST+ avec les priorités par défaut (32768). La racine de chaque VLAN est donc élue sur la plus petite adresse MAC : c'est A1, le commutateur d'accès. La dernière panne d'un lien montant a coupé le réseau près de 50 s.\n\nConfigurez les trois commutateurs (onglets D1, D2 et A1) :\n1. Passez D1, D2 et A1 en Rapid PVST+.\n2. D1 est le pont racine du VLAN 10 et la racine de secours du VLAN 20.\n3. D2 est le pont racine du VLAN 20 et la racine de secours du VLAN 10. Les macros d'IOS comme des priorités explicites conviennent : 24576 au plus pour la racine, 28672 pour la racine de secours.\n4. Sur A1, les ports des postes Fa0/1 à Fa0/24 passent immédiatement en transmission et se désactivent s'ils reçoivent une BPDU. Les liens montants Gi0/1 et Gi0/2 ne reçoivent aucun de ces réglages.\n5. Sur D1 et D2, le port vers A1 (Gi0/2) doit empêcher A1, ou tout commutateur branché derrière lui, de devenir racine. Le lien D1–D2 reste sans protection : chacun des deux y est racine d'un VLAN.",
+  "topology": "              Gi0/1            Gi0/1\n           D1 ====== trunk ====== D2\n         Gi0/2                    Gi0/2\n            \\  trunk        trunk  /\n           Gi0/1                Gi0/2\n                       A1\n      Fa0/1-12 : VLAN 10 (BUREAUX)   Fa0/13-24 : VLAN 20 (ATELIER)\n\n  Aujourd'hui : spanning-tree mode pvst et priorité 32768 partout.\n  Cible : VLAN 10 -> racine D1, secours D2 ; VLAN 20 -> racine D2, secours D1.",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "D1",
+      "type": "switch",
+      "interfaces": [
+        "FastEthernet0/1-24",
+        "GigabitEthernet0/1-2"
+      ],
+      "startupConfig": "hostname D1\nno ip domain-lookup\nspanning-tree mode pvst\nvlan 10\n name BUREAUX\nvlan 20\n name ATELIER\ninterface GigabitEthernet0/1\n description Vers D2\n switchport mode trunk\ninterface GigabitEthernet0/2\n description Vers A1\n switchport mode trunk"
+    },
+    {
+      "id": "D2",
+      "type": "switch",
+      "interfaces": [
+        "FastEthernet0/1-24",
+        "GigabitEthernet0/1-2"
+      ],
+      "startupConfig": "hostname D2\nno ip domain-lookup\nspanning-tree mode pvst\nvlan 10\n name BUREAUX\nvlan 20\n name ATELIER\ninterface GigabitEthernet0/1\n description Vers D1\n switchport mode trunk\ninterface GigabitEthernet0/2\n description Vers A1\n switchport mode trunk"
+    },
+    {
+      "id": "A1",
+      "type": "switch",
+      "interfaces": [
+        "FastEthernet0/1-24",
+        "GigabitEthernet0/1-2"
+      ],
+      "startupConfig": "hostname A1\nno ip domain-lookup\nspanning-tree mode pvst\nvlan 10\n name BUREAUX\nvlan 20\n name ATELIER\ninterface range FastEthernet0/1 - 12\n switchport mode access\n switchport access vlan 10\ninterface range FastEthernet0/13 - 24\n switchport mode access\n switchport access vlan 20\ninterface GigabitEthernet0/1\n description Vers D1\n switchport mode trunk\ninterface GigabitEthernet0/2\n description Vers D2\n switchport mode trunk"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "mode-rapid",
+      "description": "D1, D2 et A1 fonctionnent en Rapid PVST+.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "device": "D1",
+            "line": "spanning-tree mode rapid-pvst"
+          },
+          {
+            "type": "line",
+            "device": "D2",
+            "line": "spanning-tree mode rapid-pvst"
+          },
+          {
+            "type": "line",
+            "device": "A1",
+            "line": "spanning-tree mode rapid-pvst"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d1-roots",
+      "description": "D1 est la racine du VLAN 10 et la racine de secours du VLAN 20 (A1 ne passe pas devant).",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "device": "D1",
+            "pattern": "^spanning-tree vlan 10 (root primary|priority (0|4096|8192|12288|16384|20480|24576))$"
+          },
+          {
+            "type": "regex",
+            "device": "D1",
+            "pattern": "^spanning-tree vlan 20 (root secondary|priority 28672)$"
+          },
+          {
+            "type": "regex",
+            "device": "D1",
+            "pattern": "^spanning-tree vlan (?!(10|20) )\\S+ (root|priority) ",
+            "absent": true
+          },
+          {
+            "type": "regex",
+            "device": "A1",
+            "pattern": "^spanning-tree vlan \\S+ (root (primary|secondary)|priority (0|4096|8192|12288|16384|20480|24576|28672))$",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "d2-roots",
+      "description": "D2 est la racine du VLAN 20 et la racine de secours du VLAN 10 (A1 ne passe pas devant).",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "device": "D2",
+            "pattern": "^spanning-tree vlan 20 (root primary|priority (0|4096|8192|12288|16384|20480|24576))$"
+          },
+          {
+            "type": "regex",
+            "device": "D2",
+            "pattern": "^spanning-tree vlan 10 (root secondary|priority 28672)$"
+          },
+          {
+            "type": "regex",
+            "device": "D2",
+            "pattern": "^spanning-tree vlan (?!(10|20) )\\S+ (root|priority) ",
+            "absent": true
+          },
+          {
+            "type": "regex",
+            "device": "A1",
+            "pattern": "^spanning-tree vlan \\S+ (root (primary|secondary)|priority (0|4096|8192|12288|16384|20480|24576|28672))$",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "a1-portfast",
+      "description": "Sur A1, Fa0/1 à Fa0/24 sont des ports de bordure (PortFast), et les liens montants Gi0/1-2 n'en sont pas.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "line",
+                "device": "A1",
+                "sectionPattern": "^interface FastEthernet0/\\d+$",
+                "sections": "all",
+                "line": [
+                  "spanning-tree portfast",
+                  "spanning-tree portfast edge"
+                ]
+              },
+              {
+                "type": "line",
+                "device": "A1",
+                "line": [
+                  "spanning-tree portfast default",
+                  "spanning-tree portfast edge default"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "regex",
+            "device": "A1",
+            "sectionPattern": "^interface GigabitEthernet0/[12]$",
+            "pattern": "^spanning-tree portfast( edge)?( trunk)?$",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "a1-bpduguard",
+      "description": "Sur A1, Fa0/1 à Fa0/24 se désactivent à la réception d'une BPDU, et les liens montants Gi0/1-2 n'ont pas BPDU Guard.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "line",
+                "device": "A1",
+                "sectionPattern": "^interface FastEthernet0/\\d+$",
+                "sections": "all",
+                "line": "spanning-tree bpduguard enable"
+              },
+              {
+                "type": "all",
+                "checks": [
+                  {
+                    "type": "line",
+                    "device": "A1",
+                    "line": [
+                      "spanning-tree portfast bpduguard default",
+                      "spanning-tree portfast edge bpduguard default"
+                    ]
+                  },
+                  {
+                    "type": "any",
+                    "checks": [
+                      {
+                        "type": "line",
+                        "device": "A1",
+                        "sectionPattern": "^interface FastEthernet0/\\d+$",
+                        "sections": "all",
+                        "line": [
+                          "spanning-tree portfast",
+                          "spanning-tree portfast edge"
+                        ]
+                      },
+                      {
+                        "type": "line",
+                        "device": "A1",
+                        "line": [
+                          "spanning-tree portfast default",
+                          "spanning-tree portfast edge default"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "line",
+            "device": "A1",
+            "sectionPattern": "^interface GigabitEthernet0/[12]$",
+            "line": "spanning-tree bpduguard enable",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "root-guard",
+      "description": "Root guard protège Gi0/2 (vers A1) sur D1 et D2, mais pas le lien D1–D2 (Gi0/1).",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "device": "D1",
+            "section": "interface GigabitEthernet0/2",
+            "line": "spanning-tree guard root"
+          },
+          {
+            "type": "line",
+            "device": "D2",
+            "section": "interface GigabitEthernet0/2",
+            "line": "spanning-tree guard root"
+          },
+          {
+            "type": "line",
+            "device": "D1",
+            "section": "interface GigabitEthernet0/1",
+            "line": "spanning-tree guard root",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "device": "D2",
+            "section": "interface GigabitEthernet0/1",
+            "line": "spanning-tree guard root",
+            "absent": true
+          }
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "Le mode Spanning Tree se choisit en configuration globale, sur chaque commutateur. La racine s'élit VLAN par VLAN : l'identifiant de pont le plus petit gagne, priorité d'abord, puis adresse MAC.",
+    "IOS fournit deux macros par VLAN : l'une rend le commutateur racine (priorité 24576, ou moins si un autre est déjà plus bas), l'autre en fait la racine de secours (28672). Une priorité explicite doit être un multiple de 4096. Côté accès, PortFast fait d'un port un port de bordure RSTP, et BPDU Guard le met en err-disabled à la première BPDU. Root guard bloque un port qui reçoit une BPDU supérieure.",
+    "spanning-tree mode rapid-pvst sur les trois ; spanning-tree vlan <n> root primary ou root secondary sur D1 et D2 ; sous interface range fa0/1 - 24 d'A1, PortFast et spanning-tree bpduguard enable ; sous Gi0/2 de D1 et D2, spanning-tree guard root."
+  ],
+  "solution": [
+    {
+      "device": "D1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "spanning-tree mode rapid-pvst",
+        "spanning-tree vlan 10 root primary",
+        "spanning-tree vlan 20 root secondary",
+        "interface g0/2",
+        "spanning-tree guard root",
+        "end"
+      ]
+    },
+    {
+      "device": "D2",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "spanning-tree mode rapid-pvst",
+        "spanning-tree vlan 20 root primary",
+        "spanning-tree vlan 10 root secondary",
+        "interface g0/2",
+        "spanning-tree guard root",
+        "end"
+      ]
+    },
+    {
+      "device": "A1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "spanning-tree mode rapid-pvst",
+        "interface range fa0/1 - 24",
+        "spanning-tree portfast",
+        "spanning-tree bpduguard enable",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Priorités explicites, PortFast et BPDU Guard par défaut en global sur A1, abréviations",
+      "solution": [
+        {
+          "device": "D1",
+          "commands": [
+            "en",
+            "conf t",
+            "spanning-tree mode rapid",
+            "spanning-tree vlan 10 priority 4096",
+            "spanning-tree vlan 20 priority 28672",
+            "int g0/2",
+            "spanning-tree guard root",
+            "\u001a"
+          ]
+        },
+        {
+          "device": "D2",
+          "commands": [
+            "en",
+            "conf t",
+            "spanning-tree vlan 10 root sec",
+            "spanning-tree vlan 20 priority 24576",
+            "int GigabitEthernet 0/2",
+            "spanning-tree guard root",
+            "exit",
+            "spanning-tree mode rapid-pvst",
+            "end"
+          ]
+        },
+        {
+          "device": "A1",
+          "commands": [
+            "en",
+            "conf t",
+            "spanning-tree portfast default",
+            "spanning-tree portfast bpduguard default",
+            "spanning-tree mode rapid-pvst",
+            "end"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Syntaxe « portfast edge » (IOS 15.2 et IOS XE), BPDU Guard par défaut en global, port par port sur A1",
+      "solution": [
+        {
+          "device": "D1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree vlan 20 root secondary",
+            "spanning-tree vlan 10 root pri",
+            "spanning-tree mode rapid-pvst",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "D2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 20 root primary",
+            "spanning-tree vlan 10 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "A1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree portfast edge bpduguard default",
+            "interface range fa0/1 - 12",
+            "spanning-tree portfast edge",
+            "interface range fa0/13 - 24",
+            "spanning-tree portfast edge",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "D1 racine des deux VLAN : tout passe par D1, le lien A1–D2 reste bloqué pour les deux VLAN",
+      "solution": [
+        {
+          "device": "D1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 10 root primary",
+            "spanning-tree vlan 20 root primary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "D2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 10 root secondary",
+            "spanning-tree vlan 20 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "A1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "interface range fa0/1 - 24",
+            "spanning-tree portfast",
+            "spanning-tree bpduguard enable",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "d1-roots",
+        "d2-roots"
+      ]
+    },
+    {
+      "description": "Root guard aussi sur le lien D1–D2 : les BPDU supérieures légitimes de l'autre racine y mettent le port en root-inconsistent",
+      "solution": [
+        {
+          "device": "D1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 10 root primary",
+            "spanning-tree vlan 20 root secondary",
+            "interface range g0/1 - 2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "D2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 20 root primary",
+            "spanning-tree vlan 10 root secondary",
+            "interface range g0/1 - 2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "A1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "interface range fa0/1 - 24",
+            "spanning-tree portfast",
+            "spanning-tree bpduguard enable",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "root-guard"
+      ]
+    },
+    {
+      "description": "A1 laissé en PVST+ : ses ports retombent en 802.1D face aux distributions, sans convergence rapide",
+      "solution": [
+        {
+          "device": "D1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 10 root primary",
+            "spanning-tree vlan 20 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "D2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 20 root primary",
+            "spanning-tree vlan 10 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "A1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface range fa0/1 - 24",
+            "spanning-tree portfast",
+            "spanning-tree bpduguard enable",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "mode-rapid"
+      ]
+    },
+    {
+      "description": "PortFast sans BPDU Guard : un commutateur branché sur une prise devient un pont sans protection",
+      "solution": [
+        {
+          "device": "D1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 10 root primary",
+            "spanning-tree vlan 20 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "D2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 20 root primary",
+            "spanning-tree vlan 10 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "A1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "interface range fa0/1 - 24",
+            "spanning-tree portfast",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "a1-bpduguard"
+      ]
+    },
+    {
+      "description": "PortFast trunk et BPDU Guard aussi sur les liens montants : A1 met ses propres uplinks en err-disabled",
+      "solution": [
+        {
+          "device": "D1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 10 root primary",
+            "spanning-tree vlan 20 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "D2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 20 root primary",
+            "spanning-tree vlan 10 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "A1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "interface range fa0/1 - 24",
+            "spanning-tree portfast",
+            "spanning-tree bpduguard enable",
+            "interface range g0/1 - 2",
+            "spanning-tree portfast trunk",
+            "spanning-tree bpduguard enable",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "a1-portfast",
+        "a1-bpduguard"
+      ]
+    },
+    {
+      "description": "BPDU Guard par défaut sans PortFast : la commande globale ne vise que les ports PortFast, elle reste sans effet",
+      "solution": [
+        {
+          "device": "D1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 10 root primary",
+            "spanning-tree vlan 20 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "D2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 20 root primary",
+            "spanning-tree vlan 10 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "A1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree portfast bpduguard default",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "a1-portfast",
+        "a1-bpduguard"
+      ]
+    },
+    {
+      "description": "Racine de secours oubliée : si D1 tombe, l'élection du VLAN 10 repart sur les MAC et A1 peut redevenir racine",
+      "solution": [
+        {
+          "device": "D1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 10 root primary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "D2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 20 root primary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "A1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "interface range fa0/1 - 24",
+            "spanning-tree portfast",
+            "spanning-tree bpduguard enable",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "d1-roots",
+        "d2-roots"
+      ]
+    },
+    {
+      "description": "Sur D1, spanning-tree vlan 10,20 root primary tapé après la racine de secours : IOS applique la dernière commande à chaque VLAN de la liste, D1 devient aussi racine du VLAN 20",
+      "solution": [
+        {
+          "device": "D1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 20 root secondary",
+            "spanning-tree vlan 10,20 root primary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "D2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 20 root primary",
+            "spanning-tree vlan 10 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "A1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "interface range fa0/1 - 24",
+            "spanning-tree portfast",
+            "spanning-tree bpduguard enable",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "d1-roots"
+      ]
+    },
+    {
+      "description": "Macro root primary jouée aussi sur A1 : A1 annonce la meilleure priorité, root guard met les ports Gi0/2 de D1 et D2 en root-inconsistent et A1 est isolé",
+      "solution": [
+        {
+          "device": "D1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 10 root primary",
+            "spanning-tree vlan 20 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "D2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 20 root primary",
+            "spanning-tree vlan 10 root secondary",
+            "interface g0/2",
+            "spanning-tree guard root",
+            "end"
+          ]
+        },
+        {
+          "device": "A1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "spanning-tree mode rapid-pvst",
+            "spanning-tree vlan 10,20 root primary",
+            "interface range fa0/1 - 24",
+            "spanning-tree portfast",
+            "spanning-tree bpduguard enable",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "d1-roots",
+        "d2-roots"
+      ]
+    }
+  ],
+  "explanation": "PVST+, le mode par défaut des Catalyst 2960, applique le 802.1D : après une panne, un port bloqué attend jusqu'à max age (20 s), puis passe par listening et learning (2 × 15 s). D'où les 50 s de coupure. Rapid PVST+ applique le 802.1w (RSTP), une instance par VLAN. Les ports alternate et backup sont calculés d'avance et les ports désignés négocient leur passage en forwarding (proposal/agreement) : la reconvergence prend une à deux secondes. Le mode se règle sur chaque commutateur. Un port qui reçoit des BPDU 802.1D d'un voisin resté en PVST+ y retombe lui-même, et perd la convergence rapide. L'identifiant de pont commence par la priorité (multiple de 4096) augmentée du numéro de VLAN (extended system ID), puis vient la MAC : à priorités égales, la plus petite MAC gagne, ce qui fait souvent d'un vieux commutateur d'accès la racine. spanning-tree vlan 10 root primary est une macro : elle fixe la priorité à 24576, ou 4096 de moins que la racine actuelle si celle-ci est déjà plus basse, et IOS l'écrit spanning-tree vlan 10 priority 24576. root secondary donne 28672. Ces commandes acceptent une liste de VLAN (spanning-tree vlan 10,20 …) : pour chaque VLAN, la dernière commande saisie l'emporte. La macro ne se joue que sur les distributions : sur A1, elle lui redonnerait la racine. show spanning-tree vlan 10 affiche alors 24586 (24576 + 10). Avec D1 racine du VLAN 10 et D2 racine du VLAN 20, chaque VLAN emprunte son propre lien montant depuis A1. L'autre lien reste en alternate pour ce VLAN et prend le relais immédiatement. Une racine de secours évite qu'à la chute de la racine, l'élection retombe sur les MAC. PortFast (spanning-tree portfast, ou portfast edge sur les versions récentes) fait d'un port d'accès un port de bordure : il passe tout de suite en forwarding et ne déclenche pas de notification de changement de topologie. BPDU Guard met ce port en err-disabled dès qu'une BPDU arrive. En global, spanning-tree portfast default ne vise que les ports d'accès, et spanning-tree portfast bpduguard default que les ports où PortFast est actif. Les liens montants, eux, échangent des BPDU par nature : BPDU Guard les couperait. Root guard, posé sur un port désigné vers l'accès, met ce port en root-inconsistent (bloqué) pour le VLAN concerné tant qu'il reçoit des BPDU supérieures : un commutateur ajouté derrière A1 ne peut pas prendre la racine. Sur le lien D1–D2, chaque distribution reçoit légitimement des BPDU supérieures pour le VLAN dont l'autre est racine : root guard y bloquerait le lien. Vérification : show spanning-tree vlan 10, show spanning-tree summary, show spanning-tree root.",
+  "reference": "Catalyst 2960 Switch Software Configuration Guide, Cisco IOS Release 15.0(2)SE — « Configuring STP » (Configuring the Root Switch, Configuring a Secondary Root Switch), « Configuring MSTP » (RSTP et changement du mode spanning-tree), « Configuring Optional Spanning-Tree Features » (PortFast, BPDU Guard, Root Guard) ; Cisco IOS LAN Switching Command Reference (spanning-tree mode, spanning-tree vlan root, spanning-tree portfast, spanning-tree bpduguard, spanning-tree guard)",
+  "estimatedMinutes": 15
+}

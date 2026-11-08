@@ -1,0 +1,966 @@
+[
+  {
+    "slug": "ccna-2.5-bridge-priority-valid-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un administrateur veut modifier la priorité de pont de SW1 pour le VLAN 10 avec la commande « spanning-tree vlan 10 priority <valeur> ». Laquelle de ces valeurs IOS accepte-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "1000"
+        },
+        {
+          "id": "b",
+          "text": "32769"
+        },
+        {
+          "id": "c",
+          "text": "8192"
+        },
+        {
+          "id": "d",
+          "text": "65535"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Avec l'extended system ID, les 16 bits de priorité du bridge ID sont partagés : les 4 bits de poids fort portent la priorité configurable, les 12 bits suivants le numéro de VLAN. La priorité ne peut donc prendre que des multiples de 4096, de 0 à 61440 (16 valeurs) ; 8192 en fait partie. Pour toute autre valeur, IOS refuse la commande et affiche la liste des valeurs permises. La valeur par défaut est 32768, et « show spanning-tree vlan 10 » afficherait ici 8202 (8192 + 10).",
+    "distractorNotes": {
+      "a": "1000 n'est pas un multiple de 4096 : IOS refuse la commande.",
+      "b": "32769 est la priorité affichée par défaut dans le VLAN 1 (32768 + sys-id-ext 1), pas une valeur configurable.",
+      "d": "65535 dépasse la valeur maximale, 61440, et n'est pas un multiple de 4096."
+    },
+    "reference": "IEEE 802.1t (extended system ID) ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-root-secondary-priority-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur SW2, dont la priorité Spanning Tree est restée à la valeur par défaut, un administrateur saisit « spanning-tree vlan 20 root secondary ». Quelle priorité (sans le sys-id-ext) le VLAN 20 reçoit-il sur SW2 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "24576"
+        },
+        {
+          "id": "b",
+          "text": "32768"
+        },
+        {
+          "id": "c",
+          "text": "16384"
+        },
+        {
+          "id": "d",
+          "text": "28672"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La macro « root secondary » fixe la priorité du VLAN à 28672 : plus basse que la valeur par défaut (32768) des autres commutateurs, mais plus haute que les 24576 que « root primary » donne en général au root bridge principal. Si la racine tombe, SW2 prend donc le relais, à condition que les autres commutateurs soient restés à 32768. « show spanning-tree vlan 20 » affichera 28692 dans la section Bridge ID (28672 + sys-id-ext 20).",
+    "distractorNotes": {
+      "a": "24576 est la valeur posée par « root primary » quand aucune racine n'a déjà une priorité plus basse.",
+      "b": "32768 est la priorité par défaut ; la macro la remplace justement par une valeur plus basse.",
+      "c": "Aucune macro ne donne 16384 ici : « root primary » ne descend sous 24576 que si une racine existante a déjà une priorité inférieure, et « root secondary » donne toujours 28672."
+    },
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-root-bridge-designated-ports-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un réseau commuté en Rapid PVST+ où tous les liens sont point à point, quel rôle ont les ports actifs du root bridge d'un VLAN une fois la topologie convergée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Designated"
+        },
+        {
+          "id": "b",
+          "text": "Root"
+        },
+        {
+          "id": "c",
+          "text": "Alternate"
+        },
+        {
+          "id": "d",
+          "text": "Backup"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le root bridge annonce un coût de 0 vers la racine sur chacun de ses segments : aucun voisin ne peut lui opposer une meilleure BPDU, il remporte donc l'élection du port désigné sur tous ses liens, et tous ses ports sont designated, en forwarding. Les root ports n'existent que sur les commutateurs non racine (un par commutateur, celui du meilleur chemin vers la racine). Les ports alternate ou backup apparaissent sur les commutateurs qui reçoivent une BPDU meilleure que la leur sur un segment.",
+    "distractorNotes": {
+      "b": "Un root port est le meilleur chemin d'un commutateur vers la racine : le root bridge n'en a pas besoin et n'en a aucun.",
+      "c": "Un port alternate reçoit une BPDU meilleure venant d'un autre commutateur ; aucune BPDU n'est meilleure que celles du root bridge.",
+      "d": "Un port backup suppose un segment partagé où le même commutateur a déjà un port designated, ce que l'énoncé exclut (liens point à point)."
+    },
+    "reference": "IEEE 802.1w ; IEEE 802.1D-2004"
+  },
+  {
+    "slug": "ccna-2.5-root-priority-from-show-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Quelle commande, saisie sur le root bridge du VLAN 20, explique la priorité affichée dans la section Root ID ?",
+      "exhibit": "SW2# show spanning-tree vlan 20\n\nVLAN0020\n  Spanning tree enabled protocol rstp\n  Root ID    Priority    8212\n             Address     5c71.0d3a.1200\n             Cost        4\n             Port        1 (GigabitEthernet1/0/1)\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n\n  Bridge ID  Priority    32788  (priority 32768 sys-id-ext 20)\n             Address     5c71.0d3a.4500\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n             Aging Time  300 sec\n\nInterface           Role Sts Cost      Prio.Nbr Type\n------------------- ---- --- --------- -------- --------------------------------\nGi1/0/1             Root FWD 4         128.1    P2p\nGi1/0/2             Desg FWD 4         128.2    P2p",
+      "options": [
+        {
+          "id": "a",
+          "text": "spanning-tree vlan 20 priority 4096"
+        },
+        {
+          "id": "b",
+          "text": "spanning-tree vlan 20 root secondary"
+        },
+        {
+          "id": "c",
+          "text": "spanning-tree vlan 20 priority 8212"
+        },
+        {
+          "id": "d",
+          "text": "spanning-tree vlan 20 priority 8192"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La priorité affichée dans un bridge ID est la somme de la priorité configurée et du sys-id-ext, égal au numéro de VLAN. Pour la racine : 8212 − 20 = 8192, un multiple de 4096, donc « spanning-tree vlan 20 priority 8192 ». SW2 affiche 32788, soit 32768 + 20 : il est resté à la valeur par défaut. Il atteint la racine par Gi1/0/1, son root port, avec un coût de 4 (lien à 1 Gbit/s directement relié à la racine).",
+    "distractorNotes": {
+      "a": "Une priorité de 4096 s'afficherait 4116 (4096 + 20) dans le VLAN 20.",
+      "b": "« root secondary » donne 28672, qui s'afficherait 28692, et ne ferait pas du commutateur la racine face à une priorité plus basse.",
+      "c": "8212 n'est pas un multiple de 4096 : IOS refuse cette valeur. Le 20 de plus vient du sys-id-ext, ajouté automatiquement."
+    },
+    "reference": "IEEE 802.1t (extended system ID) ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-root-port-neighbor-bid-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Une fois la topologie convergée, quel est le root port de SW4 dans le VLAN 10 ?",
+      "exhibit": "Rapid PVST+, VLAN 10, coûts short, priorités de port par défaut\n\nSW1 : priorité 24576, MAC 0011.2233.0500\nSW2 : priorité 32768, MAC 0011.2233.0300\nSW3 : priorité 28672, MAC 0011.2233.0400\nSW4 : priorité 32768, MAC 0011.2233.0100\n\nLiens, tous à 1 Gbit/s :\nSW1 Gi1/0/1 <---> SW2 Gi1/0/1\nSW1 Gi1/0/2 <---> SW3 Gi1/0/1\nSW2 Gi1/0/2 <---> SW4 Gi1/0/1\nSW3 Gi1/0/2 <---> SW4 Gi1/0/2",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi1/0/1, vers SW2"
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/2, vers SW3"
+        },
+        {
+          "id": "c",
+          "text": "Aucun : SW4 est le root bridge du VLAN 10"
+        },
+        {
+          "id": "d",
+          "text": "Gi1/0/1 et Gi1/0/2, qui se partagent la charge"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "SW1 a la priorité la plus basse (24576) : il est root bridge, même si sa MAC est la plus haute. SW4 a deux chemins de même coût vers SW1 : 4 + 4 = 8 par SW2 et 8 par SW3. À coût égal, il retient la BPDU du voisin au bridge ID le plus bas : SW3 (28672 + 10) bat SW2 (32768 + 10), la priorité étant comparée avant la MAC. Gi1/0/2 devient root port. Sur le lien SW2–SW4, SW2 annonce un coût de 4 contre 8 pour SW4 : Gi1/0/2 de SW2 est designated et Gi1/0/1 de SW4 passe alternate (discarding).",
+    "distractorNotes": {
+      "a": "Ce choix départage l'égalité de coût par la MAC seule (celle de SW2 est plus basse) ou par le numéro de port local ; or c'est le bridge ID de l'émetteur, priorité d'abord, qui compte.",
+      "c": "SW4 a la plus petite MAC, mais la priorité est comparée avant la MAC : SW1 (24576) l'emporte.",
+      "d": "Le Spanning Tree ne garde qu'un seul root port par commutateur et par VLAN ; l'autre chemin est bloqué, pas utilisé en parallèle."
+    },
+    "reference": "IEEE 802.1D-2004 (vecteurs de priorité) ; IEEE 802.1w"
+  },
+  {
+    "slug": "ccna-2.5-pvst-root-unconfigured-vlan-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Quel commutateur est le root bridge du VLAN 30 ?",
+      "exhibit": "Rapid PVST+ sur les quatre commutateurs, VLAN 10, 20 et 30 actifs partout\n\nSW1 (MAC 7c0e.ce21.4400)\n spanning-tree vlan 10 priority 4096\n spanning-tree vlan 20 priority 8192\nSW2 (MAC 7c0e.ce21.2200)\n spanning-tree vlan 20 priority 4096\nSW3 (MAC 7c0e.ce21.1100)\n spanning-tree vlan 30 priority 36864\nSW4 (MAC 7c0e.ce21.5500)\n aucune commande spanning-tree vlan",
+      "options": [
+        {
+          "id": "a",
+          "text": "SW1"
+        },
+        {
+          "id": "b",
+          "text": "SW3"
+        },
+        {
+          "id": "c",
+          "text": "SW2"
+        },
+        {
+          "id": "d",
+          "text": "SW4"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "En Rapid PVST+, chaque VLAN a sa propre instance et sa propre élection : les commandes visant les VLAN 10 et 20 n'ont aucun effet sur le VLAN 30. Dans ce VLAN, SW1, SW2 et SW4 gardent la priorité par défaut, 32768 (32798 avec le sys-id-ext), tandis que SW3 a été relevé à 36864 (36894). La priorité étant comparée en premier, SW3 est écarté malgré sa MAC la plus basse. Entre les trois commutateurs à égalité, la plus petite MAC l'emporte : 7c0e.ce21.2200, celle de SW2, qui est aussi racine du VLAN 20.",
+    "distractorNotes": {
+      "a": "Les priorités basses de SW1 ne valent que pour les VLAN 10 et 20 ; dans le VLAN 30 il est à 32768, avec une MAC plus haute que celle de SW2.",
+      "b": "SW3 a la plus petite MAC, mais sa priorité dans le VLAN 30 (36864) est plus haute que celle des autres (32768) : la commande l'éloigne du rôle de racine.",
+      "d": "SW4 est à la priorité par défaut comme SW1 et SW2, mais sa MAC est la plus haute des trois."
+    },
+    "reference": "IEEE 802.1D-2004 (bridge identifier) ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-designated-port-root-cost-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Ni SW2 ni SW3 n'est le root bridge. Quel rôle prend chacun des deux ports du lien entre SW2 et SW3 ?",
+      "exhibit": "Rapid PVST+, VLAN 40, coûts short, topologie convergée\n\n        Bridge ID (priorité, MAC)     Coût vers la racine\nSW2     32808  00a1.b2c3.0900         8\nSW3     28712  00a1.b2c3.0200         19\n\nLien SW2 Gi1/0/3 <---> SW3 Gi1/0/3 à 100 Mbit/s (coût 19)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi1/0/3 de SW3 designated ; Gi1/0/3 de SW2 alternate"
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/3 de SW3 root port ; Gi1/0/3 de SW2 designated"
+        },
+        {
+          "id": "c",
+          "text": "Gi1/0/3 de SW2 designated ; Gi1/0/3 de SW3 alternate"
+        },
+        {
+          "id": "d",
+          "text": "Gi1/0/3 de SW2 root port ; Gi1/0/3 de SW3 designated"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sur un segment, le port désigné est celui qui annonce le meilleur coût vers la racine ; le bridge ID ne sert qu'en cas d'égalité. SW2 annonce 8, SW3 annonce 19 : Gi1/0/3 de SW2 est designated, même si SW3 a le bridge ID le plus bas. Gi1/0/3 de SW3 reçoit une BPDU meilleure que la sienne, mais passer par SW2 lui coûterait 8 + 19 = 27, plus que ses 19 actuels : ce n'est pas son root port, il devient alternate (discarding).",
+    "distractorNotes": {
+      "a": "Ce raisonnement départage le segment par le bridge ID ; or le coût vers la racine est comparé d'abord, et SW2 annonce 8 contre 19.",
+      "b": "Par SW2, SW3 atteindrait la racine pour 8 + 19 = 27, plus que les 19 de son chemin actuel : ce port ne peut pas être son root port.",
+      "d": "Par SW3, SW2 paierait 19 + 19 = 38, bien plus que son coût actuel de 8 : son root port est ailleurs."
+    },
+    "reference": "IEEE 802.1D-2004 (vecteurs de priorité) ; IEEE 802.1w"
+  },
+  {
+    "slug": "ccna-2.5-root-port-sender-port-id-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Une fois la topologie convergée, quels rôles prennent les deux ports de SW2 dans le VLAN 1 ?",
+      "exhibit": "Rapid PVST+, VLAN 1, SW1 est le root bridge, priorités de port par défaut\n\nSW1 Gi1/0/1 <---> SW2 Gi1/0/2   (1 Gbit/s)\nSW1 Gi1/0/2 <---> SW2 Gi1/0/1   (1 Gbit/s)\n\nAucun autre lien entre SW1 et SW2, pas d'EtherChannel.",
+      "options": [
+        {
+          "id": "a",
+          "text": "Root : Gi1/0/1 ; alternate : Gi1/0/2"
+        },
+        {
+          "id": "b",
+          "text": "Root : Gi1/0/2 ; alternate : Gi1/0/1"
+        },
+        {
+          "id": "c",
+          "text": "Root : Gi1/0/1 ; backup : Gi1/0/2"
+        },
+        {
+          "id": "d",
+          "text": "Root : Gi1/0/2 ; backup : Gi1/0/1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Les deux ports de SW2 offrent le même coût (4) et reçoivent les BPDU du même pont, SW1 : il faut départager par le port ID de l'émetteur (priorité, puis numéro de port). SW1 Gi1/0/1 annonce 128.1, SW1 Gi1/0/2 annonce 128.2 : SW2 retient le port relié à SW1 Gi1/0/1, c'est-à-dire son Gi1/0/2. Les numéros des ports locaux de SW2 n'interviennent pas. L'autre port reçoit une BPDU meilleure venant d'un autre pont (SW1) : il est alternate, et reste en discarding.",
+    "distractorNotes": {
+      "a": "Ce choix se fonde sur le numéro de port local de SW2 ; or c'est le port ID annoncé par SW1 qui départage, et 128.1 arrive sur Gi1/0/2.",
+      "c": "Le root port est mal choisi (numéro local au lieu du port ID de l'émetteur), et un port backup suppose des BPDU venant du commutateur lui-même, sur un segment partagé.",
+      "d": "Le root port est juste, mais Gi1/0/1 reçoit ses BPDU de SW1, un autre pont : c'est un port alternate. Le rôle backup est réservé aux BPDU reçues de son propre commutateur."
+    },
+    "reference": "IEEE 802.1D-2004 (vecteurs de priorité) ; IEEE 802.1w"
+  },
+  {
+    "slug": "ccna-2.5-bridge-id-components-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Avec l'extended system ID activé (comportement par défaut des commutateurs Catalyst), quels trois éléments composent le bridge ID qu'un commutateur annonce dans ses BPDU pour un VLAN ?",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le coût du chemin vers la racine, sur 32 bits"
+        },
+        {
+          "id": "b",
+          "text": "La priorité de pont, sur 4 bits"
+        },
+        {
+          "id": "c",
+          "text": "L'identifiant du port émetteur, sur 16 bits"
+        },
+        {
+          "id": "d",
+          "text": "Le numéro de VLAN, sur 12 bits"
+        },
+        {
+          "id": "e",
+          "text": "L'adresse MAC du commutateur, sur 48 bits"
+        },
+        {
+          "id": "f",
+          "text": "L'adresse IPv4 de la SVI de gestion, sur 32 bits"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Le bridge ID compte 64 bits : 4 bits de priorité, 12 bits d'extended system ID qui portent le numéro de VLAN, puis les 48 bits de l'adresse MAC. C'est pourquoi la priorité se règle par pas de 4096 et pourquoi un même commutateur a un bridge ID différent dans chaque VLAN en PVST+ et Rapid PVST+, avec la même MAC. Une BPDU contient d'autres champs (root ID, coût vers la racine, port ID), mais ils ne font pas partie du bridge ID de l'émetteur.",
+    "distractorNotes": {
+      "a": "Le coût vers la racine est un champ de la BPDU, distinct du bridge ID ; il est comparé avant le bridge ID de l'émetteur.",
+      "c": "Le port ID (priorité de port et numéro) est un champ à part de la BPDU, qui sert au dernier départage.",
+      "f": "Le Spanning Tree opère au niveau 2 : aucune adresse IP n'entre dans le bridge ID."
+    },
+    "reference": "IEEE 802.1D-2004 (bridge identifier) ; IEEE 802.1t (extended system ID)"
+  },
+  {
+    "slug": "ccna-2.5-root-path-cost-rules-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur le coût du chemin vers la racine (root path cost) en Rapid PVST+ sont vraies ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Un commutateur ajoute au coût annoncé dans une BPDU le coût du port par lequel il la retransmet."
+        },
+        {
+          "id": "b",
+          "text": "Le coût dépend du nombre de commutateurs traversés, pas du débit des liens."
+        },
+        {
+          "id": "c",
+          "text": "Le coût d'un port découle du débit et ne peut pas être modifié par l'administrateur."
+        },
+        {
+          "id": "d",
+          "text": "Le root bridge annonce un coût de 0 dans ses BPDU."
+        },
+        {
+          "id": "e",
+          "text": "Un commutateur ajoute au coût annoncé dans une BPDU le coût du port sur lequel il la reçoit."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "Le root bridge envoie ses BPDU avec un coût de 0. Chaque commutateur qui reçoit une BPDU ajoute au coût annoncé le coût de son port de réception : il obtient ainsi son coût vers la racine par ce port, garde le plus faible (root port) et annonce cette valeur, sans rien ajouter, sur ses ports designated. En méthode short, un port coûte 100 à 10 Mbit/s, 19 à 100 Mbit/s, 4 à 1 Gbit/s et 2 à 10 Gbit/s ; l'administrateur peut l'ajuster avec « spanning-tree cost » ou « spanning-tree vlan <id> cost » en configuration d'interface.",
+    "distractorNotes": {
+      "a": "Le coût du port d'émission n'est jamais ajouté : un commutateur annonce sur ses ports designated son propre coût vers la racine, et c'est le récepteur qui ajoute le coût de son port.",
+      "b": "Le coût se calcule à partir du débit de chaque port traversé : deux sauts à 1 Gbit/s (8) valent mieux qu'un seul à 100 Mbit/s (19).",
+      "c": "Le coût par défaut découle du débit, mais il se modifie par port, et même par VLAN, en configuration d'interface."
+    },
+    "reference": "IEEE 802.1D-1998 (coûts short) ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-become-root-commands-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Les autres commutateurs ne changent pas de configuration. Quelles deux commandes, saisies chacune seule sur SW3, en font le root bridge du VLAN 10 ?",
+      "exhibit": "SW3# show spanning-tree vlan 10\n\nVLAN0010\n  Spanning tree enabled protocol rstp\n  Root ID    Priority    16394\n             Address     6c8b.d3f0.0a00\n             Cost        4\n             Port        1 (GigabitEthernet1/0/1)\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n\n  Bridge ID  Priority    32778  (priority 32768 sys-id-ext 10)\n             Address     6c8b.d3f0.0c00\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n             Aging Time  300 sec\n\nInterface           Role Sts Cost      Prio.Nbr Type\n------------------- ---- --- --------- -------- --------------------------------\nGi1/0/1             Root FWD 4         128.1    P2p\nGi1/0/2             Altn BLK 4         128.2    P2p",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "spanning-tree vlan 10 priority 16384"
+        },
+        {
+          "id": "b",
+          "text": "spanning-tree vlan 10 root primary"
+        },
+        {
+          "id": "c",
+          "text": "spanning-tree vlan 10 root secondary"
+        },
+        {
+          "id": "d",
+          "text": "spanning-tree vlan 10 priority 16000"
+        },
+        {
+          "id": "e",
+          "text": "spanning-tree vlan 10 priority 12288"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "La racine affiche 16394, soit une priorité configurée de 16384 (16394 − 10). Pour la battre, SW3 doit descendre strictement en dessous, à 12288 ou moins, car à priorité égale c'est la MAC qui départage, et celle de SW3 (6c8b.d3f0.0c00) est plus haute que celle de la racine (6c8b.d3f0.0a00). « priority 12288 » y suffit. La macro « root primary » constate qu'une racine a déjà une priorité inférieure à 24576 : elle fixe alors celle de SW3 à 4096 de moins que la plus basse, soit 12288.",
+    "distractorNotes": {
+      "a": "Avec 16384, SW3 est à égalité de priorité avec la racine et perd sur l'adresse MAC, plus haute.",
+      "c": "« root secondary » fixe 28672, plus haut que les 16384 de la racine actuelle.",
+      "d": "16000 n'est pas un multiple de 4096 : IOS refuse la commande et la priorité ne change pas."
+    },
+    "reference": "IEEE 802.1t (extended system ID) ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-pvst-load-sharing-roles-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Une fois la topologie convergée, quelles deux affirmations sont vraies ?",
+      "exhibit": "Rapid PVST+, coûts short, liens à 1 Gbit/s, priorités de port par défaut\n\nDSW1 : spanning-tree vlan 10 priority 24576\n       spanning-tree vlan 20 priority 28672\nDSW2 : spanning-tree vlan 10 priority 28672\n       spanning-tree vlan 20 priority 24576\nASW1 : priorité par défaut dans tous les VLAN\n\nDSW1 Gi1/0/1  <---> DSW2 Gi1/0/1\nASW1 Gi1/0/23 <---> DSW1 Gi1/0/2\nASW1 Gi1/0/24 <---> DSW2 Gi1/0/2\n\nLes liens sont des trunks qui transportent les VLAN 10 et 20.",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Dans les VLAN 10 et 20, DSW1 est le root bridge."
+        },
+        {
+          "id": "b",
+          "text": "Dans les deux VLAN, Gi1/0/24 d'ASW1 est en discarding, car un seul uplink peut transmettre."
+        },
+        {
+          "id": "c",
+          "text": "Dans le VLAN 10, Gi1/0/24 d'ASW1 est en discarding."
+        },
+        {
+          "id": "d",
+          "text": "Dans le VLAN 20, le lien entre DSW1 et DSW2 est bloqué."
+        },
+        {
+          "id": "e",
+          "text": "Dans le VLAN 20, Gi1/0/24 d'ASW1 est le root port."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Rapid PVST+ calcule un arbre par VLAN : DSW1 est racine du VLAN 10, DSW2 du VLAN 20. Dans le VLAN 10, ASW1 rejoint DSW1 par Gi1/0/23 (coût 4) ; sur le lien vers DSW2, les deux côtés annoncent un coût de 4 et DSW2 gagne au bridge ID (28672 contre 32768) : Gi1/0/24 d'ASW1 passe alternate, en discarding. Le VLAN 20 donne l'image inverse : Gi1/0/24 est root port et Gi1/0/23 bloque. Chaque uplink porte ainsi un VLAN : c'est le partage de charge par VLAN.",
+    "distractorNotes": {
+      "a": "L'élection a lieu par VLAN : dans le VLAN 20, DSW2 (24576) a une priorité plus basse que DSW1 (28672) et devient racine.",
+      "b": "Le blocage est calculé par VLAN : Gi1/0/24 bloque dans le VLAN 10 mais est root port, donc en forwarding, dans le VLAN 20.",
+      "d": "Dans le VLAN 20, ce lien relie la racine, DSW2, à DSW1, dont c'est le root port (coût 4 contre 8 par ASW1) : il transmet, comme dans le VLAN 10."
+    },
+    "reference": "IEEE 802.1w ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-root-path-cost-calc-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Une fois la topologie convergée, quel est le coût du chemin vers la racine (root path cost) de SW3 et de SW4 dans le VLAN 50 ? Répondez par des nombres entiers.",
+      "exhibit": "Rapid PVST+, VLAN 50, coûts short (méthode short)\n\nSW1 : priorité 32768, MAC 3c08.f611.1000\nSW2 : priorité 28672, MAC 3c08.f611.5000\nSW3 : priorité 32768, MAC 3c08.f611.0800\nSW4 : priorité 32768, MAC 3c08.f611.2000\n\nLiens :\nSW2 <---> SW1   1 Gbit/s\nSW2 <---> SW3   100 Mbit/s\nSW1 <---> SW3   10 Gbit/s\nSW3 <---> SW4   100 Mbit/s\nSW1 <---> SW4   10 Mbit/s\nSW2 <---> SW4   10 Mbit/s",
+      "fields": [
+        {
+          "id": "sw3",
+          "label": "Coût vers la racine de SW3 (nombre entier)"
+        },
+        {
+          "id": "sw4",
+          "label": "Coût vers la racine de SW4 (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "sw3": {
+          "accepted": [
+            "6"
+          ],
+          "normalize": "int"
+        },
+        "sw4": {
+          "accepted": [
+            "25"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "SW2 a la priorité la plus basse (28672) : il est root bridge, même si SW3 a la MAC la plus basse. SW1 l'atteint directement pour 4. SW3 a le choix entre son lien direct à 100 Mbit/s (19) et le passage par SW1 : 4 + 2 (10 Gbit/s) = 6, qu'il retient. SW4 compare SW3 + 19 = 25, SW1 + 100 = 104 et son lien direct vers SW2 à 10 Mbit/s, 100 : il passe par SW3, pour 25. Le chemin le plus court en sauts n'est pas forcément le moins coûteux.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1D-1998 (coûts short) ; IEEE 802.1D-2004 (bridge identifier)"
+  },
+  {
+    "slug": "ccna-2.5-cost-from-show-output-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. SW4 est relié uniquement à Gi1/0/3 de SW2, par un lien à 100 Mbit/s ; son port a lui aussi un coût de 19. Répondez par des nombres entiers.",
+      "exhibit": "SW2# show spanning-tree vlan 60\n\nVLAN0060\n  Spanning tree enabled protocol rstp\n  Root ID    Priority    4156\n             Address     e8ba.70b1.0100\n             Cost        8\n             Port        1 (GigabitEthernet1/0/1)\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n\n  Bridge ID  Priority    32828  (priority 32768 sys-id-ext 60)\n             Address     e8ba.70b1.0200\n             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec\n             Aging Time  300 sec\n\nInterface           Role Sts Cost      Prio.Nbr Type\n------------------- ---- --- --------- -------- --------------------------------\nGi1/0/1             Root FWD 4         128.1    P2p\nGi1/0/2             Altn BLK 4         128.2    P2p\nGi1/0/3             Desg FWD 19        128.3    P2p",
+      "fields": [
+        {
+          "id": "recv",
+          "label": "Coût vers la racine annoncé dans les BPDU que SW2 reçoit sur son root port (nombre entier)"
+        },
+        {
+          "id": "sw4",
+          "label": "Coût vers la racine de SW4 dans le VLAN 60 (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "recv": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        },
+        "sw4": {
+          "accepted": [
+            "27"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le champ Cost de la section Root ID (8) est le coût de SW2 vers la racine : coût annoncé par le voisin sur le root port, plus le coût de ce port (4). Le voisin annonce donc 8 − 4 = 4, par exemple un commutateur relié directement à la racine par un lien à 1 Gbit/s. Sur son port designated Gi1/0/3, SW2 annonce ses 8 sans y ajouter le coût de Gi1/0/3. SW4 ajoute le coût de son propre port de réception : 8 + 19 = 27. Ajouter aussi les 19 de Gi1/0/3 de SW2 compterait le lien deux fois.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1D-1998 (coûts short) ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-vlan-priority-command-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW2, en mode de configuration globale, fixez la priorité de pont du VLAN 20 à 4096 avec la commande de priorité explicite, sans passer par les macros root.",
+      "prompt": "SW2(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "spanning-tree vlan 20 priority 4096"
+        ]
+      ]
+    },
+    "explanation": "« spanning-tree vlan 20 priority 4096 » règle la priorité de la seule instance du VLAN 20 ; les autres VLAN gardent la leur. La valeur doit être un multiple de 4096 entre 0 et 61440. « show spanning-tree vlan 20 » affichera ensuite 4116 dans la section Bridge ID (4096 + sys-id-ext 20). Contrairement aux macros « root primary » et « root secondary », qui calculent une valeur au moment de la saisie, la priorité est ici fixée explicitement et reste dans la configuration telle quelle.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-load-sharing-root-macros-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "DSW1 et DSW2 relient tous les commutateurs d'accès. Pour partager la charge entre les uplinks, DSW1 doit être le root bridge du VLAN 110 et le root bridge de secours du VLAN 120. Sur DSW1, en mode de configuration globale, configurez ces deux rôles avec les macros root d'IOS, sans saisir de valeur de priorité.",
+      "prompt": "DSW1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "spanning-tree vlan 110 root primary"
+        ],
+        [
+          "spanning-tree vlan 120 root secondary"
+        ]
+      ]
+    },
+    "explanation": "Rapid PVST+ fait tourner une instance par VLAN, ce qui permet de choisir une racine différente pour chaque VLAN. « root primary » donne au VLAN 110 la priorité 24576 (ou moins si une racine plus basse existe déjà) ; « root secondary » fixe 28672 pour le VLAN 120. Sur DSW2, la configuration inverse (VLAN 120 primary, VLAN 110 secondary) fait passer le VLAN 110 par l'uplink vers DSW1 et le VLAN 120 par celui vers DSW2 : chaque uplink transmet au lieu de rester bloqué pour tous les VLAN.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-priority-from-bridge-id-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW3, en mode de configuration globale, réglez la priorité de pont des VLAN 30 et 40 pour que « show spanning-tree » affiche, dans la section Bridge ID, une priorité de 8222 pour le VLAN 30 et de 12328 pour le VLAN 40. Utilisez une commande de priorité explicite par VLAN.",
+      "prompt": "SW3(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "spanning-tree vlan 30 priority 8192"
+        ],
+        [
+          "spanning-tree vlan 40 priority 12288"
+        ]
+      ]
+    },
+    "explanation": "La priorité affichée dans le bridge ID additionne la priorité configurée et le sys-id-ext, égal au numéro de VLAN. Il faut donc retrancher le VLAN : 8222 − 30 = 8192 pour le VLAN 30 et 12328 − 40 = 12288 pour le VLAN 40, deux multiples de 4096 que la commande accepte. Saisir directement 8222 ou 12328 serait refusé, car ces valeurs ne sont pas des multiples de 4096 : le sys-id-ext est ajouté automatiquement par le commutateur.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1t (extended system ID) ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-interface-vlan-cost-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "SW3 atteint la racine du VLAN 10 par Gi1/0/1 ; l'équipe veut favoriser Gi1/0/2 pour ce VLAN uniquement. Vous êtes en configuration de l'interface Gi1/0/2. Fixez le coût Spanning Tree de ce port à 2 pour le VLAN 10, sans changer son coût dans les autres VLAN.",
+      "prompt": "SW3(config-if)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "spanning-tree vlan 10 cost 2"
+        ]
+      ]
+    },
+    "explanation": "En configuration d'interface, « spanning-tree vlan 10 cost 2 » change le coût du port pour la seule instance du VLAN 10 ; « spanning-tree cost 2 » l'aurait changé pour tous les VLAN, ce que la consigne exclut. Le coût d'un port est ajouté au coût annoncé dans les BPDU reçues sur ce port : un coût plus bas rend le chemin par Gi1/0/2 plus attractif pour le choix du root port. On vérifie le résultat dans la colonne Cost de « show spanning-tree vlan 10 ».",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-stp-convergence-steps-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Remettez dans l'ordre les étapes logiques par lesquelles le Spanning Tree construit la topologie d'un VLAN, de la première à la dernière.",
+      "items": [
+        {
+          "id": "desg",
+          "text": "Un port désigné est choisi sur chaque segment."
+        },
+        {
+          "id": "claim",
+          "text": "Chaque commutateur annonce dans ses BPDU son propre bridge ID comme root ID."
+        },
+        {
+          "id": "block",
+          "text": "Les ports qui ne sont ni root ni désignés passent en discarding."
+        },
+        {
+          "id": "rootp",
+          "text": "Chaque commutateur non racine choisit son root port."
+        },
+        {
+          "id": "elect",
+          "text": "Le commutateur au bridge ID le plus bas est reconnu comme root bridge."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "claim",
+        "elect",
+        "rootp",
+        "desg",
+        "block"
+      ]
+    },
+    "explanation": "Au démarrage, chaque commutateur se considère comme racine et l'annonce. Dès qu'il reçoit une BPDU portant un root ID plus bas, il adopte ce root ID : tous finissent par reconnaître le même root bridge. Chaque non-racine choisit alors son root port, celui du coût le plus bas vers la racine. Le port désigné de chaque segment se décide ensuite d'après le coût vers la racine annoncé, qui dépend du root port de chaque commutateur. Les ports restants ne transmettent pas, ce qui supprime les boucles.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1D-2004 ; IEEE 802.1w"
+  },
+  {
+    "slug": "ccna-2.5-bridge-id-ranking-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Reportez-vous à l'exhibit. Classez les commutateurs selon leur bridge ID dans le VLAN 20, du meilleur candidat au rôle de root bridge au moins bon.",
+      "exhibit": "VLAN 20, Rapid PVST+\n\nSWA : aucune commande spanning-tree vlan         MAC 0c1a.2b3c.0005\nSWB : spanning-tree vlan 20 root secondary       MAC 0c1a.2b3c.0009\nSWC : aucune commande spanning-tree vlan         MAC 0c1a.2b3c.0002\nSWD : spanning-tree vlan 20 priority 4096        MAC 0c1a.2b3c.000a\nSWE : spanning-tree vlan 20 priority 61440       MAC 0c1a.2b3c.0001",
+      "items": [
+        {
+          "id": "swa",
+          "text": "SWA"
+        },
+        {
+          "id": "swb",
+          "text": "SWB"
+        },
+        {
+          "id": "swc",
+          "text": "SWC"
+        },
+        {
+          "id": "swd",
+          "text": "SWD"
+        },
+        {
+          "id": "swe",
+          "text": "SWE"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "swd",
+        "swb",
+        "swc",
+        "swa",
+        "swe"
+      ]
+    },
+    "explanation": "Le bridge ID se compare d'abord sur la priorité, puis sur l'adresse MAC. Tous sont dans le VLAN 20 : le sys-id-ext ajoute 20 partout et ne change pas le classement. SWD (4096) vient en tête, puis SWB, que « root secondary » a placé à 28672. SWC et SWA restent à 32768 et se départagent par la MAC : 0c1a.2b3c.0002 avant 0c1a.2b3c.0005. SWE ferme la marche avec 61440, la priorité maximale, malgré la MAC la plus basse.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1D-2004 (bridge identifier) ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-stp-variants-instances-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque variante de Spanning Tree à son fonctionnement.",
+      "left": [
+        {
+          "id": "pvst",
+          "text": "PVST+"
+        },
+        {
+          "id": "rpvst",
+          "text": "Rapid PVST+"
+        },
+        {
+          "id": "mst",
+          "text": "MST (IEEE 802.1s)"
+        },
+        {
+          "id": "stp",
+          "text": "STP standard (IEEE 802.1D)"
+        },
+        {
+          "id": "rstp",
+          "text": "RSTP standard (IEEE 802.1w)"
+        }
+      ],
+      "right": [
+        {
+          "id": "d1vlan",
+          "text": "Une instance 802.1D par VLAN"
+        },
+        {
+          "id": "w1vlan",
+          "text": "Une instance 802.1w par VLAN"
+        },
+        {
+          "id": "groups",
+          "text": "Quelques instances, chacune associée à un groupe de VLAN"
+        },
+        {
+          "id": "d1all",
+          "text": "Une seule instance 802.1D pour tous les VLAN"
+        },
+        {
+          "id": "w1all",
+          "text": "Une seule instance 802.1w pour tous les VLAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "pvst": "d1vlan",
+        "rpvst": "w1vlan",
+        "mst": "groups",
+        "stp": "d1all",
+        "rstp": "w1all"
+      }
+    },
+    "explanation": "Les normes 802.1D (STP) et 802.1w (RSTP) calculent un seul arbre pour tout le réseau, quel que soit le VLAN (Common Spanning Tree). Cisco a décliné chacune par VLAN : PVST+ fait tourner une instance 802.1D par VLAN, Rapid PVST+ une instance 802.1w par VLAN, d'où la possibilité de choisir une racine par VLAN pour partager la charge. MST (802.1s) regroupe les VLAN dans quelques instances, ce qui limite la charge processeur quand les VLAN sont nombreux.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1D ; IEEE 802.1w ; IEEE 802.1s ; Cisco Catalyst 9300 Layer 2 Configuration Guide — Configuring Spanning Tree Protocol"
+  },
+  {
+    "slug": "ccna-2.5-port-roles-topology-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Reportez-vous à l'exhibit. Une fois la topologie convergée, associez chaque port à son rôle dans le VLAN 99.",
+      "exhibit": "Rapid PVST+, VLAN 99, coûts short, priorité 32768 partout,\npriorités de port par défaut\n\nSW1 : MAC 2401.c7aa.0300\nSW2 : MAC 2401.c7aa.0100\nSW3 : MAC 2401.c7aa.0200\nSW4 : MAC 2401.c7aa.0400\n\nSW2 Gi1/0/1 <---> SW1 Gi1/0/1   1 Gbit/s\nSW2 Gi1/0/2 <---> SW3 Gi1/0/1   100 Mbit/s\nSW1 Gi1/0/2 <---> SW3 Gi1/0/2   1 Gbit/s\nSW1 Gi1/0/3 <---> SW4 Gi1/0/1   1 Gbit/s\nSW3 Gi1/0/3 <---> SW4 Gi1/0/2   1 Gbit/s",
+      "left": [
+        {
+          "id": "sw3g1",
+          "text": "Gi1/0/1 de SW3"
+        },
+        {
+          "id": "sw3g2",
+          "text": "Gi1/0/2 de SW3"
+        },
+        {
+          "id": "sw3g3",
+          "text": "Gi1/0/3 de SW3"
+        },
+        {
+          "id": "sw4g2",
+          "text": "Gi1/0/2 de SW4"
+        },
+        {
+          "id": "sw1g2",
+          "text": "Gi1/0/2 de SW1"
+        }
+      ],
+      "right": [
+        {
+          "id": "root",
+          "text": "Root port"
+        },
+        {
+          "id": "desg",
+          "text": "Designated port"
+        },
+        {
+          "id": "altn",
+          "text": "Alternate port"
+        },
+        {
+          "id": "back",
+          "text": "Backup port"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "sw3g1": "altn",
+        "sw3g2": "root",
+        "sw3g3": "desg",
+        "sw4g2": "altn",
+        "sw1g2": "desg"
+      }
+    },
+    "explanation": "Toutes les priorités sont égales : SW2, à la plus petite MAC, est racine. SW1 l'atteint pour 4. SW3 préfère passer par SW1 (4 + 4 = 8) plutôt que par son lien direct à 100 Mbit/s (19) : Gi1/0/2 est son root port, Gi1/0/1 devient alternate, car SW2 est designated sur ce segment. Gi1/0/2 de SW1 annonce 4 contre 8 : il est designated. SW4 rejoint la racine par SW1 pour 8. Sur le lien SW3–SW4, les deux annoncent 8 : la MAC plus basse de SW3 rend son Gi1/0/3 designated, et Gi1/0/2 de SW4 passe alternate.",
+    "distractorNotes": {
+      "back": "Un port backup reçoit les BPDU de son propre commutateur sur un segment partagé ; tous les liens sont ici point à point entre deux commutateurs différents."
+    },
+    "reference": "IEEE 802.1D-2004 (vecteurs de priorité) ; IEEE 802.1w"
+  }
+]

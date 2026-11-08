@@ -1,0 +1,1755 @@
+[
+  {
+    "slug": "ccna-1.6-class-b-first-octet-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "À quelle classe historique (adressage par classes) appartient l'adresse 191.12.4.9, et quel était le masque par défaut de cette classe ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Classe A, masque par défaut 255.0.0.0"
+        },
+        {
+          "id": "b",
+          "text": "Classe B, masque par défaut 255.255.0.0"
+        },
+        {
+          "id": "c",
+          "text": "Classe C, masque par défaut 255.255.255.0"
+        },
+        {
+          "id": "d",
+          "text": "Classe D, réservée au multicast, sans masque par défaut"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La classe se lit sur les bits de tête du premier octet : 0 pour la classe A (0 à 127), 10 pour la classe B (128 à 191), 110 pour la classe C (192 à 223), 1110 pour la classe D (224 à 239). 191 s'écrit 10111111 : il commence par 10, c'est la dernière valeur de la classe B, dont le masque par défaut est 255.255.0.0 (/16). Le CIDR a rendu ces classes obsolètes pour le découpage et le routage, mais IOS s'en sert encore, par exemple dans la commande « network » de RIP, qui ramène toute adresse saisie à son réseau par classes (« network 10.1.1.0 » devient « network 10.0.0.0 »).",
+    "distractorNotes": {
+      "a": "La classe A couvre les premiers octets 0 à 127 (bit de tête 0) ; 191 commence par les bits 10.",
+      "c": "La classe C commence à 192 (bits de tête 110) : 191 est juste en dessous, encore en classe B.",
+      "d": "La classe D (multicast) couvre 224 à 239 ; 191.12.4.9 est une adresse unicast de classe B."
+    },
+    "reference": "RFC 791 (adressage par classes) ; RFC 1112, section 4 (classe D)"
+  },
+  {
+    "slug": "ccna-1.6-loopback-127-block-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle affirmation sur le bloc 127.0.0.0/8 est exacte ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Seule l'adresse 127.0.0.1 est réservée ; le reste du bloc peut être attribué aux hôtes d'un LAN"
+        },
+        {
+          "id": "b",
+          "text": "C'est un bloc de lien local : les routeurs ne le transmettent pas, mais les hôtes d'un segment l'utilisent entre eux"
+        },
+        {
+          "id": "c",
+          "text": "Tout le bloc est réservé au bouclage : un paquet destiné à l'une de ses adresses ne doit jamais sortir de l'hôte"
+        },
+        {
+          "id": "d",
+          "text": "C'est un bloc privé, comme 10.0.0.0/8 : le NAT traduit ses adresses pour l'accès à Internet"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La RFC 1122 réserve l'ensemble du bloc 127.0.0.0/8, soit plus de 16 millions d'adresses, au bouclage interne : un datagramme adressé à 127.x.x.x est traité par la pile IP de l'hôte et ne doit jamais apparaître sur un réseau. 127.0.0.1 n'en est que l'adresse la plus utilisée (localhost). Un ping vers 127.0.0.1 qui réussit prouve seulement que la pile TCP/IP fonctionne, pas que la carte réseau ou le câble sont bons. C'est aussi pourquoi les réseaux de classe A utilisables s'arrêtent à 126.",
+    "distractorNotes": {
+      "a": "Le bloc entier est réservé : aucune adresse 127.x.x.x ne peut être attribuée à un hôte du réseau, même si 127.0.0.1 est la plus connue.",
+      "b": "Le lien local IPv4 est 169.254.0.0/16 (RFC 3927) : ces adresses circulent sur le segment, alors que 127.0.0.0/8 ne quitte jamais l'hôte.",
+      "d": "Les plages privées de la RFC 1918 sont 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16 ; 127.0.0.0/8 n'en fait pas partie et n'est jamais traduit."
+    },
+    "reference": "RFC 1122, section 3.2.1.3 ; RFC 6890"
+  },
+  {
+    "slug": "ccna-1.6-host-range-22-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un hôte a l'adresse 172.24.100.37/22. Quelle est la plage des adresses d'hôtes utilisables de son sous-réseau ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "172.24.100.1 à 172.24.100.254"
+        },
+        {
+          "id": "b",
+          "text": "172.24.96.1 à 172.24.99.254"
+        },
+        {
+          "id": "c",
+          "text": "172.24.100.1 à 172.24.103.254"
+        },
+        {
+          "id": "d",
+          "text": "172.24.100.0 à 172.24.103.255"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un /22 vaut 255.255.252.0 : l'octet intéressant est le troisième, avec un pas de 256 − 252 = 4. Les sous-réseaux commencent à 172.24.96.0, 172.24.100.0, 172.24.104.0… 100 étant un multiple de 4, l'hôte est dans 172.24.100.0/22, qui s'étend jusqu'au broadcast 172.24.103.255. On retire l'adresse réseau et le broadcast : les hôtes vont de 172.24.100.1 à 172.24.103.254, soit 2¹⁰ − 2 = 1022 adresses. Des adresses comme 172.24.101.0 ou 172.24.102.255 sont donc des adresses d'hôtes valides.",
+    "distractorNotes": {
+      "a": "Cette plage correspond à un /24 : avec un /22, le sous-réseau couvre quatre valeurs du troisième octet (100 à 103).",
+      "b": "172.24.96.0/22 est le sous-réseau précédent (96 à 99) : 100 est lui-même un multiple de 4 et commence un nouveau bloc.",
+      "d": "Cette plage inclut l'adresse réseau 172.24.100.0 et le broadcast 172.24.103.255, qui ne sont pas attribuables aux hôtes."
+    },
+    "reference": "RFC 950 ; RFC 4632"
+  },
+  {
+    "slug": "ccna-1.6-broadcast-23-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle est l'adresse de broadcast du sous-réseau de l'hôte 10.200.13.70/23 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "10.200.12.255"
+        },
+        {
+          "id": "b",
+          "text": "10.200.13.127"
+        },
+        {
+          "id": "c",
+          "text": "10.200.255.255"
+        },
+        {
+          "id": "d",
+          "text": "10.200.13.255"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le masque /23 vaut 255.255.254.0 : dans le troisième octet, le pas est de 2, et les sous-réseaux commencent aux valeurs paires (10.200.12.0, 10.200.14.0…). 13 est impair : l'hôte est dans 10.200.12.0/23, qui couvre 10.200.12.0 à 10.200.13.255. Le broadcast, dernière adresse avant le sous-réseau suivant 10.200.14.0, est donc 10.200.13.255 ; les hôtes vont de 10.200.12.1 à 10.200.13.254. Dans un /23, 10.200.12.255 et 10.200.13.0 sont des adresses d'hôtes ordinaires.",
+    "distractorNotes": {
+      "a": "10.200.12.255 est au milieu du sous-réseau 10.200.12.0/23 : c'est une adresse d'hôte valide, pas le broadcast.",
+      "b": "10.200.13.127 serait le broadcast avec un /25 ; avec un /23, la frontière tombe dans le troisième octet et le quatrième ne compte pas.",
+      "c": "10.200.255.255 est le broadcast de 10.200.0.0/16 : ce calcul ignore les 7 bits empruntés dans le troisième octet."
+    },
+    "reference": "RFC 950 ; RFC 922"
+  },
+  {
+    "slug": "ccna-1.6-borrow-3-bits-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le réseau 192.168.10.0/24 est découpé en empruntant 3 bits à la partie hôte. Le premier et le dernier sous-réseau sont utilisables, comme c'est la règle aujourd'hui. Combien de sous-réseaux obtient-on, et combien d'adresses d'hôtes utilisables chacun offre-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "8 sous-réseaux de 30 hôtes"
+        },
+        {
+          "id": "b",
+          "text": "6 sous-réseaux de 30 hôtes"
+        },
+        {
+          "id": "c",
+          "text": "8 sous-réseaux de 32 hôtes"
+        },
+        {
+          "id": "d",
+          "text": "16 sous-réseaux de 14 hôtes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Emprunter 3 bits donne 2³ = 8 sous-réseaux, avec un préfixe /27 (24 + 3). Il reste 5 bits d'hôte, soit 2⁵ = 32 adresses par sous-réseau, dont 2⁵ − 2 = 30 attribuables une fois retirés l'adresse réseau et le broadcast. Les sous-réseaux se suivent par pas de 32 : .0, .32, .64… .224. Depuis IOS 12.0, « ip subnet-zero » est actif par défaut : le sous-réseau zéro est utilisable, comme l'a toujours été le dernier (« all-ones ») sous IOS. La formule 2ⁿ − 2 appliquée aux sous-réseaux relève de l'ancienne recommandation de la RFC 950.",
+    "distractorNotes": {
+      "b": "2³ − 2 = 6 applique l'ancienne règle qui excluait le sous-réseau zéro et le dernier ; elle ne s'applique plus, comme le précise l'énoncé.",
+      "c": "32 est le nombre total d'adresses de chaque /27 : l'adresse réseau et le broadcast ne sont pas attribuables, il reste 30 hôtes.",
+      "d": "16 sous-réseaux de 14 hôtes correspondent à 4 bits empruntés (/28), pas à 3."
+    },
+    "reference": "RFC 950 ; RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-mask-25-hosts-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le réseau 192.168.100.0/24 doit être découpé en sous-réseaux de même taille, d'au moins 25 hôtes chacun, en obtenant le plus grand nombre possible de sous-réseaux. Quel masque faut-il choisir ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "255.255.255.240"
+        },
+        {
+          "id": "b",
+          "text": "255.255.255.192"
+        },
+        {
+          "id": "c",
+          "text": "255.255.255.248"
+        },
+        {
+          "id": "d",
+          "text": "255.255.255.224"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "On cherche le plus petit nombre h de bits d'hôte tel que 2ʰ − 2 ≥ 25 : avec 4 bits, 14 hôtes ne suffisent pas ; avec 5 bits, 30 hôtes conviennent. Il reste 3 bits pour les sous-réseaux dans le dernier octet, soit 8 sous-réseaux /27, de masque 255.255.255.224 (11100000 = 224). Garder plus de bits d'hôte réduirait le nombre de sous-réseaux sans nécessité : le /26 n'en donne que 4.",
+    "distractorNotes": {
+      "a": "255.255.255.240 (/28) ne laisse que 4 bits d'hôte, soit 14 adresses utilisables : moins que les 25 exigées.",
+      "b": "255.255.255.192 (/26) offre 62 hôtes mais seulement 4 sous-réseaux : il ne maximise pas le nombre de sous-réseaux.",
+      "c": "255.255.255.248 (/29) ne laisse que 6 adresses utilisables par sous-réseau, bien moins que 25."
+    },
+    "reference": "RFC 950 ; RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-loopback-32-mask-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'interface Loopback0 de R1 est configurée avec « ip address 10.255.0.1 255.255.255.255 ». Que contient le préfixe ainsi défini ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La seule adresse 10.255.0.1, sans adresse réseau ni broadcast distincts"
+        },
+        {
+          "id": "b",
+          "text": "Les adresses 10.255.0.0 et 10.255.0.1, toutes deux attribuables"
+        },
+        {
+          "id": "c",
+          "text": "Les adresses 10.255.0.0 à 10.255.0.3, dont deux attribuables"
+        },
+        {
+          "id": "d",
+          "text": "Les adresses 10.255.0.0 à 10.255.0.255, dont 254 attribuables"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un masque dont les 32 bits sont à 1 ne laisse aucun bit d'hôte : le préfixe /32 contient une seule adresse, qui désigne le routeur lui-même. C'est le choix habituel sur une loopback : l'interface ne raccorde aucun autre équipement, elle reste up tant que le routeur fonctionne et sert d'identifiant stable (router ID OSPF, source des sessions de gestion). On ne gaspille ainsi aucune adresse, et un protocole de routage l'annonce sous la forme d'une route hôte /32.",
+    "distractorNotes": {
+      "b": "Un bloc de deux adresses, toutes deux attribuables, c'est un /31 (RFC 3021), réservé aux liaisons point à point.",
+      "c": "Quatre adresses dont deux attribuables, c'est un /30 (255.255.255.252).",
+      "d": "254 adresses attribuables correspondent à un /24 (255.255.255.0), pas à un masque de 32 bits."
+    },
+    "reference": "RFC 4632, section 3.1 ; Cisco IOS IP Addressing Services Configuration Guide (interfaces loopback)"
+  },
+  {
+    "slug": "ccna-1.6-gateway-same-subnet-21-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Avant de dépanner ce poste, un technicien vérifie que sa passerelle par défaut est dans le même sous-réseau que lui. Quelle affirmation est exacte ?",
+      "exhibit": "C:\\>ipconfig\n\nWindows IP Configuration\n\n\nEthernet adapter Ethernet:\n\n   Connection-specific DNS Suffix  . :\n   Link-local IPv6 Address . . . . . : fe80::4a1c:9e2f:7b3d:1a5c%7\n   IPv4 Address. . . . . . . . . . . : 172.16.9.250\n   Subnet Mask . . . . . . . . . . . : 255.255.248.0\n   Default Gateway . . . . . . . . . : 172.16.15.254",
+      "options": [
+        {
+          "id": "a",
+          "text": "La passerelle est hors du sous-réseau du poste, car leurs troisièmes octets (9 et 15) diffèrent"
+        },
+        {
+          "id": "b",
+          "text": "Le poste et sa passerelle sont tous deux dans le sous-réseau 172.16.8.0/21"
+        },
+        {
+          "id": "c",
+          "text": "La passerelle est inutilisable, car 172.16.15.254 est le broadcast du sous-réseau du poste"
+        },
+        {
+          "id": "d",
+          "text": "Le masque est invalide, car 248 n'est pas une valeur permise dans le troisième octet"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "255.255.248.0 est un /21 : le pas est de 256 − 248 = 8 dans le troisième octet, et les sous-réseaux commencent à 172.16.0.0, 172.16.8.0, 172.16.16.0… L'octet 9 du poste tombe dans le bloc 8 à 15 : le poste est dans 172.16.8.0/21, qui s'étend jusqu'au broadcast 172.16.15.255. La passerelle 172.16.15.254, dernière adresse utilisable de ce bloc, est donc dans le même sous-réseau : la configuration IPv4 est cohérente et la panne est à chercher ailleurs. Comparer les octets un à un ne vaut qu'aux frontières d'octet (/8, /16, /24).",
+    "distractorNotes": {
+      "a": "Avec un /21, le troisième octet compte 8 valeurs par sous-réseau (8 à 15) : 9 et 15 sont dans le même bloc.",
+      "c": "Le broadcast de 172.16.8.0/21 est 172.16.15.255 ; 172.16.15.254 en est la dernière adresse utilisable.",
+      "d": "248 (11111000) est une valeur de masque valide : les bits à 1 sont contigus, c'est un /21."
+    },
+    "reference": "RFC 1122, section 3.3.1.1 (choix local ou distant)"
+  },
+  {
+    "slug": "ccna-1.6-summary-20-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R2 doit annoncer à R1 une seule route résumée, la plus précise possible, qui couvre les seize réseaux 10.20.32.0/24 à 10.20.47.0/24. Quelle route faut-il annoncer ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "10.20.32.0/21"
+        },
+        {
+          "id": "b",
+          "text": "10.20.32.0/20"
+        },
+        {
+          "id": "c",
+          "text": "10.20.32.0/19"
+        },
+        {
+          "id": "d",
+          "text": "10.20.0.0/16"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Seize /24 consécutifs forment un bloc de 2⁴ réseaux : le résumé a 4 bits de moins, soit un /20, à condition que le premier réseau soit aligné. 32 est un multiple de 16 : en binaire, 32 vaut 00100000 et 47 vaut 00101111, et les 4 premiers bits du troisième octet (0010) sont communs à tout l'intervalle. Le résumé 10.20.32.0/20 (masque 255.255.240.0) couvre exactement 10.20.32.0 à 10.20.47.255, sans englober d'autre réseau.",
+    "distractorNotes": {
+      "a": "10.20.32.0/21 ne couvre que 10.20.32.0 à 10.20.39.255 : les réseaux 40 à 47 restent hors du résumé.",
+      "c": "10.20.32.0/19 couvre bien les seize réseaux, mais aussi 10.20.48.0 à 10.20.63.255 : ce n'est pas le résumé le plus précis.",
+      "d": "10.20.0.0/16 englobe les 256 réseaux 10.20.x.0 : il est bien trop large."
+    },
+    "reference": "RFC 4632 (CIDR, agrégation de préfixes)"
+  },
+  {
+    "slug": "ccna-1.6-multicast-class-d-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Laquelle de ces adresses IPv4 est une adresse multicast ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "223.10.1.1"
+        },
+        {
+          "id": "b",
+          "text": "255.255.255.255"
+        },
+        {
+          "id": "c",
+          "text": "239.255.255.250"
+        },
+        {
+          "id": "d",
+          "text": "240.10.1.1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le multicast IPv4 occupe 224.0.0.0/4, l'ancienne classe D : premier octet de 224 à 239 (bits de tête 1110). 239.255.255.250, utilisée par SSDP, en fait partie ; le bloc 239.0.0.0/8 est réservé aux adresses à portée administrative, l'équivalent multicast des adresses privées. Un paquet multicast n'est traité que par les hôtes abonnés au groupe, alors qu'un broadcast concerne tous les hôtes du segment.",
+    "distractorNotes": {
+      "a": "223 est la dernière valeur de la classe C (192 à 223) : 223.10.1.1 est une adresse unicast.",
+      "b": "255.255.255.255 est la diffusion limitée : elle vise tous les hôtes du segment, pas un groupe multicast.",
+      "d": "240.0.0.0/4 (ancienne classe E) est réservé pour un usage futur : ce n'est pas du multicast."
+    },
+    "reference": "RFC 5771 ; RFC 2365"
+  },
+  {
+    "slug": "ccna-1.6-vlsm-free-27-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le bloc 192.168.40.0/24 est découpé en VLSM. Sont déjà attribués 192.168.40.0/26, 192.168.40.96/27 et 192.168.40.128/26. Lequel de ces sous-réseaux peut être attribué à un nouveau LAN sans chevaucher les précédents ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "192.168.40.32/27"
+        },
+        {
+          "id": "b",
+          "text": "192.168.40.160/27"
+        },
+        {
+          "id": "c",
+          "text": "192.168.40.112/27"
+        },
+        {
+          "id": "d",
+          "text": "192.168.40.64/27"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Il faut d'abord tracer les plages occupées : 192.168.40.0/26 couvre .0 à .63, 192.168.40.96/27 couvre .96 à .127 et 192.168.40.128/26 couvre .128 à .191. Il reste deux trous : .64 à .95, exactement un bloc /27 aligné (64 est un multiple de 32), et .192 à .255. 192.168.40.64/27 (.64 à .95) est donc libre. Pour détecter un chevauchement, on compare les plages complètes, adresse réseau et broadcast compris, et pas seulement les adresses réseau.",
+    "distractorNotes": {
+      "a": "192.168.40.32/27 (.32 à .63) est inclus dans 192.168.40.0/26, qui couvre .0 à .63.",
+      "b": "192.168.40.160/27 (.160 à .191) est inclus dans 192.168.40.128/26, qui couvre .128 à .191.",
+      "c": "112 n'est pas un multiple de 32 : 192.168.40.112 n'est pas une adresse réseau /27, c'est un hôte de 192.168.40.96/27, déjà attribué."
+    },
+    "reference": "RFC 1878 ; RFC 4632"
+  },
+  {
+    "slug": "ccna-1.6-broadcast-15-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un technicien veut attribuer à un serveur l'adresse 10.1.255.255 avec le masque 255.254.0.0. Quelle affirmation est exacte ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "C'est impossible : c'est l'adresse de broadcast du sous-réseau 10.0.0.0/15"
+        },
+        {
+          "id": "b",
+          "text": "C'est possible : une adresse finissant par .255 n'est un broadcast qu'avec un /24"
+        },
+        {
+          "id": "c",
+          "text": "C'est possible : le sous-réseau 10.0.0.0/15 s'étend jusqu'à 10.3.255.255"
+        },
+        {
+          "id": "d",
+          "text": "C'est impossible : c'est l'adresse réseau du sous-réseau 10.1.0.0/15"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "255.254.0.0 est un /15 : l'octet intéressant est le deuxième, avec un pas de 256 − 254 = 2. Les sous-réseaux commencent aux valeurs paires : 10.0.0.0/15 couvre 10.0.0.0 à 10.1.255.255, puis vient 10.2.0.0/15. 10.1.255.255 est la dernière adresse du bloc, tous ses 17 bits d'hôte sont à 1 : c'est le broadcast dirigé du sous-réseau, qu'on ne peut pas attribuer à une interface. Le serveur peut recevoir par exemple 10.1.255.254, la dernière adresse utilisable.",
+    "distractorNotes": {
+      "b": "Une adresse est un broadcast quand tous ses bits d'hôte sont à 1, quel que soit le préfixe ; ici, les 17 bits d'hôte de 10.1.255.255 sont à 1.",
+      "c": "Un /15 couvre deux valeurs du deuxième octet (0 et 1) ; 10.0.0.0 à 10.3.255.255 serait un /14.",
+      "d": "10.1.0.0 n'est pas une frontière de /15 (1 est impair) : le sous-réseau est 10.0.0.0/15, dont 10.1.255.255 est la dernière adresse, pas la première."
+    },
+    "reference": "RFC 950 ; RFC 922"
+  },
+  {
+    "slug": "ccna-1.6-host-config-check-22-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Un technicien a préparé la configuration statique de cinq postes raccordés au segment de l'interface G0/1 de R1, qui leur sert de passerelle. Quelles deux configurations sont correctes ?",
+      "exhibit": "R1, interface GigabitEthernet0/1 : 172.20.39.254/22\n\nPoste  Adresse IPv4     Masque           Passerelle\nPC1    172.20.37.10     255.255.252.0    172.20.39.254\nPC2    172.20.40.5      255.255.252.0    172.20.39.254\nPC3    172.20.39.255    255.255.252.0    172.20.39.254\nPC4    172.20.38.255    255.255.252.0    172.20.39.254\nPC5    172.20.36.200    255.255.255.0    172.20.39.254",
+      "options": [
+        {
+          "id": "a",
+          "text": "PC1"
+        },
+        {
+          "id": "b",
+          "text": "PC2"
+        },
+        {
+          "id": "c",
+          "text": "PC3"
+        },
+        {
+          "id": "d",
+          "text": "PC4"
+        },
+        {
+          "id": "e",
+          "text": "PC5"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Le segment de G0/1 est 172.20.36.0/22 : pas de 4 dans le troisième octet, de 172.20.36.0 (réseau) à 172.20.39.255 (broadcast), hôtes de 172.20.36.1 à 172.20.39.254. Une configuration correcte place le poste dans ce sous-réseau, avec le même masque, sur une adresse qui n'est ni l'adresse réseau ni le broadcast, et désigne une passerelle du même sous-réseau. PC1 (172.20.37.10) et PC4 (172.20.38.255) remplissent ces conditions : dans un /22, une adresse qui finit par .255 n'est pas forcément un broadcast.",
+    "distractorNotes": {
+      "b": "172.20.40.5/22 appartient à 172.20.40.0/22 (40 à 43) : le poste n'est pas dans le sous-réseau du segment, et sa passerelle 172.20.39.254 est hors de son propre sous-réseau.",
+      "c": "172.20.39.255 est le broadcast de 172.20.36.0/22 : elle ne peut pas être attribuée à un poste.",
+      "e": "Avec 255.255.255.0, PC5 se croit dans 172.20.36.0/24 : son masque ne correspond pas au /22 du segment, et la passerelle 172.20.39.254 est hors de ce /24."
+    },
+    "reference": "RFC 1122, section 3.3.1.1 ; RFC 950"
+  },
+  {
+    "slug": "ccna-1.6-summary-18-included-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 annonce la route résumée 10.1.64.0/18. Quels deux sous-réseaux sont entièrement inclus dans ce résumé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "10.1.100.0/24"
+        },
+        {
+          "id": "b",
+          "text": "10.1.128.0/24"
+        },
+        {
+          "id": "c",
+          "text": "10.1.127.128/25"
+        },
+        {
+          "id": "d",
+          "text": "10.1.32.0/19"
+        },
+        {
+          "id": "e",
+          "text": "10.1.0.0/17"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Un /18 vaut 255.255.192.0 : pas de 64 dans le troisième octet. 10.1.64.0/18 couvre donc 10.1.64.0 à 10.1.127.255. 10.1.100.0/24 (100 est entre 64 et 127) et 10.1.127.128/25 (10.1.127.128 à 10.1.127.255, la fin du bloc) y sont entièrement inclus. Pour qu'un sous-réseau soit inclus dans un résumé, son préfixe doit être au moins aussi long que celui du résumé, et sa première comme sa dernière adresse doivent tomber dans la plage du résumé.",
+    "distractorNotes": {
+      "b": "10.1.128.0 commence le bloc /18 suivant (10.1.128.0 à 10.1.191.255) : il est hors du résumé.",
+      "d": "10.1.32.0/19 couvre 10.1.32.0 à 10.1.63.255 : il précède le résumé, qui commence à 10.1.64.0.",
+      "e": "10.1.0.0/17 (10.1.0.0 à 10.1.127.255) est plus large que le résumé : c'est lui qui contient 10.1.64.0/18, et non l'inverse."
+    },
+    "reference": "RFC 4632 (CIDR, agrégation de préfixes)"
+  },
+  {
+    "slug": "ccna-1.6-subnets-hosts-8-to-20-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le réseau 10.0.0.0/8 est découpé en sous-réseaux de masque 255.255.240.0. Quelles deux affirmations sont exactes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "On obtient 16 sous-réseaux."
+        },
+        {
+          "id": "b",
+          "text": "On obtient 4096 sous-réseaux."
+        },
+        {
+          "id": "c",
+          "text": "Chaque sous-réseau offre 4096 adresses d'hôtes utilisables."
+        },
+        {
+          "id": "d",
+          "text": "Les sous-réseaux se succèdent par pas de 16 dans le deuxième octet."
+        },
+        {
+          "id": "e",
+          "text": "Chaque sous-réseau offre 4094 adresses d'hôtes utilisables."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "255.255.240.0 est un /20. Partant d'un /8, on emprunte 20 − 8 = 12 bits, 8 dans le deuxième octet et 4 dans le troisième, soit 2¹² = 4096 sous-réseaux. Il reste 32 − 20 = 12 bits d'hôte : 2¹² = 4096 adresses par sous-réseau, dont 4094 attribuables. Le pas de 16 (256 − 240) s'applique dans le troisième octet : 10.0.0.0, 10.0.16.0, 10.0.32.0… 10.0.240.0, puis 10.1.0.0, et ainsi de suite jusqu'à 10.255.240.0.",
+    "distractorNotes": {
+      "a": "16 = 2⁴ ne compte que les 4 bits empruntés dans le troisième octet ; les 8 bits du deuxième octet sont eux aussi empruntés au /8.",
+      "c": "4096 est le nombre total d'adresses d'un /20 : l'adresse réseau et le broadcast ne sont pas attribuables.",
+      "d": "Le deuxième octet du masque vaut 255 : le pas de 16 se trouve dans le troisième octet, celui qui vaut 240."
+    },
+    "reference": "RFC 950 ; RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-valid-masks-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux masques de sous-réseau IPv4 sont valides ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "255.255.255.250"
+        },
+        {
+          "id": "b",
+          "text": "255.254.255.0"
+        },
+        {
+          "id": "c",
+          "text": "255.255.255.224"
+        },
+        {
+          "id": "d",
+          "text": "255.255.252.255"
+        },
+        {
+          "id": "e",
+          "text": "255.255.254.0"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Un masque valide est une suite de bits à 1 contigus, suivie uniquement de bits à 0. Un octet de masque ne peut donc valoir que 0, 128, 192, 224, 240, 248, 252, 254 ou 255, et dès qu'un octet est inférieur à 255, tous les octets suivants valent 0. 255.255.255.224 (/27) et 255.255.254.0 (/23) respectent ces règles. Un masque non contigu ne correspond à aucune longueur de préfixe : IOS le refuse dans la commande « ip address ».",
+    "distractorNotes": {
+      "a": "250 s'écrit 11111010 : un bit à 0 sépare des bits à 1, le masque n'est pas contigu.",
+      "b": "Le troisième octet vaut 255 après un deuxième octet à 254 : un bit à 0 précède des bits à 1.",
+      "d": "Le dernier octet vaut 255 alors que le troisième vaut 252 : les bits à 1 ne sont pas contigus."
+    },
+    "reference": "RFC 4632, section 3.1 ; RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-vlsm-overlap-plan-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Quels deux sous-réseaux du plan d'adressage se chevauchent ?",
+      "exhibit": "Plan d'adressage du site (bloc 172.16.0.0/20)\n\nVLAN  Usage           Sous-réseau\n10    Postes          172.16.0.0/21\n20    Téléphonie      172.16.8.0/22\n30    Wi-Fi invités   172.16.12.0/23\n40    Serveurs        172.16.10.128/25\n50    Imprimantes     172.16.14.0/24",
+      "options": [
+        {
+          "id": "a",
+          "text": "VLAN 10 (172.16.0.0/21)"
+        },
+        {
+          "id": "b",
+          "text": "VLAN 20 (172.16.8.0/22)"
+        },
+        {
+          "id": "c",
+          "text": "VLAN 30 (172.16.12.0/23)"
+        },
+        {
+          "id": "d",
+          "text": "VLAN 40 (172.16.10.128/25)"
+        },
+        {
+          "id": "e",
+          "text": "VLAN 50 (172.16.14.0/24)"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "On convertit chaque sous-réseau en plage : VLAN 10 couvre 172.16.0.0 à 172.16.7.255, VLAN 20 172.16.8.0 à 172.16.11.255, VLAN 30 172.16.12.0 à 172.16.13.255, VLAN 40 172.16.10.128 à 172.16.10.255 et VLAN 50 172.16.14.0 à 172.16.14.255. La plage du VLAN 40 est entièrement incluse dans celle du VLAN 20 : ces deux sous-réseaux se chevauchent. Sur un même routeur, IOS signale d'ailleurs un tel recouvrement entre deux interfaces (message « overlaps with ») ; entre routeurs différents, rien ne le détecte à la configuration. Les autres plages se suivent sans recouvrement.",
+    "distractorNotes": {
+      "a": "VLAN 10 s'arrête à 172.16.7.255, juste avant le début du VLAN 20 : aucun recouvrement.",
+      "c": "VLAN 30 (172.16.12.0 à 172.16.13.255) commence juste après la fin du VLAN 20 et finit avant le VLAN 50.",
+      "e": "VLAN 50 (172.16.14.0 à 172.16.14.255) commence après la fin du VLAN 30 et ne recoupe aucune autre plage."
+    },
+    "reference": "RFC 1878 ; RFC 4632"
+  },
+  {
+    "slug": "ccna-1.6-subnet-12-class-a-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un hôte a l'adresse 10.130.77.19/12. Donnez l'adresse réseau et l'adresse de broadcast de son sous-réseau.",
+      "fields": [
+        {
+          "id": "network",
+          "label": "Adresse réseau (en décimal pointé)"
+        },
+        {
+          "id": "broadcast",
+          "label": "Adresse de broadcast (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "network": {
+          "accepted": [
+            "10.128.0.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "broadcast": {
+          "accepted": [
+            "10.143.255.255"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Un /12 vaut 255.240.0.0 : l'octet intéressant est le deuxième, avec un pas de 256 − 240 = 16. Les sous-réseaux commencent à 10.0.0.0, 10.16.0.0… 10.112.0.0, 10.128.0.0, 10.144.0.0. 130 est entre 128 et 143 : le réseau est 10.128.0.0, et le broadcast, dernière adresse avant 10.144.0.0, est 10.143.255.255. Les deux derniers octets de l'hôte (77.19) n'interviennent pas : à droite de l'octet intéressant, l'adresse réseau les met à 0 et le broadcast à 255.",
+    "reference": "RFC 950 ; RFC 4632"
+  },
+  {
+    "slug": "ccna-1.6-subnet-28-first-last-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un hôte a l'adresse 192.168.200.185 avec le masque 255.255.255.240. Donnez la première et la dernière adresse d'hôte utilisable de son sous-réseau.",
+      "fields": [
+        {
+          "id": "first",
+          "label": "Première adresse utilisable (en décimal pointé)"
+        },
+        {
+          "id": "last",
+          "label": "Dernière adresse utilisable (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "first": {
+          "accepted": [
+            "192.168.200.177"
+          ],
+          "normalize": "ipv4"
+        },
+        "last": {
+          "accepted": [
+            "192.168.200.190"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "255.255.255.240 est un /28 : pas de 16 dans le quatrième octet (.0, .16… .160, .176, .192). 185 est entre 176 et 191 : le sous-réseau est 192.168.200.176/28, de broadcast 192.168.200.191. La première adresse utilisable suit l'adresse réseau (192.168.200.177) et la dernière précède le broadcast (192.168.200.190), soit 14 hôtes. Erreur fréquente : donner 192.168.200.176 ou 192.168.200.191, qui ne sont pas attribuables.",
+    "reference": "RFC 950"
+  },
+  {
+    "slug": "ccna-1.6-hosts-mask-248-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Combien d'adresses d'hôtes utilisables offre un sous-réseau de masque 255.255.255.248 ?",
+      "fields": [
+        {
+          "id": "hosts",
+          "label": "Nombre d'adresses utilisables (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "hosts": {
+          "accepted": [
+            "6"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "248 s'écrit 11111000 : le masque compte 29 bits à 1 (/29) et laisse 3 bits d'hôte. Un bloc contient donc 2³ = 8 adresses, dont il faut retirer l'adresse réseau (bits d'hôte tous à 0) et le broadcast (bits d'hôte tous à 1) : il reste 2³ − 2 = 6 adresses attribuables. Le /29 sert souvent pour un petit segment de serveurs ou pour un bloc d'adresses publiques fourni par un FAI.",
+    "reference": "RFC 950 ; RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-borrow-10-bits-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le réseau 172.25.0.0/16 est découpé en empruntant 10 bits à la partie hôte. Complétez.",
+      "fields": [
+        {
+          "id": "prefix",
+          "label": "Longueur du préfixe obtenu (sans le /)"
+        },
+        {
+          "id": "subnets",
+          "label": "Nombre de sous-réseaux (nombre entier)"
+        },
+        {
+          "id": "hosts",
+          "label": "Nombre d'adresses d'hôtes utilisables par sous-réseau (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "prefix": {
+          "accepted": [
+            "26"
+          ],
+          "normalize": "int"
+        },
+        "subnets": {
+          "accepted": [
+            "1024"
+          ],
+          "normalize": "int"
+        },
+        "hosts": {
+          "accepted": [
+            "62"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Emprunter 10 bits à un /16 donne un préfixe /26 (16 + 10), de masque 255.255.255.192. Les 10 bits empruntés, 8 dans le troisième octet et 2 dans le quatrième, fournissent 2¹⁰ = 1024 sous-réseaux. Il reste 32 − 26 = 6 bits d'hôte, soit 2⁶ − 2 = 62 adresses attribuables par sous-réseau. Les sous-réseaux se suivent par pas de 64 dans le quatrième octet : 172.25.0.0, 172.25.0.64, 172.25.0.128, 172.25.0.192, 172.25.1.0…",
+    "reference": "RFC 950 ; RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-min-subnets-20-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le bloc 10.10.0.0/20 doit être découpé en au moins 20 sous-réseaux de même taille, chacun aussi grand que possible. Complétez.",
+      "fields": [
+        {
+          "id": "prefix",
+          "label": "Longueur du préfixe retenu (sans le /)"
+        },
+        {
+          "id": "hosts",
+          "label": "Nombre d'adresses d'hôtes utilisables par sous-réseau (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "prefix": {
+          "accepted": [
+            "25"
+          ],
+          "normalize": "int"
+        },
+        "hosts": {
+          "accepted": [
+            "126"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Il faut n bits de sous-réseau tels que 2ⁿ ≥ 20 : 4 bits (16 sous-réseaux) ne suffisent pas, 5 bits (32) conviennent. On n'emprunte pas plus de bits que nécessaire, pour garder des sous-réseaux aussi grands que possible : le préfixe est /25 (20 + 5). Il reste 7 bits d'hôte, soit 2⁷ − 2 = 126 adresses attribuables. On obtient 32 sous-réseaux, de 10.10.0.0/25 à 10.10.15.128/25, dont 12 restent disponibles pour la croissance.",
+    "reference": "RFC 950 ; RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-prefix-two-constraints-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le réseau 172.16.0.0/16 doit être découpé en sous-réseaux de même taille. Il en faut au moins 60, et chacun doit pouvoir accueillir au moins 900 hôtes. Un seul masque satisfait les deux contraintes : donnez-le, ainsi que le nombre de sous-réseaux obtenus.",
+      "fields": [
+        {
+          "id": "mask",
+          "label": "Masque en décimal pointé"
+        },
+        {
+          "id": "subnets",
+          "label": "Nombre de sous-réseaux obtenus (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "mask": {
+          "accepted": [
+            "255.255.252.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "subnets": {
+          "accepted": [
+            "64"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Côté sous-réseaux, 2ⁿ ≥ 60 impose au moins 6 bits empruntés, donc un préfixe d'au moins /22. Côté hôtes, 2ʰ − 2 ≥ 900 impose au moins 10 bits d'hôte (1022 adresses ; 9 bits n'en donnent que 510), donc un préfixe d'au plus /22. Seul le /22 satisfait les deux : masque 255.255.252.0, avec 2⁶ = 64 sous-réseaux de 1022 hôtes. Un /21 offrirait 2046 hôtes mais seulement 32 sous-réseaux ; un /23 donnerait 128 sous-réseaux, mais de 510 hôtes seulement.",
+    "reference": "RFC 950 ; RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-nth-subnet-28-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le réseau 10.5.5.0/24 est découpé en sous-réseaux /28, numérotés dans l'ordre croissant des adresses, 10.5.5.0/28 étant le premier. Donnez l'adresse réseau et l'adresse de broadcast du dixième sous-réseau.",
+      "fields": [
+        {
+          "id": "network",
+          "label": "Adresse réseau du dixième sous-réseau (en décimal pointé)"
+        },
+        {
+          "id": "broadcast",
+          "label": "Adresse de broadcast du dixième sous-réseau (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "network": {
+          "accepted": [
+            "10.5.5.144"
+          ],
+          "normalize": "ipv4"
+        },
+        "broadcast": {
+          "accepted": [
+            "10.5.5.159"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Un /28 contient 16 adresses : les sous-réseaux commencent tous les 16 dans le quatrième octet. Le premier commence à .0, le deuxième à .16 : le n-ième commence donc à (n − 1) × 16. Le dixième commence à 9 × 16 = 144 : c'est 10.5.5.144/28, qui va jusqu'au broadcast 10.5.5.159 (144 + 16 − 1), juste avant le onzième sous-réseau, 10.5.5.160. Erreur classique : multiplier par n au lieu de n − 1, ce qui donne le début du onzième.",
+    "reference": "RFC 950 ; RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-vlsm-plan-21-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Le bloc est découpé en VLSM. Chaque besoin reçoit le plus petit sous-réseau qui le contient (interface du routeur comprise) ; on traite les besoins du plus grand au plus petit, WAN1 avant WAN2, et chaque sous-réseau commence à la première adresse libre après le précédent. Complétez.",
+      "exhibit": "Bloc à découper : 10.12.8.0/21\n\nLAN Siège   : 900 hôtes\nLAN Atelier : 400 hôtes\nLAN Accueil : 100 hôtes\nWAN1 R1-R2  : liaison point à point en /30\nWAN2 R1-R3  : liaison point à point en /30",
+      "fields": [
+        {
+          "id": "at_prefix",
+          "label": "Longueur du préfixe du LAN Atelier (sans le /)"
+        },
+        {
+          "id": "at_bcast",
+          "label": "Adresse de broadcast du LAN Atelier (en décimal pointé)"
+        },
+        {
+          "id": "ac_last",
+          "label": "Dernière adresse utilisable du LAN Accueil (en décimal pointé)"
+        },
+        {
+          "id": "wan2_net",
+          "label": "Adresse réseau de WAN2 (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "at_prefix": {
+          "accepted": [
+            "23"
+          ],
+          "normalize": "int"
+        },
+        "at_bcast": {
+          "accepted": [
+            "10.12.13.255"
+          ],
+          "normalize": "ipv4"
+        },
+        "ac_last": {
+          "accepted": [
+            "10.12.14.126"
+          ],
+          "normalize": "ipv4"
+        },
+        "wan2_net": {
+          "accepted": [
+            "10.12.14.132"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Plus petit bloc suffisant : 900 hôtes → /22 (1022), 400 → /23 (510), 100 → /25 (126), puis deux /30. Le Siège prend 10.12.8.0/22 (8.0 à 11.255). L'Atelier suit en 10.12.12.0/23 (12.0 à 13.255, broadcast 10.12.13.255). L'Accueil prend 10.12.14.0/25 (14.0 à 14.127) : sa dernière adresse utilisable est 10.12.14.126. WAN1 reçoit 10.12.14.128/30 et WAN2 10.12.14.132/30. Traiter les grands besoins d'abord garde chaque bloc aligné sur sa taille ; il reste 10.12.14.136 à 10.12.15.255 pour l'avenir.",
+    "reference": "RFC 1878 ; RFC 4632"
+  },
+  {
+    "slug": "ccna-1.6-p2p-31-neighbor-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "L'interface G0/0 de R1 est configurée en 10.255.0.9/31 sur une liaison point à point vers R2 (RFC 3021). Quelle adresse et quel masque doit recevoir l'interface de R2 ?",
+      "fields": [
+        {
+          "id": "peer",
+          "label": "Adresse IPv4 de l'interface de R2 (en décimal pointé)"
+        },
+        {
+          "id": "mask",
+          "label": "Masque en décimal pointé"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "peer": {
+          "accepted": [
+            "10.255.0.8"
+          ],
+          "normalize": "ipv4"
+        },
+        "mask": {
+          "accepted": [
+            "255.255.255.254"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Un /31 ne contient que deux adresses et commence sur une valeur paire : 10.255.0.9 appartient au bloc 10.255.0.8/31, formé de 10.255.0.8 et 10.255.0.9. La RFC 3021 supprime l'adresse réseau et le broadcast sur ces liaisons : les deux adresses sont attribuables, et R2 doit donc recevoir 10.255.0.8, avec le même masque 255.255.255.254. 10.255.0.10 serait dans le bloc suivant (10.255.0.10/31) : les deux routeurs ne partageraient aucun sous-réseau.",
+    "reference": "RFC 3021"
+  },
+  {
+    "slug": "ccna-1.6-summary-unaligned-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "R1 doit annoncer à son voisin une seule route résumée couvrant les réseaux 192.168.98.0/24, 192.168.99.0/24, 192.168.100.0/24 et 192.168.101.0/24. Donnez le résumé unique le plus précis qui les contient tous.",
+      "fields": [
+        {
+          "id": "network",
+          "label": "Adresse réseau du résumé (en décimal pointé)"
+        },
+        {
+          "id": "prefix",
+          "label": "Longueur du préfixe du résumé (sans le /)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "network": {
+          "accepted": [
+            "192.168.96.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "prefix": {
+          "accepted": [
+            "21"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "On écrit le troisième octet en binaire : 98 = 01100010, 99 = 01100011, 100 = 01100100, 101 = 01100101. Les bits communs s'arrêtent après 01100 : 16 bits pour les deux premiers octets plus 5 bits, soit un /21, et l'adresse réseau a pour troisième octet 01100000 = 96. Le résumé est 192.168.96.0/21 (255.255.248.0), qui couvre 192.168.96.0 à 192.168.103.255. Les quatre réseaux ne commencent pas sur un multiple de 4 : aucun /22 ne les contient tous, et le /21 englobe aussi 96, 97, 102 et 103. Deux routes, 192.168.98.0/23 et 192.168.100.0/23, seraient exactes.",
+    "reference": "RFC 4632 (CIDR, agrégation de préfixes)"
+  },
+  {
+    "slug": "ccna-1.6-bits-addresses-21-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Pour un préfixe /21, donnez le nombre de bits d'hôte et le nombre total d'adresses du bloc (adresse réseau et broadcast compris).",
+      "fields": [
+        {
+          "id": "bits",
+          "label": "Nombre de bits d'hôte (nombre entier)"
+        },
+        {
+          "id": "total",
+          "label": "Nombre total d'adresses du bloc (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "bits": {
+          "accepted": [
+            "11"
+          ],
+          "normalize": "int"
+        },
+        "total": {
+          "accepted": [
+            "2048"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Une adresse IPv4 compte 32 bits ; un /21 en consacre 21 au réseau, il reste donc 32 − 21 = 11 bits d'hôte. Chaque bit double le nombre de combinaisons : 2¹¹ = 2048 adresses, dont 2046 attribuables une fois retirés l'adresse réseau et le broadcast. Le masque correspondant est 255.255.248.0 : le pas est de 8 dans le troisième octet, et 8 × 256 = 2048.",
+    "reference": "RFC 4632, section 3.1"
+  },
+  {
+    "slug": "ccna-1.6-dhcp-discover-addresses-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un poste qui n'a encore aucune adresse IPv4 envoie un DHCPDISCOVER pour trouver un serveur DHCP sur son segment. Quelles adresses IPv4 source et destination porte ce paquet ?",
+      "fields": [
+        {
+          "id": "src",
+          "label": "Adresse IPv4 source (en décimal pointé)"
+        },
+        {
+          "id": "dst",
+          "label": "Adresse IPv4 destination (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "src": {
+          "accepted": [
+            "0.0.0.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "dst": {
+          "accepted": [
+            "255.255.255.255"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Sans adresse, le client émet depuis 0.0.0.0 : le bloc 0.0.0.0/8 (« cet hôte sur ce réseau », RFC 1122) n'est valable qu'en adresse source, jamais en destination. Ne connaissant ni le serveur ni son propre sous-réseau, il envoie le message à la diffusion limitée 255.255.255.255, qui atteint tous les hôtes du segment mais n'est jamais relayée par un routeur. C'est pourquoi un serveur DHCP situé dans un autre sous-réseau exige un relais (« ip helper-address » sur l'interface du routeur).",
+    "reference": "RFC 2131, section 4.1 ; RFC 1122, section 3.2.1.3"
+  },
+  {
+    "slug": "ccna-1.6-loopback-32-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale de R1, créez l'interface Loopback0 et attribuez-lui l'adresse 172.30.255.7 avec un préfixe /32 (masque en décimal pointé).",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface Loopback0"
+        ],
+        [
+          "ip address 172.30.255.7 255.255.255.255"
+        ]
+      ]
+    },
+    "explanation": "« interface Loopback0 » crée l'interface logique et fait passer en mode de configuration d'interface ; une loopback est up dès sa création, sans « no shutdown ». « ip address 172.30.255.7 255.255.255.255 » lui donne un préfixe /32, qui ne contient qu'une seule adresse : la loopback identifie le routeur sans consommer de plage d'hôtes. La commande « ip address » prend l'adresse suivie du masque en décimal pointé, ici 32 bits à 1. On vérifie ensuite avec « show ip interface brief » ou « show running-config interface Loopback0 ».",
+    "reference": "Cisco IOS IP Addressing Services Configuration Guide (Configuring IPv4 Addresses) ; RFC 4632, section 3.1"
+  },
+  {
+    "slug": "ccna-1.6-p2p-31-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R2 est relié à R1 par une liaison Ethernet point à point adressée avec le bloc 172.31.255.254/31 (RFC 3021) ; R1 utilise déjà 172.31.255.254. Depuis le mode de configuration globale, configurez l'interface GigabitEthernet0/0 de R2 avec l'autre adresse du bloc (masque en décimal pointé), puis activez-la.",
+      "prompt": "R2(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/0"
+        ],
+        [
+          "ip address 172.31.255.255 255.255.255.254"
+        ],
+        [
+          "no shutdown"
+        ]
+      ],
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    "explanation": "Le bloc 172.31.255.254/31 contient deux adresses, 172.31.255.254 et 172.31.255.255. Avec la RFC 3021, un /31 n'a ni adresse réseau ni broadcast : 172.31.255.255, qui serait le broadcast avec un /30, un /24 ou un /16, est ici une adresse d'interface valide. Le masque /31 s'écrit 255.255.255.254. IOS accepte la commande sur une interface Ethernet en affichant un simple avertissement. « no shutdown » active l'interface, désactivée par défaut sur un routeur ; l'ordre de ces deux sous-commandes est libre.",
+    "reference": "RFC 3021 ; Cisco IOS IP Addressing Services Configuration Guide (Using 31-Bit Prefixes on IPv4 Point-to-Point Links)"
+  },
+  {
+    "slug": "ccna-1.6-last-usable-18-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale de R1, attribuez à l'interface GigabitEthernet0/1 la dernière adresse utilisable du sous-réseau 10.30.64.0/18 (masque en décimal pointé).",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/1"
+        ],
+        [
+          "ip address 10.30.127.254 255.255.192.0"
+        ]
+      ]
+    },
+    "explanation": "Un /18 vaut 255.255.192.0 : pas de 64 dans le troisième octet. 10.30.64.0/18 couvre 10.30.64.0 à 10.30.127.255, juste avant le sous-réseau suivant, 10.30.128.0. Le broadcast est 10.30.127.255 et la dernière adresse utilisable, qui le précède, est 10.30.127.254. « interface GigabitEthernet0/1 » fait passer en mode interface, puis « ip address 10.30.127.254 255.255.192.0 » attribue l'adresse. Erreurs fréquentes : 10.30.127.255, qui est le broadcast, et 10.30.64.254, qui ne serait la dernière adresse utilisable qu'avec un /24 (10.30.64.0/24).",
+    "reference": "Cisco IOS IP Addressing Services Configuration Guide (Configuring IPv4 Addresses) ; RFC 950"
+  },
+  {
+    "slug": "ccna-1.6-summary-static-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 joint quatre réseaux par le même next hop, 10.0.0.2 : 192.168.8.0/23, 192.168.10.0/24, 192.168.11.0/25 et 192.168.11.128/25. Depuis le mode de configuration globale, configurez une seule route statique résumée vers ce next hop, la plus précise possible, qui les couvre tous.",
+      "prompt": "R1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ip route 192.168.8.0 255.255.252.0 10.0.0.2",
+          "ip route 192.168.8.0 255.255.252.0 10.0.0.2 1"
+        ]
+      ]
+    },
+    "explanation": "On convertit chaque réseau en plage : 192.168.8.0/23 couvre 8.0 à 9.255, 192.168.10.0/24 couvre 10.0 à 10.255, et les deux /25 se partagent 11.0 à 11.255. L'ensemble va de 192.168.8.0 à 192.168.11.255 sans trou : quatre valeurs du troisième octet, alignées car 8 est un multiple de 4. Le résumé est 192.168.8.0/22, de masque 255.255.252.0, et « ip route 192.168.8.0 255.255.252.0 10.0.0.2 » l'installe avec la distance administrative par défaut de 1. Un /21 (192.168.8.0 à 192.168.15.255) couvrirait aussi des réseaux absents.",
+    "reference": "Cisco IOS IP Routing: Static Configuration Guide ; RFC 4632"
+  },
+  {
+    "slug": "ccna-1.6-order-block-size-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Ordonnez ces sous-réseaux du plus petit au plus grand nombre total d'adresses.",
+      "items": [
+        {
+          "id": "a",
+          "text": "172.16.0.0 255.255.240.0"
+        },
+        {
+          "id": "b",
+          "text": "10.1.0.0/23"
+        },
+        {
+          "id": "c",
+          "text": "192.168.1.0 255.255.255.128"
+        },
+        {
+          "id": "d",
+          "text": "10.2.0.0/30"
+        },
+        {
+          "id": "e",
+          "text": "172.20.0.0 255.255.248.0"
+        },
+        {
+          "id": "f",
+          "text": "192.168.5.0 255.255.255.224"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "d",
+        "f",
+        "c",
+        "b",
+        "e",
+        "a"
+      ]
+    },
+    "explanation": "Il faut ramener chaque masque à une longueur de préfixe : 255.255.255.224 est un /27, 255.255.255.128 un /25, 255.255.248.0 un /21 et 255.255.240.0 un /20. Plus le préfixe est long, plus le bloc est petit : il contient 2^(32 − préfixe) adresses. On obtient /30 (4 adresses), /27 (32), /25 (128), /23 (512), /21 (2048) et /20 (4096). La classe de l'adresse n'intervient pas : seul le masque fixe la taille du bloc.",
+    "reference": "RFC 4632, section 3.1 ; RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-block-size-method-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Pour l'hôte 10.4.77.130 de masque 255.255.224.0, vous cherchez la dernière adresse utilisable de son sous-réseau par la méthode de la taille de bloc. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "bcast",
+          "text": "Retirer 1 au sous-réseau suivant pour obtenir l'adresse de broadcast"
+        },
+        {
+          "id": "octet",
+          "text": "Repérer l'octet du masque qui ne vaut ni 255 ni 0"
+        },
+        {
+          "id": "next",
+          "text": "Ajouter la taille de bloc à l'adresse réseau pour obtenir le sous-réseau suivant"
+        },
+        {
+          "id": "last",
+          "text": "Retirer 1 à l'adresse de broadcast pour obtenir la dernière adresse utilisable"
+        },
+        {
+          "id": "block",
+          "text": "Calculer la taille de bloc : 256 moins la valeur de cet octet du masque"
+        },
+        {
+          "id": "net",
+          "text": "Prendre le plus grand multiple de la taille de bloc inférieur ou égal à l'octet correspondant de l'adresse, pour obtenir l'adresse réseau"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "octet",
+        "block",
+        "net",
+        "next",
+        "bcast",
+        "last"
+      ]
+    },
+    "explanation": "Chaque étape utilise le résultat de la précédente. Ici, l'octet intéressant est le troisième (224), la taille de bloc vaut 256 − 224 = 32, et le plus grand multiple de 32 inférieur ou égal à 77 est 64 : le réseau est 10.4.64.0. Le sous-réseau suivant est 10.4.96.0, donc le broadcast est 10.4.95.255 et la dernière adresse utilisable 10.4.95.254. Le quatrième octet de l'hôte (130) n'intervient pas : à droite de l'octet intéressant, l'adresse réseau a des 0 et le broadcast des 255.",
+    "reference": "RFC 950"
+  },
+  {
+    "slug": "ccna-1.6-classes-match-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque classe historique d'adresses IPv4 à la plage de son premier octet et à son masque par défaut ou à son usage.",
+      "left": [
+        {
+          "id": "ca",
+          "text": "Classe A"
+        },
+        {
+          "id": "cb",
+          "text": "Classe B"
+        },
+        {
+          "id": "cc",
+          "text": "Classe C"
+        },
+        {
+          "id": "cd",
+          "text": "Classe D"
+        }
+      ],
+      "right": [
+        {
+          "id": "r192",
+          "text": "Premier octet de 192 à 223, masque par défaut 255.255.255.0"
+        },
+        {
+          "id": "r240",
+          "text": "Premier octet de 240 à 255, plage réservée pour un usage futur"
+        },
+        {
+          "id": "r1",
+          "text": "Premier octet de 1 à 126, masque par défaut 255.0.0.0"
+        },
+        {
+          "id": "r224",
+          "text": "Premier octet de 224 à 239, plage réservée au multicast"
+        },
+        {
+          "id": "r128",
+          "text": "Premier octet de 128 à 191, masque par défaut 255.255.0.0"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "ca": "r1",
+        "cb": "r128",
+        "cc": "r192",
+        "cd": "r224"
+      }
+    },
+    "explanation": "Les classes se lisent sur les bits de tête du premier octet : 0 pour la classe A, 10 pour la B, 110 pour la C, 1110 pour la D. La classe A couvre en théorie 0 à 127, mais 0 (« ce réseau ») et 127 (bouclage) sont réservés : les réseaux de classe A utilisables vont de 1 à 126. Les classes A, B et C portent l'unicast, avec des masques par défaut /8, /16 et /24 ; la classe D, 224.0.0.0/4, est le multicast et n'a pas de masque par défaut. Le CIDR a aboli ces frontières pour le découpage et le routage.",
+    "distractorNotes": {
+      "r240": "240 à 255 est l'ancienne classe E (bits de tête 1111), réservée pour un usage futur ; elle ne figure pas parmi les classes à associer."
+    },
+    "reference": "RFC 791 (adressage par classes) ; RFC 1112, section 4 ; RFC 6890"
+  },
+  {
+    "slug": "ccna-1.6-reserved-blocks-match-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque bloc d'adresses IPv4 réservé à son usage.",
+      "left": [
+        {
+          "id": "z0",
+          "text": "0.0.0.0/8"
+        },
+        {
+          "id": "lo",
+          "text": "127.0.0.0/8"
+        },
+        {
+          "id": "ll",
+          "text": "169.254.0.0/16"
+        },
+        {
+          "id": "mc",
+          "text": "224.0.0.0/4"
+        }
+      ],
+      "right": [
+        {
+          "id": "u_ll",
+          "text": "Lien local : adresses auto-attribuées faute de serveur DHCP, jamais routées"
+        },
+        {
+          "id": "u_priv",
+          "text": "Adresses privées réutilisables dans chaque organisation (RFC 1918)"
+        },
+        {
+          "id": "u_this",
+          "text": "« Cet hôte sur ce réseau » : valable seulement comme adresse source"
+        },
+        {
+          "id": "u_mc",
+          "text": "Multicast : destinations qui désignent un groupe de récepteurs"
+        },
+        {
+          "id": "u_bc",
+          "text": "Diffusion limitée à tous les hôtes du segment"
+        },
+        {
+          "id": "u_loop",
+          "text": "Bouclage : un paquet vers ces adresses ne quitte jamais l'hôte"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "z0": "u_this",
+        "lo": "u_loop",
+        "ll": "u_ll",
+        "mc": "u_mc"
+      }
+    },
+    "explanation": "La RFC 6890 recense ces blocs à usage spécial. 0.0.0.0/8 désigne « cet hôte sur ce réseau » : un client DHCP sans adresse émet depuis 0.0.0.0, mais ces adresses ne sont jamais des destinations. 127.0.0.0/8 tout entier sert au bouclage interne. 169.254.0.0/16 regroupe les adresses de lien local (APIPA, RFC 3927), que les routeurs ne transmettent pas. 224.0.0.0/4, l'ancienne classe D, est le multicast ; 224.0.0.0/24 est réservé aux protocoles du lien local, comme OSPF (224.0.0.5 et 224.0.0.6).",
+    "distractorNotes": {
+      "u_priv": "Les plages privées de la RFC 1918 sont 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16 ; aucune ne figure parmi les blocs à associer.",
+      "u_bc": "La diffusion limitée est l'unique adresse 255.255.255.255/32, qui n'appartient à aucun des blocs à associer."
+    },
+    "reference": "RFC 6890 ; RFC 1122, section 3.2.1.3 ; RFC 3927 ; RFC 5771"
+  },
+  {
+    "slug": "ccna-1.6-mask-prefix-match-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque masque de sous-réseau à sa longueur de préfixe.",
+      "left": [
+        {
+          "id": "m1",
+          "text": "255.255.128.0"
+        },
+        {
+          "id": "m2",
+          "text": "255.255.240.0"
+        },
+        {
+          "id": "m3",
+          "text": "255.255.255.192"
+        },
+        {
+          "id": "m4",
+          "text": "255.255.255.252"
+        }
+      ],
+      "right": [
+        {
+          "id": "p26",
+          "text": "/26"
+        },
+        {
+          "id": "p17",
+          "text": "/17"
+        },
+        {
+          "id": "p28",
+          "text": "/28"
+        },
+        {
+          "id": "p30",
+          "text": "/30"
+        },
+        {
+          "id": "p20",
+          "text": "/20"
+        },
+        {
+          "id": "p25",
+          "text": "/25"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "m1": "p17",
+        "m2": "p20",
+        "m3": "p26",
+        "m4": "p30"
+      }
+    },
+    "explanation": "On compte les bits à 1 : chaque octet à 255 en apporte 8, puis 128 vaut 1 bit, 192 en vaut 2, 224 3, 240 4, 248 5, 252 6 et 254 7. 255.255.128.0 donne 16 + 1 = /17 ; 255.255.240.0, 16 + 4 = /20 ; 255.255.255.192, 24 + 2 = /26 ; 255.255.255.252, 24 + 6 = /30. Il faut bien repérer l'octet qui porte la valeur partielle : 240 dans le troisième octet ou dans le quatrième ne donne pas le même préfixe.",
+    "distractorNotes": {
+      "p25": "/25 correspond à 255.255.255.128 : la valeur 128 y est dans le quatrième octet, pas dans le troisième comme dans 255.255.128.0.",
+      "p28": "/28 correspond à 255.255.255.240 ; dans 255.255.240.0, le 240 est dans le troisième octet, d'où /20."
+    },
+    "reference": "RFC 4632, section 3.1 ; RFC 1878"
+  },
+  {
+    "slug": "ccna-1.6-network-by-prefix-match-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "On applique plusieurs longueurs de préfixe à la même adresse 10.77.141.200. Associez chaque combinaison à l'adresse réseau obtenue.",
+      "left": [
+        {
+          "id": "k12",
+          "text": "10.77.141.200/12"
+        },
+        {
+          "id": "k18",
+          "text": "10.77.141.200/18"
+        },
+        {
+          "id": "k21",
+          "text": "10.77.141.200/21"
+        },
+        {
+          "id": "k27",
+          "text": "10.77.141.200/27"
+        }
+      ],
+      "right": [
+        {
+          "id": "n136",
+          "text": "10.77.136.0"
+        },
+        {
+          "id": "n141",
+          "text": "10.77.141.0"
+        },
+        {
+          "id": "n64",
+          "text": "10.64.0.0"
+        },
+        {
+          "id": "n192",
+          "text": "10.77.141.192"
+        },
+        {
+          "id": "n140",
+          "text": "10.77.140.0"
+        },
+        {
+          "id": "n128",
+          "text": "10.77.128.0"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "k12": "n64",
+        "k18": "n128",
+        "k21": "n136",
+        "k27": "n192"
+      }
+    },
+    "explanation": "Pour chaque préfixe, on cherche l'octet intéressant et son pas. /12 : deuxième octet, pas de 16, et 77 tombe dans le bloc 64 à 79, d'où 10.64.0.0. /18 : troisième octet, pas de 64, et 141 est dans 128 à 191, d'où 10.77.128.0. /21 : troisième octet, pas de 8, et 141 est dans 136 à 143, d'où 10.77.136.0. /27 : quatrième octet, pas de 32, et 200 est dans 192 à 223, d'où 10.77.141.192. Les octets situés à droite de l'octet intéressant sont mis à 0.",
+    "distractorNotes": {
+      "n140": "10.77.140.0 est l'adresse réseau obtenue avec un /22 ou un /23 (pas de 4 ou de 2 dans le troisième octet), préfixes qui ne sont pas demandés.",
+      "n141": "10.77.141.0 est l'adresse réseau obtenue avec un /24 ; avec un /27, le quatrième octet n'est pas mis à 0 mais ramené au multiple de 32 inférieur, 192."
+    },
+    "reference": "RFC 950 ; RFC 4632"
+  }
+]

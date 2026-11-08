@@ -1,0 +1,222 @@
+{
+  "slug": "ccna-lab-4.2-ntp-maitre-client",
+  "certification": "ccna",
+  "domain": "4.0",
+  "subtopic": "4.2",
+  "difficulty": "medium",
+  "title": "Synchroniser l'heure d'un site isolé : maître NTP et client",
+  "statement": "Le réseau de l'entreprise n'a pas accès à Internet : aucun serveur NTP public n'est joignable. Les journaux de R1 (siège) et de R2 (agence) doivent pourtant être horodatés de façon cohérente. Le routage entre les deux loopbacks fonctionne déjà.\n\nSur R1 :\n1. R1 devient la source de temps de référence du réseau en s'appuyant sur sa propre horloge, et annonce la strate 3.\n2. R1 ne doit dépendre d'aucun autre serveur NTP.\n\nSur R2 :\n3. R2 se synchronise sur R1 en le joignant par l'adresse de sa loopback, 10.255.0.1 (une adresse stable, liée à aucune interface physique : elle restera la bonne si un second lien est ajouté entre les sites).\n4. Les paquets NTP émis par R2 doivent avoir pour adresse source celle de sa Loopback0 (10.255.0.2).\n5. R2 ne doit en aucun cas se déclarer lui-même source de temps.\n6. R2 recopie régulièrement l'heure NTP dans son horloge matérielle (calendrier), pour repartir à l'heure après un redémarrage.\n\nSur les deux routeurs :\n7. L'heure s'affiche dans le fuseau nommé CET, à UTC + 1 heure.",
+  "topology": "        R1 (siège)                                   R2 (agence)\n   Loopback0 10.255.0.1/32                      Loopback0 10.255.0.2/32\n          G0/0/1 10.0.12.1/30 ------------------ G0/0/1 10.0.12.2/30\n\nR1 : ip route 10.255.0.2 255.255.255.255 10.0.12.2 (déjà configurée)\nR2 : ip route 10.255.0.1 255.255.255.255 10.0.12.1 (déjà configurée)\nAucun accès à Internet, aucun autre serveur NTP.",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface Loopback0\n ip address 10.255.0.1 255.255.255.255\ninterface GigabitEthernet0/0/1\n description Lien vers R2\n ip address 10.0.12.1 255.255.255.252\n no shutdown\nip route 10.255.0.2 255.255.255.255 10.0.12.2"
+    },
+    {
+      "id": "R2",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R2\nno ip domain-lookup\ninterface Loopback0\n ip address 10.255.0.2 255.255.255.255\ninterface GigabitEthernet0/0/1\n description Lien vers R1\n ip address 10.0.12.2 255.255.255.252\n no shutdown\nip route 10.255.0.1 255.255.255.255 10.0.12.1"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "r1-maitre",
+      "description": "R1 sert de référence de temps à partir de sa propre horloge, en strate 3, sans dépendre d'un autre serveur NTP.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "device": "R1", "pattern": "^ntp master 3$" },
+          { "type": "regex", "device": "R1", "pattern": "^ntp server ", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "r2-client",
+      "description": "R2 se synchronise sur R1 par l'adresse de la loopback de R1, et ne se déclare pas lui-même source de temps.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "device": "R2", "pattern": "^ntp server 10\\.255\\.0\\.1( prefer)?$" },
+          { "type": "regex", "device": "R2", "pattern": "^ntp master", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "r2-source",
+      "description": "Les paquets NTP de R2 partent de l'adresse de sa Loopback0.",
+      "check": { "type": "line", "device": "R2", "line": "ntp source Loopback0" }
+    },
+    {
+      "id": "r2-calendrier",
+      "description": "R2 met régulièrement à jour son horloge matérielle avec l'heure NTP.",
+      "check": { "type": "line", "device": "R2", "line": "ntp update-calendar" }
+    },
+    {
+      "id": "fuseau",
+      "description": "R1 et R2 affichent l'heure dans le fuseau CET, à UTC + 1 heure.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "device": "R1", "pattern": "^clock timezone CET 1 0$" },
+          { "type": "regex", "device": "R2", "pattern": "^clock timezone CET 1 0$" }
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "Un routeur peut servir l'heure sans source externe en faisant confiance à sa propre horloge ; les autres en deviennent alors clients. Le fuseau horaire, lui, ne change que l'affichage : NTP transporte toujours l'heure UTC.",
+    "Sans valeur, la strate annoncée par un maître NTP Cisco vaut 8 : précisez-la. Côté client, visez l'adresse de loopback de R1, choisissez l'interface dont l'adresse sert de source aux paquets NTP, et ne déclarez surtout pas R2 maître lui aussi. La mise à jour du calendrier est une commande NTP à part, sur le client.",
+    "En configuration globale : ntp master suivi de la strate sur R1 ; ntp server <adresse>, ntp source <interface> et ntp update-calendar sur R2 ; clock timezone <nom> <heures> sur les deux routeurs."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp master 3", "end"]
+    },
+    {
+      "device": "R2",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "clock timezone CET 1 0",
+        "ntp source Loopback0",
+        "ntp server 10.255.0.1",
+        "ntp update-calendar",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations, minutes omises, serveur préféré, R2 configuré en premier",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": ["en", "conf t", "ntp ser 10.255.0.1 prefer", "ntp sou lo0", "ntp up", "clock timezone cet 1", "\u001a"]
+        },
+        {
+          "device": "R1",
+          "commands": ["en", "conf t", "ntp ma 3", "clock time CET 1", "\u001a"]
+        }
+      ]
+    },
+    {
+      "description": "Source NTP donnée en deux mots, depuis le mode interface",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "interface loopback 0", "ntp master 3", "clock timezone CET 1 0", "end"]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ntp server 10.255.0.1",
+            "ntp source Loopback 0",
+            "ntp update-calendar",
+            "clock timezone CET 1 0",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "ntp master sans strate : R1 annonce la strate 8 par défaut",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp master"] },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp source Loopback0", "ntp server 10.255.0.1", "ntp update-calendar"]
+        }
+      ],
+      "failing": ["r1-maitre"]
+    },
+    {
+      "description": "R2 pointe vers l'adresse du lien de R1 au lieu de sa loopback",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp master 3"] },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp source Loopback0", "ntp server 10.0.12.1", "ntp update-calendar"]
+        }
+      ],
+      "failing": ["r2-client"]
+    },
+    {
+      "description": "R2 déclaré maître lui aussi en strate 3 : sur son horloge locale il serait en strate 3, sur R1 en strate 4 ; il choisit son horloge et se synchronise sur lui-même",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp master 3"] },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp source Loopback0", "ntp server 10.255.0.1", "ntp update-calendar", "ntp master 3"]
+        }
+      ],
+      "failing": ["r2-client"]
+    },
+    {
+      "description": "R2 maître « de secours » en strate 10 : il reste client de R1, mais servirait sa propre heure s'il le perdait, ce que l'énoncé interdit",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp master 3"] },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp source Loopback0", "ntp server 10.255.0.1", "ntp update-calendar", "ntp master 10"]
+        }
+      ],
+      "failing": ["r2-client"]
+    },
+    {
+      "description": "R1 rendu client de R2 en plus d'être maître : dépendance circulaire envers son propre client",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp master 3", "ntp server 10.255.0.2"] },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp source Loopback0", "ntp server 10.255.0.1", "ntp update-calendar"]
+        }
+      ],
+      "failing": ["r1-maitre"]
+    },
+    {
+      "description": "Source NTP laissée sur l'interface physique de R2",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp master 3"] },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp source GigabitEthernet0/0/1", "ntp server 10.255.0.1", "ntp update-calendar"]
+        }
+      ],
+      "failing": ["r2-source"]
+    },
+    {
+      "description": "Mise à jour du calendrier posée sur R1 au lieu de R2",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp master 3", "ntp update-calendar"] },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "clock timezone CET 1 0", "ntp source Loopback0", "ntp server 10.255.0.1"]
+        }
+      ],
+      "failing": ["r2-calendrier"]
+    },
+    {
+      "description": "Décalage de signe inversé (UTC − 1 au lieu de UTC + 1)",
+      "solution": [
+        { "device": "R1", "commands": ["enable", "configure terminal", "clock timezone CET -1", "ntp master 3"] },
+        {
+          "device": "R2",
+          "commands": ["enable", "configure terminal", "clock timezone CET -1", "ntp source Loopback0", "ntp server 10.255.0.1", "ntp update-calendar"]
+        }
+      ],
+      "failing": ["fuseau"]
+    }
+  ],
+  "explanation": "NTP (UDP 123, RFC 5905) organise les horloges en strates : plus le numéro est bas, plus la source est proche d'une référence ; un serveur de strate n donne à ses clients la strate n + 1, et 16 signifie « non synchronisé ». Sans accès à une source externe, ntp master 3 fait de R1 une référence qui s'appuie sur sa propre horloge (association 127.127.1.1 dans show ntp associations) et annonce la strate 3 ; sans argument, ntp master annonce la strate 8. R1 ne doit être client de personne : un ntp server 10.255.0.2 sur R1 le ferait dépendre de son propre client (NTP repère cette boucle par l'identifiant de référence et écarte la source, mais l'association n'a aucun sens). Sur R2, ntp server 10.255.0.1 l'associe à R1 en mode client/serveur (prefer ne fait que départager plusieurs serveurs) ; viser la loopback plutôt que 10.0.12.1 garde la synchronisation tant qu'un chemin existe. ntp source Loopback0 fixe l'adresse source des paquets NTP de R2 (10.255.0.2), une adresse stable que R1 peut filtrer (ntp access-group) ou authentifier. Il ne faut pas ajouter ntp master sur R2 : avec ntp master 3, son horloge locale le placerait en strate 3, alors que synchronisé sur R1 il n'est qu'en strate 4 (3 + 1) ; la source locale l'emporte, R2 se synchroniserait donc sur lui-même et dériverait de R1 sans le moindre message. Même avec une strate haute (ntp master 10, usage classique en secours), R2 se remettrait à servir sa propre heure dès qu'il perdrait R1, ce que l'énoncé interdit. ntp update-calendar recopie périodiquement l'heure NTP dans l'horloge matérielle de R2 (sur un routeur, qui en a une) : au redémarrage, R2 repart d'une heure juste avant même d'avoir retrouvé R1. Enfin, NTP transporte l'heure UTC : clock timezone CET 1 0 ne change que l'heure affichée et celle des horodatages en localtime (IOS affiche toujours les minutes, d'où le « 0 » final). Vérifications : show ntp associations (astérisque devant 10.255.0.1, st 3), show ntp status sur R2 (Clock is synchronized, stratum 4, reference is 10.255.0.1), show clock.",
+  "reference": "Cisco IOS XE Basic System Management Configuration Guide, chapitre « Configuring NTP » (ntp master, ntp server, ntp source, ntp update-calendar) ; Cisco IOS Basic System Management Command Reference (clock timezone) ; RFC 5905 (NTPv4)",
+  "estimatedMinutes": 10
+}

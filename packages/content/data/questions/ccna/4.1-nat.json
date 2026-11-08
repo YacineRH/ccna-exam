@@ -1,0 +1,851 @@
+[
+  {
+    "slug": "ccna-4.1-overload-keyword-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur R1, la règle « ip nat inside source list 1 pool PUB overload » est configurée. Quel est l'effet du mot-clé « overload » ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque hôte interne reçoit sa propre adresse du pool, attribuée en un-pour-un."
+        },
+        {
+          "id": "b",
+          "text": "R1 ajoute temporairement des adresses au pool quand toutes sont allouées."
+        },
+        {
+          "id": "c",
+          "text": "Plusieurs hôtes internes partagent une même adresse du pool, distingués par le port."
+        },
+        {
+          "id": "d",
+          "text": "Les hôtes externes peuvent ouvrir des sessions vers les hôtes internes via le pool."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "« overload » transforme la NAT dynamique en PAT (NAT overload) : au lieu de réserver une adresse inside global par hôte interne, R1 fait partager une même adresse du pool par de nombreux hôtes et distingue leurs sessions par le numéro de port TCP/UDP source (en le changeant si deux hôtes utilisent le même). R1 utilise la première adresse du pool tant qu'elle a des ports disponibles. C'est la forme de NAT la plus courante pour l'accès Internet, car elle économise les adresses publiques.",
+    "distractorNotes": {
+      "a": "C'est le comportement de la NAT dynamique sans « overload » : une adresse du pool par hôte, ce qui épuise vite un petit pool.",
+      "b": "Le pool ne contient jamais que les adresses de la plage configurée ; aucun mot-clé ne l'étend automatiquement.",
+      "d": "Une règle « inside source list » ne crée une traduction que pour le trafic initié de l'intérieur ; pour qu'un hôte externe joigne un hôte interne, il faut une traduction statique."
+    },
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-clear-translation-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après avoir modifié la configuration NAT de R1, l'administrateur veut supprimer immédiatement toutes les traductions dynamiques de la table NAT. Quelle commande du mode EXEC privilégié le permet ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "clear ip nat statistics"
+        },
+        {
+          "id": "b",
+          "text": "clear ip nat translation *"
+        },
+        {
+          "id": "c",
+          "text": "clear ip route *"
+        },
+        {
+          "id": "d",
+          "text": "clear access-list counters"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« clear ip nat translation * » supprime toutes les entrées dynamiques de la table NAT (NAT dynamique et PAT) ; les entrées simples des traductions statiques (lignes « --- ») restent, puisqu'elles découlent de la configuration. Les sessions qui utilisaient ces entrées sont interrompues et de nouvelles traductions sont créées au trafic suivant. Elle sert notamment à libérer un pool après une modification, car une traduction dynamique simple reste sinon en place jusqu'à 24 heures d'inactivité par défaut.",
+    "distractorNotes": {
+      "a": "Cette commande remet à zéro les compteurs de « show ip nat statistics » (hits, misses…) sans supprimer aucune traduction.",
+      "c": "Elle vide la table de routage, qui se reconstruit ; la table NAT n'est pas concernée.",
+      "d": "Elle remet à zéro les compteurs de correspondance des ACL, sans effet sur les traductions NAT."
+    },
+    "reference": "Cisco IOS IP Addressing Services Command Reference, clear ip nat translation"
+  },
+  {
+    "slug": "ccna-4.1-static-translations-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 publie le serveur HTTPS 192.168.1.10 par une NAT statique. Quelle affirmation décrit correctement la première entrée de la table ?",
+      "exhibit": "R1# show ip nat translations\nPro Inside global      Inside local       Outside local      Outside global\ntcp 203.0.113.10:443   192.168.1.10:443   198.51.100.7:50122 198.51.100.7:50122\n--- 203.0.113.10       192.168.1.10       ---                ---",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le serveur 192.168.1.10 a ouvert une session vers 198.51.100.7 depuis son port 443."
+        },
+        {
+          "id": "b",
+          "text": "R1 traduit aussi l'adresse du client, puisque les colonnes outside sont renseignées."
+        },
+        {
+          "id": "c",
+          "text": "Le client 198.51.100.7 s'est connecté à 203.0.113.10, que R1 a traduite en 192.168.1.10."
+        },
+        {
+          "id": "d",
+          "text": "L'entrée provient d'une règle de PAT, puisqu'elle comporte des numéros de port."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La seconde ligne (« --- ») est l'entrée simple créée par « ip nat inside source static 192.168.1.10 203.0.113.10 » ; elle existe en permanence. La première est une entrée étendue, créée lorsque du trafic a utilisé cette traduction : le port 443 est du côté du serveur et le port éphémère 50122 du côté du client. Le client Internet 198.51.100.7 a donc ouvert une connexion HTTPS vers l'adresse inside global 203.0.113.10, que R1 a traduite en adresse inside local 192.168.1.10. Outside local et outside global sont identiques : l'adresse du client n'est pas traduite.",
+    "distractorNotes": {
+      "a": "Le port 443 est le port d'écoute HTTPS du serveur et 50122 un port éphémère de client : c'est 198.51.100.7 qui a ouvert la session.",
+      "b": "Les colonnes outside d'une entrée étendue sont toujours remplies ; comme outside local et outside global sont égales, l'adresse du client n'est pas modifiée.",
+      "d": "Une traduction statique crée aussi des entrées étendues, avec ports, pour chaque flux ; les ports inside local et inside global sont d'ailleurs identiques (443), rien n'indique un partage d'adresse."
+    },
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-static-reversed-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les clients Internet doivent joindre le serveur web 192.168.1.10 à l'adresse publique 203.0.113.10, que le FAI route vers R1. Les connexions échouent. Quelle correction est nécessaire ?",
+      "exhibit": "interface GigabitEthernet0/0\n ip address 192.168.1.1 255.255.255.0\n ip nat inside\n!\ninterface GigabitEthernet0/1\n ip address 203.0.113.2 255.255.255.248\n ip nat outside\n!\nip nat inside source static 203.0.113.10 192.168.1.10\nip route 0.0.0.0 0.0.0.0 203.0.113.1",
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer « ip nat inside » par « ip nat outside » sur G0/0, l'interface du serveur."
+        },
+        {
+          "id": "b",
+          "text": "Associer à la règle statique une ACL standard qui autorise 192.168.1.10."
+        },
+        {
+          "id": "c",
+          "text": "Remplacer la règle par une NAT dynamique vers un pool réduit à 203.0.113.10."
+        },
+        {
+          "id": "d",
+          "text": "Réécrire la règle en « ip nat inside source static 192.168.1.10 203.0.113.10 »."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La syntaxe est « ip nat inside source static <inside local> <inside global> » : l'adresse réelle de l'hôte interne vient en premier, l'adresse publique ensuite. Telle qu'elle est écrite, la règle déclare un hôte interne 203.0.113.10 traduit en 192.168.1.10, ce qui n'a aucun sens ici : les paquets reçus pour 203.0.113.10 ne sont pas traduits vers le serveur. IOS accepte la commande sans erreur, puisque les deux arguments sont des adresses valides. Le reste de la configuration (interfaces inside/outside, route par défaut) est correct.",
+    "distractorNotes": {
+      "a": "G0/0 est l'interface du LAN, où se trouve le serveur : elle doit bien porter « ip nat inside ».",
+      "b": "Une traduction statique désigne directement l'hôte par son adresse ; les ACL ne servent qu'aux règles dynamiques (« inside source list »).",
+      "c": "Une règle dynamique ne crée de traduction que pour le trafic initié par l'hôte interne : les clients Internet ne pourraient toujours pas ouvrir de connexion vers le serveur."
+    },
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-acl-wildcard-scope-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les postes du LAN de R1 reçoivent par DHCP des adresses de 192.168.10.2 à 192.168.10.254. Lesquels peuvent accéder à Internet ?",
+      "exhibit": "interface GigabitEthernet0/0\n ip address 192.168.10.1 255.255.255.0\n ip nat inside\n!\ninterface GigabitEthernet0/1\n ip address 198.51.100.2 255.255.255.252\n ip nat outside\n!\nip nat inside source list 1 interface GigabitEthernet0/1 overload\nip route 0.0.0.0 0.0.0.0 198.51.100.1\n!\naccess-list 1 permit 192.168.10.0 0.0.0.127",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tous les postes, de 192.168.10.2 à 192.168.10.254."
+        },
+        {
+          "id": "b",
+          "text": "Seulement les postes de 192.168.10.2 à 192.168.10.127."
+        },
+        {
+          "id": "c",
+          "text": "Seulement les postes de 192.168.10.128 à 192.168.10.254."
+        },
+        {
+          "id": "d",
+          "text": "Aucun poste, car le wildcard ne correspond pas au masque de G0/0."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le wildcard 0.0.0.127 laisse libres les 7 bits de poids faible du dernier octet et fixe le bit de valeur 128 à 0 : l'ACL 1 correspond à 192.168.10.0/25, soit 192.168.10.0 à 192.168.10.127. Seules ces adresses sont traduites par la PAT vers l'adresse de G0/1. Les paquets des postes .128 à .254 ne correspondent pas à l'ACL : ils sont routés sans traduction, avec une adresse source privée que les routeurs Internet ne savent pas joindre, et aucune réponse ne revient. Pour couvrir tout le LAN, il faut le wildcard 0.0.0.255.",
+    "distractorNotes": {
+      "a": "L'ACL utilisée par la règle NAT ne correspond qu'à la moitié basse du /24 ; les autres postes ne sont pas traduits.",
+      "c": "Le bit de valeur 128 est fixé à 0 par le wildcard : c'est la moitié basse (.0 à .127) qui est sélectionnée, pas la moitié haute.",
+      "d": "Le wildcard d'une ACL n'a pas à correspondre au masque de l'interface ; il définit seulement les adresses sélectionnées, ici un /25 inclus dans le LAN."
+    },
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-nat-inside-two-lans-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 relie le LAN du siège 10.1.0.0/16 (G0/0), une agence 10.2.0.0/16 par une liaison privée (S0/1/0) et le FAI (G0/1). La PAT vers l'adresse de G0/1 utilise une ACL qui autorise 10.1.0.0/16 et 10.2.0.0/16. Quelle configuration des interfaces permet aux deux sites d'accéder à Internet ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ip nat inside sur G0/0 ; ip nat outside sur S0/1/0 et G0/1"
+        },
+        {
+          "id": "b",
+          "text": "ip nat inside sur G0/0 ; ip nat outside sur G0/1 ; rien sur S0/1/0"
+        },
+        {
+          "id": "c",
+          "text": "ip nat outside sur G0/0 et S0/1/0 ; ip nat inside sur G0/1"
+        },
+        {
+          "id": "d",
+          "text": "ip nat inside sur G0/0 et S0/1/0 ; ip nat outside sur G0/1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une règle « ip nat inside source » ne traduit un paquet que s'il entre par une interface marquée « ip nat inside » et sort par une interface marquée « ip nat outside ». Le trafic de l'agence arrive sur S0/1/0 : cette interface doit donc être inside, comme G0/0 pour le siège, et G0/1, vers le FAI, est l'unique interface outside. Plusieurs interfaces peuvent porter le même rôle. L'ACL ne suffit pas : elle sélectionne les adresses, les rôles des interfaces déterminent le sens de traduction.",
+    "distractorNotes": {
+      "a": "Avec S0/1/0 en outside, les paquets de l'agence entrent par une interface outside : ils ne sont pas traduits par la règle inside source et sortent avec une adresse privée.",
+      "b": "Un paquet qui entre par une interface sans rôle NAT n'est pas traduit : l'agence sortirait vers le FAI avec ses adresses 10.2.x.x.",
+      "c": "Les rôles sont inversés : les paquets des deux sites entreraient par des interfaces outside et la règle inside source ne s'appliquerait pas."
+    },
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-acl-outside-in-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'ACL étendue 120, appliquée en entrée sur l'interface outside de R1, doit autoriser les connexions HTTPS des clients Internet vers le serveur web publié par la NAT statique. Quelle entrée faut-il y ajouter ?",
+      "exhibit": "interface GigabitEthernet0/0\n ip address 192.168.1.1 255.255.255.0\n ip nat inside\n!\ninterface GigabitEthernet0/1\n ip address 203.0.113.2 255.255.255.240\n ip nat outside\n ip access-group 120 in\n!\nip nat inside source static 192.168.1.10 203.0.113.10",
+      "options": [
+        {
+          "id": "a",
+          "text": "access-list 120 permit tcp any host 203.0.113.10 eq 443"
+        },
+        {
+          "id": "b",
+          "text": "access-list 120 permit tcp any host 192.168.1.10 eq 443"
+        },
+        {
+          "id": "c",
+          "text": "access-list 120 permit tcp any host 203.0.113.2 eq 443"
+        },
+        {
+          "id": "d",
+          "text": "access-list 120 permit tcp host 192.168.1.10 eq 443 any"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Pour un paquet qui va de l'outside vers l'inside, IOS vérifie l'ACL d'entrée de l'interface avant d'appliquer la traduction NAT. Quand l'ACL 120 examine le paquet reçu sur G0/1, sa destination est encore l'adresse inside global 203.0.113.10 ; la traduction en 192.168.1.10 n'intervient qu'ensuite. L'entrée doit donc autoriser TCP vers l'hôte 203.0.113.10, port 443. À l'inverse, une ACL appliquée en entrée sur l'interface inside voit l'adresse inside local, puisque la traduction inside vers outside a lieu après le routage.",
+    "distractorNotes": {
+      "b": "192.168.1.10 est l'adresse inside local : sur G0/1 en entrée, le paquet n'est pas encore traduit et porte toujours la destination 203.0.113.10.",
+      "c": "203.0.113.2 est l'adresse de l'interface de R1, pas celle sous laquelle le serveur est publié.",
+      "d": "Cette entrée décrit le trafic de retour du serveur, avec son adresse inside local en source ; elle ne correspond pas aux connexions entrantes des clients."
+    },
+    "reference": "Note technique Cisco « NAT Order of Operation »"
+  },
+  {
+    "slug": "ccna-4.1-static-properties-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Les interfaces de R1 portent déjà « ip nat inside » (LAN) et « ip nat outside » (FAI). Quelles deux affirmations sur la commande « ip nat inside source static 192.168.1.10 203.0.113.10 » sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'entrée apparaît dans « show ip nat translations » dès sa configuration, sans trafic."
+        },
+        {
+          "id": "b",
+          "text": "Elle nécessite une ACL standard qui sélectionne l'adresse 192.168.1.10."
+        },
+        {
+          "id": "c",
+          "text": "Elle permet à plusieurs hôtes internes de partager l'adresse 203.0.113.10."
+        },
+        {
+          "id": "d",
+          "text": "Elle permet à des hôtes externes d'ouvrir des connexions vers 192.168.1.10."
+        },
+        {
+          "id": "e",
+          "text": "Elle est supprimée de la table après 24 heures d'inactivité."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Une traduction statique associe en permanence une adresse inside local (192.168.1.10) à une adresse inside global (203.0.113.10). Elle figure dans la table dès sa configuration (ligne « --- 203.0.113.10 192.168.1.10 --- --- ») et n'expire jamais. Comme la correspondance existe avant tout trafic, un hôte d'Internet peut ouvrir une connexion vers 203.0.113.10 : c'est la méthode classique pour publier un serveur interne. Elle ne consomme pas de pool et ne passe par aucune ACL.",
+    "distractorNotes": {
+      "b": "Les ACL servent aux règles dynamiques (« ip nat inside source list ») ; une règle statique désigne directement l'hôte par son adresse.",
+      "c": "Une traduction statique est un-pour-un : partager une adresse entre plusieurs hôtes relève de la PAT (« overload »).",
+      "e": "Le délai de 24 heures concerne les traductions dynamiques simples ; une traduction statique reste tant que la commande est configurée."
+    },
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-pat-two-errors-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Aucun poste du LAN 192.168.30.0/24 de R1 n'accède à Internet. Quelles deux erreurs de configuration faut-il corriger ? (Choisissez-en deux.)",
+      "exhibit": "interface GigabitEthernet0/0\n description LAN\n ip address 192.168.30.1 255.255.255.0\n ip nat outside\n!\ninterface GigabitEthernet0/1\n description FAI\n ip address 203.0.113.6 255.255.255.252\n ip nat inside\n!\nip nat inside source list 1 interface GigabitEthernet0/1 overload\nip route 0.0.0.0 0.0.0.0 203.0.113.5\n!\naccess-list 1 permit 192.168.3.0 0.0.0.255",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le mot-clé « overload » exige un pool et ne s'emploie pas avec « interface »."
+        },
+        {
+          "id": "b",
+          "text": "Les rôles « ip nat inside » et « ip nat outside » sont inversés entre G0/0 et G0/1."
+        },
+        {
+          "id": "c",
+          "text": "La règle exige une ACL étendue pour sélectionner les adresses source."
+        },
+        {
+          "id": "d",
+          "text": "La route par défaut doit désigner l'interface G0/1 et non l'adresse 203.0.113.5."
+        },
+        {
+          "id": "e",
+          "text": "L'ACL 1 sélectionne 192.168.3.0/24 au lieu du réseau 192.168.30.0/24."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Première erreur : la règle inside source ne traduit que les paquets qui entrent par une interface inside et sortent par une interface outside. Ici G0/0, côté LAN, est outside et G0/1, côté FAI, est inside : le trafic des postes n'est jamais traduit. Seconde erreur : l'ACL 1 désigne 192.168.3.0/24, alors que le LAN est 192.168.30.0/24 ; même avec des rôles corrects, aucune adresse du LAN ne correspondrait. Il faut corriger les deux. La PAT sur l'adresse de G0/1 et la route par défaut vers 203.0.113.5 (l'autre adresse du /30) sont correctes.",
+    "distractorNotes": {
+      "a": "« ip nat inside source list 1 interface GigabitEthernet0/1 overload » est la forme habituelle de la PAT sur l'adresse de l'interface outside.",
+      "c": "Une ACL standard, qui filtre sur l'adresse source, suffit pour sélectionner les adresses inside local à traduire.",
+      "d": "Une route par défaut vers l'adresse du routeur du FAI est correcte, et même préférable sur une interface Ethernet ; 203.0.113.5 est bien dans le /30 de G0/1."
+    },
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-pat-properties-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur la PAT (NAT overload) configurée sur un routeur Cisco sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle exige autant d'adresses inside global que d'hôtes internes actifs."
+        },
+        {
+          "id": "b",
+          "text": "Elle crée ses traductions dès la configuration, avant tout trafic."
+        },
+        {
+          "id": "c",
+          "text": "Elle peut utiliser l'adresse de l'interface outside ou les adresses d'un pool."
+        },
+        {
+          "id": "d",
+          "text": "Elle permet aux hôtes externes d'ouvrir des sessions vers tout hôte interne."
+        },
+        {
+          "id": "e",
+          "text": "Elle distingue les sessions des hôtes internes par le numéro de port TCP ou UDP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "La PAT fait partager une adresse inside global par de nombreux hôtes internes : chaque entrée de la table est étendue (adresse et port), et R1 rattache chaque réponse au bon hôte grâce au port, qu'il modifie si deux hôtes utilisent le même port source. L'adresse partagée peut être celle de l'interface outside (« … interface GigabitEthernet0/1 overload ») ou celles d'un pool (« … pool PUB overload »). Les entrées sont créées dynamiquement, par le trafic sortant.",
+    "distractorNotes": {
+      "a": "C'est la NAT dynamique sans « overload » qui consomme une adresse par hôte ; la PAT peut servir des milliers de sessions avec une seule adresse.",
+      "b": "Les traductions de la PAT sont dynamiques : elles naissent au premier paquet sortant d'un flux et expirent après inactivité.",
+      "d": "Une entrée de PAT n'existe que pour un flux initié de l'intérieur ; un hôte externe ne peut pas joindre un hôte interne sans traduction statique."
+    },
+    "reference": "RFC 3022, section 2.2 ; IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-pool-netmask-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le FAI a attribué à l'entreprise le bloc 203.0.113.32/27. Complétez la commande qui crée le pool de toutes les adresses utilisables de ce bloc : « ip nat pool PUB 203.0.113.33 203.0.113.62 netmask ____ ».",
+      "fields": [
+        {
+          "id": "mask",
+          "label": "Masque (en décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "mask": {
+          "accepted": [
+            "255.255.255.224"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Un préfixe /27 compte 27 bits à 1 : trois octets complets (255.255.255) et 3 bits dans le dernier octet, soit 128 + 64 + 32 = 224. Le masque est donc 255.255.255.224, et le bloc va de 203.0.113.32 (réseau) à 203.0.113.63 (diffusion) ; les adresses utilisables sont 203.0.113.33 à 203.0.113.62, celles de la commande. Le même pool s'écrit aussi avec « prefix-length 27 » à la place de « netmask 255.255.255.224 ». Le masque sert à vérifier la cohérence de la plage ; ce sont les adresses de début et de fin qui fixent le contenu du pool.",
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-pool-remaining-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. R1 utilise la règle « ip nat inside source list 1 pool PUB », sans « overload ». À cet instant, combien d'hôtes internes supplémentaires, n'ayant encore aucune traduction, peuvent obtenir une adresse du pool ?",
+      "exhibit": "! Extrait de « show ip nat statistics » sur R1\n pool PUB: netmask 255.255.255.240\n        start 198.51.100.33 end 198.51.100.46\n        type generic, total addresses 14, allocated 9 (64%), misses 0",
+      "fields": [
+        {
+          "id": "hosts",
+          "label": "Nombre d'hôtes (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "hosts": {
+          "accepted": [
+            "5"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Sans « overload », la NAT dynamique réserve une adresse du pool à chaque hôte interne traduit. Le pool PUB va de 198.51.100.33 à 198.51.100.46, soit 14 adresses (« total addresses 14 »), dont 9 sont déjà allouées. Il en reste 14 − 9 = 5 : cinq nouveaux hôtes peuvent encore être traduits. Le suivant échouera et incrémentera le compteur « misses », jusqu'à ce qu'une traduction expire (24 heures d'inactivité par défaut) ou soit supprimée par « clear ip nat translation * ».",
+    "reference": "Cisco IOS IP Addressing Services Command Reference, show ip nat statistics"
+  },
+  {
+    "slug": "ccna-4.1-static-cli-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, l'interface du LAN porte déjà « ip nat inside » et celle du FAI « ip nat outside ». Depuis le mode de configuration globale, publiez le serveur 192.168.10.20 sous l'adresse publique 203.0.113.20 par une traduction statique un-pour-un.",
+      "prompt": "R1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ip nat inside source static 192.168.10.20 203.0.113.20"
+        ]
+      ]
+    },
+    "explanation": "« ip nat inside source static » prend d'abord l'adresse inside local (l'adresse réelle du serveur, 192.168.10.20), puis l'adresse inside global (203.0.113.20). La traduction est permanente et bidirectionnelle : le trafic du serveur sort avec la source 203.0.113.20, et les clients Internet peuvent ouvrir des connexions vers 203.0.113.20, que R1 traduit en 192.168.10.20. Aucune ACL ni aucun pool n'est nécessaire. Inverser les deux adresses est l'erreur classique : IOS l'accepte, mais la traduction ne fonctionne pas.",
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-nat-interfaces-cli-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale de R1, désignez GigabitEthernet0/0 (LAN) comme interface interne, puis GigabitEthernet0/1 (vers le FAI) comme interface externe pour la NAT.",
+      "prompt": "R1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/0"
+        ],
+        [
+          "ip nat inside"
+        ],
+        [
+          "interface GigabitEthernet0/1"
+        ],
+        [
+          "ip nat outside"
+        ]
+      ]
+    },
+    "explanation": "Les rôles NAT se configurent en mode interface : « ip nat inside » sur l'interface tournée vers les adresses à traduire (le LAN), « ip nat outside » sur l'interface tournée vers l'extérieur. On peut passer directement d'une interface à l'autre avec une nouvelle commande « interface », sans « exit ». Sans ces rôles, aucune règle « ip nat inside source » ne s'applique, puisque la traduction inside vers outside n'a lieu que pour un paquet qui entre par une interface inside et sort par une interface outside.",
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-dynamic-pool-cli-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, les interfaces portent déjà leurs rôles NAT et l'ACL standard 5 sélectionne les adresses du LAN. Depuis le mode de configuration globale, créez le pool PUBLIC des adresses 198.51.100.65 à 198.51.100.78 (masque /28), puis la NAT dynamique un-pour-un, sans PAT, qui traduit les adresses de l'ACL 5 vers ce pool.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ip nat pool PUBLIC 198.51.100.65 198.51.100.78 netmask 255.255.255.240",
+          "ip nat pool PUBLIC 198.51.100.65 198.51.100.78 prefix-length 28"
+        ],
+        [
+          "ip nat inside source list 5 pool PUBLIC"
+        ]
+      ]
+    },
+    "explanation": "« ip nat pool » définit la plage des adresses inside global : adresse de début, adresse de fin, puis le masque, sous la forme « netmask 255.255.255.240 » ou « prefix-length 28 ». « ip nat inside source list 5 pool PUBLIC » associe ensuite les adresses inside local autorisées par l'ACL 5 à ce pool. Sans « overload », chaque hôte reçoit sa propre adresse : 14 hôtes au plus peuvent être traduits en même temps. Le nom du pool doit être écrit à l'identique dans les deux commandes.",
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-pat-pool-cli-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Le FAI a attribué le bloc 198.51.100.48/28 à R1. Sa première adresse utilisable est déjà configurée sur G0/1 (ip nat outside) ; G0/0 (ip nat inside) dessert le LAN 10.20.0.0/22. Depuis le mode de configuration globale, créez l'ACL standard numérotée 2 qui sélectionne tout le LAN, le pool PUB contenant toutes les autres adresses utilisables du bloc, puis la règle de PAT qui traduit les adresses de l'ACL 2 vers ce pool.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          0,
+          1
+        ]
+      ],
+      "commands": [
+        [
+          "access-list 2 permit 10.20.0.0 0.0.3.255"
+        ],
+        [
+          "ip nat pool PUB 198.51.100.50 198.51.100.62 netmask 255.255.255.240",
+          "ip nat pool PUB 198.51.100.50 198.51.100.62 prefix-length 28"
+        ],
+        [
+          "ip nat inside source list 2 pool PUB overload"
+        ]
+      ]
+    },
+    "explanation": "Le /22 couvre 10.20.0.0 à 10.20.3.255 : son wildcard est 0.0.3.255 (255.255.255.255 − 255.255.252.0). Le bloc 198.51.100.48/28 va de .48 (réseau) à .63 (diffusion) ; ses adresses utilisables sont .49 à .62. La première, .49, est sur G0/1 : le pool va donc de 198.51.100.50 à 198.51.100.62 (13 adresses), avec le masque 255.255.255.240 (/28). Enfin, « overload » à la fin de la règle active la PAT sur les adresses du pool. L'ACL et le pool peuvent être créés dans n'importe quel ordre avant la règle.",
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-nat-order-operations-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un paquet entre par l'interface « ip nat inside » d'un routeur IOS et sort par son interface « ip nat outside », chacune portant une ACL (en entrée sur l'interface inside, en sortie sur l'interface outside). Remettez dans l'ordre les opérations appliquées à ce paquet.",
+      "items": [
+        {
+          "id": "nat",
+          "text": "Traduction NAT inside vers outside"
+        },
+        {
+          "id": "aclin",
+          "text": "Contrôle par l'ACL d'entrée de l'interface inside"
+        },
+        {
+          "id": "aclout",
+          "text": "Contrôle par l'ACL de sortie de l'interface outside"
+        },
+        {
+          "id": "route",
+          "text": "Décision de routage"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "aclin",
+        "route",
+        "nat",
+        "aclout"
+      ]
+    },
+    "explanation": "Dans le sens inside vers outside, IOS contrôle d'abord l'ACL d'entrée, puis prend la décision de routage, et ne traduit qu'ensuite : c'est l'interface de sortie choisie par le routage qui indique qu'il faut passer de l'inside à l'outside. L'ACL de sortie vient après la traduction. Conséquence pratique : une ACL d'entrée sur l'interface inside voit les adresses inside local, une ACL de sortie sur l'interface outside voit les adresses inside global. Dans l'autre sens, outside vers inside, la traduction a lieu avant le routage.",
+    "reference": "Note technique Cisco « NAT Order of Operation »"
+  },
+  {
+    "slug": "ccna-4.1-pat-flow-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "PC1 (192.168.1.10) ouvre une session HTTPS vers 198.51.100.80 à travers R1, qui fait de la PAT sur l'adresse 203.0.113.2 de son interface outside. Remettez les étapes dans l'ordre.",
+      "items": [
+        {
+          "id": "reply",
+          "text": "Le serveur répond à destination de 203.0.113.2:50000."
+        },
+        {
+          "id": "send",
+          "text": "PC1 envoie un segment de 192.168.1.10:50000 vers 198.51.100.80:443."
+        },
+        {
+          "id": "deliver",
+          "text": "PC1 reçoit la réponse du serveur."
+        },
+        {
+          "id": "untranslate",
+          "text": "R1 retrouve l'entrée et remplace la destination par 192.168.1.10:50000."
+        },
+        {
+          "id": "translate",
+          "text": "R1 crée une entrée et remplace la source par 203.0.113.2:50000."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "send",
+        "translate",
+        "reply",
+        "untranslate",
+        "deliver"
+      ]
+    },
+    "explanation": "Le segment de PC1 entre par l'interface inside de R1 et sort par l'interface outside : R1 crée une entrée étendue (inside local 192.168.1.10:50000, inside global 203.0.113.2:50000) et réécrit la source. Le serveur ne voit que 203.0.113.2 et lui répond. À la réception, R1 cherche dans sa table l'entrée qui correspond à 203.0.113.2:50000 et au serveur, réécrit la destination en 192.168.1.10:50000 et transmet la réponse à PC1. Le port 50000 a été conservé ici, car aucun autre hôte ne l'utilisait.",
+    "reference": "RFC 3022, section 2.2"
+  },
+  {
+    "slug": "ccna-4.1-four-addresses-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "PC1 (192.168.4.20) ouvre une session vers un serveur dont l'adresse réelle est 198.51.100.50. R1 traduit PC1 en 203.0.113.44 et, par une NAT outside, présente ce serveur aux hôtes internes sous l'adresse 10.99.0.50. Associez chaque adresse à son type dans la terminologie NAT de Cisco.",
+      "left": [
+        {
+          "id": "pc",
+          "text": "192.168.4.20"
+        },
+        {
+          "id": "pub",
+          "text": "203.0.113.44"
+        },
+        {
+          "id": "seen",
+          "text": "10.99.0.50"
+        },
+        {
+          "id": "real",
+          "text": "198.51.100.50"
+        }
+      ],
+      "right": [
+        {
+          "id": "ol",
+          "text": "Outside local"
+        },
+        {
+          "id": "ig",
+          "text": "Inside global"
+        },
+        {
+          "id": "og",
+          "text": "Outside global"
+        },
+        {
+          "id": "il",
+          "text": "Inside local"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "pc": "il",
+        "pub": "ig",
+        "seen": "ol",
+        "real": "og"
+      }
+    },
+    "explanation": "« Inside » ou « outside » indique où se trouve l'hôte ; « local » ou « global » indique de quel côté l'adresse est vue. PC1 est un hôte interne : son adresse réelle, 192.168.4.20, est inside local et l'adresse sous laquelle Internet le voit, 203.0.113.44, inside global. Le serveur est un hôte externe : son adresse réelle, 198.51.100.50, est outside global, et l'adresse sous laquelle les hôtes internes le voient, 10.99.0.50, outside local. Sans NAT outside, outside local et outside global sont identiques.",
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  },
+  {
+    "slug": "ccna-4.1-nat-commands-roles-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque commande de configuration NAT à son rôle.",
+      "left": [
+        {
+          "id": "static",
+          "text": "ip nat inside source static 192.168.1.10 203.0.113.10"
+        },
+        {
+          "id": "pool",
+          "text": "ip nat pool PUB 203.0.113.17 203.0.113.22 prefix-length 29"
+        },
+        {
+          "id": "dyn",
+          "text": "ip nat inside source list 1 pool PUB"
+        },
+        {
+          "id": "pat",
+          "text": "ip nat inside source list 1 interface GigabitEthernet0/1 overload"
+        },
+        {
+          "id": "outside",
+          "text": "ip nat outside (mode interface)"
+        }
+      ],
+      "right": [
+        {
+          "id": "range",
+          "text": "Définit une plage d'adresses inside global"
+        },
+        {
+          "id": "flush",
+          "text": "Supprime toutes les traductions dynamiques"
+        },
+        {
+          "id": "many",
+          "text": "Traduit plusieurs hôtes vers une seule adresse, distingués par port"
+        },
+        {
+          "id": "fixed",
+          "text": "Crée une traduction un-pour-un permanente"
+        },
+        {
+          "id": "ext",
+          "text": "Désigne l'interface tournée vers le réseau externe"
+        },
+        {
+          "id": "ondemand",
+          "text": "Attribue à la demande une adresse du pool à chaque hôte"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "static": "fixed",
+        "pool": "range",
+        "dyn": "ondemand",
+        "pat": "many",
+        "outside": "ext"
+      }
+    },
+    "explanation": "La NAT statique (« inside source static ») associe en permanence une adresse interne à une adresse publique. « ip nat pool » ne traduit rien à lui seul : il définit les adresses inside global disponibles. « inside source list … pool » est la NAT dynamique : chaque hôte autorisé par l'ACL reçoit une adresse libre du pool. Avec « overload » (ici sur l'adresse de G0/1), c'est la PAT. « ip nat outside », en mode interface, marque l'interface externe, comme « ip nat inside » marque l'interface interne.",
+    "distractorNotes": {
+      "flush": "C'est le rôle de la commande EXEC « clear ip nat translation * », qui ne figure pas dans la liste."
+    },
+    "reference": "IP Addressing: NAT Configuration Guide (Cisco IOS XE), Configuring NAT for IP Address Conservation"
+  }
+]

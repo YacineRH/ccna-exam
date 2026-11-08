@@ -1,0 +1,974 @@
+[
+  {
+    "slug": "ccna-1.11-channel-plan-2-4ghz-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un bureau situé aux États-Unis, trois AP voisins utilisent la bande 2,4 GHz et leurs zones de couverture se recouvrent. AP1 utilise le canal 1 et AP2 le canal 6. Quel canal faut-il attribuer à AP3 pour qu'aucun des trois AP ne chevauche les autres ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le canal 3"
+        },
+        {
+          "id": "b",
+          "text": "Le canal 7"
+        },
+        {
+          "id": "c",
+          "text": "Le canal 9"
+        },
+        {
+          "id": "d",
+          "text": "Le canal 11"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "En 2,4 GHz, les fréquences centrales des canaux ne sont espacées que de 5 MHz (canal 1 : 2 412 MHz, canal 6 : 2 437 MHz, canal 11 : 2 462 MHz), alors que chaque canal occupe environ 20 à 22 MHz. Deux canaux ne se chevauchent donc pas s'ils sont séparés d'au moins cinq numéros (25 MHz). Avec les canaux 1 à 11, le seul jeu de trois canaux non chevauchants est 1, 6 et 11 : AP3 doit prendre le canal 11. Un canal partiellement chevauchant provoquerait des interférences de canal adjacent qui dégradent les cellules voisines.",
+    "distractorNotes": {
+      "a": "Le canal 3 (2 422 MHz) n'est qu'à 10 MHz du canal 1 et à 15 MHz du canal 6 : il chevauche les deux.",
+      "b": "Le canal 7 (2 442 MHz) n'est qu'à 5 MHz du canal 6 : les deux canaux se recouvrent presque entièrement.",
+      "c": "Le canal 9 (2 452 MHz) n'est qu'à 15 MHz du canal 6 : il le chevauche."
+    },
+    "reference": "IEEE 802.11-2020 (plan de canaux de la bande 2,4 GHz)"
+  },
+  {
+    "slug": "ccna-1.11-5ghz-channel-width-overlap-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un administrateur a relevé le plan de canaux 5 GHz de quatre AP voisins. Quelle paire d'AP utilise des fréquences qui se chevauchent ?",
+      "exhibit": "AP      Canal primaire   Largeur de canal\nAP-A    36               80 MHz\nAP-B    64               40 MHz\nAP-C    52               40 MHz\nAP-D    48               20 MHz",
+      "options": [
+        {
+          "id": "a",
+          "text": "AP-B et AP-C"
+        },
+        {
+          "id": "b",
+          "text": "AP-A et AP-D"
+        },
+        {
+          "id": "c",
+          "text": "AP-A et AP-C"
+        },
+        {
+          "id": "d",
+          "text": "AP-C et AP-D"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "En 5 GHz, les canaux de 20 MHz sont numérotés de 4 en 4 (36, 40, 44, 48…) et ne se chevauchent pas entre eux. Un canal plus large agrège des canaux de 20 MHz contigus selon des blocs fixes : en 40 MHz, 36-40, 44-48, 52-56, 60-64… ; en 80 MHz, 36-48, 52-64… Le canal primaire est celui des canaux de 20 MHz du bloc sur lequel l'AP émet ses beacons ; il ne change pas l'étendue du bloc. AP-A (80 MHz, primaire 36) occupe donc les canaux 36, 40, 44 et 48, soit 5 170 à 5 250 MHz : AP-D, sur le canal 48, se trouve dans ce bloc. AP-C occupe 52-56 et AP-B 60-64 : ils ne recouvrent aucun autre AP.",
+    "distractorNotes": {
+      "a": "AP-C (40 MHz, primaire 52) occupe les canaux 52 et 56, AP-B (40 MHz, primaire 64) les canaux 60 et 64 : les deux blocs sont contigus mais disjoints.",
+      "c": "Le bloc de 80 MHz d'AP-A s'arrête au canal 48 (5 250 MHz), là où commence celui d'AP-C (canal 52).",
+      "d": "AP-C n'occupe que les canaux 52 et 56 ; les canaux de 20 MHz 48 et 52 sont voisins mais ne se chevauchent pas."
+    },
+    "reference": "IEEE 802.11-2020 (PHY VHT : canaux de 40, 80 et 160 MHz ; classes de fonctionnement)"
+  },
+  {
+    "slug": "ccna-1.11-roaming-ssid-mismatch-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Trois AP autonomes reliés au même VLAN couvrent un couloir ; leurs zones de couverture se recouvrent d'environ 20 % et ils utilisent la même clé pré-partagée. Les utilisateurs passent sans coupure de la zone d'AP1 à celle d'AP2, mais perdent la connexion en entrant dans la zone d'AP3, et leur poste ne s'y reconnecte pas tout seul. Quelle est la cause ?",
+      "exhibit": "AP    SSID   BSSID              Canal   Sécurité\nAP1   CORP   f4:db:e6:41:0a:2f  1       WPA2-Personnel (AES)\nAP2   CORP   f4:db:e6:41:1c:8f  6       WPA2-Personnel (AES)\nAP3   Corp   f4:db:e6:41:3e:4f  11      WPA2-Personnel (AES)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les trois AP ont des BSSID différents, alors qu'un ESS impose un BSSID commun à ses AP"
+        },
+        {
+          "id": "b",
+          "text": "AP3 utilise le canal 11 et AP2 le canal 6, or un client ne change pas de canal en itinérance"
+        },
+        {
+          "id": "c",
+          "text": "Le SSID d'AP3 diffère par la casse : un SSID étant sensible à la casse, AP3 sert un autre WLAN"
+        },
+        {
+          "id": "d",
+          "text": "Les zones de couverture se recouvrent de 20 %, ce qui crée des interférences entre AP voisins"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Pour qu'un client passe d'un AP à l'autre sans intervention, les AP doivent former un même ESS : même SSID, mêmes paramètres de sécurité, même système de distribution (ici le VLAN commun) et zones de couverture qui se recouvrent. Le SSID est une chaîne de 0 à 32 octets comparée telle quelle : « Corp » et « CORP » sont deux WLAN différents. Les postes configurés pour « CORP » ne voient donc pas AP3 comme un candidat à l'itinérance et perdent la connexion en sortant de la zone d'AP2. Des BSSID différents et des canaux différents (1, 6, 11) sont au contraire normaux : chaque AP forme son propre BSS, et le client change de canal en se réassociant.",
+    "distractorNotes": {
+      "a": "Chaque AP (et chaque WLAN d'une radio) a son propre BSSID ; c'est le SSID commun, et non le BSSID, qui regroupe les BSS en un ESS.",
+      "b": "Changer de canal fait partie de l'itinérance : le client balaie les canaux, puis se réassocie au nouvel AP. Des AP voisins doivent justement utiliser des canaux non chevauchants.",
+      "d": "Un recouvrement partiel est nécessaire à l'itinérance : sans lui, le client perdrait le signal avant de trouver l'AP suivant. Sur les canaux 1, 6 et 11, il ne crée pas d'interférences gênantes."
+    },
+    "reference": "IEEE 802.11-2020 (architecture ESS ; élément SSID)"
+  },
+  {
+    "slug": "ccna-1.11-repeater-throughput-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pour couvrir un atelier éloigné sans y tirer de câble, un administrateur installe un AP en mode répéteur, doté d'une seule radio, qui relaie l'AP raccordé au LAN filaire. Quel effet faut-il attendre pour les clients associés au répéteur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ils doivent se connecter à un SSID différent de celui de l'AP raccordé au LAN"
+        },
+        {
+          "id": "b",
+          "text": "Leur débit utile est environ deux fois plus faible que sur l'AP raccordé au LAN"
+        },
+        {
+          "id": "c",
+          "text": "Ils forment un IBSS avec le répéteur et ne peuvent plus joindre le LAN filaire"
+        },
+        {
+          "id": "d",
+          "text": "Le répéteur doit les servir sur un autre canal que celui de l'AP raccordé au LAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un répéteur n'a pas de liaison filaire : il reçoit les trames de ses clients et les retransmet à l'AP raccordé au LAN (l'AP racine), et inversement. Avec une seule radio, il doit faire les deux sur le canal de l'AP racine. Le support radio étant half duplex et partagé, chaque trame occupe deux fois le temps d'antenne : le débit utile des clients du répéteur est environ divisé par deux. Un répéteur à deux radios évite cette perte en utilisant un canal vers l'AP racine et un autre vers ses clients. Le répéteur étend le même WLAN : ses clients utilisent le même SSID.",
+    "distractorNotes": {
+      "a": "Le répéteur étend le même WLAN : ses clients utilisent le même SSID que ceux de l'AP racine et joignent le LAN par son intermédiaire.",
+      "c": "Un IBSS (ad hoc) ne comporte aucun AP ; les clients du répéteur restent dans un réseau d'infrastructure relié au LAN par l'AP racine.",
+      "d": "Avec une seule radio, le répéteur doit recevoir l'AP racine et servir ses clients sur le même canal ; seul un répéteur à deux radios peut utiliser un second canal."
+    },
+    "reference": "Cisco, Configuring Repeater and Standby Access Points and Workgroup Bridge Mode (guide de configuration des AP Aironet autonomes)"
+  },
+  {
+    "slug": "ccna-1.11-workgroup-bridge-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une machine-outil ne dispose que d'un port Ethernet. Elle doit rejoindre le WLAN de l'usine, sans câble jusqu'au commutateur, grâce à un équipement qui s'associe à un AP existant comme un client sans fil. Quelle solution répond au besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un AP en mode répéteur, qui relaie l'AP existant pour étendre sa couverture"
+        },
+        {
+          "id": "b",
+          "text": "Un réseau ad hoc (IBSS) établi entre la machine-outil et l'AP existant"
+        },
+        {
+          "id": "c",
+          "text": "Un pont de groupe de travail (WGB) installé à proximité de la machine-outil"
+        },
+        {
+          "id": "d",
+          "text": "Un pont extérieur point à point, avec une antenne directionnelle à chaque extrémité"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un pont de groupe de travail (WGB, workgroup bridge) est un AP configuré pour se comporter comme un client sans fil : il s'associe à un AP du WLAN et relie à ce WLAN les équipements filaires branchés sur son port Ethernet. C'est la solution classique pour une machine, une imprimante ou une caméra dépourvue de carte Wi-Fi. Cisco distingue le WGB, qui peut relier plusieurs équipements filaires lorsqu'il est associé à un AP Cisco, et le WGB universel (uWGB), qui s'associe à n'importe quel AP mais ne relie qu'un seul équipement.",
+    "distractorNotes": {
+      "a": "Un répéteur étend la couverture d'un AP pour des clients sans fil ; relier au WLAN un équipement qui n'a qu'un port Ethernet est le rôle du WGB.",
+      "b": "Un IBSS relie directement des stations équipées d'une radio, sans AP ; la machine-outil n'a pas de radio et un AP ne participe pas à un IBSS.",
+      "d": "Un pont point à point relie deux réseaux filaires par une liaison radio dédiée entre deux ponts ; il ne s'associe pas à un AP du WLAN comme un client."
+    },
+    "reference": "Cisco Catalyst 9800 Series Wireless Controller Software Configuration Guide (chapitre Workgroup Bridges)"
+  },
+  {
+    "slug": "ccna-1.11-snr-noise-floor-diagnosis-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'utilisateur de PC-A se plaint de débits faibles et de nombreuses retransmissions, alors que son poste reçoit l'AP plus fort que les deux autres. Quelle est l'explication la plus probable ?",
+      "exhibit": "Mesures relevées sur trois postes associés au même AP\n\nPoste   RSSI      Bruit de fond\nPC-A    -58 dBm   -72 dBm\nPC-B    -66 dBm   -94 dBm\nPC-C    -74 dBm   -97 dBm",
+      "options": [
+        {
+          "id": "a",
+          "text": "Son RSSI de −58 dBm est trop élevé et sature la radio de son adaptateur Wi-Fi"
+        },
+        {
+          "id": "b",
+          "text": "Son SNR est le meilleur des trois : la cause est à chercher hors de la liaison radio"
+        },
+        {
+          "id": "c",
+          "text": "Son bruit de fond de −72 dBm est le plus faible des trois, ce qui écarte les interférences"
+        },
+        {
+          "id": "d",
+          "text": "Son SNR n'est que de 14 dB : une source d'interférences proche élève son bruit de fond"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le SNR (rapport signal/bruit) est l'écart, en dB, entre la puissance du signal reçu (RSSI) et celle du bruit de fond : SNR = RSSI − bruit. PC-A : −58 − (−72) = 14 dB ; PC-B : −66 − (−94) = 28 dB ; PC-C : −74 − (−97) = 23 dB. PC-A reçoit le signal le plus fort, mais son bruit de fond est anormalement élevé (il se situe d'ordinaire vers −90 dBm ou moins), signe d'une source d'interférences à proximité. Avec 14 dB de marge seulement, le client se rabat sur des débits plus bas et subit plus d'erreurs, donc de retransmissions. Pour la voix, Cisco recommande au moins −67 dBm de signal et 25 dB de SNR.",
+    "distractorNotes": {
+      "a": "Une radio Wi-Fi ne risque la saturation qu'à des niveaux bien plus forts, quand le poste est presque collé à l'AP ; −58 dBm est un bon niveau de réception.",
+      "b": "PC-A a au contraire le plus faible SNR : 14 dB, contre 28 dB pour PC-B et 23 dB pour PC-C.",
+      "c": "En dBm, −72 est une puissance plus forte que −94 ou −97 : le bruit de fond de PC-A est le plus élevé des trois."
+    },
+    "reference": "Cisco, Voice over Wireless LAN 4.1 Design Guide (seuils de signal et de SNR)"
+  },
+  {
+    "slug": "ccna-1.11-csma-ca-half-duplex-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pourquoi les stations 802.11 utilisent-elles CSMA/CA plutôt que CSMA/CD, la méthode d'accès de l'Ethernet partagé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une radio qui émet ne peut pas écouter son canal en même temps : elle ne peut pas détecter de collision"
+        },
+        {
+          "id": "b",
+          "text": "Les liaisons Wi-Fi sont full duplex : aucune collision ne peut s'y produire, seule la congestion compte"
+        },
+        {
+          "id": "c",
+          "text": "L'AP remet à chaque client, à tour de rôle, un jeton qui l'autorise seul à émettre, comme en Token Ring"
+        },
+        {
+          "id": "d",
+          "text": "L'AP détecte les collisions à la place des clients et leur envoie alors un signal de brouillage (jam)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Sur un Ethernet partagé, CSMA/CD détecte la collision pendant l'émission, émet un signal de brouillage puis retente après un délai aléatoire. Une radio Wi-Fi est half duplex : elle émet et reçoit sur la même fréquence, et son propre signal, bien plus fort, l'empêche d'entendre une autre émission. De plus, la collision se produit au niveau du récepteur, qu'un émetteur éloigné peut ne pas entendre (nœud caché). 802.11 cherche donc à éviter les collisions (CSMA/CA) : écoute du canal, délai aléatoire (backoff) avant d'émettre, acquittement (ACK) de chaque trame unicast, retransmission en l'absence d'ACK, et RTS/CTS en option.",
+    "distractorNotes": {
+      "b": "Une radio 802.11 ne peut pas émettre et recevoir en même temps sur son canal : la liaison est half duplex et tous les équipements d'un BSS partagent ce canal.",
+      "c": "802.11 n'utilise pas de jeton : chaque station accède au support par contention (DCF), en écoutant le canal et en tirant un délai aléatoire.",
+      "d": "Il n'y a pas de signal de brouillage en 802.11 : l'émetteur ne voit pas la collision, il constate seulement l'absence d'ACK et retransmet."
+    },
+    "reference": "IEEE 802.11-2020 (DCF, CSMA/CA)"
+  },
+  {
+    "slug": "ccna-1.11-encrypted-frame-visibility-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un WLAN chiffre ses trames de données avec AES-CCMP. Un attaquant situé dans la zone de couverture capture les trames échangées entre un client et l'AP, sans connaître la clé. Quelle information peut-il lire dans ces trames de données ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les adresses IP source et destination des paquets transportés"
+        },
+        {
+          "id": "b",
+          "text": "Les numéros de port TCP et UDP des applications du client"
+        },
+        {
+          "id": "c",
+          "text": "Les adresses MAC qui figurent dans l'en-tête 802.11"
+        },
+        {
+          "id": "d",
+          "text": "Les noms de domaine que le client demande à son serveur DNS"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le chiffrement du WLAN protège la confidentialité de la charge utile des trames de données : le paquet IP, avec ses adresses, ses ports et ses données applicatives, est illisible sans la clé, et un contrôle d'intégrité (MIC) détecte toute modification. L'en-tête MAC 802.11, lui, reste en clair, car chaque station doit le lire pour savoir si la trame lui est destinée : les adresses MAC (client, BSSID) et le type de trame sont visibles. Le SSID reste lui aussi lisible dans les beacons et les Probe Response, qui ne sont pas chiffrés. Le chiffrement ne rend donc pas le WLAN invisible, il rend son trafic inintelligible.",
+    "distractorNotes": {
+      "a": "Les adresses IP font partie du paquet transporté dans la charge utile de la trame, qui est chiffrée.",
+      "b": "Les ports se trouvent dans l'en-tête TCP ou UDP, à l'intérieur du paquet IP chiffré.",
+      "d": "Les requêtes DNS voyagent dans la charge utile chiffrée : leur contenu reste illisible sans la clé."
+    },
+    "reference": "IEEE 802.11-2020 (CCMP)"
+  },
+  {
+    "slug": "ccna-1.11-passive-scanning-beacons-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "En découverte passive, comment un client Wi-Fi apprend-il quels WLAN sont disponibles autour de lui ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il écoute, canal par canal, les beacons émis périodiquement par les AP"
+        },
+        {
+          "id": "b",
+          "text": "Il envoie une Probe Request sur chaque canal et attend les Probe Response des AP"
+        },
+        {
+          "id": "c",
+          "text": "Il diffuse un DHCP Discover pour que les AP lui annoncent les SSID disponibles"
+        },
+        {
+          "id": "d",
+          "text": "Il interroge le WLC, qui lui renvoie la liste des SSID publiés sur le réseau"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "En découverte passive, le client parcourt les canaux et écoute les trames balises (beacons), des trames de gestion que chaque AP émet périodiquement, en général toutes les 100 TU (102,4 ms). Elles annoncent le SSID, le BSSID, les débits pris en charge et les paramètres de sécurité. En découverte active, le client envoie au contraire une Probe Request, générale ou pour un SSID précis, à laquelle les AP répondent par une Probe Response. Dans les deux cas, la découverte précède l'authentification 802.11 et l'association ; DHCP n'intervient qu'une fois le client associé.",
+    "distractorNotes": {
+      "b": "C'est la découverte active : le client sollicite les AP par une Probe Request au lieu d'écouter leurs beacons.",
+      "c": "DHCP n'intervient qu'après l'association, pour obtenir une adresse IP ; il ne sert pas à découvrir les WLAN.",
+      "d": "Le client ne dialogue pas avec le WLC : il découvre les WLAN grâce aux trames 802.11 émises par les AP."
+    },
+    "reference": "IEEE 802.11-2020 (balayage passif et actif)"
+  },
+  {
+    "slug": "ccna-1.11-6ghz-wifi6e-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur la bande 6 GHz du Wi-Fi sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "À puissance égale, elle porte plus loin et traverse mieux les murs que la bande 2,4 GHz."
+        },
+        {
+          "id": "b",
+          "text": "Côté Wi-Fi, seuls les équipements Wi-Fi 6E ou plus récents (Wi-Fi 7) peuvent l'utiliser."
+        },
+        {
+          "id": "c",
+          "text": "Wi-Fi 6E désigne une version de 802.11ac adaptée à la bande 6 GHz."
+        },
+        {
+          "id": "d",
+          "text": "Elle n'accepte que des canaux de 20 MHz, afin de protéger les autres usages de la bande."
+        },
+        {
+          "id": "e",
+          "text": "Aux États-Unis, elle ouvre 1 200 MHz de spectre, de quoi former sept canaux de 160 MHz."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "La bande 6 GHz (5,925 à 7,125 GHz aux États-Unis) est ouverte au Wi-Fi depuis 2020. Wi-Fi 6E est le nom donné par la Wi-Fi Alliance aux équipements 802.11ax capables d'y fonctionner ; Wi-Fi 7 (802.11be) l'utilise aussi. Les équipements plus anciens (802.11n, 802.11ac, Wi-Fi 6 sans « E ») ne la voient pas. Ses 1 200 MHz offrent 59 canaux de 20 MHz, 29 de 40 MHz, 14 de 80 MHz et 7 de 160 MHz ; en Europe, la décision de 2021 n'en a ouvert que la partie basse (5 945 à 6 425 MHz, soit 24 canaux de 20 MHz). Fréquence plus élevée signifie en revanche portée plus courte et absorption plus forte qu'à 2,4 ou 5 GHz.",
+    "distractorNotes": {
+      "a": "Plus la fréquence est élevée, plus l'affaiblissement et l'absorption sont forts : à puissance égale, 6 GHz porte moins loin que 5 GHz et, a fortiori, que 2,4 GHz.",
+      "c": "Wi-Fi 6E correspond à 802.11ax (Wi-Fi 6) étendu à la bande 6 GHz ; 802.11ac (Wi-Fi 5) ne fonctionne qu'en 5 GHz.",
+      "d": "La bande 6 GHz accepte des canaux de 20, 40, 80 et 160 MHz (et 320 MHz en Wi-Fi 7) : sa largeur est justement son principal atout."
+    },
+    "reference": "IEEE 802.11ax-2021 ; FCC 20-51 (ouverture de la bande 6 GHz) ; Wi-Fi Alliance, Wi-Fi CERTIFIED 6"
+  },
+  {
+    "slug": "ccna-1.11-ssid-bss-ess-bsa-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les notions de SSID, BSS et ESS sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le BSSID est le nom du réseau que l'utilisateur choisit dans la liste des WLAN de son poste."
+        },
+        {
+          "id": "b",
+          "text": "Un ESS regroupe plusieurs BSS qui partagent le même SSID et sont reliés par un système de distribution."
+        },
+        {
+          "id": "c",
+          "text": "Un IBSS est un ESS dont les AP sont reliés entre eux par radio plutôt que par câble."
+        },
+        {
+          "id": "d",
+          "text": "La zone dans laquelle les clients d'un AP peuvent communiquer avec lui s'appelle la BSA, ou cellule."
+        },
+        {
+          "id": "e",
+          "text": "Un AP ne peut diffuser qu'un seul SSID par radio, faute de pouvoir utiliser plusieurs BSSID."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Un BSS (Basic Service Set) est formé d'un AP et des clients qui lui sont associés ; il est identifié par son BSSID, une adresse MAC propre à la radio de l'AP et au WLAN, et sa zone de couverture s'appelle la BSA (Basic Service Area), ou cellule. Les clients d'un BSS communiquent par l'intermédiaire de l'AP. Un ESS (Extended Service Set) relie plusieurs BSS au même système de distribution (DS), en général le LAN filaire, avec le même SSID : le client peut ainsi passer d'un AP à l'autre. Le SSID est le nom du WLAN choisi par l'utilisateur ; une radio peut en diffuser plusieurs, chacun avec son propre BSSID.",
+    "distractorNotes": {
+      "a": "Le nom du réseau choisi par l'utilisateur est le SSID ; le BSSID est une adresse MAC de 48 bits propre à chaque BSS.",
+      "c": "Un IBSS (mode ad hoc) ne comporte aucun AP : les stations communiquent directement entre elles. Des AP reliés entre eux par radio forment un réseau maillé (mesh).",
+      "e": "Une même radio peut diffuser plusieurs SSID, chacun avec son propre BSSID (et en général son propre VLAN)."
+    },
+    "reference": "IEEE 802.11-2020 (composants de l'architecture : BSS, IBSS, DS, ESS)"
+  },
+  {
+    "slug": "ccna-1.11-interference-sources-2-4ghz-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux équipements émettent dans la bande 2,4 GHz et peuvent donc perturber un WLAN qui l'utilise ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Un four à micro-ondes"
+        },
+        {
+          "id": "b",
+          "text": "Un émetteur de radio FM"
+        },
+        {
+          "id": "c",
+          "text": "Un casque Bluetooth"
+        },
+        {
+          "id": "d",
+          "text": "Une télécommande infrarouge"
+        },
+        {
+          "id": "e",
+          "text": "Un émetteur de télévision numérique terrestre"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "La bande 2,4 GHz (2,400 à 2,4835 GHz) est une bande ISM utilisable sans licence : le Wi-Fi la partage avec d'autres usages. Un four à micro-ondes chauffe les aliments vers 2,45 GHz et ses fuites peuvent brouiller plusieurs canaux ; Bluetooth saute en permanence de fréquence entre 79 canaux (40 en Bluetooth Low Energy) de cette même bande. Ces émissions non-802.11 ne respectent pas CSMA/CA : elles occupent le canal, élèvent le bruit de fond et dégradent le SNR des clients. Un analyseur de spectre, comme Cisco CleanAir, permet de les identifier.",
+    "distractorNotes": {
+      "b": "La radio FM émet entre 87,5 et 108 MHz, très loin de la bande 2,4 GHz.",
+      "d": "Une télécommande infrarouge utilise de la lumière invisible, pas des ondes radio : elle ne perturbe pas le Wi-Fi.",
+      "e": "La télévision numérique terrestre émet sous 700 MHz (bandes VHF et UHF) : elle ne déborde pas sur la bande 2,4 GHz."
+    },
+    "reference": "IEEE 802.11-2020 (bande ISM 2,4 GHz) ; Cisco, 20 Myths of Wi-Fi Interference (livre blanc)"
+  },
+  {
+    "slug": "ccna-1.11-hidden-node-rts-cts-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. PC-A et PC-B sont associés à AP1. Lorsqu'ils émettent beaucoup tous les deux, AP1 reçoit de nombreuses trames corrompues et les retransmissions se multiplient. Quelles deux affirmations sont exactes ?",
+      "exhibit": "PC-A                        AP1                        PC-B\n[o] )))      35 m      ((( [AP1] )))      35 m      ((( [o]\n\nPC-A et PC-B sont chacun à portée d'AP1, mais hors de portée l'un de l'autre.",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque PC trouve le canal libre pendant que l'autre émet, et leurs trames se superposent à l'arrivée sur AP1."
+        },
+        {
+          "id": "b",
+          "text": "PC-A détecte la collision pendant son émission et envoie un signal de brouillage pour avertir PC-B."
+        },
+        {
+          "id": "c",
+          "text": "Augmenter la puissance d'émission d'AP1 règle le problème, car les deux PC entendront mieux l'AP."
+        },
+        {
+          "id": "d",
+          "text": "Activer RTS/CTS réduit le problème : le CTS d'AP1, entendu par les deux PC, fait différer l'autre PC."
+        },
+        {
+          "id": "e",
+          "text": "Placer PC-A et PC-B dans deux VLAN différents supprime les collisions entre leurs trames."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "C'est le problème du nœud caché. CSMA/CA repose sur l'écoute du canal avant d'émettre : comme PC-A et PC-B ne s'entendent pas, chacun croit le canal libre pendant que l'autre émet, et leurs signaux se superposent à l'arrivée sur AP1. Aucun émetteur ne peut détecter cette collision, qui se produit au niveau du récepteur : faute d'ACK, chacun retransmet après un nouveau délai aléatoire. Avec RTS/CTS, la station envoie d'abord une courte trame RTS ; AP1 répond par un CTS, entendu par tous ses clients, dont le champ Durée fait différer les autres stations (NAV) jusqu'à la fin de l'échange. Rapprocher les clients ou ajouter un AP sont d'autres remèdes.",
+    "distractorNotes": {
+      "b": "Une radio half duplex ne détecte pas de collision pendant qu'elle émet, et 802.11 n'utilise pas de signal de brouillage : c'est le principe de CSMA/CD, propre à l'Ethernet partagé.",
+      "c": "Le problème vient de ce que les PC ne s'entendent pas entre eux ; la puissance d'émission d'AP1 n'y change rien.",
+      "e": "Les VLAN séparent le trafic au niveau 2 du réseau filaire ; les deux PC partagent toujours le même canal radio et leurs émissions s'y superposent."
+    },
+    "reference": "IEEE 802.11-2020 (DCF : RTS/CTS et NAV)"
+  },
+  {
+    "slug": "ccna-1.11-association-aid-reassociation-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur l'association d'un client 802.11 à un AP sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'association a lieu après le 4-way handshake, une fois les clés de chiffrement installées."
+        },
+        {
+          "id": "b",
+          "text": "L'AP attribue au client un identifiant d'association (AID) dans l'Association Response."
+        },
+        {
+          "id": "c",
+          "text": "Association Request et Association Response sont des trames de contrôle, comme RTS et CTS."
+        },
+        {
+          "id": "d",
+          "text": "C'est l'AP qui envoie l'Association Request au client, après avoir reçu sa Probe Request."
+        },
+        {
+          "id": "e",
+          "text": "En itinérance, le client envoie une Reassociation Request au nouvel AP de l'ESS."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Après l'authentification 802.11 (Open System en général), le client envoie une Association Request à l'AP choisi, avec le SSID, les débits et les capacités qu'il prend en charge ; l'AP répond par une Association Response qui indique le résultat et attribue au client un AID (Association ID). Ce sont des trames de gestion. Si le WLAN est chiffré en WPA2 ou WPA3, le 4-way handshake ne vient qu'ensuite. Quand le client se déplace vers un autre AP du même ESS, il envoie au nouvel AP une Reassociation Request, qui indique l'adresse de l'AP précédent, et reçoit une Reassociation Response.",
+    "distractorNotes": {
+      "a": "L'ordre est inverse : authentification 802.11 et association d'abord, 4-way handshake ensuite, pour dériver les clés.",
+      "c": "Les trames d'association sont des trames de gestion ; RTS, CTS et ACK sont des trames de contrôle.",
+      "d": "C'est toujours le client qui demande l'association ; l'AP l'accepte ou la refuse dans l'Association Response."
+    },
+    "reference": "IEEE 802.11-2020 (authentification, association et réassociation ; trames de gestion)"
+  },
+  {
+    "slug": "ccna-1.11-dbm-mw-conversion-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le dBm exprime une puissance par rapport à 1 mW (0 dBm = 1 mW). Un AP émet à 100 mW. Exprimez cette puissance en dBm, puis celle d'un second AP qui émet à 200 mW, et enfin la puissance du premier AP, en mW, après une baisse de 10 dB.",
+      "fields": [
+        {
+          "id": "p100",
+          "label": "Puissance de 100 mW, en dBm (nombre entier)"
+        },
+        {
+          "id": "p200",
+          "label": "Puissance de 200 mW, en dBm (arrondie à l'entier)"
+        },
+        {
+          "id": "pminus10",
+          "label": "Puissance du premier AP après une baisse de 10 dB, en mW (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "p100": {
+          "accepted": [
+            "20"
+          ],
+          "normalize": "int"
+        },
+        "p200": {
+          "accepted": [
+            "23"
+          ],
+          "normalize": "int"
+        },
+        "pminus10": {
+          "accepted": [
+            "10"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le dBm est une échelle logarithmique rapportée à 1 mW : P(dBm) = 10 × log₁₀(P en mW). 100 mW = 10² mW, soit 20 dBm. Doubler une puissance ajoute environ 3 dB (10 × log₁₀ 2 ≈ 3,01) : 200 mW ≈ 23 dBm. Retirer 10 dB divise la puissance par dix : 20 dBm − 10 dB = 10 dBm, soit 10 mW. Ces « règles des 3 et des 10 » suffisent pour la plupart des calculs Wi-Fi. Les puissances reçues (RSSI), bien inférieures à 1 mW, s'expriment en dBm négatifs : −67 dBm correspond à environ 0,0000002 mW.",
+    "reference": "Cisco, RF Power Values (note technique 23231)"
+  },
+  {
+    "slug": "ccna-1.11-rts-cts-exchange-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Sur un WLAN où RTS/CTS est activé, un client émet une trame de données unicast vers l'AP. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "data",
+          "text": "Le client envoie la trame de données"
+        },
+        {
+          "id": "cts",
+          "text": "L'AP répond par une trame CTS"
+        },
+        {
+          "id": "listen",
+          "text": "Le client vérifie que le canal est libre (écoute de la porteuse)"
+        },
+        {
+          "id": "ack",
+          "text": "L'AP renvoie un ACK au client"
+        },
+        {
+          "id": "nav",
+          "text": "Les stations qui ont entendu le CTS règlent leur NAV et diffèrent leurs émissions"
+        },
+        {
+          "id": "rts",
+          "text": "Le client envoie une trame RTS qui annonce la durée de l'échange"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "listen",
+        "rts",
+        "cts",
+        "nav",
+        "data",
+        "ack"
+      ]
+    },
+    "explanation": "Avec RTS/CTS, la réservation du canal précède les données. Le client vérifie d'abord que le canal est libre, comme toujours en CSMA/CA (avec un délai aléatoire si le canal était occupé), puis envoie une courte trame RTS (Request To Send) dont le champ Durée couvre tout l'échange. L'AP répond, après un court intervalle SIFS, par un CTS (Clear To Send). Toutes les stations qui entendent ce CTS, y compris celles qui n'entendent pas le client (nœuds cachés), règlent leur NAV (Network Allocation Vector) et s'abstiennent d'émettre. Le client envoie alors sa trame, que l'AP acquitte par un ACK ; sans ACK, le client retransmettrait.",
+    "reference": "IEEE 802.11-2020 (DCF : RTS/CTS, NAV et ACK)"
+  },
+  {
+    "slug": "ccna-1.11-standards-max-rate-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Ordonnez ces normes 802.11 de la plus faible à la plus élevée selon leur débit théorique maximal.",
+      "items": [
+        {
+          "id": "ac",
+          "text": "802.11ac"
+        },
+        {
+          "id": "b",
+          "text": "802.11b"
+        },
+        {
+          "id": "ax",
+          "text": "802.11ax"
+        },
+        {
+          "id": "g",
+          "text": "802.11g"
+        },
+        {
+          "id": "n",
+          "text": "802.11n"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "b",
+        "g",
+        "n",
+        "ac",
+        "ax"
+      ]
+    },
+    "explanation": "802.11b (1999, 2,4 GHz) plafonne à 11 Mbit/s ; 802.11g (2003, 2,4 GHz, OFDM) atteint 54 Mbit/s, comme 802.11a en 5 GHz. 802.11n (Wi-Fi 4, 2009) introduit MIMO et les canaux de 40 MHz : jusqu'à 600 Mbit/s avec quatre flux spatiaux. 802.11ac (Wi-Fi 5, 2013, 5 GHz seulement) monte à environ 6,9 Gbit/s avec des canaux de 160 MHz, le 256-QAM et huit flux. 802.11ax (Wi-Fi 6 et 6E) atteint environ 9,6 Gbit/s grâce au 1024-QAM et améliore surtout l'efficacité en environnement dense (OFDMA). Ce sont des maxima théoriques : sur un support half duplex partagé, le débit utile est bien inférieur.",
+    "reference": "IEEE 802.11-2020 ; IEEE 802.11ax-2021"
+  },
+  {
+    "slug": "ccna-1.11-rf-propagation-phenomena-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque phénomène de propagation RF à sa description.",
+      "left": [
+        {
+          "id": "abs",
+          "text": "Absorption"
+        },
+        {
+          "id": "refl",
+          "text": "Réflexion"
+        },
+        {
+          "id": "scat",
+          "text": "Diffusion (scattering)"
+        },
+        {
+          "id": "refr",
+          "text": "Réfraction"
+        },
+        {
+          "id": "diffr",
+          "text": "Diffraction"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Un matériau dense (béton, eau, corps humain) convertit une partie de l'énergie en chaleur : le signal qui le traverse s'affaiblit"
+        },
+        {
+          "id": "r2",
+          "text": "Le signal rebondit sur une surface lisse et conductrice (armoire métallique, porte d'ascenseur), ce qui crée des trajets multiples"
+        },
+        {
+          "id": "r3",
+          "text": "Le signal frappe une surface irrégulière ou des particules (poussière, pluie) et repart dans de nombreuses directions"
+        },
+        {
+          "id": "r4",
+          "text": "Le signal change de direction en passant dans un milieu de densité différente (vitre, couche d'air plus chaude)"
+        },
+        {
+          "id": "r5",
+          "text": "Le signal contourne le bord d'un obstacle, en laissant derrière lui une zone d'ombre RF"
+        },
+        {
+          "id": "r6",
+          "text": "Le signal s'affaiblit avec la distance, même sans obstacle, car son énergie se répartit sur une surface croissante"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "abs": "r1",
+        "refl": "r2",
+        "scat": "r3",
+        "refr": "r4",
+        "diffr": "r5"
+      }
+    },
+    "explanation": "L'absorption transforme une partie de l'énergie RF en chaleur dans les matériaux denses ou riches en eau : murs en béton, réservoirs, corps humains. La réflexion renvoie le signal sur les surfaces métalliques ; les trajets multiples (multipath) qui en résultent peuvent affaiblir le signal reçu, ou être exploités par MIMO. La diffusion éparpille le signal sur des surfaces rugueuses ou des particules. La réfraction le dévie au passage d'un milieu à un autre. La diffraction lui fait contourner un obstacle, au prix d'une zone d'ombre derrière lui. Tous ces phénomènes s'ajoutent à l'affaiblissement en espace libre, qui croît avec la distance et la fréquence.",
+    "distractorNotes": {
+      "r6": "C'est l'affaiblissement en espace libre (free space path loss), qui ne dépend d'aucun obstacle ; ce phénomène ne figure pas dans la liste."
+    },
+    "reference": "CWNA Certified Wireless Network Administrator Study Guide (CWNA-109), Radio Frequency Fundamentals (comportements de propagation RF)"
+  },
+  {
+    "slug": "ccna-1.11-standards-bands-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque norme 802.11 à la ou aux bandes de fréquences dans lesquelles elle fonctionne.",
+      "left": [
+        {
+          "id": "s11a",
+          "text": "802.11a"
+        },
+        {
+          "id": "s11b",
+          "text": "802.11b"
+        },
+        {
+          "id": "s11n",
+          "text": "802.11n"
+        },
+        {
+          "id": "s11ac",
+          "text": "802.11ac"
+        },
+        {
+          "id": "s11ax",
+          "text": "802.11ax (équipement Wi-Fi 6E)"
+        }
+      ],
+      "right": [
+        {
+          "id": "b24",
+          "text": "2,4 GHz uniquement"
+        },
+        {
+          "id": "b5",
+          "text": "5 GHz uniquement"
+        },
+        {
+          "id": "b245",
+          "text": "2,4 GHz et 5 GHz"
+        },
+        {
+          "id": "b2456",
+          "text": "2,4 GHz, 5 GHz et 6 GHz"
+        },
+        {
+          "id": "b6",
+          "text": "6 GHz uniquement"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s11a": "b5",
+        "s11b": "b24",
+        "s11n": "b245",
+        "s11ac": "b5",
+        "s11ax": "b2456"
+      }
+    },
+    "explanation": "802.11b, comme 802.11g, n'utilise que la bande 2,4 GHz ; 802.11a, puis 802.11ac (Wi-Fi 5), n'utilisent que la bande 5 GHz : un client Wi-Fi 5 bibande utilise donc 802.11n lorsqu'il se connecte en 2,4 GHz. 802.11n (Wi-Fi 4) est la première norme à fonctionner dans les deux bandes. 802.11ax (Wi-Fi 6) fonctionne en 2,4 et 5 GHz, et les équipements Wi-Fi 6E l'étendent à la bande 6 GHz, réservée aux équipements de cette génération ou plus récents.",
+    "distractorNotes": {
+      "b6": "Aucune de ces normes ne se limite à la bande 6 GHz : Wi-Fi 6E ajoute le 6 GHz aux bandes 2,4 et 5 GHz de 802.11ax."
+    },
+    "reference": "IEEE 802.11-2020 (PHY HR/DSSS, OFDM, ERP, HT et VHT) ; IEEE 802.11ax-2021"
+  },
+  {
+    "slug": "ccna-1.11-frame-types-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.11",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque trame 802.11 dans son type.",
+      "left": [
+        {
+          "id": "bcn",
+          "text": "Beacon"
+        },
+        {
+          "id": "auth",
+          "text": "Authentication"
+        },
+        {
+          "id": "rts",
+          "text": "RTS"
+        },
+        {
+          "id": "ack",
+          "text": "ACK"
+        },
+        {
+          "id": "arp",
+          "text": "Trame transportant une requête ARP du client"
+        }
+      ],
+      "right": [
+        {
+          "id": "mgmt",
+          "text": "Trame de gestion"
+        },
+        {
+          "id": "ctrl",
+          "text": "Trame de contrôle"
+        },
+        {
+          "id": "data",
+          "text": "Trame de données"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "bcn": "mgmt",
+        "auth": "mgmt",
+        "rts": "ctrl",
+        "ack": "ctrl",
+        "arp": "data"
+      }
+    },
+    "explanation": "802.11 distingue trois types de trames. Les trames de gestion établissent et maintiennent la relation entre client et AP : beacons, Probe Request et Response, authentification, association et réassociation, désauthentification. Les trames de contrôle aident à accéder au canal et à délivrer les autres trames : RTS, CTS, ACK. Les trames de données transportent la charge utile des couches supérieures, quel que soit le protocole : un paquet IP comme une requête ARP voyage dans une trame de données, dont la charge utile est protégée par le chiffrement du WLAN.",
+    "reference": "IEEE 802.11-2020 (champs Type et Subtype du Frame Control)"
+  }
+]

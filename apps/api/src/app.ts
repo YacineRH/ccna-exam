@@ -11,6 +11,7 @@ import { HttpError } from './errors.js';
 import authPlugin, { SESSION_COOKIE } from './plugins/auth.js';
 import { adminRoutes } from './routes/admin.js';
 import { attemptRoutes } from './routes/attempts.js';
+import { examRoutes } from './routes/exams.js';
 import { authRoutes } from './routes/auth.js';
 import { certificationRoutes } from './routes/certifications.js';
 import { labAttemptRoutes, labRoutes } from './routes/labs.js';
@@ -60,6 +61,7 @@ export async function buildApp(env: Env, db: Db): Promise<FastifyInstance> {
       await v1.register(authRoutes(db, { allowRegistration: env.ALLOW_REGISTRATION }), { prefix: '/auth' });
       await v1.register(certificationRoutes(db), { prefix: '/certifications' });
       await v1.register(attemptRoutes(db), { prefix: '/attempts' });
+      await v1.register(examRoutes(db), { prefix: '/exams' });
       await v1.register(labRoutes(db), { prefix: '/labs' });
       await v1.register(labAttemptRoutes(db), { prefix: '/lab-attempts' });
       await v1.register(revisionRoutes(db), { prefix: '/revision' });

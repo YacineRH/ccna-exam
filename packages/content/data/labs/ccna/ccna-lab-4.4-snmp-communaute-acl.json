@@ -1,0 +1,347 @@
+{
+  "slug": "ccna-lab-4.4-snmp-communaute-acl",
+  "certification": "ccna",
+  "domain": "4.0",
+  "subtopic": "4.4",
+  "difficulty": "medium",
+  "title": "Superviser un routeur en SNMPv2c : communauté filtrée par ACL et traps",
+  "statement": "La station de supervision (NMS) 10.10.99.50, sur le LAN d'administration, doit superviser R1 en SNMPv2c. Un ancien administrateur a laissé la communauté public (la plus connue, valeur d'usine de nombreux équipements), utilisable depuis n'importe où.\n\n1. Créez l'ACL standard n° 20, qui n'autorise que la NMS 10.10.99.50.\n2. Créez la communauté en lecture seule N0c-Lecture (respectez la casse), utilisable uniquement depuis les adresses autorisées par l'ACL 20.\n3. Supprimez la communauté public : N0c-Lecture doit être la seule communauté, et aucune communauté ne doit permettre l'écriture.\n4. Renseignez l'emplacement du routeur : Lyon, salle serveurs, baie 3 ; et le contact : noc@exemple.fr.\n5. R1 envoie ses notifications sous forme de traps SNMPv2c à la NMS, avec la communauté N0c-Lecture.\n6. Activez les traps de changement d'état des interfaces (linkDown et linkUp) et les traps de modification de la configuration.",
+  "topology": "  LAN utilisateurs 192.168.40.0/24          LAN d'administration 10.10.99.0/24\n                |                                       |\n      G0/0/0 192.168.40.1/24                  G0/0/1 10.10.99.1/24\n                +------------------ R1 ------------------+\n                                                        |\n                                             NMS 10.10.99.50 (SNMP, traps UDP 162)\n\nConfiguration de départ : snmp-server community public RO",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN utilisateurs\n ip address 192.168.40.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description LAN administration\n ip address 10.10.99.1 255.255.255.0\n no shutdown\nsnmp-server community public RO"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "acl-nms",
+      "description": "L'ACL standard 20 autorise la NMS 10.10.99.50, et rien d'autre ; aucun refus ne précède cette autorisation.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "pattern": "^access-list 20 permit (host 10\\.10\\.99\\.50|10\\.10\\.99\\.50|10\\.10\\.99\\.50 0\\.0\\.0\\.0)( log)?$" },
+          {
+            "type": "regex",
+            "pattern": "^access-list 20 permit (?!(host 10\\.10\\.99\\.50|10\\.10\\.99\\.50|10\\.10\\.99\\.50 0\\.0\\.0\\.0)( log)?$)",
+            "absent": true
+          },
+          { "type": "sequence", "patterns": ["^access-list 20 deny ", "^access-list 20 permit "], "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "communaute-ro",
+      "description": "La communauté N0c-Lecture (casse comprise) donne un accès en lecture seule, restreint par l'ACL 20.",
+      "check": { "type": "regex", "pattern": "^snmp-server community N0c-Lecture [Rr][Oo] 20$", "caseSensitive": true }
+    },
+    {
+      "id": "communautes-retirees",
+      "description": "La communauté public a disparu : aucune autre communauté que N0c-Lecture, et aucune en écriture.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "pattern": "^snmp-server community (?!N0c-Lecture )", "caseSensitive": true, "absent": true },
+          { "type": "regex", "pattern": "^snmp-server community \\S+ rw", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "emplacement",
+      "description": "L'emplacement du routeur annoncé en SNMP est « Lyon, salle serveurs, baie 3 ».",
+      "check": { "type": "line", "line": "snmp-server location Lyon, salle serveurs, baie 3" }
+    },
+    {
+      "id": "contact",
+      "description": "Le contact annoncé en SNMP est noc@exemple.fr.",
+      "check": { "type": "line", "line": "snmp-server contact noc@exemple.fr" }
+    },
+    {
+      "id": "hote-traps",
+      "description": "R1 envoie ses traps à la NMS en SNMPv2c, avec la communauté N0c-Lecture.",
+      "check": { "type": "regex", "pattern": "^snmp-server host 10\\.10\\.99\\.50 version 2c N0c-Lecture$", "caseSensitive": true }
+    },
+    {
+      "id": "traps-actives",
+      "description": "Les traps linkDown, linkUp et de modification de la configuration sont activées.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "any",
+            "checks": [
+              { "type": "regex", "pattern": "^snmp-server enable traps snmp (?=.*\\blinkdown\\b)(?=.*\\blinkup\\b)" },
+              {
+                "type": "all",
+                "checks": [
+                  { "type": "line", "line": "snmp-server enable traps snmp linkup" },
+                  { "type": "command", "command": "snmp-server enable traps snmp linkup", "after": ["snmp-server enable traps snmp linkdown"] }
+                ]
+              },
+              {
+                "type": "all",
+                "checks": [
+                  { "type": "line", "line": "snmp-server enable traps snmp linkdown" },
+                  { "type": "command", "command": "snmp-server enable traps snmp linkdown", "after": ["snmp-server enable traps snmp linkup"] }
+                ]
+              }
+            ]
+          },
+          { "type": "line", "line": "snmp-server enable traps config" }
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "Tout se règle en configuration globale : une ACL standard décrit qui peut interroger l'agent, et la communauté y fait référence. Les traps demandent deux réglages distincts : à qui les envoyer, et lesquelles envoyer.",
+    "L'ACL d'une communauté se donne en dernier argument, après le niveau d'accès. Une communauté se retire par sa forme no. Pour les traps, sans précision de version la destination reçoit du SNMPv1 ; les traps d'interface relèvent de la famille snmp, celles de configuration de la famille config.",
+    "access-list 20 permit host …, snmp-server community <nom> RO <acl>, no snmp-server community …, snmp-server location et snmp-server contact suivis du texte, snmp-server host <adresse> version 2c <communauté>, puis snmp-server enable traps snmp … et snmp-server enable traps config."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "access-list 20 permit host 10.10.99.50",
+        "snmp-server community N0c-Lecture RO 20",
+        "no snmp-server community public",
+        "snmp-server location Lyon, salle serveurs, baie 3",
+        "snmp-server contact noc@exemple.fr",
+        "snmp-server host 10.10.99.50 version 2c N0c-Lecture",
+        "snmp-server enable traps snmp linkdown linkup",
+        "snmp-server enable traps config",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "ACL en mode nommé avec refus explicite à la fin, mot-clé traps, toutes les traps snmp, abréviations",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "no snmp-server community public",
+            "ip access-list standard 20",
+            "permit 10.10.99.50",
+            "deny any log",
+            "exit",
+            "snmp-server community N0c-Lecture ro 20",
+            "snmp-server host 10.10.99.50 traps version 2c N0c-Lecture",
+            "snmp-server enable traps snmp",
+            "snmp-server enable traps config",
+            "snmp-server contact noc@exemple.fr",
+            "snmp-server location Lyon, salle serveurs, baie 3",
+            "\u001a"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Traps linkDown et linkUp activées en deux commandes (IOS les cumule sur la même ligne)",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 20 permit 10.10.99.50",
+            "snmp-server community N0c-Lecture RO 20",
+            "no snmp-server community public",
+            "snmp-server location Lyon, salle serveurs, baie 3",
+            "snmp-server contact noc@exemple.fr",
+            "snmp-server host 10.10.99.50 version 2c N0c-Lecture",
+            "snmp-server enable traps snmp linkdown",
+            "snmp-server enable traps snmp linkup",
+            "snmp-server enable traps config",
+            "end"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Masque générique 0.0.0.0, numéros de séquence, communauté créée avant l'ACL",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "snmp-server community N0c-Lecture RO 20",
+            "ip access-list standard 20",
+            "10 permit 10.10.99.50 0.0.0.0",
+            "exit",
+            "no snmp-server community public",
+            "snmp-server location Lyon, salle serveurs, baie 3",
+            "snmp-server contact noc@exemple.fr",
+            "snmp-server enable traps config",
+            "snmp-server enable traps snmp authentication linkdown linkup",
+            "snmp-server host 10.10.99.50 version 2c N0c-Lecture",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Communauté créée sans l'ACL : toute adresse qui connaît la chaîne peut interroger R1",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 20 permit host 10.10.99.50",
+            "snmp-server community N0c-Lecture RO",
+            "no snmp-server community public",
+            "snmp-server location Lyon, salle serveurs, baie 3",
+            "snmp-server contact noc@exemple.fr",
+            "snmp-server host 10.10.99.50 version 2c N0c-Lecture",
+            "snmp-server enable traps snmp linkdown linkup",
+            "snmp-server enable traps config"
+          ]
+        }
+      ],
+      "failing": ["communaute-ro"]
+    },
+    {
+      "description": "Accès en lecture-écriture au lieu de la lecture seule",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 20 permit host 10.10.99.50",
+            "snmp-server community N0c-Lecture RW 20",
+            "no snmp-server community public",
+            "snmp-server location Lyon, salle serveurs, baie 3",
+            "snmp-server contact noc@exemple.fr",
+            "snmp-server host 10.10.99.50 version 2c N0c-Lecture",
+            "snmp-server enable traps snmp linkdown linkup",
+            "snmp-server enable traps config"
+          ]
+        }
+      ],
+      "failing": ["communaute-ro", "communautes-retirees"]
+    },
+    {
+      "description": "Communauté public laissée en place",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 20 permit host 10.10.99.50",
+            "snmp-server community N0c-Lecture RO 20",
+            "snmp-server location Lyon, salle serveurs, baie 3",
+            "snmp-server contact noc@exemple.fr",
+            "snmp-server host 10.10.99.50 version 2c N0c-Lecture",
+            "snmp-server enable traps snmp linkdown linkup",
+            "snmp-server enable traps config"
+          ]
+        }
+      ],
+      "failing": ["communautes-retirees"]
+    },
+    {
+      "description": "ACL qui autorise tout le LAN d'administration au lieu de la seule NMS",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 20 permit 10.10.99.0 0.0.0.255",
+            "snmp-server community N0c-Lecture RO 20",
+            "no snmp-server community public"
+          ]
+        }
+      ],
+      "failing": ["acl-nms"]
+    },
+    {
+      "description": "Refus général placé avant l'autorisation de la NMS",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "access-list 20 deny any", "access-list 20 permit host 10.10.99.50", "snmp-server community N0c-Lecture RO 20"]
+        }
+      ],
+      "failing": ["acl-nms"]
+    },
+    {
+      "description": "Casse de la communauté non respectée (n0c-lecture) : la NMS ne s'authentifie plus",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 20 permit host 10.10.99.50",
+            "snmp-server community n0c-lecture RO 20",
+            "no snmp-server community public",
+            "snmp-server location Lyon, salle serveurs, baie 3",
+            "snmp-server contact noc@exemple.fr",
+            "snmp-server host 10.10.99.50 version 2c n0c-lecture",
+            "snmp-server enable traps snmp linkdown linkup",
+            "snmp-server enable traps config"
+          ]
+        }
+      ],
+      "failing": ["communaute-ro", "communautes-retirees", "hote-traps"]
+    },
+    {
+      "description": "Destination des traps sans version : la NMS reçoit du SNMPv1",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 20 permit host 10.10.99.50",
+            "snmp-server community N0c-Lecture RO 20",
+            "no snmp-server community public",
+            "snmp-server location Lyon, salle serveurs, baie 3",
+            "snmp-server contact noc@exemple.fr",
+            "snmp-server host 10.10.99.50 N0c-Lecture",
+            "snmp-server enable traps snmp linkdown linkup",
+            "snmp-server enable traps config"
+          ]
+        }
+      ],
+      "failing": ["hote-traps"]
+    },
+    {
+      "description": "Seules les traps syslog sont activées",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "access-list 20 permit host 10.10.99.50",
+            "snmp-server community N0c-Lecture RO 20",
+            "no snmp-server community public",
+            "snmp-server location Lyon, salle serveurs, baie 3",
+            "snmp-server contact noc@exemple.fr",
+            "snmp-server host 10.10.99.50 version 2c N0c-Lecture",
+            "snmp-server enable traps syslog"
+          ]
+        }
+      ],
+      "failing": ["traps-actives"]
+    }
+  ],
+  "explanation": "En SNMPv1 et v2c, la communauté sert de mot de passe, transmis en clair et sensible à la casse : N0c-Lecture et n0c-lecture sont deux chaînes différentes. snmp-server community N0c-Lecture RO 20 autorise les lectures (get, getnext, getbulk, sur UDP 161) mais aucun set (RW les autoriserait), et seulement pour les requêtes dont l'adresse source est permise par l'ACL standard 20 : l'ACL se donne en dernier argument et ne filtre que les requêtes reçues par l'agent, pas les traps qu'il émet. Une ACL standard ne regarde que l'adresse source : access-list 20 permit host 10.10.99.50 (ou 10.10.99.50, ou 10.10.99.50 0.0.0.0) suffit, le deny any implicite refusant tout le reste ; un deny any placé avant l'autorisation bloquerait aussi la NMS. La communauté public, connue de tous, se retire avec no snmp-server community public. snmp-server location et snmp-server contact renseignent les objets sysLocation et sysContact du groupe system de MIB-II. Les notifications demandent deux réglages : snmp-server host 10.10.99.50 version 2c N0c-Lecture désigne le destinataire (traps par défaut, UDP 162 ; sans version 2c, IOS envoie des traps SNMPv1). Attention à l'ordre de saisie : si la communauté nommée dans snmp-server host n'existe pas encore, IOS insère de lui-même snmp-server community <nom> RO, sans ACL ; créez-la d'abord avec son ACL, et relisez la configuration (une faute de casse dans snmp-server host crée ainsi une seconde communauté ouverte à tous), et snmp-server enable traps choisit les familles envoyées : snmp linkdown linkup pour l'état des interfaces (snmp seul active aussi authentication, coldstart et warmstart), config pour les modifications de la configuration (CISCO-CONFIG-MAN-MIB). SNMPv3 (snmp-server group, snmp-server user) ajoute authentification et chiffrement et reste préférable en production. Vérifications : show snmp community, show snmp host, show snmp location, show snmp contact, show access-lists 20.",
+  "reference": "Cisco IOS XE SNMP Configuration Guide, « Configuring SNMP Support » (snmp-server community, snmp-server host, snmp-server enable traps) ; Cisco IOS SNMP Support Command Reference ; RFC 3416 (opérations SNMPv2c) et RFC 3418 (sysContact, sysLocation)",
+  "estimatedMinutes": 12
+}

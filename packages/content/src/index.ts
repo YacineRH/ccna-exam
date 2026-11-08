@@ -3,12 +3,16 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   checkLab,
+  checkSeries,
   parseCertification,
+  parseExamSeries,
   parseLab,
   parseQuestion,
   parseTerminalProfile,
   type CertificationConfig,
+  type ExamSeries,
   type Lab,
+  type PoolQuestion,
   type Question,
   type TerminalProfile,
 } from '@examforge/core';
@@ -173,4 +177,28 @@ export function loadLabs(code: string, dataDir = DATA_DIR): LabBundle {
   }
   if (issues.length) throw new ContentError(`Labs invalides pour ${code}`, issues);
   return { profile, labs };
+}
+
+/** Fichier de la série d'examens blancs figés d'une certification. */
+export const seriesPath = (code: string, dataDir = DATA_DIR) => join(dataDir, 'exams', `${code}.json`);
+
+/** Ce dont l'assemblage a besoin d'une question de la banque : le slug sert d'identifiant. */
+export function poolOf(questions: readonly Question[]): PoolQuestion[] {
+  return questions.map((q) => ({ id: q.slug, domain: q.domain, type: q.body.type, difficulty: q.difficulty, subtopic: q.subtopic ?? null }));
+}
+
+/**
+ * Charge la série figée d'une certification (null si elle n'en a pas) et la contrôle face à sa banque :
+ * format officiel, pondérations, aucun doublon ni slug inconnu, plafonds tenus, chaque question servie.
+ */
+export function loadExamSeries(code: string, dataDir = DATA_DIR): ExamSeries | null {
+  const path = seriesPath(code, dataDir);
+  if (!existsSync(path)) return null;
+  const series = parseExamSeries(readJson(path));
+  const { certification, questions } = loadCertification(code, dataDir);
+  const issues: string[] = [];
+  if (series.certification !== code) issues.push(`certification ${series.certification} au lieu de ${code}`);
+  issues.push(...checkSeries(series.exams.map((e) => e.questions), poolOf(questions), certification, series.constraints));
+  if (issues.length) throw new ContentError(`Série d'examens invalide pour ${code}`, issues);
+  return series;
 }

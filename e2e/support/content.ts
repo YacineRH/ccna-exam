@@ -1,5 +1,5 @@
-import { loadCertification, loadLabs } from '@examforge/content';
-import { allocateByWeight, type Lab, type Question } from '@examforge/core';
+import { loadCertification, loadExamSeries, loadLabs } from '@examforge/content';
+import { allocateByWeight, type ExamSeries, type Lab, type Question } from '@examforge/core';
 
 /*
  * Les tests ne codent en dur aucune question : ils lisent la banque du dépôt (packages/content),
@@ -15,6 +15,20 @@ export function bankOf(code: string): Question[] {
     cache.set(code, questions);
   }
   return questions;
+}
+
+/** Série d'examens blancs figés de la certification, telle que l'API l'importe. */
+export function seriesOf(code: string): ExamSeries {
+  const series = loadExamSeries(code);
+  if (!series) throw new Error(`Pas de série d'examens pour ${code}`);
+  return series;
+}
+
+/** Retrouve une question par son slug. */
+export function questionBySlug(code: string, slug: string): Question {
+  const found = bankOf(code).find((q) => q.slug === slug);
+  if (!found) throw new Error(`Question ${slug} introuvable dans la banque ${code}`);
+  return found;
 }
 
 /** Retrouve une question par son énoncé (texte du paragraphe #enonce). */

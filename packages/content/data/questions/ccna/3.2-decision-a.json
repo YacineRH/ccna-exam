@@ -1,0 +1,1400 @@
+[
+  {
+    "slug": "ccna-3.2-longest-match-second-octet-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 reçoit un paquet à destination de 10.47.20.9. Quelle route utilise-t-il pour le transférer ?",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is 203.0.113.1 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 203.0.113.1\n      10.0.0.0/8 is variably subnetted, 8 subnets, 6 masks\nC        10.0.12.0/30 is directly connected, GigabitEthernet0/1\nL        10.0.12.1/32 is directly connected, GigabitEthernet0/1\nC        10.0.13.0/30 is directly connected, GigabitEthernet0/2\nL        10.0.13.1/32 is directly connected, GigabitEthernet0/2\nS        10.32.0.0/11 [1/0] via 10.0.12.2\nO        10.40.0.0/13 [110/3] via 10.0.13.2, 00:12:40, GigabitEthernet0/2\nD        10.44.0.0/15 [90/3072] via 10.0.12.2, 00:12:38, GigabitEthernet0/1\nS        10.46.0.0/16 [1/0] via 10.0.13.2\n      203.0.113.0/24 is variably subnetted, 2 subnets, 2 masks\nC        203.0.113.0/30 is directly connected, GigabitEthernet0/0\nL        203.0.113.2/32 is directly connected, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "10.32.0.0/11 via 10.0.12.2"
+        },
+        {
+          "id": "b",
+          "text": "10.44.0.0/15 via 10.0.12.2"
+        },
+        {
+          "id": "c",
+          "text": "10.46.0.0/16 via 10.0.13.2"
+        },
+        {
+          "id": "d",
+          "text": "10.40.0.0/13 via 10.0.13.2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Tout se joue sur le deuxième octet, 47 = 00101111. La route /11 fixe les 3 premiers bits de cet octet (001) : elle couvre 10.32 à 10.63 et correspond. La /13 fixe 5 bits (00101) : elle couvre 10.40 à 10.47 et correspond aussi. La /15 fixe 7 bits (0010110) et ne couvre que 10.44 et 10.45 ; la /16 ne couvre que 10.46. Parmi les routes qui correspondent (0.0.0.0/0, /11 et /13), R1 retient la plus longue : 10.40.0.0/13, vers 10.0.13.2 par GigabitEthernet0/2. Des préfixes plus longs ne servent à rien s'ils ne contiennent pas la destination.",
+    "distractorNotes": {
+      "a": "La /11 (10.32.0.0 à 10.63.255.255) correspond bien, mais la /13 correspond aussi et elle est plus longue : elle l'emporte.",
+      "b": "La /15 ne couvre que 10.44.0.0 à 10.45.255.255 ; 10.47.20.9 n'en fait pas partie, quelle que soit la longueur du préfixe.",
+      "c": "La /16 ne couvre que 10.46.0.0 à 10.46.255.255 : le deuxième octet 47 ne correspond pas à 46."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-longest-match-nested-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Quelle route R1 utilise-t-il pour transférer un paquet destiné à 172.16.47.200 ?",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is not set\n\n      10.0.0.0/8 is variably subnetted, 6 subnets, 2 masks\nC        10.0.0.0/30 is directly connected, GigabitEthernet0/0\nL        10.0.0.1/32 is directly connected, GigabitEthernet0/0\nC        10.0.0.4/30 is directly connected, GigabitEthernet0/1\nL        10.0.0.5/32 is directly connected, GigabitEthernet0/1\nC        10.0.0.8/30 is directly connected, GigabitEthernet0/2\nL        10.0.0.9/32 is directly connected, GigabitEthernet0/2\n      172.16.0.0/16 is variably subnetted, 6 subnets, 6 masks\nO        172.16.32.0/19 [110/30] via 10.0.0.2, 00:08:15, GigabitEthernet0/0\nD        172.16.40.0/21 [90/3072] via 10.0.0.6, 00:08:12, GigabitEthernet0/1\nS        172.16.44.0/22 [1/0] via 10.0.0.10\nO        172.16.46.0/23 [110/20] via 10.0.0.6, 00:08:15, GigabitEthernet0/1\nS        172.16.47.128/26 [1/0] via 10.0.0.2\nD        172.16.47.224/27 [90/3328] via 10.0.0.10, 00:08:12, GigabitEthernet0/2",
+      "options": [
+        {
+          "id": "a",
+          "text": "172.16.44.0/22 via 10.0.0.10"
+        },
+        {
+          "id": "b",
+          "text": "172.16.46.0/23 via 10.0.0.6"
+        },
+        {
+          "id": "c",
+          "text": "172.16.47.128/26 via 10.0.0.2"
+        },
+        {
+          "id": "d",
+          "text": "172.16.47.224/27 via 10.0.0.10"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Il faut tester chaque route, de la plus longue à la plus courte. Quatrième octet : 200 = 11001000. La /27 172.16.47.224 couvre .224 à .255 (bits 111) : 200 n'en fait pas partie. La /26 172.16.47.128 couvre .128 à .191 (bits 10) : 200 commence par 11, pas de correspondance. Troisième octet : 47 = 00101111 ; la /23 172.16.46.0 couvre 46 et 47 (bits 0010111) : elle correspond. La /22, la /21 et la /19 correspondent aussi, mais elles sont plus courtes. R1 retient donc 172.16.46.0/23 via 10.0.0.6 (GigabitEthernet0/1). Sans correspondance, le paquet serait abandonné, car aucune passerelle de dernier recours n'est définie.",
+    "distractorNotes": {
+      "a": "La /22 (172.16.44.0 à 172.16.47.255) correspond, mais la /23 correspond aussi avec 23 bits identiques au lieu de 22 : elle est plus précise.",
+      "c": "La /26 couvre 172.16.47.128 à 172.16.47.191 ; 200 est au-delà de 191, donc cette route ne correspond pas.",
+      "d": "La /27 couvre 172.16.47.224 à 172.16.47.255 ; 200 est en dessous de 224, donc cette route ne correspond pas malgré sa longueur."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-default-route-zero-bits-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelles adresses de destination IPv4 la route 0.0.0.0/0 couvre-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les adresses publiques, hors des plages privées RFC 1918"
+        },
+        {
+          "id": "b",
+          "text": "La seule adresse 0.0.0.0, source d'un hôte encore sans adresse"
+        },
+        {
+          "id": "c",
+          "text": "Toutes les adresses IPv4, aucun bit n'étant comparé"
+        },
+        {
+          "id": "d",
+          "text": "Les adresses des réseaux directement connectés au routeur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une route correspond quand les n premiers bits de la destination sont identiques à ceux du préfixe, n étant la longueur du masque. Avec /0, aucun bit n'est comparé : toute adresse IPv4 correspond. C'est ce qui fait de 0.0.0.0/0 une route par défaut (« quad zéro »). Comme c'est aussi la correspondance la plus courte possible, elle ne sert que lorsque aucune autre route de la table ne contient la destination. IOS en indique le next hop sur la ligne « Gateway of last resort ».",
+    "distractorNotes": {
+      "a": "La route par défaut ne fait aucune distinction entre adresses privées et publiques : elle couvre aussi 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16.",
+      "b": "0.0.0.0/0 désigne l'ensemble des adresses ; c'est 0.0.0.0/32 qui désignerait la seule adresse 0.0.0.0.",
+      "d": "Les réseaux directement connectés ont leurs propres routes C et L ; la route par défaut sert justement à joindre des réseaux absents de la table."
+    },
+    "reference": "RFC 4632 ; Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.2-longest-match-8-vs-16-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 a deux routes statiques : 10.0.0.0/8 via 192.168.1.2 (R2) et 10.1.0.0/16 via 192.168.1.3 (R3). Où R1 envoie-t-il un paquet destiné à 10.1.5.5 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vers R2, car la route /8 couvre davantage d'adresses"
+        },
+        {
+          "id": "b",
+          "text": "Vers R3, car sa route correspond sur 16 bits au lieu de 8"
+        },
+        {
+          "id": "c",
+          "text": "Vers R2 et R3, en partageant la charge entre les deux routes"
+        },
+        {
+          "id": "d",
+          "text": "Vers R2, car la route la moins précise est testée en premier"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "10.1.5.5 correspond aux deux routes : ses 8 premiers bits valent 10 et ses 16 premiers bits valent 10.1. Quand plusieurs routes correspondent, le routeur retient celle dont le préfixe est le plus long, c'est-à-dire la plus précise : ici 10.1.0.0/16, vers R3. La route 10.0.0.0/8 reste utilisée pour toutes les autres destinations en 10.x.x.x, par exemple 10.2.0.1 ou 10.0.255.1.",
+    "distractorNotes": {
+      "a": "Couvrir plus d'adresses rend une route moins précise, pas préférable : la règle est la correspondance la plus longue.",
+      "c": "Le partage de charge ne concerne que des chemins vers le même préfixe ; ici les préfixes diffèrent (/8 et /16) et seul le plus long est utilisé.",
+      "d": "L'ordre de test n'a pas d'influence : le routeur retient toujours, parmi les routes qui correspondent, celle au préfixe le plus long."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-icmp-unreachable-to-source-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "PC1 (192.168.1.10) envoie un paquet vers 203.0.113.50. R2, sa passerelle, le transmet à R1. R1, en configuration par défaut, n'a aucune route qui correspond à 203.0.113.50 et aucune passerelle de dernier recours. À qui R1 envoie-t-il le message ICMP Destination Unreachable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "À R2, le routeur qui lui a transmis le paquet"
+        },
+        {
+          "id": "b",
+          "text": "À 203.0.113.50, la destination du paquet abandonné"
+        },
+        {
+          "id": "c",
+          "text": "À personne : IOS abandonne le paquet sans le signaler"
+        },
+        {
+          "id": "d",
+          "text": "À 192.168.1.10, la source du paquet abandonné"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Sans route correspondante ni route par défaut, R1 abandonne le paquet. Le message ICMP Destination Unreachable (type 3) est adressé à l'adresse IP source du paquet abandonné, ici PC1 (192.168.1.10) : c'est l'émetteur qui doit apprendre que sa destination est injoignable. R1 achemine ce message vers 192.168.1.10 comme n'importe quel paquet, ici par R2, qui ne fait que le relayer. L'envoi des unreachables est actif par défaut sur les interfaces IOS (« ip unreachables ») ; il peut être désactivé par « no ip unreachables ».",
+    "distractorNotes": {
+      "a": "R2 ne fait que relayer le message : son adresse IP de destination est celle de l'émetteur d'origine, pas celle du routeur précédent.",
+      "b": "R1 ne sait justement pas joindre 203.0.113.50 ; le message est destiné à celui qui a émis le paquet.",
+      "c": "Par défaut, « ip unreachables » est actif : IOS signale l'abandon par un ICMP Destination Unreachable, avec un débit limité."
+    },
+    "reference": "RFC 792 ; RFC 1812"
+  },
+  {
+    "slug": "ccna-3.2-default-route-no-specific-match-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Comment R1 traite-t-il un paquet destiné à 10.40.1.1 ?",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is 198.51.100.1 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 198.51.100.1\n      10.0.0.0/8 is variably subnetted, 4 subnets, 4 masks\nC        10.1.12.0/30 is directly connected, GigabitEthernet0/1\nL        10.1.12.1/32 is directly connected, GigabitEthernet0/1\nO        10.32.0.0/13 [110/2] via 10.1.12.2, 00:31:02, GigabitEthernet0/1\nO        10.48.0.0/12 [110/3] via 10.1.12.2, 00:31:02, GigabitEthernet0/1\n      198.51.100.0/24 is variably subnetted, 2 subnets, 2 masks\nC        198.51.100.0/30 is directly connected, GigabitEthernet0/0\nL        198.51.100.2/32 is directly connected, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il le transmet par la route 10.32.0.0/13 vers 10.1.12.2"
+        },
+        {
+          "id": "b",
+          "text": "Il le transmet par la route 0.0.0.0/0 vers 198.51.100.1"
+        },
+        {
+          "id": "c",
+          "text": "Il le transmet par la route 10.48.0.0/12 vers 10.1.12.2"
+        },
+        {
+          "id": "d",
+          "text": "Il l'abandonne et renvoie un ICMP Destination Unreachable"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Deuxième octet : 40 = 00101000. La /13 10.32.0.0 fixe 5 bits de cet octet (00100) et couvre 10.32 à 10.39 : 40 en sort. La /12 10.48.0.0 fixe 4 bits (0011) et couvre 10.48 à 10.63 : 40 n'y est pas non plus. Les routes connectées et locales ne contiennent pas 10.40.1.1. La seule route qui correspond est donc 0.0.0.0/0 : R1 envoie le paquet vers 198.51.100.1 par GigabitEthernet0/0. Le fait que 10.40.1.1 « ressemble » aux préfixes 10.32 ou 10.48 ne compte pas : seule l'égalité des bits couverts par le masque compte.",
+    "distractorNotes": {
+      "a": "10.32.0.0/13 s'arrête à 10.39.255.255 : 10.40.1.1 est juste au-delà et ne correspond pas.",
+      "c": "10.48.0.0/12 commence à 10.48.0.0 : 10.40.1.1 est en dessous et ne correspond pas.",
+      "d": "R1 a une route par défaut (Gateway of last resort is 198.51.100.1) : un paquet sans correspondance plus précise n'est pas abandonné."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-summary-before-default-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Vers quel next hop R1 transmet-il un paquet destiné à 10.200.1.1 ?",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is 203.0.113.5 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 203.0.113.5\n      10.0.0.0/8 is variably subnetted, 3 subnets, 2 masks\nS        10.0.0.0/8 [1/0] via 192.168.12.2\nO        10.1.0.0/16 [110/2] via 192.168.13.2, 00:04:51, GigabitEthernet0/2\nO        10.2.0.0/16 [110/3] via 192.168.13.2, 00:04:51, GigabitEthernet0/2\n      192.168.12.0/24 is variably subnetted, 2 subnets, 2 masks\nC        192.168.12.0/30 is directly connected, GigabitEthernet0/1\nL        192.168.12.1/32 is directly connected, GigabitEthernet0/1\n      192.168.13.0/24 is variably subnetted, 2 subnets, 2 masks\nC        192.168.13.0/30 is directly connected, GigabitEthernet0/2\nL        192.168.13.1/32 is directly connected, GigabitEthernet0/2\n      203.0.113.0/24 is variably subnetted, 2 subnets, 2 masks\nC        203.0.113.4/30 is directly connected, GigabitEthernet0/0\nL        203.0.113.6/32 is directly connected, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "203.0.113.5, par la route par défaut"
+        },
+        {
+          "id": "b",
+          "text": "192.168.13.2, par la route 10.2.0.0/16"
+        },
+        {
+          "id": "c",
+          "text": "192.168.12.2, par la route 10.0.0.0/8"
+        },
+        {
+          "id": "d",
+          "text": "192.168.13.2, par la route 10.1.0.0/16"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "10.200.1.1 ne correspond ni à 10.1.0.0/16 ni à 10.2.0.0/16 (deuxième octet 200 au lieu de 1 ou 2). En revanche, la route statique 10.0.0.0/8 ne compare que le premier octet, 10 : elle correspond. Elle est plus longue que 0.0.0.0/0, qui correspond aussi, donc R1 envoie le paquet vers 192.168.12.2. La route par défaut ne sert qu'aux destinations qu'aucune autre route ne contient, par exemple 172.16.1.1 ; une route large comme 10.0.0.0/8 « capte » toutes les destinations 10.x.x.x sans route plus précise.",
+    "distractorNotes": {
+      "a": "La route par défaut correspond, mais 10.0.0.0/8 correspond aussi avec 8 bits au lieu de 0 : elle est préférée.",
+      "b": "10.2.0.0/16 couvre 10.2.0.0 à 10.2.255.255 ; 10.200.1.1 n'en fait pas partie.",
+      "d": "10.1.0.0/16 couvre 10.1.0.0 à 10.1.255.255 ; 10.200.1.1 n'en fait pas partie."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-prefix-contains-address-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Laquelle des routes suivantes ne correspond pas à l'adresse de destination 172.31.77.10 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "172.31.64.0/19"
+        },
+        {
+          "id": "b",
+          "text": "172.31.72.0/21"
+        },
+        {
+          "id": "c",
+          "text": "172.31.76.0/22"
+        },
+        {
+          "id": "d",
+          "text": "172.31.80.0/20"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Seul le troisième octet compte : 77 = 01001101. La /19 fixe 3 bits de cet octet (010) : elle couvre 64 à 95, 77 y est. La /21 fixe 5 bits (01001) : elle couvre 72 à 79, 77 y est. La /22 fixe 6 bits (010011) : elle couvre 76 à 79, 77 y est. La /20 172.31.80.0 fixe 4 bits (0101) : elle couvre 80 à 95, alors que 77 commence par 0100. Un routeur qui aurait les quatre routes retiendrait la /22, la plus longue de celles qui correspondent.",
+    "distractorNotes": {
+      "a": "172.31.64.0/19 couvre 172.31.64.0 à 172.31.95.255 : 77 est dans cette plage.",
+      "b": "172.31.72.0/21 couvre 172.31.72.0 à 172.31.79.255 : 77 est dans cette plage.",
+      "c": "172.31.76.0/22 couvre 172.31.76.0 à 172.31.79.255 : 77 est dans cette plage, c'est même la correspondance la plus longue."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-egress-interface-several-destinations-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Lequel de ces paquets R1 transmet-il par GigabitEthernet0/2 ?",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is not set\n\n      10.0.0.0/8 is variably subnetted, 6 subnets, 2 masks\nC        10.0.1.0/30 is directly connected, GigabitEthernet0/0\nL        10.0.1.1/32 is directly connected, GigabitEthernet0/0\nC        10.0.2.0/30 is directly connected, GigabitEthernet0/1\nL        10.0.2.1/32 is directly connected, GigabitEthernet0/1\nC        10.0.3.0/30 is directly connected, GigabitEthernet0/2\nL        10.0.3.1/32 is directly connected, GigabitEthernet0/2\n      172.20.0.0/16 is variably subnetted, 4 subnets, 4 masks\nS        172.20.0.0/16 [1/0] via 10.0.1.2\nO        172.20.64.0/18 [110/3] via 10.0.2.2, 00:22:10, GigabitEthernet0/1\nO        172.20.96.0/20 [110/4] via 10.0.3.2, 00:22:10, GigabitEthernet0/2\nD        172.20.100.0/24 [90/3072] via 10.0.1.2, 00:21:47, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un paquet destiné à 172.20.100.9"
+        },
+        {
+          "id": "b",
+          "text": "Un paquet destiné à 172.20.112.1"
+        },
+        {
+          "id": "c",
+          "text": "Un paquet destiné à 172.20.111.1"
+        },
+        {
+          "id": "d",
+          "text": "Un paquet destiné à 172.20.130.1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Seule la route 172.20.96.0/20 sort par GigabitEthernet0/2 ; elle couvre 172.20.96.0 à 172.20.111.255. 172.20.111.1 y est, et aucune route plus longue ne le contient (la /24 ne couvre que 172.20.100.x) : il sort par G0/2. 172.20.100.9 correspond à la /16, à la /18, à la /20 et à la /24 : la /24 l'emporte et il sort par G0/0. 172.20.112.1 dépasse la /20 mais reste dans la /18 (64 à 127) : G0/1. 172.20.130.1 n'est couvert que par la /16 : G0/0, via 10.0.1.2.",
+    "distractorNotes": {
+      "a": "172.20.100.9 est dans la /20, mais aussi dans 172.20.100.0/24, plus longue : il sort par GigabitEthernet0/0 vers 10.0.1.2.",
+      "b": "172.20.112.1 est au-delà de la /20 (qui s'arrête à 172.20.111.255) ; il suit la /18 et sort par GigabitEthernet0/1.",
+      "d": "172.20.130.1 n'est couvert que par 172.20.0.0/16 (la /18 s'arrête à 172.20.127.255) : il sort par GigabitEthernet0/0."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-default-route-learned-ospf-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un hôte du LAN 10.10.0.0/24 envoie un paquet vers 198.51.100.7. Que fait R1 ?",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is 10.0.12.2 to network 0.0.0.0\n\nO*E2  0.0.0.0/0 [110/1] via 10.0.12.2, 00:21:07, GigabitEthernet0/0\n      10.0.0.0/8 is variably subnetted, 5 subnets, 3 masks\nC        10.0.12.0/30 is directly connected, GigabitEthernet0/0\nL        10.0.12.1/32 is directly connected, GigabitEthernet0/0\nO        10.0.23.0/30 [110/2] via 10.0.12.2, 00:21:07, GigabitEthernet0/0\nC        10.10.0.0/24 is directly connected, GigabitEthernet0/1\nL        10.10.0.1/32 is directly connected, GigabitEthernet0/1",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il le transmet à 10.0.12.2 par GigabitEthernet0/0, grâce à la route par défaut apprise par OSPF"
+        },
+        {
+          "id": "b",
+          "text": "Il l'abandonne, car une passerelle de dernier recours doit provenir d'une route statique"
+        },
+        {
+          "id": "c",
+          "text": "Il l'abandonne, car le réseau 198.51.100.0 n'apparaît dans aucune ligne de la table"
+        },
+        {
+          "id": "d",
+          "text": "Il le renvoie sur GigabitEthernet0/1, l'interface par laquelle le paquet est arrivé"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La ligne « O*E2 0.0.0.0/0 » est une route par défaut apprise par OSPF (externe de type 2, l'astérisque signalant la candidate par défaut) ; IOS l'indique aussi par « Gateway of last resort is 10.0.12.2 to network 0.0.0.0 ». 198.51.100.7 ne correspond à aucune route connectée, locale ou OSPF plus précise : R1 utilise 0.0.0.0/0 et transmet le paquet à 10.0.12.2 par GigabitEthernet0/0. Peu importe la source de la route par défaut (statique, OSPF, EIGRP…) : seul compte qu'elle soit installée dans la table.",
+    "distractorNotes": {
+      "b": "Une route par défaut apprise dynamiquement (ici O*E2, typiquement annoncée par « default-information originate ») est une passerelle de dernier recours aussi valable qu'une route statique.",
+      "c": "C'est justement le rôle de 0.0.0.0/0 : elle correspond à toutes les destinations absentes de la table, comme 198.51.100.7.",
+      "d": "Un routeur ne renvoie pas un paquet vers son interface d'arrivée faute de mieux ; il suit la route qui correspond, ici la route par défaut vers G0/0."
+    },
+    "reference": "Cisco IOS IP Routing: OSPF Configuration Guide ; Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.2-ping-unreachable-transit-router-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 a pour seule route vers l'extérieur « ip route 0.0.0.0 0.0.0.0 10.0.12.2 » (R2). Aucune ACL n'est configurée sur le chemin. Quelle est la cause de l'échec du ping vers 172.16.9.9 ?",
+      "exhibit": "R1# ping 172.16.9.9\nType escape sequence to abort.\nSending 5, 100-byte ICMP Echos to 172.16.9.9, timeout is 2 seconds:\nU.U.U\nSuccess rate is 0 percent (0/5)\n\nR2# show ip route | begin Gateway\nGateway of last resort is not set\n\n      10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks\nC        10.0.12.0/30 is directly connected, GigabitEthernet0/0\nL        10.0.12.2/32 is directly connected, GigabitEthernet0/0\nC        10.0.23.0/30 is directly connected, GigabitEthernet0/1\nL        10.0.23.2/32 is directly connected, GigabitEthernet0/1\n      172.16.0.0/16 is variably subnetted, 3 subnets, 3 masks\nO        172.16.8.0/24 [110/2] via 10.0.23.3, 00:14:52, GigabitEthernet0/1\nO        172.16.10.0/23 [110/2] via 10.0.23.3, 00:14:52, GigabitEthernet0/1\nO        172.16.12.0/22 [110/2] via 10.0.23.3, 00:14:52, GigabitEthernet0/1",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2 transmet les échos à R3 par 172.16.10.0/23, mais l'hôte 172.16.9.9 ne répond pas"
+        },
+        {
+          "id": "b",
+          "text": "R2 transmet les échos par 172.16.8.0/24, la route la plus proche de 172.16.9.9"
+        },
+        {
+          "id": "c",
+          "text": "Les échos atteignent 172.16.9.9, mais ses réponses se perdent sur le chemin du retour"
+        },
+        {
+          "id": "d",
+          "text": "Aucune route de R2 ne correspond à 172.16.9.9 : il abandonne les échos et répond par ICMP"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Dans un ping IOS, « U » signale un ICMP Destination Unreachable reçu, « . » un délai expiré sans réponse. R1 envoie tout à R2 par sa route par défaut. Sur R2, 172.16.8.0/24 ne couvre que 172.16.8.x, 172.16.10.0/23 couvre 172.16.10.0 à 172.16.11.255 et 172.16.12.0/22 commence à 172.16.12.0 : aucune ne contient 172.16.9.9, et « Gateway of last resort is not set ». R2 abandonne chaque écho et doit renvoyer un unreachable à 10.0.12.1, mais IOS limite par défaut ces messages à un toutes les 500 ms. L'écho suivant, émis dès la réception d'un U, arrive pendant cet intervalle et reste sans réponse : R1 attend les 2 secondes du délai (« . ») avant d'envoyer le suivant, qui obtient de nouveau un U. D'où l'alternance U.U.U.",
+    "distractorNotes": {
+      "a": "172.16.10.0/23 couvre 172.16.10.0 à 172.16.11.255 : elle ne contient pas 172.16.9.9, et un hôte muet produirait des « . », pas des « U ».",
+      "b": "Il n'existe pas de route « la plus proche » : une route correspond ou non. 172.16.8.0/24 ne contient que 172.16.8.0 à 172.16.8.255.",
+      "c": "Des réponses perdues au retour donneraient « ..... » ; les « U » prouvent qu'un routeur a renvoyé un ICMP Destination Unreachable."
+    },
+    "reference": "Cisco, « Understanding the Ping and Traceroute Commands » (note technique) ; RFC 792 ; RFC 1812"
+  },
+  {
+    "slug": "ccna-3.2-static-more-specific-divert-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 apprend 10.1.96.0/19 par OSPF via R2 et n'a aucune autre route vers 10.1.0.0/16. L'administrateur veut que les paquets destinés à 10.1.100.1 passent par R3 (10.0.13.3), tandis que ceux destinés à 10.1.120.5 continuent de suivre la route OSPF. Quelle commande atteint ce but ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ip route 10.1.64.0 255.255.192.0 10.0.13.3"
+        },
+        {
+          "id": "b",
+          "text": "ip route 10.1.96.0 255.255.224.0 10.0.13.3"
+        },
+        {
+          "id": "c",
+          "text": "ip route 10.1.96.0 255.255.240.0 10.0.13.3"
+        },
+        {
+          "id": "d",
+          "text": "ip route 10.1.112.0 255.255.240.0 10.0.13.3"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Il faut une route plus longue que la /19 qui contienne 10.1.100.1 sans contenir 10.1.120.5. Troisième octet : 100 = 01100100 et 120 = 01111000. Le masque 255.255.240.0 (/20) fixe 4 bits : 10.1.96.0/20 (0110) couvre 96 à 111, donc 100 mais pas 120. Par la correspondance la plus longue, 10.1.100.1 suivra la statique vers R3 ; 10.1.120.5 ne correspond qu'à la /19 OSPF et reste vers R2. Pour une même destination, la longueur du préfixe départage avant la distance administrative.",
+    "distractorNotes": {
+      "a": "10.1.64.0/18 est plus courte que la /19 OSPF : pour 10.1.100.1 comme pour 10.1.120.5, la /19 reste la correspondance la plus longue et rien ne change.",
+      "b": "Même préfixe que la route OSPF : la statique (distance 1) remplace la route OSPF (110) dans la table, et 10.1.120.5 part aussi vers R3.",
+      "d": "10.1.112.0/20 couvre 112 à 127 : elle détourne 10.1.120.5 vers R3, alors que 10.1.100.1 reste sur la route OSPF."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique) ; Cisco IOS IP Routing: Protocol-Independent Configuration Guide (ip route)"
+  },
+  {
+    "slug": "ccna-3.2-gateway-last-resort-not-set-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La sortie de « show ip route » sur R1 affiche « Gateway of last resort is not set ». Que signifie cette ligne ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 n'a aucune route connectée active et ne peut router aucun paquet"
+        },
+        {
+          "id": "b",
+          "text": "R1 transmet les paquets sans route à son voisin OSPF le plus proche"
+        },
+        {
+          "id": "c",
+          "text": "R1 inonde les paquets sans route sur toutes ses interfaces actives"
+        },
+        {
+          "id": "d",
+          "text": "R1 n'a pas de route par défaut : un paquet sans route correspondante est abandonné"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La passerelle de dernier recours est le next hop de la route par défaut (0.0.0.0/0) installée dans la table. « Gateway of last resort is not set » signifie qu'aucune route par défaut n'est installée : R1 ne transmet que les paquets dont la destination correspond à une route de la table ; les autres sont abandonnés, et la source reçoit un ICMP Destination Unreachable. Avec une route par défaut, la ligne devient par exemple « Gateway of last resort is 203.0.113.1 to network 0.0.0.0 ».",
+    "distractorNotes": {
+      "a": "Cette ligne ne concerne que la route par défaut ; les routes connectées (C) et locales (L) s'affichent juste en dessous, indépendamment.",
+      "b": "Un routeur n'envoie jamais un paquet à un voisin « par défaut » sans route qui le prévoie ; sans 0.0.0.0/0, le paquet sans correspondance est abandonné.",
+      "c": "Un routeur n'inonde jamais un paquet IP de destination inconnue, contrairement à un commutateur avec une trame unicast inconnue."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.2-longest-match-principle-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent la façon dont un routeur choisit la route d'un paquet IPv4 dans sa table ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le routeur retient la première route de la table qui correspond, dans l'ordre d'affichage."
+        },
+        {
+          "id": "b",
+          "text": "Une route correspond si les bits de son préfixe sont identiques à ceux de la destination."
+        },
+        {
+          "id": "c",
+          "text": "Une route ne correspond que si la destination est égale à l'adresse réseau du préfixe."
+        },
+        {
+          "id": "d",
+          "text": "Parmi les routes qui correspondent, le routeur retient celle dont le masque est le plus long."
+        },
+        {
+          "id": "e",
+          "text": "Parmi les routes qui correspondent, le routeur retient celle qui couvre le plus d'adresses."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Pour chaque route, le routeur compare les n premiers bits de l'adresse de destination à ceux du préfixe (n = longueur du masque) : s'ils sont égaux, la route correspond. Plusieurs routes peuvent correspondre, par exemple 10.0.0.0/8, 10.1.0.0/16 et 0.0.0.0/0 pour 10.1.2.3. Le routeur retient alors la correspondance la plus longue, c'est-à-dire la route la plus précise. L'ordre d'affichage de la table, trié par adresse, n'a aucune importance.",
+    "distractorNotes": {
+      "a": "L'ordre d'affichage (trié par adresse) ne joue aucun rôle : seule la longueur du préfixe départage les routes qui correspondent.",
+      "c": "La destination peut être n'importe quelle adresse contenue dans le préfixe ; seuls les n premiers bits sont comparés.",
+      "e": "C'est l'inverse : la route qui couvre le plus d'adresses a le masque le plus court, donc elle est la moins précise et la moins prioritaire."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-default-route-show-lines-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux lignes de la sortie de « show ip route » indiquent que R1 dispose d'une route par défaut ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gateway of last resort is 192.0.2.1 to network 0.0.0.0"
+        },
+        {
+          "id": "b",
+          "text": "S*    0.0.0.0/0 [1/0] via 192.0.2.1"
+        },
+        {
+          "id": "c",
+          "text": "S        10.0.0.0/8 [1/0] via 192.0.2.1"
+        },
+        {
+          "id": "d",
+          "text": "Gateway of last resort is not set"
+        },
+        {
+          "id": "e",
+          "text": "C        192.0.2.0/30 is directly connected, GigabitEthernet0/0"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b"
+      ]
+    },
+    "explanation": "Une route par défaut IPv4 a pour préfixe 0.0.0.0/0. IOS la signale de deux façons : la ligne « Gateway of last resort is 192.0.2.1 to network 0.0.0.0 », qui donne son next hop, et l'entrée elle-même, marquée d'un astérisque (code S* pour une route statique candidate par défaut). Sans route par défaut, la sortie affiche « Gateway of last resort is not set » et tout paquet sans correspondance est abandonné.",
+    "distractorNotes": {
+      "d": "Cette ligne dit justement l'inverse : aucune route par défaut n'est installée.",
+      "c": "10.0.0.0/8 est une route large, mais elle ne couvre que les destinations 10.x.x.x ; ce n'est pas une route par défaut.",
+      "e": "C'est la route du réseau directement connecté sur G0/0 ; elle ne couvre que 192.0.2.0 à 192.0.2.3."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.2-added-specific-route-impact-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 a deux routes statiques : 10.0.0.0/8 via 192.168.1.2 (R2) et 0.0.0.0/0 via 203.0.113.1 (FAI). L'administrateur ajoute « ip route 10.2.0.0 255.254.0.0 192.168.1.3 » (R3). Pour quelles deux destinations R1 change-t-il de next hop ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "10.3.200.1"
+        },
+        {
+          "id": "b",
+          "text": "10.1.255.1"
+        },
+        {
+          "id": "c",
+          "text": "10.2.0.9"
+        },
+        {
+          "id": "d",
+          "text": "10.4.0.1"
+        },
+        {
+          "id": "e",
+          "text": "11.2.0.1"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Le masque 255.254.0.0 est un /15 : il fixe les 7 premiers bits du deuxième octet. 10.2.0.0/15 couvre donc 10.2.0.0 à 10.3.255.255. Pour 10.3.200.1 et 10.2.0.9, cette route correspond et elle est plus longue que 10.0.0.0/8 : ces paquets partent désormais vers R3. 10.1.255.1 et 10.4.0.1 restent hors de la /15 et suivent toujours la /8 vers R2. 11.2.0.1 ne correspond qu'à la route par défaut, qui ne change pas. Ajouter une route plus précise ne modifie que les destinations qu'elle contient.",
+    "distractorNotes": {
+      "b": "10.1.255.1 est juste en dessous de 10.2.0.0 : hors de la /15, il suit toujours 10.0.0.0/8 vers R2.",
+      "d": "10.4.0.1 est juste au-delà de 10.3.255.255 : hors de la /15, il suit toujours 10.0.0.0/8 vers R2.",
+      "e": "11.2.0.1 n'est pas dans 10.0.0.0/8 : il suivait et suit toujours la route par défaut vers le FAI."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-dropped-destinations-gap-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. R1 reçoit des paquets à destination des adresses suivantes. Quelles deux destinations provoquent l'abandon du paquet ? (Choisissez-en deux.)",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is not set\n\n      10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks\nC        10.0.12.0/30 is directly connected, GigabitEthernet0/0\nL        10.0.12.1/32 is directly connected, GigabitEthernet0/0\nC        10.0.13.0/30 is directly connected, GigabitEthernet0/1\nL        10.0.13.1/32 is directly connected, GigabitEthernet0/1\n      172.30.0.0/16 is variably subnetted, 4 subnets, 4 masks\nO        172.30.0.0/18 [110/2] via 10.0.12.2, 00:17:33, GigabitEthernet0/0\nS        172.30.64.0/19 [1/0] via 10.0.13.2\nO        172.30.96.0/21 [110/3] via 10.0.13.2, 00:17:33, GigabitEthernet0/1\nD        172.30.128.0/17 [90/3072] via 10.0.12.2, 00:17:20, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "172.30.63.200"
+        },
+        {
+          "id": "b",
+          "text": "172.30.104.10"
+        },
+        {
+          "id": "c",
+          "text": "172.30.103.254"
+        },
+        {
+          "id": "d",
+          "text": "172.30.128.1"
+        },
+        {
+          "id": "e",
+          "text": "172.30.127.1"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Troisième octet de chaque route : la /18 172.30.0.0 couvre 0 à 63, la /19 172.30.64.0 couvre 64 à 95, la /21 172.30.96.0 couvre 96 à 103 et la /17 172.30.128.0 couvre 128 à 255. Les valeurs 104 à 127 ne sont couvertes par aucune route, et « Gateway of last resort is not set » : 172.30.104.10 et 172.30.127.1 sont abandonnés, et leur source reçoit un ICMP Destination Unreachable. 172.30.63.200 suit la /18, 172.30.103.254 la /21 et 172.30.128.1 la /17.",
+    "distractorNotes": {
+      "a": "172.30.63.200 est dans 172.30.0.0/18 (jusqu'à 172.30.63.255) : il est transmis vers 10.0.12.2.",
+      "c": "172.30.103.254 appartient à 172.30.96.0/21, qui couvre 96 à 103 : il est transmis vers 10.0.13.2.",
+      "d": "172.30.128.1 est dans 172.30.128.0/17 (128 à 255) : il est transmis vers 10.0.12.2."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique) ; RFC 792"
+  },
+  {
+    "slug": "ccna-3.2-default-route-several-destinations-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Quels trois paquets R1 transmet-il par sa route par défaut ? (Choisissez-en trois.)",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is 192.0.2.1 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 192.0.2.1\n      10.0.0.0/8 is variably subnetted, 8 subnets, 6 masks\nC        10.0.0.0/30 is directly connected, GigabitEthernet0/1\nL        10.0.0.1/32 is directly connected, GigabitEthernet0/1\nC        10.0.0.4/30 is directly connected, GigabitEthernet0/2\nL        10.0.0.5/32 is directly connected, GigabitEthernet0/2\nO        10.32.0.0/12 [110/2] via 10.0.0.2, 00:09:45, GigabitEthernet0/1\nO        10.64.0.0/10 [110/3] via 10.0.0.6, 00:09:45, GigabitEthernet0/2\nS        10.160.0.0/11 [1/0] via 10.0.0.2\nD        10.200.0.0/13 [90/3072] via 10.0.0.6, 00:09:31, GigabitEthernet0/2\n      192.0.2.0/24 is variably subnetted, 2 subnets, 2 masks\nC        192.0.2.0/30 is directly connected, GigabitEthernet0/0\nL        192.0.2.2/32 is directly connected, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un paquet destiné à 10.63.1.1"
+        },
+        {
+          "id": "b",
+          "text": "Un paquet destiné à 10.100.1.1"
+        },
+        {
+          "id": "c",
+          "text": "Un paquet destiné à 10.191.255.1"
+        },
+        {
+          "id": "d",
+          "text": "Un paquet destiné à 10.192.0.1"
+        },
+        {
+          "id": "e",
+          "text": "Un paquet destiné à 10.207.1.1"
+        },
+        {
+          "id": "f",
+          "text": "Un paquet destiné à 10.48.0.1"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d",
+        "f"
+      ]
+    },
+    "explanation": "Deuxième octet de chaque route : 10.32.0.0/12 couvre 32 à 47, 10.64.0.0/10 couvre 64 à 127, 10.160.0.0/11 couvre 160 à 191 et 10.200.0.0/13 couvre 200 à 207. 10.48.0.1 (48), 10.63.1.1 (63) et 10.192.0.1 (192) tombent dans des trous entre ces plages : seule 0.0.0.0/0 les contient, ils partent vers 192.0.2.1. 10.100.1.1 suit la /10, 10.191.255.1 la /11 et 10.207.1.1 la /13. Appartenir à 10.0.0.0/8 ne suffit pas : R1 n'a pas de route 10.0.0.0/8.",
+    "distractorNotes": {
+      "b": "10.100.1.1 est dans 10.64.0.0/10 (10.64.0.0 à 10.127.255.255) : il part vers 10.0.0.6.",
+      "c": "10.191.255.1 est la fin de 10.160.0.0/11 (160 à 191) : il part vers 10.0.0.2.",
+      "e": "10.207.1.1 est dans 10.200.0.0/13 (200 à 207) : il part vers 10.0.0.6."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-default-route-notation-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Complétez les écritures de la route par défaut.",
+      "fields": [
+        {
+          "id": "len",
+          "label": "Longueur de préfixe de la route par défaut IPv4 (nombre entier)"
+        },
+        {
+          "id": "mask",
+          "label": "Masque de la route par défaut IPv4, en décimal pointé"
+        },
+        {
+          "id": "v6",
+          "label": "Préfixe de la route par défaut IPv6, sous la forme compressée la plus courte avec sa longueur (ex. 2001:db8::/32)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "len": {
+          "accepted": [
+            "0"
+          ],
+          "normalize": "int"
+        },
+        "mask": {
+          "accepted": [
+            "0.0.0.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "v6": {
+          "accepted": [
+            "::/0"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "La route par défaut IPv4 s'écrit 0.0.0.0/0 : longueur de préfixe 0, donc masque 0.0.0.0, sans aucun bit à comparer. Elle correspond à toutes les destinations et ne sert que lorsque aucune route plus longue ne correspond. Sur IOS, elle se configure par « ip route 0.0.0.0 0.0.0.0 <next hop> ». L'équivalent IPv6 est ::/0, configuré par « ipv6 route ::/0 <next hop> ».",
+    "distractorNotes": {},
+    "reference": "RFC 4632 ; RFC 4291 ; Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.2-egress-interface-fill-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Indiquez l'interface de sortie que R1 utilise pour chacune de ces destinations.",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is 203.0.113.1 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 203.0.113.1\n      172.25.0.0/16 is variably subnetted, 6 subnets, 4 masks\nO        172.25.0.0/17 [110/2] via 172.25.255.2, 00:06:28, GigabitEthernet0/1\nS        172.25.96.0/19 [1/0] via 172.25.255.6\nC        172.25.255.0/30 is directly connected, GigabitEthernet0/1\nL        172.25.255.1/32 is directly connected, GigabitEthernet0/1\nC        172.25.255.4/30 is directly connected, GigabitEthernet0/2\nL        172.25.255.5/32 is directly connected, GigabitEthernet0/2\n      203.0.113.0/24 is variably subnetted, 2 subnets, 2 masks\nC        203.0.113.0/30 is directly connected, GigabitEthernet0/0\nL        203.0.113.2/32 is directly connected, GigabitEthernet0/0",
+      "fields": [
+        {
+          "id": "d1",
+          "label": "Paquet destiné à 172.25.100.1 (interface, ex. G0/3)"
+        },
+        {
+          "id": "d2",
+          "label": "Paquet destiné à 172.25.95.1 (interface, ex. G0/3)"
+        },
+        {
+          "id": "d3",
+          "label": "Paquet destiné à 172.25.128.1 (interface, ex. G0/3)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "d1": {
+          "accepted": [
+            "G0/2",
+            "Gi0/2",
+            "Gig0/2",
+            "GigabitEthernet0/2"
+          ],
+          "normalize": "text"
+        },
+        "d2": {
+          "accepted": [
+            "G0/1",
+            "Gi0/1",
+            "Gig0/1",
+            "GigabitEthernet0/1"
+          ],
+          "normalize": "text"
+        },
+        "d3": {
+          "accepted": [
+            "G0/0",
+            "Gi0/0",
+            "Gig0/0",
+            "GigabitEthernet0/0"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Troisième octet : 172.25.0.0/17 couvre 0 à 127 (vers 172.25.255.2, G0/1) et 172.25.96.0/19 couvre 96 à 127. 172.25.100.1 correspond aux deux : la /19, plus longue, l'emporte ; son next hop 172.25.255.6 appartient au réseau connecté 172.25.255.4/30, donc la sortie est G0/2. 172.25.95.1 est juste sous la /19 : seule la /17 correspond, sortie G0/1. 172.25.128.1 dépasse la /17 (127 maximum) : seule 0.0.0.0/0 correspond, vers 203.0.113.1 par G0/0.",
+    "distractorNotes": {},
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-overlap-forwarding-ranges-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "La table de R1 ne contient, vers 172.16.0.0/16, que ces trois routes : 172.16.64.0/18 via 10.0.0.2, 172.16.96.0/19 via 10.0.0.6 et 172.16.120.0/21 via 10.0.0.10. Elle n'a pas de route par défaut. Donnez les bornes des destinations que R1 transmet à chaque next hop.",
+      "fields": [
+        {
+          "id": "low6",
+          "label": "Plus petite adresse de destination transmise à 10.0.0.6 (décimal pointé)"
+        },
+        {
+          "id": "high6",
+          "label": "Plus grande adresse de destination transmise à 10.0.0.6 (décimal pointé)"
+        },
+        {
+          "id": "high2",
+          "label": "Plus grande adresse de destination transmise à 10.0.0.2 (décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "low6": {
+          "accepted": [
+            "172.16.96.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "high6": {
+          "accepted": [
+            "172.16.119.255"
+          ],
+          "normalize": "ipv4"
+        },
+        "high2": {
+          "accepted": [
+            "172.16.95.255"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Plages du troisième octet : la /18 couvre 64 à 127, la /19 96 à 127 et la /21 120 à 127. Une adresse suit la route la plus longue qui la contient. De 120 à 127, c'est la /21 (10.0.0.10). De 96 à 119, la /21 ne correspond plus et la /19 l'emporte sur la /18 : 10.0.0.6 reçoit 172.16.96.0 à 172.16.119.255. De 64 à 95, seule la /18 correspond : 10.0.0.2 reçoit 172.16.64.0 à 172.16.95.255. Le reste de 172.16.0.0/16 est abandonné, faute de route par défaut.",
+    "distractorNotes": {},
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-prefix-range-slash11-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "R1 a la route « O 10.96.0.0/11 [110/2] via 10.0.12.2 ». Donnez la plage des adresses de destination qui correspondent à cette route.",
+      "fields": [
+        {
+          "id": "first",
+          "label": "Plus petite adresse qui correspond (décimal pointé)"
+        },
+        {
+          "id": "last",
+          "label": "Plus grande adresse qui correspond (décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "first": {
+          "accepted": [
+            "10.96.0.0"
+          ],
+          "normalize": "ipv4"
+        },
+        "last": {
+          "accepted": [
+            "10.127.255.255"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Un /11 fixe les 8 bits du premier octet et les 3 premiers bits du deuxième. 96 = 01100000 : les bits fixés valent 011, et les 5 bits libres du deuxième octet vont de 00000 à 11111, soit 96 à 127 (un bloc de 32). Les troisième et quatrième octets sont entièrement libres. La route couvre donc 10.96.0.0 à 10.127.255.255 : une destination comme 10.127.0.1 correspond, 10.128.0.1 non.",
+    "distractorNotes": {},
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-matching-routes-count-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. R1 reçoit un paquet destiné à 172.18.30.77.",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is 192.0.2.1 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 192.0.2.1\n      172.18.0.0/16 is variably subnetted, 9 subnets, 6 masks\nO        172.18.16.0/20 [110/3] via 172.18.255.2, 00:11:04, GigabitEthernet0/1\nD        172.18.24.0/21 [90/3072] via 172.18.255.6, 00:10:58, GigabitEthernet0/2\nS        172.18.28.0/23 [1/0] via 172.18.255.2\nO        172.18.30.0/24 [110/4] via 172.18.255.6, 00:11:04, GigabitEthernet0/2\nS        172.18.31.0/24 [1/0] via 172.18.255.2\nC        172.18.255.0/30 is directly connected, GigabitEthernet0/1\nL        172.18.255.1/32 is directly connected, GigabitEthernet0/1\nC        172.18.255.4/30 is directly connected, GigabitEthernet0/2\nL        172.18.255.5/32 is directly connected, GigabitEthernet0/2\n      192.0.2.0/24 is variably subnetted, 2 subnets, 2 masks\nC        192.0.2.0/30 is directly connected, GigabitEthernet0/0\nL        192.0.2.2/32 is directly connected, GigabitEthernet0/0",
+      "fields": [
+        {
+          "id": "count",
+          "label": "Nombre de routes de la table qui correspondent à cette destination, route par défaut comprise (nombre entier)"
+        },
+        {
+          "id": "len",
+          "label": "Longueur de préfixe de la route retenue (nombre entier, sans le /)"
+        },
+        {
+          "id": "nh",
+          "label": "Next hop de la route retenue (décimal pointé)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "count": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        },
+        "len": {
+          "accepted": [
+            "24"
+          ],
+          "normalize": "int"
+        },
+        "nh": {
+          "accepted": [
+            "172.18.255.6"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Troisième octet : 30 = 00011110. 172.18.16.0/20 couvre 16 à 31 et 172.18.24.0/21 couvre 24 à 31 : elles correspondent. 172.18.28.0/23 ne couvre que 28 et 29, et 172.18.31.0/24 que 31 : pas de correspondance. 172.18.30.0/24 correspond, de même que 0.0.0.0/0. Les routes connectées et locales (172.18.255.x, 192.0.2.x) ne contiennent pas l'adresse. Quatre routes correspondent ; la plus longue est 172.18.30.0/24, apprise par OSPF via 172.18.255.6.",
+    "distractorNotes": {},
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-show-ip-route-address-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode d'exécution privilégié de R1, affichez le détail de la route la plus précise de la table de routage qui contient l'adresse 192.168.50.77 (préfixe, source, distance, next hop), sans afficher le reste de la table.",
+      "prompt": "R1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show ip route 192.168.50.77"
+        ]
+      ]
+    },
+    "explanation": "« show ip route <adresse> » cherche dans la table la route la plus longue qui contient l'adresse et affiche son détail : « Routing entry for 192.168.50.64/26 » par exemple, puis la source (« Known via \"ospf 1\" »), la distance administrative et la métrique, et le ou les next hops avec leur interface. C'est le moyen le plus direct de vérifier quelle entrée la correspondance la plus longue désigne, sans lire toute la table. Ici, l'adresse seule suffit : avec un masque, IOS chercherait exactement ce préfixe.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.2-show-ip-route-longer-prefixes-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode d'exécution privilégié de R1, affichez en une seule commande toutes les routes contenues dans 10.20.0.0/16 : la route 10.20.0.0/16 elle-même si elle existe et toutes ses routes plus précises (10.20.4.0/22, 10.20.4.128/25…). Saisissez le masque en décimal pointé.",
+      "prompt": "R1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show ip route 10.20.0.0 255.255.0.0 longer-prefixes"
+        ]
+      ]
+    },
+    "explanation": "Avec le mot-clé longer-prefixes, l'adresse et le masque saisis forment un préfixe, et IOS affiche toutes les routes dont le préfixe est égal ou plus long et inclus dans 10.20.0.0/16. C'est pratique pour repérer les routes qui se recouvrent : un paquet destiné à 10.20.4.200 suivra la plus longue d'entre elles qui le contient, par exemple 10.20.4.128/25 plutôt que 10.20.4.0/22. C'est ce mot-clé, saisi après le masque, qui étend l'affichage aux routes plus précises.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.2-longest-match-fallback-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "R1 possède les six routes ci-dessous, toutes valides, chacune vers un next hop différent. Il reçoit en continu des paquets destinés à 10.8.9.10. On supprime, l'une après l'autre, la route que R1 utilise pour cette destination. Classez les routes dans l'ordre où R1 les utilisera, de la première à la dernière.",
+      "items": [
+        {
+          "id": "r22",
+          "text": "10.8.8.0/22"
+        },
+        {
+          "id": "r0",
+          "text": "0.0.0.0/0"
+        },
+        {
+          "id": "r29",
+          "text": "10.8.9.8/29"
+        },
+        {
+          "id": "r13",
+          "text": "10.8.0.0/13"
+        },
+        {
+          "id": "r8",
+          "text": "10.0.0.0/8"
+        },
+        {
+          "id": "r24",
+          "text": "10.8.9.0/24"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "r29",
+        "r24",
+        "r22",
+        "r13",
+        "r8",
+        "r0"
+      ]
+    },
+    "explanation": "Les six routes contiennent toutes 10.8.9.10 : la /29 10.8.9.8 couvre .8 à .15 ; la /24 couvre 10.8.9.x ; la /22 10.8.8.0 couvre 10.8.8.0 à 10.8.11.255 ; la /13 couvre 10.8.0.0 à 10.15.255.255 ; la /8 couvre 10.x.x.x ; et 0.0.0.0/0 couvre tout. R1 retient toujours la correspondance la plus longue encore présente : /29, puis /24, /22, /13, /8 et enfin la route par défaut, utilisée seulement quand plus aucune autre route ne correspond.",
+    "distractorNotes": {},
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-no-route-drop-sequence-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "PC1 (192.168.1.10/24, passerelle 192.168.1.1 sur R1) envoie un paquet vers 198.51.100.9 ; son cache ARP est vide. R1 n'a aucune route qui contient 198.51.100.9 et affiche « Gateway of last resort is not set ». Remettez les étapes dans l'ordre.",
+      "items": [
+        {
+          "id": "drop",
+          "text": "R1 abandonne le paquet et envoie un ICMP Destination Unreachable à 192.168.1.10"
+        },
+        {
+          "id": "frame",
+          "text": "PC1 envoie la trame à l'adresse MAC de R1, avec 198.51.100.9 comme IP de destination"
+        },
+        {
+          "id": "and",
+          "text": "PC1 compare la destination à son propre réseau, à l'aide de son masque, et la juge distante"
+        },
+        {
+          "id": "lookup",
+          "text": "R1 cherche une route qui contient 198.51.100.9 et n'en trouve aucune"
+        },
+        {
+          "id": "arp",
+          "text": "PC1 obtient par ARP l'adresse MAC de sa passerelle 192.168.1.1"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "and",
+        "arp",
+        "frame",
+        "lookup",
+        "drop"
+      ]
+    },
+    "explanation": "PC1 applique d'abord son masque : 198.51.100.9 n'est pas dans 192.168.1.0/24, donc le paquet doit partir vers la passerelle. Son cache ARP étant vide, il résout l'adresse MAC de 192.168.1.1, puis envoie la trame à R1 ; l'IP de destination reste 198.51.100.9. R1 retire l'en-tête Ethernet et cherche une correspondance dans sa table : aucune route, pas même 0.0.0.0/0. Il abandonne le paquet et renvoie à la source un ICMP Destination Unreachable (type 3).",
+    "distractorNotes": {},
+    "reference": "RFC 792 ; RFC 1812"
+  },
+  {
+    "slug": "ccna-3.2-ping-output-characters-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque caractère affiché par la commande ping d'IOS à sa signification.",
+      "left": [
+        {
+          "id": "bang",
+          "text": "!"
+        },
+        {
+          "id": "dot",
+          "text": "."
+        },
+        {
+          "id": "u",
+          "text": "U"
+        },
+        {
+          "id": "m",
+          "text": "M"
+        }
+      ],
+      "right": [
+        {
+          "id": "reply",
+          "text": "Une réponse d'écho a été reçue"
+        },
+        {
+          "id": "timeout",
+          "text": "Aucune réponse n'est arrivée avant l'expiration du délai"
+        },
+        {
+          "id": "unreach",
+          "text": "Un message ICMP Destination Unreachable a été reçu"
+        },
+        {
+          "id": "frag",
+          "text": "Le paquet ne pouvait pas être fragmenté"
+        },
+        {
+          "id": "ttl",
+          "text": "La durée de vie du paquet (TTL) a expiré en chemin"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "bang": "reply",
+        "dot": "timeout",
+        "u": "unreach",
+        "m": "frag"
+      }
+    },
+    "explanation": "Le ping IOS affiche un caractère par écho envoyé. « ! » : une réponse d'écho est revenue. « . » : rien n'est arrivé avant le délai (2 secondes par défaut), par exemple parce que l'écho ou sa réponse a été perdu. « U » : un routeur a renvoyé un ICMP Destination Unreachable, typiquement parce qu'il n'avait aucune route vers la destination. « M » : le paquet devait être fragmenté alors que le bit DF était positionné (could not fragment). Un « U » oriente donc le dépannage vers la table de routage d'un routeur du chemin.",
+    "distractorNotes": {
+      "ttl": "Une expiration de durée de vie (ICMP Time Exceeded) s'affiche « & » ; aucun des quatre caractères proposés ne la représente."
+    },
+    "reference": "Cisco, « Understanding the Ping and Traceroute Commands » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-destinations-to-routes-matching-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Reportez-vous à l'exhibit. Associez chaque destination à la route que R1 utilise pour la joindre.",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is 192.0.2.1 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 192.0.2.1\n      10.0.0.0/8 is variably subnetted, 7 subnets, 5 masks\nC        10.0.0.0/30 is directly connected, GigabitEthernet0/1\nL        10.0.0.1/32 is directly connected, GigabitEthernet0/1\nC        10.0.0.4/30 is directly connected, GigabitEthernet0/2\nL        10.0.0.5/32 is directly connected, GigabitEthernet0/2\nO        10.128.0.0/9 [110/2] via 10.0.0.2, 00:03:19, GigabitEthernet0/1\nD        10.160.0.0/11 [90/3072] via 10.0.0.6, 00:03:02, GigabitEthernet0/2\nS        10.176.0.0/12 [1/0] via 10.0.0.2\n      192.0.2.0/24 is variably subnetted, 2 subnets, 2 masks\nC        192.0.2.0/30 is directly connected, GigabitEthernet0/0\nL        192.0.2.2/32 is directly connected, GigabitEthernet0/0",
+      "left": [
+        {
+          "id": "d1",
+          "text": "Paquet destiné à 10.150.1.1"
+        },
+        {
+          "id": "d2",
+          "text": "Paquet destiné à 10.175.255.1"
+        },
+        {
+          "id": "d3",
+          "text": "Paquet destiné à 10.176.0.9"
+        },
+        {
+          "id": "d4",
+          "text": "Paquet destiné à 10.127.9.9"
+        }
+      ],
+      "right": [
+        {
+          "id": "r12",
+          "text": "10.176.0.0/12 via 10.0.0.2"
+        },
+        {
+          "id": "rd",
+          "text": "0.0.0.0/0 via 192.0.2.1"
+        },
+        {
+          "id": "r9",
+          "text": "10.128.0.0/9 via 10.0.0.2"
+        },
+        {
+          "id": "drop",
+          "text": "Aucune : le paquet est abandonné"
+        },
+        {
+          "id": "r11",
+          "text": "10.160.0.0/11 via 10.0.0.6"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "d1": "r9",
+        "d2": "r11",
+        "d3": "r12",
+        "d4": "rd"
+      }
+    },
+    "explanation": "Deuxième octet de chaque route : la /9 couvre 128 à 255, la /11 160 à 191 et la /12 176 à 191. 10.150.1.1 (150) n'est que dans la /9. 10.175.255.1 (175) est dans la /9 et la /11, mais juste sous la /12 : la /11 l'emporte. 10.176.0.9 est dans les trois : la /12, la plus longue, est retenue. 10.127.9.9 (127) est juste sous la /9 : aucune route 10.x ne le contient, il suit 0.0.0.0/0 vers 192.0.2.1.",
+    "distractorNotes": {
+      "drop": "R1 a une passerelle de dernier recours (192.0.2.1) : un paquet sans correspondance plus précise suit la route par défaut au lieu d'être abandonné."
+    },
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  },
+  {
+    "slug": "ccna-3.2-routes-match-classification-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "R1 reçoit un paquet destiné à 172.20.13.130. Classez chacune des routes suivantes de sa table selon son rôle pour ce paquet.",
+      "left": [
+        {
+          "id": "l16",
+          "text": "172.20.0.0/16"
+        },
+        {
+          "id": "l22",
+          "text": "172.20.12.0/22"
+        },
+        {
+          "id": "l25a",
+          "text": "172.20.13.128/25"
+        },
+        {
+          "id": "l25b",
+          "text": "172.20.13.0/25"
+        },
+        {
+          "id": "l26",
+          "text": "172.20.13.192/26"
+        }
+      ],
+      "right": [
+        {
+          "id": "used",
+          "text": "Correspond et sera utilisée"
+        },
+        {
+          "id": "match",
+          "text": "Correspond, mais n'est pas retenue"
+        },
+        {
+          "id": "nomatch",
+          "text": "Ne correspond pas"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l16": "match",
+        "l22": "match",
+        "l25a": "used",
+        "l25b": "nomatch",
+        "l26": "nomatch"
+      }
+    },
+    "explanation": "Quatrième octet : 130 = 10000010. 172.20.13.128/25 couvre .128 à .255 : elle correspond, et c'est la plus longue de celles qui correspondent, donc elle est utilisée. 172.20.13.0/25 couvre .0 à .127 : non. 172.20.13.192/26 couvre .192 à .255 : 130 commence par 10, pas par 11, donc non, malgré sa longueur. 172.20.12.0/22 couvre 172.20.12.0 à 172.20.15.255 et 172.20.0.0/16 tout 172.20.x.x : elles correspondent, mais sont moins précises.",
+    "distractorNotes": {},
+    "reference": "RFC 1812 ; Cisco, « Route Selection in Cisco Routers » (note technique)"
+  }
+]

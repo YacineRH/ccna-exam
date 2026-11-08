@@ -1,0 +1,1343 @@
+[
+  {
+    "slug": "ccna-6.1-automation-scale-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise passe de 50 à 500 agences en trois ans, sans augmenter son équipe réseau. En quoi l'automatisation l'aide-t-elle à absorber cette croissance ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle supprime le besoin de superviser les équipements une fois déployés."
+        },
+        {
+          "id": "b",
+          "text": "Elle rend inutile toute connaissance des protocoles par l'équipe réseau."
+        },
+        {
+          "id": "c",
+          "text": "Un même processus s'applique à un nombre quelconque d'équipements, avec un effort humain qui croît peu."
+        },
+        {
+          "id": "d",
+          "text": "Elle augmente la bande passante disponible sur les liens WAN des agences."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'automatisation décrit une fois la tâche (modèle, script, playbook) puis l'exécute sur autant d'équipements que nécessaire. L'effort humain porte sur la conception et la validation du processus, pas sur chaque équipement : il croît donc beaucoup moins vite que le parc. C'est ce qui permet la mise à l'échelle sans multiplier les effectifs, tout en gardant des configurations cohérentes.",
+    "distractorNotes": {
+      "a": "La supervision reste nécessaire : l'automatisation applique des changements, elle ne garantit pas l'absence de pannes.",
+      "b": "Les modèles et scripts doivent être conçus et validés par des personnes qui comprennent le réseau ; une erreur de conception est reproduite partout.",
+      "d": "L'automatisation agit sur la gestion des équipements, pas sur la capacité physique des liens."
+    },
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-netdevops-definition-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Que désigne le terme NetDevOps ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un protocole de gestion qui remplace SNMP sur les équipements réseau."
+        },
+        {
+          "id": "b",
+          "text": "L'application aux réseaux des pratiques DevOps : contrôle de version, tests automatisés et déploiement continu."
+        },
+        {
+          "id": "c",
+          "text": "Un mode d'exploitation où chaque ingénieur modifie directement la production en CLI."
+        },
+        {
+          "id": "d",
+          "text": "Une architecture matérielle qui sépare plan de contrôle et plan de données."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "NetDevOps transpose au réseau les pratiques issues du développement logiciel (DevOps) : configurations et modèles stockés dans un système de contrôle de version, revue des changements, tests automatisés en maquette et pipelines d'intégration et de déploiement continus (CI/CD). L'objectif est de livrer des changements plus fréquents, plus sûrs et traçables.",
+    "distractorNotes": {
+      "a": "NetDevOps est une démarche, pas un protocole ; NETCONF ou RESTCONF sont des protocoles de gestion.",
+      "c": "C'est précisément la gestion manuelle que NetDevOps cherche à remplacer par des changements versionnés et testés.",
+      "d": "Cette description correspond au SDN, pas à NetDevOps."
+    },
+    "reference": "Cisco DevNet, blog « Anatomy of NetDevOps »"
+  },
+  {
+    "slug": "ccna-6.1-manual-change-overwritten-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les configurations d'un parc sont générées à partir d'un dépôt Git (source de vérité) et redéployées chaque nuit par un outil d'automatisation qui remplace la configuration de chaque équipement par la configuration de référence. Un technicien ajoute en CLI une description d'interface sur un commutateur, sans modifier le dépôt. Que se passe-t-il le plus probablement ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le dépôt Git est mis à jour automatiquement avec la nouvelle description."
+        },
+        {
+          "id": "b",
+          "text": "Le commutateur refuse la commande car il est géré par un outil d'automatisation."
+        },
+        {
+          "id": "c",
+          "text": "La description est conservée car l'outil ne gère que les nouveaux équipements."
+        },
+        {
+          "id": "d",
+          "text": "Le prochain déploiement efface la description, absente de la configuration de référence."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Avec une source de vérité, c'est le dépôt qui fait foi : la modification faite hors outil crée une dérive entre l'équipement et la référence. Comme l'outil remplace la configuration de l'équipement par la référence, il la rétablit au prochain passage et la description disparaît. Tout changement durable doit donc passer par le dépôt (modification, revue, déploiement), ce qui garantit aussi sa traçabilité.",
+    "distractorNotes": {
+      "a": "Un outil de déploiement pousse la référence vers les équipements ; il ne réécrit pas le dépôt à partir de la configuration en cours.",
+      "b": "IOS accepte la commande : rien n'empêche un accès CLI direct, d'où le risque de dérive.",
+      "c": "L'outil redéploie chaque nuit tout le parc, pas seulement les nouveaux équipements."
+    },
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-automation-investment-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME gère six routeurs dont la configuration change deux fois par an. Quelle affirmation sur l'automatisation de cette gestion est la plus juste ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le gain est faible : l'effort initial (modèles, tests) se rentabilise surtout sur un grand parc."
+        },
+        {
+          "id": "b",
+          "text": "Le gain est immédiat : l'automatisation ne demande ni développement ni test préalable des modèles."
+        },
+        {
+          "id": "c",
+          "text": "Le gain est nul : les routeurs de PME ne disposent pas d'un accès SSH utilisable par un outil."
+        },
+        {
+          "id": "d",
+          "text": "Le gain est garanti : les routeurs IOS XE récents ne se configurent plus qu'au moyen d'API."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'automatisation a un coût d'entrée : écrire et tester des modèles ou scripts, mettre en place un dépôt, former l'équipe. Ce coût est vite amorti quand la tâche est répétée souvent ou sur beaucoup d'équipements ; pour six routeurs modifiés deux fois par an, le bénéfice est limité, même si la sauvegarde ou la vérification de conformité automatisées peuvent rester utiles.",
+    "distractorNotes": {
+      "b": "Un modèle ou un script doit être écrit puis validé en maquette ; c'est justement l'investissement initial.",
+      "c": "Des outils comme Ansible gèrent des routeurs IOS par SSH ; l'accès n'est pas la limite.",
+      "d": "IOS XE conserve la CLI ; les API (NETCONF, RESTCONF) s'y ajoutent sans la remplacer, et rien n'impose l'automatisation."
+    },
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-drift-emergency-route-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un outil compare chaque nuit la configuration en cours de R1 à celle générée depuis la source de vérité, puis remplace la configuration de l'équipement par la référence. La route a été ajoutée en urgence pour rétablir l'accès à un nouveau site, et elle doit rester. Quelle action est appropriée avant le prochain déploiement ?",
+      "exhibit": "Rapport de conformite - R1\n--- reference (source de verite)\n+++ running-config\n@@ routage statique @@\n ip route 0.0.0.0 0.0.0.0 203.0.113.1\n+ip route 10.50.0.0 255.255.0.0 10.1.1.2",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aucune : l'outil conserve les lignes présentes uniquement dans la running-config."
+        },
+        {
+          "id": "b",
+          "text": "Ajouter la route dans la source de vérité, la faire valider, puis laisser le déploiement s'exécuter."
+        },
+        {
+          "id": "c",
+          "text": "Enregistrer la route avec copy running-config startup-config pour la protéger."
+        },
+        {
+          "id": "d",
+          "text": "Supprimer la route par défaut de la référence pour que les deux configurations soient identiques."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le rapport montre une ligne (+) présente dans la running-config mais absente de la référence : c'est une dérive. Comme l'outil remplace la configuration par la référence, la route serait supprimée au prochain passage et l'accès au nouveau site coupé. Le changement d'urgence doit donc être régularisé dans la source de vérité (modification, revue, validation) ; la référence et l'équipement redeviennent alors identiques et le déploiement ne retire plus rien.",
+    "distractorNotes": {
+      "a": "L'outil remplace la configuration par la référence : une ligne absente de la référence est retirée, pas conservée.",
+      "c": "La startup-config n'est pas la source de vérité : l'outil remplacera quand même la configuration par la référence, qui ne contient pas la route.",
+      "d": "La route par défaut figure dans les deux configurations ; la retirer couperait l'accès Internet sans résoudre l'écart."
+    },
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-template-variables-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une équipe génère la configuration de ses 300 commutateurs d'accès à partir d'un modèle unique et d'un fichier de variables par équipement (nom, adresse de gestion, VLAN). Quel est le principal intérêt de cette séparation ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque commutateur peut avoir une structure de configuration entièrement différente."
+        },
+        {
+          "id": "b",
+          "text": "Les variables ne sont plus nécessaires une fois la première configuration poussée."
+        },
+        {
+          "id": "c",
+          "text": "Une structure commune à tous ; seules les valeurs propres à chaque commutateur changent."
+        },
+        {
+          "id": "d",
+          "text": "Le modèle remplace la running-config, ce qui supprime le besoin d'une startup-config."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le modèle décrit une fois la configuration type d'un rôle (services, sécurité, conventions) et les variables portent ce qui est propre à chaque équipement. Toute évolution du standard se fait à un seul endroit et se retrouve à l'identique sur tous les commutateurs ; les écarts ne peuvent venir que des variables, faciles à relire. C'est la base de la cohérence d'un parc automatisé.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : le modèle impose une structure commune, justement pour éviter des configurations hétérogènes.",
+      "b": "Les variables sont réutilisées à chaque génération, par exemple lors d'une évolution du modèle.",
+      "d": "Le modèle produit une configuration à déployer ; IOS garde ses running-config et startup-config."
+    },
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-version-control-repo-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une démarche NetDevOps, où sont habituellement conservés les modèles de configuration qui servent de référence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dans la mémoire flash de chaque équipement, sous forme de fichiers de sauvegarde."
+        },
+        {
+          "id": "b",
+          "text": "Dans un système de contrôle de version tel que Git."
+        },
+        {
+          "id": "c",
+          "text": "Dans les messages syslog envoyés par les équipements."
+        },
+        {
+          "id": "d",
+          "text": "Dans la table MIB SNMP de l'équipement de cœur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un système de contrôle de version comme Git conserve chaque version des modèles et des variables, avec l'auteur, la date et le motif du changement. Il permet la revue des modifications avant fusion, la comparaison entre versions et le retour à une version antérieure : il devient la source de vérité du réseau.",
+    "distractorNotes": {
+      "a": "Des sauvegardes locales, dispersées sur chaque équipement, n'offrent ni historique centralisé ni revue des changements.",
+      "c": "Syslog transporte des événements, pas des configurations de référence.",
+      "d": "La MIB décrit des objets gérés interrogeables par SNMP ; ce n'est pas un dépôt de modèles."
+    },
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-automation-limits-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent des limites ou des risques de l'automatisation du réseau ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle exige de nouvelles compétences (scripts, modèles, contrôle de version) et un effort initial."
+        },
+        {
+          "id": "b",
+          "text": "Elle oblige à remplacer les équipements existants par des modèles dédiés au SDN."
+        },
+        {
+          "id": "c",
+          "text": "Elle augmente le nombre d'erreurs de frappe lors des changements répétitifs."
+        },
+        {
+          "id": "d",
+          "text": "Une erreur dans un modèle validé trop vite est reproduite sur tous les équipements ciblés."
+        },
+        {
+          "id": "e",
+          "text": "Elle empêche de revenir à une configuration antérieure."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "L'automatisation n'est pas gratuite : il faut apprendre à écrire des modèles et des scripts, utiliser Git et tester. Et sa rapidité joue dans les deux sens : un modèle faux est appliqué partout en quelques minutes. D'où l'importance des tests en maquette, de la revue et des déploiements progressifs. En revanche, elle réduit les erreurs de saisie et facilite le retour arrière grâce au versionnement.",
+    "distractorNotes": {
+      "b": "Les outils courants gèrent les équipements existants par SSH, NETCONF ou RESTCONF ; aucun remplacement n'est requis.",
+      "c": "C'est l'inverse : la commande est générée, pas retapée, ce qui supprime les fautes de frappe.",
+      "e": "Avec un dépôt versionné, on redéploie simplement la version précédente."
+    },
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-automation-candidates-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux tâches se prêtent le mieux à l'automatisation ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Choisir l'architecture d'un nouveau campus."
+        },
+        {
+          "id": "b",
+          "text": "Sauvegarder chaque nuit la configuration de tous les équipements."
+        },
+        {
+          "id": "c",
+          "text": "Définir la politique de sécurité de l'entreprise."
+        },
+        {
+          "id": "d",
+          "text": "Négocier le contrat d'un nouvel opérateur WAN."
+        },
+        {
+          "id": "e",
+          "text": "Vérifier sur tout le parc la présence des serveurs NTP et syslog standard."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Les meilleures candidates à l'automatisation sont des tâches répétitives, bien définies et appliquées à de nombreux équipements : sauvegarde des configurations, contrôles de conformité, déploiement d'un paramètre standard. Les tâches qui demandent du jugement, de la négociation ou des décisions d'architecture restent humaines.",
+    "distractorNotes": {
+      "a": "Le choix d'architecture repose sur l'analyse des besoins et des contraintes ; ce n'est pas une tâche répétitive.",
+      "c": "La politique de sécurité est une décision de l'entreprise ; l'automatisation peut ensuite l'appliquer, pas la définir.",
+      "d": "Une négociation commerciale n'a rien d'une tâche technique répétitive."
+    },
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-netdevops-pipeline-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une équipe veut fiabiliser ses changements selon une démarche NetDevOps. Quelles trois pratiques en font partie ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Versionner les modèles et les variables dans un dépôt Git."
+        },
+        {
+          "id": "b",
+          "text": "Modifier la production en CLI, puis recopier les changements dans le dépôt une fois par mois."
+        },
+        {
+          "id": "c",
+          "text": "Exécuter des tests automatisés (syntaxe, maquette) avant chaque déploiement."
+        },
+        {
+          "id": "d",
+          "text": "Déployer chaque changement simultanément sur tout le parc pour gagner du temps."
+        },
+        {
+          "id": "e",
+          "text": "Faire relire chaque modification par un pair avant sa fusion dans la branche principale."
+        },
+        {
+          "id": "f",
+          "text": "Désactiver la journalisation des changements pour accélérer les déploiements."
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "NetDevOps s'appuie sur trois piliers visibles ici : le contrôle de version (historique, retour arrière), la revue par un pair (demande de fusion approuvée) et les tests automatisés intégrés au pipeline avant tout déploiement. On y ajoute souvent un déploiement progressif (groupe pilote) et une vérification après changement. Le dépôt doit rester la source de vérité, ce qui exclut les modifications directes en production.",
+    "distractorNotes": {
+      "b": "Modifier d'abord la production crée des dérives et fait perdre au dépôt son rôle de source de vérité.",
+      "d": "Un déploiement simultané maximise l'impact d'une erreur ; on préfère un groupe pilote puis une généralisation.",
+      "f": "La traçabilité est un objectif de la démarche ; supprimer la journalisation va à son encontre."
+    },
+    "reference": "Cisco DevNet, blog « Anatomy of NetDevOps »"
+  },
+  {
+    "slug": "ccna-6.1-configuration-drift-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un outil compare la configuration en cours de chaque équipement à la configuration de référence de la source de vérité, et signale les écarts introduits par des modifications manuelles. Comment appelle-t-on cet écart progressif entre l'état réel et l'état voulu ?",
+      "fields": [
+        {
+          "id": "f1",
+          "label": "Terme, en français ou en anglais"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "f1": {
+          "accepted": [
+            "dérive de configuration",
+            "derive de configuration",
+            "dérive de la configuration",
+            "derive de la configuration",
+            "configuration drift",
+            "dérive",
+            "derive",
+            "drift",
+            "dérive des configurations",
+            "derive des configurations"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "On parle de dérive de configuration (configuration drift) : au fil des interventions manuelles, la configuration réelle de chaque équipement s'écarte de la configuration voulue, décrite dans la source de vérité. La détection de dérive compare régulièrement les deux ; chaque écart est ensuite soit intégré à la référence, soit corrigé par un redéploiement.",
+    "distractorNotes": {},
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-netdevops-change-order-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Placez dans l'ordre les étapes d'un changement de configuration selon une démarche NetDevOps.",
+      "items": [
+        {
+          "id": "i1",
+          "text": "Modifier le modèle de configuration dans une branche du dépôt."
+        },
+        {
+          "id": "i2",
+          "text": "Ouvrir une demande de fusion, qui déclenche les tests automatisés."
+        },
+        {
+          "id": "i3",
+          "text": "Faire approuver la demande par un pair une fois les tests réussis."
+        },
+        {
+          "id": "i4",
+          "text": "Déployer la nouvelle configuration sur un groupe pilote."
+        },
+        {
+          "id": "i5",
+          "text": "Généraliser le déploiement au reste du parc."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "i1",
+        "i2",
+        "i3",
+        "i4",
+        "i5"
+      ]
+    },
+    "explanation": "Le changement naît dans une branche du dépôt, ce qui le garde isolé de la référence. La demande de fusion lance le pipeline de tests (syntaxe, maquette), puis un pair approuve une fois les tests réussis. Après fusion, on déploie d'abord sur un groupe pilote pour limiter l'impact d'une erreur, avant de généraliser.",
+    "distractorNotes": {},
+    "reference": "Cisco DevNet, blog « Anatomy of NetDevOps »"
+  },
+  {
+    "slug": "ccna-6.1-drift-remediation-order-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Placez dans l'ordre les étapes d'un cycle de détection et de correction de la dérive de configuration.",
+      "items": [
+        {
+          "id": "i1",
+          "text": "Collecter la running-config de chaque équipement."
+        },
+        {
+          "id": "i2",
+          "text": "La comparer à la configuration générée depuis la source de vérité."
+        },
+        {
+          "id": "i3",
+          "text": "Produire un rapport des écarts constatés."
+        },
+        {
+          "id": "i4",
+          "text": "Décider pour chaque écart : l'intégrer à la référence ou le rejeter."
+        },
+        {
+          "id": "i5",
+          "text": "Redéployer la configuration de référence pour éliminer les écarts rejetés."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "i1",
+        "i2",
+        "i3",
+        "i4",
+        "i5"
+      ]
+    },
+    "explanation": "On ne peut comparer qu'après avoir collecté l'état réel. La comparaison avec la référence produit la liste des écarts, qui doivent être analysés : un changement d'urgence légitime est intégré à la source de vérité, un écart non autorisé est rejeté. Le redéploiement vient en dernier ; le faire avant la décision effacerait aussi les changements légitimes.",
+    "distractorNotes": {},
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-manual-vs-automated-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque caractéristique selon le mode de gestion de configuration auquel elle correspond.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Chaque équipement est configuré en CLI, une session à la fois."
+        },
+        {
+          "id": "l2",
+          "text": "Chaque changement est historisé dans un dépôt Git avec son auteur."
+        },
+        {
+          "id": "l3",
+          "text": "Des configurations hétérogènes s'accumulent au fil des interventions."
+        },
+        {
+          "id": "l4",
+          "text": "Le même modèle est appliqué à des centaines d'équipements en une exécution."
+        },
+        {
+          "id": "l5",
+          "text": "Les écarts avec la référence sont repérés par comparaison automatique."
+        }
+      ],
+      "right": [
+        {
+          "id": "manual",
+          "text": "Gestion manuelle"
+        },
+        {
+          "id": "auto",
+          "text": "Gestion automatisée"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "manual",
+        "l2": "auto",
+        "l3": "manual",
+        "l4": "auto",
+        "l5": "auto"
+      }
+    },
+    "explanation": "La gestion manuelle repose sur des sessions CLI successives, équipement par équipement ; elle laisse peu de traces et produit des configurations qui divergent avec le temps. La gestion automatisée part d'une source de vérité versionnée, applique un même modèle à grande échelle et compare régulièrement l'état réel à la référence pour détecter la dérive.",
+    "distractorNotes": {},
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.1-automation-terms-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque terme à sa définition.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Source de vérité"
+        },
+        {
+          "id": "l2",
+          "text": "Idempotence"
+        },
+        {
+          "id": "l3",
+          "text": "Modèle de configuration"
+        },
+        {
+          "id": "l4",
+          "text": "Infrastructure as Code"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Référentiel qui fait foi pour l'état voulu du réseau."
+        },
+        {
+          "id": "r2",
+          "text": "Propriété d'une tâche dont la répétition ne change plus l'état une fois atteint."
+        },
+        {
+          "id": "r3",
+          "text": "Configuration type dont les valeurs propres à chaque équipement sont des variables."
+        },
+        {
+          "id": "r4",
+          "text": "Description de l'infrastructure dans des fichiers versionnés, appliqués par des outils."
+        },
+        {
+          "id": "r5",
+          "text": "Copie de la running-config enregistrée en NVRAM au démarrage."
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "r1",
+        "l2": "r2",
+        "l3": "r3",
+        "l4": "r4"
+      }
+    },
+    "explanation": "La source de vérité définit l'état voulu ; les modèles et leurs variables produisent les configurations ; l'Infrastructure as Code traite ces fichiers comme du code (versionnés, relus, testés). Une tâche idempotente peut être relancée sans risque : si l'état voulu est déjà atteint, elle ne modifie rien.",
+    "distractorNotes": {
+      "r5": "Ce n'est aucun des termes proposés, et c'est inexact : la startup-config est enregistrée en NVRAM par copy running-config startup-config, pas au démarrage."
+    },
+    "reference": "Cisco Press, CCNA 200-301 Official Cert Guide, Volume 2 (W. Odom)"
+  },
+  {
+    "slug": "ccna-6.4-supervised-failure-labels-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un modèle est entraîné sur un historique de mesures d'alimentations électriques, chaque relevé étant étiqueté « panne dans les 7 jours » ou « normal ». Quelle approche d'apprentissage automatique est utilisée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Apprentissage non supervisé"
+        },
+        {
+          "id": "b",
+          "text": "IA générative"
+        },
+        {
+          "id": "c",
+          "text": "Apprentissage supervisé"
+        },
+        {
+          "id": "d",
+          "text": "Système expert à règles fixes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'apprentissage supervisé utilise des exemples étiquetés : pour chaque relevé, le résultat attendu est connu. Le modèle apprend la relation entre mesures et étiquette, puis prédit l'étiquette pour de nouveaux relevés, ici le risque de panne. C'est une approche typique de l'IA prédictive.",
+    "distractorNotes": {
+      "a": "L'apprentissage non supervisé travaille sans étiquettes, par exemple pour regrouper ou repérer des écarts.",
+      "b": "L'IA générative produit du contenu nouveau (texte, code) ; ici le modèle classe des relevés.",
+      "d": "Un système à règles fixes n'apprend rien des données ; ici le modèle est entraîné sur l'historique."
+    },
+    "reference": "ISO/IEC 22989:2022 (concepts et terminologie de l'intelligence artificielle)"
+  },
+  {
+    "slug": "ccna-6.4-aiops-definition-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Que désigne le terme AIOps ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'application de l'IA aux données d'exploitation pour détecter et anticiper les incidents."
+        },
+        {
+          "id": "b",
+          "text": "Un protocole de télémétrie en continu qui remplace SNMP sur les équipements Cisco."
+        },
+        {
+          "id": "c",
+          "text": "Une méthode de câblage structuré pour les baies des centres de données."
+        },
+        {
+          "id": "d",
+          "text": "Un langage de modèles utilisé pour générer les configurations des équipements."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "AIOps (Artificial Intelligence for IT Operations) applique l'IA et l'apprentissage automatique aux grandes quantités de données d'exploitation (télémétrie, journaux, événements) : détection d'anomalies, corrélation d'alarmes, aide à l'analyse de cause, prédiction de pannes. Il s'appuie sur la supervision existante plutôt que de la remplacer.",
+    "distractorNotes": {
+      "b": "AIOps n'est pas un protocole ; il exploite les données collectées par SNMP, syslog ou la télémétrie.",
+      "c": "Le câblage n'a aucun rapport avec AIOps.",
+      "d": "Cela décrit un moteur de modèles comme Jinja2, pas AIOps."
+    },
+    "reference": "Gartner Information Technology Glossary, « AIOps (Artificial Intelligence for IT Operations) »"
+  },
+  {
+    "slug": "ccna-6.4-human-validation-remediation-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une plateforme AIOps propose de désactiver une interface qu'elle juge à l'origine d'une boucle. Pourquoi est-il recommandé qu'un ingénieur valide cette action avant son exécution ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Parce qu'une plateforme AIOps ne peut techniquement envoyer aucune commande aux équipements."
+        },
+        {
+          "id": "b",
+          "text": "Parce que le modèle peut se tromper et que l'action a un impact direct sur la production."
+        },
+        {
+          "id": "c",
+          "text": "Parce que les recommandations sont toujours fondées sur des règles écrites à la main."
+        },
+        {
+          "id": "d",
+          "text": "Parce que la désactivation d'une interface exige un redémarrage de l'équipement."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une recommandation issue d'un modèle est probabiliste : corrélation trompeuse, données incomplètes ou situation jamais vue peuvent mener à une mauvaise conclusion. Désactiver une interface peut couper des utilisateurs ; garder un humain dans la boucle pour les actions à fort impact permet de vérifier le diagnostic et d'assumer la responsabilité du changement.",
+    "distractorNotes": {
+      "a": "Rien n'empêche techniquement une plateforme d'agir sur les équipements ; la validation est un choix de maîtrise du risque.",
+      "c": "Les recommandations AIOps reposent justement sur des modèles appris, pas seulement sur des règles écrites.",
+      "d": "La commande shutdown s'applique immédiatement, sans redémarrage."
+    },
+    "reference": "NIST AI 100-1, Artificial Intelligence Risk Management Framework (AI RMF 1.0)"
+  },
+  {
+    "slug": "ccna-6.4-conversational-assistant-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel est l'intérêt principal d'un assistant conversationnel fondé sur l'IA générative, intégré à une plateforme de gestion réseau ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer le plan de contrôle des routeurs pour calculer les routes."
+        },
+        {
+          "id": "b",
+          "text": "Garantir que chaque réponse fournie est exacte sans vérification."
+        },
+        {
+          "id": "c",
+          "text": "Chiffrer le trafic de gestion entre la plateforme et les équipements."
+        },
+        {
+          "id": "d",
+          "text": "Interroger le réseau en langage naturel et obtenir des synthèses de son état."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un assistant conversationnel s'appuie sur un grand modèle de langage pour comprendre une demande en langage naturel (« quels sites ont eu des problèmes Wi-Fi hier ? »), interroger les données de la plateforme et formuler une réponse ou un résumé. Il accélère l'accès à l'information, mais ses réponses restent à vérifier.",
+    "distractorNotes": {
+      "a": "Le calcul des routes reste assuré par les protocoles de routage des équipements.",
+      "b": "Un modèle génératif peut produire des réponses fausses mais plausibles ; la vérification reste nécessaire.",
+      "c": "Le chiffrement relève de protocoles comme SSH ou TLS, pas d'un assistant conversationnel."
+    },
+    "reference": "NIST AI 600-1, Generative Artificial Intelligence Profile"
+  },
+  {
+    "slug": "ccna-6.4-genai-nonexistent-command-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un assistant d'IA générative propose à un ingénieur une commande IOS qui, une fois saisie, est rejetée avec « % Invalid input detected ». Quelle est l'explication la plus probable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le modèle génère un texte plausible, sans garantie d'exactitude."
+        },
+        {
+          "id": "b",
+          "text": "Le modèle a volontairement modifié la commande pour tester l'ingénieur."
+        },
+        {
+          "id": "c",
+          "text": "Le routeur bloque les commandes générées par une IA."
+        },
+        {
+          "id": "d",
+          "text": "Le modèle a lu la configuration du routeur, mais l'a mal interprétée."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un modèle génératif prédit la suite de texte la plus probable ; il peut ainsi « inventer » une commande à la syntaxe crédible qui n'existe pas dans la version d'IOS concernée. Ce phénomène, appelé hallucination (ou confabulation), impose de vérifier toute commande dans la documentation ou en maquette avant usage.",
+    "distractorNotes": {
+      "b": "Un modèle n'a pas d'intention de tester l'utilisateur ; l'erreur vient de sa nature probabiliste.",
+      "c": "IOS ne sait pas d'où vient une commande ; il la rejette parce qu'elle est invalide.",
+      "d": "Rien n'indique que le modèle a eu accès au routeur ; la commande est invalide quel que soit l'état de la configuration."
+    },
+    "reference": "NIST AI 600-1, Generative Artificial Intelligence Profile"
+  },
+  {
+    "slug": "ccna-6.4-biased-baseline-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un outil de détection d'anomalies a appris la référence de trafic d'un campus universitaire uniquement pendant le mois d'août, période de fermeture. À la rentrée, il signale des centaines d'anomalies de débit et de nombre de clients Wi-Fi, alors que le réseau fonctionne normalement. Quelle est la cause la plus probable ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le réseau subit une attaque, car le trafic dépasse la référence apprise."
+        },
+        {
+          "id": "b",
+          "text": "L'apprentissage non supervisé ne peut pas traiter des mesures de débit."
+        },
+        {
+          "id": "c",
+          "text": "Les données d'entraînement ne représentent pas l'activité normale du campus."
+        },
+        {
+          "id": "d",
+          "text": "Le modèle aurait dû être entraîné sur des exemples d'attaques étiquetés."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un modèle n'est bon que si ses données d'entraînement sont représentatives. Appris pendant la fermeture, il considère comme « normal » un trafic très faible ; l'activité ordinaire de la rentrée apparaît alors comme une anomalie : ce sont des faux positifs. Il faut réapprendre la référence sur une période représentative, idéalement incluant les variations saisonnières, et faire valider les alertes par l'exploitant.",
+    "distractorNotes": {
+      "a": "Les alertes viennent d'une référence faussée ; l'énoncé précise que le réseau fonctionne normalement.",
+      "b": "La détection d'anomalies non supervisée traite très bien des mesures numériques comme le débit.",
+      "d": "Des exemples d'attaques n'apprendraient pas au modèle le trafic normal de la rentrée ; le problème est la période de référence."
+    },
+    "reference": "NIST AI 100-1, Artificial Intelligence Risk Management Framework (AI RMF 1.0)"
+  },
+  {
+    "slug": "ccna-6.4-catalyst-center-ai-analytics-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Qu'apporte la fonction AI Network Analytics de Cisco Catalyst Center par rapport à des seuils d'alerte fixes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle applique le même seuil à tous les sites, défini une fois par l'administrateur."
+        },
+        {
+          "id": "b",
+          "text": "Elle apprend des références dynamiques propres au réseau et signale les écarts significatifs."
+        },
+        {
+          "id": "c",
+          "text": "Elle remplace la collecte de télémétrie par des estimations sans mesure."
+        },
+        {
+          "id": "d",
+          "text": "Elle génère automatiquement les configurations de tous les équipements."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "AI Network Analytics utilise l'apprentissage automatique pour construire des références (baselines) dynamiques à partir des données du réseau, par exemple sur l'onboarding des clients ou les performances Wi-Fi, et lève un problème quand le comportement s'en écarte nettement. On évite ainsi des seuils fixes trop sensibles sur un site et trop laxistes sur un autre.",
+    "distractorNotes": {
+      "a": "Un seuil unique et statique est justement ce que les références dynamiques cherchent à dépasser.",
+      "c": "Les modèles ont besoin de données mesurées ; ils s'appuient sur la télémétrie collectée par Catalyst Center.",
+      "d": "La génération de configurations n'est pas le rôle de cette fonction d'analyse."
+    },
+    "reference": "Cisco Catalyst Center Assurance User Guide (AI Network Analytics)"
+  },
+  {
+    "slug": "ccna-6.4-anomaly-detection-facts-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles trois affirmations sur la détection d'anomalies par apprentissage automatique dans un réseau sont exactes ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une anomalie est un écart par rapport au comportement appris, pas forcément une panne."
+        },
+        {
+          "id": "b",
+          "text": "Le modèle n'a besoin d'aucune donnée historique pour établir sa référence."
+        },
+        {
+          "id": "c",
+          "text": "La qualité de la référence dépend de la période et de la qualité des données collectées."
+        },
+        {
+          "id": "d",
+          "text": "Elle rend inutile la collecte de télémétrie et de journaux."
+        },
+        {
+          "id": "e",
+          "text": "Des faux positifs restent possibles, d'où la validation des alertes par l'exploitant."
+        },
+        {
+          "id": "f",
+          "text": "Elle garantit qu'aucun incident ne passe inaperçu."
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "La détection d'anomalies compare le comportement observé à une référence apprise sur des données historiques. Un écart peut être bénin (événement exceptionnel, changement planifié) : une anomalie n'est pas une panne. La référence n'est fiable que si les données sont représentatives et de bonne qualité. Comme tout modèle statistique, elle produit des faux positifs et des faux négatifs ; l'exploitant reste nécessaire pour qualifier les alertes.",
+    "distractorNotes": {
+      "b": "La référence est justement apprise à partir de l'historique ; sans données, rien n'est appris.",
+      "d": "Le modèle consomme la télémétrie et les journaux ; sans collecte, il n'a rien à analyser.",
+      "f": "Aucun modèle n'exclut les faux négatifs : un incident proche du comportement normal peut passer inaperçu."
+    },
+    "reference": "NIST AI 100-1, Artificial Intelligence Risk Management Framework (AI RMF 1.0)"
+  },
+  {
+    "slug": "ccna-6.4-genai-limits-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent des limites des grands modèles de langage utilisés comme assistants réseau ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ils peuvent produire des réponses fausses présentées avec assurance."
+        },
+        {
+          "id": "b",
+          "text": "Ils ne peuvent produire que des réponses en anglais."
+        },
+        {
+          "id": "c",
+          "text": "Ils ne connaissent votre réseau que si on le leur décrit."
+        },
+        {
+          "id": "d",
+          "text": "Ils citent toujours la source exacte de chacune de leurs affirmations."
+        },
+        {
+          "id": "e",
+          "text": "Ils donnent toujours la même réponse à la même question."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Un grand modèle de langage peut halluciner : il formule avec assurance une réponse fausse mais plausible. Ses connaissances proviennent de ses données d'entraînement, arrêtées à une date donnée ; il ne connaît ni la topologie ni la configuration de votre réseau, sauf si on les lui fournit. D'où la relecture et le test de toute proposition avant usage.",
+    "distractorNotes": {
+      "b": "Ces modèles traitent de nombreuses langues, dont le français.",
+      "d": "Un modèle peut ne citer aucune source, voire en inventer ; c'est une limite, pas une garantie.",
+      "e": "La génération comporte une part d'aléa : la même question peut recevoir des réponses différentes."
+    },
+    "reference": "NIST AI 600-1, Generative Artificial Intelligence Profile"
+  },
+  {
+    "slug": "ccna-6.4-hallucination-term-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un assistant d'IA générative affirme avec assurance qu'une fonction existe sur un modèle de commutateur, alors qu'elle n'existe pas. Quel terme désigne une réponse plausible mais fausse produite par un modèle génératif ?",
+      "fields": [
+        {
+          "id": "f1",
+          "label": "Un mot, en français ou en anglais"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "f1": {
+          "accepted": [
+            "hallucination",
+            "hallucinations",
+            "confabulation",
+            "confabulations"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "On parle d'hallucination (NIST emploie aussi le terme confabulation) : le modèle génère un contenu statistiquement plausible qui n'est pas fondé sur des faits. C'est la principale raison de faire vérifier par un humain, dans la documentation ou en maquette, toute réponse d'un assistant génératif avant de s'en servir.",
+    "distractorNotes": {},
+    "reference": "NIST AI 600-1, Generative Artificial Intelligence Profile"
+  },
+  {
+    "slug": "ccna-6.4-supervised-workflow-order-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Placez dans l'ordre les étapes de mise en place d'un modèle supervisé de prédiction de pannes.",
+      "items": [
+        {
+          "id": "i1",
+          "text": "Collecter l'historique de télémétrie des équipements."
+        },
+        {
+          "id": "i2",
+          "text": "Étiqueter chaque période selon qu'une panne a suivi ou non."
+        },
+        {
+          "id": "i3",
+          "text": "Entraîner le modèle sur une partie des données étiquetées."
+        },
+        {
+          "id": "i4",
+          "text": "Évaluer le modèle sur des données étiquetées qu'il n'a pas vues."
+        },
+        {
+          "id": "i5",
+          "text": "Déployer le modèle et surveiller la qualité de ses prédictions."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "i1",
+        "i2",
+        "i3",
+        "i4",
+        "i5"
+      ]
+    },
+    "explanation": "Un modèle supervisé a besoin de données, puis d'étiquettes qui donnent le résultat attendu. On l'entraîne sur une partie des données et on mesure sa performance sur une autre partie, jamais vue, pour vérifier qu'il généralise. Ce n'est qu'ensuite qu'on le déploie, en surveillant ses prédictions car le réseau évolue.",
+    "distractorNotes": {},
+    "reference": "ISO/IEC 22989:2022 (concepts et terminologie de l'intelligence artificielle)"
+  },
+  {
+    "slug": "ccna-6.4-predictive-vs-generative-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque usage selon le type d'IA auquel il correspond.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Estimer le risque de panne d'une alimentation à partir de ses mesures."
+        },
+        {
+          "id": "l2",
+          "text": "Rédiger un compte rendu d'incident à partir des journaux."
+        },
+        {
+          "id": "l3",
+          "text": "Anticiper la saturation d'un lien WAN d'après les tendances."
+        },
+        {
+          "id": "l4",
+          "text": "Expliquer en langage naturel la configuration d'un routeur."
+        },
+        {
+          "id": "l5",
+          "text": "Produire un brouillon de playbook à partir d'une demande écrite."
+        }
+      ],
+      "right": [
+        {
+          "id": "pred",
+          "text": "IA prédictive"
+        },
+        {
+          "id": "gen",
+          "text": "IA générative"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "pred",
+        "l2": "gen",
+        "l3": "pred",
+        "l4": "gen",
+        "l5": "gen"
+      }
+    },
+    "explanation": "L'IA prédictive apprend à partir de données passées pour estimer un résultat futur ou une probabilité (risque de panne, saturation). L'IA générative produit un contenu nouveau, souvent en langage naturel ou sous forme de code : compte rendu, explication, brouillon de playbook.",
+    "distractorNotes": {},
+    "reference": "NIST AI 600-1, Generative Artificial Intelligence Profile"
+  },
+  {
+    "slug": "ccna-6.4-ml-learning-types-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque scénario au type d'apprentissage automatique qu'il utilise.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Classer le trafic par application à partir de flux déjà étiquetés."
+        },
+        {
+          "id": "l2",
+          "text": "Regrouper des clients Wi-Fi par comportements similaires, sans catégories prédéfinies."
+        },
+        {
+          "id": "l3",
+          "text": "Prédire la latence d'un lien à partir d'historiques où la latence réelle est connue."
+        },
+        {
+          "id": "l4",
+          "text": "Repérer des pics de requêtes DNS inhabituels sans aucun exemple étiqueté."
+        }
+      ],
+      "right": [
+        {
+          "id": "sup",
+          "text": "Apprentissage supervisé"
+        },
+        {
+          "id": "unsup",
+          "text": "Apprentissage non supervisé"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "sup",
+        "l2": "unsup",
+        "l3": "sup",
+        "l4": "unsup"
+      }
+    },
+    "explanation": "L'apprentissage supervisé s'appuie sur des exemples dont la réponse est connue : classification (application d'un flux) ou régression (valeur de latence). L'apprentissage non supervisé cherche une structure dans des données non étiquetées : regroupement (clustering) de clients ou détection d'écarts par rapport au comportement habituel.",
+    "distractorNotes": {},
+    "reference": "ISO/IEC 22989:2022 (concepts et terminologie de l'intelligence artificielle)"
+  },
+  {
+    "slug": "ccna-6.4-aiops-capabilities-001",
+    "certification": "ccna",
+    "domain": "6.0",
+    "subtopic": "6.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque situation à la capacité AIOps qu'elle illustre.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Un site met trois fois plus de temps que d'habitude à associer ses clients Wi-Fi."
+        },
+        {
+          "id": "l2",
+          "text": "250 alarmes sont regroupées en un seul incident lié à la perte d'un commutateur de distribution."
+        },
+        {
+          "id": "l3",
+          "text": "La puissance optique d'un émetteur baisse régulièrement ; une défaillance est annoncée sous dix jours."
+        },
+        {
+          "id": "l4",
+          "text": "Le nombre de requêtes RADIUS d'un site s'écarte nettement de sa référence apprise."
+        }
+      ],
+      "right": [
+        {
+          "id": "anom",
+          "text": "Détection d'anomalies"
+        },
+        {
+          "id": "rca",
+          "text": "Corrélation d'événements et analyse de cause"
+        },
+        {
+          "id": "pred",
+          "text": "Prédiction de panne"
+        },
+        {
+          "id": "gen",
+          "text": "Génération de configuration"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "anom",
+        "l2": "rca",
+        "l3": "pred",
+        "l4": "anom"
+      }
+    },
+    "explanation": "La détection d'anomalies compare le comportement observé à une référence apprise (onboarding Wi-Fi lent, volume RADIUS inhabituel). La corrélation regroupe les alarmes consécutives à une même cause pour orienter vers la cause racine plutôt que vers 250 symptômes. La prédiction exploite une tendance (dégradation optique) pour annoncer une défaillance avant qu'elle survienne.",
+    "distractorNotes": {
+      "gen": "Aucune situation ne demande de produire une configuration ; ce sont des analyses de données d'exploitation."
+    },
+    "reference": "Gartner Information Technology Glossary, « AIOps (Artificial Intelligence for IT Operations) »"
+  }
+]

@@ -1,0 +1,1228 @@
+[
+  {
+    "slug": "ccna-4.2-ntp-source-role-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur R1, l'administrateur ajoute la commande « ntp source Loopback0 ». Quel est son effet ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 se synchronise sur l'horloge interne associée à l'interface Loopback0."
+        },
+        {
+          "id": "b",
+          "text": "R1 n'accepte plus les requêtes NTP qu'à destination de Loopback0."
+        },
+        {
+          "id": "c",
+          "text": "Les paquets NTP émis par R1 portent l'adresse de Loopback0 en adresse source."
+        },
+        {
+          "id": "d",
+          "text": "Les paquets NTP de R1 sortent toujours physiquement par l'interface Loopback0."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "« ntp source » choisit l'interface dont l'adresse sert d'adresse IP source aux paquets NTP émis par le routeur. On choisit souvent une loopback : elle reste up tant que le routeur fonctionne, quel que soit l'état des liens physiques, si bien que le serveur (et ses éventuelles ACL, par exemple « ntp access-group ») voit toujours la même adresse. La commande ne change ni la source de temps, ni le chemin suivi par les paquets, qui reste déterminé par la table de routage.",
+    "distractorNotes": {
+      "a": "La source de temps se définit avec « ntp server » (ou « ntp master » pour l'horloge interne) ; une interface n'a pas d'horloge propre.",
+      "b": "« ntp source » ne filtre pas les requêtes reçues ; le contrôle d'accès NTP passe par « ntp access-group ».",
+      "d": "Une loopback est une interface logique : les paquets sortent par l'interface choisie par la table de routage, seule l'adresse source change."
+    },
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-show-ntp-status-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle commande affiche sur un routeur la ligne « Clock is synchronized, stratum 4, reference is 172.16.0.1 » ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "show ntp associations"
+        },
+        {
+          "id": "b",
+          "text": "show clock"
+        },
+        {
+          "id": "c",
+          "text": "show ntp status"
+        },
+        {
+          "id": "d",
+          "text": "show running-config | include ntp"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "« show ntp status » résume l'état NTP du routeur lui-même : horloge synchronisée ou non, strate qu'il annonce et adresse de la source qu'il suit (« reference is »), puis la fréquence, la précision et l'heure de référence. Un routeur non synchronisé affiche « Clock is unsynchronized, stratum 16, no reference clock ». La strate affichée vaut celle de la référence plus 1 : ici, 172.16.0.1 est de strate 3.",
+    "distractorNotes": {
+      "a": "« show ntp associations » liste les serveurs et pairs connus, avec leur propre strate et leur joignabilité, sans la ligne « Clock is synchronized ».",
+      "b": "« show clock » affiche la date et l'heure courantes, pas la strate ni la référence NTP.",
+      "d": "La configuration montre les commandes « ntp » saisies, pas l'état de synchronisation obtenu."
+    },
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-ntp-init-unsynced-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Plusieurs minutes après la configuration de « ntp server 10.1.1.1 » sur R2, que montre cette sortie ?",
+      "exhibit": "R2# show ntp associations\n\n  address         ref clock       st   when   poll reach  delay  offset   disp\n ~10.1.1.1        .INIT.          16      -     64     0  0.000   0.000 15937.\n * sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2 est synchronisé sur 10.1.1.1, qui annonce la strate 16."
+        },
+        {
+          "id": "b",
+          "text": "R2 n'a reçu aucune réponse de 10.1.1.1 et n'est pas synchronisé."
+        },
+        {
+          "id": "c",
+          "text": "10.1.1.1 est un serveur de strate 1 relié à une horloge nommée INIT."
+        },
+        {
+          "id": "d",
+          "text": "R2 a jugé 10.1.1.1 non fiable (falseticker) et l'a écarté."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le « ~ » indique une association configurée (ici par « ntp server »), mais aucun « * » ne la marque comme sys.peer : R2 ne s'est synchronisé sur aucune source. Le compteur « reach » vaut 0 : aucune des dernières interrogations n'a obtenu de réponse (377 en octal signifierait huit réponses sur huit). La référence « .INIT. » et la strate 16 sont les valeurs d'attente d'une association qui n'a encore rien reçu. Il faut vérifier la joignabilité du serveur et qu'aucune ACL ne bloque UDP 123.",
+    "distractorNotes": {
+      "a": "La strate 16 signifie « non synchronisé » : aucun équipement ne peut se synchroniser sur une source de strate 16, et aucun « * » n'apparaît.",
+      "c": "« .INIT. » n'est pas une horloge de référence : c'est l'état initial d'une association sans réponse ; un serveur de strate 1 afficherait « st 1 ».",
+      "d": "Une source écartée comme falseticker serait marquée « x » ; ici, aucune réponse n'a même été reçue (reach 0)."
+    },
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-ntp-prefer-stratum-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R2 est configuré avec « ntp server 10.1.1.1 prefer » et « ntp server 10.2.2.2 ». Quelle strate R2 affiche-t-il dans « show ntp status » ?",
+      "exhibit": "R2# show ntp associations\n\n  address         ref clock       st   when   poll reach  delay  offset   disp\n*~10.1.1.1        192.0.2.10       3     21     64   377  1.204  -0.311  1.982\n+~10.2.2.2        198.51.100.7     2     40     64   377  9.861   1.022  2.305\n * sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured",
+      "options": [
+        {
+          "id": "a",
+          "text": "2"
+        },
+        {
+          "id": "b",
+          "text": "3"
+        },
+        {
+          "id": "c",
+          "text": "8"
+        },
+        {
+          "id": "d",
+          "text": "4"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Il faut d'abord repérer la source réellement suivie : c'est la ligne marquée « * » (sys.peer), 10.1.1.1, retenue grâce au mot-clé « prefer » alors que 10.2.2.2, de strate plus faible, n'est que candidat (« + »). Ensuite, un client annonce la strate de sa source plus 1 : 10.1.1.1 étant en strate 3 (colonne « st »), R2 est en strate 4 et « show ntp status » affiche « Clock is synchronized, stratum 4, reference is 10.1.1.1 ». La colonne « ref clock » donne la source de chaque serveur, pas celle de R2.",
+    "distractorNotes": {
+      "a": "2 est la strate de 10.2.2.2, qui n'est que candidat ; et même synchronisé sur lui, R2 serait en strate 3, pas 2.",
+      "b": "3 est la strate de la source suivie, 10.1.1.1 ; R2, qui se synchronise sur elle, se place un niveau plus bas.",
+      "c": "8 est la strate par défaut de « ntp master », commande absente de R2, qui est un simple client."
+    },
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-log-timestamp-1993-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Nous sommes en novembre 2026 et R1 a redémarré il y a quelques minutes. Pourquoi ses messages sont-ils datés du 1er mars ?",
+      "exhibit": "*Mar  1 00:04:18.207: %SYS-5-CONFIG_I: Configured from console by console\n*Mar  1 00:06:52.913: %SYS-5-CONFIG_I: Configured from console by console",
+      "options": [
+        {
+          "id": "a",
+          "text": "NTP ne transmet que l'heure du jour, sans la date, si bien que R1 garde sa date par défaut."
+        },
+        {
+          "id": "b",
+          "text": "L'horloge de R1 n'a été ni réglée manuellement ni synchronisée par NTP depuis le démarrage."
+        },
+        {
+          "id": "c",
+          "text": "La commande « clock timezone » de R1 applique un décalage erroné de plusieurs mois."
+        },
+        {
+          "id": "d",
+          "text": "R1 horodate ses messages avec sa durée de fonctionnement plutôt qu'avec la date réelle."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un routeur sans calendrier matériel (ou dont l'heure n'a jamais été réglée) démarre sur une date par défaut (le 1er mars 1993 à 00:00 UTC sur de nombreuses plates-formes) et compte à partir de là. L'astérisque devant l'horodatage signale justement une heure qui ne fait pas autorité. Les journaux sont alors inexploitables pour corréler des incidents entre équipements. La solution est de régler l'horloge (« clock set ») ou, mieux, de configurer « ntp server » pour que R1 se synchronise et date ses messages correctement.",
+    "distractorNotes": {
+      "a": "Les horodatages NTP comptent les secondes écoulées depuis 1900 : ils portent la date complète, pas seulement l'heure du jour.",
+      "c": "« clock timezone » ne décale l'affichage que d'un nombre d'heures et de minutes par rapport à UTC, jamais de plusieurs mois.",
+      "d": "Avec « service timestamps log uptime », les messages afficheraient une durée (00:04:18, 1d02h…), sans mois ni jour comme « Mar  1 »."
+    },
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-ntp-why-sync-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux raisons justifient de synchroniser l'horloge des routeurs et commutateurs avec NTP ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "OSPF ne forme ses adjacences qu'entre des routeurs dont les horloges sont synchronisées."
+        },
+        {
+          "id": "b",
+          "text": "Les messages syslog de plusieurs équipements portent des horodatages comparables entre eux."
+        },
+        {
+          "id": "c",
+          "text": "Spanning Tree compare les horodatages des BPDU pour élire le pont racine."
+        },
+        {
+          "id": "d",
+          "text": "La période de validité d'un certificat est vérifiée par rapport à l'horloge locale."
+        },
+        {
+          "id": "e",
+          "text": "HSRP déduit ses timers hello et hold de l'heure fournie par le serveur NTP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Une heure juste et commune sert d'abord au dépannage et à la sécurité : pour reconstituer un incident, il faut pouvoir aligner les messages syslog de plusieurs équipements, ce qui suppose des horodatages cohérents. Elle sert aussi à la PKI : un équipement vérifie qu'un certificat est valide en comparant ses dates « not before » et « not after » à son horloge ; une horloge fausse fait rejeter des certificats valides (SSH, HTTPS, VPN). Les protocoles de routage et de redondance, eux, n'utilisent que des temporisations locales.",
+    "distractorNotes": {
+      "a": "Les timers hello et dead d'OSPF sont des durées mesurées localement ; deux routeurs aux horloges différentes forment leur adjacence.",
+      "c": "L'élection du pont racine compare les Bridge ID (priorité puis adresse MAC), jamais une heure.",
+      "e": "Les timers HSRP sont configurés (ou par défaut 3 s et 10 s) et mesurés localement, sans lien avec NTP."
+    },
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-ntp-client-serves-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. R1 est configuré avec « ntp server 10.1.1.1 ». Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "exhibit": "R1# show ntp status\nClock is synchronized, stratum 3, reference is 10.1.1.1",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 échange ses messages NTP avec 10.1.1.1 sur le port TCP 123."
+        },
+        {
+          "id": "b",
+          "text": "10.1.1.1 est nécessairement configuré avec la commande « ntp master 2 »."
+        },
+        {
+          "id": "c",
+          "text": "10.1.1.1 annonce la strate 2."
+        },
+        {
+          "id": "d",
+          "text": "R1 affiche désormais l'heure dans le fuseau horaire de 10.1.1.1."
+        },
+        {
+          "id": "e",
+          "text": "R1 peut à son tour servir de source de temps à d'autres clients NTP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Un client NTP se place un niveau sous sa source : R1 étant en strate 3, la source 10.1.1.1 annonce la strate 2. Une fois synchronisé, un routeur IOS configuré avec « ntp server » répond aussi aux requêtes NTP qu'il reçoit : il peut servir l'heure à des clients en aval, qui seraient alors en strate 4. C'est ce qui permet une hiérarchie (serveurs publics, routeurs de cœur, équipements d'accès) sans que chaque équipement interroge Internet.",
+    "distractorNotes": {
+      "a": "NTP utilise UDP, port 123, et non TCP.",
+      "b": "10.1.1.1 peut tout aussi bien être en strate 2 parce qu'il est lui-même synchronisé sur un serveur de strate 1 ; « ntp master » n'est qu'une possibilité.",
+      "d": "NTP transporte l'heure UTC ; le fuseau horaire affiché par R1 dépend uniquement de sa propre commande « clock timezone »."
+    },
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-clock-timezone-ist-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "R1 est synchronisé par NTP et affiche l'heure UTC. Il doit afficher l'heure de l'Inde (UTC+5:30), sous le nom IST. Complétez la commande : « clock timezone IST ___ ___ ».",
+      "fields": [
+        {
+          "id": "hours",
+          "label": "Décalage en heures (nombre entier)"
+        },
+        {
+          "id": "minutes",
+          "label": "Décalage complémentaire en minutes (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "hours": {
+          "accepted": [
+            "5"
+          ],
+          "normalize": "int"
+        },
+        "minutes": {
+          "accepted": [
+            "30"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La syntaxe est « clock timezone <nom> <heures> [<minutes>] », en mode de configuration globale : « clock timezone IST 5 30 ». Le nom n'est qu'une étiquette affichée par « show clock » ; seul le décalage par rapport à UTC compte. NTP échange toujours l'heure en UTC, et chaque équipement applique localement son propre décalage : deux routeurs synchronisés sur la même source mais dans des fuseaux différents affichent des heures différentes pour le même instant. Le décalage en minutes est facultatif et ne sert que pour les fuseaux non entiers.",
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-ntp-master-cli-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 n'a accès à aucune source de temps externe. Depuis le mode de configuration globale, faites-en une source de temps faisant autorité à partir de son horloge interne, en strate 3.",
+      "prompt": "R1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ntp master 3"
+        ]
+      ]
+    },
+    "explanation": "« ntp master <strate> » fait du routeur une source de temps faisant autorité, fondée sur son horloge interne, et lui fait annoncer la strate indiquée (de 1 à 15). Sans argument, la strate est 8. Les clients qui se synchronisent sur R1 se placent un niveau plus bas, en strate 4 ici. L'horloge interne d'un routeur dérive : on réserve cette commande aux réseaux isolés ou on la combine avec « ntp server » pour qu'elle ne serve que de secours.",
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-ntp-source-cli-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale, configurez R2 pour qu'il se synchronise sur le serveur NTP 10.1.1.1 et que ses paquets NTP aient pour adresse source celle de l'interface Loopback0.",
+      "prompt": "R2(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "ntp server 10.1.1.1"
+        ],
+        [
+          "ntp source Loopback0",
+          "ntp source lo0",
+          "ntp source loopback 0"
+        ]
+      ]
+    },
+    "explanation": "« ntp server 10.1.1.1 » fait de R2 un client de 10.1.1.1 (mode client/serveur, UDP 123). « ntp source Loopback0 » fixe l'adresse source de tous les paquets NTP émis par R2 : le serveur voit toujours la même adresse, quel que soit le lien emprunté, ce qui simplifie les ACL qui filtrent NTP. L'ordre des deux commandes est indifférent. On vérifie ensuite avec « show ntp associations » (« * » devant 10.1.1.1) et « show ntp status ».",
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-ntp-prefer-cli-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale, configurez R3 pour qu'il se synchronise de préférence sur le serveur NTP 10.1.1.1, avec 10.2.2.2 comme second serveur, et qu'il affiche l'heure d'Europe centrale (UTC+1) sous le nom CET.",
+      "prompt": "R3(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "ntp server 10.1.1.1 prefer"
+        ],
+        [
+          "ntp server 10.2.2.2"
+        ],
+        [
+          "clock timezone CET 1",
+          "clock timezone CET 1 0"
+        ]
+      ]
+    },
+    "explanation": "Chaque « ntp server » ajoute une association ; le mot-clé « prefer » demande à R3 de retenir 10.1.1.1 comme référence tant qu'il est jugé valide, même si 10.2.2.2 annonce une strate plus faible. Si 10.1.1.1 devient injoignable ou incohérent, R3 bascule sur 10.2.2.2. « clock timezone CET 1 » ne touche pas à NTP : il règle le décalage appliqué à l'heure UTC pour l'affichage et les horodatages. Les trois commandes sont indépendantes et peuvent être saisies dans n'importe quel ordre.",
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-strata-order-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une fois la synchronisation établie, ordonnez ces équipements de la strate la plus faible à la plus élevée.",
+      "items": [
+        {
+          "id": "a",
+          "text": "R1, configuré avec « ntp master 5 »"
+        },
+        {
+          "id": "b",
+          "text": "R2, synchronisé sur R1"
+        },
+        {
+          "id": "c",
+          "text": "R3, configuré avec « ntp master » sans argument"
+        },
+        {
+          "id": "d",
+          "text": "R4, synchronisé sur un serveur public de strate 1"
+        },
+        {
+          "id": "e",
+          "text": "R5, synchronisé sur R4"
+        },
+        {
+          "id": "f",
+          "text": "SW1, dont le seul serveur NTP configuré est injoignable"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "d",
+        "e",
+        "a",
+        "b",
+        "c",
+        "f"
+      ]
+    },
+    "explanation": "Un client prend la strate de sa source plus 1. R4 suit un serveur de strate 1 : strate 2 ; R5, qui suit R4, est en strate 3. « ntp master 5 » place R1 en strate 5, donc R2 en strate 6. Sans argument, « ntp master » utilise la strate 8 : R3 est en strate 8. SW1, qui n'a réussi à joindre aucune source, reste non synchronisé et annonce la strate 16. L'ordre est donc R4 (2), R5 (3), R1 (5), R2 (6), R3 (8), SW1 (16).",
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-ntp-assoc-codes-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque caractère placé devant une adresse dans « show ntp associations » à sa signification.",
+      "left": [
+        {
+          "id": "star",
+          "text": "*"
+        },
+        {
+          "id": "plus",
+          "text": "+"
+        },
+        {
+          "id": "tilde",
+          "text": "~"
+        },
+        {
+          "id": "x",
+          "text": "x"
+        }
+      ],
+      "right": [
+        {
+          "id": "conf",
+          "text": "Association configurée (par exemple avec « ntp server »)"
+        },
+        {
+          "id": "false",
+          "text": "Source jugée incohérente avec les autres et écartée"
+        },
+        {
+          "id": "unsync",
+          "text": "Source non synchronisée, de strate 16"
+        },
+        {
+          "id": "peer",
+          "text": "Source sur laquelle l'équipement est synchronisé"
+        },
+        {
+          "id": "cand",
+          "text": "Source retenue comme candidate, mais non suivie"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "star": "peer",
+        "plus": "cand",
+        "tilde": "conf",
+        "x": "false"
+      }
+    },
+    "explanation": "La légende d'IOS le rappelle sous le tableau : « * sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured ». « * » marque la source effectivement suivie, dont dépend la strate du routeur ; « + » une source valide retenue par la sélection, mais qui n'est pas la référence ; « x » une source dont l'heure contredit celle des autres (falseticker) ; « ~ » une association créée par la configuration, qui se combine avec les autres symboles (« *~ »).",
+    "distractorNotes": {
+      "unsync": "Aucun symbole ne signale la strate : un serveur non synchronisé se reconnaît à la valeur 16 dans la colonne « st »."
+    },
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.2-strata-match-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque strate NTP à ce qu'elle désigne.",
+      "left": [
+        {
+          "id": "s0",
+          "text": "Strate 0"
+        },
+        {
+          "id": "s1",
+          "text": "Strate 1"
+        },
+        {
+          "id": "s2",
+          "text": "Strate 2"
+        },
+        {
+          "id": "s16",
+          "text": "Strate 16"
+        }
+      ],
+      "right": [
+        {
+          "id": "srv1",
+          "text": "Serveur directement relié à une horloge de référence"
+        },
+        {
+          "id": "nosync",
+          "text": "Équipement non synchronisé"
+        },
+        {
+          "id": "max",
+          "text": "Valeur la plus élevée qu'accepte la commande « ntp master »"
+        },
+        {
+          "id": "ref",
+          "text": "Horloge de référence (récepteur GPS, horloge atomique)"
+        },
+        {
+          "id": "srv2",
+          "text": "Serveur synchronisé sur un serveur de strate 1"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s0": "ref",
+        "s1": "srv1",
+        "s2": "srv2",
+        "s16": "nosync"
+      }
+    },
+    "explanation": "La strate mesure la distance à la source de temps. Les horloges de référence (GPS, horloges atomiques) sont en strate 0 ; elles ne parlent pas NTP sur le réseau mais sont raccordées directement aux serveurs de strate 1. Chaque niveau de synchronisation ajoute 1 : un serveur qui suit un serveur de strate 1 est en strate 2, et ainsi de suite jusqu'à 15. La valeur 16 signifie « non synchronisé » : aucun client ne se synchronise sur une telle source.",
+    "distractorNotes": {
+      "max": "« ntp master » accepte une strate de 1 à 15 ; la valeur maximale, 15, ne figure pas parmi les strates proposées."
+    },
+    "reference": "RFC 5905 ; Basic System Management Configuration Guide (Cisco IOS XE), Network Time Protocol"
+  },
+  {
+    "slug": "ccna-4.5-syslog-udp-514-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Par défaut, quel protocole et quel port un routeur IOS utilise-t-il pour envoyer ses messages au serveur défini par « logging host » ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "UDP 162"
+        },
+        {
+          "id": "b",
+          "text": "UDP 123"
+        },
+        {
+          "id": "c",
+          "text": "UDP 69"
+        },
+        {
+          "id": "d",
+          "text": "UDP 514"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Syslog est transporté par défaut en UDP, vers le port 514 du serveur (RFC 5426) : l'envoi est simple et ne demande aucune session, mais un message perdu n'est pas retransmis. IOS permet de choisir un autre transport ou un autre port dans « logging host », mais sans option c'est UDP 514. Il faut donc autoriser UDP 514 vers le serveur dans les ACL et pare-feu situés sur le chemin.",
+    "distractorNotes": {
+      "a": "UDP 162 est le port de réception des notifications SNMP (traps), pas de syslog.",
+      "b": "UDP 123 est le port de NTP.",
+      "c": "UDP 69 est le port de TFTP."
+    },
+    "reference": "RFC 5426 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-message-format-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans le message « %OSPF-5-ADJCHG: Process 1, Nbr 2.2.2.2 on GigabitEthernet0/0 from LOADING to FULL, Loading Done », que représente le chiffre 5 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le numéro du processus OSPF"
+        },
+        {
+          "id": "b",
+          "text": "Le niveau de gravité du message"
+        },
+        {
+          "id": "c",
+          "text": "La facilité syslog local5"
+        },
+        {
+          "id": "d",
+          "text": "Le numéro de séquence du message"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un message IOS suit le format « %FACILITY-SEVERITY-MNEMONIC: description ». La première partie (OSPF), que Cisco appelle « facility », indique la fonction ou le processus qui l'émet, le chiffre (5) son niveau de gravité, de 0 (emergencies) à 7 (debugging), et le mnémonique (ADJCHG) le type d'événement, ici un changement d'état d'adjacence. Le niveau 5 correspond à notifications : un événement normal mais significatif. C'est ce chiffre que comparent les commandes « logging console », « logging trap », etc.",
+    "distractorNotes": {
+      "a": "Le processus OSPF figure dans la description (« Process 1 ») ; le chiffre du préfixe est la gravité.",
+      "c": "Le chiffre ne désigne pas la facilité syslog (local0 à local7, local7 par défaut), transmise au serveur dans l'en-tête du message ; c'est la gravité.",
+      "d": "Les numéros de séquence, activés par « service sequence-numbers », s'affichent en tête de ligne, avant l'horodatage."
+    },
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-terminal-monitor-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un administrateur connecté à SW1 en SSH ne voit aucun message syslog s'afficher dans sa session, alors que « logging monitor debugging » est configuré et que les messages apparaissent sur la console. Que doit-il faire ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Saisir « logging console debugging » en mode de configuration globale"
+        },
+        {
+          "id": "b",
+          "text": "Saisir « logging buffered debugging » en mode de configuration globale"
+        },
+        {
+          "id": "c",
+          "text": "Saisir « terminal monitor » en mode d'exécution privilégié"
+        },
+        {
+          "id": "d",
+          "text": "Saisir « service timestamps log datetime » en mode de configuration globale"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "« logging monitor » fixe le niveau des messages destinés aux lignes VTY (Telnet, SSH), mais une session n'affiche ces messages que si l'utilisateur les demande avec « terminal monitor », en mode d'exécution privilégié. Ce réglage ne vaut que pour la session en cours : il faut le ressaisir à chaque connexion, et « terminal no monitor » l'annule. La console, elle, reçoit les messages sans commande particulière, ce qui explique la différence observée.",
+    "distractorNotes": {
+      "a": "« logging console » règle la console, qui affiche déjà les messages ; la session SSH n'est pas concernée.",
+      "b": "« logging buffered » stocke les messages en mémoire, consultables avec « show logging », sans les afficher en direct dans la session.",
+      "d": "« service timestamps » change l'horodatage des messages, pas leur affichage dans une session VTY."
+    },
+    "reference": "System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-trap-default-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 est configuré avec « logging host 10.1.1.5 », sans aucune commande « logging trap ». Quels niveaux de gravité R1 envoie-t-il au serveur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "De 0 à 7"
+        },
+        {
+          "id": "b",
+          "text": "De 0 à 6"
+        },
+        {
+          "id": "c",
+          "text": "De 0 à 5"
+        },
+        {
+          "id": "d",
+          "text": "De 0 à 4"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« logging trap » fixe le niveau le moins grave transmis aux serveurs syslog, et chaque niveau inclut tous ceux de numéro inférieur, plus graves. Sans cette commande, la valeur par défaut est informational (6) : R1 envoie les niveaux 0 à 6, c'est-à-dire tout sauf les messages de débogage (7). Pour les recevoir aussi, il faudrait « logging trap debugging » ; pour réduire le volume, on choisit un seuil plus grave, par exemple « logging trap warnings » (0 à 4).",
+    "distractorNotes": {
+      "a": "Les messages de débogage (7) ne partent vers le serveur qu'avec « logging trap debugging » ; ce n'est pas le réglage par défaut.",
+      "c": "0 à 5 correspond à « logging trap notifications », qui n'est pas la valeur par défaut.",
+      "d": "0 à 4 correspond à « logging trap warnings », qui n'est pas la valeur par défaut."
+    },
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-trap-choose-level-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "SW1 envoie déjà ses messages au serveur syslog. Le serveur doit recevoir les messages %SYS-2-MALLOCFAIL et %LINK-3-UPDOWN, mais ni %SW_MATM-4-MACFLAP_NOTIF ni %OSPF-5-ADJCHG. Quelle commande répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "logging trap errors"
+        },
+        {
+          "id": "b",
+          "text": "logging trap critical"
+        },
+        {
+          "id": "c",
+          "text": "logging trap warnings"
+        },
+        {
+          "id": "d",
+          "text": "logging buffered errors"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le chiffre central de chaque message donne sa gravité : MALLOCFAIL est de niveau 2 (critical), LINK-3 de niveau 3 (errors), MACFLAP_NOTIF de niveau 4 (warnings) et ADJCHG de niveau 5 (notifications). Il faut transmettre les niveaux 2 et 3 et bloquer 4 et 5 : le seuil est errors (3), car « logging trap » envoie le niveau choisi et tous les niveaux plus graves, soit 0 à 3. Le serveur étant une destination « trap », c'est cette commande qu'il faut régler (« logging trap 3 » est équivalent).",
+    "distractorNotes": {
+      "b": "« logging trap critical » n'envoie que les niveaux 0 à 2 : %LINK-3-UPDOWN serait bloqué.",
+      "c": "« logging trap warnings » envoie les niveaux 0 à 4 : %SW_MATM-4-MACFLAP_NOTIF passerait.",
+      "d": "« logging buffered » règle le tampon local en mémoire, pas ce qui est envoyé au serveur syslog."
+    },
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-facility-local7-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur les facilités syslog d'un routeur IOS sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La facilité local7 regroupe les messages de niveau 7 (debugging)."
+        },
+        {
+          "id": "b",
+          "text": "Par défaut, IOS envoie ses messages au serveur avec la facilité local7."
+        },
+        {
+          "id": "c",
+          "text": "La facilité fixe le niveau de gravité minimal des messages envoyés au serveur."
+        },
+        {
+          "id": "d",
+          "text": "La commande « logging facility local5 » remplace la facilité par défaut."
+        },
+        {
+          "id": "e",
+          "text": "Le serveur doit annoncer au routeur la facilité qu'il accepte avant tout envoi."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La facilité est un champ de l'en-tête syslog qui indique la catégorie de l'émetteur ; local0 à local7 sont réservées aux usages locaux et servent à trier les messages sur le serveur (par exemple un fichier par famille d'équipements). IOS utilise local7 par défaut ; « logging facility local5 » la change. La facilité est indépendante de la gravité : un message local7 peut être de n'importe quel niveau, de 0 à 7.",
+    "distractorNotes": {
+      "a": "Le chiffre de local7 n'a rien à voir avec la gravité : un message envoyé en local7 peut être de niveau 0 comme de niveau 7.",
+      "c": "Le seuil de gravité vers le serveur se règle avec « logging trap », pas avec la facilité.",
+      "e": "Syslog sur UDP n'a aucune négociation : le routeur envoie ses messages sans échange préalable, et le serveur les classe à réception."
+    },
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-service-timestamps-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "R1 est configuré avec « service timestamps log datetime msec ». Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 règle son horloge sur celle du serveur syslog à chaque envoi."
+        },
+        {
+          "id": "b",
+          "text": "Seuls les messages de débogage sont horodatés."
+        },
+        {
+          "id": "c",
+          "text": "Chaque message journalisé porte la date et l'heure, au millième de seconde."
+        },
+        {
+          "id": "d",
+          "text": "L'heure affichée est la durée écoulée depuis le démarrage de R1."
+        },
+        {
+          "id": "e",
+          "text": "L'horodatage n'est fiable que si l'horloge de R1 est juste, par exemple grâce à NTP."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "« service timestamps log datetime msec » ajoute à chaque message journalisé la date et l'heure de l'horloge du routeur, avec les millisecondes (« *Mar  1 00:04:18.207: »). Le routeur n'invente pas l'heure : il reprend son horloge, si bien qu'un horodatage n'a de valeur que si cette horloge est réglée et synchronisée, idéalement par NTP. Le mot-clé « log » vise les messages système ; « debug » vise les sorties de débogage, et « uptime » remplacerait la date par la durée de fonctionnement.",
+    "distractorNotes": {
+      "a": "Syslog ne transporte pas l'heure vers le routeur : c'est NTP qui synchronise l'horloge, le serveur syslog ne fait que recevoir.",
+      "b": "Les sorties de débogage s'horodatent avec « service timestamps debug » ; le mot-clé « log » vise les messages système.",
+      "d": "La durée depuis le démarrage correspond au mot-clé « uptime » ; « datetime » donne la date et l'heure."
+    },
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-destinations-levels-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. SW1 génère le message « %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/3, changed state to down ». Quelles deux destinations le reçoivent ? (Choisissez-en deux.)",
+      "exhibit": "SW1# show running-config | include logging\nlogging buffered informational\nlogging console warnings\nlogging monitor notifications\nlogging trap errors\nlogging host 10.1.1.50",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La console de SW1"
+        },
+        {
+          "id": "b",
+          "text": "Une session SSH dans laquelle « terminal monitor » a été saisi"
+        },
+        {
+          "id": "c",
+          "text": "Le tampon local affiché par « show logging »"
+        },
+        {
+          "id": "d",
+          "text": "Le serveur syslog 10.1.1.50"
+        },
+        {
+          "id": "e",
+          "text": "Une session SSH dans laquelle « terminal monitor » n'a pas été saisi"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "Le message est de niveau 5 (notifications). Chaque destination a son propre seuil et reçoit les messages de ce niveau et des niveaux plus graves. Le tampon (informational, 0 à 6) le stocke ; les sessions VTY (notifications, 0 à 5) le reçoivent, mais seulement celles qui ont saisi « terminal monitor ». La console (warnings, 0 à 4) et le serveur (errors, 0 à 3) le filtrent. Il faut donc lire le chiffre du message, puis le comparer au seuil de chaque destination.",
+    "distractorNotes": {
+      "a": "La console est réglée sur warnings (0 à 4) : un message de niveau 5 est moins grave et n'y est pas affiché.",
+      "d": "« logging trap errors » limite l'envoi au serveur aux niveaux 0 à 3.",
+      "e": "Sans « terminal monitor », une session VTY n'affiche aucun message, quel que soit le niveau de « logging monitor »."
+    },
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-trap-2-count-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "R1 est configuré avec « logging host 10.1.1.5 » et « logging trap 2 ». Combien de niveaux de gravité sont envoyés au serveur, et quel est le mot-clé IOS du moins grave d'entre eux ?",
+      "fields": [
+        {
+          "id": "count",
+          "label": "Nombre de niveaux envoyés (nombre entier)"
+        },
+        {
+          "id": "keyword",
+          "label": "Mot-clé IOS du niveau le moins grave envoyé (en anglais, comme dans IOS)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "count": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        },
+        "keyword": {
+          "accepted": [
+            "critical"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "« logging trap 2 » envoie le niveau 2 et tous les niveaux plus graves, de numéro inférieur : 0 (emergencies), 1 (alerts) et 2 (critical), soit trois niveaux. Le moins grave est le niveau 2, dont le mot-clé est critical : « logging trap 2 » et « logging trap critical » sont équivalents. Un tel réglage ne transmet que les incidents majeurs ; les erreurs d'interface (niveau 3) ou les changements d'état (niveau 5) restent sur l'équipement.",
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-logging-host-cli-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale, configurez R1 pour qu'il envoie ses messages syslog au serveur 192.168.10.50.",
+      "prompt": "R1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "logging host 192.168.10.50",
+          "logging 192.168.10.50"
+        ]
+      ]
+    },
+    "explanation": "« logging host 192.168.10.50 » ajoute un serveur syslog ; l'ancienne forme « logging 192.168.10.50 » est toujours acceptée. Les messages partent en UDP vers le port 514, avec le seuil « logging trap », informational (0 à 6) par défaut, et la facilité local7. On peut répéter la commande pour plusieurs serveurs. « show logging » affiche ensuite le serveur, le niveau trap et le nombre de messages envoyés.",
+    "reference": "System Message Logging (Cisco IOS XE) ; RFC 5426"
+  },
+  {
+    "slug": "ccna-4.5-console-buffer-cli-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale, configurez SW1 pour que la console n'affiche que les messages de niveau warnings et plus graves, et que le tampon local conserve les messages de niveau informational et plus graves.",
+      "prompt": "SW1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "logging console warnings",
+          "logging console 4"
+        ],
+        [
+          "logging buffered informational",
+          "logging buffered 6"
+        ]
+      ]
+    },
+    "explanation": "Chaque destination a sa commande et son seuil : « logging console » pour le port console, « logging buffered » pour le tampon en RAM consulté avec « show logging ». Le niveau peut s'écrire en mot-clé ou en chiffre (warnings = 4, informational = 6) et inclut tous les niveaux plus graves. Limiter la console évite qu'un flot de messages ne ralentisse l'administration, tandis que le tampon garde un historique plus complet. « logging buffered » accepte aussi une taille en octets avant le niveau.",
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-server-full-cli-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale, configurez R1 pour qu'il horodate ses messages avec la date et l'heure au millième de seconde, les envoie au serveur 10.0.0.50 avec la facilité local5, ne transmette que les niveaux 0 à 4 et utilise l'adresse de Loopback0 comme adresse source.",
+      "prompt": "R1(config)#",
+      "lines": 5
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "service timestamps log datetime msec"
+        ],
+        [
+          "logging host 10.0.0.50",
+          "logging 10.0.0.50"
+        ],
+        [
+          "logging facility local5"
+        ],
+        [
+          "logging trap warnings",
+          "logging trap 4"
+        ],
+        [
+          "logging source-interface Loopback0",
+          "logging source-interface lo0",
+          "logging source-interface loopback 0"
+        ]
+      ]
+    },
+    "explanation": "« service timestamps log datetime msec » date chaque message au millième de seconde. « logging host 10.0.0.50 » désigne le serveur, « logging facility local5 » remplace la facilité par défaut (local7) pour faciliter le tri, et « logging trap warnings » (ou 4) limite l'envoi aux niveaux 0 à 4. « logging source-interface Loopback0 » donne aux messages une adresse source stable, indépendante de l'interface de sortie, que le serveur peut associer au routeur. Ces commandes globales se saisissent dans n'importe quel ordre.",
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-severity-order-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Ordonnez ces niveaux de gravité syslog du plus grave au moins grave.",
+      "items": [
+        {
+          "id": "a",
+          "text": "notifications"
+        },
+        {
+          "id": "b",
+          "text": "critical"
+        },
+        {
+          "id": "c",
+          "text": "debugging"
+        },
+        {
+          "id": "d",
+          "text": "emergencies"
+        },
+        {
+          "id": "e",
+          "text": "warnings"
+        },
+        {
+          "id": "f",
+          "text": "errors"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "d",
+        "b",
+        "f",
+        "e",
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Les huit niveaux vont de 0, le plus grave, à 7 : emergencies (0), alerts (1), critical (2), errors (3), warnings (4), notifications (5), informational (6) et debugging (7). Parmi ceux proposés, l'ordre est donc emergencies, critical, errors, warnings, notifications, debugging. Plus le numéro est petit, plus le message est grave ; c'est pourquoi un seuil comme « logging trap warnings » inclut tous les niveaux de numéro inférieur. Un moyen mnémotechnique anglais : « Every Awesome Cisco Engineer Will Need Ice cream Daily ».",
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.5-destinations-match-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque commande de configuration globale à la destination des messages dont elle fixe le niveau.",
+      "left": [
+        {
+          "id": "con",
+          "text": "logging console"
+        },
+        {
+          "id": "mon",
+          "text": "logging monitor"
+        },
+        {
+          "id": "buf",
+          "text": "logging buffered"
+        },
+        {
+          "id": "trap",
+          "text": "logging trap"
+        }
+      ],
+      "right": [
+        {
+          "id": "srv",
+          "text": "Serveurs syslog définis par « logging host »"
+        },
+        {
+          "id": "nvram",
+          "text": "Configuration de démarrage, en NVRAM"
+        },
+        {
+          "id": "port",
+          "text": "Port console du routeur"
+        },
+        {
+          "id": "ram",
+          "text": "Tampon en RAM, consulté avec « show logging »"
+        },
+        {
+          "id": "vty",
+          "text": "Sessions Telnet ou SSH ayant saisi « terminal monitor »"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "con": "port",
+        "mon": "vty",
+        "buf": "ram",
+        "trap": "srv"
+      }
+    },
+    "explanation": "IOS distingue quatre destinations, chacune avec son seuil de gravité : la console (« logging console »), les lignes VTY (« logging monitor », effectif seulement dans les sessions qui ont saisi « terminal monitor »), le tampon circulaire en RAM (« logging buffered », lu avec « show logging ») et les serveurs syslog (« logging trap », vers les adresses de « logging host »). Un même message peut ainsi être affiché sur la console, stocké localement et envoyé au serveur, ou filtré sur certaines destinations seulement.",
+    "distractorNotes": {
+      "nvram": "Les messages ne sont jamais écrits dans la configuration de démarrage ; le tampon en RAM est perdu au redémarrage."
+    },
+    "reference": "RFC 5424, section 6.2.1 ; System Message Logging (Cisco IOS XE)"
+  }
+]

@@ -1,0 +1,477 @@
+{
+  "slug": "ccna-challenge-1.8-ipv6-lien-agence-siege",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "1.0",
+  "subtopic": "1.8",
+  "difficulty": "medium",
+  "title": "Dépannage : l'IPv6 ne passe pas entre l'agence et le siège",
+  "statement": "L'agence (R1) et le siège (R2) viennent de passer en double pile. L'IPv4 fonctionne, mais en IPv6 :\n- les postes de l'agence n'ont qu'une adresse lien local (FE80::/10) : ils n'obtiennent aucune adresse globale par SLAAC ;\n- R1 et R2 ne se joignent pas sur leur lien : un ping de 2001:DB8:ACAD:12::2 depuis R1, ou de 2001:DB8:ACAD:12::1 depuis R2, échoue ;\n- le serveur du siège, adressé en statique (2001:DB8:ACAD:2::10/64, passerelle 2001:DB8:ACAD:2::1), ne joint pas sa passerelle.\n\nLes routes statiques IPv6 de R1 et de R2 sont justes et ne doivent pas changer. Remettez R1 et R2 en conformité avec le plan d'adressage ci-dessous : une seule adresse globale par interface, l'adresse lien local restant automatique. Un onglet par routeur.",
+  "topology": "  LAN agence                                                   LAN siège\n  (postes SLAAC)                                               (serveur 2001:DB8:ACAD:2::10)\n      |                                                            |\n   G0/0/0 [R1] G0/0/1 -------------------------- G0/0/1 [R2] G0/0/0\n\n  Équipement  Interface  IPv4              IPv6 globale\n  R1          G0/0/0     192.168.1.1/24    2001:DB8:ACAD:1::1/64\n  R1          G0/0/1     10.0.12.1/30      2001:DB8:ACAD:12::1/64\n  R2          G0/0/1     10.0.12.2/30      2001:DB8:ACAD:12::2/64\n  R2          G0/0/0     192.168.2.1/24    2001:DB8:ACAD:2::1/64\n\n  Routes : R1 ipv6 route ::/0 2001:DB8:ACAD:12::2\n           R2 ipv6 route 2001:DB8:ACAD:1::/64 2001:DB8:ACAD:12::1",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": [
+        "GigabitEthernet0/0/0-1"
+      ],
+      "startupConfig": "hostname R1\nno ip domain-lookup\ninterface GigabitEthernet0/0/0\n description LAN agence\n ip address 192.168.1.1 255.255.255.0\n ipv6 address 2001:DB8:ACAD:1::1/64\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers le siege\n ip address 10.0.12.1 255.255.255.252\n ipv6 address 2001:DB8:ACAD:21::1/64\n no shutdown\nip route 0.0.0.0 0.0.0.0 10.0.12.2\nipv6 route ::/0 2001:DB8:ACAD:12::2"
+    },
+    {
+      "id": "R2",
+      "type": "router",
+      "interfaces": [
+        "GigabitEthernet0/0/0-1"
+      ],
+      "startupConfig": "hostname R2\nno ip domain-lookup\nipv6 unicast-routing\ninterface GigabitEthernet0/0/0\n description LAN siege\n ip address 192.168.2.1 255.255.255.0\n ipv6 address 2001:DB8:ACAD:2::/64 eui-64\n no shutdown\ninterface GigabitEthernet0/0/1\n description Lien vers l'agence\n ip address 10.0.12.2 255.255.255.252\n ipv6 address 2001:DB8:ACAD:12::2/64\nip route 192.168.1.0 255.255.255.0 10.0.12.1\nipv6 route 2001:DB8:ACAD:1::/64 2001:DB8:ACAD:12::1"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "r1-routage-ipv6",
+      "description": "R1 achemine l'IPv6 et annonce sur le LAN le préfixe de l'agence, dont il garde la seule adresse globale 2001:DB8:ACAD:1::1/64 : les postes obtiennent une adresse globale par SLAAC.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "device": "R1",
+            "line": "ipv6 unicast-routing"
+          },
+          {
+            "type": "line",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "ipv6 address 2001:DB8:ACAD:1::1/64"
+          },
+          {
+            "type": "regex",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/0",
+            "pattern": "^ipv6 address (?!\\S+ link-local$)(?!2001:DB8:ACAD:1::1/64$)",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "shutdown",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "r1-lien",
+      "description": "Sur le lien vers le siège, R1 a pour seule adresse globale 2001:DB8:ACAD:12::1/64, et sa route par défaut IPv6 vers R2 est inchangée.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/1",
+            "line": "ipv6 address 2001:DB8:ACAD:12::1/64"
+          },
+          {
+            "type": "regex",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/1",
+            "pattern": "^ipv6 address (?!\\S+ link-local$)(?!2001:DB8:ACAD:12::1/64$)",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "device": "R1",
+            "section": "interface GigabitEthernet0/0/1",
+            "line": "shutdown",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "device": "R1",
+            "line": "ipv6 route ::/0 2001:DB8:ACAD:12::2"
+          }
+        ]
+      }
+    },
+    {
+      "id": "r2-passerelle-lan",
+      "description": "Le LAN du siège joint sa passerelle 2001:DB8:ACAD:2::1 : c'est la seule adresse globale de R2 sur ce LAN.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "ipv6 address 2001:DB8:ACAD:2::1/64"
+          },
+          {
+            "type": "regex",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/0",
+            "pattern": "^ipv6 address (?!\\S+ link-local$)(?!2001:DB8:ACAD:2::1/64$)",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/0",
+            "line": "shutdown",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "r2-lien",
+      "description": "R2 achemine toujours l'IPv6 ; son lien vers l'agence est en service avec pour seule adresse globale 2001:DB8:ACAD:12::2/64, et sa route vers le LAN de l'agence est inchangée.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "line",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/1",
+            "line": "ipv6 address 2001:DB8:ACAD:12::2/64"
+          },
+          {
+            "type": "regex",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/1",
+            "pattern": "^ipv6 address (?!\\S+ link-local$)(?!2001:DB8:ACAD:12::2/64$)",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "device": "R2",
+            "line": "ipv6 unicast-routing"
+          },
+          {
+            "type": "line",
+            "device": "R2",
+            "section": "interface GigabitEthernet0/0/1",
+            "line": "shutdown",
+            "absent": true
+          },
+          {
+            "type": "line",
+            "device": "R2",
+            "line": "ipv6 route 2001:DB8:ACAD:1::/64 2001:DB8:ACAD:12::1"
+          }
+        ]
+      }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 7,
+    "timeLimitMinutes": 14,
+    "mode": "troubleshoot",
+    "faults": [
+      "R1 n'a pas ipv6 unicast-routing : il n'achemine pas l'IPv6 et n'émet aucune annonce de routeur (RA), d'où l'absence de SLAAC sur le LAN de l'agence.",
+      "Sur G0/0/1 de R1, le préfixe est inversé (2001:DB8:ACAD:21::1/64 au lieu de 2001:DB8:ACAD:12::1/64) : R1 et R2 ne sont pas dans le même sous-réseau IPv6.",
+      "Sur G0/0/0 de R2, l'adresse est construite en EUI-64 (2001:DB8:ACAD:2::/64 eui-64) : l'identifiant d'interface vient de la MAC, et l'adresse 2001:DB8:ACAD:2::1 attendue par le serveur n'existe pas.",
+      "G0/0/1 de R2, vers l'agence, est resté administrativement désactivé (shutdown)."
+    ]
+  },
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "ipv6 unicast-routing",
+        "interface GigabitEthernet0/0/1",
+        "no ipv6 address 2001:DB8:ACAD:21::1/64",
+        "ipv6 address 2001:DB8:ACAD:12::1/64",
+        "end"
+      ]
+    },
+    {
+      "device": "R2",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface GigabitEthernet0/0/0",
+        "no ipv6 address 2001:DB8:ACAD:2::/64 eui-64",
+        "ipv6 address 2001:DB8:ACAD:2::1/64",
+        "interface GigabitEthernet0/0/1",
+        "no shutdown",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations, adresses en minuscules et non compressées, no ipv6 address qui retire toutes les adresses IPv6 de l'interface",
+      "solution": [
+        {
+          "device": "R2",
+          "commands": [
+            "en",
+            "conf t",
+            "int g0/0/1",
+            "no shut",
+            "int g0/0/0",
+            "no ipv6 address",
+            "ipv6 address 2001:0db8:acad:0002:0000:0000:0000:0001/64",
+            "\u001a"
+          ]
+        },
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "int g0/0/1",
+            "no ipv6 address",
+            "ipv6 address 2001:db8:acad:12::1/64",
+            "exit",
+            "ipv6 unicast-routing",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Bonne adresse ajoutée sur R1 sans retirer l'ancienne : IOS accepte plusieurs adresses globales, le préfixe 21 reste sur le lien",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "interface g0/0/1",
+            "ipv6 address 2001:DB8:ACAD:12::1/64",
+            "end"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "no ipv6 address 2001:DB8:ACAD:2::/64 eui-64",
+            "ipv6 address 2001:DB8:ACAD:2::1/64",
+            "interface g0/0/1",
+            "no shutdown",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "r1-lien"
+      ]
+    },
+    {
+      "description": "Lien de R1 passé en EUI-64 : l'adresse n'est plus 2001:DB8:ACAD:12::1, prochain saut de la route de R2",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "interface g0/0/1",
+            "no ipv6 address",
+            "ipv6 address 2001:DB8:ACAD:12::/64 eui-64",
+            "end"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "no ipv6 address",
+            "ipv6 address 2001:DB8:ACAD:2::1/64",
+            "interface g0/0/1",
+            "no shutdown",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "r1-lien"
+      ]
+    },
+    {
+      "description": "ipv6 enable sur les interfaces de R1 au lieu d'activer le routage IPv6 : ni acheminement ni annonces de routeur",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "ipv6 enable",
+            "interface g0/0/1",
+            "ipv6 enable",
+            "no ipv6 address 2001:DB8:ACAD:21::1/64",
+            "ipv6 address 2001:DB8:ACAD:12::1/64",
+            "end"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "no ipv6 address",
+            "ipv6 address 2001:DB8:ACAD:2::1/64",
+            "interface g0/0/1",
+            "no shutdown",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "r1-routage-ipv6"
+      ]
+    },
+    {
+      "description": "no ipv6 address tapé sur G0/0/0 de R1, le LAN de l'agence, au lieu du lien : plus aucun préfixe à annoncer aux postes",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "interface g0/0/0",
+            "no ipv6 address",
+            "interface g0/0/1",
+            "no ipv6 address",
+            "ipv6 address 2001:DB8:ACAD:12::1/64",
+            "end"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "no ipv6 address",
+            "ipv6 address 2001:DB8:ACAD:2::1/64",
+            "interface g0/0/1",
+            "no shutdown",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "r1-routage-ipv6"
+      ]
+    },
+    {
+      "description": "Adresse 2001:DB8:ACAD:2::1 ajoutée sur R2 en gardant l'adresse EUI-64",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "interface g0/0/1",
+            "no ipv6 address",
+            "ipv6 address 2001:DB8:ACAD:12::1/64",
+            "end"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "ipv6 address 2001:DB8:ACAD:2::1/64",
+            "interface g0/0/1",
+            "no shutdown",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "r2-passerelle-lan"
+      ]
+    },
+    {
+      "description": "no shutdown tapé sur le LAN de R2 au lieu de son lien vers l'agence",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "interface g0/0/1",
+            "no ipv6 address",
+            "ipv6 address 2001:DB8:ACAD:12::1/64",
+            "end"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "interface g0/0/0",
+            "no ipv6 address",
+            "ipv6 address 2001:DB8:ACAD:2::1/64",
+            "no shutdown",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "r2-lien"
+      ]
+    },
+    {
+      "description": "Routes statiques réécrites vers l'adresse fautive du préfixe 21 au lieu de corriger l'adressage",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "ipv6 unicast-routing",
+            "end"
+          ]
+        },
+        {
+          "device": "R2",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "no ipv6 route 2001:DB8:ACAD:1::/64 2001:DB8:ACAD:12::1",
+            "ipv6 route 2001:DB8:ACAD:1::/64 2001:DB8:ACAD:21::1",
+            "interface g0/0/0",
+            "no ipv6 address",
+            "ipv6 address 2001:DB8:ACAD:2::1/64",
+            "interface g0/0/1",
+            "no shutdown",
+            "end"
+          ]
+        }
+      ],
+      "failing": [
+        "r1-lien",
+        "r2-lien"
+      ]
+    }
+  ],
+  "explanation": "Quatre pannes, une par couche de la démarche. 1) Sur IOS, poser des adresses IPv6 ne suffit pas : sans ipv6 unicast-routing, le routeur se comporte comme un hôte IPv6. Il n'achemine pas les paquets et n'envoie pas d'annonces de routeur (RA) ; les postes de l'agence, en SLAAC, ne reçoivent donc aucun préfixe et restent avec leur seule adresse FE80::. ipv6 enable ne fait que créer l'adresse lien local d'une interface, il n'active pas le routage. 2) R1 porte 2001:DB8:ACAD:21::1/64 sur le lien : 21 au lieu de 12. Les deux extrémités ne partagent plus de préfixe ; le prochain saut 2001:DB8:ACAD:12::2 de la route par défaut de R1 n'est sur aucun réseau connecté. IOS accepte plusieurs adresses globales sur une interface : ajouter la bonne adresse ne retire pas l'ancienne, il faut no ipv6 address <ancienne> (ou no ipv6 address, qui retire toutes les adresses IPv6 de l'interface). 3) Sur le LAN du siège, ipv6 address 2001:DB8:ACAD:2::/64 eui-64 fabrique l'identifiant d'interface à partir de la MAC (FFFE inséré au milieu, bit U/L inversé) : l'adresse obtenue n'est pas 2001:DB8:ACAD:2::1, la passerelle statique du serveur. Il faut l'adresse statique ::1 et retirer la forme EUI-64. Mettre le lien de R1 en EUI-64 casserait de même la route de R2, dont le prochain saut est 2001:DB8:ACAD:12::1. 4) G0/0/1 de R2 n'a jamais été activé : une interface de routeur est en shutdown par défaut. Les routes statiques sont justes ; les réécrire vers la mauvaise adresse ne corrige pas l'adressage. Vérifications : show ipv6 interface brief (adresses et état), show ipv6 route (routes connectées C et locales L du préfixe 12), ping 2001:DB8:ACAD:12::2 depuis R1, et sur un poste de l'agence, une adresse globale 2001:DB8:ACAD:1::/64.",
+  "reference": "Cisco IOS IPv6 Configuration Guide — « Implementing IPv6 Addressing and Basic Connectivity » (ipv6 unicast-routing, ipv6 address eui-64, IPv6 Neighbor Discovery : Router Advertisement) ; Cisco IOS IPv6 Command Reference (ipv6 address, ipv6 enable)",
+  "estimatedMinutes": 7
+}

@@ -1,22 +1,30 @@
-import { listCertificationCodes, listLabCertificationCodes, loadCertification, loadLabs } from '@examforge/content';
+import { listCertificationCodes, listLabCertificationCodes, loadCertification, loadExamSeries, loadLabs } from '@examforge/content';
 import type { Db } from './client.js';
-import { upsertCertification, upsertLab, upsertQuestion } from '../services/content-sync.js';
+import { syncExamSeries, syncQuestions, upsertCertification, upsertLab } from '../services/content-sync.js';
 
-/** Importe toutes les certifications du paquet de contenu. Idempotent : on peut le relancer. */
+/**
+ * Importe toutes les certifications du paquet de contenu : configuration, banque, labs et série d'examens
+ * figés. Idempotent : un second import du même contenu n'écrit rien, ne crée ni doublon ni nouvel examen,
+ * et un examen déjà passé ne change jamais de contenu (voir `syncExamSeries`).
+ */
 export async function seedContent(db: Db, log: (msg: string) => void = () => {}): Promise<void> {
   for (const code of listCertificationCodes()) {
     const { certification, questions } = loadCertification(code);
     const certId = await upsertCertification(db, certification);
-    let created = 0;
-    for (const q of questions) {
-      const r = await upsertQuestion(db, certId, q, { source: 'import' });
-      if (r.created) created++;
-    }
-    log(`${code} : ${questions.length} questions (${created} nouvelles)`);
+    const q = await syncQuestions(db, certId, questions);
+    log(`${code} : ${questions.length} questions (${q.created} nouvelles, ${q.updated} mises à jour)`);
     if (listLabCertificationCodes().includes(code)) {
       const { labs } = loadLabs(code);
       for (const lab of labs) await upsertLab(db, certId, lab, { source: 'import' });
       log(`${code} : ${labs.length} labs`);
+    }
+    const series = loadExamSeries(code);
+    if (series) {
+      const s = await syncExamSeries(db, certId, series);
+      log(
+        `${code} : ${series.exams.length} examens blancs (${s.created} créés, ${s.updated} mis à jour, ${s.unchanged} inchangés` +
+          (s.frozen.length ? `, ${s.frozen.length} déjà passés gardés tels quels : n° ${s.frozen.join(', ')})` : ')'),
+      );
     }
   }
 }

@@ -1,0 +1,1801 @@
+[
+  {
+    "slug": "ccna-1.8-ipv6-expand-full-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Écrivez la forme complète (non abrégée) de l'adresse IPv6 2001:db8:0:1::2a : 8 groupes de 4 chiffres hexadécimaux séparés par « : », sans « :: ».",
+      "fields": [
+        {
+          "id": "full",
+          "label": "Adresse complète (8 groupes de 4 chiffres hexadécimaux)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "full": {
+          "accepted": [
+            "2001:0db8:0000:0001:0000:0000:0000:002a"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "On restaure d'abord les zéros de tête de chaque groupe : db8 devient 0db8, 0 devient 0000, 1 devient 0001 et 2a devient 002a. On compte ensuite les groupes écrits : 2001, db8, 0 et 1 avant « :: », 2a après, soit 5 groupes. Le « :: » remplace donc 8 − 5 = 3 groupes nuls, insérés entre 0001 et 002a. Erreur fréquente : compléter 2a en 2a00, alors que les zéros supprimés sont toujours des zéros de tête, jamais des zéros de fin.",
+    "reference": "RFC 4291, section 2.2"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-valid-compression-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle écriture abrégée représente l'adresse IPv6 2001:0db8:00c0:0000:0000:0000:0bad:0100 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "2001:db8:c0::bad:100"
+        },
+        {
+          "id": "b",
+          "text": "2001:db8:c0:bad:100"
+        },
+        {
+          "id": "c",
+          "text": "2001:db8:c0::bad:1"
+        },
+        {
+          "id": "d",
+          "text": "2001:db8:c::bad:100"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Deux règles s'appliquent : on supprime les zéros de tête de chaque groupe (00c0 → c0, 0bad → bad, 0100 → 100), et on remplace une suite de groupes nuls par « :: » (ici les trois groupes 0000). On obtient 2001:db8:c0::bad:100. Les zéros de fin d'un groupe ne se suppriment jamais : 00c0 vaut c0 et non c, 0100 vaut 100 et non 1. Pour décompresser, on complète chaque groupe à 4 chiffres par la gauche, puis on remplace « :: » par autant de groupes 0000 qu'il en manque pour arriver à 8.",
+    "distractorNotes": {
+      "b": "Les groupes nuls ont disparu sans « :: » : il ne reste que 5 groupes, ce qui n'est pas une adresse IPv6 valide.",
+      "c": "0100 ne s'abrège pas en 1 : seuls les zéros de tête disparaissent. 2001:db8:c0::bad:1 se termine par le groupe 0001, c'est une autre adresse.",
+      "d": "00c0 s'abrège en c0 ; écrire c revient à 000c, donc à une autre adresse."
+    },
+    "reference": "RFC 4291, section 2.2"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-double-colon-once-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux écritures représentent correctement l'adresse 2001:0db8:0000:0000:0001:0000:0000:0001 ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "2001:db8::1::1"
+        },
+        {
+          "id": "b",
+          "text": "2001:db8:0:0:1::1"
+        },
+        {
+          "id": "c",
+          "text": "2001:db8::1:1"
+        },
+        {
+          "id": "d",
+          "text": "2001:db8::1:0:0:1"
+        },
+        {
+          "id": "e",
+          "text": "2001:db8:0:0:1:0:1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "L'adresse contient deux suites de deux groupes nuls (groupes 3-4 et 6-7). Le « :: » ne peut remplacer qu'une seule suite, l'une ou l'autre : 2001:db8::1:0:0:1 et 2001:db8:0:0:1::1 désignent bien la même adresse, l'autre suite s'écrivant 0:0. Utiliser « :: » deux fois rendrait l'adresse ambiguë, car on ne saurait plus combien de groupes chacun remplace. Pour la forme canonique, la RFC 5952 retient la première des suites de même longueur : 2001:db8::1:0:0:1.",
+    "distractorNotes": {
+      "a": "Deux « :: » dans la même adresse sont interdits : on ne pourrait pas savoir combien de groupes nuls chacun remplace.",
+      "c": "2001:db8::1:1 se décompresse en 2001:0db8:0000:0000:0000:0000:0001:0001 : quatre groupes nuls consécutifs, donc une autre adresse.",
+      "e": "Sans « :: », les 8 groupes doivent tous être écrits ; il n'y en a ici que 7, un groupe nul a disparu."
+    },
+    "reference": "RFC 4291, section 2.2 ; RFC 5952, section 4.2.3"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-canonical-longest-run-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle est la forme canonique, au sens de la RFC 5952, de l'adresse 2001:0db8:0000:0000:00a1:0000:0000:0000 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "2001:db8::a1:0:0:0"
+        },
+        {
+          "id": "b",
+          "text": "2001:db8::a1"
+        },
+        {
+          "id": "c",
+          "text": "2001:db8::a1::"
+        },
+        {
+          "id": "d",
+          "text": "2001:db8:0:0:a1::"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La RFC 5952 impose une seule écriture : chiffres hexadécimaux en minuscules, zéros de tête supprimés, et « :: » sur la plus longue suite de groupes nuls (la première en cas d'égalité). Ici, les groupes 3 et 4 forment une suite de deux zéros, les groupes 6 à 8 une suite de trois : c'est cette dernière que remplace « :: », même en fin d'adresse. La suite de deux zéros s'écrit alors 0:0. Résultat : 2001:db8:0:0:a1::. L'écriture 2001:db8::a1:0:0:0 désigne la même adresse, mais elle n'est pas canonique.",
+    "distractorNotes": {
+      "a": "Adresse correcte mais non canonique : « :: » doit remplacer la plus longue suite de groupes nuls (les trois groupes de fin), pas la suite de deux.",
+      "b": "2001:db8::a1 se décompresse en 2001:0db8:0000:0000:0000:0000:0000:00a1 : les trois groupes nuls qui suivaient a1 ont disparu sans « :: », c'est une autre adresse.",
+      "c": "Deux « :: » dans une adresse sont interdits : l'écriture serait ambiguë."
+    },
+    "reference": "RFC 5952, sections 4.2.3 et 4.3"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-single-zero-group-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Écrivez la forme canonique RFC 5952 de l'adresse 2001:0db8:0000:0042:0000:8a2e:0370:7334 (minuscules, zéros de tête supprimés, règles d'usage de « :: » respectées).",
+      "fields": [
+        {
+          "id": "canon",
+          "label": "Forme canonique RFC 5952"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "canon": {
+          "accepted": [
+            "2001:db8:0:42:0:8a2e:370:7334"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "On supprime d'abord les zéros de tête : 0db8 → db8, 0000 → 0, 0042 → 42, 0370 → 370. Reste la question du « :: » : l'adresse ne contient que des groupes nuls isolés (3ᵉ et 5ᵉ groupes), et la RFC 5952 interdit d'utiliser « :: » pour un seul groupe de 16 bits nul, qui s'écrit 0. La forme canonique est donc 2001:db8:0:42:0:8a2e:370:7334. L'écriture 2001:db8::42:0:8a2e:370:7334 reste une adresse valide au sens de la RFC 4291, mais elle n'est pas canonique.",
+    "reference": "RFC 5952, sections 4.1 et 4.2.2"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-numeric-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Classez ces adresses IPv6 de la plus petite à la plus grande valeur numérique, comparées sur leurs 128 bits.",
+      "items": [
+        {
+          "id": "u1",
+          "text": "2001:db8:1::"
+        },
+        {
+          "id": "u2",
+          "text": "2001:db8::fffe"
+        },
+        {
+          "id": "u3",
+          "text": "2001:db8:0:1::"
+        },
+        {
+          "id": "u4",
+          "text": "2001:db8::ffff:0"
+        },
+        {
+          "id": "u5",
+          "text": "2001:db8::1:0:0:0"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "u2",
+        "u4",
+        "u5",
+        "u3",
+        "u1"
+      ]
+    },
+    "explanation": "Il faut décompresser chaque adresse, puis comparer groupe par groupe en partant de la gauche. Après 2001:db8, 2001:db8::fffe n'a de non nul que son 8ᵉ groupe (fffe) ; 2001:db8::ffff:0 a ffff dans le 7ᵉ groupe ; 2001:db8::1:0:0:0 a 1 dans le 5ᵉ ; 2001:db8:0:1:: a 1 dans le 4ᵉ ; 2001:db8:1:: a 1 dans le 3ᵉ. Plus le premier groupe non nul après 2001:db8 est à gauche, plus l'adresse est grande. Le piège : ffff paraît plus grand que 1, mais la position du groupe compte avant sa valeur.",
+    "reference": "RFC 4291, section 2.2"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-prefix-of-address-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une interface porte l'adresse 2001:db8:a:b12:20c:29ff:fe3b:7a1/64. Donnez le préfixe réseau de cette adresse en forme compressée RFC 5952 (minuscules, zéros de tête supprimés, « :: » sur la plus longue suite de groupes nuls).",
+      "fields": [
+        {
+          "id": "prefix",
+          "label": "Préfixe /64, sans la longueur"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "prefix": {
+          "accepted": [
+            "2001:db8:a:b12::",
+            "2001:db8:a:b12::/64"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Avec un /64, le préfixe correspond exactement aux 4 premiers groupes de 16 bits (4 × 16 = 64) : 2001:db8:a:b12. Les 64 bits restants, 20c:29ff:fe3b:7a1, forment l'ID d'interface ; on les met à zéro pour obtenir l'adresse du préfixe, 2001:db8:a:b12:0:0:0:0, qui se compresse en 2001:db8:a:b12::. Comme 64 est un multiple de 16, la frontière tombe entre deux groupes : aucun calcul binaire n'est nécessaire, il suffit de compter les groupes.",
+    "reference": "RFC 4291, sections 2.3 et 2.5.4"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-56-delegation-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un FAI a délégué à une agence le préfixe /56 qui contient l'adresse 2001:db8:cafe:1a7f::25. L'agence découpe ce préfixe en sous-réseaux /64. Répondez en forme canonique RFC 5952 pour les préfixes.",
+      "fields": [
+        {
+          "id": "p56",
+          "label": "Préfixe /56 délégué, sans la longueur"
+        },
+        {
+          "id": "count",
+          "label": "Nombre de sous-réseaux /64 que l'agence peut créer (nombre entier)"
+        },
+        {
+          "id": "last",
+          "label": "Dernier préfixe /64 de ce /56, sans la longueur"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "p56": {
+          "accepted": [
+            "2001:db8:cafe:1a00::",
+            "2001:db8:cafe:1a00::/56"
+          ],
+          "normalize": "text"
+        },
+        "count": {
+          "accepted": [
+            "256"
+          ],
+          "normalize": "int"
+        },
+        "last": {
+          "accepted": [
+            "2001:db8:cafe:1aff::",
+            "2001:db8:cafe:1aff::/64"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Un /56 garde les 3 premiers groupes (48 bits) et les 8 premiers bits du 4ᵉ groupe, soit ses deux premiers chiffres hexadécimaux. Dans 1a7f, on garde 1a et on met le reste à zéro : 2001:db8:cafe:1a00::/56. Entre /56 et /64, il reste 8 bits d'ID de sous-réseau, soit 2⁸ = 256 préfixes /64, de 2001:db8:cafe:1a00::/64 à 2001:db8:cafe:1aff::/64. Une longueur de préfixe multiple de 4 tombe toujours sur une frontière de chiffre hexadécimal, ce qui évite le calcul binaire.",
+    "reference": "RFC 4291, section 2.3 ; RFC 6177"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-why-64-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pourquoi les LAN IPv6 utilisent-ils des préfixes /64 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "SLAAC et l'EUI-64 modifié reposent sur un ID d'interface de 64 bits."
+        },
+        {
+          "id": "b",
+          "text": "Les routeurs n'installent aucun préfixe plus long que /64 dans leur table de routage."
+        },
+        {
+          "id": "c",
+          "text": "IOS refuse toute longueur de préfixe autre que /64 sur une interface Ethernet."
+        },
+        {
+          "id": "d",
+          "text": "L'adresse de lien local d'une interface n'existe que si son préfixe global est un /64."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'architecture d'adressage IPv6 prévoit un ID d'interface de 64 bits pour les adresses unicast globales. SLAAC forme l'adresse en accolant au préfixe annoncé un ID d'interface de 64 bits, EUI-64 modifié ou aléatoire : si le préfixe annoncé n'est pas un /64, la somme ne fait plus 128 bits et l'hôte ignore le préfixe. Le /64 est donc la taille standard d'un LAN (RFC 7421), même s'il paraît démesuré. Une liaison point à point peut utiliser un /127 (RFC 6164), configuré statiquement.",
+    "distractorNotes": {
+      "b": "IOS installe même des routes /128 : chaque adresse configurée apparaît dans la table comme route locale (code L) en /128.",
+      "c": "IOS accepte d'autres longueurs sur une interface Ethernet (/112, /127…) ; ce sont SLAAC et l'EUI-64 qui ne fonctionnent plus.",
+      "d": "L'adresse de lien local se crée dès qu'IPv6 est actif sur l'interface, quelle que soit la longueur du préfixe global, et même sans adresse globale."
+    },
+    "reference": "RFC 4291, section 2.5.1 ; RFC 4862, section 5.5.3 ; RFC 7421"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-isp-32-to-56-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un FAI dispose du bloc 2001:db8::/32 et délègue un préfixe /56 à chacun de ses clients résidentiels. Combien de clients peut-il servir au maximum avec ce bloc ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "256"
+        },
+        {
+          "id": "b",
+          "text": "65 536"
+        },
+        {
+          "id": "c",
+          "text": "16 777 216"
+        },
+        {
+          "id": "d",
+          "text": "4 294 967 296"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le nombre de sous-préfixes se calcule avec la différence entre les longueurs : 2^(56 − 32) = 2²⁴ = 16 777 216 préfixes /56. Chaque client dispose ensuite de 2^(64 − 56) = 2⁸ = 256 sous-réseaux /64 pour ses LAN. La RFC 6177 recommande de déléguer aux sites des préfixes plus courts qu'un /64 (souvent /48 ou /56), pour qu'ils puissent créer plusieurs sous-réseaux sans renumérotation.",
+    "distractorNotes": {
+      "a": "256 = 2⁸ : c'est le nombre de sous-réseaux /64 dont dispose chaque client dans son /56, pas le nombre de /56 dans le /32.",
+      "b": "65 536 = 2¹⁶ : c'est le nombre de préfixes /48 contenus dans un /32.",
+      "d": "4 294 967 296 = 2³² : c'est le nombre de préfixes /64 contenus dans un /32."
+    },
+    "reference": "RFC 6177 ; RFC 4291, section 2.3"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-same-subnet-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux adresses appartiennent au même sous-réseau que 2001:db8:acad:10::1/64 ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "2001:db8:acad:1::10"
+        },
+        {
+          "id": "b",
+          "text": "2001:db8:acad:10:ffff:ffff:ffff:ffff"
+        },
+        {
+          "id": "c",
+          "text": "2001:db8:acad:100::1"
+        },
+        {
+          "id": "d",
+          "text": "2001:db8:acad:0:10::1"
+        },
+        {
+          "id": "e",
+          "text": "2001:db8:acad:10:a::1"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Avec un /64, deux adresses sont dans le même sous-réseau si leurs 4 premiers groupes sont identiques ; ici 2001:db8:acad:10, soit 2001:0db8:acad:0010 une fois les zéros de tête restaurés. 2001:db8:acad:10:ffff:ffff:ffff:ffff est la dernière adresse du sous-réseau, et 2001:db8:acad:10:a::1 se décompresse en 2001:0db8:acad:0010:000a:0000:0000:0001. Pour lire le 4ᵉ groupe d'une adresse compressée, il faut repérer où tombe le « :: » : les groupes situés après lui se comptent depuis la fin.",
+    "distractorNotes": {
+      "a": "Le 4ᵉ groupe vaut 1 (0001) et non 10 (0010) : c'est le sous-réseau 2001:db8:acad:1::/64 ; le 10 final fait partie de l'ID d'interface.",
+      "c": "Le 4ᵉ groupe vaut 100 (0x0100), différent de 10 (0x0010) : c'est le sous-réseau 2001:db8:acad:100::/64.",
+      "d": "Décompressée, l'adresse donne 2001:0db8:acad:0000:0010:0000:0000:0001 : le 4ᵉ groupe est nul et le 10 se trouve dans l'ID d'interface."
+    },
+    "reference": "RFC 4291, sections 2.2 et 2.5.4"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-unicast-routing-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale, faites de R1 un routeur IPv6 : il doit acheminer les paquets IPv6 unicast entre ses interfaces et envoyer des Router Advertisements sur ses interfaces LAN IPv6.",
+      "prompt": "R1(config)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "ipv6 unicast-routing"
+        ]
+      ]
+    },
+    "explanation": "Par défaut, IOS traite IPv6 en hôte : une interface peut avoir une adresse IPv6, mais R1 n'achemine pas les paquets IPv6 d'une interface à l'autre et n'envoie pas de RA. La commande globale « ipv6 unicast-routing » active l'acheminement IPv6 ; R1 rejoint alors le groupe FF02::2 (tous les routeurs) et annonce les préfixes de ses interfaces Ethernet dans des RA, ce qui permet SLAAC aux hôtes. Elle est aussi indispensable aux protocoles de routage IPv6 comme OSPFv3. « ip routing » ne concerne que l'IPv4.",
+    "reference": "Cisco IOS IPv6 Configuration Guide : Implementing IPv6 Addressing and Basic Connectivity"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-gua-lla-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode de configuration globale de R1, configurez l'interface GigabitEthernet0/0 : adresse unicast globale 2001:db8:acad:20::1/64, adresse de lien local statique fe80::1, puis activez l'interface.",
+      "prompt": "R1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          3
+        ]
+      ],
+      "commands": [
+        [
+          "interface GigabitEthernet0/0"
+        ],
+        [
+          "ipv6 address 2001:db8:acad:20::1/64"
+        ],
+        [
+          "ipv6 address fe80::1 link-local"
+        ],
+        [
+          "no shutdown"
+        ]
+      ]
+    },
+    "explanation": "Les trois sous-commandes se tapent en mode interface, dans n'importe quel ordre. « ipv6 address 2001:db8:acad:20::1/64 » fixe l'adresse globale complète, préfixe et ID d'interface ::1 compris. « ipv6 address fe80::1 link-local » remplace l'adresse de lien local qu'IOS aurait générée par EUI-64 : FE80::1 est plus simple à reconnaître comme passerelle. Une adresse de lien local se configure sans longueur de préfixe, avec le mot-clé « link-local ». Enfin, les interfaces d'un routeur sont désactivées par défaut : « no shutdown » est nécessaire.",
+    "reference": "Cisco IOS IPv6 Configuration Guide : Implementing IPv6 Addressing and Basic Connectivity"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-enable-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R2, la liaison série Serial0/0/0 ne sert qu'aux échanges entre voisins OSPFv3 : IPv6 doit y fonctionner avec la seule adresse de lien local générée automatiquement, sans aucune adresse globale. L'interface est déjà activée (no shutdown). Depuis le mode de configuration globale, configurez l'interface.",
+      "prompt": "R2(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface Serial0/0/0"
+        ],
+        [
+          "ipv6 enable"
+        ]
+      ]
+    },
+    "explanation": "« ipv6 enable » active IPv6 sur l'interface sans lui donner d'adresse globale : IOS génère automatiquement une adresse de lien local FE80::/10 et l'interface rejoint FF02::1 et son groupe de nœud sollicité. Cela suffit à OSPFv3, qui échange ses messages et choisit ses prochains sauts avec les adresses de lien local. Une interface série n'ayant pas d'adresse MAC, IOS emprunte pour l'EUI-64 la MAC d'une interface Ethernet du routeur. Configurer une adresse avec « ipv6 address » active aussi IPv6, ce qui rend alors « ipv6 enable » superflue.",
+    "reference": "Cisco IOS IPv6 Command Reference : ipv6 enable"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-no-ra-diagnosis-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les PC du LAN relié à G0/1 de R1 n'obtiennent qu'une adresse de lien local : ni adresse globale par SLAAC, ni passerelle par défaut IPv6. Quelle est la cause ?",
+      "exhibit": "R1# show running-config | include ipv6|^interface\ninterface GigabitEthernet0/0\ninterface GigabitEthernet0/1\n ipv6 address FE80::1 link-local\n ipv6 address 2001:DB8:ACAD:10::1/64\ninterface Serial0/0/0\nR1# show ipv6 interface brief\nGigabitEthernet0/0     [administratively down/down]\n    unassigned\nGigabitEthernet0/1     [up/up]\n    FE80::1\n    2001:DB8:ACAD:10::1\nSerial0/0/0            [administratively down/down]\n    unassigned",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il manque « ipv6 enable » sur G0/1 : sans elle, IPv6 reste inactif sur l'interface."
+        },
+        {
+          "id": "b",
+          "text": "L'adresse de lien local statique FE80::1 bloque l'envoi des RA ; il faut l'adresse EUI-64."
+        },
+        {
+          "id": "c",
+          "text": "Il manque « ipv6 unicast-routing » : sans elle, R1 n'envoie aucun RA sur G0/1."
+        },
+        {
+          "id": "d",
+          "text": "Il manque « ipv6 address autoconfig » sur G0/1 pour que R1 annonce son préfixe."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le filtre « include ipv6|^interface » afficherait la ligne globale « ipv6 unicast-routing » si elle existait : elle manque. Sans elle, IOS traite IPv6 en hôte : les adresses de G0/1 sont actives, mais R1 n'envoie aucun RA et n'achemine pas les paquets IPv6. Or les PC tirent des RA le préfixe pour SLAAC et leur passerelle par défaut (l'adresse source du RA, ici FE80::1). Ils n'ont donc que leur adresse de lien local, qu'ils créent seuls. Correction : « ipv6 unicast-routing » en configuration globale.",
+    "distractorNotes": {
+      "a": "Configurer une adresse avec « ipv6 address » active IPv6 sur l'interface ; l'exhibit montre d'ailleurs G0/1 up/up avec ses deux adresses.",
+      "b": "Une adresse de lien local statique convient très bien : les RA partent de l'adresse de lien local de l'interface, quelle qu'elle soit, et FE80::1 est une passerelle courante.",
+      "d": "« ipv6 address autoconfig » fait de R1 un client SLAAC qui écoute les RA d'un autre routeur ; elle ne lui fait annoncer aucun préfixe."
+    },
+    "reference": "Cisco IOS IPv6 Configuration Guide : Implementing IPv6 Addressing and Basic Connectivity ; RFC 4861, section 6.2"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-show-brief-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle commande affiche, avec une ligne d'état par interface, les adresses IPv6 de lien local et globales configurées sur un routeur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "show ipv6 route"
+        },
+        {
+          "id": "b",
+          "text": "show ip interface brief"
+        },
+        {
+          "id": "c",
+          "text": "show ipv6 neighbors"
+        },
+        {
+          "id": "d",
+          "text": "show ipv6 interface brief"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "« show ipv6 interface brief » liste chaque interface avec son état entre crochets, par exemple [up/up], puis ses adresses IPv6 : d'abord l'adresse de lien local, ensuite les adresses globales ou uniques locales. C'est la vérification la plus rapide après une configuration : on y repère une adresse EUI-64 calculée par IOS ou une interface restée « unassigned ». Pour le détail (préfixe, groupes multicast rejoints, paramètres ND, adresses en double), on utilise « show ipv6 interface » suivi du nom de l'interface.",
+    "distractorNotes": {
+      "a": "« show ipv6 route » affiche la table de routage IPv6 (routes C et L des interfaces, routes statiques, OSPFv3…), pas l'état des interfaces.",
+      "b": "« show ip interface brief » ne montre que les adresses IPv4 des interfaces.",
+      "c": "« show ipv6 neighbors » affiche le cache des voisins rempli par NDP, l'équivalent IPv6 de la table ARP."
+    },
+    "reference": "Cisco IOS IPv6 Command Reference : show ipv6 interface"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-prefix-notation-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un routeur Cisco IOS, comment indique-t-on la longueur de préfixe d'une adresse IPv6 globale dans la commande « ipv6 address » ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Par un masque hexadécimal après l'adresse, par exemple ffff:ffff:ffff:ffff::"
+        },
+        {
+          "id": "b",
+          "text": "Par une barre oblique et un nombre collés à l'adresse, par exemple /64"
+        },
+        {
+          "id": "c",
+          "text": "Par un masque en décimal pointé après l'adresse, par exemple 255.255.255.0"
+        },
+        {
+          "id": "d",
+          "text": "Par un masque générique après l'adresse, par exemple ::ffff:ffff:ffff:ffff"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "En IPv6, la longueur de préfixe s'écrit toujours en notation CIDR, collée à l'adresse : « ipv6 address 2001:db8:acad:1::1/64 ». Elle compte les bits du préfixe, de 0 à 128. Il n'existe pas de masque de sous-réseau en IPv6 : un /64 correspond simplement aux 4 premiers groupes. Seule l'adresse de lien local statique se configure sans longueur, avec le mot-clé « link-local », car son préfixe FE80::/64 est implicite.",
+    "distractorNotes": {
+      "a": "IOS n'accepte pas de masque en IPv6 : la syntaxe est « ipv6 address <adresse>/<longueur> ».",
+      "c": "Le masque décimal pointé est propre à l'IPv4 (commande « ip address ») ; une adresse IPv6 compte 128 bits.",
+      "d": "Les masques génériques (wildcard) servent dans les ACL IPv4 et OSPFv2 ; ils n'existent pas pour les adresses d'interface IPv6."
+    },
+    "reference": "Cisco IOS IPv6 Command Reference : ipv6 address ; RFC 4291, section 2.3"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-commands-match-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque commande IOS à son effet.",
+      "left": [
+        {
+          "id": "c1",
+          "text": "ipv6 unicast-routing"
+        },
+        {
+          "id": "c2",
+          "text": "ipv6 enable"
+        },
+        {
+          "id": "c3",
+          "text": "ipv6 address 2001:db8:1:1::/64 eui-64"
+        },
+        {
+          "id": "c4",
+          "text": "ipv6 address fe80::1 link-local"
+        },
+        {
+          "id": "c5",
+          "text": "ipv6 address 2001:db8:1:1::1/64"
+        }
+      ],
+      "right": [
+        {
+          "id": "route",
+          "text": "Active l'acheminement des paquets IPv6 et l'envoi de RA par le routeur"
+        },
+        {
+          "id": "llonly",
+          "text": "Active IPv6 sur l'interface avec seulement une adresse de lien local automatique"
+        },
+        {
+          "id": "eui",
+          "text": "Calcule l'ID d'interface de l'adresse globale à partir de l'adresse MAC"
+        },
+        {
+          "id": "ll",
+          "text": "Remplace l'adresse de lien local générée automatiquement"
+        },
+        {
+          "id": "static",
+          "text": "Attribue une adresse globale entièrement fixée par l'administrateur"
+        },
+        {
+          "id": "slaac",
+          "text": "Forme l'adresse globale à partir des RA reçus d'un autre routeur"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "c1": "route",
+        "c2": "llonly",
+        "c3": "eui",
+        "c4": "ll",
+        "c5": "static"
+      }
+    },
+    "explanation": "« ipv6 unicast-routing » est la seule commande globale de la liste : elle active le rôle de routeur IPv6 (acheminement et RA). Les autres se tapent en mode interface. « ipv6 enable » se contente de l'adresse de lien local automatique. Avec « eui-64 », IOS complète le préfixe /64 par un ID d'interface calculé depuis la MAC (FFFE inséré au milieu, 7ᵉ bit inversé) ; sans ce mot-clé, l'adresse saisie est utilisée telle quelle, ID d'interface compris. Le mot-clé « link-local » remplace l'adresse FE80:: automatique par celle que l'on choisit.",
+    "distractorNotes": {
+      "slaac": "C'est l'effet de « ipv6 address autoconfig », qui fait de l'interface un client SLAAC ; cette commande n'est pas dans la liste."
+    },
+    "reference": "Cisco IOS IPv6 Command Reference : ipv6 address, ipv6 enable, ipv6 unicast-routing"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-gua-structure-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une entreprise a reçu un préfixe de site /48 et utilise des sous-réseaux /64. Associez chaque partie de ses adresses unicast globales à sa taille.",
+      "left": [
+        {
+          "id": "g",
+          "text": "Préfixe de routage global"
+        },
+        {
+          "id": "s",
+          "text": "ID de sous-réseau"
+        },
+        {
+          "id": "i",
+          "text": "ID d'interface"
+        },
+        {
+          "id": "a",
+          "text": "Adresse complète"
+        }
+      ],
+      "right": [
+        {
+          "id": "b16",
+          "text": "16 bits"
+        },
+        {
+          "id": "b32",
+          "text": "32 bits"
+        },
+        {
+          "id": "b48",
+          "text": "48 bits"
+        },
+        {
+          "id": "b64",
+          "text": "64 bits"
+        },
+        {
+          "id": "b128",
+          "text": "128 bits"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "g": "b48",
+        "s": "b16",
+        "i": "b64",
+        "a": "b128"
+      }
+    },
+    "explanation": "Une adresse IPv6 compte 128 bits. Le préfixe de routage global attribué au site occupe ici 48 bits, soit les 3 premiers groupes. L'ID de sous-réseau occupe les bits 49 à 64, soit 16 bits (le 4ᵉ groupe), que l'entreprise numérote librement pour ses LAN. Les 64 bits restants, les 4 derniers groupes, forment l'ID d'interface, qui identifie l'interface sur son lien. Au total : 48 + 16 + 64 = 128.",
+    "distractorNotes": {
+      "b32": "32 bits est la taille d'une adresse IPv4 ; aucune partie de cette adresse IPv6 ne fait 32 bits."
+    },
+    "reference": "RFC 4291, section 2.5.4 ; RFC 3587"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-notation-rules-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Répondez aux questions suivantes sur l'écriture textuelle d'une adresse IPv6.",
+      "fields": [
+        {
+          "id": "groups",
+          "label": "Nombre de groupes de 16 bits dans une adresse IPv6 (nombre entier)"
+        },
+        {
+          "id": "digits",
+          "label": "Nombre maximal de chiffres hexadécimaux dans un groupe (nombre entier)"
+        },
+        {
+          "id": "dcolon",
+          "label": "Nombre maximal de « :: » dans une même adresse (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "groups": {
+          "accepted": [
+            "8"
+          ],
+          "normalize": "int"
+        },
+        "digits": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        },
+        "dcolon": {
+          "accepted": [
+            "1"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Une adresse IPv6 de 128 bits s'écrit en 8 groupes de 16 bits séparés par « : ». Chaque groupe compte au plus 4 chiffres hexadécimaux (un chiffre code 4 bits), dont on peut supprimer les zéros de tête : 0db8 s'écrit db8. Le « :: » remplace une suite de groupes nuls, mais une seule fois par adresse : avec deux « :: », on ne saurait pas combien de groupes chacun remplace. Pour décompresser, on ajoute autant de groupes 0000 qu'il en manque pour revenir à 8.",
+    "reference": "RFC 4291, section 2.2"
+  },
+  {
+    "slug": "ccna-1.8-ipv6-40-to-48-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un FAI a reçu le bloc 2001:db8:ab00::/40. Il le découpe en préfixes /48 pour ses clients professionnels, numérotés dans l'ordre croissant à partir de 0. Donnez les préfixes demandés en forme canonique RFC 5952.",
+      "fields": [
+        {
+          "id": "first",
+          "label": "Préfixe /48 numéro 0, sans la longueur"
+        },
+        {
+          "id": "n100",
+          "label": "Préfixe /48 numéro 100 (en décimal), sans la longueur"
+        },
+        {
+          "id": "last",
+          "label": "Dernier préfixe /48 du bloc, sans la longueur"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "first": {
+          "accepted": [
+            "2001:db8:ab00::",
+            "2001:db8:ab00::/48"
+          ],
+          "normalize": "text"
+        },
+        "n100": {
+          "accepted": [
+            "2001:db8:ab64::",
+            "2001:db8:ab64::/48"
+          ],
+          "normalize": "text"
+        },
+        "last": {
+          "accepted": [
+            "2001:db8:abff::",
+            "2001:db8:abff::/48"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Un /40 fixe les 2 premiers groupes et les 8 premiers bits du 3ᵉ groupe, soit les chiffres ab. Les 8 bits suivants, les deux derniers chiffres du 3ᵉ groupe, numérotent les /48 : 2⁸ = 256 préfixes, de 00 à ff. Le numéro 0 donne 2001:db8:ab00::/48 et le dernier, 255 = 0xff, donne 2001:db8:abff::/48. Le numéro 100 s'écrit 0x64 en hexadécimal (6 × 16 + 4) : 2001:db8:ab64::/48. Erreur fréquente : oublier de convertir le numéro en hexadécimal avant de l'insérer dans l'adresse.",
+    "reference": "RFC 4291, section 2.3 ; RFC 6177"
+  },
+  {
+    "slug": "ccna-1.9-ula-recognize-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un serveur a l'adresse fd8c:21a0:4b3e:10::25/64. De quel type d'adresse IPv6 s'agit-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lien local"
+        },
+        {
+          "id": "b",
+          "text": "Unique locale"
+        },
+        {
+          "id": "c",
+          "text": "Unicast globale"
+        },
+        {
+          "id": "d",
+          "text": "Site local"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le bloc FC00::/7 est réservé aux adresses uniques locales, ou ULA (RFC 4193). Le 8ᵉ bit (L) vaut 1 pour les préfixes générés localement, d'où FD00::/8 en pratique : fd, puis un ID global aléatoire de 40 bits (ici 8c21a04b3e), un ID de sous-réseau de 16 bits (0010) et l'ID d'interface. Ces adresses servent à l'adressage interne : routables dans l'organisation, elles ne doivent pas l'être sur Internet, comme les adresses privées IPv4.",
+    "distractorNotes": {
+      "a": "Les adresses de lien local appartiennent à FE80::/10 (premier groupe de fe80 à febf), pas à un bloc qui commence par fd.",
+      "c": "Les unicast globales sont actuellement attribuées dans 2000::/3 (premier chiffre 2 ou 3) ; fd n'en fait pas partie.",
+      "d": "Les adresses site local (FEC0::/10) sont obsolètes depuis la RFC 3879 ; elles commençaient par fec0 à feff, pas par fd."
+    },
+    "reference": "RFC 4193, section 3.1 ; RFC 3879"
+  },
+  {
+    "slug": "ccna-1.9-ndp-rs-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un PC IPv6 vient de se connecter au réseau et ne veut pas attendre la prochaine annonce périodique de son routeur. Quel message envoie-t-il, et vers quelle destination ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un Router Advertisement vers FF02::2"
+        },
+        {
+          "id": "b",
+          "text": "Un Neighbor Solicitation vers FF02::2"
+        },
+        {
+          "id": "c",
+          "text": "Un Router Solicitation vers FF02::1"
+        },
+        {
+          "id": "d",
+          "text": "Un Router Solicitation vers FF02::2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le Router Solicitation (ICMPv6 type 133) demande aux routeurs du lien d'envoyer tout de suite un Router Advertisement (type 134). Il est adressé au groupe multicast tous-routeurs FF02::2, que rejoignent les routeurs IPv6 (sous IOS, ceux où « ipv6 unicast-routing » est active). Le routeur répond par un RA, envoyé à FF02::1 ou directement à l'hôte, qui contient le préfixe et les flags M et O ; son adresse source devient la passerelle par défaut de l'hôte.",
+    "distractorNotes": {
+      "a": "Le Router Advertisement est la réponse du routeur, pas la demande de l'hôte.",
+      "b": "Le Neighbor Solicitation sert à la résolution d'adresse et au DAD, vers un groupe de nœud sollicité ; il ne réclame pas d'annonce aux routeurs.",
+      "c": "FF02::1 désigne tous les nœuds du lien ; la sollicitation ne vise que les routeurs, groupe FF02::2."
+    },
+    "reference": "RFC 4861, sections 4.1, 4.2 et 6.3.7"
+  },
+  {
+    "slug": "ccna-1.9-dad-ns-addresses-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avant d'utiliser une nouvelle adresse unicast, un hôte IPv6 vérifie qu'elle est unique sur le lien (DAD) en envoyant un Neighbor Solicitation. Quelles adresses source et destination ce message utilise-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Source : son adresse de lien local ; destination : FF02::2"
+        },
+        {
+          "id": "b",
+          "text": "Source : :: ; destination : le groupe de nœud sollicité de l'adresse testée"
+        },
+        {
+          "id": "c",
+          "text": "Source : l'adresse testée ; destination : FF02::1"
+        },
+        {
+          "id": "d",
+          "text": "Source : ::1 ; destination : le groupe de nœud sollicité de l'adresse testée"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Pendant le DAD, l'adresse est provisoire (tentative) : l'hôte ne peut pas encore s'en servir. Il envoie donc le Neighbor Solicitation avec l'adresse non spécifiée :: comme source, et le groupe de nœud sollicité de l'adresse testée (FF02::1:FF suivi de ses 24 derniers bits) comme destination : seuls les nœuds susceptibles de porter cette adresse le traitent. Si un nœud répond par un Neighbor Advertisement, l'adresse est en double ; sans réponse, elle devient utilisable.",
+    "distractorNotes": {
+      "a": "FF02::2 ne joint que les routeurs, alors que le doublon peut être n'importe quel nœud ; et le NS du DAD part toujours de l'adresse non spécifiée.",
+      "c": "L'adresse testée est encore provisoire : l'hôte n'a pas le droit de l'utiliser comme source tant que le DAD n'est pas terminé.",
+      "d": "::1 est l'adresse de bouclage : un paquet qui la porte ne sort jamais de l'hôte."
+    },
+    "reference": "RFC 4862, section 5.4.2"
+  },
+  {
+    "slug": "ccna-1.9-eui64-ul-bit-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une interface a l'adresse MAC 0a1b.2c3d.4e5f. Quel ID d'interface EUI-64 modifié IOS calcule-t-il à partir de cette adresse ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "0a1b:2cff:fe3d:4e5f"
+        },
+        {
+          "id": "b",
+          "text": "0b1b:2cff:fe3d:4e5f"
+        },
+        {
+          "id": "c",
+          "text": "081b:2cfe:ff3d:4e5f"
+        },
+        {
+          "id": "d",
+          "text": "081b:2cff:fe3d:4e5f"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "On coupe la MAC en deux moitiés de 24 bits (0a1b2c et 3d4e5f) et on insère FFFE au milieu : 0a1b:2cff:fe3d:4e5f. On inverse ensuite le 7ᵉ bit (U/L) du premier octet : 0a = 0000 1010, le bit de valeur 2 vaut 1 et passe à 0, ce qui donne 0000 1000 = 08. L'ID d'interface est 081b:2cff:fe3d:4e5f, écrit 81b:2cff:fe3d:4e5f sans le zéro de tête. Ici le bit U/L de la MAC vaut 1 (adresse administrée localement) : l'inversion le met à 0, alors qu'avec une MAC constructeur, où il vaut 0, elle ajoute 2 (00 devient 02).",
+    "distractorNotes": {
+      "a": "FFFE est bien inséré au milieu, mais le 7ᵉ bit du premier octet n'a pas été inversé : 0a doit devenir 08.",
+      "b": "C'est le bit de poids faible du premier octet (I/G) qui a été inversé ; l'EUI-64 modifié inverse le 7ᵉ bit (U/L), de valeur 0x02.",
+      "c": "Le 7ᵉ bit est bien inversé, mais les octets insérés sont FF puis FE (2c ff fe 3d), et non FE puis FF."
+    },
+    "reference": "RFC 4291, section 2.5.1 et annexe A"
+  },
+  {
+    "slug": "ccna-1.9-dad-duplicate-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Que s'est-il passé pour l'adresse 2001:DB8:ACAD:1::1 de R1 ?",
+      "exhibit": "%IPV6_ND-4-DUPLICATE: Duplicate address 2001:DB8:ACAD:1::1 on GigabitEthernet0/0\nR1# show ipv6 interface GigabitEthernet0/0\nGigabitEthernet0/0 is up, line protocol is up\n  IPv6 is enabled, link-local address is FE80::1\n  No Virtual link-local address(es):\n  Global unicast address(es):\n    2001:DB8:ACAD:1::1, subnet is 2001:DB8:ACAD:1::/64 [DUP]\n  Joined group address(es):\n    FF02::1\n    FF02::2\n    FF02::1:FF00:1\n  MTU is 1500 bytes\n  ICMP error messages limited to one every 100 milliseconds\n  ICMP redirects are enabled\n  ICMP unreachables are sent\n  ND DAD is enabled, number of DAD attempts: 1\n  ND reachable time is 30000 milliseconds (using 30000)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un autre nœud du lien utilise déjà cette adresse : R1 l'a détectée et ne s'en sert pas."
+        },
+        {
+          "id": "b",
+          "text": "Le DAD n'a reçu aucune réponse : l'adresse reste provisoire en attendant une NA."
+        },
+        {
+          "id": "c",
+          "text": "Elle est déjà configurée sur une autre interface de R1 : IOS la bloque sur G0/0."
+        },
+        {
+          "id": "d",
+          "text": "Un autre routeur annonce le même préfixe /64 : R1 marque donc son adresse en double."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Avant d'utiliser une adresse, IOS lance le DAD : un Neighbor Solicitation envoyé depuis :: vers le groupe de nœud sollicité de l'adresse (ici FF02::1:FF00:1). Si un autre nœud répond par un Neighbor Advertisement, ou teste la même adresse au même moment, l'adresse est déclarée en double : IOS journalise %IPV6_ND-4-DUPLICATE et la marque [DUP] dans « show ipv6 interface ». Elle n'est alors pas utilisée. Il faut trouver l'hôte en conflit ou changer l'adresse, puis relancer le DAD, par exemple avec « shutdown » puis « no shutdown » sur l'interface.",
+    "distractorNotes": {
+      "b": "C'est l'inverse : sans réponse au Neighbor Solicitation, le DAD réussit et l'adresse devient utilisable. [DUP] signale qu'un doublon a été détecté.",
+      "c": "Le DAD ne teste que le lien de l'interface concernée : il ne voit pas les adresses des autres interfaces de R1. Le message signale un doublon détecté sur le lien de G0/0.",
+      "d": "Plusieurs routeurs peuvent annoncer le même préfixe sur un lien (redondance) ; le DAD porte sur l'adresse complète, pas sur le préfixe."
+    },
+    "reference": "RFC 4862, sections 5.4.3 à 5.4.5 ; Cisco IOS IPv6 Command Reference : show ipv6 interface"
+  },
+  {
+    "slug": "ccna-1.9-solicited-node-shared-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une interface a l'adresse unicast 2001:db8:1::a:12:3456. Quelles deux autres adresses unicast correspondent au même groupe multicast de nœud sollicité ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "2001:db8:1::12:3457"
+        },
+        {
+          "id": "b",
+          "text": "fe80::abcd:12:3456"
+        },
+        {
+          "id": "c",
+          "text": "2001:db8:1::1234:56"
+        },
+        {
+          "id": "d",
+          "text": "2001:db8:1::a:12:3465"
+        },
+        {
+          "id": "e",
+          "text": "2001:db8:2::ff12:3456"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Le groupe de nœud sollicité se forme avec le préfixe FF02::1:FF00:0/104 suivi des 24 derniers bits de l'adresse unicast, quel que soit son préfixe. Pour 2001:db8:1::a:12:3456, les deux derniers groupes valent 0012:3456 : les 24 bits de poids faible sont 12:3456, d'où FF02::1:FF12:3456. fe80::abcd:12:3456 se termine aussi par 0012:3456. Pour 2001:db8:2::ff12:3456, le dernier groupe 3456 et l'octet bas 12 de ff12 donnent les mêmes 24 bits : l'octet ff est ignoré. Ces adresses partagent donc le même groupe, malgré des préfixes différents.",
+    "distractorNotes": {
+      "a": "Ses 24 derniers bits valent 12:3457 : groupe FF02::1:FF12:3457, qui diffère d'un bit.",
+      "c": "Décompressés, les deux derniers groupes valent 1234:0056 : les 24 derniers bits sont 34:0056, groupe FF02::1:FF34:56.",
+      "d": "Les 24 derniers bits valent 12:3465 (65 et non 56) : groupe FF02::1:FF12:3465."
+    },
+    "reference": "RFC 4291, section 2.7.1"
+  },
+  {
+    "slug": "ccna-1.9-ipv6-host-groups-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur R1, qui n'a pas la commande « ipv6 unicast-routing », l'administrateur tape seulement « ipv6 address 2001:db8:1:1::1/64 » sur GigabitEthernet0/0, qui est active (up/up). Quelles deux affirmations sur G0/0 sont vraies ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "G0/0 rejoint le groupe multicast FF02::2."
+        },
+        {
+          "id": "b",
+          "text": "R1 annonce le préfixe 2001:db8:1:1::/64 dans des RA sur G0/0."
+        },
+        {
+          "id": "c",
+          "text": "G0/0 génère automatiquement une adresse de lien local dans FE80::/10."
+        },
+        {
+          "id": "d",
+          "text": "IPv6 reste inactif sur G0/0 tant que « ipv6 enable » n'est pas configurée."
+        },
+        {
+          "id": "e",
+          "text": "G0/0 rejoint le groupe multicast FF02::1:FF00:1."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Dès qu'une adresse IPv6 est configurée, IPv6 s'active sur l'interface : IOS lui génère une adresse de lien local EUI-64 (FE80::/10), et l'interface rejoint FF02::1 (tous les nœuds) ainsi que le groupe de nœud sollicité de chacune de ses adresses unicast. Pour 2001:db8:1:1::1, les 24 derniers bits valent 00:0001, d'où FF02::1:FF00:1. Le rôle de routeur (groupe FF02::2, envoi de RA, acheminement des paquets entre interfaces) n'apparaît qu'avec « ipv6 unicast-routing ».",
+    "distractorNotes": {
+      "a": "FF02::2 (tous les routeurs) n'est rejoint qu'une fois « ipv6 unicast-routing » active ; sans elle, R1 se comporte en hôte IPv6.",
+      "b": "Sans « ipv6 unicast-routing », IOS n'envoie aucun RA, même si l'interface a une adresse globale.",
+      "d": "Configurer une adresse avec « ipv6 address » active IPv6 sur l'interface ; « ipv6 enable » ne sert que sans adresse globale."
+    },
+    "reference": "RFC 4291, section 2.8 ; Cisco IOS IPv6 Configuration Guide : Implementing IPv6 Addressing and Basic Connectivity"
+  },
+  {
+    "slug": "ccna-1.9-dhcpv6-stateful-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un réseau IPv6 utilise le DHCPv6 avec état (stateful) pour adresser ses hôtes. Quelles deux affirmations sont vraies ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le client envoie son message Solicit au groupe multicast FF02::2."
+        },
+        {
+          "id": "b",
+          "text": "Le routeur positionne à 1 le flag M (Managed) de ses Router Advertisements."
+        },
+        {
+          "id": "c",
+          "text": "Le serveur DHCPv6 fournit au client l'adresse de sa passerelle par défaut."
+        },
+        {
+          "id": "d",
+          "text": "Le serveur DHCPv6 attribue l'adresse IPv6 du client et garde la trace de son bail."
+        },
+        {
+          "id": "e",
+          "text": "Le client forme son adresse par SLAAC et n'obtient que le DNS du serveur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "En DHCPv6 avec état, le routeur indique aux hôtes, par le flag M=1 de ses RA, d'obtenir leur adresse auprès d'un serveur DHCPv6 (sous IOS : « ipv6 nd managed-config-flag »). Le serveur attribue les adresses et mémorise qui détient quoi, les baux : c'est l'« état ». Les RA restent indispensables, car DHCPv6 ne transmet pas de passerelle par défaut : l'hôte utilise l'adresse de lien local du routeur qui émet le RA. L'échange compte quatre messages : Solicit, Advertise, Request, Reply.",
+    "distractorNotes": {
+      "a": "Le Solicit part vers FF02::1:2, le groupe de tous les serveurs et relais DHCPv6 du lien ; FF02::2 regroupe les routeurs.",
+      "c": "DHCPv6 n'a pas d'option de passerelle par défaut : le client la tire toujours de l'adresse source des RA.",
+      "e": "C'est le fonctionnement du DHCPv6 sans état (flag O à 1) : l'adresse vient de SLAAC et le serveur ne fournit que des options comme le DNS."
+    },
+    "reference": "RFC 8415, section 7.1 ; RFC 4861, section 4.2"
+  },
+  {
+    "slug": "ccna-1.9-prefix-ranges-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Les blocs FE80::/10 (lien local) et FC00::/7 (unique locale) couvrent chacun une plage de valeurs pour le premier groupe de 16 bits d'une adresse. Pour chaque bloc, donnez la plus grande valeur possible de ce premier groupe.",
+      "fields": [
+        {
+          "id": "ll",
+          "label": "Plus grande valeur du 1er groupe dans FE80::/10 (4 chiffres hexadécimaux)"
+        },
+        {
+          "id": "ula",
+          "label": "Plus grande valeur du 1er groupe dans FC00::/7 (4 chiffres hexadécimaux)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "ll": {
+          "accepted": [
+            "febf"
+          ],
+          "normalize": "text"
+        },
+        "ula": {
+          "accepted": [
+            "fdff"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Un /10 fixe les 10 premiers bits : FE80 = 1111 1110 10 suivi de 00 0000. Les 6 bits libres du premier groupe vont de 000000 à 111111, donc ce groupe va de FE80 à FEBF (1111 1110 1011 1111). Un /7 fixe les 7 premiers bits, 1111 110 : le 8ᵉ bit et les 8 suivants sont libres, d'où FC00 à FDFF. En pratique, le 8ᵉ bit (L) des ULA vaut 1 et elles commencent par fd ; et les adresses de lien local commencent toutes par fe80, car la RFC 4291 impose 54 bits nuls après les 10 bits du préfixe.",
+    "reference": "RFC 4291, sections 2.4 et 2.5.6 ; RFC 4193, section 3.1"
+  },
+  {
+    "slug": "ccna-1.9-eui64-reverse-mac-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. R1 a généré l'adresse de lien local de G0/2 par EUI-64 modifié à partir de la MAC de l'interface. Retrouvez cette adresse MAC.",
+      "exhibit": "R1# show ipv6 interface GigabitEthernet0/2 | include IPv6 is\n  IPv6 is enabled, link-local address is FE80::E3A:15FF:FE7B:9C10",
+      "fields": [
+        {
+          "id": "mac",
+          "label": "Adresse MAC de G0/2, au format Cisco xxxx.xxxx.xxxx"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "mac": {
+          "accepted": [
+            "0c3a.157b.9c10",
+            "0c:3a:15:7b:9c:10",
+            "0c-3a-15-7b-9c-10",
+            "0c3a157b9c10"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "L'ID d'interface est E3A:15FF:FE7B:9C10, soit 0e3a:15ff:fe7b:9c10 avec le zéro de tête restauré. On retire le FFFE inséré au milieu : il reste 0e3a15 et 7b9c10. On inverse ensuite à nouveau le 7ᵉ bit du premier octet : 0e = 0000 1110 devient 0000 1100 = 0c. La MAC est donc 0c3a.157b.9c10. L'inversion du bit U/L marche dans les deux sens : 0c devient 0e dans l'EUI-64, et 0e redevient 0c. Piège : oublier le zéro de tête de E3A, ce qui décale tous les chiffres.",
+    "reference": "RFC 4291, section 2.5.1 et annexe A"
+  },
+  {
+    "slug": "ccna-1.9-loopback-unspecified-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Écrivez, dans leur forme compressée la plus courte, les deux adresses IPv6 spéciales suivantes.",
+      "fields": [
+        {
+          "id": "lo",
+          "label": "Adresse de bouclage (équivalent IPv6 de 127.0.0.1)"
+        },
+        {
+          "id": "un",
+          "label": "Adresse non spécifiée (équivalent IPv6 de 0.0.0.0)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "lo": {
+          "accepted": [
+            "::1",
+            "::1/128"
+          ],
+          "normalize": "text"
+        },
+        "un": {
+          "accepted": [
+            "::",
+            "::/128"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "L'adresse de bouclage IPv6 vaut 0:0:0:0:0:0:0:1, compressée en ::1 : un paquet envoyé à ::1 ne quitte jamais l'hôte, et « ping ::1 » teste la pile IPv6 locale. L'adresse non spécifiée vaut 128 bits à zéro et s'écrit :: ; elle n'est attribuée à aucune interface et sert de source quand l'hôte n'a pas encore d'adresse, par exemple dans le Neighbor Solicitation du DAD. À ne pas confondre avec ::/0, qui désigne la route par défaut IPv6.",
+    "reference": "RFC 4291, sections 2.5.2 et 2.5.3"
+  },
+  {
+    "slug": "ccna-1.9-ula-prefix-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une entreprise crée son adressage interne en adresses uniques locales : préfixe FD00::/8 (bit L à 1), suivi de l'ID global de 40 bits qu'elle a tiré au hasard, 3a5f12c4e6 en hexadécimal. Donnez les préfixes en forme canonique RFC 5952 (minuscules, zéros de tête supprimés, « :: » sur la plus longue suite de groupes nuls).",
+      "fields": [
+        {
+          "id": "p48",
+          "label": "Préfixe /48 de l'entreprise, sans la longueur"
+        },
+        {
+          "id": "p64",
+          "label": "Préfixe /64 du sous-réseau d'ID 0010 (hexadécimal), sans la longueur"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "p48": {
+          "accepted": [
+            "fd3a:5f12:c4e6::",
+            "fd3a:5f12:c4e6::/48"
+          ],
+          "normalize": "text"
+        },
+        "p64": {
+          "accepted": [
+            "fd3a:5f12:c4e6:10::",
+            "fd3a:5f12:c4e6:10::/64"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Une ULA se compose de fd (8 bits), de l'ID global (40 bits), de l'ID de sous-réseau (16 bits) et de l'ID d'interface (64 bits). Les 48 premiers bits s'obtiennent en accolant fd et 3a5f12c4e6 : fd3a5f12c4e6, que l'on découpe en groupes de 4 chiffres, fd3a:5f12:c4e6, d'où le préfixe fd3a:5f12:c4e6::/48. L'ID de sous-réseau occupe le 4ᵉ groupe : fd3a:5f12:c4e6:0010::/64, soit fd3a:5f12:c4e6:10:: sans le zéro de tête. Le tirage aléatoire de l'ID global rend très improbable un conflit lors d'une fusion avec un autre réseau.",
+    "reference": "RFC 4193, sections 3.1 et 3.2"
+  },
+  {
+    "slug": "ccna-1.9-subnet-router-anycast-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Les interfaces G0/0 et G0/1 de R1 ont respectivement les adresses 2001:db8:acad:9::1/64 et 2001:db8:0:5c:a8bb:ccff:fe00:1/64. Donnez l'adresse anycast Subnet-Router de chacun de ces deux sous-réseaux, en forme canonique RFC 5952.",
+      "fields": [
+        {
+          "id": "g0",
+          "label": "Adresse anycast Subnet-Router du sous-réseau de G0/0"
+        },
+        {
+          "id": "g1",
+          "label": "Adresse anycast Subnet-Router du sous-réseau de G0/1"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "g0": {
+          "accepted": [
+            "2001:db8:acad:9::"
+          ],
+          "normalize": "text"
+        },
+        "g1": {
+          "accepted": [
+            "2001:db8:0:5c::"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "L'adresse anycast Subnet-Router d'un sous-réseau est son préfixe suivi d'un ID d'interface entièrement nul : 2001:db8:acad:9::/64 donne 2001:db8:acad:9::, et 2001:db8:0:5c::/64 donne 2001:db8:0:5c:: (le groupe nul isolé reste 0, les quatre groupes nuls de fin deviennent « :: »). Les routeurs doivent prendre en charge cette adresse pour chaque sous-réseau auquel ils ont une interface : un paquet qui lui est adressé atteint l'un des routeurs du sous-réseau. L'ID d'interface nul est donc réservé à cet usage.",
+    "reference": "RFC 4291, section 2.6.1"
+  },
+  {
+    "slug": "ccna-1.9-eui64-solicited-node-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. L'adresse MAC de GigabitEthernet0/1 de R1 est 5c5a.c7f1.0e21. Donnez l'adresse globale que R1 calcule pour G0/1, puis le groupe multicast de nœud sollicité qui correspond à cette adresse, en forme compressée RFC 5952 (minuscules, zéros de tête supprimés, « :: » sur la plus longue suite de groupes nuls).",
+      "exhibit": "R1# show running-config | section interface GigabitEthernet0/1\ninterface GigabitEthernet0/1\n no ip address\n duplex auto\n speed auto\n ipv6 address 2001:DB8:CAFE:A::/64 eui-64",
+      "fields": [
+        {
+          "id": "gua",
+          "label": "Adresse globale de G0/1, sans la longueur"
+        },
+        {
+          "id": "sn",
+          "label": "Groupe de nœud sollicité de cette adresse"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "gua": {
+          "accepted": [
+            "2001:db8:cafe:a:5e5a:c7ff:fef1:e21",
+            "2001:db8:cafe:a:5e5a:c7ff:fef1:e21/64"
+          ],
+          "normalize": "text"
+        },
+        "sn": {
+          "accepted": [
+            "ff02::1:fff1:e21"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "EUI-64 modifié : on coupe la MAC 5c5a.c7f1.0e21 en deux moitiés de 24 bits, 5c5ac7 et f10e21, et on insère FFFE au milieu : 5c5a:c7ff:fef1:0e21. On inverse ensuite le 7ᵉ bit du premier octet : 5c = 0101 1100 devient 0101 1110 = 5e. L'ID d'interface 5e5a:c7ff:fef1:0e21 suit le préfixe : 2001:db8:cafe:a:5e5a:c7ff:fef1:e21. Le groupe de nœud sollicité est FF02::1:FF suivi des 24 derniers bits de l'adresse, f1:0e21 : FF02::1:FFF1:0E21, soit ff02::1:fff1:e21 en forme canonique.",
+    "reference": "RFC 4291, sections 2.5.1 et 2.7.1, annexe A"
+  },
+  {
+    "slug": "ccna-1.9-slaac-autoconfig-cli-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "R1 est relié à son FAI par GigabitEthernet0/0, déjà activée. Depuis le mode de configuration globale, configurez cette interface pour qu'elle obtienne son adresse IPv6 globale par SLAAC, à partir des RA du FAI, et qu'elle installe une route par défaut vers le routeur qui envoie ces RA.",
+      "prompt": "R1(config)#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface GigabitEthernet0/0"
+        ],
+        [
+          "ipv6 address autoconfig default"
+        ]
+      ]
+    },
+    "explanation": "« ipv6 address autoconfig » fait de l'interface un client SLAAC : IOS accole au préfixe /64 annoncé dans les RA du FAI un ID d'interface EUI-64 calculé depuis la MAC. Le mot-clé « default » ajoute une route par défaut (::/0) vers le routeur qui a émis le RA, via son adresse de lien local. Sans lui, l'adresse est configurée mais R1 n'a pas de route vers Internet. À ne pas confondre avec « ipv6 address dhcp », qui demande l'adresse à un serveur DHCPv6, ni avec le mot-clé « eui-64 », qui exige de donner soi-même le préfixe.",
+    "reference": "Cisco IOS IPv6 Command Reference : ipv6 address autoconfig ; RFC 4862, section 5.5"
+  },
+  {
+    "slug": "ccna-1.9-slaac-steps-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un hôte vient d'activer sa carte réseau ; son adresse de lien local est déjà validée par le DAD et il n'attend pas le RA périodique du routeur. Ordonnez les étapes qui lui donnent une adresse globale par SLAAC, de la première à la dernière.",
+      "items": [
+        {
+          "id": "ra",
+          "text": "Le routeur répond par un Router Advertisement qui annonce le préfixe 2001:db8:acad:1::/64"
+        },
+        {
+          "id": "ns",
+          "text": "L'hôte envoie un Neighbor Solicitation depuis :: vers le groupe de nœud sollicité de l'adresse provisoire"
+        },
+        {
+          "id": "rs",
+          "text": "L'hôte envoie un Router Solicitation vers FF02::2"
+        },
+        {
+          "id": "use",
+          "text": "Faute de Neighbor Advertisement en réponse, l'hôte commence à utiliser l'adresse"
+        },
+        {
+          "id": "form",
+          "text": "L'hôte accole son ID d'interface au préfixe et obtient une adresse provisoire (tentative)"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "rs",
+        "ra",
+        "form",
+        "ns",
+        "use"
+      ]
+    },
+    "explanation": "SLAAC commence par l'adresse de lien local, déjà acquise ici. Pour ne pas attendre le RA périodique, l'hôte envoie un Router Solicitation au groupe tous-routeurs FF02::2 ; le routeur répond par un Router Advertisement qui contient le préfixe /64 avec le flag A à 1. L'hôte y accole son ID d'interface, EUI-64 modifié ou aléatoire selon le système. L'adresse reste provisoire pendant le DAD : un Neighbor Solicitation depuis :: vers son groupe de nœud sollicité. Sans réponse, elle devient préférée, donc utilisable. La passerelle par défaut est l'adresse source du RA.",
+    "reference": "RFC 4862, sections 5.4 et 5.5 ; RFC 4861, section 6.3.7"
+  },
+  {
+    "slug": "ccna-1.9-ndp-messages-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque message NDP (Neighbor Discovery, ICMPv6) à son rôle.",
+      "left": [
+        {
+          "id": "rs",
+          "text": "Router Solicitation (type 133)"
+        },
+        {
+          "id": "ra",
+          "text": "Router Advertisement (type 134)"
+        },
+        {
+          "id": "ns",
+          "text": "Neighbor Solicitation (type 135)"
+        },
+        {
+          "id": "na",
+          "text": "Neighbor Advertisement (type 136)"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Demande aux routeurs du lien de s'annoncer sans attendre"
+        },
+        {
+          "id": "r2",
+          "text": "Annonce le préfixe du lien, les flags M et O et le routeur comme passerelle"
+        },
+        {
+          "id": "r3",
+          "text": "Demande l'adresse MAC d'une adresse IPv6, ou teste l'unicité d'une adresse"
+        },
+        {
+          "id": "r4",
+          "text": "Fournit l'adresse MAC qui correspond à une adresse IPv6"
+        },
+        {
+          "id": "r5",
+          "text": "Indique à un hôte un meilleur premier saut vers une destination"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "rs": "r1",
+        "ra": "r2",
+        "ns": "r3",
+        "na": "r4"
+      }
+    },
+    "explanation": "NDP remplace ARP et une partie de DHCP en IPv6, avec cinq messages ICMPv6. Le Router Solicitation (133) part vers FF02::2 pour réclamer un RA immédiat. Le Router Advertisement (134) annonce le préfixe, la durée pendant laquelle le routeur sert de passerelle, et les flags M et O qui orientent vers DHCPv6. Le Neighbor Solicitation (135) sert à la résolution d'adresse (vers le groupe de nœud sollicité) et au DAD (source ::). Le Neighbor Advertisement (136) y répond avec l'adresse MAC.",
+    "distractorNotes": {
+      "r5": "C'est le rôle du message Redirect (type 137), le cinquième message NDP, absent de la liste."
+    },
+    "reference": "RFC 4861, section 4"
+  },
+  {
+    "slug": "ccna-1.9-dhcpv6-stateless-sources-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le routeur d'un LAN envoie des RA avec le flag A à 1, le flag M à 0 et le flag O à 1, sans option RDNSS. Associez chaque paramètre obtenu par un hôte du LAN à sa source.",
+      "left": [
+        {
+          "id": "p",
+          "text": "Préfixe /64 de l'adresse globale"
+        },
+        {
+          "id": "gw",
+          "text": "Passerelle par défaut"
+        },
+        {
+          "id": "iid",
+          "text": "ID d'interface de l'adresse globale"
+        },
+        {
+          "id": "dns",
+          "text": "Adresse du serveur DNS"
+        },
+        {
+          "id": "dom",
+          "text": "Nom de domaine DNS"
+        }
+      ],
+      "right": [
+        {
+          "id": "ra",
+          "text": "Le Router Advertisement du routeur"
+        },
+        {
+          "id": "dhcp",
+          "text": "Un serveur DHCPv6 sans état"
+        },
+        {
+          "id": "host",
+          "text": "L'hôte lui-même (EUI-64 modifié ou valeur aléatoire)"
+        },
+        {
+          "id": "stateful",
+          "text": "Un serveur DHCPv6 avec état, qui attribue un bail d'adresse"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "p": "ra",
+        "gw": "ra",
+        "iid": "host",
+        "dns": "dhcp",
+        "dom": "dhcp"
+      }
+    },
+    "explanation": "Ces flags décrivent SLAAC avec DHCPv6 sans état. Le flag A=1 autorise l'hôte à former son adresse par SLAAC : le préfixe vient du RA et l'ID d'interface est calculé par l'hôte lui-même. La passerelle par défaut est toujours l'adresse de lien local source du RA. Le flag O=1 (Other configuration) dit à l'hôte de demander les autres paramètres, comme le DNS et le nom de domaine, à un serveur DHCPv6 sans état, qui ne garde trace d'aucune attribution. Sous IOS, ce flag se positionne avec « ipv6 nd other-config-flag ».",
+    "distractorNotes": {
+      "stateful": "Avec le flag M à 0, aucun serveur n'attribue d'adresse : le DHCPv6 avec état correspond au flag M à 1."
+    },
+    "reference": "RFC 4861, section 4.2 ; RFC 4862, section 5.5.3 ; RFC 8415, section 6.1"
+  },
+  {
+    "slug": "ccna-1.9-address-usage-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque usage au type d'adresse IPv6 qui lui correspond.",
+      "left": [
+        {
+          "id": "u1",
+          "text": "Adresse source des RA et prochain saut des routes apprises par OSPFv3"
+        },
+        {
+          "id": "u2",
+          "text": "Adressage interne stable, non routé sur Internet et indépendant du FAI"
+        },
+        {
+          "id": "u3",
+          "text": "Adresse d'un serveur web joignable depuis Internet"
+        },
+        {
+          "id": "u4",
+          "text": "Même adresse sur plusieurs serveurs DNS, le routage choisissant le plus proche"
+        },
+        {
+          "id": "u5",
+          "text": "Destination d'un NS qui cherche l'adresse MAC d'un voisin pas encore connu"
+        }
+      ],
+      "right": [
+        {
+          "id": "ll",
+          "text": "Lien local (FE80::/10)"
+        },
+        {
+          "id": "ula",
+          "text": "Unique locale (FD00::/8)"
+        },
+        {
+          "id": "gua",
+          "text": "Unicast globale (2000::/3)"
+        },
+        {
+          "id": "any",
+          "text": "Anycast"
+        },
+        {
+          "id": "snm",
+          "text": "Multicast de nœud sollicité (FF02::1:FF00:0/104)"
+        },
+        {
+          "id": "loop",
+          "text": "Bouclage (::1)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "u1": "ll",
+        "u2": "ula",
+        "u3": "gua",
+        "u4": "any",
+        "u5": "snm"
+      }
+    },
+    "explanation": "Les routeurs émettent leurs RA depuis leur adresse de lien local, et OSPFv3 utilise ces adresses comme prochains sauts. Les ULA (FD00::/8 en pratique) offrent un adressage interne qui ne change pas avec le FAI, sans être routées sur Internet. Un serveur public a besoin d'une unicast globale. Une adresse anycast est une adresse unicast attribuée à plusieurs interfaces : le routage livre le paquet à la plus proche, ce qu'utilisent par exemple les serveurs DNS racine. Enfin, la résolution d'adresse envoie le NS au groupe de nœud sollicité de l'adresse cherchée.",
+    "distractorNotes": {
+      "loop": "::1 ne sort jamais de l'hôte : elle ne sert qu'à tester la pile IPv6 locale, aucun des usages listés."
+    },
+    "reference": "RFC 4291, sections 2.4, 2.6 et 2.7.1 ; RFC 4193 ; RFC 4861, section 7.2.2"
+  }
+]

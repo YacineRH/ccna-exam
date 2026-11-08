@@ -1,0 +1,1033 @@
+[
+  {
+    "slug": "ccna-1.5-header-sizes-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle est la taille de l'en-tête UDP, et celle d'un en-tête TCP qui ne porte aucune option ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "UDP : 20 octets ; TCP : 8 octets"
+        },
+        {
+          "id": "b",
+          "text": "UDP : 8 octets ; TCP : 60 octets"
+        },
+        {
+          "id": "c",
+          "text": "UDP : 8 octets ; TCP : 20 octets"
+        },
+        {
+          "id": "d",
+          "text": "UDP : 8 octets ; TCP : 40 octets"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'en-tête UDP ne compte que quatre champs de 16 bits : port source, port destination, longueur et somme de contrôle, soit 8 octets fixes. L'en-tête TCP fait au minimum 20 octets, car il ajoute les numéros de séquence et d'acquittement, le champ Data Offset, les indicateurs (SYN, ACK, FIN…), la fenêtre et le pointeur urgent. Les options (MSS, SACK, horodatage…) peuvent l'allonger jusqu'à 60 octets. Ce surcoût d'au moins 12 octets par segment est le prix des mécanismes de fiabilité et de contrôle de flux qu'UDP n'offre pas.",
+    "distractorNotes": {
+      "a": "Les valeurs sont inversées : 8 octets pour UDP, 20 octets au minimum pour TCP.",
+      "b": "60 octets est la taille maximale de l'en-tête TCP, options comprises (Data Offset à 15 mots de 32 bits), pas sa taille sans option.",
+      "d": "40 octets correspond aux en-têtes IPv4 et TCP minimaux additionnés (20 + 20), ou à l'en-tête IPv6 ; l'en-tête TCP seul en fait 20."
+    },
+    "reference": "RFC 768 ; RFC 9293, section 3.1"
+  },
+  {
+    "slug": "ccna-1.5-dhcp-discover-ports-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un poste qui démarre sans adresse IP diffuse un message DHCPDISCOVER. Quels ports source et destination ce message utilise-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Source UDP 67, destination UDP 68"
+        },
+        {
+          "id": "b",
+          "text": "Source UDP 68, destination UDP 67"
+        },
+        {
+          "id": "c",
+          "text": "Source TCP 68, destination TCP 67"
+        },
+        {
+          "id": "d",
+          "text": "Source UDP éphémère, destination UDP 67"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "DHCP reprend les ports de BOOTP : le serveur (et le relais) écoute sur UDP 67 (bootps), le client sur UDP 68 (bootpc). Le DHCPDISCOVER part donc de 0.0.0.0, port 68, vers 255.255.255.255, port 67, et les réponses du serveur reviennent vers le port 68. Le port client est fixe, et distinct de celui du serveur, car la réponse peut être diffusée en broadcast : elle doit atteindre un port connu sans réveiller les serveurs DHCP du segment. DHCP repose sur UDP : un client sans adresse, qui s'adresse au broadcast, ne peut pas ouvrir de connexion TCP.",
+    "distractorNotes": {
+      "a": "Les ports sont inversés : 67 est le port du serveur (destination du DISCOVER), 68 celui du client.",
+      "c": "DHCP utilise UDP : une connexion TCP est impossible vers une destination broadcast, depuis un client qui n'a pas encore d'adresse.",
+      "d": "Le client DHCP n'utilise pas de port éphémère : il émet et reçoit sur le port fixe UDP 68."
+    },
+    "reference": "RFC 2131, section 4.1 ; RFC 951"
+  },
+  {
+    "slug": "ccna-1.5-ephemeral-port-range-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Selon l'IANA (RFC 6335), quelle plage de numéros forme les ports dynamiques, aussi appelés ports privés ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "0 à 1023"
+        },
+        {
+          "id": "b",
+          "text": "1024 à 49151"
+        },
+        {
+          "id": "c",
+          "text": "1024 à 65535"
+        },
+        {
+          "id": "d",
+          "text": "49152 à 65535"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La RFC 6335 découpe l'espace des ports TCP et UDP en trois plages : les ports système ou bien connus (0 à 1023, par exemple 22, 53 ou 443), les ports utilisateur ou enregistrés (1024 à 49151, par exemple 1812 pour RADIUS) et les ports dynamiques ou privés (49152 à 65535). Ces derniers ne sont jamais attribués à un service : ils sont destinés aux usages temporaires, en particulier au port source éphémère qu'un client choisit pour chaque connexion, ce qui permet de distinguer plusieurs sessions vers un même service. Windows suit cette plage ; Linux puise par défaut entre 32768 et 60999, et la RFC 6056 admet toute la plage 1024 à 65535 pour les ports éphémères. La plage dynamique de l'IANA reste 49152 à 65535.",
+    "distractorNotes": {
+      "a": "0 à 1023 est la plage des ports système (bien connus), réservés aux services standard comme SSH (22) ou HTTPS (443).",
+      "b": "1024 à 49151 est la plage des ports utilisateur (enregistrés), que l'IANA attribue à des services, par exemple RADIUS sur 1812.",
+      "c": "1024 à 65535 engloberait les ports utilisateur (1024 à 49151), que l'IANA attribue à des services : la plage dynamique ne commence qu'à 49152. La RFC 6056 admet cette plage large pour choisir un port éphémère, mais ce n'est pas la plage dynamique définie par l'IANA."
+    },
+    "reference": "RFC 6335, section 6 ; RFC 6056"
+  },
+  {
+    "slug": "ccna-1.5-udp-service-ports-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque échange au port UDP de destination qu'il utilise par défaut.",
+      "left": [
+        {
+          "id": "ntp",
+          "text": "Un routeur interroge son serveur NTP"
+        },
+        {
+          "id": "tftp",
+          "text": "Un routeur demande une image IOS à un serveur TFTP"
+        },
+        {
+          "id": "syslog",
+          "text": "Un commutateur envoie un message à son serveur syslog"
+        },
+        {
+          "id": "trap",
+          "text": "Un agent SNMP envoie un trap à son manager"
+        }
+      ],
+      "right": [
+        {
+          "id": "u161",
+          "text": "UDP 161"
+        },
+        {
+          "id": "u514",
+          "text": "UDP 514"
+        },
+        {
+          "id": "u123",
+          "text": "UDP 123"
+        },
+        {
+          "id": "u53",
+          "text": "UDP 53"
+        },
+        {
+          "id": "u162",
+          "text": "UDP 162"
+        },
+        {
+          "id": "u69",
+          "text": "UDP 69"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "ntp": "u123",
+        "tftp": "u69",
+        "syslog": "u514",
+        "trap": "u162"
+      }
+    },
+    "explanation": "NTP échange ses messages sur UDP 123. TFTP reçoit les requêtes de lecture et d'écriture sur UDP 69 ; le transfert se poursuit ensuite entre deux ports choisis pour la session. Syslog envoie ses messages vers le port UDP 514 du serveur, sans accusé de réception. Pour SNMP, il faut distinguer les deux sens : le manager interroge l'agent sur UDP 161 (Get, Set), tandis que l'agent envoie ses notifications (traps et informs) vers le port UDP 162 du manager. Ces quatre services utilisent UDP, adapté à des échanges courts et répétés.",
+    "distractorNotes": {
+      "u161": "UDP 161 est le port de l'agent SNMP, qui reçoit les requêtes Get et Set du manager ; les traps partent vers le port 162 du manager.",
+      "u53": "UDP 53 est le port des serveurs DNS ; aucun des échanges proposés ne l'utilise."
+    },
+    "reference": "RFC 5905 (NTP) ; RFC 1350 (TFTP) ; RFC 5426, section 3.3 (syslog) ; RFC 3417, section 3 (SNMP)"
+  },
+  {
+    "slug": "ccna-1.5-tcp-flags-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque indicateur (flag) de l'en-tête TCP à son rôle.",
+      "left": [
+        {
+          "id": "syn",
+          "text": "SYN"
+        },
+        {
+          "id": "ack",
+          "text": "ACK"
+        },
+        {
+          "id": "fin",
+          "text": "FIN"
+        },
+        {
+          "id": "rst",
+          "text": "RST"
+        }
+      ],
+      "right": [
+        {
+          "id": "valid",
+          "text": "Signaler que le champ numéro d'acquittement est valide"
+        },
+        {
+          "id": "df",
+          "text": "Interdire la fragmentation du paquet sur le chemin"
+        },
+        {
+          "id": "abort",
+          "text": "Abandonner aussitôt la connexion, ou refuser son ouverture"
+        },
+        {
+          "id": "open",
+          "text": "Ouvrir une connexion en synchronisant les numéros de séquence"
+        },
+        {
+          "id": "end",
+          "text": "Annoncer que l'émetteur n'a plus de données à envoyer"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "syn": "open",
+        "ack": "valid",
+        "fin": "end",
+        "rst": "abort"
+      }
+    },
+    "explanation": "SYN (synchronize) ouvre la connexion : chaque extrémité annonce son numéro de séquence initial dans un segment SYN. ACK indique que le champ numéro d'acquittement est significatif ; il est positionné dès le SYN-ACK, puis dans tous les segments de la connexion établie. FIN ferme proprement un sens de la connexion : l'émetteur n'a plus rien à envoyer, mais peut encore recevoir. RST interrompt brutalement la connexion, sans échange de fermeture ; c'est aussi la réponse à un SYN reçu sur un port où aucune application n'écoute.",
+    "distractorNotes": {
+      "df": "Le bit DF (Don't Fragment) appartient à l'en-tête IPv4, pas à l'en-tête TCP ; TCP ne gère pas la fragmentation des paquets."
+    },
+    "reference": "RFC 9293, sections 3.1, 3.5 et 3.6"
+  },
+  {
+    "slug": "ccna-1.5-tcp-service-ports-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Donnez le port TCP bien connu sur lequel le serveur attend chacun des services suivants.",
+      "fields": [
+        {
+          "id": "smtp",
+          "label": "SMTP, transfert de courrier entre serveurs (nombre entier)"
+        },
+        {
+          "id": "pop3",
+          "label": "POP3, relève du courrier par un client (nombre entier)"
+        },
+        {
+          "id": "ftp",
+          "label": "FTP, connexion de contrôle (nombre entier)"
+        },
+        {
+          "id": "telnet",
+          "label": "Telnet (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "smtp": {
+          "accepted": [
+            "25"
+          ],
+          "normalize": "int"
+        },
+        "pop3": {
+          "accepted": [
+            "110"
+          ],
+          "normalize": "int"
+        },
+        "ftp": {
+          "accepted": [
+            "21"
+          ],
+          "normalize": "int"
+        },
+        "telnet": {
+          "accepted": [
+            "23"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "SMTP achemine le courrier entre serveurs sur TCP 25 ; POP3 permet au client de relever sa boîte sur TCP 110 (995 pour sa version chiffrée POP3S). FTP reçoit les commandes sur une connexion de contrôle, TCP 21, et transfère les fichiers sur des connexions de données séparées, ouvertes depuis le port 20 du serveur en mode actif. Telnet écoute sur TCP 23 et transmet tout en clair, identifiants compris : on lui préfère SSH (TCP 22). Ces quatre services ont besoin d'une remise fiable et ordonnée, d'où le choix de TCP.",
+    "distractorNotes": {},
+    "reference": "RFC 5321 (SMTP) ; RFC 1939 (POP3) ; RFC 959 (FTP) ; RFC 854 (Telnet) ; registre IANA des ports"
+  },
+  {
+    "slug": "ccna-1.5-tcp-rst-closed-port-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un client envoie un segment SYN vers le port TCP 8080 d'un serveur joignable ; aucune application de ce serveur n'écoute sur ce port. Aucun pare-feu ne filtre le trafic. Quelle réponse le client reçoit-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un message ICMP « port unreachable »"
+        },
+        {
+          "id": "b",
+          "text": "Un segment SYN-ACK, suivi aussitôt d'un FIN"
+        },
+        {
+          "id": "c",
+          "text": "Un segment RST, qui refuse la connexion"
+        },
+        {
+          "id": "d",
+          "text": "Aucune : le serveur ignore le SYN en silence"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Quand un segment arrive pour une connexion qui n'existe pas (état CLOSED), TCP répond par un RST, sauf si ce segment est lui-même un RST. Pour un SYN, le RST porte aussi l'indicateur ACK et acquitte le SYN (ack = ISN du client + 1). L'application du client reçoit aussitôt l'erreur « connection refused », sans attendre de délai. C'est le pendant TCP du message ICMP « port unreachable » qu'un hôte renvoie pour un datagramme UDP adressé à un port fermé. Un SYN resté sans réponse et retransmis plusieurs fois indique plutôt un filtrage en chemin ou un hôte injoignable.",
+    "distractorNotes": {
+      "a": "Le message ICMP « port unreachable » répond à un datagramme UDP envoyé vers un port fermé ; pour TCP, l'hôte répond par un RST.",
+      "b": "Le serveur n'envoie un SYN-ACK que si une application écoute sur le port : sans socket en écoute, il n'accepte pas la connexion.",
+      "d": "Ignorer le SYN en silence est le comportement d'un pare-feu qui filtre (drop) ; une pile TCP sans filtrage répond par un RST."
+    },
+    "reference": "RFC 9293, sections 3.5.2 et 3.10.7.1 ; RFC 1122, section 4.1.3.1"
+  },
+  {
+    "slug": "ccna-1.5-voip-packet-loss-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un appel VoIP transporte la voix en RTP sur UDP. Un paquet de voix est perdu sur un lien saturé. Que se passe-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le paquet n'est pas retransmis : le récepteur continue avec les suivants, au prix d'un bref défaut du son."
+        },
+        {
+          "id": "b",
+          "text": "UDP détecte la perte grâce à ses numéros de séquence et retransmet aussitôt le paquet au téléphone destinataire."
+        },
+        {
+          "id": "c",
+          "text": "UDP ferme la session dès qu'un paquet manque, et le téléphone doit rappeler son correspondant."
+        },
+        {
+          "id": "d",
+          "text": "Le téléphone émetteur divise sa fenêtre d'envoi par deux, comme TCP le fait après une perte."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "UDP n'a ni acquittement ni retransmission : un datagramme perdu l'est définitivement. Pour la voix, c'est le comportement souhaité : un paquet retransmis arriverait bien après son instant de lecture, alors que la latence de bout en bout doit rester sous 150 ms environ (recommandation ITU-T G.114). Le récepteur se sert des numéros de séquence et de l'horodatage de RTP pour détecter la perte et ordonner les paquets dans sa mémoire tampon de gigue, puis continue la lecture ; un algorithme de masquage atténue souvent le trou. La QoS (file prioritaire) sert justement à éviter ces pertes.",
+    "distractorNotes": {
+      "b": "L'en-tête UDP ne contient aucun numéro de séquence et UDP ne retransmet rien ; RTP numérote les paquets, mais sans retransmission.",
+      "c": "UDP fonctionne sans connexion : il n'y a pas de session UDP à fermer, et la perte d'un paquet n'interrompt pas l'appel.",
+      "d": "UDP n'a pas de fenêtre d'envoi : la fenêtre et sa réduction après une perte sont des mécanismes propres à TCP."
+    },
+    "reference": "RFC 768 ; RFC 3550, section 5.1 ; ITU-T G.114"
+  },
+  {
+    "slug": "ccna-1.5-tftp-reliability-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "TFTP s'appuie sur UDP, qui ne garantit pas la remise. Comment un transfert TFTP récupère-t-il pourtant un bloc de données perdu ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque bloc doit être acquitté avant l'envoi du suivant ; sans acquittement, il est réémis après un délai."
+        },
+        {
+          "id": "b",
+          "text": "Une connexion TCP de contrôle, ouverte sur le port 69, indique à l'émetteur les blocs à réémettre."
+        },
+        {
+          "id": "c",
+          "text": "UDP réémet de lui-même tout datagramme dont la somme de contrôle s'avère fausse à l'arrivée."
+        },
+        {
+          "id": "d",
+          "text": "En fin de transfert, le récepteur réclame la liste des blocs manquants, qui lui sont réémis en une seule rafale."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "TFTP assure lui-même, au niveau applicatif, la fiabilité qu'UDP n'offre pas. Il découpe le fichier en blocs numérotés (512 octets par défaut) et fonctionne en « lock-step » : chaque bloc doit être acquitté par un ACK portant son numéro avant l'envoi du suivant. Si l'acquittement n'arrive pas, l'émetteur réémet le bloc à l'expiration de son temporisateur. Ce mécanisme simple, avec un seul bloc en vol à la fois, explique la lenteur de TFTP sur les liens à forte latence, mais suffit pour charger une image IOS ou une configuration.",
+    "distractorNotes": {
+      "b": "TFTP n'utilise jamais TCP : le port 69 est le port UDP qui reçoit la requête initiale de lecture ou d'écriture.",
+      "c": "UDP ne retransmet rien : un datagramme dont la somme de contrôle est fausse est simplement détruit à l'arrivée.",
+      "d": "TFTP ne connaît pas d'acquittement groupé en fin de transfert : chaque bloc est acquitté un par un, avant l'envoi du suivant."
+    },
+    "reference": "RFC 1350, sections 1 et 2"
+  },
+  {
+    "slug": "ccna-1.5-tcp-zero-window-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un serveur dont la mémoire tampon de réception est pleine envoie à un client un ACK dont le champ Window vaut 0. Comment réagit le client TCP ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il ferme la connexion par un RST, puisque le serveur ne peut plus rien recevoir."
+        },
+        {
+          "id": "b",
+          "text": "Il continue au même rythme, car la fenêtre annoncée ne sert qu'au contrôle de congestion."
+        },
+        {
+          "id": "c",
+          "text": "Il réémet aussitôt tous les segments non acquittés pour relancer le transfert."
+        },
+        {
+          "id": "d",
+          "text": "Il cesse d'envoyer des données et sonde le serveur jusqu'à ce que sa fenêtre se rouvre."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le champ Window est l'outil de contrôle de flux de TCP : le récepteur y annonce combien d'octets il peut encore accepter au-delà du dernier octet acquitté. Une fenêtre nulle signifie « arrêtez d'envoyer » : la connexion reste ouverte, mais l'émetteur cesse d'envoyer des données. Il envoie périodiquement une sonde de fenêtre (zero-window probe) ; dès que l'application du serveur a vidé son tampon, le serveur annonce une fenêtre non nulle et l'envoi reprend. La fenêtre de congestion est une autre fenêtre, calculée par l'émetteur lui-même.",
+    "distractorNotes": {
+      "a": "Une fenêtre nulle est un état normal et temporaire du contrôle de flux : la connexion reste ouverte et l'émetteur attend.",
+      "b": "La fenêtre annoncée par le récepteur sert au contrôle de flux ; l'émetteur ne peut pas envoyer au-delà, quelle que soit sa fenêtre de congestion.",
+      "c": "Retransmettre n'aurait aucun effet : le serveur n'a pas perdu de données, il manque seulement de place pour en recevoir de nouvelles."
+    },
+    "reference": "RFC 9293, sections 3.8.6 et 3.8.6.1"
+  },
+  {
+    "slug": "ccna-1.5-multicast-iptv-udp-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un opérateur diffuse des chaînes de télévision en direct, en multicast IP, vers des milliers d'abonnés. Pourquoi ce flux est-il transporté par UDP plutôt que par TCP ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "UDP numérote ses datagrammes, ce qui permet à chaque abonné de remettre les images dans l'ordre."
+        },
+        {
+          "id": "b",
+          "text": "L'en-tête UDP porte un champ fenêtre qui adapte le débit du flux à chaque abonné."
+        },
+        {
+          "id": "c",
+          "text": "UDP retransmet les datagrammes perdus plus vite que TCP, ce qui évite les saccades."
+        },
+        {
+          "id": "d",
+          "text": "TCP n'établit de connexion qu'entre deux extrémités : il ne peut pas desservir un groupe de récepteurs."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "TCP est un protocole unicast de bout en bout : une connexion relie exactement deux sockets, après une poignée de main propre à ce couple d'hôtes. Un flux multicast, envoyé une seule fois vers une adresse de groupe puis dupliqué par les routeurs, ne peut donc passer que par un transport sans connexion comme UDP. Les acquittements de milliers de récepteurs submergeraient d'ailleurs la source. La perte d'un datagramme ne cause qu'un défaut d'image passager ; la remise en ordre et la détection des pertes reposent, si besoin, sur RTP, au-dessus d'UDP.",
+    "distractorNotes": {
+      "a": "L'en-tête UDP ne contient aucun numéro de séquence : seuls TCP, ou RTP au-dessus d'UDP, numérotent les données.",
+      "b": "L'en-tête UDP ne contient que les ports, la longueur et la somme de contrôle : il n'a aucun champ fenêtre.",
+      "c": "UDP ne retransmet jamais : un datagramme perdu l'est définitivement, sauf si l'application le redemande elle-même."
+    },
+    "reference": "RFC 9293, section 2.2 ; RFC 1112 ; RFC 768"
+  },
+  {
+    "slug": "ccna-1.5-three-way-handshake-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur la poignée de main TCP en trois temps sont vraies ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaque extrémité choisit son propre numéro de séquence initial (ISN), indépendamment de l'autre."
+        },
+        {
+          "id": "b",
+          "text": "Les deux extrémités démarrent leur numérotation à 0, comme l'affiche Wireshark."
+        },
+        {
+          "id": "c",
+          "text": "Le SYN-ACK porte un numéro d'acquittement égal à l'ISN du client augmenté de 1."
+        },
+        {
+          "id": "d",
+          "text": "Le client envoie son SYN depuis le port bien connu du service, par exemple le port source 80."
+        },
+        {
+          "id": "e",
+          "text": "L'ACK final du client acquitte le SYN du serveur avec un numéro égal à l'ISN du serveur."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Chaque côté tire son propre ISN, de façon imprévisible pour compliquer l'usurpation de connexion : les deux numérotations sont indépendantes. Le segment SYN consomme un numéro de séquence : le SYN-ACK du serveur acquitte donc ISN client + 1, c'est-à-dire le prochain octet attendu, et l'ACK final du client acquitte de même ISN serveur + 1. Le client émet depuis un port source éphémère vers le port bien connu du service (80 pour HTTP). Le « Seq=0 » de Wireshark n'est qu'un affichage relatif, calculé à partir de l'ISN réel.",
+    "distractorNotes": {
+      "b": "Wireshark affiche par défaut des numéros relatifs (Seq=0) ; les ISN réels sont des valeurs de 32 bits choisies par chaque hôte.",
+      "d": "Le port bien connu est le port de destination ; le client choisit un port source éphémère, par exemple 51000.",
+      "e": "Le SYN du serveur consomme lui aussi un numéro de séquence : l'ACK final acquitte l'ISN du serveur plus 1."
+    },
+    "reference": "RFC 9293, sections 3.4 et 3.5"
+  },
+  {
+    "slug": "ccna-1.5-tcp-only-mechanisms-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels trois mécanismes sont propres à TCP et absents d'UDP ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'identification des applications par un port source et un port destination"
+        },
+        {
+          "id": "b",
+          "text": "Le séquencement des données, qui permet de les remettre dans l'ordre"
+        },
+        {
+          "id": "c",
+          "text": "Le contrôle de flux par une fenêtre que le récepteur annonce"
+        },
+        {
+          "id": "d",
+          "text": "La détection des erreurs par une somme de contrôle"
+        },
+        {
+          "id": "e",
+          "text": "L'acquittement des données reçues et la retransmission des pertes"
+        },
+        {
+          "id": "f",
+          "text": "Un champ Longueur qui donne la taille de l'en-tête et des données"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "TCP numérote chaque octet (séquencement), acquitte ce qu'il reçoit et retransmet ce qui n'est pas acquitté (fiabilité), et laisse le récepteur limiter le débit par la fenêtre qu'il annonce (contrôle de flux). UDP n'a rien de tout cela : son en-tête de 8 octets ne contient que les ports, la longueur et une somme de contrôle. Les deux protocoles partagent donc le multiplexage par ports et la détection d'erreurs, mais un datagramme UDP corrompu est simplement détruit, sans retransmission. Le champ Longueur, à l'inverse, n'existe que dans UDP.",
+    "distractorNotes": {
+      "a": "Les ports source et destination existent dans les deux en-têtes : c'est le multiplexage, commun à TCP et à UDP.",
+      "d": "UDP a lui aussi une somme de contrôle (facultative en IPv4, en principe obligatoire en IPv6) ; il détruit le datagramme en erreur sans le retransmettre.",
+      "f": "Seul UDP a un champ Longueur ; TCP n'indique que la longueur de son en-tête (Data Offset), la taille des données se déduisant de l'en-tête IP."
+    },
+    "reference": "RFC 768 ; RFC 9293, section 3.1 ; RFC 8200, section 8.1"
+  },
+  {
+    "slug": "ccna-1.5-dns-over-tcp-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Par défaut, un client DNS envoie ses requêtes en UDP vers le port 53. Quelles deux situations conduisent à un échange DNS en TCP sur le port 53 ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La résolution d'un nom en adresse IPv6 (enregistrement AAAA)"
+        },
+        {
+          "id": "b",
+          "text": "Une requête récursive envoyée par un poste à son résolveur"
+        },
+        {
+          "id": "c",
+          "text": "Un transfert de zone complet (AXFR) vers un serveur secondaire"
+        },
+        {
+          "id": "d",
+          "text": "La recherche des serveurs de messagerie d'un domaine (enregistrement MX)"
+        },
+        {
+          "id": "e",
+          "text": "Une réponse trop grande, renvoyée tronquée avec le bit TC positionné"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "UDP suffit pour la grande majorité des requêtes : une question et sa réponse tiennent chacune dans un datagramme. Si la réponse dépasse la taille permise en UDP (512 octets sans EDNS0, davantage avec), le serveur la renvoie tronquée avec le bit TC, et le client repose la même question en TCP. Les transferts de zone AXFR, qui copient toute une zone vers un serveur secondaire, utilisent toujours TCP, qui garantit une copie complète et ordonnée. Le type d'enregistrement demandé (A, AAAA, MX, PTR) ou le caractère récursif de la requête ne changent rien au transport.",
+    "distractorNotes": {
+      "a": "Le type AAAA ne change pas le transport : la requête part en UDP, et une adresse IPv6 n'occupe que 16 octets dans la réponse.",
+      "b": "La requête récursive d'un poste vers son résolveur est le cas le plus courant : elle part en UDP vers le port 53.",
+      "d": "Le type d'enregistrement ne détermine pas le transport : une requête MX part en UDP, comme une requête A."
+    },
+    "reference": "RFC 1035, section 4.2 ; RFC 5936, section 4 ; RFC 7766"
+  },
+  {
+    "slug": "ccna-1.5-netstat-sockets-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Cette sortie a été relevée sur le serveur 10.0.0.5. Quelles deux affirmations sont vraies ?",
+      "exhibit": "C:\\> netstat -an\n\nActive Connections\n\n  Proto  Local Address          Foreign Address        State\n  TCP    0.0.0.0:22             0.0.0.0:0              LISTENING\n  TCP    0.0.0.0:443            0.0.0.0:0              LISTENING\n  TCP    10.0.0.5:22            192.168.1.10:51022     ESTABLISHED\n  TCP    10.0.0.5:443           192.168.1.10:51023     ESTABLISHED\n  TCP    10.0.0.5:443           192.168.1.11:51022     ESTABLISHED\n  UDP    0.0.0.0:123            *:*",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le serveur a attribué à chaque client HTTPS un port local distinct, afin de séparer leurs connexions."
+        },
+        {
+          "id": "b",
+          "text": "Les deux connexions au port distant 51022 coexistent, chacune étant identifiée par ses adresses et ports."
+        },
+        {
+          "id": "c",
+          "text": "Le port UDP 123 ne reçoit aucun datagramme, puisqu'il n'est pas à l'état LISTENING."
+        },
+        {
+          "id": "d",
+          "text": "Le serveur a choisi les ports 51022 et 51023 comme ports éphémères pour répondre à ses clients."
+        },
+        {
+          "id": "e",
+          "text": "L'hôte 192.168.1.10 a deux connexions ouvertes vers le serveur, l'une pour SSH, l'autre pour HTTPS."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Une connexion TCP est identifiée par quatre valeurs : adresse et port locaux, adresse et port distants. Les clients 192.168.1.10 et 192.168.1.11 ont tiré le même port source 51022, sans conflit, puisque leurs adresses diffèrent. 192.168.1.10 utilise deux ports éphémères différents : 51022 vers le port 22 (SSH) et 51023 vers le port 443 (HTTPS). Côté serveur, toutes les connexions HTTPS gardent le port local 443 : c'est le couple adresse et port distants qui les sépare. UDP, sans connexion, n'affiche aucun état : le socket 0.0.0.0:123 accepte les datagrammes de toute source.",
+    "distractorNotes": {
+      "a": "Les deux connexions HTTPS utilisent le même port local 443 ; ce sont l'adresse et le port du client qui les distinguent.",
+      "c": "UDP fonctionne sans connexion et netstat n'affiche aucun état pour lui : le socket 0.0.0.0:123 reçoit bien les datagrammes adressés à ce port.",
+      "d": "Les ports 51022 et 51023 figurent dans la colonne Foreign Address : ce sont les ports éphémères choisis par les clients."
+    },
+    "reference": "RFC 9293, section 2.2 ; RFC 6335, section 6"
+  },
+  {
+    "slug": "ccna-1.5-transport-by-protocol-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque protocole applicatif au transport qu'il utilise dans son fonctionnement standard.",
+      "left": [
+        {
+          "id": "telnet",
+          "text": "Telnet"
+        },
+        {
+          "id": "tftp",
+          "text": "TFTP"
+        },
+        {
+          "id": "dhcp",
+          "text": "DHCP (IPv4)"
+        },
+        {
+          "id": "pop3",
+          "text": "POP3"
+        },
+        {
+          "id": "dns",
+          "text": "DNS"
+        }
+      ],
+      "right": [
+        {
+          "id": "tcp",
+          "text": "TCP"
+        },
+        {
+          "id": "udp",
+          "text": "UDP"
+        },
+        {
+          "id": "both",
+          "text": "TCP ou UDP, selon l'échange"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "telnet": "tcp",
+        "tftp": "udp",
+        "dhcp": "udp",
+        "pop3": "tcp",
+        "dns": "both"
+      }
+    },
+    "explanation": "Telnet (TCP 23) et POP3 (TCP 110) transportent une session ou un courrier qui doit arriver complet et dans l'ordre : ils s'appuient sur TCP. TFTP (UDP 69) assure lui-même sa fiabilité par un acquittement bloc par bloc, et DHCP (UDP 67 et 68) doit fonctionner avant que le client ait une adresse, souvent en broadcast : tous deux utilisent UDP. DNS utilise les deux : UDP 53 pour les requêtes ordinaires, TCP 53 pour les transferts de zone et pour les réponses trop volumineuses pour un datagramme.",
+    "distractorNotes": {},
+    "reference": "RFC 854 ; RFC 1939 ; RFC 1350 ; RFC 2131 ; RFC 1035, section 4.2"
+  },
+  {
+    "slug": "ccna-1.5-tcp-close-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un client a fini d'envoyer ses données et ferme sa connexion TCP. Le serveur acquitte aussitôt sa demande, puis ferme à son tour une fois ses derniers envois terminés. Ordonnez les étapes de la fermeture, de la première à la dernière.",
+      "items": [
+        {
+          "id": "sfin",
+          "text": "Le serveur envoie son propre segment FIN"
+        },
+        {
+          "id": "tw",
+          "text": "Le client attend 2 × MSL en TIME-WAIT, puis libère la connexion"
+        },
+        {
+          "id": "cfin",
+          "text": "Le client envoie un segment FIN"
+        },
+        {
+          "id": "cack",
+          "text": "Le client acquitte le FIN du serveur par un ACK"
+        },
+        {
+          "id": "sack",
+          "text": "Le serveur acquitte le FIN du client par un ACK"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "cfin",
+        "sack",
+        "sfin",
+        "cack",
+        "tw"
+      ]
+    },
+    "explanation": "La fermeture TCP se fait sens par sens. Le client, qui ferme le premier, envoie un FIN (état FIN-WAIT-1) ; le serveur l'acquitte (CLOSE-WAIT) et le client passe en FIN-WAIT-2 : la connexion est alors à moitié fermée, le serveur pouvant encore envoyer. Quand il a terminé, le serveur envoie son propre FIN (LAST-ACK), que le client acquitte. Le client reste ensuite en TIME-WAIT pendant deux fois la durée de vie maximale d'un segment (MSL), pour pouvoir réacquitter un FIN retransmis et laisser expirer les segments retardés. Le serveur, lui, passe en CLOSED dès réception du dernier ACK.",
+    "distractorNotes": {},
+    "reference": "RFC 9293, section 3.6"
+  },
+  {
+    "slug": "ccna-1.5-demultiplexing-order-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un serveur reçoit une trame Ethernet qui transporte une requête HTTP adressée à son port TCP 80. Ordonnez les étapes qui remettent ces données au serveur web, de la première à la dernière.",
+      "items": [
+        {
+          "id": "tcp",
+          "text": "TCP vérifie la somme de contrôle et identifie la connexion par ses adresses et ses ports"
+        },
+        {
+          "id": "nic",
+          "text": "La carte réseau vérifie le FCS et reconnaît sa propre adresse MAC de destination"
+        },
+        {
+          "id": "app",
+          "text": "TCP remet les données au processus du serveur web, associé au port 80"
+        },
+        {
+          "id": "ip",
+          "text": "IP reconnaît sa propre adresse de destination et lit le champ Protocole (6)"
+        },
+        {
+          "id": "etype",
+          "text": "Le champ EtherType (0x0800) désigne IPv4 comme protocole transporté"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "nic",
+        "etype",
+        "ip",
+        "tcp",
+        "app"
+      ]
+    },
+    "explanation": "La désencapsulation remonte les couches, et à chaque niveau un champ indique à qui remettre la charge utile : c'est le démultiplexage. La carte réseau accepte la trame si l'adresse MAC de destination la concerne et si le FCS est correct ; l'EtherType 0x0800 désigne alors IPv4. IP vérifie que le paquet lui est destiné, puis son champ Protocole (6 pour TCP, 17 pour UDP) désigne le transport. TCP contrôle la somme de contrôle, retrouve la connexion grâce aux adresses et aux ports source et destination, et remet les données au processus associé au port 80.",
+    "distractorNotes": {},
+    "reference": "RFC 894 ; RFC 791, section 3.1 ; RFC 9293, sections 2.2 et 3.1"
+  },
+  {
+    "slug": "ccna-1.5-tcp-duplicate-ack-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Cette capture, prise sur le client, montre quatre segments de données envoyés à la suite (numéros de séquence relatifs). Le segment n° 2 est perdu en chemin ; les trois autres arrivent intacts au serveur, qui les conserve en mémoire. Quel numéro d'acquittement porte l'ACK que le serveur envoie à la réception du segment n° 4 ?",
+      "exhibit": "No.  Source      Destination  Info\n1    10.1.1.10   10.2.2.20    51514 > 443 [ACK] Seq=1 Ack=1 Len=1200\n2    10.1.1.10   10.2.2.20    51514 > 443 [ACK] Seq=1201 Ack=1 Len=1200\n3    10.1.1.10   10.2.2.20    51514 > 443 [ACK] Seq=2401 Ack=1 Len=800\n4    10.1.1.10   10.2.2.20    51514 > 443 [ACK] Seq=3201 Ack=1 Len=1200",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ack=4401"
+        },
+        {
+          "id": "b",
+          "text": "Ack=1201"
+        },
+        {
+          "id": "c",
+          "text": "Ack=3201"
+        },
+        {
+          "id": "d",
+          "text": "Ack=2401"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'acquittement TCP est cumulatif : il indique le prochain octet attendu dans l'ordre, jamais un octet situé après un trou. Le segment 1 couvre les octets 1 à 1200 ; le segment 2, perdu, les octets 1201 à 2400 ; les segments 3 (2401 à 3200) et 4 (3201 à 4400) arrivent, mais au-delà du trou. Le serveur les garde en mémoire et répond à chacun par un ACK dupliqué Ack=1201, qui réclame l'octet manquant. Le client retransmettra le segment 2 dès trois ACK dupliqués (fast retransmit) ou à l'expiration de son temporisateur ; le serveur pourra alors acquitter d'un coup jusqu'à Ack=4401.",
+    "distractorNotes": {
+      "a": "Ack=4401 suppose que tous les octets jusqu'à 4400 sont arrivés ; le trou laissé par le segment 2 empêche de les acquitter.",
+      "c": "Ack=3201 serait l'acquittement du segment 3 en l'absence de perte ; or le serveur ne peut pas acquitter au-delà de l'octet 1200.",
+      "d": "2401 est le premier octet du segment 3 : l'acquittement cumulatif ne peut pas sauter le segment 2 manquant."
+    },
+    "reference": "RFC 9293, section 3.4 ; RFC 5681, sections 3.2 et 4.2"
+  },
+  {
+    "slug": "ccna-1.5-tcp-fin-seq-ack-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Cette capture d'une connexion HTTP affiche les numéros de séquence absolus ; aucun segment n'est perdu. Le serveur répond au FIN du client par un segment FIN, ACK, que le client acquitte. Donnez les valeurs manquantes (A), (B) et (C).",
+      "exhibit": "No.  Source     Destination  Info\n1    10.1.1.10  10.2.2.20    51200 > 80 [SYN] Seq=4000 Len=0\n2    10.2.2.20  10.1.1.10    80 > 51200 [SYN, ACK] Seq=9000 Ack=4001 Len=0\n3    10.1.1.10  10.2.2.20    51200 > 80 [ACK] Seq=4001 Ack=9001 Len=0\n4    10.1.1.10  10.2.2.20    51200 > 80 [PSH, ACK] Seq=4001 Ack=9001 Len=300\n5    10.2.2.20  10.1.1.10    80 > 51200 [PSH, ACK] Seq=9001 Ack=4301 Len=1000\n6    10.1.1.10  10.2.2.20    51200 > 80 [FIN, ACK] Seq=4301 Ack=10001 Len=0\n7    10.2.2.20  10.1.1.10    80 > 51200 [FIN, ACK] Seq=10001 Ack=(A) Len=0\n8    10.1.1.10  10.2.2.20    51200 > 80 [ACK] Seq=(B) Ack=(C) Len=0",
+      "fields": [
+        {
+          "id": "a",
+          "label": "(A) : numéro d'acquittement du segment 7 (nombre entier)"
+        },
+        {
+          "id": "b",
+          "label": "(B) : numéro de séquence du segment 8 (nombre entier)"
+        },
+        {
+          "id": "c",
+          "label": "(C) : numéro d'acquittement du segment 8 (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "a": {
+          "accepted": [
+            "4302"
+          ],
+          "normalize": "int"
+        },
+        "b": {
+          "accepted": [
+            "4302"
+          ],
+          "normalize": "int"
+        },
+        "c": {
+          "accepted": [
+            "10002"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le client a envoyé 300 octets à partir de 4001 (octets 4001 à 4300), d'où l'Ack=4301 du serveur ; le serveur a envoyé 1 000 octets à partir de 9001 (9001 à 10000), d'où l'Ack=10001 du client. Comme le SYN, le FIN consomme un numéro de séquence : le FIN du client, numéroté 4301, est acquitté par Ack=4302 (A). Le segment suivant du client porte donc le numéro de séquence 4302 (B), et il acquitte le FIN du serveur, numéroté 10001, par Ack=10002 (C). Oublier ce « + 1 » du FIN est l'erreur la plus fréquente.",
+    "distractorNotes": {},
+    "reference": "RFC 9293, sections 3.4 et 3.6"
+  },
+  {
+    "slug": "ccna-1.5-tcp-usable-window-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un émetteur TCP utilise un MSS de 1 460 octets. Le dernier ACK reçu du récepteur porte le numéro d'acquittement 35001 et annonce une fenêtre de 11 680 octets. Depuis, l'émetteur a envoyé des segments pleins, encore non acquittés : le prochain octet à envoyer porte le numéro 39381. En ne tenant compte que de la fenêtre annoncée par le récepteur, répondez aux trois questions.",
+      "fields": [
+        {
+          "id": "last",
+          "label": "Numéro du dernier octet que la fenêtre autorise l'émetteur à envoyer (nombre entier)"
+        },
+        {
+          "id": "bytes",
+          "label": "Nombre d'octets que l'émetteur peut encore envoyer sans attendre d'ACK (nombre entier)"
+        },
+        {
+          "id": "segs",
+          "label": "Nombre de segments pleins correspondant (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "last": {
+          "accepted": [
+            "46680"
+          ],
+          "normalize": "int"
+        },
+        "bytes": {
+          "accepted": [
+            "7300"
+          ],
+          "normalize": "int"
+        },
+        "segs": {
+          "accepted": [
+            "5"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La fenêtre annoncée part du numéro d'acquittement : l'émetteur peut envoyer les octets 35001 à 35001 + 11 680 − 1 = 46680. Il a déjà envoyé, sans acquittement, les octets 35001 à 39380, soit 39381 − 35001 = 4 380 octets (trois segments de 1 460). Il lui reste donc 11 680 − 4 380 = 7 300 octets, soit exactement cinq segments pleins (5 × 1 460 = 7 300). Chaque nouvel ACK fait glisser la fenêtre : le bord gauche avance avec l'acquittement, et le bord droit dépend de la fenêtre annoncée dans ce même ACK.",
+    "distractorNotes": {},
+    "reference": "RFC 9293, sections 3.3.1 et 3.8.6"
+  }
+]

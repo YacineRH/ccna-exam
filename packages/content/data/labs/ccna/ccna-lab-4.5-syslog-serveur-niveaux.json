@@ -1,0 +1,217 @@
+{
+  "slug": "ccna-lab-4.5-syslog-serveur-niveaux",
+  "certification": "ccna",
+  "domain": "4.0",
+  "subtopic": "4.5",
+  "difficulty": "easy",
+  "title": "Centraliser les journaux de R1 sur un serveur syslog",
+  "statement": "Les messages de R1 doivent être centralisés sur le serveur syslog 10.10.99.60 du LAN d'administration. La configuration de départ ne déclare encore aucun serveur, règle sur débogage (7) le niveau des messages destinés aux serveurs syslog et horodate les messages avec le temps de fonctionnement du routeur, ce qui les rend impossibles à corréler.\n\n1. Envoyez les messages de R1 au serveur syslog 10.10.99.60.\n2. Le serveur ne doit recevoir que les messages de gravité 0 à 5 inclus (jusqu'aux notifications) : ni les messages informatifs, ni ceux de débogage.\n3. Horodatez les messages de journalisation avec la date et l'heure, à la milliseconde près, au lieu du temps de fonctionnement.\n4. Gardez aussi une copie locale des messages dans un tampon en mémoire de 16384 octets, jusqu'au niveau informatif (6) inclus.\n5. Les messages envoyés au serveur doivent partir de l'adresse de la Loopback0 (10.255.0.1), qui identifie R1 de façon stable sur le serveur.",
+  "topology": "  LAN 192.168.50.0/24                          LAN d'administration 10.10.99.0/24\n         |                                                 |\n G0/0/0 192.168.50.1/24                          G0/0/1 10.10.99.1/24\n         +-------------------- R1 ---------------------+\n                     Loopback0 10.255.0.1/32           |\n                                          serveur syslog 10.10.99.60 (UDP 514)\n\nConfiguration de départ : logging trap debugging, service timestamps log uptime",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "service timestamps log uptime\nhostname R1\nno ip domain-lookup\ninterface Loopback0\n ip address 10.255.0.1 255.255.255.255\ninterface GigabitEthernet0/0/0\n description LAN\n ip address 192.168.50.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description LAN administration\n ip address 10.10.99.1 255.255.255.0\n no shutdown\nlogging trap debugging"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "serveur",
+      "description": "R1 envoie ses messages au serveur syslog 10.10.99.60.",
+      "check": { "type": "line", "line": "logging host 10.10.99.60" }
+    },
+    {
+      "id": "niveau-serveur",
+      "description": "Le serveur ne reçoit que les messages de gravité 0 à 5 inclus.",
+      "check": { "type": "line", "line": "logging trap notifications" }
+    },
+    {
+      "id": "horodatage",
+      "description": "Les messages de journalisation sont horodatés avec la date et l'heure, millisecondes comprises.",
+      "check": { "type": "regex", "pattern": "^service timestamps log datetime msec( localtime)?( show-timezone)?$" }
+    },
+    {
+      "id": "tampon",
+      "description": "Un tampon local de 16384 octets garde les messages jusqu'au niveau informatif inclus.",
+      "check": { "type": "line", "line": "logging buffered 16384 informational" }
+    },
+    {
+      "id": "source",
+      "description": "Les messages envoyés au serveur partent de l'adresse de la Loopback0.",
+      "check": { "type": "line", "line": "logging source-interface Loopback0" }
+    }
+  ],
+  "hints": [
+    "Tout se règle en configuration globale, avec des commandes de la famille logging, plus une commande service pour l'horodatage. Les niveaux de gravité vont de 0 (le plus grave) à 7 (débogage) : un niveau choisi inclut tous les niveaux plus graves.",
+    "La destination et le niveau envoyé au serveur sont deux réglages distincts ; le niveau du serveur porte un nom qui n'évoque pas un serveur. Le niveau 5 s'appelle notifications, le 6 informational. L'horodatage se règle séparément pour les messages de journalisation et pour ceux de débogage : visez les premiers.",
+    "logging host <adresse>, logging trap <niveau>, service timestamps log datetime …, logging buffered <taille> <niveau> et logging source-interface <interface>."
+  ],
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "logging host 10.10.99.60",
+        "logging trap notifications",
+        "service timestamps log datetime msec",
+        "logging buffered 16384 informational",
+        "logging source-interface Loopback0",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Niveaux en chiffres, ancienne forme logging <adresse>, heure locale avec fuseau, abréviations",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "logging 10.10.99.60",
+            "logging trap 5",
+            "logging buffered 16384 6",
+            "service timestamps log datetime msec localtime show-timezone",
+            "logging source-interface lo0",
+            "\u001a"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Source donnée en deux mots, niveaux abrégés",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "logging source-interface Loopback 0",
+            "logging buffered 16384 inf",
+            "service timestamps log datetime msec localtime",
+            "logging trap notif",
+            "logging host 10.10.99.60",
+            "end"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "logging trap warnings : le niveau 5 (notifications) n'arrive plus au serveur",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "logging host 10.10.99.60",
+            "logging trap warnings",
+            "service timestamps log datetime msec",
+            "logging buffered 16384 informational",
+            "logging source-interface Loopback0"
+          ]
+        }
+      ],
+      "failing": ["niveau-serveur"]
+    },
+    {
+      "description": "logging trap 6 : les messages informatifs partent encore vers le serveur",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "logging host 10.10.99.60",
+            "logging trap 6",
+            "service timestamps log datetime msec",
+            "logging buffered 16384 informational",
+            "logging source-interface Loopback0"
+          ]
+        }
+      ],
+      "failing": ["niveau-serveur"]
+    },
+    {
+      "description": "Horodatage réglé pour les messages de débogage au lieu des messages de journalisation",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "logging host 10.10.99.60",
+            "logging trap notifications",
+            "service timestamps debug datetime msec",
+            "logging buffered 16384 informational",
+            "logging source-interface Loopback0"
+          ]
+        }
+      ],
+      "failing": ["horodatage"]
+    },
+    {
+      "description": "Horodatage sans les millisecondes",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "logging host 10.10.99.60",
+            "logging trap notifications",
+            "service timestamps log datetime localtime",
+            "logging buffered 16384 informational",
+            "logging source-interface Loopback0"
+          ]
+        }
+      ],
+      "failing": ["horodatage"]
+    },
+    {
+      "description": "Tampon local sans niveau : il garde aussi les messages de débogage",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "logging host 10.10.99.60",
+            "logging trap notifications",
+            "service timestamps log datetime msec",
+            "logging buffered 16384",
+            "logging source-interface Loopback0"
+          ]
+        }
+      ],
+      "failing": ["tampon"]
+    },
+    {
+      "description": "Source laissée sur l'interface physique côté serveur",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "enable",
+            "configure terminal",
+            "logging host 10.10.99.60",
+            "logging trap notifications",
+            "service timestamps log datetime msec",
+            "logging buffered 16384 informational",
+            "logging source-interface GigabitEthernet0/0/1"
+          ]
+        }
+      ],
+      "failing": ["source"]
+    }
+  ],
+  "explanation": "Syslog classe les messages en 8 niveaux de gravité : 0 emergencies, 1 alerts, 2 critical, 3 errors, 4 warnings, 5 notifications, 6 informational, 7 debugging. Choisir un niveau envoie ce niveau et tous les niveaux plus graves (numéros plus petits) : logging trap notifications, ou logging trap 5, que IOS affiche notifications, envoie les niveaux 0 à 5 au serveur ; warnings (4) perdrait les notifications, comme les changements d'état du protocole de ligne (%LINEPROTO-5-UPDOWN) ou la fin d'une session de configuration (%SYS-5-CONFIG_I) ; informational (6) est la valeur par défaut, si bien que logging trap 6 disparaît de la configuration et laisse passer les messages informatifs. logging host 10.10.99.60 (ou l'ancienne forme logging 10.10.99.60) désigne le serveur, joint en UDP 514 ; la destination et le niveau sont deux réglages distincts, et logging trap s'applique à tous les serveurs déclarés. service timestamps log datetime msec remplace l'horodatage par temps de fonctionnement (uptime) par la date et l'heure, avec les millisecondes ; localtime utilise le fuseau de clock timezone et show-timezone l'affiche ; service timestamps debug règle seulement les messages de débogage. L'heure n'est utile que si l'horloge est juste : en production, on synchronise R1 par NTP. logging buffered 16384 informational garde une copie locale dans un tampon circulaire en RAM (lue par show logging, perdue au redémarrage) ; sans niveau, le tampon garde tout jusqu'au débogage. logging source-interface Loopback0 fixe l'adresse source des messages à 10.255.0.1, quelle que soit l'interface de sortie : le serveur classe ainsi les messages de R1 sous une seule adresse. Vérification : show logging (niveaux de la console, du tampon et du trap, serveur et nombre de messages envoyés).",
+  "reference": "Cisco IOS XE System Message Logging Configuration Guide (logging host, logging trap, logging buffered, logging source-interface) ; Cisco IOS Configuration Fundamentals Command Reference (service timestamps) ; RFC 5424 (niveaux de gravité syslog)",
+  "estimatedMinutes": 8
+}

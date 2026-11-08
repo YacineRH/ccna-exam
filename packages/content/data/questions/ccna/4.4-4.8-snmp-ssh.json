@@ -1,0 +1,1093 @@
+[
+  {
+    "slug": "ccna-4.4-community-rw-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur R1, le NMS 10.1.1.10 doit pouvoir modifier des objets de la MIB par des SetRequest SNMPv2c, avec la communauté Wr1teK3y. Quelle commande crée cette communauté ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "snmp-server community Wr1teK3y RO"
+        },
+        {
+          "id": "b",
+          "text": "snmp-server host 10.1.1.10 version 2c Wr1teK3y"
+        },
+        {
+          "id": "c",
+          "text": "snmp-server community Wr1teK3y RW"
+        },
+        {
+          "id": "d",
+          "text": "snmp-server enable traps"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "En SNMPv1 et SNMPv2c, l'accès est contrôlé par la communauté : « snmp-server community <nom> RO » n'autorise que la lecture (Get, GetNext, GetBulk), « RW » autorise aussi l'écriture par SetRequest. Le mot-clé est facultatif, mais la valeur par défaut est RO : il faut donc préciser RW. Une ACL standard peut être ajoutée en fin de commande pour limiter les sources autorisées. La communauté circule en clair : une communauté RW doit être longue, difficile à deviner et toujours filtrée par ACL.",
+    "distractorNotes": {
+      "a": "RO (read-only, valeur par défaut) n'autorise que la lecture : les SetRequest seraient rejetées.",
+      "b": "« snmp-server host » désigne le destinataire des notifications (Trap ou Inform) ; il ne donne aucun droit d'accès en écriture au NMS.",
+      "d": "« snmp-server enable traps » active l'envoi des notifications par l'agent ; il ne crée aucune communauté et n'autorise pas les SetRequest."
+    },
+    "reference": "SNMP Configuration Guide (Cisco IOS XE) ; RFC 3416"
+  },
+  {
+    "slug": "ccna-4.4-snmp-ports-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Donnez les deux ports UDP utilisés par SNMP.",
+      "fields": [
+        {
+          "id": "requests",
+          "label": "Port UDP de l'agent qui reçoit les requêtes Get et Set du manager (nombre entier)"
+        },
+        {
+          "id": "notifications",
+          "label": "Port UDP du manager qui reçoit les Trap et les Inform (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "requests": {
+          "accepted": [
+            "161"
+          ],
+          "normalize": "int"
+        },
+        "notifications": {
+          "accepted": [
+            "162"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "SNMP fonctionne sur UDP. L'agent, sur l'équipement géré, écoute sur le port 161 : le manager y envoie ses GetRequest, GetNextRequest, GetBulkRequest et SetRequest, et l'agent répond depuis ce port. Le manager écoute sur le port 162 les notifications que l'agent envoie de sa propre initiative : Trap (sans accusé de réception) et InformRequest (acquitté par le manager). Retenir : 161 pour l'interrogation (polling), 162 pour les notifications.",
+    "distractorNotes": {},
+    "reference": "RFC 3417"
+  },
+  {
+    "slug": "ccna-4.4-getnext-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle opération SNMP, disponible dès SNMPv1, demande à l'agent la valeur de l'objet qui suit immédiatement l'OID indiqué, dans l'ordre de la MIB ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "GetRequest"
+        },
+        {
+          "id": "b",
+          "text": "GetBulkRequest"
+        },
+        {
+          "id": "c",
+          "text": "SetRequest"
+        },
+        {
+          "id": "d",
+          "text": "GetNextRequest"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "GetNextRequest renvoie l'objet suivant, dans l'ordre lexicographique des OID, celui qui est indiqué dans la requête. En répétant l'opération avec l'OID reçu, le manager parcourt une table ou une branche entière sans connaître à l'avance les OID exacts (c'est le principe d'un « snmpwalk » en SNMPv1). SNMPv2 a ajouté GetBulkRequest, qui renvoie plusieurs objets suivants en une seule réponse et réduit le nombre d'échanges.",
+    "distractorNotes": {
+      "a": "GetRequest renvoie la valeur de l'OID exact indiqué, pas celle de l'objet suivant.",
+      "b": "GetBulkRequest n'existe qu'à partir de SNMPv2 ; elle renvoie en outre plusieurs objets suivants en une seule réponse.",
+      "c": "SetRequest modifie la valeur d'un objet sur l'agent ; elle ne sert pas à lire."
+    },
+    "reference": "RFC 1157 ; RFC 3416"
+  },
+  {
+    "slug": "ccna-4.4-read-operations-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles trois opérations SNMP le manager utilise-t-il pour lire des valeurs sur l'agent ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "SetRequest"
+        },
+        {
+          "id": "b",
+          "text": "GetRequest"
+        },
+        {
+          "id": "c",
+          "text": "Trap"
+        },
+        {
+          "id": "d",
+          "text": "GetBulkRequest"
+        },
+        {
+          "id": "e",
+          "text": "InformRequest"
+        },
+        {
+          "id": "f",
+          "text": "GetNextRequest"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "f"
+      ]
+    },
+    "explanation": "Les trois opérations de lecture partent du manager vers le port UDP 161 de l'agent : GetRequest lit les OID indiqués, GetNextRequest lit l'objet qui suit un OID (parcours de table), GetBulkRequest (SNMPv2c et SNMPv3) lit en une seule requête une série d'objets suivants. L'agent répond par un message Response. SetRequest est la seule opération d'écriture, et Trap et InformRequest sont des notifications émises vers le port UDP 162 du manager.",
+    "distractorNotes": {
+      "a": "SetRequest est l'opération d'écriture : elle modifie la valeur d'un objet de la MIB, ce qui exige une communauté RW en SNMPv2c.",
+      "c": "Un Trap est une notification envoyée par l'agent au manager, de sa propre initiative ; ce n'est pas une requête de lecture du manager.",
+      "e": "InformRequest est une notification acquittée envoyée vers le port UDP 162 d'un manager ; elle ne lit aucune valeur sur l'agent."
+    },
+    "reference": "RFC 3416"
+  },
+  {
+    "slug": "ccna-4.4-security-levels-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque mode de sécurité SNMP à la protection qu'il apporte aux messages.",
+      "left": [
+        {
+          "id": "nanp",
+          "text": "SNMPv3 noAuthNoPriv"
+        },
+        {
+          "id": "anp",
+          "text": "SNMPv3 authNoPriv"
+        },
+        {
+          "id": "ap",
+          "text": "SNMPv3 authPriv"
+        },
+        {
+          "id": "v2c",
+          "text": "SNMPv2c"
+        }
+      ],
+      "right": [
+        {
+          "id": "user",
+          "text": "Nom d'utilisateur seul, sans authentification ni chiffrement"
+        },
+        {
+          "id": "enc",
+          "text": "Authentification HMAC et chiffrement (DES, 3DES ou AES)"
+        },
+        {
+          "id": "privonly",
+          "text": "Chiffrement des données, sans authentification des messages"
+        },
+        {
+          "id": "comm",
+          "text": "Communauté transmise en clair, sans aucune cryptographie"
+        },
+        {
+          "id": "hmac",
+          "text": "Authentification HMAC (MD5 ou SHA), sans chiffrement"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "nanp": "user",
+        "anp": "hmac",
+        "ap": "enc",
+        "v2c": "comm"
+      }
+    },
+    "explanation": "SNMPv3 remplace les communautés par des utilisateurs (modèle USM) et définit trois niveaux. noAuthNoPriv identifie l'émetteur par son nom d'utilisateur, sans contrôle cryptographique. authNoPriv ajoute l'authentification et l'intégrité par HMAC (MD5 ou SHA) : un message modifié ou forgé est rejeté, mais son contenu reste lisible. authPriv chiffre en plus la PDU (DES, 3DES ou AES). SNMPv1 et SNMPv2c n'ont que la communauté, envoyée en clair dans chaque message.",
+    "distractorNotes": {
+      "privonly": "Ce niveau n'existe pas : en SNMPv3, le chiffrement (priv) exige l'authentification, d'où les seuls niveaux noAuthNoPriv, authNoPriv et authPriv."
+    },
+    "reference": "RFC 3411 ; RFC 3414"
+  },
+  {
+    "slug": "ccna-4.4-v2c-community-config-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, l'ACL standard 10, qui n'autorise que le NMS 192.168.10.50, existe déjà. Depuis le mode de configuration globale, dans l'ordre de votre choix : créez la communauté SNMPv2c en lecture seule M0n1tor, limitée par l'ACL 10 ; déclarez 192.168.10.50 comme destinataire des traps SNMPv2c avec cette communauté ; activez l'envoi de tous les types de traps.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "snmp-server community M0n1tor RO 10"
+        ],
+        [
+          "snmp-server host 192.168.10.50 version 2c M0n1tor",
+          "snmp-server host 192.168.10.50 traps version 2c M0n1tor"
+        ],
+        [
+          "snmp-server enable traps"
+        ]
+      ]
+    },
+    "explanation": "« snmp-server community M0n1tor RO 10 » crée la communauté en lecture seule et n'accepte les requêtes que des sources permises par l'ACL 10. « snmp-server host » désigne le destinataire des notifications : le mot-clé traps est la valeur par défaut, mais « version 2c » doit être précisé, sinon IOS envoie des traps SNMPv1 ; la communauté est placée en fin de commande. « snmp-server enable traps », sans mot-clé, active tous les types de notifications pris en charge. Sans elle, l'hôte est déclaré mais la plupart des notifications ne sont pas émises.",
+    "distractorNotes": {},
+    "reference": "SNMP Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.4-snmpv3-config-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, configurez SNMPv3 depuis le mode de configuration globale, dans cet ordre : créez le groupe NOC-ADMIN de niveau authPriv ; créez l'utilisateur supv dans ce groupe, authentifié en SHA avec le mot de passe Auth2026key et chiffré en AES 128 bits avec le mot de passe Priv2026key ; enfin, envoyez les traps vers 10.1.1.50 en SNMPv3 authPriv au nom de cet utilisateur.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "snmp-server group NOC-ADMIN v3 priv"
+        ],
+        [
+          "snmp-server user supv NOC-ADMIN v3 auth sha Auth2026key priv aes 128 Priv2026key"
+        ],
+        [
+          "snmp-server host 10.1.1.50 version 3 priv supv",
+          "snmp-server host 10.1.1.50 traps version 3 priv supv"
+        ]
+      ]
+    },
+    "explanation": "Le groupe fixe le niveau de sécurité minimal : « v3 priv » correspond à authPriv (« auth » donnerait authNoPriv, « noauth » noAuthNoPriv). L'utilisateur est rattaché au groupe et reçoit ses deux mots de passe : « auth sha » pour l'authentification HMAC et « priv aes 128 » pour le chiffrement. Dans « snmp-server host », la version 3 se complète du niveau de sécurité, et le nom d'utilisateur prend la place de la communauté. Les utilisateurs SNMPv3 n'apparaissent pas dans la running-config : on les vérifie avec « show snmp user ».",
+    "distractorNotes": {},
+    "reference": "SNMP Configuration Guide (Cisco IOS XE) ; RFC 3414"
+  },
+  {
+    "slug": "ccna-4.4-acl-ro-diagnostic-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Deux NMS interrogent R1 en SNMPv2c avec la communauté N3tM0n. 10.1.1.10 lit les compteurs d'interface, mais ses SetRequest sont rejetées ; 10.1.1.20 n'obtient aucune réponse, même à ses GetRequest. Quelle explication couvre les deux symptômes ?",
+      "exhibit": "R1# show running-config | include snmp|access-list\naccess-list 20 permit 10.1.1.10\nsnmp-server community N3tM0n RO 20",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'ACL 20 bloque les SetRequest de 10.1.1.10 et toutes les requêtes de 10.1.1.20."
+        },
+        {
+          "id": "b",
+          "text": "La communauté est en lecture seule, et l'ACL 20 n'admet que la source 10.1.1.10."
+        },
+        {
+          "id": "c",
+          "text": "SNMPv2c ne permet aucune écriture, et 10.1.1.20 n'est pas déclaré par snmp-server host."
+        },
+        {
+          "id": "d",
+          "text": "La communauté doit être créée deux fois, en RO et en RW, pour chacun des deux NMS."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Deux contrôles s'appliquent. L'ACL standard 20, liée à la communauté, filtre par adresse source : seule 10.1.1.10 est permise, et le refus implicite final fait ignorer toutes les requêtes de 10.1.1.20, d'où l'absence de réponse. Pour 10.1.1.10, la communauté est acceptée, mais elle est en RO : les Get, GetNext et GetBulk réussissent, les SetRequest sont refusées. Il faudrait une communauté RW (filtrée par ACL) pour écrire, et ajouter 10.1.1.20 à l'ACL pour qu'il soit servi.",
+    "distractorNotes": {
+      "a": "Une ACL standard ne filtre que l'adresse source, pas le type d'opération SNMP : 10.1.1.10 est permise, ses Set échouent à cause du mode RO.",
+      "c": "SNMPv2c permet l'écriture avec une communauté RW. « snmp-server host » ne concerne que l'envoi des notifications, pas l'accès des NMS qui interrogent l'agent.",
+      "d": "Une seule communauté RW, filtrée par une ACL qui autorise les deux NMS, suffirait ; rien n'oblige à créer une communauté par NMS."
+    },
+    "reference": "SNMP Configuration Guide (Cisco IOS XE) ; RFC 3416"
+  },
+  {
+    "slug": "ccna-4.4-v2c-cleartext-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un administrateur capture avec Wireshark les requêtes SNMPv2c qu'un NMS envoie à un routeur. Que peut-il lire dans chaque requête ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Seulement les OID demandés, car les valeurs sont chiffrées avec la communauté"
+        },
+        {
+          "id": "b",
+          "text": "Rien de la PDU, car SNMPv2c chiffre tout le message avec la communauté"
+        },
+        {
+          "id": "c",
+          "text": "La communauté en clair, ainsi que les OID et les valeurs transportées"
+        },
+        {
+          "id": "d",
+          "text": "Seulement l'en-tête UDP, car la communauté est hachée en MD5"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "SNMPv1 et SNMPv2c n'ont aucun mécanisme cryptographique : la communauté, qui joue le rôle de mot de passe, est placée en clair dans chaque message, avec les OID et les valeurs. Quiconque capture le trafic peut donc la réutiliser, et une communauté RW lui permettrait de modifier l'équipement. Les mesures possibles sont une ACL sur la communauté, un réseau de gestion séparé, et surtout SNMPv3 avec le niveau authPriv, qui authentifie et chiffre les messages.",
+    "distractorNotes": {
+      "a": "SNMPv2c ne chiffre rien : les valeurs circulent en clair comme les OID et la communauté.",
+      "b": "La communauté n'est pas une clé de chiffrement : elle est simplement recopiée en clair dans le message.",
+      "d": "Aucun hachage n'est appliqué en SNMPv2c. L'authentification HMAC (MD5 ou SHA) n'existe qu'en SNMPv3, aux niveaux authNoPriv et authPriv."
+    },
+    "reference": "RFC 1901 ; RFC 3414"
+  },
+  {
+    "slug": "ccna-4.4-oid-tree-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "L'OID 1.3.6.1.2.1 désigne la branche mib-2, qui contient les objets standard de gestion. Ordonnez ces nœuds de l'arbre des OID, de la racine jusqu'à mib-2.",
+      "items": [
+        {
+          "id": "a",
+          "text": "internet"
+        },
+        {
+          "id": "b",
+          "text": "org"
+        },
+        {
+          "id": "c",
+          "text": "mib-2"
+        },
+        {
+          "id": "d",
+          "text": "iso"
+        },
+        {
+          "id": "e",
+          "text": "mgmt"
+        },
+        {
+          "id": "f",
+          "text": "dod"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "d",
+        "b",
+        "f",
+        "a",
+        "e",
+        "c"
+      ]
+    },
+    "explanation": "Chaque nombre de l'OID correspond à un nœud de l'arbre : 1 = iso, 3 = org, 6 = dod, 1 = internet, 2 = mgmt, 1 = mib-2, soit iso.org.dod.internet.mgmt.mib-2. Sous internet se trouvent aussi la branche private (4), qui contient enterprises (1.3.6.1.4.1) où chaque constructeur a son numéro (9 pour Cisco). Par exemple, l'objet sysName, nom de l'équipement, est 1.3.6.1.2.1.1.5 : groupe system (1) de mib-2, cinquième objet.",
+    "distractorNotes": {},
+    "reference": "RFC 1155 ; RFC 1213"
+  },
+  {
+    "slug": "ccna-4.4-architecture-terms-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque élément de l'architecture SNMP à sa définition.",
+      "left": [
+        {
+          "id": "mgr",
+          "text": "Manager (NMS)"
+        },
+        {
+          "id": "agent",
+          "text": "Agent"
+        },
+        {
+          "id": "mib",
+          "text": "MIB"
+        },
+        {
+          "id": "oid",
+          "text": "OID"
+        }
+      ],
+      "right": [
+        {
+          "id": "r_oid",
+          "text": "Identifiant numérique hiérarchique d'un objet, par exemple 1.3.6.1.2.1.1.5"
+        },
+        {
+          "id": "r_key",
+          "text": "Clé partagée qui chiffre les messages échangés en SNMPv2c"
+        },
+        {
+          "id": "r_mgr",
+          "text": "Application centrale qui interroge les équipements et reçoit leurs notifications"
+        },
+        {
+          "id": "r_mib",
+          "text": "Base structurée des objets gérés qu'un équipement expose"
+        },
+        {
+          "id": "r_agent",
+          "text": "Logiciel de l'équipement géré qui répond aux requêtes et émet les notifications"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "mgr": "r_mgr",
+        "agent": "r_agent",
+        "mib": "r_mib",
+        "oid": "r_oid"
+      }
+    },
+    "explanation": "Le manager (NMS, Network Management Station) interroge les agents et reçoit leurs Trap et Inform. L'agent tourne sur chaque équipement géré : il répond aux requêtes sur UDP 161 et émet les notifications. La MIB décrit, sous forme d'arbre, les objets gérés que l'agent expose (compteurs, états d'interface, nom d'hôte…). Chaque objet est désigné par un OID, suite de nombres qui suit l'arbre depuis la racine : 1.3.6.1.2.1.1.5 est sysName, le nom de l'équipement.",
+    "distractorNotes": {
+      "r_key": "Rien de tel en SNMPv2c : la communauté sert de mot de passe envoyé en clair, et seul SNMPv3 (niveau authPriv) chiffre les messages."
+    },
+    "reference": "RFC 3411 ; RFC 1213"
+  },
+  {
+    "slug": "ccna-4.4-snmpv3-authnopriv-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Quel niveau de sécurité SNMPv3 s'applique aux échanges de l'utilisateur supv, et que garantit-il ?",
+      "exhibit": "R1(config)# snmp-server group NOC v3 auth\nR1(config)# snmp-server user supv NOC v3 auth sha Sup3rv1s10n",
+      "options": [
+        {
+          "id": "a",
+          "text": "authPriv : messages authentifiés par HMAC-SHA et chiffrés"
+        },
+        {
+          "id": "b",
+          "text": "noAuthNoPriv : messages identifiés par le seul nom d'utilisateur"
+        },
+        {
+          "id": "c",
+          "text": "authNoPriv : messages chiffrés en SHA, mais pas authentifiés"
+        },
+        {
+          "id": "d",
+          "text": "authNoPriv : messages authentifiés par HMAC-SHA, mais pas chiffrés"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le mot-clé « auth » du groupe correspond au niveau authNoPriv, et l'utilisateur ne reçoit qu'un mot de passe d'authentification (« auth sha ») sans paramètre « priv ». Chaque message porte donc un code HMAC calculé avec SHA : l'agent vérifie l'identité de l'émetteur et l'intégrité du message, mais la PDU circule en clair. Pour la chiffrer, il faudrait un groupe « v3 priv » et un utilisateur configuré avec « priv aes 128 <mot de passe> » (niveau authPriv).",
+    "distractorNotes": {
+      "a": "authPriv exigerait le mot-clé « priv » dans le groupe et un mot de passe de chiffrement (« priv aes … ») pour l'utilisateur ; aucun des deux n'est configuré.",
+      "b": "noAuthNoPriv correspond au mot-clé « noauth » ; ici le groupe impose « auth » et l'utilisateur a un mot de passe SHA.",
+      "c": "SHA est une fonction de hachage utilisée pour l'authentification HMAC, pas un algorithme de chiffrement : authNoPriv authentifie sans chiffrer."
+    },
+    "reference": "SNMP Configuration Guide (Cisco IOS XE) ; RFC 3414"
+  },
+  {
+    "slug": "ccna-4.4-getbulk-inform-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un NMS et un routeur utilisent SNMPv2c. Le NMS doit relever toutes les 5 minutes l'ensemble de la table des interfaces du routeur en un minimum d'échanges, et être prévenu d'une panne de lien de façon que le routeur sache si l'alerte a été reçue. Quelle combinaison répond aux deux besoins ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "GetBulkRequest vers le port UDP 162 du routeur ; Trap vers le port UDP 161 du NMS"
+        },
+        {
+          "id": "b",
+          "text": "GetNextRequest vers le port UDP 161 du routeur ; Trap vers le port UDP 162 du NMS"
+        },
+        {
+          "id": "c",
+          "text": "GetBulkRequest vers le port UDP 161 du routeur ; InformRequest vers le port UDP 162 du NMS"
+        },
+        {
+          "id": "d",
+          "text": "SetRequest vers le port UDP 161 du routeur ; InformRequest vers le port UDP 162 du NMS"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Deux besoins sont à combiner. Pour lire une table entière en peu d'échanges, GetBulkRequest (SNMPv2c) renvoie en une réponse une série d'objets successifs, là où GetNextRequest n'en renvoie qu'un. Les requêtes du manager visent le port UDP 161 de l'agent. Pour la panne, la notification part du routeur vers le port UDP 162 du NMS ; l'InformRequest est acquittée par le NMS et retransmise en l'absence d'acquittement, alors qu'un Trap n'est jamais acquitté, donc le routeur ignore s'il est arrivé.",
+    "distractorNotes": {
+      "a": "Les ports sont inversés : l'agent reçoit les requêtes sur UDP 161 et le manager les notifications sur UDP 162. De plus, un Trap n'est pas acquitté.",
+      "b": "Un Trap n'est jamais acquitté : le routeur ne sait pas s'il a été reçu. GetNextRequest renvoie en outre un seul objet par échange.",
+      "d": "SetRequest modifie des objets sur l'agent ; elle ne permet pas de lire la table des interfaces."
+    },
+    "reference": "RFC 3416"
+  },
+  {
+    "slug": "ccna-4.8-ssh-port-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur quel port TCP le serveur SSH d'un routeur Cisco écoute-t-il par défaut ?",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Numéro de port TCP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "22"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "SSH utilise TCP, port 22, pour toutes ses fonctions (session de commandes, SCP, SFTP). Telnet utilise TCP 23 et transmet tout en clair, identifiants compris ; SSH chiffre l'ensemble de la session après l'échange de clés. Sur un routeur, le serveur SSH est actif dès qu'une paire de clés RSA existe, et « transport input ssh » sous les lignes VTY refuse alors les connexions Telnet.",
+    "distractorNotes": {},
+    "reference": "RFC 4253 ; Secure Shell Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-session-steps-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un administrateur ouvre une session SSHv2 vers R1, dont les lignes VTY sont configurées avec « login local ». Ordonnez les étapes de l'établissement de la session.",
+      "items": [
+        {
+          "id": "a",
+          "text": "Négociation des algorithmes et échange de clés Diffie-Hellman ; R1 prouve son identité avec sa clé d'hôte RSA."
+        },
+        {
+          "id": "b",
+          "text": "Le client ouvre une connexion TCP vers le port 22 de R1."
+        },
+        {
+          "id": "c",
+          "text": "R1 ouvre la session EXEC et affiche son invite de commande."
+        },
+        {
+          "id": "d",
+          "text": "Le client et R1 échangent leurs chaînes de version (SSH-2.0-…)."
+        },
+        {
+          "id": "e",
+          "text": "Dans le canal chiffré, le client envoie le nom d'utilisateur et le mot de passe, vérifiés dans la base locale."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "b",
+        "d",
+        "a",
+        "e",
+        "c"
+      ]
+    },
+    "explanation": "SSHv2 s'empile en couches. Après la connexion TCP sur le port 22, chaque côté annonce sa version en clair (« SSH-2.0-… »). La couche transport négocie ensuite les algorithmes et réalise l'échange de clés Diffie-Hellman : les clés de session sont dérivées et le serveur s'authentifie par sa clé d'hôte RSA. Ce n'est qu'une fois le canal chiffré que l'utilisateur s'authentifie (avec login local, comparaison avec les comptes « username »), puis la session interactive s'ouvre.",
+    "distractorNotes": {},
+    "reference": "RFC 4253 ; RFC 4252"
+  },
+  {
+    "slug": "ccna-4.8-vty-access-class-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, le serveur SSH est actif et l'ACL standard 15, qui n'autorise que le sous-réseau d'administration 192.168.99.0/24, existe déjà. Depuis le mode de configuration globale, passez sur les lignes VTY 0 à 15, puis, dans l'ordre de votre choix : appliquez l'ACL 15 aux connexions entrantes et n'acceptez que le protocole SSH.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "line vty 0 15"
+        ],
+        [
+          "access-class 15 in"
+        ],
+        [
+          "transport input ssh"
+        ]
+      ]
+    },
+    "explanation": "Sous les lignes VTY, « access-class 15 in » filtre les connexions entrantes vers le routeur selon leur adresse source : seules les machines de 192.168.99.0/24 peuvent ouvrir une session, quel que soit le protocole. « transport input ssh » limite les protocoles acceptés à SSH, et Telnet est refusé. Sur une ligne, c'est « access-class » qui s'emploie, et non « ip access-group », réservé aux interfaces : l'ACL protège alors l'accès de gestion sans filtrer le trafic qui traverse le routeur.",
+    "distractorNotes": {},
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE) ; Security Configuration Guide: Access Control Lists (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-ssh-timers-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Sur R1, une paire de clés RSA de 2048 bits existe déjà. Depuis le mode de configuration globale, dans l'ordre de votre choix : n'acceptez que SSH version 2, limitez à 60 secondes le délai accordé pour s'authentifier, et à 2 le nombre de tentatives d'authentification.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": false,
+      "commands": [
+        [
+          "ip ssh version 2"
+        ],
+        [
+          "ip ssh time-out 60"
+        ],
+        [
+          "ip ssh authentication-retries 2"
+        ]
+      ]
+    },
+    "explanation": "Les paramètres globaux du serveur SSH se règlent par « ip ssh ». « ip ssh version 2 » refuse les clients SSHv1. « ip ssh time-out » fixe en secondes le délai laissé au client pour s'authentifier (120 par défaut, 120 au maximum) et « ip ssh authentication-retries » le nombre d'essais avant coupure de la connexion (3 par défaut, 5 au maximum). « show ip ssh » affiche ensuite la version et ces deux valeurs, par exemple « Authentication timeout: 60 secs; Authentication retries: 2 ».",
+    "distractorNotes": {},
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-version-199-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Que signifie la version affichée par le routeur ?",
+      "exhibit": "R1# show ip ssh\nSSH Enabled - version 1.99\nAuthentication timeout: 120 secs; Authentication retries: 3",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le serveur n'accepte que SSHv1, car la clé RSA est trop courte pour SSHv2."
+        },
+        {
+          "id": "b",
+          "text": "SSH est actif mais aucune clé RSA n'existe, il faut encore en générer une."
+        },
+        {
+          "id": "c",
+          "text": "Le serveur accepte SSHv1 et SSHv2, « ip ssh version 2 » réserverait l'accès à SSHv2."
+        },
+        {
+          "id": "d",
+          "text": "Le serveur n'accepte que SSHv2, 1.99 est le numéro de révision de SSHv2."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La version 1.99 est le mode de compatibilité : le serveur accepte les clients SSHv1 et SSHv2. Sur IOS 15, c'est l'état par défaut après la génération d'une clé RSA d'au moins 768 bits. Pour refuser SSHv1, dont la conception présente des faiblesses connues, on saisit « ip ssh version 2 », et « show ip ssh » affiche alors « version 2.0 ». Avec une clé plus courte que 768 bits, seul SSHv1 est possible et la version affichée est 1.5.",
+    "distractorNotes": {
+      "a": "Une clé trop courte pour SSHv2 (moins de 768 bits) donnerait la version 1.5, pas 1.99.",
+      "b": "« SSH Enabled » indique justement qu'une paire de clés RSA existe : sans clé, le serveur est désactivé (« SSH Disabled »).",
+      "d": "Un serveur limité à SSHv2 afficherait « version 2.0 ». 1.99 annonce la compatibilité avec les deux versions."
+    },
+    "reference": "RFC 4253, section 5.1 ; Secure Shell Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-login-local-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur les lignes VTY d'un routeur, quelle commande impose une authentification par les comptes créés avec « username … secret » ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "login"
+        },
+        {
+          "id": "b",
+          "text": "password Cl3fVty"
+        },
+        {
+          "id": "c",
+          "text": "transport input ssh"
+        },
+        {
+          "id": "d",
+          "text": "login local"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "« login local » demande un nom d'utilisateur et un mot de passe, comparés aux comptes définis par « username <nom> secret <mot de passe> » dans la configuration. C'est l'authentification attendue pour SSH, qui transmet toujours un nom d'utilisateur. Chaque administrateur a ainsi son propre compte, éventuellement avec un niveau de privilège. Pour une base centralisée (RADIUS, TACACS+), on utiliserait AAA avec « aaa new-model » et « login authentication ».",
+    "distractorNotes": {
+      "a": "« login » seul vérifie le mot de passe de ligne défini par « password », sans nom d'utilisateur ni base locale.",
+      "b": "« password » définit le mot de passe de ligne, partagé par tous ; il n'est utilisé qu'avec « login », pas avec la base des comptes.",
+      "c": "« transport input ssh » choisit les protocoles acceptés sur la ligne ; il ne définit pas la méthode d'authentification."
+    },
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-default-gateway-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit, extrait de la configuration de S1, un commutateur de niveau 2 sans routage IP. « show ip ssh » affiche « SSH Enabled - version 2.0 » et le compte local admin existe. Depuis PC-A (192.168.99.10, VLAN 99), « ssh -l admin 192.168.99.2 » fonctionne. Depuis PC-B (10.20.0.15), situé derrière le routeur R1 dont l'adresse dans le VLAN 99 est 192.168.99.1, la connexion échoue, alors que R1 route correctement vers 192.168.99.0/24 et que le proxy ARP y est désactivé. Que faut-il faire ?",
+      "exhibit": "hostname S1\n!\nip domain-name examforge.lab\nip ssh version 2\n!\ninterface Vlan1\n no ip address\n shutdown\n!\ninterface Vlan99\n ip address 192.168.99.2 255.255.255.0\n!\nline vty 0 15\n login local\n transport input ssh",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter « transport input ssh telnet » sous « line vty 0 15 »."
+        },
+        {
+          "id": "b",
+          "text": "Configurer « ip default-gateway 192.168.99.1 » en configuration globale."
+        },
+        {
+          "id": "c",
+          "text": "Régénérer la paire de clés RSA avec un modulus de 2048 bits."
+        },
+        {
+          "id": "d",
+          "text": "Remplacer « login local » par « login » sous « line vty 0 15 »."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La configuration SSH est correcte : PC-A, dans le même sous-réseau, se connecte. Le problème est le chemin retour. Un commutateur de niveau 2 n'a pas de table de routage : pour répondre à une machine hors de 192.168.99.0/24, il doit connaître une passerelle, fixée par « ip default-gateway ». Sans elle, les segments TCP de S1 vers 10.20.0.15 ne sont jamais envoyés et la connexion de PC-B n'aboutit pas. Le proxy ARP étant désactivé sur R1, aucun contournement n'est possible. Avec « ip default-gateway 192.168.99.1 », S1 envoie ces réponses à R1.",
+    "distractorNotes": {
+      "a": "Le protocole n'est pas en cause : PC-A se connecte en SSH. Autoriser Telnet affaiblirait la sécurité sans rétablir le chemin vers 10.20.0.15.",
+      "c": "Les clés conviennent : SSHv2 est actif et fonctionne depuis PC-A. La taille de clé ne dépend pas du sous-réseau du client.",
+      "d": "« login » utiliserait le mot de passe de ligne, qui n'est pas configuré : les connexions seraient refusées, y compris depuis PC-A."
+    },
+    "reference": "Catalyst Switch Software Configuration Guide (Cisco) ; Secure Shell Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-verification-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur R1, un administrateur veut vérifier la version du serveur SSH et ses paramètres d'authentification, puis lister les connexions SSH établies. Quelles deux commandes utilise-t-il ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "show crypto key mypubkey rsa"
+        },
+        {
+          "id": "b",
+          "text": "show ip ssh"
+        },
+        {
+          "id": "c",
+          "text": "show ip interface brief"
+        },
+        {
+          "id": "d",
+          "text": "show ssh"
+        },
+        {
+          "id": "e",
+          "text": "show version"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "« show ip ssh » indique si le serveur est actif et dans quelle version (1.5, 1.99 ou 2.0), avec le délai et le nombre de tentatives d'authentification. « show ssh » liste les connexions SSH en cours : numéro de connexion, version, algorithmes de chiffrement et de HMAC, état et nom d'utilisateur. Ce sont les deux commandes de vérification du serveur SSH ; la paire de clés elle-même se consulte avec « show crypto key mypubkey rsa ».",
+    "distractorNotes": {
+      "a": "Cette commande affiche la clé publique RSA du routeur, pas la version du serveur SSH ni les connexions établies.",
+      "c": "Elle résume l'adresse et l'état des interfaces ; elle n'apporte aucune information sur SSH.",
+      "e": "Elle affiche la version d'IOS, l'image et le matériel, pas la version du serveur SSH ni les sessions."
+    },
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-commands-roles-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque commande à son rôle dans la mise en place de l'accès SSH sur R1.",
+      "left": [
+        {
+          "id": "host",
+          "text": "hostname R1"
+        },
+        {
+          "id": "dom",
+          "text": "ip domain-name examforge.lab"
+        },
+        {
+          "id": "key",
+          "text": "crypto key generate rsa modulus 2048"
+        },
+        {
+          "id": "login",
+          "text": "login local"
+        },
+        {
+          "id": "transport",
+          "text": "transport input ssh"
+        }
+      ],
+      "right": [
+        {
+          "id": "r_host",
+          "text": "Remplace le nom par défaut « Router », condition pour générer les clés"
+        },
+        {
+          "id": "r_dom",
+          "text": "Fournit le suffixe du nom de la paire de clés (R1.examforge.lab)"
+        },
+        {
+          "id": "r_enc",
+          "text": "Chiffre les mots de passe de ligne affichés dans la configuration"
+        },
+        {
+          "id": "r_key",
+          "text": "Crée la paire de clés RSA et active le serveur SSH"
+        },
+        {
+          "id": "r_login",
+          "text": "Vérifie les identifiants dans la base des comptes « username »"
+        },
+        {
+          "id": "r_transport",
+          "text": "N'accepte que SSH sur les lignes VTY et refuse Telnet"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "host": "r_host",
+        "dom": "r_dom",
+        "key": "r_key",
+        "login": "r_login",
+        "transport": "r_transport"
+      }
+    },
+    "explanation": "La paire de clés RSA est nommée d'après le FQDN, formé du hostname et du domaine : il faut donc un nom différent de « Router » et un « ip domain-name » avant « crypto key generate rsa ». La génération des clés active le serveur SSH. Sous les lignes VTY, « login local » authentifie par les comptes locaux, et « transport input ssh » refuse Telnet. Ajouter ensuite « ip ssh version 2 » pour refuser SSHv1.",
+    "distractorNotes": {
+      "r_enc": "C'est le rôle de « service password-encryption » (chiffrement faible de type 7), qui ne fait pas partie de la configuration SSH."
+    },
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-4.8-encrypted-data-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un administrateur ouvre une session SSHv2 vers R1 pendant qu'un collègue capture le trafic. Quelles deux informations la capture ne permet-elle pas de lire ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les adresses IP du client et de R1"
+        },
+        {
+          "id": "b",
+          "text": "Le mot de passe saisi par l'administrateur"
+        },
+        {
+          "id": "c",
+          "text": "Le port TCP de destination 22"
+        },
+        {
+          "id": "d",
+          "text": "Les chaînes de version échangées au début (SSH-2.0-…)"
+        },
+        {
+          "id": "e",
+          "text": "Les commandes show tapées pendant la session"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "SSH chiffre la charge utile TCP une fois l'échange de clés terminé. L'authentification de l'utilisateur (nom et mot de passe) et toute la session interactive (commandes saisies, sorties affichées) passent dans ce canal chiffré. En revanche, les en-têtes IP et TCP restent lisibles, car les routeurs en ont besoin, et l'échange initial des chaînes de version, qui précède le chiffrement, se fait en clair. C'est la différence essentielle avec Telnet, qui transmet tout en clair.",
+    "distractorNotes": {
+      "a": "Les en-têtes IP ne sont pas chiffrés par SSH : les adresses source et destination restent visibles.",
+      "c": "L'en-tête TCP reste en clair : le port 22 permet justement d'identifier une session SSH dans la capture.",
+      "d": "Les chaînes de version sont échangées avant l'échange de clés, donc en clair."
+    },
+    "reference": "RFC 4253 ; RFC 4252"
+  },
+  {
+    "slug": "ccna-4.8-vty-errors-001",
+    "certification": "ccna",
+    "domain": "4.0",
+    "subtopic": "4.8",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit, extrait de la configuration de R1. La politique impose : SSHv2 uniquement, authentification par les comptes locaux créés avec « username … secret », Telnet interdit. « show ip ssh » affiche « SSH Enabled - version 2.0 ». Quelles deux modifications faut-il apporter ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "exhibit": "hostname R1\n!\nip domain-name examforge.lab\nip ssh version 2\n!\nline vty 0 15\n password Vty2026\n login\n transport input telnet ssh",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter « crypto key generate rsa », qui manque dans la configuration."
+        },
+        {
+          "id": "b",
+          "text": "Remplacer « login » par « login local » sous les lignes VTY."
+        },
+        {
+          "id": "c",
+          "text": "Déplacer « ip ssh version 2 » sous les lignes VTY 0 à 15."
+        },
+        {
+          "id": "d",
+          "text": "Remplacer « password Vty2026 » par « secret Vty2026 » sous les lignes VTY."
+        },
+        {
+          "id": "e",
+          "text": "Remplacer « transport input telnet ssh » par « transport input ssh »."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Deux lignes VTY contredisent la politique. « login » authentifie par le mot de passe de ligne Vty2026, partagé et sans nom d'utilisateur : il faut « login local » pour utiliser les comptes « username ». « transport input telnet ssh » accepte encore Telnet : « transport input ssh » le refuse. Le reste est conforme : « SSH Enabled - version 2.0 » prouve que des clés RSA d'au moins 768 bits existent et que SSHv1 est refusé.",
+    "distractorNotes": {
+      "a": "La commande « crypto key generate rsa » ne figure jamais dans la configuration : les clés sont stockées à part. « SSH Enabled - version 2.0 » montre qu'elles existent.",
+      "c": "« ip ssh version 2 » est une commande de configuration globale : elle n'existe pas en mode ligne.",
+      "d": "Il n'existe pas de commande « secret » en mode ligne ; et avec « login local », le mot de passe de ligne n'est plus utilisé."
+    },
+    "reference": "Secure Shell Configuration Guide (Cisco IOS XE)"
+  }
+]

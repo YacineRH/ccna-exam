@@ -71,6 +71,78 @@ Renvoie la configuration de la certification et les compteurs de la banque publi
 | `byDomainType` | Par domaine puis par type. L'écran de lancement en déduit ce que permet un filtre de types (« la banque permet au plus N questions ») en reproduisant la logique du serveur : domaines sans question de ces types écartés, pondérations renormalisées (`apps/web/src/lib/planning.ts`). |
 | `exams` | Nombre d'examens blancs figés. |
 
+## Banque complète et série de 100 examens blancs (bloc 6)
+
+Le cahier des charges demande « ~100 examens blancs uniques, pas un simple mélange aléatoire des mêmes questions ». Les chiffres ci-dessous ont été fixés avant la génération ; les tests de contenu (`packages/content/test/series.test.ts`, `content.test.ts`) les vérifient.
+
+### Ce que demande la série
+
+Un examen CCNA compte 102 questions, réparties par `allocateByWeight` : **21 / 20 / 26 / 10 / 15 / 10** questions pour les domaines 1.0 à 6.0 (20,4 / 20,4 / 25,5 / 10,2 / 15,3 / 10,2, arrondis au plus fort reste). Cent examens font donc **10 200 places** : 2 100, 2 000, 2 600, 1 000, 1 500 et 1 000 par domaine.
+
+### Cibles de la banque CCNA : 1 530 questions publiées
+
+Chaque domaine reçoit une part de la banque égale à sa part des places, pour que la réutilisation moyenne soit la même partout : **10 200 / 1 530 = 6,67 examens par question**. Les parts restent à moins d'un point des pondérations officielles.
+
+| Domaine | Poids | Places / examen | Cible | Part de la banque | Réutilisation moyenne |
+| --- | --- | --- | --- | --- | --- |
+| 1.0 Network Fundamentals | 20 % | 21 | 315 | 20,6 % | 6,67 |
+| 2.0 Network Access | 20 % | 20 | 300 | 19,6 % | 6,67 |
+| 3.0 IP Connectivity | 25 % | 26 | 390 | 25,5 % | 6,67 |
+| 4.0 IP Services | 10 % | 10 | 150 | 9,8 % | 6,67 |
+| 5.0 Security Fundamentals | 15 % | 15 | 225 | 14,7 % | 6,67 |
+| 6.0 Automation and Programmability | 10 % | 10 | 150 | 9,8 % | 6,67 |
+| **Total** | | **102** | **1 530** | | |
+
+Le minimum demandé (1 500) laisse 30 questions de marge pour les rejets de la relecture. Banque publiée à la fin du bloc 6 : **1 523 questions** (bilan des relectures dans `docs/generation/journal-bloc-6.md`). **Sous-thèmes** : au moins 15 questions chacun (test), réparties selon le poids du sous-thème dans le programme :
+
+| Domaine | Cibles par sous-thème |
+| --- | --- |
+| 1.0 | 1.1 : 25, 1.2 : 22, 1.3 : 22, 1.4 : 22, 1.5 : 24, 1.6 : 45, 1.7 : 16, 1.8 : 24, 1.9 : 24, 1.10 : 18, 1.11 : 23, 1.12 : 18, 1.13 : 32 |
+| 2.0 | 2.1 : 45, 2.2 : 42, 2.3 : 28, 2.4 : 38, 2.5 : 50, 2.6 : 28, 2.7 : 20, 2.8 : 24, 2.9 : 25 |
+| 3.0 | 3.1 : 75, 3.2 : 70, 3.3 : 90, 3.4 : 105, 3.5 : 50 |
+| 4.0 | 4.1 : 24, 4.2 : 16, 4.3 : 15, 4.4 : 16, 4.5 : 16, 4.6 : 16, 4.7 : 17, 4.8 : 15, 4.9 : 15 |
+| 5.0 | 5.1 : 24, 5.2 : 16, 5.3 : 22, 5.4 : 20, 5.5 : 20, 5.6 : 38, 5.7 : 33, 5.8 : 20, 5.9 : 16, 5.10 : 16 |
+| 6.0 | 6.1 : 18, 6.2 : 20, 6.3 : 24, 6.4 : 18, 6.5 : 26, 6.6 : 20, 6.7 : 24 |
+
+**Types** (cible sur la banque entière) : QCM simple 40 %, QCM multiple 18 %, champs à compléter 10 %, CLI 11 %, remise en ordre 9 %, association 11 %. Chaque domaine contient les six types, au moins 5 questions de chacun, sauf la CLI en 6.0 : le type `cli` corrige des commandes IOS, et le domaine Automation porte sur des API, des formats et des outils qui ne se tapent pas dans IOS.
+
+**Difficultés** : 30 % faciles, 50 % moyennes, 20 % difficiles sur la banque (à 3 points près) et dans chaque domaine (à 5 points près).
+
+### Contraintes de la série
+
+| Contrainte | Valeur | Justification |
+| --- | --- | --- |
+| Examens | 100, numérotés de 1 à 100, au format officiel (102 questions, pondérations exactes) | Cahier des charges. |
+| Doublon dans un examen | aucun | Clé primaire `(exam_id, question_id)` et contrôle de la série. |
+| **N** : examens par question, au plus | **8** | La moyenne est 6,67, donc le plancher est 7. Un cran de plus laisse à l'assembleur la latitude d'équilibrer sous-thèmes et difficultés sans dépasser, et absorbe une banque un peu plus mince après rejets (150 → 140 questions en 4.0 donnerait 7,1). |
+| Recouvrement entre deux examens, au plus | **12 questions (11,8 %)** | Deux examens tirés au hasard dans une banque équilibrée partagent en moyenne Σ k²/n = 21²/315 + 20²/300 + 26²/390 + 10²/150 + 15²/225 + 10²/150 ≈ **6,8 questions** ; le plafond tolère l'écart d'un tirage, sous les 15 % demandés. |
+| Couverture | chaque question publiée sert au moins une fois | Une question jamais servie serait du contenu perdu. |
+| Équilibre par examen | difficultés à 5 points près de 30/50/20 ; au moins 45 des 53 sous-thèmes | Chaque examen ressemble au vrai, pas seulement la série en moyenne. |
+
+### Assemblage de la série (`packages/core/src/series.ts`)
+
+`assembleSeries(pool, cert, { seed, examCount, maxUses, maxOverlap })` construit les examens un par un, domaine par domaine (l'ordre des domaines tourne d'un examen à l'autre). Pour chaque place, il retient la question de coût minimal :
+
+1. **réutilisation** : les questions les moins servies du domaine d'abord (40 par utilisation au-dessus du minimum du domaine) ; c'est ce qui garantit que chaque question sert et que l'écart reste d'une utilisation ;
+2. **recouvrement** : pour chaque examen précédent qui contient déjà la question, le carré du recouvrement qu'elle créerait ; au-delà du plafond, la question est exclue ;
+3. **sous-thèmes** : au prorata de leur taille dans la banque, avec un bonus pour un sous-thème encore absent de l'examen ;
+4. **difficultés** : au plus près des parts visées (30/50/20) ;
+5. un départage tiré du seed.
+
+Une seconde passe échange, s'il le faut, une question contre une autre du même domaine (même sous-thème et même difficulté de préférence) pour placer une question jamais servie ou ramener une paire sous le plafond. Le tout est déterministe : même banque et même seed, même série, quel que soit l'ordre de la banque. S'il manque des questions, `InsufficientBankError` dit le domaine et le nombre manquant (`needed`, `available`, `missing`) ; une contrainte intenable lève `SeriesConstraintError`.
+
+`seriesReport` rend la réutilisation par question (minimum, maximum, moyenne, histogramme, questions jamais servies), le recouvrement maximal et moyen (avec la paire la plus proche et l'histogramme), et pour chaque examen les domaines, types, difficultés et sous-thèmes couverts. `checkSeries` contrôle une série figée relue depuis un fichier.
+
+### Doublons sémantiques (`packages/core/src/similarity.ts`)
+
+L'empreinte exacte (`contentKey`, énoncé, exhibit et choix normalisés ; SHA-256 en base) ne voit pas une reformulation. `compareQuestions` combine trois signaux :
+
+- **texte** : énoncé et exhibit, sans casse, accents, ponctuation, mots vides ni valeurs, réduits à des racines de 5 lettres ; moyenne du Jaccard et du coefficient de recouvrement des racines ;
+- **valeurs** : adresses IPv4 et IPv6 avec préfixe, MAC, nombres d'au moins deux chiffres (les heures des sorties IOS sont ignorées) ;
+- **bonne réponse** normalisée, quel que soit le type (texte des options justes, valeurs attendues, commandes, ordre, paires).
+
+`score = texte × (1 si même réponse, 0,6 sinon) × (0,4 + 0,6 × Jaccard des valeurs, ou 1 sans valeurs)`. Un même gabarit sur d'autres valeurs est un autre exercice (score bas), une même question reformulée avec les mêmes valeurs et la même réponse reste haute. **Seuil de doublon : 0,70** (bloquant dans les tests de contenu) ; **seuil de suspicion : 0,50** (liste de paires à relire, `node packages/content/scripts/near-duplicates.mjs`). Les cas de calibrage sont dans `packages/core/test/similarity.test.ts`. Toute la banque (environ 1,2 million de paires) se compare en moins d'une seconde : un filtre sur le recouvrement des racines écarte d'abord les paires sans rapport.
+
 ## Modèle de données
 
 ```
@@ -100,6 +172,8 @@ Les migrations SQL sont générées par Drizzle dans `apps/api/drizzle/` et appl
 - Le niveau de préparation est la moyenne des 5 derniers examens blancs, les plus récents pesant davantage.
 
 ## Labs CLI
+
+La banque CCNA compte 24 labs et 17 challenges (11 de dépannage). Chaque sous-thème que le programme fait configurer ou vérifier en CLI IOS a au moins un lab (test `labs ccna : couverture`) : 1.3, 1.8, 2.1 à 2.5, 2.8, 3.3 à 3.5, 4.1 à 4.6, 4.8, 5.3, 5.4, 5.6 à 5.8 ; l'adressage IPv4 (1.6) est exercé par le lab 1.3. Les autres sous-thèmes portent sur des concepts, le sans-fil (interface graphique du WLC) ou l'automatisation.
 
 ### Simulateur de terminal (`packages/core/src/terminal/`)
 
@@ -131,6 +205,15 @@ Toujours sans rien d'IOS dans le moteur : chaque comportement est un champ du pr
 | `<port:tcp>`, `<port:udp>`, `portNames.{tcp,udp}` | Noms de ports par protocole. | `www` en TCP, `tftp` en UDP |
 | `keyGroup` + `key` sur les formes `no` | La forme `no` est partagée par deux orthographes. | `ip domain-lookup` / `ip domain lookup` |
 | `clears` | Lignes devenues inutiles effacées. | `passive-interface default` |
+| `<-23-23>` (bornes signées), mots-clés avec `+` | Entier négatif accepté si la borne basse l'est ; mot-clé `tacacs+`. | `clock timezone EST -5` ; `group tacacs+` |
+| `rewrite` en liste | Plusieurs règles, la première qui correspond s'applique (forme `no` comprise). | `logging trap 4` → `logging trap warnings` ; `address ipv4 …` complétée des ports 1645/1646 ; `clock timezone CET 1` → `… 1 0` |
+| `defaults` | Forme canonique égale au défaut : le réglage est retiré au lieu d'être affiché. | `cdp timer 60`, `spanning-tree port-priority 128`, `logging trap informational`, `login authentication default` |
+| `negate: "disable"` | Réglage actif par défaut et à valeur : `no …` garde « no » + la clé, une forme positive l'efface. | `no logging console`, `logging console warnings` |
+| `negateKey` | La forme `no` peut s'arrêter après la clé alors que la syntaxe exige encore un mot-clé. | `no spanning-tree guard`, `no aaa authentication login default` |
+| `requires[].invalidAtWord` | Refus présenté comme une saisie invalide, marqueur sous un mot-clé. | `aaa authentication …` et `login authentication …` sans `aaa new-model` |
+| `display` | Un mot facultatif absent ne laisse pas d'espace final. | `snmp-server community public RO [10]` |
+
+Pour la vitesse, la lecture d'une ligne ne suit que les formes dont le premier mot-clé peut commencer comme le premier mot saisi (les quatre méthodes de `aaa authentication login` font à elles seules 9 360 formes linéaires).
 
 `TerminalDevice.complete(line)` complète le dernier mot (touche Tab d'IOS) sans rien exécuter ni enregistrer ; l'API l'expose en `POST /lab-attempts/:id/complete` pour la barre tactile du terminal.
 

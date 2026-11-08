@@ -1,0 +1,1738 @@
+[
+  {
+    "slug": "ccna-2.1-undeletable-vlans-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur un commutateur Catalyst, quels VLAN la commande « no vlan » ne permet-elle pas de supprimer ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le VLAN 1 seulement"
+        },
+        {
+          "id": "b",
+          "text": "Les VLAN 1 à 1005"
+        },
+        {
+          "id": "c",
+          "text": "Le VLAN 1 et le VLAN natif des trunks"
+        },
+        {
+          "id": "d",
+          "text": "Les VLAN 1 et 1002 à 1005"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le VLAN 1 est le VLAN par défaut : tous les ports y sont à l'origine, et IOS refuse sa suppression (« %Default VLAN 1 may not be deleted. »). Les VLAN 1002 à 1005 (fddi-default, token-ring-default, fddinet-default, trnet-default) sont créés d'office pour la compatibilité avec FDDI et Token Ring ; ils apparaissent en act/unsup dans « show vlan brief » et ne peuvent pas non plus être supprimés. Tous les autres VLAN, de la plage normale comme de la plage étendue, se créent et se suppriment librement.",
+    "distractorNotes": {
+      "a": "Les VLAN 1002 à 1005, réservés à FDDI et Token Ring, sont eux aussi impossibles à supprimer.",
+      "b": "Les VLAN 2 à 1001 de la plage normale se créent, se renomment et se suppriment librement.",
+      "c": "Le VLAN natif est un réglage du trunk (1 par défaut) ; un VLAN choisi comme natif, par exemple le 99, se supprime comme n'importe quel autre."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-default-vlan-name-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur SW1, l'administrateur crée le VLAN 30 par la commande « vlan 30 », puis quitte le mode de configuration sans avoir utilisé la commande « name ». Quel nom « show vlan brief » affiche-t-il pour ce VLAN ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "VLAN0030"
+        },
+        {
+          "id": "b",
+          "text": "VLAN30"
+        },
+        {
+          "id": "c",
+          "text": "default"
+        },
+        {
+          "id": "d",
+          "text": "VLAN-30"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un VLAN créé sans nom reçoit un nom par défaut : le mot VLAN suivi de son numéro complété par des zéros sur quatre chiffres, soit VLAN0030 pour le VLAN 30 (VLAN0005 pour le VLAN 5, VLAN1500 pour le VLAN 1500). On le remplace avec « name » en mode de configuration du VLAN (SW1(config-vlan)#). Le nom ne sert qu'à l'administration : c'est le numéro du VLAN qui figure dans l'étiquette 802.1Q et dans la configuration des ports.",
+    "distractorNotes": {
+      "b": "IOS complète toujours le numéro par des zéros sur quatre chiffres : VLAN30 n'est pas le nom par défaut.",
+      "c": "« default » est le nom du VLAN 1 ; un VLAN nouvellement créé ne le reçoit pas.",
+      "d": "Le nom par défaut ne contient pas de tiret : il colle le mot VLAN au numéro écrit sur quatre chiffres."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-inactive-access-vlan-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le PC raccordé au port Gi1/0/9 de SW1 a perdu toute connectivité juste après une intervention sur la base VLAN. Quelle commande rétablit sa connectivité sans modifier la configuration du port ?",
+      "exhibit": "SW1# show interfaces GigabitEthernet1/0/9 switchport\nName: Gi1/0/9\nSwitchport: Enabled\nAdministrative Mode: static access\nOperational Mode: static access\nAdministrative Trunking Encapsulation: dot1q\nOperational Trunking Encapsulation: native\nNegotiation of Trunking: Off\nAccess Mode VLAN: 30 (Inactive)\nTrunking Native Mode VLAN: 1 (default)\nAdministrative Native VLAN tagging: enabled\nVoice VLAN: none",
+      "options": [
+        {
+          "id": "a",
+          "text": "« no shutdown » sous l'interface Gi1/0/9"
+        },
+        {
+          "id": "b",
+          "text": "« vlan 30 » en configuration globale"
+        },
+        {
+          "id": "c",
+          "text": "« switchport access vlan 1 » sous l'interface Gi1/0/9"
+        },
+        {
+          "id": "d",
+          "text": "« switchport mode access » sous l'interface Gi1/0/9"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "« Access Mode VLAN: 30 (Inactive) » signifie que le port est toujours affecté au VLAN 30, mais que ce VLAN n'existe plus dans la base VLAN : il a été supprimé par « no vlan 30 ». Un port dont le VLAN d'accès n'existe pas reste inactif et ne transmet aucune trame ; il n'apparaît plus dans « show vlan brief ». Recréer le VLAN avec « vlan 30 » réactive aussitôt le port, sans toucher à sa configuration. Il faut ensuite redonner son nom au VLAN avec « name », sinon il s'appellera VLAN0030.",
+    "distractorNotes": {
+      "a": "Le port n'est pas désactivé administrativement : le problème vient de son VLAN d'accès, pas de l'interface.",
+      "c": "Cette commande modifie la configuration du port et place le PC dans le VLAN 1, hors de son sous-réseau : il ne retrouverait pas ses voisins du VLAN 30.",
+      "d": "Le port est déjà en accès statique (« Administrative Mode: static access ») : la commande ne change rien."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-wrong-access-vlan-diag-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. PC-C doit faire partie du VLAN GUESTS. Il ne parvient à joindre ni PC-B ni sa passerelle 10.10.20.1, alors que PC-A et PC-B fonctionnent normalement. Quelle action corrige le problème ?",
+      "exhibit": "SW1# show vlan brief\n\nVLAN Name                             Status    Ports\n---- -------------------------------- --------- -------------------------------\n1    default                          active    Gi1/0/9, Gi1/0/10, Gi1/0/11\n                                                Gi1/0/13, Gi1/0/14, Gi1/0/15\n                                                Gi1/0/16\n10   STAFF                            active    Gi1/0/1, Gi1/0/2, Gi1/0/3\n                                                Gi1/0/4, Gi1/0/12\n20   GUESTS                           active    Gi1/0/5, Gi1/0/6, Gi1/0/7\n                                                Gi1/0/8\n1002 fddi-default                     act/unsup\n1003 token-ring-default               act/unsup\n1004 fddinet-default                  act/unsup\n1005 trnet-default                    act/unsup\n\nPoste  Port      Adresse IP        Passerelle\nPC-A   Gi1/0/2   10.10.10.21/24    10.10.10.1\nPC-B   Gi1/0/6   10.10.20.22/24    10.10.20.1\nPC-C   Gi1/0/12  10.10.20.23/24    10.10.20.1",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur PC-C, remplacer la passerelle par 10.10.10.1"
+        },
+        {
+          "id": "b",
+          "text": "En configuration globale, recréer le VLAN 20 par « vlan 20 »"
+        },
+        {
+          "id": "c",
+          "text": "Sous l'interface Gi1/0/12, saisir « switchport access vlan 20 »"
+        },
+        {
+          "id": "d",
+          "text": "Sous l'interface Gi1/0/12, saisir « switchport mode trunk »"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "PC-C a une adresse du sous-réseau 10.10.20.0/24, celui du VLAN 20 (GUESTS), comme PC-B. Or « show vlan brief » montre son port Gi1/0/12 dans le VLAN 10 (STAFF) : ses requêtes ARP, diffusées dans le VLAN 10, n'atteignent ni PC-B ni la passerelle 10.10.20.1, qui sont dans le VLAN 20. Il faut donc affecter Gi1/0/12 au VLAN 20 avec « switchport access vlan 20 ». Démarche type pour un poste isolé : comparer l'adresse IP du poste au sous-réseau de son VLAN, puis vérifier le VLAN réel de son port.",
+    "distractorNotes": {
+      "a": "10.10.10.1 n'est pas dans le sous-réseau de PC-C (10.10.20.0/24) : PC-C ne pourrait pas l'utiliser comme passerelle, et ses voisins du VLAN 20 resteraient injoignables.",
+      "b": "Le VLAN 20 existe déjà et il est actif : l'exhibit le montre avec ses ports, dont celui de PC-B.",
+      "d": "Un PC n'étiquette pas ses trames : sur un trunk, elles arriveraient dans le VLAN natif, et non dans le VLAN 20."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-roas-physical-shutdown-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 assure le routage entre les VLAN 10 et 20 en router-on-a-stick ; le port de SW1 qui lui est relié est configuré par « switchport mode trunk ». Aucun hôte de ces deux VLAN ne parvient à pinguer sa passerelle. Quelle commande corrige le problème ?",
+      "exhibit": "R1# show running-config | section GigabitEthernet0/0/0\ninterface GigabitEthernet0/0/0\n no ip address\n shutdown\ninterface GigabitEthernet0/0/0.10\n encapsulation dot1Q 10\n ip address 192.168.10.1 255.255.255.0\ninterface GigabitEthernet0/0/0.20\n encapsulation dot1Q 20\n ip address 192.168.20.1 255.255.255.0",
+      "options": [
+        {
+          "id": "a",
+          "text": "« ip routing » en configuration globale"
+        },
+        {
+          "id": "b",
+          "text": "« no shutdown » sous GigabitEthernet0/0/0.10 et GigabitEthernet0/0/0.20"
+        },
+        {
+          "id": "c",
+          "text": "« no shutdown » sous GigabitEthernet0/0/0"
+        },
+        {
+          "id": "d",
+          "text": "« ip address 192.168.1.1 255.255.255.0 » sous GigabitEthernet0/0/0"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'interface physique GigabitEthernet0/0/0 est en « shutdown ». Les sous-interfaces dépendent d'elle : tant qu'elle est désactivée, elles restent down, quelle que soit leur configuration. Une seule commande « no shutdown » sur l'interface physique suffit : les sous-interfaces, qui ne sont pas désactivées elles-mêmes (aucune ligne « shutdown » sous elles), passent alors up. Le reste est correct : chaque sous-interface est associée à son VLAN par « encapsulation dot1Q » et porte la passerelle de ce VLAN ; l'interface physique n'a pas besoin d'adresse IP.",
+    "distractorNotes": {
+      "a": "Le routage IPv4 est actif par défaut sur un routeur IOS : la commande ne changerait rien.",
+      "b": "Les sous-interfaces ne sont pas en shutdown (aucune ligne « shutdown » sous elles) : elles sont down parce que l'interface physique l'est.",
+      "d": "L'interface physique n'a pas besoin d'adresse en router-on-a-stick, et une adresse ne lèverait pas son shutdown."
+    },
+    "reference": "Cisco IOS LAN Switching Configuration Guide — Configuring Routing Between VLANs"
+  },
+  {
+    "slug": "ccna-2.1-roas-switch-port-trunk-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 doit router entre les VLAN 10, 20 et 30 de SW1 en router-on-a-stick, par un seul lien relié au port Gi1/0/24 de SW1. Comment ce port de SW1 doit-il être configuré ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "En port d'accès du VLAN 1, le VLAN par défaut"
+        },
+        {
+          "id": "b",
+          "text": "En trunk 802.1Q transportant les VLAN 10, 20 et 30"
+        },
+        {
+          "id": "c",
+          "text": "En port routé (« no switchport ») relié à R1"
+        },
+        {
+          "id": "d",
+          "text": "En port d'accès du VLAN 10, avec les VLAN 20 et 30 en VLAN voix"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "En router-on-a-stick, le lien entre SW1 et R1 transporte tous les VLAN à router : le port de SW1 doit donc être un trunk 802.1Q (« switchport mode trunk ») qui autorise les VLAN 10, 20 et 30. Chaque trame y porte l'étiquette de son VLAN, ce qui permet à R1 de l'associer à la bonne sous-interface (« encapsulation dot1Q 10 », etc.). Un port d'accès ne transporte qu'un seul VLAN de données, sans étiquette : R1 ne verrait qu'un VLAN.",
+    "distractorNotes": {
+      "a": "Un port d'accès ne transporte qu'un VLAN, sans étiquette : R1 ne recevrait que le VLAN 1, qu'il n'a pas à router ici.",
+      "c": "Un port routé n'appartient à aucun VLAN : il ne peut pas transporter vers R1 les trames étiquetées des trois VLAN.",
+      "d": "Un port n'accepte qu'un seul VLAN voix, prévu pour un téléphone IP : impossible d'y placer à la fois les VLAN 20 et 30."
+    },
+    "reference": "Cisco IOS LAN Switching Configuration Guide — Configuring Routing Between VLANs"
+  },
+  {
+    "slug": "ccna-2.1-same-subnet-different-vlans-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "PC1 (192.168.50.10/24) est sur un port d'accès du VLAN 10 de SW1, PC2 (192.168.50.20/24) sur un port d'accès du VLAN 20 du même commutateur. Aucun routeur ni commutateur multicouche ne relie ces VLAN. PC1 lance un ping vers PC2 alors que son cache ARP est vide. Quel est le résultat ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le ping échoue : la requête ARP de PC1, diffusée dans le VLAN 10, n'atteint pas PC2."
+        },
+        {
+          "id": "b",
+          "text": "Le ping réussit : les deux PC, dans le même sous-réseau, forment un seul domaine de broadcast."
+        },
+        {
+          "id": "c",
+          "text": "Le ping réussit : SW1 commute la trame vers PC2 dès qu'il a appris son adresse MAC."
+        },
+        {
+          "id": "d",
+          "text": "Le ping échoue : PC1 envoie sa requête ARP à une passerelle qui n'existe pas."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "PC1 constate que 192.168.50.20 est dans son propre sous-réseau : il ne passe pas par une passerelle et diffuse une requête ARP pour obtenir la MAC de PC2. Un broadcast ne sort pas de son VLAN : SW1 ne le retransmet que sur les ports du VLAN 10, et PC2, dans le VLAN 20, ne le reçoit jamais. Sans réponse ARP, le ping échoue. Chaque VLAN est un domaine de broadcast distinct ; la bonne pratique consiste à donner à chaque VLAN son propre sous-réseau et à router entre eux.",
+    "distractorNotes": {
+      "b": "Le sous-réseau IP ne définit pas le domaine de broadcast : c'est le VLAN qui le délimite, et les deux PC sont dans deux VLAN différents.",
+      "c": "SW1 tient sa table d'adresses MAC par VLAN et ne commute jamais une trame d'un VLAN vers un port d'un autre VLAN.",
+      "d": "PC1 considère PC2 comme local, puisqu'il est dans le même sous-réseau : il ne consulte pas sa passerelle et cherche directement la MAC de PC2."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-deleted-vlan-ports-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur SW1, les ports d'accès Gi1/0/5 à Gi1/0/8 sont dans le VLAN 40. Un administrateur supprime ce VLAN par « no vlan 40 », sans toucher aux interfaces. Que deviennent ces ports ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ils passent dans le VLAN 1, où leurs hôtes retrouvent une connectivité."
+        },
+        {
+          "id": "b",
+          "text": "Ils passent en état err-disabled jusqu'à un « shutdown » suivi d'un « no shutdown »."
+        },
+        {
+          "id": "c",
+          "text": "Ils sont désactivés : une ligne « shutdown » apparaît sous chaque interface."
+        },
+        {
+          "id": "d",
+          "text": "Ils restent affectés au VLAN 40, deviennent inactifs et ne transmettent plus rien."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Supprimer un VLAN ne modifie pas la configuration des ports : « switchport access vlan 40 » reste sous chaque interface. Ces ports, affectés à un VLAN qui n'existe plus, deviennent inactifs : ils disparaissent de « show vlan brief », « show interfaces switchport » indique « Access Mode VLAN: 40 (Inactive) » et leurs hôtes perdent toute connectivité. Ils ne reprennent du service que si l'on recrée le VLAN 40 ou qu'on les affecte à un autre VLAN. Bonne pratique : déplacer les ports avant de supprimer un VLAN.",
+    "distractorNotes": {
+      "a": "IOS ne remet pas les ports dans le VLAN 1 : ils restent affectés au VLAN 40, inactifs.",
+      "b": "L'état err-disabled résulte d'une violation (port-security, BPDU Guard…), pas de la suppression d'un VLAN.",
+      "c": "La configuration des interfaces n'est pas modifiée : aucune commande « shutdown » n'est ajoutée ; les ports sont inactifs, pas désactivés administrativement."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-voice-vlan-tagging-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le port Gi1/0/3 de SW1 porte « switchport access vlan 10 » et « switchport voice vlan 110 ». Un téléphone IP Cisco y est raccordé, et un PC est branché sur le port PC du téléphone. Comment les trames circulent-elles sur le câble entre SW1 et le téléphone ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les trames du PC sont étiquetées VLAN 10 et la voix est envoyée sans étiquette."
+        },
+        {
+          "id": "b",
+          "text": "Les trames du PC et la voix sont étiquetées 802.1Q, avec les VLAN 10 et 110."
+        },
+        {
+          "id": "c",
+          "text": "Les trames du PC sont envoyées sans étiquette et la voix est étiquetée VLAN 110."
+        },
+        {
+          "id": "d",
+          "text": "Toutes les trames sont envoyées sans étiquette ; SW1 isole la voix par sa valeur CoS."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sur un port avec VLAN voix, le lien vers le téléphone transporte deux VLAN. Les trames du PC, relayées par le commutateur intégré du téléphone, restent non étiquetées et SW1 les place dans le VLAN d'accès 10. Le téléphone, qui a appris le VLAN voix par CDP, étiquette sa voix en 802.1Q avec le VLAN 110 ; le champ PCP de cette étiquette porte la priorité CoS (5 pour la voix). Le port reste un port d'accès : il n'apparaît pas dans « show interfaces trunk ».",
+    "distractorNotes": {
+      "a": "C'est l'inverse : le PC ignore les VLAN et envoie des trames non étiquetées ; c'est la voix qui est étiquetée.",
+      "b": "Seule la voix est étiquetée ; les trames du PC arrivent sans étiquette et SW1 les place dans le VLAN d'accès.",
+      "d": "La valeur CoS est transportée dans l'étiquette 802.1Q : une trame non étiquetée n'en a pas, et SW1 ne pourrait pas séparer la voix des données."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring Voice VLANs"
+  },
+  {
+    "slug": "ccna-2.1-voice-vlan-cdp-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un téléphone IP Cisco est raccordé à un port de commutateur Catalyst configuré avec « switchport voice vlan 150 ». Comment le téléphone apprend-il qu'il doit étiqueter sa voix avec le VLAN 150 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Par DTP, qui négocie le VLAN voix avec le téléphone"
+        },
+        {
+          "id": "b",
+          "text": "Par les annonces CDP que le commutateur envoie sur le port"
+        },
+        {
+          "id": "c",
+          "text": "Par l'option DHCP 150 reçue avec son adresse IP"
+        },
+        {
+          "id": "d",
+          "text": "Par VTP, qui diffuse la base VLAN aux équipements raccordés"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Sur un port configuré avec « switchport voice vlan 150 », le commutateur envoie des annonces CDP qui indiquent au téléphone IP Cisco le VLAN voix (VVID). Le téléphone étiquette alors sa voix en 802.1Q avec le VLAN 150. Il doit connaître ce VLAN avant même d'envoyer sa requête DHCP, pour obtenir une adresse dans le sous-réseau voix. Pour un téléphone d'un autre constructeur, LLDP-MED remplit le même rôle.",
+    "distractorNotes": {
+      "a": "DTP négocie la formation d'un trunk entre commutateurs ; il n'annonce pas de VLAN voix au téléphone.",
+      "c": "L'option DHCP 150 donne l'adresse du serveur TFTP des téléphones Cisco ; de plus, le téléphone doit connaître son VLAN avant d'envoyer sa requête DHCP.",
+      "d": "VTP synchronise la base VLAN entre les commutateurs d'un même domaine ; il ne s'adresse pas aux téléphones."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring Voice VLANs"
+  },
+  {
+    "slug": "ccna-2.1-extended-range-vtp-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un administrateur crée le VLAN 2500 sur SW1. Quelle affirmation sur ce VLAN est exacte ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il ne peut pas être affecté à un port d'accès."
+        },
+        {
+          "id": "b",
+          "text": "Il ne peut pas être transporté par un trunk 802.1Q."
+        },
+        {
+          "id": "c",
+          "text": "Il n'est pas annoncé aux autres commutateurs par VTP version 1 ou 2."
+        },
+        {
+          "id": "d",
+          "text": "Il est réservé par IOS et ne peut plus être supprimé."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le VLAN 2500 appartient à la plage étendue (1006 à 4094). VTP versions 1 et 2 ne connaissent que la plage normale (1 à 1005) : un VLAN étendu doit donc être créé sur chaque commutateur qui en a besoin, ou propagé par VTP version 3. Pour le reste, il s'utilise comme un autre : on peut l'affecter à des ports d'accès, le transporter sur un trunk (le VLAN ID 802.1Q, codé sur 12 bits, va jusqu'à 4094) et le supprimer.",
+    "distractorNotes": {
+      "a": "Un VLAN de la plage étendue s'affecte à un port d'accès comme un VLAN de la plage normale (« switchport access vlan 2500 »).",
+      "b": "Le VLAN ID 802.1Q, codé sur 12 bits, couvre tous les VLAN jusqu'à 4094 ; un trunk autorise par défaut les VLAN 1 à 4094.",
+      "d": "Seuls les VLAN 1 et 1002 à 1005 sont impossibles à supprimer ; le VLAN 2500 se supprime par « no vlan 2500 »."
+    },
+    "reference": "IEEE 802.1Q ; Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-broadcast-scope-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_single",
+      "stem": "SW1 porte les VLAN 10, 20 et 30, chacun avec plusieurs ports d'accès, et n'a aucun trunk. Un PC du VLAN 20 envoie une trame de broadcast. Sur quels ports SW1 la retransmet-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur tous les ports actifs de SW1, sauf celui d'origine"
+        },
+        {
+          "id": "b",
+          "text": "Sur les autres ports actifs du VLAN 20 uniquement"
+        },
+        {
+          "id": "c",
+          "text": "Sur les autres ports du VLAN 20 et sur ceux du VLAN 1"
+        },
+        {
+          "id": "d",
+          "text": "Sur aucun port : un commutateur ne relaie pas les broadcasts"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un VLAN est un domaine de broadcast : SW1 inonde une trame de broadcast, comme une trame unicast de destination inconnue, uniquement sur les ports du VLAN où elle est entrée, sauf le port d'origine. Les hôtes des VLAN 10 et 30 ne la reçoivent pas. Si SW1 avait un trunk autorisant le VLAN 20, la trame y serait aussi envoyée, étiquetée VLAN 20, pour atteindre les autres commutateurs. Pour passer d'un VLAN à l'autre, il faut un équipement de niveau 3.",
+    "distractorNotes": {
+      "a": "Ce serait le cas sans VLAN : ici, l'inondation est limitée aux ports du VLAN 20.",
+      "c": "Le VLAN 1 est un VLAN comme les autres pour l'inondation : un broadcast du VLAN 20 n'y passe pas.",
+      "d": "Un commutateur inonde les broadcasts dans le VLAN d'origine ; c'est le routeur qui ne les relaie pas d'un réseau à l'autre."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-svi-no-ip-routing-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les hôtes des VLAN 10 et 20 sont raccordés à DSW1, un commutateur multicouche, et ont pour passerelle l'adresse de la SVI de leur VLAN. PC-A (10.1.10.50) pingue sa passerelle, mais pas PC-B (10.1.20.50). Quelle est la cause ?",
+      "exhibit": "DSW1# show ip interface brief | include Vlan\nVlan1                  unassigned      YES unset  administratively down down\nVlan10                 10.1.10.1       YES manual up                    up\nVlan20                 10.1.20.1       YES manual up                    up\nDSW1# show ip route\nDefault gateway is not set\n\nHost               Gateway           Last Use    Total Uses  Interface\nICMP redirect cache is empty",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le routage IP n'est pas activé sur DSW1."
+        },
+        {
+          "id": "b",
+          "text": "Les SVI Vlan10 et Vlan20 sont désactivées."
+        },
+        {
+          "id": "c",
+          "text": "DSW1 n'a pas de passerelle par défaut configurée."
+        },
+        {
+          "id": "d",
+          "text": "La SVI Vlan1, désactivée, ne relaie plus le trafic entre VLAN."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Les SVI Vlan10 et Vlan20 sont up/up : PC-A atteint donc sa passerelle. Mais « show ip route » n'affiche aucune table de routage : la mention « Default gateway is not set » suivie du cache de redirections ICMP est la sortie d'un équipement qui ne route pas. DSW1 se comporte en hôte : il répond sur ses SVI, mais ne relaie pas les paquets d'un VLAN à l'autre. La commande « ip routing » active le routage ; « show ip route » affiche alors les routes connectées 10.1.10.0/24 et 10.1.20.0/24, et le ping vers PC-B aboutit.",
+    "distractorNotes": {
+      "b": "« show ip interface brief » montre Vlan10 et Vlan20 up/up ; d'ailleurs, PC-A pingue sa passerelle.",
+      "c": "« ip default-gateway » ne sert qu'aux communications du commutateur lui-même quand il ne route pas ; elle ne lui fait pas relayer le trafic des hôtes.",
+      "d": "La SVI Vlan1 ne joue aucun rôle dans le routage entre les VLAN 10 et 20 ; sa désactivation n'a pas d'effet ici."
+    },
+    "reference": "Cisco Catalyst 9300 IP Routing Configuration Guide"
+  },
+  {
+    "slug": "ccna-2.1-vlan-benefits-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux avantages apporte la création de VLAN sur un réseau commuté ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ils permettent à des hôtes de VLAN différents de communiquer sans routeur."
+        },
+        {
+          "id": "b",
+          "text": "Ils réduisent la taille des domaines de broadcast."
+        },
+        {
+          "id": "c",
+          "text": "Ils augmentent le débit disponible sur chaque port du commutateur."
+        },
+        {
+          "id": "d",
+          "text": "Ils isolent des groupes d'hôtes, dont le trafic mutuel doit être routé et peut donc être filtré."
+        },
+        {
+          "id": "e",
+          "text": "Ils évitent d'attribuer un sous-réseau IP distinct à chaque groupe d'hôtes."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Un VLAN est un domaine de broadcast distinct : découper un grand réseau commuté en VLAN réduit le nombre d'hôtes qui reçoivent chaque broadcast (ARP, DHCP…) et donc la charge inutile. Les VLAN isolent aussi des groupes (services, invités, téléphonie) : leurs hôtes ne communiquent qu'à travers un routeur ou un commutateur multicouche, où l'on peut appliquer des ACL. Ils facilitent enfin l'administration, puisque l'appartenance à un groupe ne dépend plus de l'emplacement physique des postes.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : des hôtes de VLAN différents ne communiquent qu'à travers un équipement de niveau 3.",
+      "c": "Un VLAN ne change pas la vitesse d'un port ; il limite seulement la portée des broadcasts.",
+      "e": "Chaque VLAN doit au contraire avoir son propre sous-réseau IP, pour que le routage entre VLAN fonctionne."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-roas-statements-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur une configuration router-on-a-stick d'un routeur Cisco IOS sont exactes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sur une sous-interface, « encapsulation dot1Q » doit être saisie avant « ip address »."
+        },
+        {
+          "id": "b",
+          "text": "Chaque sous-interface doit être activée par sa propre commande « no shutdown »."
+        },
+        {
+          "id": "c",
+          "text": "Le numéro d'une sous-interface n'a pas à être égal au VLAN ID qu'elle traite."
+        },
+        {
+          "id": "d",
+          "text": "Le port du commutateur relié au routeur doit être un port d'accès du VLAN natif."
+        },
+        {
+          "id": "e",
+          "text": "Toutes les sous-interfaces partagent l'adresse IP de l'interface physique."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Sur une sous-interface Ethernet, IOS refuse « ip address » tant que « encapsulation dot1Q » ne l'a pas associée à un VLAN. C'est cette encapsulation, et non le numéro, qui fixe le VLAN traité : G0/0/0.100 peut porter « encapsulation dot1Q 10 », même si faire correspondre les deux reste une bonne pratique de lisibilité. Les sous-interfaces ne sont pas désactivées à leur création : elles suivent l'état de l'interface physique, seule à activer par « no shutdown ». Côté commutateur, le port relié au routeur doit être un trunk 802.1Q.",
+    "distractorNotes": {
+      "b": "Les sous-interfaces sont actives dès leur création et suivent l'état de l'interface physique : seul « no shutdown » sur celle-ci est nécessaire.",
+      "d": "Le port du commutateur doit être un trunk 802.1Q, pour transporter les trames étiquetées de tous les VLAN à router.",
+      "e": "Chaque sous-interface porte sa propre adresse, dans le sous-réseau de son VLAN : c'est la passerelle des hôtes de ce VLAN."
+    },
+    "reference": "Cisco IOS LAN Switching Configuration Guide — Configuring Routing Between VLANs"
+  },
+  {
+    "slug": "ccna-2.1-voice-port-statements-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le port Gi1/0/7 de SW1 est configuré avec « switchport mode access », « switchport access vlan 20 » et « switchport voice vlan 120 », et un téléphone IP Cisco y est raccordé. Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gi1/0/7 apparaît dans « show interfaces trunk » avec les VLAN 20 et 120 autorisés."
+        },
+        {
+          "id": "b",
+          "text": "« show vlan brief » affiche Gi1/0/7 dans le VLAN 20 et dans le VLAN 120."
+        },
+        {
+          "id": "c",
+          "text": "Le PC branché derrière le téléphone doit étiqueter ses trames avec le VLAN 20."
+        },
+        {
+          "id": "d",
+          "text": "Le VLAN 120 devient le VLAN natif du port."
+        },
+        {
+          "id": "e",
+          "text": "« show interfaces switchport » indique le mode opérationnel « static access »."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Un port avec VLAN voix reste un port d'accès, parfois appelé port d'accès multi-VLAN : « show interfaces switchport » indique « Operational Mode: static access », avec « Access Mode VLAN: 20 » et « Voice VLAN: 120 ». « show vlan brief » le liste dans ses deux VLAN, données et voix. Le PC envoie des trames non étiquetées, placées dans le VLAN 20 ; seul le téléphone étiquette sa voix avec le VLAN 120. Le port ne figure pas parmi les trunks de « show interfaces trunk ».",
+    "distractorNotes": {
+      "a": "Le port reste un port d'accès : « show interfaces trunk » ne liste que les trunks opérationnels.",
+      "c": "Le PC n'étiquette pas ses trames : elles arrivent sans étiquette et SW1 les place dans le VLAN d'accès 20.",
+      "d": "La notion de VLAN natif ne concerne que les trunks ; le VLAN 120 est le VLAN voix, dans lequel le téléphone étiquette sa voix."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring Voice VLANs"
+  },
+  {
+    "slug": "ccna-2.1-switchport-dynamic-auto-diag-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le PC raccordé à Gi1/0/7 doit faire partie du VLAN 20 (USERS), mais il ne joint aucun autre poste de ce VLAN. Quelles deux affirmations décrivent l'état de ce port ? (Choisissez-en deux.)",
+      "exhibit": "SW1# show interfaces GigabitEthernet1/0/7 switchport\nName: Gi1/0/7\nSwitchport: Enabled\nAdministrative Mode: dynamic auto\nOperational Mode: static access\nAdministrative Trunking Encapsulation: dot1q\nOperational Trunking Encapsulation: native\nNegotiation of Trunking: On\nAccess Mode VLAN: 1 (default)\nTrunking Native Mode VLAN: 1 (default)\nAdministrative Native VLAN tagging: enabled\nVoice VLAN: none",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le port fonctionne en trunk, avec le VLAN 1 comme VLAN natif."
+        },
+        {
+          "id": "b",
+          "text": "Un VLAN voix est configuré sur le port et masque son VLAN de données."
+        },
+        {
+          "id": "c",
+          "text": "Le port fonctionne en accès dans le VLAN 1."
+        },
+        {
+          "id": "d",
+          "text": "Le port a bien été affecté au VLAN 20, mais ce VLAN a depuis été supprimé de SW1."
+        },
+        {
+          "id": "e",
+          "text": "Le port est en dynamic auto : il deviendrait trunk face à un voisin qui le demande."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "« Operational Mode: static access » et « Access Mode VLAN: 1 (default) » montrent que le port fonctionne en accès dans le VLAN 1 : il n'a jamais reçu « switchport access vlan 20 », d'où l'isolement du PC. « Administrative Mode: dynamic auto » est le mode par défaut : le port négocie par DTP (« Negotiation of Trunking: On ») et deviendrait trunk face à un voisin en mode trunk ou dynamic desirable. La correction consiste à saisir « switchport mode access » et « switchport access vlan 20 » sous Gi1/0/7.",
+    "distractorNotes": {
+      "a": "Le mode opérationnel est « static access » : face à un PC, le port en dynamic auto est resté en accès.",
+      "b": "L'exhibit indique « Voice VLAN: none » : aucun VLAN voix n'est configuré.",
+      "d": "Un port affecté à un VLAN supprimé afficherait « Access Mode VLAN: 20 (Inactive) », et non le VLAN 1."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-svi-routing-requirements-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le commutateur multicouche DSW1 doit router entre les VLAN 10 (10.10.0.0/24) et 20 (10.20.0.0/24), dont les hôtes sont raccordés à ses ports d'accès. Les deux VLAN existent déjà. Quelles trois conditions sont nécessaires ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "« ip routing » est configuré sur DSW1."
+        },
+        {
+          "id": "b",
+          "text": "Un trunk 802.1Q relie DSW1 à un routeur externe."
+        },
+        {
+          "id": "c",
+          "text": "Les interfaces Vlan10 et Vlan20 ont chacune une adresse dans le sous-réseau de leur VLAN."
+        },
+        {
+          "id": "d",
+          "text": "« encapsulation dot1Q » est configurée sous chaque SVI avec le numéro de son VLAN."
+        },
+        {
+          "id": "e",
+          "text": "DSW1 a une passerelle définie par « ip default-gateway »."
+        },
+        {
+          "id": "f",
+          "text": "Les hôtes de chaque VLAN ont pour passerelle l'adresse de la SVI de leur VLAN."
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "f"
+      ]
+    },
+    "explanation": "Le routage inter-VLAN par SVI repose sur trois éléments : le routage IP activé sur le commutateur (« ip routing »), une SVI par VLAN portant une adresse de son sous-réseau (« interface vlan 10 », « ip address 10.10.0.1 255.255.255.0 »…), et des hôtes qui utilisent cette adresse comme passerelle par défaut. Le commutateur route alors en interne, sans routeur externe ni sous-interface. Les SVI doivent aussi être up/up : leur VLAN doit exister et avoir au moins un port actif.",
+    "distractorNotes": {
+      "b": "Avec des SVI, c'est DSW1 qui route : aucun routeur externe n'est nécessaire, contrairement au router-on-a-stick.",
+      "d": "« encapsulation dot1Q » est une commande de sous-interface de routeur ; une SVI est liée à son VLAN par son numéro.",
+      "e": "« ip default-gateway » ne sert qu'à un commutateur qui ne route pas ; avec « ip routing », elle est ignorée, et les sous-réseaux des SVI sont directement connectés."
+    },
+    "reference": "Cisco Catalyst 9300 IP Routing Configuration Guide"
+  },
+  {
+    "slug": "ccna-2.1-vlan1-facts-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "easy",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur le VLAN 1 d'un commutateur Catalyst en configuration d'usine sont exactes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tous les ports de commutation lui appartiennent."
+        },
+        {
+          "id": "b",
+          "text": "Il appartient à la plage étendue des VLAN."
+        },
+        {
+          "id": "c",
+          "text": "Il peut être supprimé une fois tous ses ports affectés à d'autres VLAN."
+        },
+        {
+          "id": "d",
+          "text": "C'est le VLAN natif des trunks 802.1Q."
+        },
+        {
+          "id": "e",
+          "text": "Il ne transporte que du trafic de contrôle, comme CDP ou VTP."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "En configuration d'usine, tous les ports de commutation sont dans le VLAN 1, le VLAN par défaut, nommé « default ». C'est aussi le VLAN natif par défaut des trunks 802.1Q : ses trames y circulent sans étiquette. Le VLAN 1 fait partie de la plage normale et ne peut pas être supprimé. Il transporte le trafic des hôtes comme le trafic de contrôle (CDP, VTP, DTP) : c'est pourquoi on recommande de déplacer les utilisateurs et le VLAN natif vers d'autres VLAN.",
+    "distractorNotes": {
+      "b": "Le VLAN 1 fait partie de la plage normale (1 à 1005) ; la plage étendue commence à 1006.",
+      "c": "IOS refuse toujours de supprimer le VLAN 1, même vide.",
+      "e": "Le VLAN 1 transporte aussi le trafic des hôtes : tous les ports y sont à l'origine."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-roas-failure-causes-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "hard",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "PC-A (VLAN 10, 192.168.10.10/24) et PC-B (VLAN 20, 192.168.20.10/24) sont sur des ports d'accès de SW1. R1 route entre ces VLAN en router-on-a-stick, avec une sous-interface par VLAN (passerelles 192.168.10.1 et 192.168.20.1), sur un lien relié au port Gi1/0/24 de SW1. PC-B ne parvient pas à pinguer sa passerelle. Quelles deux erreurs peuvent chacune expliquer ce symptôme ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "PC-A et PC-B n'utilisent pas la même passerelle par défaut."
+        },
+        {
+          "id": "b",
+          "text": "Gi1/0/24 est un port d'accès du VLAN 10."
+        },
+        {
+          "id": "c",
+          "text": "La sous-interface d'adresse 192.168.20.1 est numérotée G0/0/0.200."
+        },
+        {
+          "id": "d",
+          "text": "Le VLAN 20 n'est pas le VLAN natif du trunk."
+        },
+        {
+          "id": "e",
+          "text": "La sous-interface d'adresse 192.168.20.1 porte « encapsulation dot1Q 30 »."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Pour que PC-B joigne 192.168.20.1, ses trames doivent arriver à R1 étiquetées VLAN 20 et être reçues par une sous-interface qui porte « encapsulation dot1Q 20 ». Si Gi1/0/24 est un port d'accès du VLAN 10, SW1 n'envoie jamais à R1 les trames du VLAN 20 : il faut un trunk. Si la sous-interface de 192.168.20.1 porte « encapsulation dot1Q 30 », elle ne traite que les trames étiquetées 30 et ignore celles du VLAN 20. Le numéro de la sous-interface, lui, est arbitraire.",
+    "distractorNotes": {
+      "a": "Chaque VLAN a son propre sous-réseau, donc sa propre passerelle : c'est la configuration attendue.",
+      "c": "Le numéro d'une sous-interface est un simple identifiant : c'est « encapsulation dot1Q » qui fixe le VLAN traité.",
+      "d": "Un VLAN n'a pas besoin d'être natif pour être routé : ses trames arrivent étiquetées et sont associées à la bonne sous-interface."
+    },
+    "reference": "Cisco IOS LAN Switching Configuration Guide — Configuring Routing Between VLANs"
+  },
+  {
+    "slug": "ccna-2.1-switchport-voice-read-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Un téléphone IP Cisco est raccordé au port Fa0/14 de SW2, et un PC est branché sur le port PC du téléphone. Répondez par des nombres entiers.",
+      "exhibit": "SW2# show interfaces FastEthernet0/14 switchport\nName: Fa0/14\nSwitchport: Enabled\nAdministrative Mode: static access\nOperational Mode: static access\nAdministrative Trunking Encapsulation: dot1q\nOperational Trunking Encapsulation: native\nNegotiation of Trunking: Off\nAccess Mode VLAN: 30 (ACCOUNTING)\nTrunking Native Mode VLAN: 1 (default)\nAdministrative Native VLAN tagging: enabled\nVoice VLAN: 160 (VOICE)",
+      "fields": [
+        {
+          "id": "pc",
+          "label": "VLAN dans lequel SW2 place les trames du PC (nombre entier)"
+        },
+        {
+          "id": "voice",
+          "label": "VLAN avec lequel le téléphone étiquette sa voix (nombre entier)"
+        },
+        {
+          "id": "count",
+          "label": "Nombre de VLAN dans lesquels « show vlan brief » liste Fa0/14 (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "pc": {
+          "accepted": [
+            "30"
+          ],
+          "normalize": "int"
+        },
+        "voice": {
+          "accepted": [
+            "160"
+          ],
+          "normalize": "int"
+        },
+        "count": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "« Access Mode VLAN: 30 (ACCOUNTING) » est le VLAN d'accès : les trames non étiquetées du PC, relayées par le téléphone, y sont placées. « Voice VLAN: 160 (VOICE) » est le VLAN voix, annoncé au téléphone par CDP ; le téléphone étiquette sa voix en 802.1Q avec le VLAN 160. Le port reste un port d'accès (« Operational Mode: static access ») et « show vlan brief » le liste dans ses deux VLAN, 30 et 160. La ligne « Trunking Native Mode VLAN » ne s'appliquerait que si le port devenait trunk.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring Voice VLANs"
+  },
+  {
+    "slug": "ccna-2.1-roas-gateway-subnet-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "hard",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. R1 doit servir de passerelle aux hôtes du VLAN 30 en router-on-a-stick. Complétez la configuration de la sous-interface.",
+      "exhibit": "Sous-réseau du VLAN 30 : troisième sous-réseau /26 de 172.16.30.0/24\n                         (le premier étant 172.16.30.0/26)\nPasserelle             : dernière adresse utilisable de ce sous-réseau\n\nR1(config)# interface GigabitEthernet0/0/1.30\nR1(config-subif)# encapsulation dot1Q [A]\nR1(config-subif)# ip address [B] [C]",
+      "fields": [
+        {
+          "id": "a",
+          "label": "[A] : VLAN ID (nombre entier)"
+        },
+        {
+          "id": "b",
+          "label": "[B] : adresse de la passerelle, en décimal pointé"
+        },
+        {
+          "id": "c",
+          "label": "[C] : masque, en décimal pointé"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "a": {
+          "accepted": [
+            "30"
+          ],
+          "normalize": "int"
+        },
+        "b": {
+          "accepted": [
+            "172.16.30.190"
+          ],
+          "normalize": "ipv4"
+        },
+        "c": {
+          "accepted": [
+            "255.255.255.192"
+          ],
+          "normalize": "ipv4"
+        }
+      }
+    },
+    "explanation": "Un /26 compte 64 adresses : les sous-réseaux /26 de 172.16.30.0/24 commencent à .0, .64, .128 et .192. Le troisième est donc 172.16.30.128/26, qui va de .128 (réseau) à .191 (broadcast) ; sa dernière adresse utilisable est 172.16.30.190. Le masque /26 s'écrit 255.255.255.192 (le 4ᵉ octet vaut 11000000). La sous-interface doit traiter les trames étiquetées VLAN 30 : « encapsulation dot1Q 30 », saisie avant « ip address ». Les hôtes du VLAN 30 prennent 172.16.30.190 comme passerelle.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS LAN Switching Configuration Guide — Configuring Routing Between VLANs ; RFC 950"
+  },
+  {
+    "slug": "ccna-2.1-broadcast-domains-roas-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Chaque VLAN de SW1 a son propre sous-réseau, routé par R1 en router-on-a-stick. On compte la liaison R1–FAI, mais pas le réseau du FAI au-delà. Répondez par des nombres entiers.",
+      "exhibit": "                 FAI\n                  |\n                  | G0/0/1\n                 R1\n                  | G0/0/0 (sous-interfaces .10, .20 et .30)\n                  | trunk 802.1Q\n                  | Gi1/0/24\n                 SW1\n     +------------+------------+\n  VLAN 10       VLAN 20      VLAN 30\n  8 PC          6 PC         4 imprimantes",
+      "fields": [
+        {
+          "id": "now",
+          "label": "Nombre de domaines de broadcast de cette topologie (nombre entier)"
+        },
+        {
+          "id": "flat",
+          "label": "Nombre de domaines de broadcast si tous les ports de SW1 étaient dans un seul VLAN, routé par une seule interface de R1 (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "now": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        },
+        "flat": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Chaque VLAN est un domaine de broadcast : les VLAN 10, 20 et 30 en forment trois, même s'ils partagent SW1 et le trunk. Un routeur ne relaie pas les broadcasts : chacune de ses interfaces délimite un domaine, et la liaison R1–FAI en forme un quatrième, soit 4 au total. Avec un seul VLAN, les 18 hôtes et l'interface G0/0/0 de R1 formeraient un seul grand domaine de broadcast, plus la liaison R1–FAI : 2. Le nombre d'hôtes ou de ports n'entre pas dans le calcul.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-interface-range-access-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, les ports GigabitEthernet1/0/1 à GigabitEthernet1/0/12 doivent devenir des ports d'accès statiques du VLAN 10, qui existe déjà. Depuis le mode de configuration globale, sélectionnez ces douze ports en une seule commande, puis fixez-les en accès et placez-les dans le VLAN 10.",
+      "prompt": "SW1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "interface range gigabitethernet1/0/1 - 12"
+        ],
+        [
+          "switchport mode access"
+        ],
+        [
+          "switchport access vlan 10"
+        ]
+      ]
+    },
+    "explanation": "« interface range gigabitethernet1/0/1 - 12 » sélectionne les douze ports d'un coup (prompt SW1(config-if-range)#) : chaque commande saisie ensuite s'applique à tous. « switchport mode access » les fixe en accès : ils ne deviendront jamais trunks, quel que soit le voisin. « switchport access vlan 10 » les place dans le VLAN 10. Ces deux commandes se saisissent dans n'importe quel ordre. Une même commande peut aussi combiner plusieurs plages séparées par des virgules, par exemple « interface range gi1/0/1 - 4 , gi1/0/10 ».",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-reset-access-vlan-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "easy",
+    "body": {
+      "type": "cli",
+      "stem": "Le port Gi1/0/3 de SW1 est un port d'accès du VLAN 30. Vous êtes en mode de configuration de cette interface. En une seule commande, remettez le port dans le VLAN par défaut.",
+      "prompt": "SW1(config-if)#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "no switchport access vlan",
+          "switchport access vlan 1"
+        ]
+      ]
+    },
+    "explanation": "« no switchport access vlan » rétablit la valeur par défaut du VLAN d'accès, le VLAN 1 ; « switchport access vlan 1 » produit le même résultat. Le port reste un port d'accès, et le VLAN 30 continue d'exister avec ses autres ports. On vérifie avec « show interfaces gi1/0/3 switchport » (« Access Mode VLAN: 1 (default) ») ou « show vlan brief ». À ne pas confondre avec « no vlan 30 », en configuration globale, qui supprimerait le VLAN lui-même et rendrait inactifs tous ses ports.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-voice-vlan-create-assign-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Sur SW1, le port Gi1/0/15 est déjà un port d'accès du VLAN 10 et va recevoir un téléphone IP. Depuis le mode de configuration globale et sans utiliser « exit », créez le VLAN 200 et nommez-le VOICE, puis entrez dans l'interface Gi1/0/15 et faites du VLAN 200 son VLAN voix, sans retirer le VLAN 10.",
+      "prompt": "SW1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "vlan 200"
+        ],
+        [
+          "name VOICE"
+        ],
+        [
+          "interface gigabitethernet1/0/15"
+        ],
+        [
+          "switchport voice vlan 200"
+        ]
+      ]
+    },
+    "explanation": "« vlan 200 » crée le VLAN et passe en mode de configuration du VLAN, où « name VOICE » le nomme. « interface gigabitethernet1/0/15 » est acceptée directement depuis ce mode : IOS enregistre le VLAN en quittant le mode VLAN et entre dans l'interface. « switchport voice vlan 200 » ajoute le VLAN voix sans toucher au VLAN d'accès 10 : le PC reste dans le VLAN 10, tandis que le téléphone, informé par CDP, étiquette sa voix avec le VLAN 200. « switchport access vlan 200 » aurait au contraire remplacé le VLAN de données.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring Voice VLANs"
+  },
+  {
+    "slug": "ccna-2.1-roas-subinterface-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "R1 doit servir de passerelle au VLAN 30 en router-on-a-stick, avec l'adresse 10.0.30.1/24. Depuis le mode de configuration globale, créez la sous-interface GigabitEthernet0/0/0.30, associez-la au VLAN 30 en 802.1Q, puis attribuez-lui son adresse.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface gigabitethernet0/0/0.30"
+        ],
+        [
+          "encapsulation dot1q 30"
+        ],
+        [
+          "ip address 10.0.30.1 255.255.255.0"
+        ]
+      ]
+    },
+    "explanation": "« interface gigabitethernet0/0/0.30 » crée la sous-interface (prompt R1(config-subif)#). « encapsulation dot1Q 30 » l'associe aux trames étiquetées VLAN 30 ; elle doit précéder « ip address », qu'IOS refuse sur une sous-interface Ethernet sans encapsulation. L'adresse 10.0.30.1/24 devient la passerelle des hôtes du VLAN 30. Le numéro .30 est un choix de lisibilité : c'est l'encapsulation qui fixe le VLAN. Côté SW1, le port relié à R1 doit être un trunk qui autorise le VLAN 30.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS LAN Switching Configuration Guide — Configuring Routing Between VLANs"
+  },
+  {
+    "slug": "ccna-2.1-roas-native-subif-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "hard",
+    "body": {
+      "type": "cli",
+      "stem": "Le trunk entre SW1 et R1 utilise le VLAN natif 99, dont le sous-réseau est 192.168.99.0/24 : SW1 envoie donc les trames de ce VLAN sans étiquette. Depuis le mode de configuration globale, créez la sous-interface GigabitEthernet0/0/0.99 de R1, associez-la au VLAN 99 en tant que VLAN natif, puis donnez-lui l'adresse 192.168.99.1/24.",
+      "prompt": "R1(config)#",
+      "lines": 3
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "interface gigabitethernet0/0/0.99"
+        ],
+        [
+          "encapsulation dot1q 99 native"
+        ],
+        [
+          "ip address 192.168.99.1 255.255.255.0"
+        ]
+      ]
+    },
+    "explanation": "Sur un trunk, SW1 envoie les trames du VLAN natif 99 sans étiquette. Le mot-clé « native » de « encapsulation dot1Q 99 native » indique à R1 que les trames non étiquetées reçues sur G0/0/0 appartiennent au VLAN 99 et relèvent de cette sous-interface. Sans lui, la sous-interface attendrait des trames étiquetées 99 qui n'arrivent jamais. Autre solution possible : configurer l'adresse du VLAN natif directement sur l'interface physique, qui traite les trames non étiquetées. Le VLAN natif doit être le même des deux côtés du trunk.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS LAN Switching Configuration Guide — Configuring Routing Between VLANs"
+  },
+  {
+    "slug": "ccna-2.1-svi-gateway-config-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "Le commutateur multicouche DSW1 doit router entre ses VLAN. Le VLAN 10 existe et a des ports actifs. Depuis le mode de configuration globale, activez d'abord le routage IPv4, puis créez la SVI du VLAN 10, donnez-lui l'adresse 10.10.10.1/24 et activez-la.",
+      "prompt": "DSW1(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          2,
+          3
+        ]
+      ],
+      "commands": [
+        [
+          "ip routing"
+        ],
+        [
+          "interface vlan 10"
+        ],
+        [
+          "ip address 10.10.10.1 255.255.255.0"
+        ],
+        [
+          "no shutdown"
+        ]
+      ]
+    },
+    "explanation": "« ip routing » active le routage IPv4 du commutateur multicouche. « interface vlan 10 » crée la SVI du VLAN 10 ; « ip address 10.10.10.1 255.255.255.0 » lui donne l'adresse qui servira de passerelle aux hôtes du VLAN, et « no shutdown » garantit qu'elle est activée. Ces deux sous-commandes se saisissent dans n'importe quel ordre. La SVI ne passe up/up que si le VLAN 10 existe et a au moins un port actif en état forwarding. On vérifie avec « show ip interface brief » puis « show ip route » (route connectée 10.10.10.0/24).",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 IP Routing Configuration Guide"
+  },
+  {
+    "slug": "ccna-2.1-show-interfaces-switchport-cli-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "easy",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode d'exécution privilégié de SW1, affichez les modes administratif et opérationnel, le VLAN d'accès et le VLAN voix du seul port GigabitEthernet1/0/5.",
+      "prompt": "SW1#",
+      "lines": 1
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show interfaces gigabitethernet1/0/5 switchport",
+          "show interface gigabitethernet1/0/5 switchport"
+        ]
+      ]
+    },
+    "explanation": "« show interfaces gigabitethernet1/0/5 switchport » détaille la configuration de niveau 2 d'un seul port : mode administratif (configuré) et mode opérationnel (réel), encapsulation et négociation du trunking, VLAN d'accès (avec la mention « Inactive » si ce VLAN n'existe plus), VLAN natif utilisé en trunk et VLAN voix. C'est la commande de référence pour diagnostiquer un poste isolé, en complément de « show vlan brief », qui ne donne que la répartition des ports d'accès par VLAN.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-mgmt-svi-default-gateway-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "cli",
+      "stem": "SW2 est un commutateur de niveau 2, qui ne route pas. Il doit être administrable depuis les autres VLAN via l'adresse 10.0.90.11/24 dans le VLAN 90, dont la passerelle est 10.0.90.1. Le VLAN 90 existe et a des ports actifs. Depuis le mode de configuration globale, entrez dans la SVI du VLAN 90, donnez-lui son adresse et activez-la, puis configurez la passerelle par défaut du commutateur.",
+      "prompt": "SW2(config)#",
+      "lines": 4
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "freeOrder": [
+        [
+          1,
+          2
+        ]
+      ],
+      "commands": [
+        [
+          "interface vlan 90"
+        ],
+        [
+          "ip address 10.0.90.11 255.255.255.0"
+        ],
+        [
+          "no shutdown"
+        ],
+        [
+          "ip default-gateway 10.0.90.1"
+        ]
+      ]
+    },
+    "explanation": "Un commutateur de niveau 2 n'a d'adresse IP que sur une SVI, ici Vlan90 : « ip address » et « no shutdown », dans n'importe quel ordre, la rendent joignable depuis le VLAN 90. Pour répondre aux postes des autres VLAN, il doit aussi savoir où envoyer les paquets destinés à un autre sous-réseau : c'est le rôle de « ip default-gateway 10.0.90.1 », commande globale qu'IOS accepte même depuis le mode interface. Sans elle, le commutateur reçoit les requêtes venues d'autres VLAN mais ne peut pas y répondre.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 System Management Configuration Guide"
+  },
+  {
+    "slug": "ccna-2.1-access-port-steps-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "easy",
+    "body": {
+      "type": "ordering",
+      "stem": "Le VLAN 30 existe sur SW1. Depuis le mode d'exécution utilisateur (SW1>), un technicien place le port Gi1/0/4 dans le VLAN 30, puis enregistre la configuration. Remettez ses commandes dans l'ordre.",
+      "items": [
+        {
+          "id": "acc",
+          "text": "switchport access vlan 30"
+        },
+        {
+          "id": "save",
+          "text": "copy running-config startup-config"
+        },
+        {
+          "id": "conf",
+          "text": "configure terminal"
+        },
+        {
+          "id": "end",
+          "text": "end"
+        },
+        {
+          "id": "en",
+          "text": "enable"
+        },
+        {
+          "id": "int",
+          "text": "interface GigabitEthernet1/0/4"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "en",
+        "conf",
+        "int",
+        "acc",
+        "end",
+        "save"
+      ]
+    },
+    "explanation": "Depuis SW1>, « enable » donne accès au mode d'exécution privilégié (SW1#), puis « configure terminal » au mode de configuration globale. « interface GigabitEthernet1/0/4 » entre dans l'interface, où « switchport access vlan 30 » affecte le port au VLAN 30. « end » ramène directement en mode privilégié, où « copy running-config startup-config » enregistre la configuration en NVRAM pour qu'elle survive à un redémarrage. Le VLAN 30 lui-même, de la plage normale, est enregistré dans le fichier vlan.dat en flash.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-ip-phone-boot-sequence-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "ordering",
+      "stem": "Un téléphone IP Cisco est branché sur le port Gi1/0/8 de SW1, un port PoE configuré avec « switchport access vlan 10 » et « switchport voice vlan 110 ». Remettez dans l'ordre les étapes de son démarrage.",
+      "items": [
+        {
+          "id": "dhcp",
+          "text": "Le téléphone envoie sa requête DHCP, étiquetée dans le VLAN 110."
+        },
+        {
+          "id": "reg",
+          "text": "Le téléphone s'enregistre auprès de son serveur d'appels (CUCM)."
+        },
+        {
+          "id": "poe",
+          "text": "SW1 détecte le téléphone et l'alimente par PoE."
+        },
+        {
+          "id": "tftp",
+          "text": "Le téléphone télécharge sa configuration depuis le serveur TFTP (option 150)."
+        },
+        {
+          "id": "cdp",
+          "text": "SW1 annonce au téléphone, par CDP, le VLAN voix 110."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "poe",
+        "cdp",
+        "dhcp",
+        "tftp",
+        "reg"
+      ]
+    },
+    "explanation": "Le téléphone est d'abord détecté et alimenté par le port PoE. Il doit ensuite connaître son VLAN avant de demander une adresse : SW1 lui annonce le VLAN voix 110 par CDP. Le téléphone envoie alors sa requête DHCP étiquetée VLAN 110 et reçoit une adresse du sous-réseau voix, avec l'option 150 qui désigne le serveur TFTP. Il y télécharge son fichier de configuration, puis s'enregistre auprès du serveur d'appels (Cisco Unified Communications Manager). Le PC branché derrière lui reste, lui, dans le VLAN de données 10.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring Voice VLANs ; Cisco IP Phone 8800 Series Administration Guide for Cisco Unified Communications Manager"
+  },
+  {
+    "slug": "ccna-2.1-svi-arp-routing-order-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "hard",
+    "body": {
+      "type": "ordering",
+      "stem": "PC-A (10.1.10.50/24, passerelle 10.1.10.1) et PC-B (10.1.20.50/24) sont raccordés à DSW1, un commutateur multicouche où « ip routing » est actif, avec les SVI Vlan10 (10.1.10.1) et Vlan20 (10.1.20.1). Le cache ARP de PC-A est vide ; DSW1 connaît déjà l'adresse MAC de PC-B. Remettez dans l'ordre les étapes d'un ping de PC-A vers PC-B.",
+      "items": [
+        {
+          "id": "send",
+          "text": "PC-A envoie l'écho ICMP vers la MAC de Vlan10, avec l'IP de PC-B pour destination."
+        },
+        {
+          "id": "route",
+          "text": "DSW1 route le paquet vers Vlan20 et le remet à PC-B dans une nouvelle trame."
+        },
+        {
+          "id": "cmp",
+          "text": "PC-A compare l'adresse de PC-B à son sous-réseau et conclut qu'elle est distante."
+        },
+        {
+          "id": "arprep",
+          "text": "DSW1 répond avec l'adresse MAC de l'interface Vlan10."
+        },
+        {
+          "id": "arpreq",
+          "text": "PC-A diffuse dans le VLAN 10 une requête ARP pour 10.1.10.1."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "cmp",
+        "arpreq",
+        "arprep",
+        "send",
+        "route"
+      ]
+    },
+    "explanation": "PC-A applique son masque : 10.1.20.50 n'est pas dans 10.1.10.0/24, il doit donc passer par sa passerelle. Son cache ARP étant vide, il diffuse dans le VLAN 10 une requête ARP pour 10.1.10.1, à laquelle DSW1 répond avec la MAC de Vlan10. PC-A envoie alors l'écho : MAC de destination celle de Vlan10, IP de destination celle de PC-B. DSW1 consulte sa table de routage (route connectée 10.1.20.0/24 via Vlan20), connaît déjà la MAC de PC-B et réémet le paquet dans une nouvelle trame du VLAN 20. L'adresse IP de destination ne change jamais.",
+    "distractorNotes": {},
+    "reference": "Cisco Catalyst 9300 IP Routing Configuration Guide ; RFC 826"
+  },
+  {
+    "slug": "ccna-2.1-vlan-id-categories-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque numéro de VLAN à sa catégorie sur un commutateur Catalyst.",
+      "left": [
+        {
+          "id": "v1",
+          "text": "VLAN 1"
+        },
+        {
+          "id": "v1004",
+          "text": "VLAN 1004"
+        },
+        {
+          "id": "v500",
+          "text": "VLAN 500"
+        },
+        {
+          "id": "v3000",
+          "text": "VLAN 3000"
+        },
+        {
+          "id": "v4095",
+          "text": "VLAN 4095"
+        }
+      ],
+      "right": [
+        {
+          "id": "ext",
+          "text": "VLAN de la plage étendue"
+        },
+        {
+          "id": "def",
+          "text": "VLAN par défaut, non supprimable"
+        },
+        {
+          "id": "resv",
+          "text": "Valeur réservée par 802.1Q, inutilisable"
+        },
+        {
+          "id": "legacy",
+          "text": "VLAN réservé aux anciennes technologies FDDI et Token Ring"
+        },
+        {
+          "id": "normal",
+          "text": "VLAN de la plage normale, librement configurable"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "v1": "def",
+        "v1004": "legacy",
+        "v500": "normal",
+        "v3000": "ext",
+        "v4095": "resv"
+      }
+    },
+    "explanation": "Le VLAN 1 est le VLAN par défaut, que l'on ne peut pas supprimer. Les VLAN 1002 à 1005, dont le 1004 (fddinet-default), sont créés d'office pour les anciennes technologies FDDI et Token Ring et ne se suppriment pas non plus. Les VLAN 2 à 1001 forment le reste de la plage normale, librement configurable. Les VLAN 1006 à 4094 constituent la plage étendue. Enfin, le VLAN ID 802.1Q étant codé sur 12 bits, les valeurs 0 et 4095 sont réservées et inutilisables.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1Q ; Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-vlan-show-commands-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "easy",
+    "body": {
+      "type": "matching",
+      "stem": "Un technicien dépanne les VLAN du commutateur SW1. Pour chaque information qu'il recherche, choisissez la commande show qui la lui donne.",
+      "left": [
+        {
+          "id": "q1",
+          "text": "Lister les VLAN et leurs ports d'accès"
+        },
+        {
+          "id": "q2",
+          "text": "Voir les modes administratif et opérationnel, le VLAN d'accès et le VLAN voix d'un port"
+        },
+        {
+          "id": "q3",
+          "text": "Voir les trunks actifs et les VLAN qu'ils transportent"
+        },
+        {
+          "id": "q4",
+          "text": "Voir les adresses MAC apprises dans le VLAN 10"
+        },
+        {
+          "id": "q5",
+          "text": "Voir l'état et l'adresse IP des SVI"
+        }
+      ],
+      "right": [
+        {
+          "id": "c1",
+          "text": "show interfaces trunk"
+        },
+        {
+          "id": "c2",
+          "text": "show vlan brief"
+        },
+        {
+          "id": "c3",
+          "text": "show ip interface brief"
+        },
+        {
+          "id": "c4",
+          "text": "show vtp status"
+        },
+        {
+          "id": "c5",
+          "text": "show interfaces Gi1/0/5 switchport"
+        },
+        {
+          "id": "c6",
+          "text": "show mac address-table vlan 10"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "q1": "c2",
+        "q2": "c5",
+        "q3": "c1",
+        "q4": "c6",
+        "q5": "c3"
+      }
+    },
+    "explanation": "« show vlan brief » liste chaque VLAN avec son nom, son état et ses ports d'accès. « show interfaces Gi1/0/5 switchport » détaille un port : modes administratif et opérationnel, VLAN d'accès, VLAN natif, VLAN voix. « show interfaces trunk » donne les trunks opérationnels, leur VLAN natif et les VLAN autorisés et actifs. « show mac address-table vlan 10 » filtre la table d'adresses MAC sur le VLAN 10. « show ip interface brief » affiche, entre autres interfaces, les SVI avec leur adresse et leur état.",
+    "distractorNotes": {
+      "c4": "« show vtp status » donne le domaine, le mode, la version et le nombre de VLAN existants, mais ne liste ni les VLAN ni leurs ports."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-2.1-roas-vs-svi-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "matching",
+      "stem": "Classez chaque caractéristique selon la solution de routage inter-VLAN à laquelle elle s'applique.",
+      "left": [
+        {
+          "id": "c1",
+          "text": "Une sous-interface par VLAN, avec « encapsulation dot1Q »"
+        },
+        {
+          "id": "c2",
+          "text": "Le trafic routé entre deux VLAN emprunte deux fois le même lien physique"
+        },
+        {
+          "id": "c3",
+          "text": "La passerelle de chaque VLAN est portée par une interface Vlan (Vlan10, Vlan20…)"
+        },
+        {
+          "id": "c4",
+          "text": "Le routage est assuré par le commutateur lui-même, avec « ip routing »"
+        },
+        {
+          "id": "c5",
+          "text": "Le port du commutateur relié au routeur doit être un trunk"
+        }
+      ],
+      "right": [
+        {
+          "id": "svi",
+          "text": "SVI sur un commutateur multicouche"
+        },
+        {
+          "id": "roas",
+          "text": "Router-on-a-stick"
+        },
+        {
+          "id": "l2",
+          "text": "Commutateur de niveau 2 seul"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "c1": "roas",
+        "c2": "roas",
+        "c3": "svi",
+        "c4": "svi",
+        "c5": "roas"
+      }
+    },
+    "explanation": "En router-on-a-stick, un routeur externe reçoit tous les VLAN sur un trunk 802.1Q et consacre à chacun une sous-interface (« encapsulation dot1Q ») ; le trafic routé entre deux VLAN entre et ressort par le même lien, ce qui en limite le débit. Avec des SVI, le commutateur multicouche route lui-même : chaque VLAN a sa passerelle sur une interface Vlan, et « ip routing » doit être actif. Aucun lien vers un routeur n'est alors nécessaire pour router entre ses VLAN.",
+    "distractorNotes": {
+      "l2": "Un commutateur de niveau 2 ne route pas : sa SVI éventuelle ne sert qu'à l'administrer. Sans routeur ni commutateur multicouche, des VLAN différents ne communiquent pas."
+    },
+    "reference": "Cisco IOS LAN Switching Configuration Guide — Configuring Routing Between VLANs ; Cisco Catalyst 9300 IP Routing Configuration Guide"
+  },
+  {
+    "slug": "ccna-2.1-access-commands-effects-001",
+    "certification": "ccna",
+    "domain": "2.0",
+    "subtopic": "2.1",
+    "source": "ai",
+    "difficulty": "medium",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque commande à son effet sur un commutateur Catalyst.",
+      "left": [
+        {
+          "id": "k1",
+          "text": "switchport access vlan 10"
+        },
+        {
+          "id": "k2",
+          "text": "switchport voice vlan 150"
+        },
+        {
+          "id": "k3",
+          "text": "switchport mode access"
+        },
+        {
+          "id": "k4",
+          "text": "no switchport access vlan"
+        },
+        {
+          "id": "k5",
+          "text": "no vlan 10"
+        }
+      ],
+      "right": [
+        {
+          "id": "e_del",
+          "text": "Supprime le VLAN, dont les ports deviennent inactifs"
+        },
+        {
+          "id": "e_data",
+          "text": "Place les trames non étiquetées du port dans le VLAN 10"
+        },
+        {
+          "id": "e_trunk",
+          "text": "Transforme le port en trunk vers le téléphone IP"
+        },
+        {
+          "id": "e_mode",
+          "text": "Empêche le port de devenir un trunk, quel que soit le voisin"
+        },
+        {
+          "id": "e_voice",
+          "text": "Indique au téléphone IP le VLAN où étiqueter sa voix"
+        },
+        {
+          "id": "e_reset",
+          "text": "Remet le port dans le VLAN par défaut"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "k1": "e_data",
+        "k2": "e_voice",
+        "k3": "e_mode",
+        "k4": "e_reset",
+        "k5": "e_del"
+      }
+    },
+    "explanation": "« switchport access vlan 10 » fixe le VLAN des trames non étiquetées du port. « switchport voice vlan 150 » ajoute un VLAN voix, annoncé par CDP au téléphone, qui y étiquette sa voix. « switchport mode access » fixe le port en accès : il ne deviendra jamais trunk. « no switchport access vlan » remet le VLAN d'accès à sa valeur par défaut, le VLAN 1. « no vlan 10 », en configuration globale, supprime le VLAN de la base : ses ports restent configurés pour lui mais deviennent inactifs.",
+    "distractorNotes": {
+      "e_trunk": "Aucune de ces commandes ne crée de trunk : même avec un VLAN voix, le port reste un port d'accès ; un trunk se configure par « switchport mode trunk »."
+    },
+    "reference": "Cisco Catalyst 9300 VLAN Configuration Guide — Configuring VLANs ; Cisco Catalyst 9300 VLAN Configuration Guide — Configuring Voice VLANs"
+  }
+]
