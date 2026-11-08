@@ -1,0 +1,1050 @@
+[
+  {
+    "slug": "ccna-1.1-broadcast-domain-boundary-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans sa configuration par défaut, quel équipement délimite un domaine de diffusion (broadcast) distinct sur chacune de ses interfaces ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un concentrateur (hub)"
+        },
+        {
+          "id": "b",
+          "text": "Un pont (bridge)"
+        },
+        {
+          "id": "c",
+          "text": "Un commutateur de niveau 2"
+        },
+        {
+          "id": "d",
+          "text": "Un routeur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un routeur ne relaie pas les broadcasts : une trame à destination de FF:FF:FF:FF:FF:FF ou un paquet vers 255.255.255.255 reçu sur une interface n'est jamais retransmis sur une autre. Comme chaque interface appartient à un réseau IP différent, chacune délimite son propre domaine de diffusion. Le concentrateur, le pont et le commutateur, au contraire, propagent les broadcasts sur tous leurs ports ; seul le découpage en VLAN sépare les domaines de diffusion d'un commutateur, et il faut alors un équipement de niveau 3 pour les relier.",
+    "distractorNotes": {
+      "a": "Un concentrateur répète chaque bit sur tous ses ports : il ne forme qu'un seul domaine de collision et un seul domaine de diffusion.",
+      "b": "Un pont sépare les domaines de collision, mais il inonde les broadcasts sur tous ses ports : l'ensemble reste un seul domaine de diffusion.",
+      "c": "Par défaut, tous les ports d'un commutateur sont dans le VLAN 1 : il inonde les broadcasts sur chacun d'eux et ne forme qu'un seul domaine de diffusion."
+    },
+    "reference": "RFC 1812 (Requirements for IP Version 4 Routers), section 5.3.5 ; IEEE 802.1Q-2018"
+  },
+  {
+    "slug": "ccna-1.1-hub-switch-router-behaviors-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque comportement à l'équipement qui l'adopte dans sa configuration par défaut. Un même équipement peut être choisi plusieurs fois.",
+      "left": [
+        {
+          "id": "rep",
+          "text": "Régénère et répète chaque bit reçu sur tous ses autres ports, sans lire aucune adresse"
+        },
+        {
+          "id": "learn",
+          "text": "Apprend l'adresse MAC source de chaque trame reçue et l'associe au port d'arrivée"
+        },
+        {
+          "id": "noroute",
+          "text": "Supprime un paquet dont la destination ne correspond à aucune route, pas même une route par défaut"
+        },
+        {
+          "id": "half",
+          "text": "Impose à tous les équipements raccordés de partager le support en half duplex (CSMA/CD)"
+        },
+        {
+          "id": "domains",
+          "text": "Place chaque port dans son propre domaine de collision, mais tous les ports dans un même domaine de diffusion"
+        }
+      ],
+      "right": [
+        {
+          "id": "hub",
+          "text": "Concentrateur (hub)"
+        },
+        {
+          "id": "sw",
+          "text": "Commutateur de niveau 2"
+        },
+        {
+          "id": "rtr",
+          "text": "Routeur"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "rep": "hub",
+        "learn": "sw",
+        "noroute": "rtr",
+        "half": "hub",
+        "domains": "sw"
+      }
+    },
+    "explanation": "Le concentrateur travaille en couche 1 : il régénère le signal et le répète sur tous ses ports, si bien que tous les équipements raccordés partagent un même domaine de collision et doivent fonctionner en half duplex avec CSMA/CD. Le commutateur de niveau 2 lit les adresses MAC : il apprend l'adresse source de chaque trame pour remplir sa table et isole chaque port dans son domaine de collision, mais, sans VLAN, il inonde les broadcasts sur tous ses ports. Le routeur décide en couche 3 : sans route correspondante ni route par défaut, il supprime le paquet et peut renvoyer un message ICMP Destination Unreachable.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.3-2022 (répéteurs, CSMA/CD) ; IEEE 802.1Q-2018 (apprentissage des adresses) ; RFC 1812, section 5.2"
+  },
+  {
+    "slug": "ccna-1.1-l3-switch-intervlan-rewrite-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le commutateur multicouche DSW1 a les SVI Vlan10 (10.10.0.1/24) et Vlan20 (10.20.0.1/24) et le routage IP activé. PC1 (10.10.0.50, VLAN 10), dont la passerelle est 10.10.0.1, envoie un paquet à SRV1 (10.20.0.80, VLAN 20), dont DSW1 connaît déjà l'adresse MAC. Quelles deux opérations DSW1 effectue-t-il sur ce paquet ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il décrémente le TTL du paquet et recalcule la somme de contrôle de l'en-tête IPv4."
+        },
+        {
+          "id": "b",
+          "text": "Il transmet la trame inchangée dans le VLAN 20, avec l'adresse MAC source de PC1."
+        },
+        {
+          "id": "c",
+          "text": "Il remplace l'adresse IP de destination par celle de sa SVI Vlan20."
+        },
+        {
+          "id": "d",
+          "text": "Il construit une nouvelle trame : MAC source du commutateur, MAC destination de SRV1."
+        },
+        {
+          "id": "e",
+          "text": "Il inonde la trame dans le VLAN 20, car SRV1 appartient à un autre domaine de diffusion."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "PC1 envoie la trame à l'adresse MAC de sa passerelle, la SVI Vlan10 de DSW1. DSW1 y reconnaît sa propre adresse : il retire l'en-tête Ethernet et cherche 10.20.0.80 dans sa table de routage (la FIB de CEF, programmée dans le matériel), où 10.20.0.0/24 est un réseau connecté via Vlan20. Comme un routeur, il décrémente le TTL, met à jour la somme de contrôle de l'en-tête IPv4, puis construit une nouvelle trame : MAC source du commutateur, MAC destination de SRV1 tirée de sa table ARP. Les adresses IP source et destination ne changent pas.",
+    "distractorNotes": {
+      "b": "Transmettre la trame telle quelle est le comportement d'un commutateur de niveau 2 à l'intérieur d'un VLAN ; entre deux VLAN, le paquet est routé et l'en-tête Ethernet est reconstruit.",
+      "c": "Le routage ne modifie pas les adresses IP : seule une traduction NAT le ferait. L'adresse de la SVI sert seulement de passerelle aux hôtes du VLAN.",
+      "e": "DSW1 connaît l'adresse MAC de SRV1 et envoie la trame uniquement vers son port. Un équipement qui route n'inonde pas un paquet ; sans entrée ARP, il enverrait d'abord une requête ARP."
+    },
+    "reference": "RFC 1812, sections 5.2 et 5.3.1 ; IP Switching Cisco Express Forwarding Configuration Guide (Cisco IOS XE)"
+  },
+  {
+    "slug": "ccna-1.1-collision-broadcast-count-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. R1 route entre les VLAN 10 et 20 de SW1 par des sous-interfaces (router-on-a-stick). HUB1 est un concentrateur. Tous les équipements du réseau sont représentés ; pour les domaines de diffusion, ne comptez que ceux qui contiennent au moins un PC. Combien ce réseau compte-t-il de domaines de collision et de domaines de diffusion ?",
+      "exhibit": "     Gi0/0.10 10.0.10.1/24     +------+     Gi0/1 192.168.30.1/24\n     Gi0/0.20 10.0.20.1/24     |  R1  |\n                    +----------+------+----------+\n                    | Gi0/0 (trunk)        Gi0/1 |\n                    |                            |\n                 Gi1/0/1                      Gi1/0/1\n                +-------+                    +-------+\n                |  SW1  |                    |  SW2  |\n                +-------+                    +-------+\n\nSW1 Gi1/0/2 (VLAN 10) : PC1         SW2 Gi1/0/2 : HUB1 -> PC4, PC5, PC6\nSW1 Gi1/0/3 (VLAN 10) : PC2         SW2 Gi1/0/3 : PC7\nSW1 Gi1/0/4 (VLAN 20) : PC3         Tous les ports de SW2 : VLAN 1",
+      "fields": [
+        {
+          "id": "collision",
+          "label": "Nombre de domaines de collision (nombre entier)"
+        },
+        {
+          "id": "broadcast",
+          "label": "Nombre de domaines de diffusion (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "collision": {
+          "accepted": [
+            "7"
+          ],
+          "normalize": "int"
+        },
+        "broadcast": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Chaque port de commutateur, avec l'interface qui lui fait face, forme un domaine de collision. Côté SW1 : le trunk vers R1 et les trois ports des PC, soit 4. Côté SW2 : le lien vers R1, le port de PC7 et le port de HUB1 ; le concentrateur répète les bits sur tous ses ports, donc HUB1 et ses trois PC ne forment qu'un seul domaine. Cela fait 3, soit 7 au total. Les domaines de diffusion s'arrêtent aux interfaces de R1 : le VLAN 10 et le VLAN 20 de SW1 (le trunk en transporte deux sur un même lien), plus le réseau de Gi0/1, soit 3. Le VLAN 1 de SW1, VLAN natif du trunk sans aucun PC, n'entre pas dans le compte.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.3-2022 (domaines de collision, répéteurs) ; IEEE 802.1Q-2018 (VLAN) ; RFC 1812"
+  },
+  {
+    "slug": "ccna-1.1-stateful-vs-established-acl-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Depuis Internet, un attaquant envoie vers le réseau interne des segments TCP dont le drapeau ACK est positionné, sans qu'aucune session n'ait été ouverte. On compare deux protections : sur l'interface Internet du routeur de bordure, une ACL entrante réduite à « permit tcp any any established » ; ou un pare-feu à états qui n'autorise que les sessions ouvertes depuis l'intérieur. Que deviennent ces segments ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'ACL et le pare-feu les laissent passer tous les deux."
+        },
+        {
+          "id": "b",
+          "text": "L'ACL les bloque, le pare-feu les laisse passer."
+        },
+        {
+          "id": "c",
+          "text": "L'ACL les laisse passer, le pare-feu les bloque."
+        },
+        {
+          "id": "d",
+          "text": "L'ACL et le pare-feu les bloquent tous les deux."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le mot-clé established ne vérifie que les drapeaux : il correspond à tout segment TCP dont le bit ACK ou RST est positionné, sans savoir si une session existe. Des segments ACK forgés passent donc l'ACL, ce qui permet par exemple un scan ACK du réseau interne. Un pare-feu à états enregistre chaque session ouverte depuis l'intérieur (adresses, ports, protocole, état TCP) dans sa table de connexions : un segment qui ne correspond à aucune entrée, et qui n'ouvre pas une session autorisée, est rejeté.",
+    "distractorNotes": {
+      "a": "Le pare-feu à états ne laisse passer que le trafic qui correspond à une session de sa table : un ACK isolé, sans session, est rejeté.",
+      "b": "C'est l'inverse : established laisse passer tout segment qui porte ACK ou RST, et c'est le pare-feu qui détecte l'absence de session.",
+      "d": "L'ACL ne bloque pas ces segments : established ne regarde que les drapeaux ACK et RST, pas l'existence d'une session."
+    },
+    "reference": "NIST SP 800-41 rév. 1 (Guidelines on Firewalls and Firewall Policy), section 2.1 ; Cisco IOS Security Command Reference, commande permit (mot-clé established)"
+  },
+  {
+    "slug": "ccna-1.1-ngfw-url-filtering-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise veut empêcher ses employés d'accéder aux sites de jeux d'argent en ligne, sans tenir à jour de liste d'adresses IP. Quelle fonction de son pare-feu nouvelle génération (NGFW) doit-elle activer ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une politique d'intrusion (IPS) aux signatures à jour"
+        },
+        {
+          "id": "b",
+          "text": "Le filtrage d'URL par catégorie et par réputation"
+        },
+        {
+          "id": "c",
+          "text": "L'inspection stateful des sessions HTTPS"
+        },
+        {
+          "id": "d",
+          "text": "Une règle qui refuse le trafic vers le port TCP 443"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le filtrage d'URL d'un NGFW classe les sites web en catégories (jeux d'argent, hameçonnage, réseaux sociaux…) et leur attribue un score de réputation, à partir d'une base que l'éditeur tient à jour en continu (Cisco Talos pour Cisco Secure Firewall). L'administrateur bloque une catégorie entière sans connaître les adresses des sites, qui changent souvent et sont partagées par de nombreux sites hébergés sur les mêmes plateformes. Une liste d'adresses IP serait à la fois incomplète et difficile à maintenir.",
+    "distractorNotes": {
+      "a": "Un IPS reconnaît des attaques (exploitation de vulnérabilités, trafic malveillant) d'après des signatures ; il ne classe pas les sites selon leur contenu.",
+      "c": "L'inspection stateful suit l'état des sessions pour autoriser le trafic de retour ; elle ignore la nature et la catégorie du site visité.",
+      "d": "Refuser le port TCP 443 couperait tout le web chiffré, sites autorisés compris : la règle ne distingue pas les jeux d'argent des autres sites."
+    },
+    "reference": "Cisco Secure Firewall Management Center Device Configuration Guide — URL Filtering"
+  },
+  {
+    "slug": "ccna-1.1-dmz-server-placement-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le pare-feu FW1 sépare trois zones : inside (réseau interne), DMZ et outside (vers Internet). Associez chaque serveur à la zone où il doit être placé. Une même zone peut être choisie plusieurs fois.",
+      "left": [
+        {
+          "id": "web",
+          "text": "Serveur web public du site de l'entreprise"
+        },
+        {
+          "id": "smtp",
+          "text": "Relais SMTP qui reçoit les courriels venus d'Internet"
+        },
+        {
+          "id": "dns",
+          "text": "Serveur DNS qui fait autorité sur le domaine public de l'entreprise"
+        },
+        {
+          "id": "dhcp",
+          "text": "Serveur DHCP des postes de travail"
+        },
+        {
+          "id": "files",
+          "text": "Serveur de fichiers des services"
+        }
+      ],
+      "right": [
+        {
+          "id": "dmz",
+          "text": "DMZ"
+        },
+        {
+          "id": "inside",
+          "text": "Inside"
+        },
+        {
+          "id": "outside",
+          "text": "Outside, entre FW1 et le routeur du FAI"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "web": "dmz",
+        "smtp": "dmz",
+        "dns": "dmz",
+        "dhcp": "inside",
+        "files": "inside"
+      }
+    },
+    "explanation": "La DMZ accueille les services qui doivent être joints depuis Internet : site web, relais de messagerie, DNS public. FW1 n'y laisse entrer que les ports utiles (TCP 80 et 443, TCP 25, UDP et TCP 53) et limite strictement les flux de la DMZ vers l'inside : si l'un de ces serveurs exposés est compromis, l'attaquant ne se retrouve pas dans le réseau interne. Les services réservés aux employés, comme le DHCP des postes ou le partage de fichiers, restent dans l'inside, injoignables depuis Internet.",
+    "distractorNotes": {
+      "outside": "Côté outside, un serveur ne bénéficierait d'aucune protection de FW1 : il serait exposé à tout Internet, sans filtrage. On n'y place aucun serveur."
+    },
+    "reference": "NIST SP 800-41 rév. 1 (Guidelines on Firewalls and Firewall Policy), section 3 (architectures réseau, DMZ)"
+  },
+  {
+    "slug": "ccna-1.1-ids-span-single-packet-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un capteur de détection d'intrusion est raccordé à un port SPAN du commutateur de cœur, qui lui envoie une copie du trafic des serveurs. Un attaquant envoie un paquet unique qui exploite une vulnérabilité d'un serveur. Que peut faire le capteur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Générer une alerte, sans pouvoir empêcher ce paquet d'atteindre le serveur"
+        },
+        {
+          "id": "b",
+          "text": "Supprimer le paquet avant qu'il atteigne le serveur, puis générer une alerte"
+        },
+        {
+          "id": "c",
+          "text": "Modifier le paquet pour neutraliser l'exploit, puis le transmettre au serveur"
+        },
+        {
+          "id": "d",
+          "text": "Analyser seulement les en-têtes, car le port SPAN ne copie pas la charge utile"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Raccordé à un port SPAN, le capteur fonctionne hors bande (mode promiscuous) : il ne reçoit qu'une copie des trames, et le commutateur transmet l'original au serveur sans attendre son verdict. Il peut donc reconnaître l'exploit et lever une alerte, mais le paquet a déjà atteint sa cible. Après coup, certains IDS savent envoyer un TCP reset ou demander à un pare-feu de bloquer l'attaquant, ce qui n'arrête que la suite de l'attaque. Pour supprimer le paquet lui-même, il faut un IPS en ligne, que le trafic traverse.",
+    "distractorNotes": {
+      "b": "Supprimer un paquet suppose d'être sur son chemin (en ligne) : le capteur ne voit qu'une copie, l'original a déjà été transmis.",
+      "c": "Modifier puis réinjecter un paquet n'est possible que pour un équipement en ligne ; la copie SPAN ne remplace pas le trafic d'origine.",
+      "d": "Un port SPAN copie les trames entières, charge utile comprise : le capteur peut analyser leur contenu."
+    },
+    "reference": "NIST SP 800-94 (Guide to Intrusion Detection and Prevention Systems), chapitre 4 (capteurs en ligne et passifs)"
+  },
+  {
+    "slug": "ccna-1.1-ips-inline-tradeoffs-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une équipe remplace un IDS raccordé à un port SPAN par un IPS installé en ligne (inline) entre le pare-feu et le commutateur de cœur. Quelles deux nouvelles contraintes ce changement entraîne-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le capteur n'ajoute plus aucune latence au trafic qu'il analyse."
+        },
+        {
+          "id": "b",
+          "text": "Une panne du capteur peut désormais interrompre le trafic."
+        },
+        {
+          "id": "c",
+          "text": "Le capteur ne peut plus détecter que des attaques connues par leurs signatures."
+        },
+        {
+          "id": "d",
+          "text": "Le commutateur de cœur doit désormais copier le trafic vers le capteur par SPAN."
+        },
+        {
+          "id": "e",
+          "text": "Un faux positif peut désormais bloquer du trafic légitime."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "En ligne, le trafic traverse physiquement l'IPS, qui peut supprimer un paquet ou couper une session. Cette capacité a deux contreparties. D'abord, le capteur devient un point de passage obligé : s'il tombe en panne ou sature, le trafic est coupé, d'où les modules de contournement matériels (bypass) ou une configuration fail-open, qui privilégient la disponibilité. Ensuite, une alerte erronée (faux positif) ne produit plus seulement un message : le trafic légitime concerné est bloqué. Il faut donc régler les signatures avant d'activer les actions de blocage.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : chaque paquet traverse le capteur et doit être analysé avant d'être retransmis, ce qui ajoute de la latence. L'IDS hors bande n'en ajoutait aucune.",
+      "c": "Le mode de déploiement ne change pas les méthodes de détection : en ligne ou non, le capteur peut combiner signatures, anomalies et réputation.",
+      "d": "La copie par SPAN est le raccordement d'un IDS hors bande ; en ligne, le trafic traverse le capteur, sans copie."
+    },
+    "reference": "NIST SP 800-94 (Guide to Intrusion Detection and Prevention Systems), chapitre 4"
+  },
+  {
+    "slug": "ccna-1.1-ips-placement-topology-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'entreprise veut ajouter un IPS qui bloque les attaques venues d'Internet ou de la DMZ et autorisées par FW1, avant qu'elles atteignent les postes et les serveurs internes. L'IPS ne doit pas analyser le trafic entrant que FW1 rejette déjà. À quel emplacement l'installer ?",
+      "exhibit": "                Internet\n                   |\n                R-EDGE\n                   |\n                  (A)\n                   |\n               [outside]\n                  FW1  [dmz] ---(D)--- SW-DMZ --- SRV-WEB\n               [inside]\n                   |\n                  (B)\n                   |\n                 CORE1 ---(C)--- port SPAN (copie du trafic)\n                 /    \\\n              ACC1   SW-SRV\n          (postes)   (SRV-APP, SRV-BDD)",
+      "options": [
+        {
+          "id": "a",
+          "text": "En ligne au point A, entre R-EDGE et l'interface outside de FW1"
+        },
+        {
+          "id": "b",
+          "text": "En ligne au point B, entre l'interface inside de FW1 et CORE1"
+        },
+        {
+          "id": "c",
+          "text": "Sur le port SPAN de CORE1, au point C"
+        },
+        {
+          "id": "d",
+          "text": "En ligne au point D, entre l'interface dmz de FW1 et SW-DMZ"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Au point B, l'IPS voit tout le trafic que FW1 a autorisé vers le réseau interne, qu'il vienne d'Internet ou de la DMZ, et, dans ce sens, seulement ce trafic : ce que FW1 rejette ne lui parvient pas. Installé en ligne, il peut supprimer les paquets malveillants avant qu'ils atteignent CORE1, les postes et les serveurs. Il couvre aussi le cas d'un SRV-WEB compromis qui attaquerait le réseau interne, une fois ce trafic autorisé par FW1 : le point A ne le voit pas, et le point D n'arrête pas les attaques venues d'Internet.",
+    "distractorNotes": {
+      "a": "Au point A, l'IPS analyserait tout le trafic d'Internet, y compris celui que FW1 rejette ensuite, et ne verrait pas le trafic de la DMZ vers l'inside.",
+      "c": "Le port SPAN ne fournit qu'une copie du trafic : le capteur fonctionnerait comme un IDS, capable d'alerter mais pas de bloquer.",
+      "d": "Au point D, l'IPS ne verrait que le trafic qui entre dans la DMZ ou en sort : les flux d'Internet vers l'inside ne passent pas par là."
+    },
+    "reference": "NIST SP 800-94 (Guide to Intrusion Detection and Prevention Systems), chapitre 4 (emplacement des capteurs réseau)"
+  },
+  {
+    "slug": "ccna-1.1-ap-join-sequence-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un AP lightweight neuf, sorti de son carton, est raccordé à un port PoE d'un commutateur, dans le même VLAN que l'interface de gestion du WLC. Ordonnez les étapes, de la mise sous tension de l'AP à sa mise en service.",
+      "items": [
+        {
+          "id": "join",
+          "text": "L'AP envoie une Join Request et le WLC répond par une Join Response"
+        },
+        {
+          "id": "dhcp",
+          "text": "L'AP obtient une adresse IP par DHCP"
+        },
+        {
+          "id": "cfg",
+          "text": "L'AP reçoit sa configuration du WLC et passe en état Run"
+        },
+        {
+          "id": "disc",
+          "text": "L'AP diffuse une CAPWAP Discovery Request et reçoit une Discovery Response"
+        },
+        {
+          "id": "dtls",
+          "text": "L'AP et le WLC établissent une session DTLS"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "dhcp",
+        "disc",
+        "dtls",
+        "join",
+        "cfg"
+      ]
+    },
+    "explanation": "Un AP neuf n'a ni configuration ni adresse de contrôleur en mémoire. Il lui faut d'abord une adresse IP, qu'il obtient par DHCP. Comme le WLC est dans le même sous-réseau, une Discovery Request en broadcast suffit à le trouver ; le WLC répond par une Discovery Response. L'AP établit ensuite avec le contrôleur choisi une session DTLS, qui protège le canal de contrôle CAPWAP, et y envoie sa Join Request. Une fois accepté, il télécharge au besoin l'image logicielle du WLC, reçoit sa configuration (WLAN, paramètres radio) et passe en état Run, prêt à servir les clients.",
+    "distractorNotes": {},
+    "reference": "RFC 5415 (CAPWAP), section 2.2 ; Cisco Wireless Controller Configuration Guide, Release 8.10 — Controller Discovery"
+  },
+  {
+    "slug": "ccna-1.1-split-mac-roles-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Dans une architecture centralisée split-MAC, avec des AP lightweight en mode local, les fonctions 802.11 sont réparties entre l'AP et le WLC. Associez chaque fonction à l'équipement qui l'assure. Un même équipement peut être choisi plusieurs fois.",
+      "left": [
+        {
+          "id": "beacon",
+          "text": "Émission des beacons du SSID"
+        },
+        {
+          "id": "probe",
+          "text": "Réponse aux probe requests des clients"
+        },
+        {
+          "id": "ack",
+          "text": "Envoi des acquittements (ACK) des trames 802.11 reçues"
+        },
+        {
+          "id": "rrm",
+          "text": "Choix des canaux et des puissances d'émission de l'ensemble des AP (RRM)"
+        },
+        {
+          "id": "eap",
+          "text": "Relais de l'authentification 802.1X/EAP des clients vers le serveur RADIUS"
+        }
+      ],
+      "right": [
+        {
+          "id": "ap",
+          "text": "AP lightweight"
+        },
+        {
+          "id": "wlc",
+          "text": "WLC"
+        },
+        {
+          "id": "sw",
+          "text": "Commutateur d'accès de l'AP"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "beacon": "ap",
+        "probe": "ap",
+        "ack": "ap",
+        "rrm": "wlc",
+        "eap": "wlc"
+      }
+    },
+    "explanation": "Le split-MAC laisse à l'AP les tâches en temps réel, qui ne supporteraient pas l'aller-retour jusqu'au WLC : émission des beacons à intervalle régulier, réponses aux probe requests, acquittement de chaque trame reçue, que l'AP doit envoyer quelques microsecondes après la fin de la trame (SIFS). Le WLC prend en charge les fonctions de gestion : il calcule pour tous les AP les canaux et les puissances (RRM), gère l'itinérance des clients et joue le rôle d'authentificateur 802.1X : les trames EAPOL des clients lui parviennent dans le tunnel CAPWAP, et c'est lui qui dialogue avec le serveur RADIUS.",
+    "distractorNotes": {
+      "sw": "Le commutateur d'accès alimente l'AP et transporte les paquets CAPWAP comme n'importe quel trafic IP : il n'assure aucune fonction 802.11."
+    },
+    "reference": "RFC 5416 (CAPWAP Protocol Binding for IEEE 802.11), architecture Split MAC ; Cisco Wireless Controller Configuration Guide, Release 8.10"
+  },
+  {
+    "slug": "ccna-1.1-autonomous-ap-trunk-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un AP autonome, géré sans contrôleur, diffuse deux SSID : « Personnel », relié au VLAN 10, et « Invités », relié au VLAN 20. Son adresse de gestion se trouve dans le VLAN 99. Comment faut-il configurer le port du commutateur auquel il est raccordé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "En port d'accès dans le VLAN 99, car le trafic des clients est encapsulé dans CAPWAP"
+        },
+        {
+          "id": "b",
+          "text": "En trunk 802.1Q qui autorise les VLAN 10, 20 et 99"
+        },
+        {
+          "id": "c",
+          "text": "En port d'accès dans le VLAN 10, celui du SSID principal"
+        },
+        {
+          "id": "d",
+          "text": "En trunk 802.1Q qui n'autorise que le VLAN 99, celui de la gestion"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un AP autonome fait lui-même le pont entre le réseau sans fil et le réseau filaire : chaque SSID est associé à un VLAN, et l'AP envoie les trames des clients sur son port Ethernet avec l'étiquette 802.1Q de ce VLAN. Le port du commutateur doit donc être un trunk qui transporte les VLAN des deux SSID (10 et 20) et celui de la gestion (99), souvent choisi comme VLAN natif. C'est la différence avec un AP lightweight en mode local, qui tunnelise le trafic des clients jusqu'au WLC et se contente d'un port d'accès.",
+    "distractorNotes": {
+      "a": "Un AP autonome ne parle pas CAPWAP : ce protocole relie un AP lightweight à son WLC. Ici, l'AP dépose lui-même le trafic de chaque SSID dans son VLAN.",
+      "c": "Un port d'accès ne transporte qu'un VLAN : les invités du VLAN 20 et la gestion dans le VLAN 99 seraient coupés du réseau.",
+      "d": "L'AP autonome commute le trafic de chaque SSID dans son VLAN sur le lien vers le commutateur : sans les VLAN 10 et 20 sur le trunk, les clients n'obtiendraient pas d'adresse."
+    },
+    "reference": "Cisco IOS Configuration Guide for Autonomous Aironet Access Points — Configuring VLANs"
+  },
+  {
+    "slug": "ccna-1.1-wlc-discovery-option43-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. AP1, un AP lightweight neuf, est raccordé à un port d'accès du VLAN 30. Il est alimenté en PoE et a obtenu l'adresse 10.30.0.11 auprès de DSW1, mais il n'apparaît jamais sur WLC1, dont l'interface de gestion est 10.99.0.10 dans le VLAN 99. Le routage entre les VLAN fonctionne, aucun filtrage n'est en place et le serveur DNS 10.99.0.53 ne connaît pas le nom CISCO-CAPWAP-CONTROLLER. Quelle modification permet à AP1 de découvrir WLC1 ?",
+      "exhibit": "DSW1# show running-config | section ip dhcp pool\nip dhcp pool AP-VLAN30\n network 10.30.0.0 255.255.255.0\n default-router 10.30.0.1\n dns-server 10.99.0.53\nDSW1# show ip interface brief | include Vlan\nVlan30                 10.30.0.1       YES NVRAM  up                    up\nVlan99                 10.99.0.1       YES NVRAM  up                    up",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter « ip helper-address 10.99.0.10 » sur l'interface Vlan30 de DSW1"
+        },
+        {
+          "id": "b",
+          "text": "Passer AP1 en mode FlexConnect pour qu'il fonctionne sans WLC"
+        },
+        {
+          "id": "c",
+          "text": "Ajouter au pool AP-VLAN30 l'option 43 portant l'adresse 10.99.0.10"
+        },
+        {
+          "id": "d",
+          "text": "Fixer la puissance PoE du port d'AP1 avec « power inline static »"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un AP lightweight neuf cherche son WLC par plusieurs méthodes : broadcast de Discovery Requests sur son sous-réseau, adresses de contrôleur mémorisées lors d'une précédente association, option DHCP 43 et résolution DNS du nom CISCO-CAPWAP-CONTROLLER. Ici, le broadcast ne franchit pas DSW1, l'AP n'a rien en mémoire, le pool n'a pas d'option 43 et le DNS ne connaît pas le nom : aucune méthode n'aboutit. Avec « option 43 hex f104.0a63.000a » dans le pool (type f1, longueur 4, puis 10.99.0.10 en hexadécimal), l'AP reçoit l'adresse de WLC1 avec son bail et lui envoie une Discovery Request en unicast.",
+    "distractorNotes": {
+      "a": "DSW1 sert lui-même le DHCP, et ip helper-address ne relaie par défaut que quelques services UDP (BOOTP/DHCP, TFTP, DNS, TACACS, NetBIOS, Time) : les Discovery Requests CAPWAP (UDP 5246) n'en font pas partie.",
+      "b": "Le mode FlexConnect se choisit sur le WLC une fois l'AP associé : un AP qui n'a jamais trouvé de contrôleur ne peut pas le recevoir.",
+      "d": "AP1 est déjà alimenté, puisqu'il a obtenu un bail DHCP : la puissance n'est pas en cause."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Controller Discovery Process ; note technique Cisco « Configure DHCP OPTION 43 for Lightweight Access Points »"
+  },
+  {
+    "slug": "ccna-1.1-client-server-model-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations décrivent le modèle client-serveur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le client prend l'initiative de l'échange en envoyant une requête au serveur."
+        },
+        {
+          "id": "b",
+          "text": "Le serveur contacte régulièrement chaque client pour lui proposer ses services."
+        },
+        {
+          "id": "c",
+          "text": "Le client et le serveur doivent appartenir au même sous-réseau IP."
+        },
+        {
+          "id": "d",
+          "text": "Chaque hôte partage directement ses ressources avec les autres, sans rôle fixe."
+        },
+        {
+          "id": "e",
+          "text": "Le serveur attend les requêtes sur un port fixé à l'avance, par exemple TCP 443 pour HTTPS."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "Dans le modèle client-serveur, le client prend l'initiative : il ouvre l'échange et envoie une requête. Le serveur est passif : un processus écoute en permanence sur un port connu des clients (TCP 443 pour HTTPS, UDP 53 pour DNS, UDP 67 pour DHCP) et répond à chaque requête. Client et serveur peuvent se trouver n'importe où, pourvu qu'une route existe entre eux. Le modèle pair à pair, au contraire, ne fixe pas les rôles : chaque hôte peut à la fois demander et fournir des ressources.",
+    "distractorNotes": {
+      "b": "Le serveur ne sollicite pas les clients : il attend leurs requêtes. Les notifications dites « push » reposent elles-mêmes, en général, sur une connexion ouverte par le client.",
+      "c": "Client et serveur communiquent à travers des routeurs : il suffit d'une route entre eux, comme pour tout site web sur Internet.",
+      "d": "C'est la définition du modèle pair à pair (peer-to-peer), où chaque hôte est tour à tour client et serveur."
+    },
+    "reference": "RFC 9110 (HTTP Semantics), section 3.3 ; RFC 6335 (attribution des numéros de port)"
+  },
+  {
+    "slug": "ccna-1.1-server-as-client-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un poste ouvre une session HTTPS vers le serveur SRV-WEB. Pour construire la page demandée, SRV-WEB interroge à son tour le serveur de base de données SRV-BDD sur le port TCP 3306. Quel rôle SRV-WEB joue-t-il dans chacun des deux échanges ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Serveur face au poste, client face à SRV-BDD"
+        },
+        {
+          "id": "b",
+          "text": "Serveur face au poste et face à SRV-BDD"
+        },
+        {
+          "id": "c",
+          "text": "Client face au poste et face à SRV-BDD"
+        },
+        {
+          "id": "d",
+          "text": "Client face au poste, serveur face à SRV-BDD"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Les rôles client et serveur se définissent pour chaque échange, d'après celui qui l'ouvre. Le poste ouvre la connexion TCP vers le port 443 de SRV-WEB : SRV-WEB, qui attendait cette requête, est le serveur. Pour répondre, SRV-WEB ouvre à son tour, depuis un port éphémère, une connexion vers le port 3306 de SRV-BDD : il est alors le client. Un même équipement peut ainsi être serveur pour un service et client pour d'autres, comme un serveur qui interroge un DNS ou télécharge ses mises à jour.",
+    "distractorNotes": {
+      "b": "Face à SRV-BDD, c'est SRV-WEB qui ouvre la connexion vers un port en écoute : dans cet échange, il est le client.",
+      "c": "Face au poste, SRV-WEB attend la connexion sur le port 443 et répond aux requêtes : dans cet échange, il est le serveur.",
+      "d": "Les rôles sont inversés : SRV-WEB répond au poste (serveur) et sollicite SRV-BDD (client)."
+    },
+    "reference": "RFC 9293 (TCP), section 3.5 (ouverture active et passive) ; RFC 6335"
+  },
+  {
+    "slug": "ccna-1.1-endpoints-identify-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux équipements sont des terminaux (endpoints), c'est-à-dire des sources ou des destinations finales du trafic ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Caméra IP"
+        },
+        {
+          "id": "b",
+          "text": "Commutateur d'accès"
+        },
+        {
+          "id": "c",
+          "text": "Ordinateur portable"
+        },
+        {
+          "id": "d",
+          "text": "Routeur de bordure"
+        },
+        {
+          "id": "e",
+          "text": "Pare-feu"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Un terminal (endpoint) est la source ou la destination finale des données : poste de travail, ordinateur portable, téléphone, imprimante, caméra IP, capteur IoT ou serveur. Les équipements intermédiaires, eux, transportent ou filtrent le trafic des autres : le commutateur le transfère d'après les adresses MAC, le routeur d'après les adresses IP, le pare-feu l'autorise ou le bloque selon sa politique. Ils possèdent eux aussi une adresse de gestion, mais leur rôle est de relayer le trafic, pas d'en être la destination.",
+    "distractorNotes": {
+      "b": "Le commutateur est un équipement intermédiaire : il transfère les trames des terminaux d'après leurs adresses MAC.",
+      "d": "Le routeur est un équipement intermédiaire : il achemine les paquets entre réseaux d'après les adresses IP.",
+      "e": "Le pare-feu est un équipement intermédiaire : il filtre le trafic qui le traverse selon sa politique de sécurité."
+    },
+    "reference": "RFC 1122 (Requirements for Internet Hosts), section 1.1.1 ; RFC 1812 (routeurs)"
+  },
+  {
+    "slug": "ccna-1.1-poe-pse-pd-roles-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un téléphone IP est alimenté par le port Gi1/0/5 d'un commutateur Catalyst PoE+. Dans la terminologie IEEE 802.3, quel rôle joue chacun des deux équipements ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Commutateur : PD ; téléphone : PSE"
+        },
+        {
+          "id": "b",
+          "text": "Commutateur : midspan ; téléphone : PD"
+        },
+        {
+          "id": "c",
+          "text": "Commutateur : PSE ; téléphone : PD"
+        },
+        {
+          "id": "d",
+          "text": "Commutateur : PSE ; téléphone : midspan"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La norme IEEE 802.3 nomme PSE (Power Sourcing Equipment) l'équipement qui fournit l'alimentation et PD (Powered Device) celui qui la reçoit. Un commutateur PoE est un PSE de type endpoint (endspan) : il injecte le courant directement sur ses ports. Un injecteur intercalé entre un commutateur sans PoE et le PD est un PSE midspan. Téléphones IP, AP et caméras sont des PD : ils présentent une signature de détection, annoncent leur classe et consomment la puissance fournie.",
+    "distractorNotes": {
+      "a": "Les rôles sont inversés : c'est le commutateur qui fournit le courant (PSE) et le téléphone qui le consomme (PD).",
+      "b": "Un midspan est un injecteur placé entre un commutateur sans PoE et le PD ; un commutateur qui alimente lui-même ses ports est un PSE de type endpoint.",
+      "d": "Le téléphone consomme l'alimentation : c'est un PD. Un midspan fournit l'alimentation, intercalé sur le câble entre le commutateur et le PD."
+    },
+    "reference": "IEEE 802.3-2022, clause 33 (Power over Ethernet : PSE et PD)"
+  },
+  {
+    "slug": "ccna-1.1-poe-standards-power-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque norme PoE à la puissance maximale que le PSE fournit sur un port.",
+      "left": [
+        {
+          "id": "af",
+          "text": "IEEE 802.3af (type 1)"
+        },
+        {
+          "id": "at",
+          "text": "IEEE 802.3at (type 2, PoE+)"
+        },
+        {
+          "id": "bt3",
+          "text": "IEEE 802.3bt type 3"
+        },
+        {
+          "id": "bt4",
+          "text": "IEEE 802.3bt type 4"
+        }
+      ],
+      "right": [
+        {
+          "id": "w15",
+          "text": "15,4 W"
+        },
+        {
+          "id": "w30",
+          "text": "30 W"
+        },
+        {
+          "id": "w60",
+          "text": "60 W"
+        },
+        {
+          "id": "w90",
+          "text": "90 W"
+        },
+        {
+          "id": "w100",
+          "text": "100 W"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "af": "w15",
+        "at": "w30",
+        "bt3": "w60",
+        "bt4": "w90"
+      }
+    },
+    "explanation": "Les puissances normalisées s'entendent au PSE, par port : 15,4 W pour 802.3af (type 1), 30 W pour 802.3at (type 2), 60 W pour 802.3bt type 3 et 90 W pour 802.3bt type 4. Une partie se perd dans les 100 m de câble : le PD dispose au minimum de 12,95 W, 25,5 W, 51 W et 71,3 W. Les types 1 et 2 alimentent sur deux paires, alors que 802.3bt peut utiliser les quatre, ce qui lui permet de dépasser 30 W sans échauffer excessivement le câble.",
+    "distractorNotes": {
+      "w100": "Aucune norme IEEE ne fournit 100 W par port : le maximum est celui de 802.3bt type 4, 90 W au PSE, soit 71,3 W disponibles au PD."
+    },
+    "reference": "IEEE 802.3-2022, clauses 33 (802.3af/at) et 145 (802.3bt)"
+  },
+  {
+    "slug": "ccna-1.1-poe-802-3bt-features-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux affirmations sur la norme IEEE 802.3bt sont correctes ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle porte la distance maximale d'un lien PoE à 200 m."
+        },
+        {
+          "id": "b",
+          "text": "Elle peut alimenter le PD sur les quatre paires du câble."
+        },
+        {
+          "id": "c",
+          "text": "Elle garantit au PD toute la puissance fournie par le PSE, sans perte dans le câble."
+        },
+        {
+          "id": "d",
+          "text": "Elle reste compatible avec les PD 802.3af et 802.3at."
+        },
+        {
+          "id": "e",
+          "text": "Elle réserve la classe 8 (90 W) aux injecteurs midspan."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "IEEE 802.3bt (2018) étend le PoE au-delà de 30 W en alimentant le PD sur les quatre paires du câble : jusqu'à 60 W au PSE en type 3 et 90 W en type 4. Elle reste rétrocompatible : un PSE 802.3bt détecte et alimente les PD 802.3af et 802.3at selon leur classe. Le reste ne change pas : liaison de 100 m au plus, pertes dans le câble (71,3 W au mieux au PD pour 90 W au PSE), et toutes les classes peuvent être fournies aussi bien par un commutateur que par un injecteur midspan.",
+    "distractorNotes": {
+      "a": "La distance reste celle d'Ethernet sur paires torsadées : 100 m au plus entre le PSE et le PD.",
+      "c": "Une partie de la puissance se dissipe dans le câble : pour 90 W au PSE, le PD ne dispose que de 71,3 W.",
+      "e": "Un commutateur (PSE de type endpoint) peut fournir 90 W, comme un midspan : la norme ne réserve aucune classe aux injecteurs."
+    },
+    "reference": "IEEE 802.3bt-2018 (aujourd'hui IEEE 802.3-2022, clause 145)"
+  },
+  {
+    "slug": "ccna-1.1-poe-power-up-sequence-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un AP est raccordé à un port PoE+ d'un commutateur configuré avec « power inline auto », puis débranché quelques jours plus tard. Ordonnez les étapes, du raccordement du câble à la coupure de l'alimentation.",
+      "items": [
+        {
+          "id": "pwr",
+          "text": "Le PSE applique la tension de fonctionnement sur les paires"
+        },
+        {
+          "id": "det",
+          "text": "Le PSE applique une faible tension et détecte la résistance de signature du PD"
+        },
+        {
+          "id": "mps",
+          "text": "Le PSE coupe l'alimentation quand le PD ne présente plus sa signature de maintien (MPS)"
+        },
+        {
+          "id": "cls",
+          "text": "Le PSE mesure le courant absorbé par le PD pour déterminer sa classe"
+        },
+        {
+          "id": "boot",
+          "text": "Le PD démarre et ajuste sa demande de puissance par CDP ou LLDP"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "det",
+        "cls",
+        "pwr",
+        "boot",
+        "mps"
+      ]
+    },
+    "explanation": "Le PSE ne met jamais la pleine tension sur un câble sans savoir ce qui est raccordé. Il commence par la détection : sous une faible tension (de 2,7 à 10,1 V), il cherche la résistance de signature d'environ 25 kΩ que présente tout PD. Vient ensuite la classification : sous une tension de 15,5 à 20,5 V, le courant absorbé indique la classe du PD, donc la puissance à réserver. Le PSE applique alors la tension de fonctionnement (de 44 à 57 V selon le type) ; le PD démarre et peut affiner sa demande par CDP ou LLDP. Tant qu'il consomme, il présente sa signature de maintien (MPS) ; quand elle disparaît, le PSE coupe l'alimentation.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.3-2022, clause 33.2 (PSE : détection, classification, mise sous tension, déconnexion)"
+  },
+  {
+    "slug": "ccna-1.1-poe-budget-phones-001",
+    "certification": "ccna",
+    "domain": "1.0",
+    "subtopic": "1.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un commutateur d'accès dispose d'un budget PoE de 370 W. Il réserve à chaque PD la puissance maximale de sa classe, telle que le PSE doit la fournir. Il alimente déjà 8 AP de classe 4. Combien de téléphones IP de classe 2 peut-il encore alimenter, au maximum ?",
+      "exhibit": "Classe   Puissance au PSE   Puissance au PD\n  0          15,4 W            12,95 W\n  1           4,0 W             3,84 W\n  2           7,0 W             6,49 W\n  3          15,4 W            12,95 W\n  4          30,0 W            25,5 W",
+      "options": [
+        {
+          "id": "a",
+          "text": "25"
+        },
+        {
+          "id": "b",
+          "text": "23"
+        },
+        {
+          "id": "c",
+          "text": "20"
+        },
+        {
+          "id": "d",
+          "text": "18"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le budget PoE se décompte au PSE : c'est la puissance que le commutateur doit fournir, pertes du câble comprises. Les 8 AP de classe 4 réservent 8 × 30 W = 240 W ; il reste 370 − 240 = 130 W. Chaque téléphone de classe 2 réserve 7 W : 130 / 7 ≈ 18,6, donc 18 téléphones (126 W). Un 19ᵉ demanderait 133 W, au-delà du budget restant : le commutateur refuserait de l'alimenter. La colonne « au PD » indique ce que l'équipement reçoit au bout de 100 m de câble, pas ce qu'il coûte au budget.",
+    "distractorNotes": {
+      "a": "25 suppose les puissances au PD pour les AP (25,5 W) comme pour les téléphones (6,49 W) : le budget du commutateur se décompte au PSE.",
+      "b": "23 compte les AP à 25,5 W, leur puissance au PD : le commutateur leur réserve 30 W chacun, pertes du câble comprises.",
+      "c": "20 divise bien les 130 W restants, mais par 6,49 W, la puissance au PD : chaque téléphone de classe 2 réserve 7 W du budget."
+    },
+    "reference": "IEEE 802.3-2022, clause 33 (classes de puissance) ; Catalyst 9300 Interface and Hardware Components Configuration Guide — Power over Ethernet"
+  }
+]

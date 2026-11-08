@@ -249,8 +249,8 @@ function BestScoresChart({ progress, min, max }: { progress: SeriesProgress; min
           key={s.number}
           x={(s.number - 1) * slot + slot * 0.15}
           width={slot * 0.7}
-          y={y(s.score)}
-          height={H - y(s.score)}
+          y={Math.min(y(s.score), H - 3)}
+          height={Math.max(3, H - y(s.score))}
           fill={s.passed ? '#3DDC97' : '#F5B544'}
           opacity={0.85}
         />
