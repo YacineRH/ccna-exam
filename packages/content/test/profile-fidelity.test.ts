@@ -357,7 +357,7 @@ describe('4.5 Syslog', () => {
     expect([...positions].sort((a, b) => a - b)).toEqual(positions);
   });
 
-  it('service timestamps log datetime [msec] [localtime] [show-timezone]', () => {
+  it('service timestamps log datetime [msec] [localtime] [show-timezone] [year]', () => {
     const d = router();
     ok(d, ['service timestamps log datetime msec', 'service timestamps debug datetime msec localtime', 'service timestamps log datetime msec localtime show-timezone']);
     expect(shown(d, 'service timestamps')).toEqual(['service timestamps debug datetime msec localtime', 'service timestamps log datetime msec localtime show-timezone']);
@@ -366,8 +366,10 @@ describe('4.5 Syslog', () => {
     ok(d, ['no service timestamps log']);
     expect(shown(d, 'service timestamps log')).toEqual([]);
     expect(d.execute('service timestamps log datetime ?').output).toBe(
-      '  localtime      Use local time zone for timestamps\n  msec           Include milliseconds in timestamp\n  show-timezone  Add time zone information to timestamp\n  <cr>',
+      '  localtime      Use local time zone for timestamps\n  msec           Include milliseconds in timestamp\n  show-timezone  Add time zone information to timestamp\n  year           Include year in timestamp\n  <cr>',
     );
+    ok(d, ['service timestamps log datetime msec localtime show-timezone year']);
+    expect(shown(d, 'service timestamps log')).toEqual(['service timestamps log datetime msec localtime show-timezone year']);
   });
 
   it('terminal monitor : en mode privilégié seulement, rien n’est enregistré', () => {

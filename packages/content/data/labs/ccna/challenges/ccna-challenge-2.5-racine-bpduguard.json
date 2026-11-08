@@ -1,0 +1,323 @@
+{
+  "slug": "ccna-challenge-2.5-racine-bpduguard",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "2.0",
+  "subtopic": "2.5",
+  "difficulty": "medium",
+  "title": "Dépannage : la racine Rapid PVST+ est sur le commutateur d'accès",
+  "statement": "Le commutateur de distribution D1 et le commutateur d'accès A1 (Catalyst 2960, Rapid PVST+) sont reliés par deux trunks, Gi0/1 et Gi0/2. Le VLAN 10 est le seul VLAN des postes. Depuis l'intervention d'hier :\n- show spanning-tree vlan 10 sur A1 affiche « This bridge is the root » ;\n- Gi0/1 de A1 est en err-disabled depuis sa remise en service ; tout le trafic passe par Gi0/2 ;\n- un stagiaire a branché un petit commutateur sur la prise Fa0/7 de A1 : la prise est restée active et ce commutateur a pris part au spanning tree.\n\nLa politique :\n1. D1 est le pont racine du VLAN 10 : priorité 24576 au plus (la macro root primary convient).\n2. A1 n'est ni racine ni racine de secours du VLAN 10 : sa priorité reste au moins à la valeur par défaut, 32768.\n3. Sur A1, les ports des postes Fa0/1 à Fa0/24 sont des ports PortFast qui se désactivent dès qu'ils reçoivent une BPDU.\n4. Les liens montants Gi0/1 et Gi0/2 ne reçoivent ni PortFast ni BPDU Guard.\n5. Remettez Gi0/1 de A1 en service tout de suite, sans récupération automatique.\n\nUn onglet par commutateur.",
+  "topology": "                 D1 (distribution)\n            Gi0/1 |        | Gi0/2\n          (trunk) |        | (trunk)\n            Gi0/1 |        | Gi0/2\n                 A1 (accès)\n        Fa0/1 - Fa0/24 : postes, VLAN 10 POSTES\n\n  Mode spanning-tree : rapid-pvst sur D1 et A1",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "D1",
+      "type": "switch",
+      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "startupConfig": "hostname D1\nno ip domain-lookup\nspanning-tree mode rapid-pvst\nspanning-tree vlan 10 priority 61440\nvlan 10\n name POSTES\ninterface GigabitEthernet0/1\n description Vers A1 Gi0/1\n switchport mode trunk\ninterface GigabitEthernet0/2\n description Vers A1 Gi0/2\n switchport mode trunk"
+    },
+    {
+      "id": "A1",
+      "type": "switch",
+      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "startupConfig": "hostname A1\nno ip domain-lookup\nspanning-tree mode rapid-pvst\nspanning-tree vlan 10 priority 24576\nvlan 10\n name POSTES\ninterface range FastEthernet0/1 - 24\n switchport mode access\n switchport access vlan 10\n spanning-tree portfast\ninterface GigabitEthernet0/1\n description Vers D1 Gi0/1\n switchport mode trunk\n spanning-tree bpduguard enable\ninterface GigabitEthernet0/2\n description Vers D1 Gi0/2\n switchport mode trunk"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "d1-racine",
+      "description": "D1 est le pont racine du VLAN 10, avec une priorité de 24576 au plus.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "device": "D1",
+            "pattern": "^spanning-tree vlan (\\S+,)?10(,\\S+)? (root primary|priority (0|4096|8192|12288|16384|20480|24576))$"
+          },
+          { "type": "line", "device": "D1", "line": "spanning-tree mode rapid-pvst" }
+        ]
+      }
+    },
+    {
+      "id": "a1-ni-racine-ni-secours",
+      "description": "A1 n'est ni racine ni racine de secours du VLAN 10 : sa priorité est au moins de 32768.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "regex",
+            "device": "A1",
+            "pattern": "^spanning-tree vlan (\\S+,)?10(,\\S+)? (root (primary|secondary)|priority (0|4096|8192|12288|16384|20480|24576|28672))$",
+            "absent": true
+          },
+          { "type": "line", "device": "A1", "line": "spanning-tree mode rapid-pvst" },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "regex",
+                "device": "A1",
+                "pattern": "^spanning-tree vlan (\\S+,)?10(,\\S+)? priority (32768|36864|40960|45056|49152|53248|57344|61440)$"
+              },
+              {
+                "type": "command",
+                "device": "A1",
+                "command": [
+                  "no spanning-tree vlan 10 priority",
+                  "no spanning-tree vlan 10 priority 0",
+                  "no spanning-tree vlan 10 priority 4096",
+                  "no spanning-tree vlan 10 priority 8192",
+                  "no spanning-tree vlan 10 priority 12288",
+                  "no spanning-tree vlan 10 priority 16384",
+                  "no spanning-tree vlan 10 priority 20480",
+                  "no spanning-tree vlan 10 priority 24576",
+                  "no spanning-tree vlan 10 priority 28672",
+                  "no spanning-tree vlan 10 priority 32768",
+                  "no spanning-tree vlan 10 priority 36864",
+                  "no spanning-tree vlan 10 priority 40960",
+                  "no spanning-tree vlan 10 priority 45056",
+                  "no spanning-tree vlan 10 priority 49152",
+                  "no spanning-tree vlan 10 priority 53248",
+                  "no spanning-tree vlan 10 priority 57344",
+                  "no spanning-tree vlan 10 priority 61440",
+                  "no spanning-tree vlan 10 root",
+                  "no spanning-tree vlan 10 root primary",
+                  "no spanning-tree vlan 10 root secondary"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "a1-ports-postes",
+      "description": "Sur A1, Fa0/1 à Fa0/24 sont des ports PortFast qui se désactivent à la réception d'une BPDU.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "line",
+                "device": "A1",
+                "sectionPattern": "^interface FastEthernet0/\\d+$",
+                "sections": "all",
+                "line": ["spanning-tree portfast", "spanning-tree portfast edge"]
+              },
+              { "type": "line", "device": "A1", "line": ["spanning-tree portfast default", "spanning-tree portfast edge default"] }
+            ]
+          },
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "line",
+                "device": "A1",
+                "sectionPattern": "^interface FastEthernet0/\\d+$",
+                "sections": "all",
+                "line": "spanning-tree bpduguard enable"
+              },
+              {
+                "type": "all",
+                "checks": [
+                  { "type": "line", "device": "A1", "line": ["spanning-tree portfast bpduguard default", "spanning-tree portfast edge bpduguard default"] },
+                  {
+                    "type": "regex",
+                    "device": "A1",
+                    "sectionPattern": "^interface FastEthernet0/\\d+$",
+                    "pattern": "^spanning-tree (bpduguard disable|portfast disable)$",
+                    "absent": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "a1-liens-montants",
+      "description": "Les liens montants Gi0/1 et Gi0/2 de A1 n'ont ni PortFast ni BPDU Guard.",
+      "check": {
+        "type": "regex",
+        "device": "A1",
+        "sectionPattern": "^interface GigabitEthernet0/[12]$",
+        "pattern": "^spanning-tree (bpduguard enable|portfast( edge)?( trunk)?)$",
+        "absent": true
+      }
+    },
+    {
+      "id": "a1-gi01-en-service",
+      "description": "Gi0/1 de A1 est de nouveau en service, réactivé à la main après la correction.",
+      "check": {
+        "type": "all",
+        "checks": [
+          {
+            "type": "any",
+            "checks": [
+              {
+                "type": "command",
+                "device": "A1",
+                "section": "interface GigabitEthernet0/1",
+                "command": "no shutdown",
+                "after": ["shutdown", "no spanning-tree bpduguard enable"]
+              },
+              {
+                "type": "command",
+                "device": "A1",
+                "section": "interface GigabitEthernet0/1",
+                "command": "no shutdown",
+                "after": ["shutdown", "spanning-tree bpduguard disable"]
+              }
+            ]
+          },
+          { "type": "line", "device": "A1", "section": "interface GigabitEthernet0/1", "line": "shutdown", "absent": true },
+          { "type": "regex", "device": "A1", "pattern": "^errdisable recovery cause (all|bpduguard)$", "absent": true }
+        ]
+      }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 6,
+    "timeLimitMinutes": 12,
+    "mode": "troubleshoot",
+    "faults": [
+      "D1 a la priorité 61440 sur le VLAN 10, la pire possible : la valeur la plus haute a été prise pour la « plus haute priorité ».",
+      "A1 garde la priorité 24576 sur le VLAN 10, trace d'un spanning-tree vlan 10 root primary tapé sur le mauvais commutateur : il est élu racine.",
+      "Les ports des postes Fa0/1 à Fa0/24 sont en PortFast sans BPDU Guard : un commutateur branché sur une prise participe au spanning tree.",
+      "BPDU Guard est activé sur le trunk Gi0/1 de A1 : la première BPDU de D1 l'a mis en err-disabled, et il faut le réactiver après la correction."
+    ]
+  },
+  "solution": [
+    {
+      "device": "D1",
+      "commands": ["enable", "configure terminal", "spanning-tree vlan 10 priority 24576", "end"]
+    },
+    {
+      "device": "A1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "no spanning-tree vlan 10 priority 24576",
+        "interface range FastEthernet0/1 - 24",
+        "spanning-tree bpduguard enable",
+        "exit",
+        "interface GigabitEthernet0/1",
+        "no spanning-tree bpduguard enable",
+        "shutdown",
+        "no shutdown",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Macro root primary sur D1, priorité 32768 explicite sur A1, BPDU Guard global sur les ports PortFast, Gi0/1 désactivé avant d'être corrigé",
+      "solution": [
+        { "device": "D1", "commands": ["en", "conf t", "spanning-tree vlan 10 root primary", "\u001a"] },
+        {
+          "device": "A1",
+          "commands": [
+            "en",
+            "conf t",
+            "spanning-tree vlan 10 priority 32768",
+            "spanning-tree portfast bpduguard default",
+            "int g0/1",
+            "shut",
+            "spanning-tree bpduguard disable",
+            "no shut",
+            "end"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Priorité 4096 sur D1, priorité 61440 sur A1, BPDU Guard port par port en deux plages",
+      "solution": [
+        { "device": "A1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 priority 61440", "interface range fa0/1 - 12", "spanning-tree bpduguard enable", "interface range fa0/13 - 24", "spanning-tree bpduguard enable", "interface gi0/1", "no spanning-tree bpduguard enable", "shutdown", "no shutdown", "end"] },
+        { "device": "D1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 priority 4096", "end"] }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "D1 configuré en racine de secours (root secondary, 28672) au lieu de racine",
+      "solution": [
+        { "device": "D1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 root secondary", "end"] },
+        { "device": "A1", "commands": ["enable", "configure terminal", "no spanning-tree vlan 10 priority 24576", "interface range fa0/1 - 24", "spanning-tree bpduguard enable", "interface g0/1", "no spanning-tree bpduguard enable", "shutdown", "no shutdown", "end"] }
+      ],
+      "failing": ["d1-racine"]
+    },
+    {
+      "description": "A1 passé en racine de secours (root secondary) au lieu de revenir à la priorité par défaut",
+      "solution": [
+        { "device": "D1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 root primary", "end"] },
+        { "device": "A1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 root secondary", "interface range fa0/1 - 24", "spanning-tree bpduguard enable", "interface g0/1", "no spanning-tree bpduguard enable", "shutdown", "no shutdown", "end"] }
+      ],
+      "failing": ["a1-ni-racine-ni-secours"]
+    },
+    {
+      "description": "no spanning-tree vlan 10 sur A1 : la priorité disparaît, mais le spanning tree est désactivé sur le VLAN 10 de A1",
+      "solution": [
+        { "device": "D1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 root primary", "end"] },
+        { "device": "A1", "commands": ["enable", "configure terminal", "no spanning-tree vlan 10", "interface range fa0/1 - 24", "spanning-tree bpduguard enable", "interface g0/1", "no spanning-tree bpduguard enable", "shutdown", "no shutdown", "end"] }
+      ],
+      "failing": ["a1-ni-racine-ni-secours"]
+    },
+    {
+      "description": "BPDU Guard posé seulement sur la prise Fa0/7 signalée",
+      "solution": [
+        { "device": "D1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 root primary", "end"] },
+        { "device": "A1", "commands": ["enable", "configure terminal", "no spanning-tree vlan 10 priority 24576", "interface fa0/7", "spanning-tree bpduguard enable", "interface g0/1", "no spanning-tree bpduguard enable", "shutdown", "no shutdown", "end"] }
+      ],
+      "failing": ["a1-ports-postes"]
+    },
+    {
+      "description": "BPDU Guard appliqué à tous les ports, liens montants compris",
+      "solution": [
+        { "device": "D1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 root primary", "end"] },
+        { "device": "A1", "commands": ["enable", "configure terminal", "no spanning-tree vlan 10 priority 24576", "interface range fa0/1 - 24 , g0/1 - 2", "spanning-tree bpduguard enable", "interface g0/1", "shutdown", "no shutdown", "end"] }
+      ],
+      "failing": ["a1-liens-montants"]
+    },
+    {
+      "description": "PortFast trunk ajouté sur les liens montants pour accélérer la convergence",
+      "solution": [
+        { "device": "D1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 root primary", "end"] },
+        { "device": "A1", "commands": ["enable", "configure terminal", "no spanning-tree vlan 10 priority 24576", "spanning-tree portfast bpduguard default", "interface range g0/1 - 2", "spanning-tree portfast trunk", "interface g0/1", "no spanning-tree bpduguard enable", "shutdown", "no shutdown", "end"] }
+      ],
+      "failing": ["a1-liens-montants"]
+    },
+    {
+      "description": "no shutdown seul sur Gi0/1 : un port err-disabled ne repart pas sans shutdown préalable",
+      "solution": [
+        { "device": "D1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 root primary", "end"] },
+        { "device": "A1", "commands": ["enable", "configure terminal", "no spanning-tree vlan 10 priority 24576", "spanning-tree portfast bpduguard default", "interface g0/1", "no spanning-tree bpduguard enable", "no shutdown", "end"] }
+      ],
+      "failing": ["a1-gi01-en-service"]
+    },
+    {
+      "description": "Gi0/1 réactivé avant de retirer BPDU Guard : la BPDU suivante de D1 le remet en err-disabled",
+      "solution": [
+        { "device": "D1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 root primary", "end"] },
+        { "device": "A1", "commands": ["enable", "configure terminal", "no spanning-tree vlan 10 priority 24576", "spanning-tree portfast bpduguard default", "interface g0/1", "shutdown", "no shutdown", "no spanning-tree bpduguard enable", "end"] }
+      ],
+      "failing": ["a1-gi01-en-service"]
+    },
+    {
+      "description": "Récupération automatique errdisable recovery cause bpduguard au lieu d'une réactivation manuelle",
+      "solution": [
+        { "device": "D1", "commands": ["enable", "configure terminal", "spanning-tree vlan 10 root primary", "end"] },
+        { "device": "A1", "commands": ["enable", "configure terminal", "no spanning-tree vlan 10 priority 24576", "spanning-tree portfast bpduguard default", "errdisable recovery cause bpduguard", "interface g0/1", "no spanning-tree bpduguard enable", "shutdown", "no shutdown", "end"] }
+      ],
+      "failing": ["a1-gi01-en-service"]
+    }
+  ],
+  "explanation": "Le pont racine est le commutateur de plus petit identifiant : priorité (par pas de 4096) puis adresse MAC. 1) D1 avait la priorité 61440, la valeur la plus haute donc la moins bonne : « plus haute priorité » veut dire plus petit nombre. 2) A1 gardait 24576, la valeur qu'écrit la macro spanning-tree vlan 10 root primary (24576, ou 4096 de moins que la racine en place si elle est déjà plus basse), tapée sur le mauvais commutateur ; IOS n'enregistre que la priorité, pas la macro. Il faut à la fois baisser D1 à 24576 au plus et ramener A1 à 32768 (no spanning-tree vlan 10 priority 24576, ou une priorité explicite de 32768 ou plus) : corriger un seul des deux laisse l'élection à la priorité ou à la MAC. root secondary (28672) ferait de A1 la racine de secours, ce qu'un commutateur d'accès ne doit pas être. Attention : no spanning-tree vlan 10 tout court désactive le spanning tree sur le VLAN 10. 3) PortFast fait passer un port d'accès directement en transmission ; sans BPDU Guard, un commutateur branché sur une prise envoie ses BPDU et participe à la topologie. spanning-tree bpduguard enable sur chaque port des postes, ou spanning-tree portfast bpduguard default en global (qui ne s'applique qu'aux ports PortFast), met le port en err-disabled à la première BPDU. 4) Sur un trunk vers D1, BPDU Guard est un contresens : D1 envoie des BPDU dès la montée du lien, Gi0/1 est passé en err-disabled. Retirer BPDU Guard ne suffit pas : un port err-disabled le reste jusqu'à shutdown puis no shutdown (dans cet ordre, et la réactivation après la correction, sinon il retombe aussitôt), ou jusqu'à une récupération automatique que la consigne exclut. PortFast n'a pas sa place non plus sur un lien entre commutateurs. Vérifications : show spanning-tree vlan 10 (Root ID, « This bridge is the root » sur D1 seulement, rôles Root et Alternate sur A1), show spanning-tree summary (BPDU Guard par défaut), show interfaces status err-disabled.",
+  "reference": "Catalyst 2960 Switch Software Configuration Guide, Cisco IOS Release 15.0(2)SE — « Configuring STP » (Configuring the Root Switch, Bridge Priority) et « Configuring Optional Spanning-Tree Features » (PortFast, BPDU Guard) ; IEEE 802.1w (RSTP)",
+  "estimatedMinutes": 6
+}

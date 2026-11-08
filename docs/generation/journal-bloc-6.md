@@ -82,3 +82,16 @@ Aucun lot ne dépasse le seuil de 2 % : aucune relecture complète n'a été rel
 | b43 | 6.6, 6.7 | 38 | 29 | 3 | 5 | 1 | 37 |
 | b44 | 4.3, 4.4, 4.6, 4.8, 5.10 | 16 | 9 | 0 | 5 | 2 | 14 |
 | b45 | 6.1, 6.2, 6.3, 6.4, 6.5, 6.6 | 22 | 15 | 1 | 5 | 1 | 21 |
+
+## Labs et challenges
+
+Même cycle en deux passes : un agent rédige, un autre relit en rejouant la solution, les variantes, les pièges et des contournements dans le simulateur (`check-lab.mjs`, grille de `validate_lab`).
+
+| Contenu | Rédigés | ok | Corrigés (fond) | Corrigés (forme) | Rejetés |
+| --- | --- | --- | --- | --- | --- |
+| Labs (1.8, 2.3, 2.5, 2.8, 4.2 à 4.5, 5.3, 5.4, 5.8) | 11 | 0 | 7 | 4 | 0 |
+| Challenges (dépannage 1.8, 2.5, 4.3, 5.3 ; construction 4.5 + 4.2, 2.8 + 2.3) | 6 | 0 | 6 | 0 | 0 |
+
+Aucune commande IOS fausse. Corrections de fond : explications inexactes (strate NTP d'un maître, boucle NTP), énoncés qui promettaient une redondance absente, et surtout des objectifs validables par un contournement. Pour les challenges : n'importe quel secret accepté, `no spanning-tree vlan 10`, `no service dhcp`, `no ipv6 unicast-routing` ou une interface éteinte qui faisaient passer les objectifs. Chaque contournement trouvé est devenu un contrôle et un piège testé.
+
+Limites du simulateur relevées en relecture : les mots-clés de `service timestamps … datetime` doivent suivre l'ordre de la configuration affichée (msec, localtime, show-timezone, year) ; `no spanning-tree vlan 10 root` ne remet pas la priorité par défaut ; une commande ajoutée après une correction juste (comme `no spanning-tree vlan 10`) ne peut pas être détectée, car le schéma ne vérifie pas l'absence d'une commande saisie.

@@ -1,0 +1,167 @@
+{
+  "slug": "ccna-challenge-4.3-serveur-dhcp-pool",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "4.0",
+  "subtopic": "4.3",
+  "difficulty": "easy",
+  "title": "Dépannage : le serveur DHCP de R1 ne distribue rien",
+  "statement": "R1 sert de serveur DHCP au LAN 192.168.50.0/24, raccordé à G0/0/0. Le pool LAN-50 a été saisi hier soir. Ce matin :\n- les postes Windows du LAN s'attribuent une adresse 169.254.x.x ;\n- show ip dhcp binding est vide et show ip dhcp pool LAN-50 n'indique aucune adresse louée ;\n- un poste configuré à la main (192.168.50.100/24, passerelle 192.168.50.1) joint R1 et Internet sans difficulté.\n\nLe plan DHCP du LAN :\n1. Les adresses 192.168.50.1 à 192.168.50.20 (R1, serveurs, imprimantes) ne sont jamais attribuées ; toutes les autres le sont.\n2. Le pool LAN-50, qui garde son nom, couvre le réseau 192.168.50.0/24.\n3. Les clients reçoivent R1 (192.168.50.1) comme passerelle par défaut, et toujours les serveurs DNS 192.168.50.10 puis 192.168.50.11.\n\nRemettez le service DHCP en état.",
+  "topology": "  Postes du LAN (clients DHCP)           Serveurs DNS 192.168.50.10 et .11\n                 \\                          /\n                  +------ commutateur ------+\n                            |\n                         G0/0/0 192.168.50.1/24\n                           [R1]\n                         G0/0/1 203.0.113.2/30\n                            |\n                         Internet",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\nip dhcp excluded-address 192.168.50.1 192.168.50.254\nip dhcp pool LAN-50\n network 192.168.5.0 255.255.255.0\n default-router 192.168.50.254\n dns-server 192.168.50.10 192.168.50.11\n domain-name entreprise.lan\ninterface GigabitEthernet0/0/0\n description LAN\n ip address 192.168.50.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Internet\n ip address 203.0.113.2 255.255.255.252\n no shutdown\nip route 0.0.0.0 0.0.0.0 203.0.113.1"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "dhcp-exclusions",
+      "description": "Seules les adresses 192.168.50.1 à 192.168.50.20 sont réservées ; le reste du réseau est attribuable.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "line": "ip dhcp excluded-address 192.168.50.1 192.168.50.20" },
+          { "type": "regex", "pattern": "^ip dhcp excluded-address (?!192\\.168\\.50\\.1 192\\.168\\.50\\.20$)", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "dhcp-reseau",
+      "description": "Le pool LAN-50 couvre le réseau 192.168.50.0/24 du LAN.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "section": "ip dhcp pool LAN-50", "pattern": "^network 192\\.168\\.50\\.0 (255\\.255\\.255\\.0|/24)$" },
+          { "type": "line", "line": "no service dhcp", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "dhcp-options",
+      "description": "Les clients reçoivent R1 (192.168.50.1) comme passerelle par défaut, et les serveurs DNS 192.168.50.10 puis 192.168.50.11.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "section": "ip dhcp pool LAN-50", "line": "default-router 192.168.50.1" },
+          { "type": "line", "section": "ip dhcp pool LAN-50", "line": "dns-server 192.168.50.10 192.168.50.11" }
+        ]
+      }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 4,
+    "timeLimitMinutes": 8,
+    "mode": "troubleshoot",
+    "faults": [
+      "La plage exclue va de 192.168.50.1 à 192.168.50.254 : elle couvre tout le réseau, il ne reste aucune adresse à attribuer.",
+      "Le pool annonce le réseau 192.168.5.0/24 au lieu de 192.168.50.0/24 : il ne correspond pas au sous-réseau de G0/0/0, R1 ne l'utilise pas pour les demandes reçues sur le LAN.",
+      "default-router donne 192.168.50.254, une adresse qui n'existe pas, au lieu de 192.168.50.1 : les clients n'auraient pas de passerelle valide."
+    ]
+  },
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "no ip dhcp excluded-address 192.168.50.1 192.168.50.254",
+        "ip dhcp excluded-address 192.168.50.1 192.168.50.20",
+        "ip dhcp pool LAN-50",
+        "network 192.168.50.0 255.255.255.0",
+        "default-router 192.168.50.1",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations, réseau en longueur de préfixe, pool corrigé avant les exclusions",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "ip dhcp pool LAN-50",
+            "default-router 192.168.50.1",
+            "network 192.168.50.0 /24",
+            "exit",
+            "ip dhcp excluded-address 192.168.50.1 192.168.50.20",
+            "no ip dhcp excluded-address 192.168.50.1 192.168.50.254",
+            "\u001a"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Plage exclue retirée sans la remplacer : R1, les serveurs et les imprimantes risquent de voir leur adresse attribuée",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "no ip dhcp excluded-address 192.168.50.1 192.168.50.254", "ip dhcp pool LAN-50", "network 192.168.50.0 255.255.255.0", "default-router 192.168.50.1", "end"]
+        }
+      ],
+      "failing": ["dhcp-exclusions"]
+    },
+    {
+      "description": "Bonne plage ajoutée sans retirer l'ancienne : les exclusions se cumulent, tout reste exclu",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "ip dhcp excluded-address 192.168.50.1 192.168.50.20", "ip dhcp pool LAN-50", "network 192.168.50.0 255.255.255.0", "default-router 192.168.50.1", "end"]
+        }
+      ],
+      "failing": ["dhcp-exclusions"]
+    },
+    {
+      "description": "Nouveau pool créé à côté de LAN-50, laissé faux",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "no ip dhcp excluded-address 192.168.50.1 192.168.50.254", "ip dhcp excluded-address 192.168.50.1 192.168.50.20", "ip dhcp pool LAN50", "network 192.168.50.0 255.255.255.0", "default-router 192.168.50.1", "dns-server 192.168.50.10 192.168.50.11", "end"]
+        }
+      ],
+      "failing": ["dhcp-reseau", "dhcp-options"]
+    },
+    {
+      "description": "Service DHCP arrêté (no service dhcp) en croyant le relancer : le pool est juste, mais R1 ne répond plus à aucune demande",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "no ip dhcp excluded-address 192.168.50.1 192.168.50.254", "ip dhcp excluded-address 192.168.50.1 192.168.50.20", "no service dhcp", "ip dhcp pool LAN-50", "network 192.168.50.0 255.255.255.0", "default-router 192.168.50.1", "end"]
+        }
+      ],
+      "failing": ["dhcp-reseau"]
+    },
+    {
+      "description": "Passerelle laissée à 192.168.50.254 : les postes ont une adresse mais ne sortent pas du LAN",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "no ip dhcp excluded-address 192.168.50.1 192.168.50.254", "ip dhcp excluded-address 192.168.50.1 192.168.50.20", "ip dhcp pool LAN-50", "network 192.168.50.0 255.255.255.0", "end"]
+        }
+      ],
+      "failing": ["dhcp-options"]
+    },
+    {
+      "description": "DNS ressaisi avec un seul serveur, ce qui remplace la liste entière",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "no ip dhcp excluded-address 192.168.50.1 192.168.50.254", "ip dhcp excluded-address 192.168.50.1 192.168.50.20", "ip dhcp pool LAN-50", "network 192.168.50.0 255.255.255.0", "default-router 192.168.50.1", "dns-server 192.168.50.10", "end"]
+        }
+      ],
+      "failing": ["dhcp-options"]
+    }
+  ],
+  "explanation": "Trois erreurs dans la saisie du pool, chacune suffisante pour priver ou gêner les postes. 1) ip dhcp excluded-address 192.168.50.1 192.168.50.254 exclut toutes les adresses d'hôte du réseau : le serveur n'a plus rien à proposer. Les exclusions sont globales et se cumulent ; ajouter la plage .1 à .20 ne retire pas l'ancienne, il faut no ip dhcp excluded-address avec la plage exacte. Supprimer l'exclusion sans la remplacer exposerait les adresses de R1, des serveurs et des imprimantes à une attribution, donc à des conflits. 2) Le serveur DHCP d'IOS choisit le pool dont la commande network contient l'adresse de l'interface qui reçoit la requête (ou l'adresse giaddr d'un relais) : 192.168.5.0/24 ne contient pas 192.168.50.1, R1 ne répond donc à aucun DHCPDISCOVER du LAN. network 192.168.50.0 255.255.255.0 (ou /24) remplace l'ancienne ligne. 3) default-router 192.168.50.254 donnerait aux clients une passerelle inexistante : adresse obtenue, mais aucun accès hors du LAN. Dans le pool, une nouvelle commande default-router ou dns-server remplace toute la liste précédente : ressaisir dns-server avec un seul serveur ferait perdre le secondaire. Créer un second pool à côté laisserait le pool d'origine faux et compliquerait l'exploitation. Vérifications : show running-config | section dhcp, show ip dhcp pool LAN-50 (plage et adresses louées), show ip dhcp binding, show ip dhcp conflict, puis ipconfig /renew sur un poste.",
+  "reference": "Cisco IOS IP Addressing Services Configuration Guide — « Configuring the Cisco IOS DHCP Server » (Excluding IP Addresses, Configuring a DHCP Address Pool, network, default-router, dns-server) ; Cisco IOS IP Addressing Services Command Reference",
+  "estimatedMinutes": 4
+}

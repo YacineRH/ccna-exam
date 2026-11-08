@@ -1,0 +1,224 @@
+{
+  "slug": "ccna-challenge-2.8-gestion-cdp-lldp",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "2.0",
+  "subtopic": "2.8",
+  "difficulty": "easy",
+  "title": "Contre la montre : mettre en gestion un commutateur d'étage neuf",
+  "statement": "S2, un Catalyst 2960 de niveau 2, arrive à l'étage. L'atelier a créé les VLAN, affecté les ports et créé l'interface Vlan99, laissée désactivée et sans adresse. Le port Gi0/2 dessert l'enregistreur du prestataire de vidéosurveillance, un équipement extérieur à l'entreprise. Les bornes Wi-Fi des ports Fa0/20 à Fa0/24, d'un autre constructeur, ne parlent que LLDP.\n\nConfigurez S2 :\n1. Interface Vlan99 : adresse 10.10.99.12/24, interface active.\n2. S2 ne route pas : il joint les postes d'administration des autres sous-réseaux par la passerelle 10.10.99.1.\n3. CDP reste actif sur S2 (DSW1 et l'outil d'inventaire s'en servent), mais il n'est plus échangé avec le prestataire sur Gi0/2.\n4. Activez LLDP sur S2 pour découvrir les bornes Wi-Fi.\n5. Sur Gi0/2, LLDP n'est ni émis ni pris en compte. Les autres ports gardent LLDP et CDP.\n6. Enregistrez la configuration.\n\nLe chronomètre tourne.",
+  "topology": "                      DSW1 (distribution, Cisco)\n                        | 10.10.99.1 = passerelle du VLAN 99\n                   Gi0/1 (trunk)\n                       [S2]  Vlan99 10.10.99.12/24\n        Fa0/1 - Fa0/19 : postes (VLAN 10)\n        Fa0/20 - Fa0/24 : bornes Wi-Fi, LLDP seulement (VLAN 10)\n        Gi0/2 : enregistreur du prestataire de vidéosurveillance (VLAN 30)",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "S2",
+      "type": "switch",
+      "interfaces": ["FastEthernet0/1-24", "GigabitEthernet0/1-2"],
+      "startupConfig": "hostname S2\nno ip domain-lookup\nvlan 10\n name POSTES\nvlan 30\n name VIDEO\nvlan 99\n name GESTION\ninterface range FastEthernet0/1 - 19\n switchport mode access\n switchport access vlan 10\ninterface range FastEthernet0/20 - 24\n description Borne Wi-Fi\n switchport mode access\n switchport access vlan 10\ninterface GigabitEthernet0/1\n description Vers DSW1\n switchport mode trunk\ninterface GigabitEthernet0/2\n description Prestataire videosurveillance\n switchport mode access\n switchport access vlan 30\ninterface Vlan99\n description Gestion\n shutdown"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "svi-gestion",
+      "description": "S2 est joignable sur 10.10.99.12/24 dans le VLAN 99, par son interface Vlan99 active.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "section": "interface Vlan99", "line": "ip address 10.10.99.12 255.255.255.0" },
+          { "type": "line", "section": "interface Vlan99", "line": "shutdown", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "passerelle",
+      "description": "S2 joint les autres sous-réseaux par la passerelle 10.10.99.1.",
+      "check": { "type": "line", "line": "ip default-gateway 10.10.99.1" }
+    },
+    {
+      "id": "cdp-perimetre",
+      "description": "CDP reste actif sur S2 et sur ses ports internes, mais n'est plus échangé sur Gi0/2, qui reste en service pour l'enregistreur.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "section": "interface GigabitEthernet0/2", "line": "no cdp enable" },
+          { "type": "line", "section": "interface GigabitEthernet0/2", "line": "shutdown", "absent": true },
+          { "type": "line", "line": "no cdp run", "absent": true },
+          { "type": "line", "sectionPattern": "^interface (FastEthernet0/\\d+|GigabitEthernet0/1)$", "line": "no cdp enable", "absent": true }
+        ]
+      }
+    },
+    {
+      "id": "lldp-perimetre",
+      "description": "LLDP est actif sur S2 ; sur Gi0/2, il n'est ni émis ni pris en compte, et les autres ports le gardent.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "line": "lldp run" },
+          { "type": "line", "section": "interface GigabitEthernet0/2", "line": "no lldp transmit" },
+          { "type": "line", "section": "interface GigabitEthernet0/2", "line": "no lldp receive" },
+          {
+            "type": "regex",
+            "sectionPattern": "^interface (FastEthernet0/\\d+|GigabitEthernet0/1)$",
+            "pattern": "^no lldp (transmit|receive)$",
+            "absent": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "sauvegarde",
+      "description": "La configuration est enregistrée après la dernière modification.",
+      "check": { "type": "command", "command": ["copy running-config startup-config", "write memory", "write"], "afterLastChange": true }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 5,
+    "timeLimitMinutes": 10,
+    "mode": "build",
+    "faults": []
+  },
+  "solution": [
+    {
+      "device": "S2",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "interface Vlan99",
+        "ip address 10.10.99.12 255.255.255.0",
+        "no shutdown",
+        "exit",
+        "ip default-gateway 10.10.99.1",
+        "lldp run",
+        "interface GigabitEthernet0/2",
+        "no cdp enable",
+        "no lldp transmit",
+        "no lldp receive",
+        "end",
+        "copy running-config startup-config"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations, Gi0/2 réglé d'abord, sauvegarde par write memory",
+      "solution": [
+        {
+          "device": "S2",
+          "commands": [
+            "en",
+            "conf t",
+            "int g0/2",
+            "no lldp receive",
+            "no lldp transmit",
+            "no cdp enable",
+            "exit",
+            "lldp run",
+            "int vlan 99",
+            "no shut",
+            "ip add 10.10.99.12 255.255.255.0",
+            "exit",
+            "ip default-gateway 10.10.99.1",
+            "\u001a",
+            "write memory"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "no cdp run : CDP disparaît de tout le commutateur, DSW1 et l'outil d'inventaire perdent S2",
+      "solution": [
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "interface vlan 99", "ip address 10.10.99.12 255.255.255.0", "no shutdown", "exit", "ip default-gateway 10.10.99.1", "no cdp run", "lldp run", "interface g0/2", "no lldp transmit", "no lldp receive", "end", "write"]
+        }
+      ],
+      "failing": ["cdp-perimetre"]
+    },
+    {
+      "description": "LLDP réglé sur Gi0/2 sans lldp run : LLDP reste éteint sur tout le commutateur",
+      "solution": [
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "interface vlan 99", "ip address 10.10.99.12 255.255.255.0", "no shutdown", "exit", "ip default-gateway 10.10.99.1", "interface g0/2", "no cdp enable", "no lldp transmit", "no lldp receive", "end", "write"]
+        }
+      ],
+      "failing": ["lldp-perimetre"]
+    },
+    {
+      "description": "Seule l'émission LLDP coupée sur Gi0/2 : S2 accepte encore les annonces du prestataire",
+      "solution": [
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "interface vlan 99", "ip address 10.10.99.12 255.255.255.0", "no shutdown", "exit", "ip default-gateway 10.10.99.1", "lldp run", "interface g0/2", "no cdp enable", "no lldp transmit", "end", "write"]
+        }
+      ],
+      "failing": ["lldp-perimetre"]
+    },
+    {
+      "description": "CDP et LLDP coupés sur tous les ports d'accès, bornes Wi-Fi comprises",
+      "solution": [
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "interface vlan 99", "ip address 10.10.99.12 255.255.255.0", "no shutdown", "exit", "ip default-gateway 10.10.99.1", "lldp run", "interface range fa0/1 - 24 , g0/2", "no cdp enable", "no lldp transmit", "no lldp receive", "end", "write"]
+        }
+      ],
+      "failing": ["cdp-perimetre", "lldp-perimetre"]
+    },
+    {
+      "description": "Gi0/2 désactivé (shutdown) pour couper CDP et LLDP vers le prestataire : l'enregistreur perd son raccordement",
+      "solution": [
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "interface vlan 99", "ip address 10.10.99.12 255.255.255.0", "no shutdown", "exit", "ip default-gateway 10.10.99.1", "lldp run", "interface g0/2", "shutdown", "no cdp enable", "no lldp transmit", "no lldp receive", "end", "write"]
+        }
+      ],
+      "failing": ["cdp-perimetre"]
+    },
+    {
+      "description": "Adresse posée sur l'interface Vlan99 restée désactivée",
+      "solution": [
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "interface vlan 99", "ip address 10.10.99.12 255.255.255.0", "exit", "ip default-gateway 10.10.99.1", "lldp run", "interface g0/2", "no cdp enable", "no lldp transmit", "no lldp receive", "end", "write"]
+        }
+      ],
+      "failing": ["svi-gestion"]
+    },
+    {
+      "description": "Adresse de gestion posée sur l'interface Vlan1 au lieu de Vlan99",
+      "solution": [
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "interface vlan 1", "ip address 10.10.99.12 255.255.255.0", "no shutdown", "exit", "ip default-gateway 10.10.99.1", "lldp run", "interface g0/2", "no cdp enable", "no lldp transmit", "no lldp receive", "end", "write"]
+        }
+      ],
+      "failing": ["svi-gestion"]
+    },
+    {
+      "description": "Passerelle oubliée : S2 ne répond qu'aux postes de son propre sous-réseau",
+      "solution": [
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "interface vlan 99", "ip address 10.10.99.12 255.255.255.0", "no shutdown", "exit", "lldp run", "interface g0/2", "no cdp enable", "no lldp transmit", "no lldp receive", "end", "write"]
+        }
+      ],
+      "failing": ["passerelle"]
+    },
+    {
+      "description": "Sauvegarde faite avant les derniers réglages de Gi0/2",
+      "solution": [
+        {
+          "device": "S2",
+          "commands": ["enable", "configure terminal", "interface vlan 99", "ip address 10.10.99.12 255.255.255.0", "no shutdown", "exit", "ip default-gateway 10.10.99.1", "lldp run", "do write", "interface g0/2", "no cdp enable", "no lldp transmit", "no lldp receive", "end"]
+        }
+      ],
+      "failing": ["sauvegarde"]
+    }
+  ],
+  "explanation": "Un commutateur de niveau 2 n'a d'adresse IP que sur une interface VLAN (SVI). Ici Vlan99, dans le VLAN de gestion transporté par le trunk Gi0/1 : ip address 10.10.99.12 255.255.255.0 puis no shutdown, car l'atelier l'avait laissée désactivée. Poser l'adresse sur Vlan1 mettrait la gestion dans le mauvais VLAN. Comme S2 ne route pas (pas d'ip routing), il ne consulte pas de table de routage pour son propre trafic : ip default-gateway 10.10.99.1 lui indique où envoyer les réponses destinées aux autres sous-réseaux. Sans elle, S2 n'est administrable que depuis le VLAN 99. CDP, propriétaire Cisco et actif par défaut, annonce le nom, le modèle, la version d'IOS et les adresses de S2 : on le coupe vers un tiers par interface avec no cdp enable ; no cdp run l'arrêterait sur tout le commutateur, et DSW1 perdrait son voisin. LLDP (IEEE 802.1AB), le protocole normalisé que parlent les bornes d'un autre constructeur, est désactivé par défaut sur les Catalyst : lldp run l'active globalement, et les réglages d'interface n'ont aucun effet sans lui. Par interface, l'émission et la réception se règlent séparément : no lldp transmit empêche S2 de s'annoncer, no lldp receive l'empêche de traiter les annonces reçues ; la consigne demande les deux sur Gi0/2. Enfin la configuration courante n'est conservée au redémarrage qu'une fois copiée en NVRAM (copy running-config startup-config, ou write memory), après la dernière modification. Vérifications : show ip interface brief (Vlan99 up/up), show cdp interface, show cdp neighbors, show lldp neighbors, show lldp interface (Tx et Rx par port), show startup-config.",
+  "reference": "Catalyst 2960 Switch Software Configuration Guide, Cisco IOS Release 15.0(2)SE — « Assigning the Switch IP Address and Default Gateway », « Configuring CDP » et « Configuring LLDP, LLDP-MED, and Wired Location Service » (lldp run, lldp transmit, lldp receive)",
+  "estimatedMinutes": 5
+}

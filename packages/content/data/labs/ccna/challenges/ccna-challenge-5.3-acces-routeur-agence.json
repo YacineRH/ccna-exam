@@ -1,0 +1,196 @@
+{
+  "slug": "ccna-challenge-5.3-acces-routeur-agence",
+  "kind": "challenge",
+  "certification": "ccna",
+  "domain": "5.0",
+  "subtopic": "5.3",
+  "difficulty": "easy",
+  "title": "Dépannage : personne ne peut administrer le routeur de l'agence",
+  "statement": "Le routeur d'agence R1 a été préparé par un collègue, qui assure que « SSH est prêt et le compte netadmin créé ». Les clés RSA (2048 bits) existent, SSH version 2 est actif et le domaine est défini. Pourtant :\n- depuis le poste d'administration 10.1.99.20, ssh -l netadmin 10.1.1.1 échoue aussitôt : « Connection refused by remote host » ;\n- il n'existe aucun autre moyen d'entrer à distance sur R1 ;\n- l'audit relève en plus que la console de R1 donne l'invite R1> sans rien demander.\n\nLa politique d'accès :\n1. Le compte local netadmin, de niveau de privilège 15, a pour mot de passe N3t-Adm1n!, stocké sous forme de secret haché.\n2. Sur toutes les lignes VTY (0 à 15) : SSH seulement, sessions authentifiées par les comptes locaux.\n3. La console demande le mot de passe de ligne C0ns-R1! (accès de secours, indépendant des comptes locaux).\n\nVous êtes à la console de R1. Corrigez-le.",
+  "topology": "  Poste d'administration 10.1.99.20\n              |\n        (réseau d'administration 10.1.99.0/24, routé jusqu'à R1)\n              |\n   G0/0/0 10.1.1.1/24 [R1] G0/0/1 vers le siège\n                        |\n                     Console (câble RJ-45, vous êtes ici)\n\n  R1 : domaine agence.lan, clés RSA 2048 bits, ip ssh version 2",
+  "profile": "cisco-ios",
+  "devices": [
+    {
+      "id": "R1",
+      "type": "router",
+      "interfaces": ["GigabitEthernet0/0/0-1"],
+      "startupConfig": "hostname R1\nno ip domain-lookup\nip domain-name agence.lan\ncrypto key generate rsa modulus 2048\nip ssh version 2\ninterface GigabitEthernet0/0/0\n description LAN agence\n ip address 10.1.1.1 255.255.255.0\n no shutdown\ninterface GigabitEthernet0/0/1\n description Vers le siege\n ip address 10.0.0.2 255.255.255.252\n no shutdown\nip route 0.0.0.0 0.0.0.0 10.0.0.1\nline con 0\nline vty 0 15\n login local\n transport input none"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "compte-netadmin",
+      "description": "Le compte local netadmin existe, au niveau de privilège 15, avec un mot de passe stocké sous forme de secret haché.",
+      "check": { "type": "regex", "pattern": "^username netadmin privilege 15 secret (0 )?N3t-Adm1n!$", "caseSensitive": true }
+    },
+    {
+      "id": "vty-ssh-comptes",
+      "description": "Sur toutes les lignes VTY (0 à 15), R1 accepte les sessions SSH, et seulement elles, authentifiées par les comptes locaux.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "line", "sectionPattern": "^line vty \\d+ \\d+$", "sections": "all", "line": "transport input ssh" },
+          { "type": "line", "sectionPattern": "^line vty \\d+ \\d+$", "sections": "all", "line": "login local" }
+        ]
+      }
+    },
+    {
+      "id": "console-protegee",
+      "description": "La console demande le mot de passe de ligne C0ns-R1! à la connexion.",
+      "check": {
+        "type": "all",
+        "checks": [
+          { "type": "regex", "sectionPattern": "^line con(sole)? 0$", "pattern": "^password (0 )?C0ns-R1!$", "caseSensitive": true },
+          { "type": "line", "sectionPattern": "^line con(sole)? 0$", "line": "login" },
+          { "type": "line", "line": "aaa new-model", "absent": true }
+        ]
+      }
+    }
+  ],
+  "hints": [],
+  "challenge": {
+    "targetMinutes": 4,
+    "timeLimitMinutes": 8,
+    "mode": "troubleshoot",
+    "faults": [
+      "Aucun compte local n'existe : login local sur les VTY ne peut authentifier personne, le compte netadmin n'a jamais été créé.",
+      "Les lignes VTY ont transport input none : aucune session distante n'est acceptée, SSH compris (« Connection refused »).",
+      "La console n'a ni mot de passe de ligne ni login : n'importe qui obtient l'invite avec un câble console."
+    ]
+  },
+  "solution": [
+    {
+      "device": "R1",
+      "commands": [
+        "enable",
+        "configure terminal",
+        "username netadmin privilege 15 secret N3t-Adm1n!",
+        "line vty 0 15",
+        "transport input ssh",
+        "line console 0",
+        "password C0ns-R1!",
+        "login",
+        "end"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "description": "Abréviations, lignes VTY corrigées en deux blocs, console d'abord",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": [
+            "en",
+            "conf t",
+            "line con 0",
+            "login",
+            "password C0ns-R1!",
+            "line vty 0 4",
+            "transport input ssh",
+            "line vty 5 15",
+            "transport input ssh",
+            "exit",
+            "username netadmin privilege 15 secret N3t-Adm1n!",
+            "\u001a"
+          ]
+        }
+      ]
+    }
+  ],
+  "pitfalls": [
+    {
+      "description": "Compte créé avec password au lieu de secret : le mot de passe reste réversible dans la configuration",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "username netadmin privilege 15 password N3t-Adm1n!", "line vty 0 15", "transport input ssh", "line console 0", "password C0ns-R1!", "login", "end"]
+        }
+      ],
+      "failing": ["compte-netadmin"]
+    },
+    {
+      "description": "Compte créé sans privilege 15 : la session s'ouvre en mode utilisateur, et sans enable secret, enable répond « % No password set »",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "username netadmin secret N3t-Adm1n!", "line vty 0 15", "transport input ssh", "line console 0", "password C0ns-R1!", "login", "end"]
+        }
+      ],
+      "failing": ["compte-netadmin"]
+    },
+    {
+      "description": "transport input all : Telnet, en clair, est accepté avec SSH",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "username netadmin privilege 15 secret N3t-Adm1n!", "line vty 0 15", "transport input all", "line console 0", "password C0ns-R1!", "login", "end"]
+        }
+      ],
+      "failing": ["vty-ssh-comptes"]
+    },
+    {
+      "description": "Seules les lignes VTY 0 à 4 ouvertes à SSH : les lignes 5 à 15 refusent toujours toute session",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "username netadmin privilege 15 secret N3t-Adm1n!", "line vty 0 4", "transport input ssh", "line console 0", "password C0ns-R1!", "login", "end"]
+        }
+      ],
+      "failing": ["vty-ssh-comptes"]
+    },
+    {
+      "description": "VTY repassées en login avec un mot de passe de ligne partagé, au lieu des comptes locaux",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "line vty 0 15", "password N3t-Adm1n!", "login", "transport input ssh", "line console 0", "password C0ns-R1!", "login", "end"]
+        }
+      ],
+      "failing": ["compte-netadmin", "vty-ssh-comptes"]
+    },
+    {
+      "description": "Mot de passe de console saisi sans login : il n'est jamais demandé",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "username netadmin privilege 15 secret N3t-Adm1n!", "line vty 0 15", "transport input ssh", "line console 0", "password C0ns-R1!", "end"]
+        }
+      ],
+      "failing": ["console-protegee"]
+    },
+    {
+      "description": "Mot de passe du compte mal saisi (casse ou caractère oublié)",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "username netadmin privilege 15 secret N3t-adm1n", "line vty 0 15", "transport input ssh", "line console 0", "password C0ns-R1!", "login", "end"]
+        }
+      ],
+      "failing": ["compte-netadmin"]
+    },
+    {
+      "description": "aaa new-model ajouté « pour SSH » : le mot de passe de ligne de la console n'est plus utilisé, et sans liste AAA par défaut la console s'ouvre sans authentification",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "aaa new-model", "username netadmin privilege 15 secret N3t-Adm1n!", "line vty 0 15", "transport input ssh", "line console 0", "password C0ns-R1!", "login", "end"]
+        }
+      ],
+      "failing": ["console-protegee"]
+    },
+    {
+      "description": "Console en login local au lieu du mot de passe de ligne demandé",
+      "solution": [
+        {
+          "device": "R1",
+          "commands": ["enable", "configure terminal", "username netadmin privilege 15 secret N3t-Adm1n!", "line vty 0 15", "transport input ssh", "line console 0", "login local", "end"]
+        }
+      ],
+      "failing": ["console-protegee"]
+    }
+  ],
+  "explanation": "Trois pannes, deux qui bloquent l'accès distant et une faille sur la console. 1) transport input none interdit tout protocole entrant sur les lignes VTY : la connexion TCP vers le port 22 est refusée avant même l'authentification. transport input ssh n'accepte que SSH ; all ou ssh telnet laisseraient passer Telnet, qui transmet tout en clair. La correction doit couvrir les 16 lignes : line vty 0 15 (IOS les affiche en deux blocs, 0 4 et 5 15). 2) login local demande un nom et un mot de passe de la base locale, mais aucun username n'existe : même avec SSH ouvert, aucune authentification ne pourrait réussir. username netadmin privilege 15 secret … stocke un hachage (type 5 ou 9 selon la version d'IOS) ; password le garderait en clair, ou en type 7 réversible avec service password-encryption. Le niveau 15 ouvre la session directement en mode privilégié ; sans lui, la session s'ouvre au niveau 1 et, sans enable secret, la commande enable renvoie « % No password set » depuis une ligne VTY. Repasser les VTY en login avec un mot de passe de ligne partagé contournerait la politique des comptes nominatifs. 3) La console sans login ne demande rien : il faut password C0ns-R1! et login, les deux. Un mot de passe sans login n'est jamais demandé ; login local utiliserait les comptes locaux, ce qui n'est pas le secours indépendant voulu. aaa new-model n'est pas nécessaire à SSH : il ferait passer toutes les lignes par les listes de méthodes AAA, et le mot de passe de ligne de la console ne serait plus demandé. Vérifications : show running-config | section line, show ip ssh, show users pendant une session, puis ssh -l netadmin 10.1.1.1 depuis le poste d'administration.",
+  "reference": "Cisco IOS Security Configuration Guide: Securing User Services — « Configuring Security with Passwords, Privileges, and Logins » ; « Configuring Secure Shell » ; Cisco IOS Terminal Services Command Reference (transport input, login, login local, password)",
+  "estimatedMinutes": 4
+}
