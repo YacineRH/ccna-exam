@@ -1,0 +1,1705 @@
+[
+  {
+    "slug": "security-plus-4.5-screened-subnet-benefit-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME héberge son site web public sur un serveur du réseau interne. Le RSSI propose de le déplacer dans un sous-réseau filtré (screened subnet) situé entre un pare-feu externe et un pare-feu interne. Quel bénéfice principal attend-il de ce changement ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le serveur n'aura plus besoin de correctifs, car le pare-feu externe arrêtera toutes les exploitations"
+        },
+        {
+          "id": "b",
+          "text": "Un serveur compromis ne donnera pas d'accès direct au réseau interne, protégé par un second filtrage"
+        },
+        {
+          "id": "c",
+          "text": "Le trafic HTTPS vers le site sera déchiffré et inspecté d'office par le pare-feu interne"
+        },
+        {
+          "id": "d",
+          "text": "Les postes internes pourront joindre le site sans qu'aucun pare-feu ne contrôle leurs flux"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le sous-réseau filtré (screened subnet, anciennement DMZ) accueille les services exposés à Internet. Le pare-feu externe n'y laisse entrer que les flux publiés (HTTPS vers le site), et le pare-feu interne n'autorise depuis cette zone que les flux strictement nécessaires vers le réseau interne. Un serveur public est la cible la plus probable d'une compromission : placé dans la zone filtrée, il ne sert plus de tremplin direct vers les postes et les serveurs internes. C'est une application de la défense en profondeur et de la segmentation.",
+    "distractorNotes": {
+      "a": "Aucun pare-feu ne remplace la gestion des correctifs : une vulnérabilité de l'application web reste exploitable par le flux HTTPS autorisé.",
+      "c": "Le déchiffrement TLS est une fonction distincte (inspection TLS) qu'il faut configurer explicitement ; la zone filtrée ne l'apporte pas.",
+      "d": "C'est l'inverse : les flux entre le réseau interne et la zone filtrée passent par le pare-feu interne, qui les filtre."
+    },
+    "reference": "NIST SP 800-41 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.5-rule-shadowing-dns-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Deux problèmes sont signalés : les résolveurs externes n'obtiennent aucune réponse du serveur DNS public 203.0.113.53, et la plage 198.51.100.0/24, que l'on voulait bloquer après une attaque, atteint toujours le site web 203.0.113.10. Quelle modification corrige les deux problèmes sans ouvrir d'autre flux ?",
+      "exhibit": "Pare-feu FW-EXT, trafic entrant depuis Internet\nTraitement de haut en bas, première correspondance, refus implicite final\n\n#  Action  Source           Destination      Protocole  Port\n1  ALLOW   any              203.0.113.10     TCP        443\n2  DENY    198.51.100.0/24  any              any        any\n3  ALLOW   any              203.0.113.25     TCP        25\n4  DENY    any              203.0.113.0/24   any        any\n5  ALLOW   any              203.0.113.53     UDP        53",
+      "options": [
+        {
+          "id": "a",
+          "text": "Supprimer la règle 4 et ajouter en fin de liste un refus de 198.51.100.0/24 vers any"
+        },
+        {
+          "id": "b",
+          "text": "Déplacer la règle 5 en tête de liste sans modifier l'ordre des autres règles"
+        },
+        {
+          "id": "c",
+          "text": "Placer la règle 2 en tête de liste et supprimer la règle 5, couverte par le refus final"
+        },
+        {
+          "id": "d",
+          "text": "Placer la règle 2 en tête de liste et la règle 5 juste avant la règle 4"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le pare-feu applique la première règle qui correspond. Une requête de 198.51.100.7 vers 203.0.113.10:443 correspond à la règle 1 (source any) avant d'atteindre la règle 2 : le refus est masqué (shadowed) et doit donc remonter en tête. De même, une requête UDP 53 vers 203.0.113.53 correspond à la règle 4 (refus vers tout 203.0.113.0/24) avant la règle 5, qui n'est jamais atteinte : elle doit passer avant la règle 4. L'ordre 2, 1, 3, 5, 4 bloque la plage hostile vers tous les serveurs, publie le DNS et garde le refus général vers le reste du bloc.",
+    "distractorNotes": {
+      "a": "Le trafic DNS serait accepté par la règle 5, mais la plage hostile correspondrait toujours à la règle 1 avant le nouveau refus placé en fin de liste.",
+      "b": "Le DNS fonctionnerait, mais la règle 2 resterait masquée par la règle 1 : la plage 198.51.100.0/24 atteindrait toujours le site web.",
+      "c": "La plage hostile serait bloquée, mais sans la règle 5 aucune règle n'autorise plus UDP 53 vers le serveur DNS, qui resterait injoignable."
+    },
+    "reference": "NIST SP 800-41 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.5-rule-add-ssh-admin-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les administrateurs du réseau 10.10.5.0/24 doivent pouvoir administrer en ligne de commande, avec un canal chiffré, les serveurs Linux de la zone filtrée 172.16.20.0/24. Leurs connexions échouent aujourd'hui. Quelle règle insérer avant la règle 4 en respectant le moindre privilège ?",
+      "exhibit": "Pare-feu FW-INT, flux du LAN admin vers la zone filtrée\nTraitement de haut en bas, première correspondance\n\n#  Action  Source         Destination      Protocole  Port\n1  ALLOW   10.10.5.0/24   172.16.20.0/24   TCP        443\n2  ALLOW   10.10.5.0/24   172.16.20.53     UDP        53\n3  ALLOW   10.10.5.0/24   172.16.20.0/24   TCP        3389\n4  DENY    any            any              any        any",
+      "options": [
+        {
+          "id": "a",
+          "text": "ALLOW 10.10.5.0/24 vers 172.16.20.0/24, TCP 23"
+        },
+        {
+          "id": "b",
+          "text": "ALLOW any vers 172.16.20.0/24, TCP 22"
+        },
+        {
+          "id": "c",
+          "text": "ALLOW 10.10.5.0/24 vers 172.16.20.0/24, TCP 22"
+        },
+        {
+          "id": "d",
+          "text": "ALLOW 10.10.5.0/24 vers 172.16.20.0/24, UDP 22"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'administration chiffrée en ligne de commande des serveurs Linux se fait en SSH, qui utilise le port TCP 22. Aucune des règles 1 à 3 n'autorise ce port : les connexions tombent sur la règle 4, qui refuse tout. La règle à insérer doit limiter la source au réseau des administrateurs, la destination à la zone filtrée et le service à TCP 22 : elle ouvre exactement le flux requis, ce qu'exige le moindre privilège. Placée avant la règle 4, elle sera évaluée avant le refus général.",
+    "distractorNotes": {
+      "a": "Le port TCP 23 est celui de Telnet, qui transmet identifiants et commandes en clair : il ne répond pas à l'exigence de chiffrement.",
+      "b": "La source any ouvrirait SSH vers la zone filtrée à tous les réseaux, et pas seulement aux administrateurs : c'est contraire au moindre privilège.",
+      "d": "SSH fonctionne sur TCP ; une règle UDP 22 ne laisserait passer aucune session SSH."
+    },
+    "reference": "NIST SP 800-41 Rev. 1 ; RFC 4253"
+  },
+  {
+    "slug": "security-plus-4.5-implicit-deny-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un technicien configure un nouveau pare-feu réseau avec trois règles ALLOW pour les services web, DNS et messagerie. Un paquet entrant ne correspond à aucune de ces règles. Selon le comportement par défaut d'un pare-feu correctement configuré, que devient ce paquet ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il est refusé en vertu du refus implicite (implicit deny)"
+        },
+        {
+          "id": "b",
+          "text": "Il est accepté, puisqu'aucune règle ne l'interdit"
+        },
+        {
+          "id": "c",
+          "text": "Il est transmis à l'IDS, qui décide de son sort"
+        },
+        {
+          "id": "d",
+          "text": "Il est conservé en file jusqu'à l'ajout d'une règle"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Une liste de règles de pare-feu se termine par un refus implicite (implicit deny) : tout ce qui n'est pas explicitement autorisé est refusé. Ce comportement, recommandé par le NIST, traduit le principe du refus par défaut : on n'ouvre que les flux nécessaires, et un oubli se traduit par un service injoignable plutôt que par une exposition. Beaucoup d'administrateurs ajoutent tout de même une règle de refus explicite en fin de liste pour journaliser les paquets rejetés.",
+    "distractorNotes": {
+      "b": "C'est le modèle « autorisation par défaut », contraire aux bonnes pratiques : un pare-feu bien configuré refuse ce qui n'est pas explicitement permis.",
+      "c": "Un IDS observe et alerte, il ne prend pas les décisions de filtrage à la place du pare-feu.",
+      "d": "Un pare-feu ne met pas de paquets en attente d'une future règle : il applique sa politique immédiatement."
+    },
+    "reference": "NIST SP 800-41 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.5-ids-signature-match-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un IDS réseau lève une alerte : le contenu d'un paquet correspond exactement au motif d'une exploitation connue, publié par l'éditeur dans sa dernière mise à jour. Quelle méthode de détection l'IDS a-t-il employée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La détection par anomalie, fondée sur un écart à une référence"
+        },
+        {
+          "id": "b",
+          "text": "L'analyse du comportement des utilisateurs (UBA)"
+        },
+        {
+          "id": "c",
+          "text": "La détection par signature, fondée sur une base d'attaques décrites"
+        },
+        {
+          "id": "d",
+          "text": "La surveillance de l'intégrité des fichiers (FIM)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La détection par signature compare le trafic à une base de motifs caractéristiques d'attaques connues (séquences d'octets, chaînes dans une requête, combinaisons de champs). Elle est précise et produit peu de faux positifs, mais elle ne reconnaît que ce qui a déjà été décrit : sa base doit être mise à jour régulièrement. Ici, l'alerte vient d'une correspondance exacte avec un motif publié par l'éditeur : c'est la signature.",
+    "distractorNotes": {
+      "a": "La détection par anomalie signale un écart au comportement habituel du réseau ; elle ne s'appuie pas sur un motif d'exploitation publié.",
+      "b": "L'UBA analyse l'activité des comptes et des utilisateurs dans le temps, pas le contenu des paquets réseau.",
+      "d": "La FIM vérifie l'empreinte de fichiers sur un hôte ; elle n'inspecte pas le trafic réseau."
+    },
+    "reference": "NIST SP 800-94"
+  },
+  {
+    "slug": "security-plus-4.5-ips-inline-block-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le SOC d'un hébergeur reçoit les alertes d'un IDS raccordé à un port miroir (SPAN), mais les tentatives d'exploitation atteignent les serveurs avant toute intervention humaine. Le RSSI veut que le trafic malveillant reconnu soit bloqué automatiquement. Quelle solution répond LE MIEUX à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mettre à jour plusieurs fois par jour les signatures de l'IDS"
+        },
+        {
+          "id": "b",
+          "text": "Remplacer l'IDS par un IPS placé en ligne sur le chemin du trafic"
+        },
+        {
+          "id": "c",
+          "text": "Envoyer les alertes de l'IDS au SIEM pour les corréler"
+        },
+        {
+          "id": "d",
+          "text": "Basculer l'IDS en détection par anomalie sur le même port"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un IDS raccordé à un port miroir reçoit une copie du trafic : il détecte et alerte, mais le trafic d'origine continue vers sa destination. Pour bloquer automatiquement, le dispositif doit être placé en coupure (inline), de sorte que chaque paquet le traverse : c'est le rôle de l'IPS, qui peut supprimer un paquet, couper une session ou bloquer une source dès qu'une règle correspond. La contrepartie est qu'un faux positif bloque du trafic légitime et qu'une panne de l'IPS peut interrompre le service, d'où le choix du mode de défaillance (fail-open ou fail-closed).",
+    "distractorNotes": {
+      "a": "Des signatures plus fraîches améliorent la détection, mais l'IDS passif ne fait toujours qu'alerter : le trafic atteint les serveurs.",
+      "c": "La corrélation dans le SIEM aide l'analyse, mais ne bloque rien en temps réel.",
+      "d": "Changer de méthode de détection ne change pas la position du capteur : sur un port miroir, il reste passif."
+    },
+    "reference": "NIST SP 800-94"
+  },
+  {
+    "slug": "security-plus-4.5-ids-anomaly-zero-day-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après un incident dû à une vulnérabilité de type jour zéro, pour laquelle aucune signature n'existait, le RSSI d'une collectivité choisit un nouvel IDS. Il veut que l'outil puisse signaler du trafic inhabituel même en l'absence de signature. Quelle méthode de détection doit-il privilégier ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La détection par signature, avec des mises à jour quotidiennes de la base"
+        },
+        {
+          "id": "b",
+          "text": "Le filtrage par liste de blocage d'adresses IP connues pour être hostiles"
+        },
+        {
+          "id": "c",
+          "text": "Le filtrage de contenu web fondé sur des catégories d'URL"
+        },
+        {
+          "id": "d",
+          "text": "La détection par anomalie, qui compare l'activité à une référence du normal"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La détection par anomalie (ou par comportement) établit d'abord une référence du trafic normal : volumes, protocoles, horaires, couples source-destination. Elle signale ensuite les écarts significatifs, ce qui lui permet de repérer une attaque inédite qu'aucune signature ne décrit encore. En contrepartie, elle demande une période d'apprentissage et produit davantage de faux positifs qu'une détection par signature : on combine généralement les deux méthodes.",
+    "distractorNotes": {
+      "a": "Une signature ne peut être écrite qu'une fois l'attaque connue : même mise à jour chaque jour, la base ne couvre pas un jour zéro.",
+      "b": "Une liste de blocage ne contient que des sources déjà identifiées ; un attaquant inconnu ou une nouvelle infrastructure y échappe.",
+      "c": "Le filtrage web par catégories contrôle les sites consultés par les utilisateurs ; ce n'est pas une méthode de détection d'intrusion."
+    },
+    "reference": "NIST SP 800-94"
+  },
+  {
+    "slug": "security-plus-4.5-web-filter-agent-roaming-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise filtre la navigation web avec un proxy centralisé installé au siège. Depuis la généralisation du télétravail, les portables des commerciaux accèdent directement à Internet depuis leur domicile, sans VPN, et échappent à tout filtrage. Quelle solution répond LE MIEUX à ce problème ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Déployer sur les portables un agent de filtrage web qui applique la politique où que soit le poste"
+        },
+        {
+          "id": "b",
+          "text": "Passer le proxy du siège en mode transparent pour qu'aucun réglage ne soit nécessaire sur les postes"
+        },
+        {
+          "id": "c",
+          "text": "Ajouter au proxy du siège les sites interdits manquants dans sa liste de blocage"
+        },
+        {
+          "id": "d",
+          "text": "Placer un IPS en ligne entre le proxy du siège et le routeur d'accès à Internet"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un proxy centralisé ne filtre que le trafic qui passe par lui : un portable qui sort directement sur Internet depuis le domicile n'y est jamais soumis. Le filtrage par agent installe sur chaque poste un composant qui applique la politique (catégories, réputation, liste de blocage) localement, quel que soit le réseau utilisé, et remonte les journaux vers la console centrale. C'est la réponse adaptée aux postes nomades ; une autre option serait d'imposer un VPN permanent, qui n'est pas proposée ici.",
+    "distractorNotes": {
+      "b": "Le mode transparent évite de configurer le proxy sur les postes, mais ne concerne toujours que le trafic qui traverse le réseau du siège.",
+      "c": "Enrichir la liste du proxy ne sert à rien si le trafic des portables ne passe plus par ce proxy.",
+      "d": "Un IPS au siège n'inspecte, lui aussi, que le trafic qui transite par le siège."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5"
+  },
+  {
+    "slug": "security-plus-4.5-web-filter-url-category-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La direction d'une PME veut empêcher les salariés de consulter les sites de jeux d'argent, quelle que soit l'adresse de ces sites, sans que l'administrateur ait à tenir lui-même une liste de domaines. Quel mécanisme du filtre web répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une liste de blocage tenue à la main par l'administrateur"
+        },
+        {
+          "id": "b",
+          "text": "Une règle de pare-feu qui refuse le port TCP 443 sortant"
+        },
+        {
+          "id": "c",
+          "text": "Le filtrage par catégorie d'URL fourni par l'éditeur"
+        },
+        {
+          "id": "d",
+          "text": "La surveillance de l'intégrité des fichiers des postes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le filtrage par catégorie s'appuie sur une base, maintenue par l'éditeur du filtre, qui classe les sites en thèmes (jeux d'argent, réseaux sociaux, contenus pour adultes, logiciels malveillants…). L'administrateur choisit simplement les catégories à autoriser ou à bloquer, et la base est mise à jour en continu sans intervention de sa part. C'est la méthode adaptée pour bloquer toute une famille de sites sans connaître leurs adresses à l'avance.",
+    "distractorNotes": {
+      "a": "Une liste de blocage manuelle exige justement que l'administrateur recense et tienne à jour les domaines, ce que la direction veut éviter.",
+      "b": "Refuser TCP 443 sortant bloquerait l'ensemble des sites en HTTPS, pas seulement les jeux d'argent.",
+      "d": "La FIM détecte la modification de fichiers sur un hôte ; elle ne contrôle pas les sites consultés."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5"
+  },
+  {
+    "slug": "security-plus-4.5-selinux-permissive-mode-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit (ligne de journal coupée pour la lisibilité). Après la compromission d'une application web, l'enquête montre que le processus httpd a pu écrire des fichiers dans le répertoire cgi-bin du serveur web01, alors que SELinux y est installé avec la politique ciblée par défaut. Quelle conclusion et quelle action sont les bonnes ?",
+      "exhibit": "[root@web01 ~]# getenforce\nPermissive\n[root@web01 ~]# grep httpd /var/log/audit/audit.log | tail -1\ntype=AVC msg=audit(1731052800.412:2281): avc:  denied  { write } for\n  pid=4127 comm=\"httpd\" name=\"cgi-bin\" dev=\"sda2\" ino=393219\n  scontext=system_u:system_r:httpd_t:s0\n  tcontext=system_u:object_r:httpd_sys_script_exec_t:s0 tclass=dir\n  permissive=1",
+      "options": [
+        {
+          "id": "a",
+          "text": "La politique ciblée ne confine pas httpd ; il faut adopter la politique MLS pour le confiner"
+        },
+        {
+          "id": "b",
+          "text": "SELinux journalise les refus sans les appliquer ; il faut le passer durablement en mode enforcing"
+        },
+        {
+          "id": "c",
+          "text": "Le contexte httpd_t est trop restrictif ; il faut exécuter le service dans le domaine unconfined_t"
+        },
+        {
+          "id": "d",
+          "text": "SELinux est désactivé ; il faut retirer l'option selinux=0 de la ligne de démarrage du noyau"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "getenforce renvoie Permissive : SELinux évalue chaque accès selon la politique, consigne ceux qu'elle refuserait (messages AVC denied), mais ne bloque rien. Le champ permissive=1 de l'entrée d'audit le confirme : l'écriture de httpd_t dans un répertoire de type httpd_sys_script_exec_t a été jugée non autorisée et a pourtant réussi. La politique ciblée confine bien httpd ; il suffit de passer en mode enforcing (setenforce 1 immédiatement, SELINUX=enforcing dans /etc/selinux/config pour que le réglage survive au redémarrage) afin que ces accès soient refusés.",
+    "distractorNotes": {
+      "a": "La politique ciblée confine justement httpd dans le domaine httpd_t, comme le montre le champ scontext ; la politique MLS n'est pas nécessaire.",
+      "c": "Exécuter httpd sans confinement supprimerait la protection au lieu de la rétablir.",
+      "d": "Un SELinux désactivé ferait renvoyer Disabled à getenforce et ne produirait aucune entrée AVC ; ici il est actif, en mode permissif."
+    },
+    "reference": "Red Hat Enterprise Linux 9, Using SELinux"
+  },
+  {
+    "slug": "security-plus-4.5-gpo-workstation-baseline-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'administrateur d'un domaine Active Directory de 600 postes Windows doit imposer sur tous les postes le verrouillage de session après 10 minutes d'inactivité et la désactivation de l'exécution automatique des supports amovibles. Quel moyen répond LE MIEUX à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une politique SELinux en mode enforcing déployée sur les postes"
+        },
+        {
+          "id": "b",
+          "text": "Un agent NAC qui évalue la posture de chaque poste à la connexion"
+        },
+        {
+          "id": "c",
+          "text": "Un réglage manuel sur chaque poste avec l'éditeur de stratégie locale"
+        },
+        {
+          "id": "d",
+          "text": "Un objet de stratégie de groupe (GPO) lié à l'OU des postes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La stratégie de groupe permet de définir de façon centralisée des paramètres de sécurité (verrouillage de session, exécution automatique, politique de mots de passe, droits utilisateurs…) et de les appliquer automatiquement à tous les ordinateurs d'une unité d'organisation du domaine. Les postes rafraîchissent périodiquement leurs stratégies : un paramètre modifié localement est réappliqué. C'est l'outil natif de durcissement d'un parc Windows géré par Active Directory.",
+    "distractorNotes": {
+      "a": "SELinux est un module de sécurité du noyau Linux ; il ne s'applique pas aux postes Windows.",
+      "b": "Un NAC vérifie la conformité d'un poste avant de lui ouvrir le réseau ; il ne configure pas ses paramètres de session.",
+      "c": "Le réglage poste par poste est fastidieux sur 600 machines, source d'oublis, et rien n'empêche ensuite les écarts : ce n'est pas la meilleure solution."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5"
+  },
+  {
+    "slug": "security-plus-4.5-snmpv3-migration-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un audit révèle que les commutateurs d'un campus sont supervisés en SNMPv2c avec la communauté « public », et une capture montre cette chaîne en clair sur le réseau. Quel changement répond LE MIEUX au constat ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Migrer vers SNMPv3 avec authentification et chiffrement des messages"
+        },
+        {
+          "id": "b",
+          "text": "Remplacer la communauté par une chaîne longue et complexe en SNMPv2c"
+        },
+        {
+          "id": "c",
+          "text": "Déplacer le service SNMP du port UDP 161 vers un port non standard"
+        },
+        {
+          "id": "d",
+          "text": "Revenir à SNMPv1, dont les requêtes sont plus simples à filtrer"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "SNMPv1 et SNMPv2c reposent sur une chaîne de communauté transmise en clair dans chaque message : quiconque capture le trafic la lit, et une communauté en écriture permet de modifier la configuration des équipements. SNMPv3 introduit le modèle de sécurité fondé sur l'utilisateur (USM), avec authentification des messages et chiffrement de leur contenu. Le niveau qui combine les deux protège à la fois contre l'usurpation et contre l'écoute : c'est le protocole de supervision sécurisé attendu.",
+    "distractorNotes": {
+      "b": "Une communauté plus complexe résiste mieux à la devinette, mais elle circule toujours en clair et reste lisible dans une capture.",
+      "c": "Changer de port relève de la sécurité par l'obscurité : la communauté reste en clair et un balayage retrouve le service.",
+      "d": "SNMPv1 transmet lui aussi la communauté en clair et n'apporte aucune protection supplémentaire."
+    },
+    "reference": "RFC 3414"
+  },
+  {
+    "slug": "security-plus-4.5-sftp-single-port-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un partenaire doit déposer chaque nuit des fichiers sur un serveur de la zone filtrée. La politique de sécurité n'autorise vers ce serveur que le port TCP 22 et exige que les identifiants comme les données soient chiffrés. Quel protocole de transfert retenir ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "FTPS en mode explicite"
+        },
+        {
+          "id": "b",
+          "text": "TFTP"
+        },
+        {
+          "id": "c",
+          "text": "SFTP"
+        },
+        {
+          "id": "d",
+          "text": "FTP en mode passif"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "SFTP (SSH File Transfer Protocol) fonctionne comme un sous-système de SSH : l'authentification et tous les transferts passent dans le tunnel chiffré d'une seule connexion TCP sur le port 22. Il satisfait donc à la fois l'exigence de chiffrement et la contrainte d'un port unique. FTPS chiffre aussi, mais repose sur l'architecture de FTP, avec un canal de contrôle (port 21) et des canaux de données sur d'autres ports, ce qui ne respecte pas la règle du port 22.",
+    "distractorNotes": {
+      "a": "FTPS explicite chiffre les échanges, mais utilise le canal de contrôle FTP sur le port 21 et des ports de données séparés, que la politique n'ouvre pas.",
+      "b": "TFTP fonctionne sur UDP 69, sans authentification ni chiffrement.",
+      "d": "FTP transmet identifiants et données en clair, quel que soit le mode, et n'utilise pas le port 22."
+    },
+    "reference": "RFC 4251 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5"
+  },
+  {
+    "slug": "security-plus-4.5-dmarc-p-none-spoofing-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Des courriels usurpant l'adresse de la paie de example.com arrivent dans les boîtes des comptables. Les rapports agrégés DMARC montrent que tous les flux légitimes du domaine sont déjà alignés. Quelle action empêchera LE MIEUX les serveurs destinataires de remettre ces messages ?",
+      "exhibit": "$ dig +short TXT _dmarc.example.com\n\"v=DMARC1; p=none; rua=mailto:dmarc-rapports@example.com\"\n\nReceived: from mail.example.net (mail.example.net [198.51.100.23])\n  by mx1.example.com with ESMTP id 4XyZ12; Fri, 8 Nov 2024 09:14:02 +0100\nAuthentication-Results: mx1.example.com;\n  spf=fail smtp.mailfrom=example.com;\n  dkim=none;\n  dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=example.com\nFrom: \"Service Paie\" <paie@example.com>\nTo: compta@example.com\nSubject: Nouveau RIB a enregistrer avant vendredi",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter l'adresse 198.51.100.23 à l'enregistrement SPF de example.com"
+        },
+        {
+          "id": "b",
+          "text": "Publier une seconde clé publique DKIM avec un nouveau sélecteur"
+        },
+        {
+          "id": "c",
+          "text": "Supprimer l'enregistrement DMARC pour que seul SPF soit évalué"
+        },
+        {
+          "id": "d",
+          "text": "Faire passer la politique DMARC du domaine de p=none à p=reject"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'en-tête Authentication-Results montre que le message échoue SPF (198.51.100.23 n'est pas autorisé pour example.com), n'est pas signé en DKIM et échoue donc DMARC. Mais l'enregistrement publie p=none : le propriétaire du domaine demande seulement des rapports, sans consigne de traitement, et le destinataire remet le message. Puisque les rapports confirment que les flux légitimes sont alignés, le domaine peut passer à p=reject (éventuellement après une étape p=quarantine) : les destinataires refuseront alors les messages qui échouent DMARC.",
+    "distractorNotes": {
+      "a": "Ce serait autoriser le serveur de l'usurpateur à émettre pour le domaine : ses messages passeraient SPF et DMARC.",
+      "b": "L'usurpateur ne signe pas ses messages avec la clé du domaine ; une clé de plus ne change rien tant que la politique reste p=none.",
+      "c": "Sans DMARC, le traitement d'un échec SPF est laissé à la politique locale de chaque destinataire, et l'en-tête From visible n'est plus vérifié par alignement : la protection diminue."
+    },
+    "reference": "RFC 7489"
+  },
+  {
+    "slug": "security-plus-4.5-dns-filtering-iot-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une clinique veut empêcher tous ses appareils, y compris des objets connectés sur lesquels aucun logiciel ne peut être installé, de joindre des domaines malveillants connus. Quel contrôle répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un agent de filtrage web installé sur chaque appareil"
+        },
+        {
+          "id": "b",
+          "text": "Un filtrage DNS appliqué par le résolveur interne"
+        },
+        {
+          "id": "c",
+          "text": "La signature DKIM des courriels émis par la clinique"
+        },
+        {
+          "id": "d",
+          "text": "Une surveillance de l'intégrité des fichiers des appareils"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le filtrage DNS fait refuser par le résolveur (ou rediriger vers une page de blocage) les requêtes portant sur des domaines classés malveillants ou interdits. Comme tout appareil doit résoudre un nom avant de s'y connecter, la protection s'applique à l'ensemble du parc, objets connectés compris, sans rien installer sur eux : il suffit qu'ils utilisent le résolveur de l'établissement (on bloque alors en sortie les requêtes DNS vers d'autres résolveurs).",
+    "distractorNotes": {
+      "a": "La clinique ne peut justement pas installer de logiciel sur ses objets connectés.",
+      "c": "DKIM authentifie les courriels sortants ; il n'empêche aucun appareil de joindre un domaine.",
+      "d": "La FIM détecte la modification de fichiers ; elle n'agit pas sur la résolution des noms et suppose aussi un agent."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5"
+  },
+  {
+    "slug": "security-plus-4.5-dlp-card-numbers-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque doit empêcher que des numéros de carte de paiement quittent l'entreprise par courriel ou soient copiés sur une clé USB, tout en laissant passer les autres messages et fichiers. Quel contrôle répond LE MIEUX à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une solution DLP qui détecte ces données et bloque leur sortie"
+        },
+        {
+          "id": "b",
+          "text": "Un IPS en ligne doté de signatures d'exploitation à jour"
+        },
+        {
+          "id": "c",
+          "text": "Une surveillance de l'intégrité des fichiers des serveurs de courriel"
+        },
+        {
+          "id": "d",
+          "text": "Une politique DMARC p=reject publiée pour le domaine de la banque"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La prévention des pertes de données (DLP) inspecte le contenu en mouvement (courriel, web), en cours d'utilisation (copie sur support amovible, presse-papiers) et au repos. Elle repère les données sensibles par motifs (expressions régulières, contrôle de Luhn pour les numéros de carte), empreintes de documents ou étiquettes de classification, puis bloque, chiffre ou signale l'opération selon la règle. Un agent DLP sur les postes couvre les clés USB, et un module réseau ou de messagerie couvre les courriels.",
+    "distractorNotes": {
+      "b": "Un IPS cherche des attaques connues dans le trafic ; il ne reconnaît pas des données métier sensibles qui sortent légitimement en apparence.",
+      "c": "La FIM signale la modification de fichiers surveillés ; elle ne contrôle pas le contenu des messages envoyés.",
+      "d": "DMARC protège contre l'usurpation du domaine expéditeur ; il ne filtre pas le contenu des messages sortants."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5 ; PCI DSS v4.0"
+  },
+  {
+    "slug": "security-plus-4.5-uba-off-hours-download-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le compte d'une comptable se connecte habituellement de 8 h à 18 h depuis Lyon et ouvre une vingtaine de fichiers par jour. Un dimanche à 3 h, ce compte, authentifié avec succès, télécharge 4 000 fichiers du serveur RH. Aucun logiciel malveillant n'est détecté. Quel outil est le plus à même de signaler cette activité ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un antivirus à signatures installé et à jour sur le poste de la comptable"
+        },
+        {
+          "id": "b",
+          "text": "Le filtrage web par catégories d'URL appliqué par le proxy"
+        },
+        {
+          "id": "c",
+          "text": "Une analyse du comportement des utilisateurs (UBA)"
+        },
+        {
+          "id": "d",
+          "text": "Un IDS réseau à signatures placé devant le serveur RH"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'analyse du comportement des utilisateurs (UBA, ou UEBA quand elle couvre aussi les entités comme les hôtes et les comptes de service) établit pour chaque compte une référence d'activité : horaires, lieux, volumes, ressources consultées. Elle attribue un score de risque aux écarts. Ici, l'authentification est valide et aucun code malveillant n'est en jeu : seuls l'horaire, le volume et la ressource sont anormaux, ce que l'UBA est conçue pour détecter (identifiants volés ou menace interne).",
+    "distractorNotes": {
+      "a": "L'antivirus recherche du code malveillant ; une session légitime qui télécharge des fichiers ne déclenche aucune signature.",
+      "b": "Le filtrage web contrôle les sites Internet consultés, pas l'accès aux partages internes.",
+      "d": "Un IDS à signatures ne reconnaît que des motifs d'attaques connues ; des téléchargements SMB authentifiés n'en contiennent aucun."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5"
+  },
+  {
+    "slug": "security-plus-4.5-xdr-correlation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le SOC d'un groupe industriel dispose d'un EDR sur les postes, d'une passerelle de messagerie et de sondes réseau, chacun avec sa console. Les analystes perdent des heures à reconstituer à la main une attaque partie d'un courriel, passée par un poste puis propagée sur le réseau. Quelle solution répond LE MIEUX à ce problème ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ajouter sur tous les postes un second EDR, choisi chez un autre éditeur"
+        },
+        {
+          "id": "b",
+          "text": "Une plateforme XDR qui unifie la détection entre les outils existants"
+        },
+        {
+          "id": "c",
+          "text": "Une surveillance de l'intégrité des fichiers sur les serveurs critiques"
+        },
+        {
+          "id": "d",
+          "text": "Un agent de filtrage web qui bloque les catégories de sites à risque"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'EDR collecte et analyse l'activité des terminaux (processus, fichiers, connexions) et permet d'y répondre (isolement, arrêt de processus). Le XDR étend cette approche à plusieurs sources : terminaux, messagerie, réseau, identités, cloud. Il corrèle automatiquement les événements de ces sources en un seul incident, reconstitue la chaîne d'attaque et permet une réponse coordonnée depuis une console unique : c'est exactement le besoin décrit.",
+    "distractorNotes": {
+      "a": "Un second EDR ajoute une console de plus et ne voit toujours que les postes, sans le courriel ni le réseau.",
+      "c": "La FIM signale des modifications de fichiers sur quelques serveurs ; elle ne relie pas les étapes d'une attaque entre sources.",
+      "d": "Le filtrage web réduit certaines expositions mais ne corrèle aucun événement de sécurité."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5"
+  },
+  {
+    "slug": "security-plus-4.5-mail-retrieval-tls-ports-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un serveur de messagerie ne doit offrir aux clients que la consultation des boîtes aux lettres chiffrée par TLS implicite, en IMAP comme en POP3. Quels deux ports TCP faut-il ouvrir sur le pare-feu ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "143"
+        },
+        {
+          "id": "b",
+          "text": "993"
+        },
+        {
+          "id": "c",
+          "text": "110"
+        },
+        {
+          "id": "d",
+          "text": "995"
+        },
+        {
+          "id": "e",
+          "text": "25"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Avec le TLS implicite, la session TLS est établie dès la connexion, sur un port dédié : 993 pour IMAPS et 995 pour POP3S. Les ports 143 (IMAP) et 110 (POP3) servent aux versions sans chiffrement initial, qui ne peuvent passer en TLS que par une commande STARTTLS ; ils ne répondent pas à l'exigence. La RFC 8314 recommande d'ailleurs le TLS implicite pour l'accès des clients à la messagerie.",
+    "distractorNotes": {
+      "a": "143 est le port d'IMAP sans chiffrement initial (éventuellement mis à niveau par STARTTLS), pas celui d'IMAPS.",
+      "c": "110 est le port de POP3 sans chiffrement initial ; POP3 sur TLS implicite utilise 995.",
+      "e": "25 sert au relais SMTP entre serveurs ; ce n'est pas un port de consultation des boîtes aux lettres."
+    },
+    "reference": "RFC 8314"
+  },
+  {
+    "slug": "security-plus-4.5-dmarc-third-party-sender-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "L'entreprise example.com publie une politique DMARC p=reject. Elle confie ses lettres d'information à un prestataire qui les envoie depuis ses propres serveurs avec l'en-tête From: news@example.com. Les destinataires rejettent ces messages (dmarc=fail). Quelles deux actions, chacune suffisante, les feront passer DMARC sans affaiblir la protection du domaine ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Abaisser la politique DMARC de example.com à p=none pendant toute la campagne d'envoi"
+        },
+        {
+          "id": "b",
+          "text": "Faire signer les messages en DKIM par le prestataire avec d=prestataire.example.net, sa propre clé"
+        },
+        {
+          "id": "c",
+          "text": "Envoyer avec une enveloppe (MAIL FROM) en example.com dont le SPF inclut les serveurs du prestataire"
+        },
+        {
+          "id": "d",
+          "text": "Publier pour example.com un enregistrement MX qui désigne les serveurs du prestataire"
+        },
+        {
+          "id": "e",
+          "text": "Faire signer les messages en DKIM par le prestataire avec d=example.com, clé publiée sous example.com"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "DMARC réussit si SPF ou DKIM réussit avec un domaine aligné sur celui de l'en-tête From. Pour SPF, le domaine de l'enveloppe (MAIL FROM) doit appartenir à example.com (alignement relâché : un sous-domaine convient) et les serveurs du prestataire doivent figurer dans l'enregistrement SPF de ce domaine. Pour DKIM, la signature doit porter d=example.com, avec une clé dont la partie publique est publiée sous un sélecteur dans le DNS de example.com. L'une ou l'autre suffit ; les deux ensemble rendent l'envoi plus robuste.",
+    "distractorNotes": {
+      "a": "p=none suspend la protection contre l'usurpation pour tout le domaine : c'est justement affaiblir la protection.",
+      "b": "La signature DKIM serait valide, mais le domaine signataire prestataire.example.net n'est pas aligné sur example.com : DMARC échouerait toujours.",
+      "d": "L'enregistrement MX désigne les serveurs qui reçoivent le courrier du domaine ; il n'intervient ni dans SPF ni dans DKIM."
+    },
+    "reference": "RFC 7489 ; RFC 7208 ; RFC 6376"
+  },
+  {
+    "slug": "security-plus-4.5-screened-subnet-placement-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise conçoit une zone filtrée (screened subnet) entre son pare-feu externe et son pare-feu interne. Quels deux serveurs ont leur place dans cette zone ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le contrôleur de domaine Active Directory"
+        },
+        {
+          "id": "b",
+          "text": "Le serveur web public du site vitrine"
+        },
+        {
+          "id": "c",
+          "text": "Le serveur de base de données des ressources humaines"
+        },
+        {
+          "id": "d",
+          "text": "Le serveur de fichiers du service comptable"
+        },
+        {
+          "id": "e",
+          "text": "Le relais SMTP qui reçoit les courriels venant d'Internet"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "La zone filtrée accueille les services qui doivent être joints depuis Internet : site web public, relais de messagerie entrant, DNS public, serveur de dépôt de fichiers des partenaires… Ces serveurs, les plus exposés, sont séparés du réseau interne par un second filtrage. Les ressources internes sensibles (annuaire, bases de données, partages de fichiers) restent derrière le pare-feu interne, et seuls les flux strictement nécessaires depuis la zone filtrée vers elles sont autorisés.",
+    "distractorNotes": {
+      "a": "Le contrôleur de domaine détient les identités de toute l'entreprise : il doit rester sur le réseau interne, jamais dans une zone exposée.",
+      "c": "Une base de données RH contient des données personnelles sensibles ; elle reste interne, le cas échéant jointe par un serveur applicatif via un flux filtré.",
+      "d": "Un serveur de fichiers interne n'a aucune raison d'être joint depuis Internet ; le placer dans la zone filtrée l'exposerait inutilement."
+    },
+    "reference": "NIST SP 800-41 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.5-selinux-statements-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un administrateur durcit des serveurs Red Hat Enterprise Linux avec SELinux. Quelles deux affirmations sur SELinux sont exactes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "En mode permissive, SELinux bloque les accès non autorisés sans les journaliser"
+        },
+        {
+          "id": "b",
+          "text": "Un processus exécuté par root échappe aux règles SELinux, quel que soit son domaine"
+        },
+        {
+          "id": "c",
+          "text": "SELinux applique un contrôle d'accès obligatoire (MAC) fondé sur les contextes des processus et des fichiers"
+        },
+        {
+          "id": "d",
+          "text": "SELinux remplace les permissions Unix classiques, qui ne sont alors plus vérifiées"
+        },
+        {
+          "id": "e",
+          "text": "En mode enforcing, un accès refusé par la politique est bloqué et consigné dans le journal d'audit"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "SELinux est un module de sécurité du noyau Linux qui applique un contrôle d'accès obligatoire : chaque processus et chaque objet porte un contexte (utilisateur, rôle, type, niveau), et la politique, définie par l'administrateur et non par le propriétaire des fichiers, décide des accès autorisés entre types. En mode enforcing, un accès non autorisé est refusé et journalisé (message AVC, sauf règle dontaudit) ; en mode permissive, il est seulement journalisé. Les permissions Unix (DAC) sont vérifiées d'abord, puis SELinux ajoute ses propres contrôles.",
+    "distractorNotes": {
+      "a": "C'est l'inverse : le mode permissive journalise les refus mais ne bloque rien.",
+      "b": "Un processus root confiné dans un domaine (httpd_t, par exemple) reste soumis à la politique : c'est l'un des intérêts majeurs de SELinux.",
+      "d": "SELinux s'ajoute aux permissions Unix : un accès doit être permis par les deux mécanismes."
+    },
+    "reference": "Red Hat Enterprise Linux 9, Using SELinux"
+  },
+  {
+    "slug": "security-plus-4.5-nac-posture-checks-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un hôpital déploie un NAC avec évaluation de la posture : un poste jugé non conforme est placé dans un VLAN de remédiation. Quels trois éléments un contrôle de posture peut-il vérifier sur le poste avant de lui ouvrir le réseau de production ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "La réputation des sites web que l'utilisateur visitera ensuite"
+        },
+        {
+          "id": "b",
+          "text": "La présence d'un antivirus ou d'un EDR actif, avec des signatures à jour"
+        },
+        {
+          "id": "c",
+          "text": "Le niveau de correctifs installés du système d'exploitation"
+        },
+        {
+          "id": "d",
+          "text": "L'alignement SPF des courriels que le poste enverra plus tard"
+        },
+        {
+          "id": "e",
+          "text": "L'activation du pare-feu local du système d'exploitation"
+        },
+        {
+          "id": "f",
+          "text": "Le score CVSS des vulnérabilités publiées pour les serveurs du centre de données"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "L'évaluation de la posture vérifie l'état de sécurité du terminal au moment où il demande l'accès, par un agent permanent, un agent temporaire (dissolvable) ou une analyse sans agent : présence et état de l'antivirus ou de l'EDR, niveau de correctifs, pare-feu local, chiffrement du disque, version du système… Un poste conforme reçoit l'accès prévu ; un poste non conforme est mis en quarantaine dans un VLAN de remédiation, où il peut se mettre à jour avant une nouvelle évaluation.",
+    "distractorNotes": {
+      "a": "La réputation des sites relève du filtrage web au moment de la navigation, pas de l'état du poste lors de sa connexion.",
+      "d": "L'alignement SPF concerne le domaine des courriels et se vérifie chez le destinataire, pas sur le poste à la connexion au réseau.",
+      "f": "Les vulnérabilités des serveurs relèvent de la gestion des vulnérabilités ; elles ne décrivent pas la conformité du poste qui se connecte."
+    },
+    "reference": "IEEE 802.1X-2020 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5"
+  },
+  {
+    "slug": "security-plus-4.5-signature-ids-limits-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le RSSI d'un éditeur de logiciels évalue un IDS qui n'emploie que la détection par signature. Quelles deux limites de cette méthode doit-il prendre en compte ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle ne détecte pas une attaque inédite tant qu'aucune signature ne la décrit"
+        },
+        {
+          "id": "b",
+          "text": "Elle impose une longue période d'apprentissage du trafic normal avant d'être utile"
+        },
+        {
+          "id": "c",
+          "text": "Elle produit en général plus de faux positifs qu'une détection par anomalie"
+        },
+        {
+          "id": "d",
+          "text": "Son efficacité dépend de la mise à jour régulière de la base de signatures"
+        },
+        {
+          "id": "e",
+          "text": "Elle ne peut fonctionner que si le capteur est placé en coupure sur le trafic"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Une signature décrit une attaque déjà connue : la détection par signature est précise et produit peu de faux positifs, mais elle ne voit ni les attaques de type jour zéro ni les variantes assez modifiées pour ne plus correspondre au motif. Elle dépend aussi de la fréquence de mise à jour de sa base : un IDS dont les signatures ne sont pas tenues à jour manque des attaques pourtant documentées. On la complète donc souvent par une détection par anomalie.",
+    "distractorNotes": {
+      "b": "La période d'apprentissage d'une référence du trafic normal est une contrainte de la détection par anomalie, pas de la signature.",
+      "c": "C'est l'inverse : la détection par anomalie génère en général davantage de faux positifs, car tout écart au normal n'est pas une attaque.",
+      "e": "Un capteur à signatures fonctionne aussi bien en mode passif (IDS sur port miroir) qu'en coupure (IPS)."
+    },
+    "reference": "NIST SP 800-94"
+  },
+  {
+    "slug": "security-plus-4.5-edge-rules-least-privilege-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. La politique n'autorise depuis Internet que l'accès HTTPS au site web 203.0.113.10, la réception du courrier sur le relais 203.0.113.25 et le dépôt SFTP du partenaire 192.0.2.44 sur 203.0.113.30. L'administration des serveurs se fait uniquement par le VPN. Quelles deux règles enfreignent cette politique ? (Choisissez-en deux.)",
+      "exhibit": "Pare-feu FW-EDGE, trafic entrant depuis Internet\nTraitement de haut en bas, première correspondance\n\n#  Action  Source       Destination      Protocole  Port\n1  ALLOW   any          203.0.113.10     TCP        443\n2  ALLOW   any          203.0.113.10     TCP        3389\n3  ALLOW   any          203.0.113.25     TCP        25\n4  ALLOW   any          203.0.113.0/24   any        any\n5  ALLOW   192.0.2.44   203.0.113.30     TCP        22\n6  DENY    any          any              any        any",
+      "options": [
+        {
+          "id": "a",
+          "text": "Règle 1"
+        },
+        {
+          "id": "b",
+          "text": "Règle 2"
+        },
+        {
+          "id": "c",
+          "text": "Règle 3"
+        },
+        {
+          "id": "d",
+          "text": "Règle 4"
+        },
+        {
+          "id": "e",
+          "text": "Règle 5"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La règle 2 publie le bureau à distance (RDP, TCP 3389) du serveur web à tout Internet, alors que l'administration doit passer par le VPN : c'est une surface d'attaque classique pour le force brute et l'exploitation de vulnérabilités RDP. La règle 4 autorise tout protocole et tout port vers l'ensemble du bloc 203.0.113.0/24 : elle rend inutile le refus final et expose tous les services de tous les serveurs. Les règles 1, 3 et 5 ouvrent exactement les trois flux prévus.",
+    "distractorNotes": {
+      "a": "La règle 1 publie HTTPS (TCP 443) vers le site web, comme le prévoit la politique.",
+      "c": "La règle 3 permet la réception du courrier (SMTP, TCP 25) sur le relais, flux prévu par la politique.",
+      "e": "La règle 5 n'ouvre TCP 22 (SFTP) vers le serveur de dépôt qu'à l'adresse du partenaire : c'est le flux prévu, limité à la bonne source."
+    },
+    "reference": "NIST SP 800-41 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.5-secure-protocol-ports-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un administrateur prépare les règles d'un pare-feu pour des services qui ne doivent accepter que des connexions chiffrées dès l'ouverture de la session. Associez chaque protocole à son port TCP par défaut.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "SSH"
+        },
+        {
+          "id": "l2",
+          "text": "LDAPS"
+        },
+        {
+          "id": "l3",
+          "text": "HTTPS"
+        },
+        {
+          "id": "l4",
+          "text": "IMAPS"
+        },
+        {
+          "id": "l5",
+          "text": "SMTPS (soumission en TLS implicite)"
+        }
+      ],
+      "right": [
+        {
+          "id": "p22",
+          "text": "22"
+        },
+        {
+          "id": "p443",
+          "text": "443"
+        },
+        {
+          "id": "p636",
+          "text": "636"
+        },
+        {
+          "id": "p993",
+          "text": "993"
+        },
+        {
+          "id": "p465",
+          "text": "465"
+        },
+        {
+          "id": "p389",
+          "text": "389"
+        },
+        {
+          "id": "p995",
+          "text": "995"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "p22",
+        "l2": "p636",
+        "l3": "p443",
+        "l4": "p993",
+        "l5": "p465"
+      }
+    },
+    "explanation": "Ces ports sont attribués par l'IANA : SSH sur 22, HTTPS sur 443, LDAP sur TLS (LDAPS) sur 636, IMAP sur TLS sur 993, et 465 pour la soumission de messages en TLS implicite (submissions), réaffecté à cet usage par la RFC 8314. Ouvrir ces ports plutôt que les versions en clair (LDAP 389, IMAP 143, HTTP 80) fait partie de l'implémentation de protocoles sécurisés ; la soumission sur 587 avec STARTTLS reste une alternative courante.",
+    "distractorNotes": {
+      "p389": "389 est le port de LDAP sans chiffrement initial (éventuellement mis à niveau par StartTLS), pas celui de LDAPS.",
+      "p995": "995 est le port de POP3 sur TLS (POP3S), qui ne figure pas dans la liste."
+    },
+    "reference": "IANA Service Name and Transport Protocol Port Number Registry ; RFC 8314"
+  },
+  {
+    "slug": "security-plus-4.5-need-to-secure-protocol-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le RSSI d'une collectivité recense les besoins des équipes et veut, pour chacun, le protocole sécurisé à imposer. Associez chaque besoin au protocole qui y répond.",
+      "left": [
+        {
+          "id": "n1",
+          "text": "Superviser les commutateurs et routeurs avec des messages authentifiés et chiffrés"
+        },
+        {
+          "id": "n2",
+          "text": "Déposer des fichiers sur un serveur en n'ouvrant que le port déjà utilisé pour l'administration en ligne de commande"
+        },
+        {
+          "id": "n3",
+          "text": "Remplacer Telnet pour l'administration en ligne de commande des équipements"
+        },
+        {
+          "id": "n4",
+          "text": "Chiffrer les liaisons (bind) et les recherches des applications auprès de l'annuaire"
+        },
+        {
+          "id": "n5",
+          "text": "Chiffrer les échanges entre les navigateurs et le portail intranet"
+        }
+      ],
+      "right": [
+        {
+          "id": "snmp3",
+          "text": "SNMPv3"
+        },
+        {
+          "id": "sftp",
+          "text": "SFTP"
+        },
+        {
+          "id": "ssh",
+          "text": "SSH"
+        },
+        {
+          "id": "ldaps",
+          "text": "LDAPS"
+        },
+        {
+          "id": "https",
+          "text": "HTTPS"
+        },
+        {
+          "id": "tftp",
+          "text": "TFTP"
+        },
+        {
+          "id": "snmp2",
+          "text": "SNMPv2c"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "n1": "snmp3",
+        "n2": "sftp",
+        "n3": "ssh",
+        "n4": "ldaps",
+        "n5": "https"
+      }
+    },
+    "explanation": "SNMPv3 ajoute l'authentification et le chiffrement des messages de supervision. SSH remplace Telnet pour l'administration à distance en offrant un canal chiffré sur TCP 22 ; SFTP fonctionne dans ce même canal SSH, d'où l'unique port 22. LDAPS protège par TLS les liaisons et requêtes d'annuaire (port 636), et HTTPS chiffre les échanges web par TLS (port 443). Choisir le protocole sécurisé adapté à chaque usage est l'un des leviers de renforcement de l'objectif 4.5.",
+    "distractorNotes": {
+      "tftp": "TFTP transfère des fichiers sur UDP 69 sans authentification ni chiffrement : il ne répond à aucun de ces besoins.",
+      "snmp2": "SNMPv2c transmet sa chaîne de communauté en clair et ne chiffre pas les messages."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5 ; RFC 3414 ; RFC 4251"
+  },
+  {
+    "slug": "security-plus-4.5-email-security-mechanisms-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'équipe sécurité d'un cabinet d'avocats présente à la direction les mécanismes qui protègent sa messagerie. Associez chaque mécanisme à son rôle.",
+      "left": [
+        {
+          "id": "m1",
+          "text": "SPF"
+        },
+        {
+          "id": "m2",
+          "text": "DKIM"
+        },
+        {
+          "id": "m3",
+          "text": "DMARC"
+        },
+        {
+          "id": "m4",
+          "text": "Passerelle de messagerie sécurisée"
+        }
+      ],
+      "right": [
+        {
+          "id": "r_ip",
+          "text": "Publie dans le DNS les serveurs autorisés à émettre pour le domaine de l'enveloppe"
+        },
+        {
+          "id": "r_sig",
+          "text": "Permet au destinataire de vérifier, par une signature, le domaine signataire et l'intégrité du message"
+        },
+        {
+          "id": "r_pol",
+          "text": "Indique au destinataire le traitement des messages non alignés sur le From et demande des rapports"
+        },
+        {
+          "id": "r_seg",
+          "text": "Filtre en amont des boîtes le spam, les pièces jointes malveillantes et les liens dangereux"
+        },
+        {
+          "id": "r_e2e",
+          "text": "Chiffre le corps du message de bout en bout avec le certificat du destinataire"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "m1": "r_ip",
+        "m2": "r_sig",
+        "m3": "r_pol",
+        "m4": "r_seg"
+      }
+    },
+    "explanation": "SPF (RFC 7208) publie dans un enregistrement TXT la liste des adresses autorisées à émettre pour le domaine utilisé dans l'enveloppe SMTP. DKIM (RFC 6376) ajoute une signature cryptographique vérifiée avec une clé publique publiée dans le DNS du domaine signataire. DMARC (RFC 7489) exige qu'au moins l'un des deux réussisse avec un domaine aligné sur l'en-tête From, fixe la politique (none, quarantine, reject) et organise les rapports. La passerelle de messagerie filtre le contenu entrant et sortant.",
+    "distractorNotes": {
+      "r_e2e": "C'est le rôle de S/MIME (ou d'OpenPGP), absent de la liste : ni SPF, ni DKIM, ni DMARC ne chiffrent le contenu des messages."
+    },
+    "reference": "RFC 7208 ; RFC 6376 ; RFC 7489"
+  },
+  {
+    "slug": "security-plus-4.5-tool-to-scenario-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le SOC d'une mutuelle classe les détections et blocages du mois selon l'outil qui les a produits. Associez chaque événement à l'outil le plus directement concerné.",
+      "left": [
+        {
+          "id": "t1",
+          "text": "Alerte : le fichier /etc/passwd d'un serveur a été modifié hors de toute fenêtre de changement"
+        },
+        {
+          "id": "t2",
+          "text": "Blocage de l'envoi par courriel d'un tableur contenant des numéros de sécurité sociale"
+        },
+        {
+          "id": "t3",
+          "text": "Refus d'accès au réseau filaire pour un portable personnel non enregistré"
+        },
+        {
+          "id": "t4",
+          "text": "Isolement d'un poste et arrêt d'un processus qui chiffrait des fichiers en masse"
+        },
+        {
+          "id": "t5",
+          "text": "Score de risque élevé pour un compte de service qui se connecte soudain à 40 serveurs inhabituels"
+        }
+      ],
+      "right": [
+        {
+          "id": "fim",
+          "text": "Surveillance de l'intégrité des fichiers (FIM)"
+        },
+        {
+          "id": "dlp",
+          "text": "Prévention des pertes de données (DLP)"
+        },
+        {
+          "id": "nac",
+          "text": "Contrôle d'accès au réseau (NAC)"
+        },
+        {
+          "id": "edr",
+          "text": "Détection et réponse sur les terminaux (EDR)"
+        },
+        {
+          "id": "uba",
+          "text": "Analyse du comportement des utilisateurs (UBA)"
+        },
+        {
+          "id": "cat",
+          "text": "Filtrage web par catégories d'URL"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "t1": "fim",
+        "t2": "dlp",
+        "t3": "nac",
+        "t4": "edr",
+        "t5": "uba"
+      }
+    },
+    "explanation": "La FIM compare l'empreinte des fichiers critiques à une référence et signale toute modification. La DLP reconnaît des données sensibles dans un contenu et bloque leur sortie. Le NAC décide de l'accès au réseau selon l'identité et la conformité du terminal. L'EDR surveille l'activité des postes et répond (isolement réseau, arrêt de processus), typiquement face à un rançongiciel. L'UBA modélise le comportement habituel des comptes et note les écarts, comme un compte de service qui change brusquement de périmètre.",
+    "distractorNotes": {
+      "cat": "Le filtrage par catégories contrôle les sites web consultés ; aucun des événements ne concerne la navigation."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5"
+  },
+  {
+    "slug": "security-plus-4.5-web-filtering-methods-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une entreprise compare les offres de filtrage web de plusieurs éditeurs. Associez chaque description à la fonction correspondante.",
+      "left": [
+        {
+          "id": "w1",
+          "text": "Logiciel installé sur le poste, qui applique la politique même hors du réseau de l'entreprise"
+        },
+        {
+          "id": "w2",
+          "text": "Serveur par lequel passent toutes les requêtes web du site, qui les filtre et les journalise"
+        },
+        {
+          "id": "w3",
+          "text": "Classement des sites en thèmes (jeux, réseaux sociaux…) autorisés ou bloqués en bloc"
+        },
+        {
+          "id": "w4",
+          "text": "Note attribuée à un domaine selon son historique (maliciels hébergés, hameçonnage)"
+        },
+        {
+          "id": "w5",
+          "text": "Liste explicite de domaines interdits tenue par l'administrateur"
+        }
+      ],
+      "right": [
+        {
+          "id": "agent",
+          "text": "Filtrage par agent"
+        },
+        {
+          "id": "proxy",
+          "text": "Proxy centralisé"
+        },
+        {
+          "id": "cat",
+          "text": "Catégorisation des URL"
+        },
+        {
+          "id": "rep",
+          "text": "Filtrage par réputation"
+        },
+        {
+          "id": "block",
+          "text": "Liste de blocage"
+        },
+        {
+          "id": "stateless",
+          "text": "Filtrage de paquets sans état"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "w1": "agent",
+        "w2": "proxy",
+        "w3": "cat",
+        "w4": "rep",
+        "w5": "block"
+      }
+    },
+    "explanation": "Le filtrage par agent suit le poste partout, alors que le proxy centralisé ne voit que le trafic qui le traverse mais offre un point unique de contrôle et de journalisation. La catégorisation bloque des familles entières de sites à partir d'une base maintenue par l'éditeur ; la réputation évalue le risque d'un domaine ou d'une URL d'après son historique ; la liste de blocage interdit des domaines précis choisis par l'administrateur. Ces fonctions se combinent dans une même politique.",
+    "distractorNotes": {
+      "stateless": "Un filtrage de paquets sans état examine adresses, protocoles et ports paquet par paquet ; il ne connaît ni les URL, ni les catégories, ni la réputation des sites."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5"
+  },
+  {
+    "slug": "security-plus-4.5-nac-8021x-flow-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un établissement déploie un NAC fondé sur 802.1X sur ses commutateurs d'accès, avec un serveur RADIUS qui attribue un VLAN selon le profil du poste. Ordonnez les étapes de l'admission d'un poste, de la première à la dernière.",
+      "items": [
+        {
+          "id": "i1",
+          "text": "Le commutateur ouvre le port et place le poste dans le VLAN indiqué par le serveur"
+        },
+        {
+          "id": "i2",
+          "text": "Le poste (supplicant) se raccorde à un port qui n'accepte encore que le trafic EAPOL"
+        },
+        {
+          "id": "i3",
+          "text": "Le serveur RADIUS valide les identifiants et renvoie un Access-Accept avec le VLAN à appliquer"
+        },
+        {
+          "id": "i4",
+          "text": "Le commutateur (authenticator) demande son identité au poste par un EAP-Request/Identity"
+        },
+        {
+          "id": "i5",
+          "text": "Le commutateur relaie la réponse EAP du poste au serveur RADIUS dans un Access-Request"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "i2",
+        "i4",
+        "i5",
+        "i3",
+        "i1"
+      ]
+    },
+    "explanation": "En 802.1X, le port contrôlé reste fermé à tout trafic autre qu'EAPOL tant que le poste n'est pas authentifié. Le commutateur, dans le rôle d'authenticator, demande l'identité du supplicant, puis relaie les échanges EAP vers le serveur d'authentification encapsulés dans RADIUS. Une fois les identifiants (et, avec un NAC, la posture) validés, le serveur répond Access-Accept, éventuellement avec des attributs de VLAN. Le commutateur autorise alors le port et applique le VLAN reçu.",
+    "distractorNotes": {},
+    "reference": "IEEE 802.1X-2020 ; RFC 3748 ; RFC 2865"
+  },
+  {
+    "slug": "security-plus-4.5-rule-order-nested-scopes-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un pare-feu traite ses règles de haut en bas et applique la première qui correspond. Vers le serveur intranet 10.0.50.10, tout le réseau 10.0.0.0/8 doit accéder en HTTPS, sauf le Wi-Fi invités 10.0.99.0/24 ; dans ce sous-réseau, seule la borne d'accueil 10.0.99.10 doit pouvoir y accéder en HTTPS. Tout autre trafic traversant le pare-feu est refusé. Ordonnez les règles, de la première à la dernière.",
+      "items": [
+        {
+          "id": "r1",
+          "text": "DENY 10.0.99.0/24 vers 10.0.50.10, tout protocole"
+        },
+        {
+          "id": "r2",
+          "text": "DENY any vers any, tout protocole"
+        },
+        {
+          "id": "r3",
+          "text": "ALLOW 10.0.99.10 vers 10.0.50.10, TCP 443"
+        },
+        {
+          "id": "r4",
+          "text": "ALLOW 10.0.0.0/8 vers 10.0.50.10, TCP 443"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "r3",
+        "r1",
+        "r4",
+        "r2"
+      ]
+    },
+    "explanation": "Avec la première correspondance, les règles doivent aller de la plus spécifique à la plus générale. L'exception de la borne (10.0.99.10) vient en premier, sinon le refus du Wi-Fi invités la bloquerait. Le refus de 10.0.99.0/24 vient ensuite, avant l'autorisation de 10.0.0.0/8, qui le contient et laisserait sinon passer les invités. Le refus général ferme la liste : placé plus haut, il masquerait toutes les règles suivantes.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-41 Rev. 1"
+  },
+  {
+    "slug": "security-plus-4.5-fim-workflow-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un hébergeur met en place la surveillance de l'intégrité des fichiers (FIM) sur un nouveau serveur web. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "f1",
+          "text": "Recalculer périodiquement les empreintes des mêmes fichiers"
+        },
+        {
+          "id": "f2",
+          "text": "Installer le serveur à partir d'une image de référence validée"
+        },
+        {
+          "id": "f3",
+          "text": "Analyser l'alerte et vérifier si l'écart correspond à un changement approuvé"
+        },
+        {
+          "id": "f4",
+          "text": "Calculer et enregistrer les empreintes des fichiers critiques comme référence"
+        },
+        {
+          "id": "f5",
+          "text": "Comparer les nouvelles empreintes à la référence et alerter en cas d'écart"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "f2",
+        "f4",
+        "f1",
+        "f5",
+        "f3"
+      ]
+    },
+    "explanation": "La FIM n'a de valeur que si la référence est prise sur un système sain : on part d'une image validée, puis on enregistre les empreintes (hachages) des fichiers critiques (binaires, configuration, pages publiées). L'outil recalcule ensuite ces empreintes, périodiquement ou à chaque modification, et les compare à la référence. Tout écart déclenche une alerte, que l'équipe rapproche des changements approuvés pour distinguer une mise à jour légitime d'une compromission ; la référence est mise à jour après chaque changement validé.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-53 Rev. 5 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.5"
+  },
+  {
+    "slug": "security-plus-4.5-ldaps-port-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une application métier de la zone filtrée doit interroger le contrôleur de domaine en LDAP protégé par TLS dès l'ouverture de la connexion (LDAPS). Quel port TCP la règle du pare-feu interne doit-elle autoriser vers le contrôleur de domaine ?",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Port TCP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "636"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "LDAPS établit la session TLS dès la connexion, sur le port TCP 636 attribué par l'IANA. Le port 389 est celui de LDAP sans chiffrement initial ; on peut y négocier TLS par l'opération StartTLS, mais l'énoncé demande LDAPS. Ouvrir 636 seul, depuis la seule adresse de l'application vers le seul contrôleur de domaine, protège les identifiants transmis lors des liaisons (bind) et respecte le moindre privilège.",
+    "distractorNotes": {},
+    "reference": "IANA Service Name and Transport Protocol Port Number Registry ; RFC 4511"
+  },
+  {
+    "slug": "security-plus-4.5-snmpv3-authpriv-level-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un administrateur migre la supervision des routeurs vers SNMPv3. La politique exige que chaque message soit à la fois authentifié et chiffré. Quel niveau de sécurité SNMPv3 doit-il configurer pour les utilisateurs de supervision ?",
+      "fields": [
+        {
+          "id": "level",
+          "label": "Nom du niveau de sécurité SNMPv3 (un mot)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "level": {
+          "accepted": [
+            "authPriv",
+            "auth-priv",
+            "auth priv",
+            "auth_priv"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Le modèle de sécurité fondé sur l'utilisateur de SNMPv3 (USM, RFC 3414) définit trois niveaux : noAuthNoPriv (ni authentification ni chiffrement), authNoPriv (authentification des messages par HMAC, sans chiffrement) et authPriv (authentification et chiffrement du contenu). Seul authPriv satisfait l'exigence. Sur les équipements, on choisit des algorithmes robustes, par exemple SHA-2 pour l'authentification et AES pour le chiffrement lorsque l'équipement les prend en charge.",
+    "distractorNotes": {},
+    "reference": "RFC 3414"
+  },
+  {
+    "slug": "security-plus-4.5-rule-number-blocking-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.5",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Le poste 10.20.12.40 n'arrive pas à se connecter au service SQL Server (TCP 1433) du serveur 172.16.30.15, alors qu'une règle semble l'autoriser. Quelle règle bloque cette connexion ?",
+      "exhibit": "Pare-feu FW-INT, flux des bureaux vers les serveurs\nTraitement de haut en bas, première correspondance\n\n#   Action  Source          Destination      Protocole  Port\n10  ALLOW   10.20.0.0/16    172.16.30.0/24   TCP        443\n20  DENY    10.20.8.0/21    172.16.30.0/24   any        any\n30  ALLOW   10.20.12.0/24   172.16.30.15     TCP        1433\n40  ALLOW   10.20.12.40     172.16.30.15     TCP        22\n50  DENY    any             any              any        any",
+      "fields": [
+        {
+          "id": "rule",
+          "label": "Numéro de la règle (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "rule": {
+          "accepted": [
+            "20"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le pare-feu applique la première règle qui correspond. La règle 10 ne concerne que TCP 443 : la connexion vers TCP 1433 ne lui correspond pas. La règle 20 refuse tout trafic depuis 10.20.8.0/21 vers 172.16.30.0/24 ; un /21 couvre 10.20.8.0 à 10.20.15.255, donc 10.20.12.40 en fait partie, et 172.16.30.15 appartient bien au réseau de destination. La connexion est refusée par la règle 20 et n'atteint jamais la règle 30, qui est masquée : il faut placer la règle 30 avant la règle 20.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-41 Rev. 1"
+  }
+]

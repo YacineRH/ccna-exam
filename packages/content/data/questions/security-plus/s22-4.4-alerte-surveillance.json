@@ -1,0 +1,1327 @@
+[
+  {
+    "slug": "security-plus-4.4-agentless-appliance-monitoring-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le service sécurité d'un hôpital doit surveiller l'appliance de contrôle d'accès par badges. Le contrat du fabricant interdit d'y installer le moindre logiciel tiers, mais l'appliance sait émettre des journaux syslog et des traps SNMP. Quelle approche de surveillance convient ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Installer sur l'appliance un agent EDR qui remonte la télémétrie à la console"
+        },
+        {
+          "id": "b",
+          "text": "Surveiller sans agent, à partir des journaux syslog et des traps SNMP émis par l'appliance"
+        },
+        {
+          "id": "c",
+          "text": "Installer sur l'appliance l'agent de collecte du SIEM qui lit ses journaux locaux"
+        },
+        {
+          "id": "d",
+          "text": "Installer sur l'appliance un HIDS qui contrôle l'intégrité de ses fichiers système"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La surveillance avec agent suppose d'installer un logiciel sur la ressource surveillée ; la surveillance sans agent exploite ce que la ressource expose déjà (syslog, SNMP, API, WMI, SSH). Ici, le contrat interdit tout logiciel tiers : seule l'approche sans agent reste possible. Les journaux syslog alimentent le SIEM et les traps SNMP signalent les incidents matériels ou réseau, sans rien modifier sur l'appliance ni rompre le support du fabricant.",
+    "distractorNotes": {
+      "a": "Un agent EDR est un logiciel tiers installé sur l'hôte : le contrat du fabricant l'interdit.",
+      "c": "L'agent de collecte du SIEM reste un logiciel à installer sur l'appliance, ce qui est exclu.",
+      "d": "Un HIDS s'installe lui aussi sur l'hôte surveillé ; il viole la même clause contractuelle."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-snmp-trap-udp-162-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans le centre de supervision d'un opérateur, un commutateur d'accès envoie de lui-même un message vers le port UDP 162 de la station de gestion dès qu'une de ses interfaces passe à l'état down, sans avoir été interrogé. Quel mécanisme est utilisé ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une requête SNMP GetRequest"
+        },
+        {
+          "id": "b",
+          "text": "Une requête SNMP SetRequest"
+        },
+        {
+          "id": "c",
+          "text": "Un enregistrement d'export NetFlow"
+        },
+        {
+          "id": "d",
+          "text": "Une notification SNMP trap"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un trap SNMP est une notification non sollicitée : c'est l'agent SNMP de l'équipement qui prend l'initiative d'avertir le gestionnaire d'un événement (lien tombé, redémarrage, seuil franchi). Les traps sont reçus par défaut sur le port UDP 162, alors que les interrogations du gestionnaire vers l'agent visent le port UDP 161. Les traps complètent l'interrogation périodique : l'alerte arrive immédiatement au lieu d'attendre le prochain cycle de collecte.",
+    "distractorNotes": {
+      "a": "GetRequest est une interrogation envoyée par le gestionnaire vers l'agent (port UDP 161) : l'équipement ne l'émet pas de lui-même.",
+      "b": "SetRequest sert au gestionnaire pour modifier une valeur sur l'agent ; ce n'est pas une notification d'événement.",
+      "c": "NetFlow exporte des statistiques de flux vers un collecteur, pas des notifications d'état d'interface vers le port 162."
+    },
+    "reference": "RFC 3416 ; RFC 3417 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-netflow-who-talks-to-whom-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'équipe réseau d'une université veut savoir, sur six mois, quels hôtes communiquent entre eux, sur quels ports et avec quels volumes, sans conserver le contenu des paquets pour limiter le stockage. Quel outil répond le mieux à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'export de flux NetFlow (ou IPFIX) depuis les routeurs"
+        },
+        {
+          "id": "b",
+          "text": "La capture complète des paquets sur les liens principaux"
+        },
+        {
+          "id": "c",
+          "text": "L'interrogation SNMP des compteurs d'octets des interfaces"
+        },
+        {
+          "id": "d",
+          "text": "La collecte des journaux syslog des commutateurs d'accès"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "NetFlow (et son équivalent normalisé IPFIX) résume chaque flux par ses métadonnées : adresses IP et ports source et destination, protocole, horodatages, nombre de paquets et d'octets. On obtient ainsi la matrice « qui parle à qui, comment et combien » sans stocker la charge utile, ce qui rend une conservation de plusieurs mois réaliste. C'est un outil de référence pour repérer des volumes anormaux, des communications inattendues ou un balisage vers l'extérieur.",
+    "distractorNotes": {
+      "b": "La capture complète conserve le contenu des paquets : c'est justement ce que l'équipe veut éviter, et le volume rendrait six mois de rétention très coûteux.",
+      "c": "Les compteurs SNMP donnent le volume total par interface, sans dire quels hôtes ni quels ports en sont à l'origine.",
+      "d": "Les journaux syslog des commutateurs décrivent les événements de l'équipement (ports, erreurs), pas les conversations entre hôtes."
+    },
+    "reference": "RFC 7011 (IPFIX) ; RFC 3954 (NetFlow v9) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-scap-automated-compliance-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une administration doit vérifier chaque mois que ses 500 serveurs respectent une configuration de référence, à l'aide d'outils de fournisseurs différents capables de lire le même contenu de vérification lisible par machine. Quel ensemble de normes répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "STIX, pour décrire les contrôles de configuration à vérifier"
+        },
+        {
+          "id": "b",
+          "text": "SNMP, pour interroger la configuration de chaque serveur"
+        },
+        {
+          "id": "c",
+          "text": "SCAP, pour exprimer et automatiser les vérifications de conformité"
+        },
+        {
+          "id": "d",
+          "text": "Syslog, pour transmettre la configuration des serveurs au SIEM"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "SCAP (Security Content Automation Protocol), défini par le NIST, regroupe des spécifications qui rendent la vérification de conformité automatisable et interopérable : XCCDF décrit les listes de contrôles, OVAL les tests techniques, CPE identifie les plateformes, CVE et CVSS nomment et notent les vulnérabilités. Un même contenu SCAP (par exemple un benchmark publié dans ce format) peut ainsi être exécuté par n'importe quel outil validé, et les écarts sont rapportés de façon homogène.",
+    "distractorNotes": {
+      "a": "STIX sert à échanger du renseignement sur les menaces (indicateurs, campagnes), pas à exprimer des vérifications de configuration.",
+      "b": "SNMP supervise surtout l'état et les performances des équipements ; il ne fournit pas de contenu normalisé de conformité.",
+      "d": "Syslog transporte des messages de journal ; il ne décrit ni n'évalue une configuration de référence."
+    },
+    "reference": "NIST SP 800-126 Rev. 3 (SCAP 1.3) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-log-archiving-retention-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un établissement de paiement doit conserver un an les journaux de ses pare-feu. Le SIEM garde 90 jours de données consultables en ligne ; au-delà, les journaux sont déplacés vers un stockage immuable moins coûteux, d'où ils peuvent être rappelés pour une enquête. De quelle activité de surveillance s'agit-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'agrégation des journaux"
+        },
+        {
+          "id": "b",
+          "text": "L'ajustement des alertes"
+        },
+        {
+          "id": "c",
+          "text": "L'archivage des journaux"
+        },
+        {
+          "id": "d",
+          "text": "La production de rapports"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'archivage consiste à conserver les journaux au-delà de la période d'analyse active, sur un support adapté (moins coûteux, souvent immuable ou WORM), pendant la durée imposée par la réglementation ou la politique interne, tout en permettant de les restituer pour une enquête ou un audit. Le scénario respecte ainsi PCI DSS v4.0, qui exige de conserver l'historique des journaux d'audit au moins douze mois, dont les trois derniers immédiatement disponibles pour analyse.",
+    "distractorNotes": {
+      "a": "L'agrégation rassemble et normalise les journaux de sources multiples dans un point central ; elle ne traite pas de leur conservation à long terme.",
+      "b": "L'ajustement des alertes modifie les règles pour réduire les faux positifs ou négatifs ; il ne concerne pas la rétention.",
+      "d": "Les rapports synthétisent l'activité pour un public donné (direction, auditeurs) ; ils ne déplacent pas les journaux vers un stockage de long terme."
+    },
+    "reference": "PCI DSS v4.0 ; NIST SP 800-92 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-cis-benchmark-hardening-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une ESN déploie de nouveaux serveurs Linux et cherche des recommandations de durcissement prescriptives, élaborées par consensus et vérifiables point par point par ses outils d'audit. Quelle ressource utiliser ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les CIS Benchmarks du système d'exploitation concerné"
+        },
+        {
+          "id": "b",
+          "text": "Le classement OWASP Top 10 des risques applicatifs"
+        },
+        {
+          "id": "c",
+          "text": "La spécification FIRST CVSS v3.1 de notation"
+        },
+        {
+          "id": "d",
+          "text": "La matrice MITRE ATT&CK des techniques adverses"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Les CIS Benchmarks, publiés par le Center for Internet Security, sont des guides de configuration sécurisée élaborés par consensus pour chaque système d'exploitation, base de données, navigateur ou service cloud. Chaque recommandation précise le réglage attendu, sa justification et la manière de l'auditer, avec des profils de niveau 1 et 2. Ils existent aussi sous forme de contenu automatisable, ce qui permet de mesurer la conformité du parc et de surveiller les dérives.",
+    "distractorNotes": {
+      "b": "L'OWASP Top 10 classe les risques des applications web ; il ne donne pas de paramètres de durcissement d'un système d'exploitation.",
+      "c": "CVSS note la gravité des vulnérabilités ; il ne prescrit aucune configuration.",
+      "d": "ATT&CK décrit les tactiques et techniques des attaquants ; c'est une base de connaissance, pas une liste de réglages à appliquer."
+    },
+    "reference": "CIS Benchmarks ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-alert-tuning-scanner-exception-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Chaque semaine, la règle « balayage de ports interne » du SIEM d'une mutuelle produit environ 200 alertes. L'analyste constate qu'elles proviennent toutes de 10.0.8.15, le scanner de vulnérabilités autorisé, pendant sa fenêtre d'analyse planifiée du mardi soir. Quelle mesure est LA PLUS adaptée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Désactiver la règle, puisque ses alertes sont toutes des faux positifs"
+        },
+        {
+          "id": "b",
+          "text": "Relever le seuil de la règle pour toutes les sources jusqu'à ne plus voir le scanner"
+        },
+        {
+          "id": "c",
+          "text": "Passer toutes les alertes de cette règle en gravité informationnelle"
+        },
+        {
+          "id": "d",
+          "text": "Créer une exception pour 10.0.8.15, limitée au créneau du mardi soir"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Il s'agit d'ajuster l'alerte (alert tuning) : la règle fonctionne, mais une source légitime et connue la déclenche. L'exception la plus étroite possible, limitée à l'adresse du scanner et à sa fenêtre planifiée, supprime le bruit tout en gardant la détection intacte pour toutes les autres sources et pour le scanner hors de son créneau (qui pourrait signaler sa compromission). L'exception doit être documentée et revue périodiquement, comme toute modification de règle.",
+    "distractorNotes": {
+      "a": "Désactiver la règle supprime aussi la détection des vrais balayages menés par un attaquant interne : on crée un angle mort.",
+      "b": "Un seuil relevé pour toutes les sources laisserait passer les balayages lents ou modérés d'un attaquant : la correction est trop large.",
+      "c": "Abaisser la gravité de toutes les alertes noie aussi les vrais balayages dans le bruit informationnel, sans traiter la cause."
+    },
+    "reference": "NIST SP 800-92 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-dlp-card-numbers-email-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une enseigne de distribution, un comptable a envoyé vers sa messagerie personnelle un tableur contenant des numéros de cartes bancaires de clients. Le RSSI veut que de tels envois soient détectés par inspection du contenu et bloqués à l'avenir. Quel outil répond le mieux à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un antivirus de passerelle sur le serveur de messagerie"
+        },
+        {
+          "id": "b",
+          "text": "Une solution DLP qui inspecte les courriels et les pièces jointes sortants"
+        },
+        {
+          "id": "c",
+          "text": "Un collecteur NetFlow placé en sortie vers Internet"
+        },
+        {
+          "id": "d",
+          "text": "Un scanner de vulnérabilités authentifié sur les postes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La prévention des pertes de données (DLP) inspecte le contenu en mouvement (courriel, web, transferts) ou sur les postes, et le compare à des règles : expressions régulières, contrôle de Luhn pour les numéros de carte, empreintes de documents, étiquettes de classification. À la détection, elle peut bloquer l'envoi, le chiffrer, le mettre en attente d'approbation ou alerter. Elle répond exactement à l'exigence : reconnaître les numéros de carte dans la pièce jointe et empêcher leur sortie.",
+    "distractorNotes": {
+      "a": "L'antivirus recherche des logiciels malveillants ; un tableur de numéros de carte n'en contient aucun et passerait sans alerte.",
+      "c": "NetFlow ne voit que les métadonnées des flux (adresses, ports, volumes), jamais le contenu de la pièce jointe.",
+      "d": "Le scanner de vulnérabilités détecte des failles et des défauts de configuration ; il n'observe pas les données qui sortent."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-antivirus-quarantine-sample-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'antivirus d'un poste du service juridique détecte un fichier suspect dans le dossier Téléchargements. Le CERT interne veut pouvoir récupérer l'échantillon pour l'analyser, tout en empêchant immédiatement son exécution. Quelle action de l'antivirus convient ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mettre le fichier en quarantaine"
+        },
+        {
+          "id": "b",
+          "text": "Supprimer définitivement le fichier"
+        },
+        {
+          "id": "c",
+          "text": "Ajouter le fichier aux exclusions d'analyse"
+        },
+        {
+          "id": "d",
+          "text": "Journaliser l'alerte et laisser le fichier en place"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La quarantaine déplace le fichier dans une zone isolée et protégée (souvent chiffrée ou rendue inexploitable) où il ne peut plus être exécuté, sans le détruire. L'échantillon reste disponible pour une analyse en bac à sable, pour la soumission à l'éditeur ou pour une restauration s'il s'agissait d'un faux positif. La quarantaine est l'une des réponses aux alertes citées par l'objectif 4.4, avec l'ajustement des règles.",
+    "distractorNotes": {
+      "b": "La suppression empêche bien l'exécution mais détruit l'échantillon dont le CERT a besoin.",
+      "c": "Une exclusion autoriserait le fichier à s'exécuter et masquerait les détections futures : c'est l'inverse du but recherché.",
+      "d": "Laisser le fichier en place ne l'empêche pas d'être ouvert ou exécuté par l'utilisateur."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-ntp-clock-skew-correlation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'une enquête, un analyste du SOC remarque que la règle de corrélation « connexion VPN puis accès au serveur RH » ne se déclenche jamais, alors que les deux événements ont bien eu lieu. Le pare-feu les horodate à 14:02 et le serveur RH à 14:09 pour une même session. Quelle mesure corrige LE MIEUX le problème ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Allonger à 24 heures la fenêtre temporelle de la règle de corrélation"
+        },
+        {
+          "id": "b",
+          "text": "Synchroniser l'horloge de toutes les sources de journaux sur un même serveur NTP"
+        },
+        {
+          "id": "c",
+          "text": "Augmenter la durée de conservation des journaux dans le SIEM"
+        },
+        {
+          "id": "d",
+          "text": "Installer un agent de collecte supplémentaire sur le serveur RH"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La corrélation repose sur l'ordre et l'écart temporel entre événements de sources différentes. Si les horloges divergent de plusieurs minutes, les événements d'une même session sortent de la fenêtre de la règle, et les chronologies d'enquête deviennent fausses. La cause doit être traitée : synchroniser tous les équipements sur une source de temps commune et fiable (NTP), comme le recommande NIST SP 800-92, et horodater de préférence dans un fuseau unique (UTC).",
+    "distractorNotes": {
+      "a": "Une fenêtre de 24 heures masque le décalage sans le corriger et rapprocherait des événements sans rapport, d'où une avalanche de faux positifs.",
+      "c": "La durée de conservation ne change rien à l'horodatage erroné des événements.",
+      "d": "Les journaux du serveur RH arrivent déjà au SIEM ; un autre agent remonterait les mêmes horodatages faux."
+    },
+    "reference": "NIST SP 800-92 ; RFC 5905 (NTPv4) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-snmpv3-authpriv-traps-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque régionale veut recevoir les traps SNMP de ses routeurs en garantissant à la fois l'authentification de l'émetteur et la confidentialité du contenu. Quelle configuration choisir ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "SNMPv2c avec une chaîne de communauté longue et complexe"
+        },
+        {
+          "id": "b",
+          "text": "SNMPv1 avec des traps envoyés uniquement vers le port UDP 162"
+        },
+        {
+          "id": "c",
+          "text": "SNMPv3 avec le niveau de sécurité noAuthNoPriv"
+        },
+        {
+          "id": "d",
+          "text": "SNMPv3 avec le niveau de sécurité authPriv"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Seul SNMPv3 apporte des services de sécurité, grâce au modèle USM : authentification et intégrité des messages par HMAC, et confidentialité par chiffrement. Le niveau authPriv active les deux ; authNoPriv authentifie sans chiffrer, et noAuthNoPriv n'offre ni l'un ni l'autre. Pour des traps à la fois authentifiés et confidentiels, il faut donc SNMPv3 en authPriv.",
+    "distractorNotes": {
+      "a": "SNMPv2c transmet la chaîne de communauté en clair ; sa longueur n'apporte ni chiffrement ni authentification réelle.",
+      "b": "SNMPv1 n'a aucun mécanisme de sécurité autre que la communauté en clair ; le choix du port n'y change rien.",
+      "c": "noAuthNoPriv est le niveau sans authentification ni chiffrement : il ne répond à aucune des deux exigences."
+    },
+    "reference": "RFC 3414 (USM pour SNMPv3) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-siem-alert-bruteforce-success-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Un analyste du SOC d'un bureau d'études reçoit cette alerte du SIEM pour le serveur de fichiers SRV-FIC01. Quelle conclusion est LA PLUS probable ?",
+      "exhibit": "[SIEM] Alerte 20931  Gravité : élevée  Règle : AUTH-BRUTE-SUCCES\nHôte : SRV-FIC01 (10.20.0.15)\n2026-10-14 22:41:03  4625  Compte : c.durand  Source : 203.0.113.77\n2026-10-14 22:41:07  4625  Compte : c.durand  Source : 203.0.113.77\n2026-10-14 22:41:11  4625  Compte : c.durand  Source : 203.0.113.77\n[... 27 autres événements 4625 identiques jusqu'à 22:42:59 ...]\n2026-10-14 22:43:02  4624  Compte : c.durand  Source : 203.0.113.77  Type : 3",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le mot de passe de c.durand a été deviné par force brute depuis 203.0.113.77"
+        },
+        {
+          "id": "b",
+          "text": "Une pulvérisation de mots de passe vise de nombreux comptes du domaine"
+        },
+        {
+          "id": "c",
+          "text": "Le compte c.durand a été verrouillé, ce qui a mis fin à l'attaque"
+        },
+        {
+          "id": "d",
+          "text": "L'utilisateur c.durand a réinitialisé son mot de passe après l'avoir oublié"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'alerte montre 30 échecs d'authentification (4625) en moins de deux minutes sur un seul compte, depuis une adresse externe, puis une ouverture de session réussie (4624, type 3 : réseau) depuis la même adresse. Le rythme d'un essai toutes les quatre secondes exclut une saisie humaine : c'est la signature d'une attaque par force brute qui a abouti. L'analyste doit traiter le compte comme compromis (désactivation, réinitialisation, recherche des actions menées depuis 22:43).",
+    "distractorNotes": {
+      "b": "La pulvérisation essaie peu de mots de passe sur beaucoup de comptes ; ici, un seul compte reçoit tous les essais.",
+      "c": "Un verrouillage produirait un événement 4740 et empêcherait l'ouverture de session ; or le 4624 final montre une connexion réussie.",
+      "d": "Une réinitialisation de mot de passe génère des événements 4723 ou 4724, absents ici, et ne se fait pas depuis une adresse externe à ce rythme."
+    },
+    "reference": "Microsoft Learn, Windows security audit events (4624, 4625) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-correlation-rule-which-source-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le SOC d'un éditeur de logiciels a écrit la règle AUTH-BF-01 et dispose du résumé des authentifications de la matinée. Pour quelle adresse source la règle se déclenche-t-elle ?",
+      "exhibit": "Règle AUTH-BF-01\n  Condition 1 : au moins 5 événements 4625, même IP source, en 10 min\n  Condition 2 : puis un 4624 de la même IP source, au plus 5 min\n                après le dernier 4625\nRésumé 09:00-10:00\nIP source       Échecs 4625                   Dernier 4625  4624 suivant\n198.51.100.20   8 en 4 min                    09:12:40      09:21:05\n198.51.100.31   4 en 2 min                    09:15:10      09:16:00\n203.0.113.45    6 en 9 min                    09:30:02      09:33:47\n203.0.113.88    5, un toutes les 3 min 30 s   09:40:00      09:41:10",
+      "options": [
+        {
+          "id": "a",
+          "text": "198.51.100.20"
+        },
+        {
+          "id": "b",
+          "text": "198.51.100.31"
+        },
+        {
+          "id": "c",
+          "text": "203.0.113.45"
+        },
+        {
+          "id": "d",
+          "text": "203.0.113.88"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Il faut vérifier les deux conditions pour chaque source. 198.51.100.20 remplit la première (8 échecs en 4 min), mais son 4624 arrive 8 min 25 s après le dernier échec, hors du délai de 5 min. 198.51.100.31 n'a que 4 échecs. 203.0.113.88 a 5 échecs étalés à raison d'un toutes les 3 min 30 s : aucune fenêtre de 10 min n'en contient plus de 3. Seule 203.0.113.45 cumule 6 échecs en 9 min et une réussite 3 min 45 s après le dernier échec : la règle se déclenche pour elle.",
+    "distractorNotes": {
+      "a": "La première condition est remplie, mais le 4624 de 09:21:05 survient 8 min 25 s après le dernier échec (09:12:40), au-delà des 5 min.",
+      "b": "Avec 4 échecs seulement, la première condition (au moins 5 échecs) n'est pas remplie.",
+      "d": "Les 5 échecs sont espacés de 3 min 30 s : 4 d'entre eux couvrent déjà 10 min 30 s, donc aucune fenêtre de 10 min n'en contient 5."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-netflow-exfiltration-db-server-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Dans une clinique, le serveur de base de données RH 10.10.5.20 n'a aucun flux autorisé vers Internet ; ses sauvegardes partent chaque nuit vers le NAS interne 10.10.9.5. Le collecteur NetFlow a enregistré ces deux flux unidirectionnels. Quelle explication est LA PLUS probable ?",
+      "exhibit": "Début     Source:port          Destination:port      Paquets     Octets\n03:02:11  10.10.5.20:51522     198.51.100.200:443    1 402 113   1 984 512 330\n03:02:11  198.51.100.200:443   10.10.5.20:51522         36 870       2 211 840\nDurée des deux flux : 47 min",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une attaque par déni de service distribué dirigée contre le serveur"
+        },
+        {
+          "id": "b",
+          "text": "Une exfiltration de données du serveur vers un hôte externe"
+        },
+        {
+          "id": "c",
+          "text": "Un balayage de ports mené par le serveur sur le réseau externe"
+        },
+        {
+          "id": "d",
+          "text": "La sauvegarde nocturne habituelle de la base de données RH"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le premier flux montre près de 2 Go sortant du serveur vers une adresse externe sur le port 443, alors que le flux retour ne pèse que 2 Mo : ce sont surtout des données qui quittent le réseau, à 3 h du matin, depuis un serveur qui n'a aucune raison de joindre Internet. Une connexion TLS unique et longue vers une destination inconnue correspond au profil d'une exfiltration. L'analyste doit confiner le serveur et rechercher la compromission qui a permis ce transfert.",
+    "distractorNotes": {
+      "a": "Un DDoS se traduirait par un fort volume entrant, venant de nombreuses sources ; ici, le volume est sortant et vers une seule destination.",
+      "c": "Un balayage produit de nombreux petits flux vers des ports ou des hôtes variés, et non un seul flux de 2 Go vers un port unique.",
+      "d": "Les sauvegardes partent vers le NAS interne 10.10.9.5, pas vers une adresse publique externe."
+    },
+    "reference": "RFC 7011 (IPFIX) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-windows-events-service-account-cover-tracks-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le SIEM d'un transporteur remonte cette séquence depuis un contrôleur de domaine. Le compte svc-backup est un compte de service qui ne doit jamais ouvrir de session interactive. Quelle conclusion l'analyste doit-il tirer ?",
+      "exhibit": "2026-11-02 02:14:07  4624  Ouverture de session réussie\n                     Compte : svc-backup  Type : 10  Source : 203.0.113.61\n2026-11-02 02:14:07  4672  Privilèges spéciaux attribués  Compte : svc-backup\n2026-11-02 02:16:45  4720  Compte d'utilisateur créé  Nouveau : maint-adm\n                     Créé par : svc-backup\n2026-11-02 02:19:30  1102  Journal d'audit effacé  Par : svc-backup",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une tâche de sauvegarde planifiée s'est exécutée normalement pendant la nuit"
+        },
+        {
+          "id": "b",
+          "text": "Une attaque par force brute est en cours contre svc-backup, encore sans succès"
+        },
+        {
+          "id": "c",
+          "text": "Le journal de sécurité, plein, a été archivé automatiquement par le système"
+        },
+        {
+          "id": "d",
+          "text": "svc-backup est compromis : un compte de persistance a été créé, puis les traces effacées"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La séquence est cohérente : ouverture de session réussie de type 10 (bureau à distance) depuis une adresse externe pour un compte de service qui n'a pas à le faire (4624), attribution de privilèges spéciaux (4672), création d'un nouveau compte (4720) par ce même compte, puis effacement du journal d'audit (1102). C'est le schéma d'un attaquant qui exploite un compte compromis, s'assure une persistance et tente d'effacer ses traces. Les copies déjà transmises au SIEM conservent la preuve : c'est l'intérêt de l'agrégation centralisée.",
+    "distractorNotes": {
+      "a": "Une sauvegarde ne crée pas de compte utilisateur et n'efface pas le journal ; et svc-backup ne doit pas ouvrir de session RDP.",
+      "b": "Aucun échec 4625 n'apparaît ; le 4624 montre au contraire une connexion réussie suivie d'actions privilégiées.",
+      "c": "L'archivage automatique d'un journal plein produit l'événement 1105, sans création de compte ; le 1102 indique un effacement attribué à svc-backup."
+    },
+    "reference": "Microsoft Learn, Windows security audit events (4624, 4672, 4720, 1102) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-agentless-collection-methods-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une collectivité recense ses méthodes de collecte de télémétrie avant de déployer un SIEM. Quelles deux méthodes sont sans agent ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'interrogation SNMP des compteurs d'un routeur par la station de supervision"
+        },
+        {
+          "id": "b",
+          "text": "L'agent EDR installé sur chaque poste de travail"
+        },
+        {
+          "id": "c",
+          "text": "L'envoi syslog natif des journaux du pare-feu vers le SIEM"
+        },
+        {
+          "id": "d",
+          "text": "L'agent de transfert de journaux installé sur le contrôleur de domaine"
+        },
+        {
+          "id": "e",
+          "text": "Le HIDS installé sur le serveur web public"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Une méthode sans agent n'ajoute aucun logiciel sur la ressource : elle utilise les fonctions natives de l'équipement ou du système. L'interrogation SNMP s'appuie sur l'agent SNMP intégré au routeur, et le pare-feu émet ses journaux syslog par sa propre configuration. L'EDR, l'agent de transfert et le HIDS sont des logiciels installés sur l'hôte : ils apportent plus de visibilité (processus, fichiers) au prix d'un déploiement et d'une maintenance.",
+    "distractorNotes": {
+      "b": "L'EDR est un agent installé sur chaque poste : c'est l'exemple même de la surveillance avec agent.",
+      "d": "Un agent de transfert de journaux est un logiciel ajouté sur le contrôleur de domaine.",
+      "e": "Le HIDS s'installe sur le serveur qu'il surveille : c'est une méthode avec agent."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-alert-response-remediation-activities-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le responsable du SOC d'une compagnie d'assurance rédige la procédure « réponse aux alertes et remédiation ». Quelles deux activités en relèvent ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Mettre en quarantaine un poste dont l'alerte de logiciel malveillant est confirmée"
+        },
+        {
+          "id": "b",
+          "text": "Déplacer les journaux de plus de 90 jours vers un stockage d'archive"
+        },
+        {
+          "id": "c",
+          "text": "Centraliser dans le SIEM les journaux des serveurs et des pare-feu"
+        },
+        {
+          "id": "d",
+          "text": "Modifier une règle qui produit des faux positifs répétés"
+        },
+        {
+          "id": "e",
+          "text": "Produire le tableau de bord mensuel des incidents pour la direction"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "L'objectif 4.4 range sous « réponse aux alertes et remédiation/validation » la quarantaine et l'ajustement des alertes. La quarantaine isole la ressource ou le fichier pour stopper l'impact d'une alerte confirmée ; l'ajustement corrige la règle qui se trompe, afin que les analystes ne s'épuisent pas sur des faux positifs et que les vrais incidents restent visibles. Archivage, agrégation et rapports sont d'autres activités de surveillance, menées en continu et non en réaction à une alerte.",
+    "distractorNotes": {
+      "b": "Le déplacement des anciens journaux est de l'archivage, une activité de conservation distincte de la réponse aux alertes.",
+      "c": "La centralisation des journaux est de l'agrégation : elle prépare la détection mais ne répond à aucune alerte.",
+      "e": "Le tableau de bord mensuel relève des rapports, destinés au pilotage et non à la remédiation d'une alerte."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-netflow-record-fields-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un analyste d'une PME industrielle s'appuie sur les enregistrements NetFlow pour une enquête. Quelles deux informations y trouvera-t-il ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les adresses IP source et destination de chaque flux"
+        },
+        {
+          "id": "b",
+          "text": "Le contenu applicatif transporté par les paquets"
+        },
+        {
+          "id": "c",
+          "text": "Le nombre d'octets et de paquets de chaque flux"
+        },
+        {
+          "id": "d",
+          "text": "Le nom du compte Active Directory de l'utilisateur"
+        },
+        {
+          "id": "e",
+          "text": "L'URL complète demandée lors d'une session HTTPS"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Un enregistrement NetFlow ou IPFIX décrit un flux par ses métadonnées : adresses IP et ports source et destination, protocole, interface, horodatages de début et de fin, nombre de paquets et d'octets, éventuellement drapeaux TCP. Il ne contient pas la charge utile. C'est ce qui permet de détecter des volumes anormaux ou des communications inattendues à faible coût, mais il faut d'autres sources (proxy, journaux d'authentification) pour connaître le contenu ou l'utilisateur.",
+    "distractorNotes": {
+      "b": "NetFlow ne conserve aucune charge utile : il faut une capture de paquets pour voir le contenu.",
+      "d": "Le flux ne connaît que des adresses IP ; l'identité de l'utilisateur vient des journaux d'authentification ou du proxy.",
+      "e": "L'URL d'une session HTTPS circule chiffrée dans le contenu ; NetFlow ne voit ni le chemin ni les paramètres."
+    },
+    "reference": "RFC 7011 (IPFIX) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-siem-core-capabilities-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une PME de 120 salariés hésite à acquérir un SIEM. Quelles deux fonctions un SIEM apporte-t-il ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La corrélation d'événements issus de sources différentes pour générer des alertes"
+        },
+        {
+          "id": "b",
+          "text": "Le blocage en ligne des paquets malveillants avant qu'ils n'atteignent les serveurs"
+        },
+        {
+          "id": "c",
+          "text": "La centralisation et la conservation des journaux de l'ensemble du parc"
+        },
+        {
+          "id": "d",
+          "text": "Le déploiement automatique des correctifs manquants sur les postes"
+        },
+        {
+          "id": "e",
+          "text": "Le chiffrement intégral des disques des ordinateurs portables"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Un SIEM (Security Information and Event Management) agrège et normalise les journaux de sources multiples, les conserve, puis applique des règles de corrélation pour détecter des schémas qu'aucune source isolée ne révèle (échecs d'authentification suivis d'une réussite, connexion VPN puis accès sensible). Il produit alertes, tableaux de bord et rapports. Il observe et alerte ; il ne bloque pas le trafic, ne corrige pas les systèmes et ne chiffre pas les données, sauf à piloter d'autres outils via une plateforme SOAR.",
+    "distractorNotes": {
+      "b": "Le blocage en ligne est le rôle d'un IPS ou d'un pare-feu ; le SIEM analyse les journaux qu'il reçoit, sans être placé en coupure du trafic.",
+      "d": "Le déploiement des correctifs relève d'un outil de gestion des correctifs, pas du SIEM.",
+      "e": "Le chiffrement des disques est assuré par une solution FDE (BitLocker, par exemple), sans lien avec le SIEM."
+    },
+    "reference": "NIST SP 800-92 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-distributed-bruteforce-rule-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le SOC d'un fournisseur de services en ligne a créé cette règle pour détecter les attaques par force brute distribuées. Quelles deux situations déclenchent la règle ?",
+      "exhibit": "Règle AUTH-BF-DISTRIB\n  Événement     : 4625 (échec d'ouverture de session)\n  Regroupement  : même compte cible\n  Condition     : au moins 10 adresses IP sources distinctes\n  Fenêtre       : 15 minutes glissantes\n  Action        : alerte de gravité élevée",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "40 échecs pour le compte j.martin depuis une seule adresse IP en 5 min"
+        },
+        {
+          "id": "b",
+          "text": "12 échecs pour le compte j.martin depuis 12 adresses IP distinctes en 8 min"
+        },
+        {
+          "id": "c",
+          "text": "10 échecs visant 10 comptes différents depuis 10 adresses IP distinctes en 3 min"
+        },
+        {
+          "id": "d",
+          "text": "15 échecs pour le compte admin depuis 15 adresses IP distinctes, un toutes les 8 min"
+        },
+        {
+          "id": "e",
+          "text": "11 échecs pour le compte admin depuis 11 adresses IP distinctes en 14 min"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "La règle exige trois conditions simultanées : des événements 4625, un même compte cible et au moins 10 adresses sources distinctes dans une fenêtre de 15 min. 12 échecs sur j.martin depuis 12 adresses en 8 min les remplissent, de même que 11 échecs sur admin depuis 11 adresses en 14 min. Ce type de règle vise les attaques réparties sur un botnet, qui échappent aux seuils par adresse source unique.",
+    "distractorNotes": {
+      "a": "Une seule adresse source ne remplit pas la condition des 10 adresses distinctes ; c'est une autre règle (force brute classique) qui doit la détecter.",
+      "c": "Les échecs visent 10 comptes différents : la condition « même compte cible » n'est pas remplie (ce profil évoque plutôt une pulvérisation).",
+      "d": "Espacés de 8 min, ces 15 échecs (étalés sur près de 2 h) ne réunissent jamais plus de 2 adresses distinctes dans une fenêtre de 15 min, loin des 10 requises."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-scap-component-specifications-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "L'équipe conformité d'un ministère prépare un contenu SCAP pour auditer ses postes. Quelles deux spécifications font partie de SCAP ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "STIX"
+        },
+        {
+          "id": "b",
+          "text": "SAML"
+        },
+        {
+          "id": "c",
+          "text": "XCCDF"
+        },
+        {
+          "id": "d",
+          "text": "TAXII"
+        },
+        {
+          "id": "e",
+          "text": "OVAL"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "SCAP réunit plusieurs spécifications publiées ou reprises par le NIST. XCCDF (Extensible Configuration Checklist Description Format) structure les listes de contrôles et leurs résultats ; OVAL (Open Vulnerability and Assessment Language) décrit les tests techniques qui vérifient l'état d'un système. S'y ajoutent notamment CPE, CCE, CVE et CVSS. Ensemble, elles permettent d'automatiser l'évaluation de la conformité d'un parc par rapport à un benchmark.",
+    "distractorNotes": {
+      "a": "STIX est un langage d'échange de renseignement sur les menaces, hors du périmètre de SCAP.",
+      "b": "SAML est une norme OASIS de fédération d'identité, sans rapport avec la vérification de configuration.",
+      "d": "TAXII est le protocole de transport des données STIX ; il ne fait pas partie de SCAP."
+    },
+    "reference": "NIST SP 800-126 Rev. 3 (SCAP 1.3) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-monitoring-tools-to-purpose-matching-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le RSSI d'un groupe hôtelier présente les outils de surveillance du SOC au comité de direction. Associez chaque outil à la finalité qui lui correspond.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "SIEM"
+        },
+        {
+          "id": "l2",
+          "text": "DLP"
+        },
+        {
+          "id": "l3",
+          "text": "NetFlow"
+        },
+        {
+          "id": "l4",
+          "text": "Trap SNMP"
+        },
+        {
+          "id": "l5",
+          "text": "Scanner de vulnérabilités"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Corréler des événements de sources multiples et générer des alertes"
+        },
+        {
+          "id": "r2",
+          "text": "Repérer et bloquer la sortie de données sensibles"
+        },
+        {
+          "id": "r3",
+          "text": "Décrire les flux réseau : qui communique avec qui, et quel volume"
+        },
+        {
+          "id": "r4",
+          "text": "Notifier spontanément un événement survenu sur un équipement"
+        },
+        {
+          "id": "r5",
+          "text": "Identifier les failles connues et les défauts de configuration"
+        },
+        {
+          "id": "r6",
+          "text": "Signer numériquement le code avant son déploiement"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "r1",
+        "l2": "r2",
+        "l3": "r3",
+        "l4": "r4",
+        "l5": "r5"
+      }
+    },
+    "explanation": "Le SIEM centralise les journaux et les corrèle pour produire des alertes. La DLP inspecte le contenu en mouvement ou au repos pour empêcher la fuite de données sensibles. NetFlow résume les conversations réseau par leurs métadonnées. Le trap SNMP est une notification non sollicitée envoyée par l'équipement au gestionnaire. Le scanner de vulnérabilités sonde les systèmes pour y trouver failles connues et mauvais réglages. Ces outils sont complémentaires : leurs résultats convergent généralement vers le SIEM.",
+    "distractorNotes": {
+      "r6": "La signature de code garantit l'origine et l'intégrité d'un logiciel ; c'est un contrôle de la chaîne de développement, pas une fonction des outils de surveillance listés."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-monitoring-activities-matching-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un opérateur d'énergie décrit le fonctionnement de son SOC dans son dossier d'audit. Associez chaque pratique à l'activité de surveillance qu'elle illustre.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Les journaux de 300 serveurs et 40 pare-feu sont centralisés et normalisés dans le SIEM"
+        },
+        {
+          "id": "l2",
+          "text": "Le SIEM avertit l'analyste d'astreinte dès qu'une règle de corrélation se déclenche"
+        },
+        {
+          "id": "l3",
+          "text": "Un analyste examine les événements liés pour établir s'il s'agit d'une attaque réelle"
+        },
+        {
+          "id": "l4",
+          "text": "Une synthèse mensuelle des incidents et des tendances est remise au comité de direction"
+        },
+        {
+          "id": "l5",
+          "text": "Les journaux de plus de 90 jours sont déplacés vers un stockage WORM pour trois ans"
+        }
+      ],
+      "right": [
+        {
+          "id": "agg",
+          "text": "Agrégation des journaux"
+        },
+        {
+          "id": "alert",
+          "text": "Alerte"
+        },
+        {
+          "id": "ana",
+          "text": "Analyse"
+        },
+        {
+          "id": "rep",
+          "text": "Rapports"
+        },
+        {
+          "id": "arch",
+          "text": "Archivage"
+        },
+        {
+          "id": "quar",
+          "text": "Quarantaine"
+        },
+        {
+          "id": "tune",
+          "text": "Ajustement des alertes"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "agg",
+        "l2": "alert",
+        "l3": "ana",
+        "l4": "rep",
+        "l5": "arch"
+      }
+    },
+    "explanation": "L'objectif 4.4 décrit une chaîne d'activités. L'agrégation rassemble et normalise les journaux dispersés. L'alerte prévient un humain quand une condition est remplie. L'analyse qualifie l'alerte : vrai ou faux positif, portée, gravité. Les rapports synthétisent l'activité pour la direction, les auditeurs ou les régulateurs. L'archivage conserve les journaux sur la durée requise, sur un support adapté et souvent immuable. Quarantaine et ajustement des alertes relèvent, eux, de la réponse aux alertes.",
+    "distractorNotes": {
+      "quar": "La quarantaine isole un fichier ou un hôte en réponse à une alerte confirmée ; aucune des pratiques décrites n'isole quoi que ce soit.",
+      "tune": "L'ajustement modifie une règle pour réduire les faux positifs ; aucune pratique listée ne change le comportement d'une règle."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-monitored-resources-category-matching-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un hébergeur classe les sources de surveillance de son SOC selon les catégories de ressources de l'objectif 4.4. Associez chaque source à la catégorie de ressource surveillée.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Événements de sécurité Windows d'un serveur de fichiers (ouvertures de session)"
+        },
+        {
+          "id": "l2",
+          "text": "Taux d'erreurs HTTP 500 et temps de réponse de l'API de paiement"
+        },
+        {
+          "id": "l3",
+          "text": "Trap SNMP d'un commutateur signalant la chute d'une liaison montante"
+        },
+        {
+          "id": "l4",
+          "text": "Occupation des disques et processus actifs des postes de travail"
+        },
+        {
+          "id": "l5",
+          "text": "Connexions refusées consignées par le pare-feu périmétrique"
+        }
+      ],
+      "right": [
+        {
+          "id": "sys",
+          "text": "Systèmes"
+        },
+        {
+          "id": "app",
+          "text": "Applications"
+        },
+        {
+          "id": "infra",
+          "text": "Infrastructure"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "sys",
+        "l2": "app",
+        "l3": "infra",
+        "l4": "sys",
+        "l5": "infra"
+      }
+    },
+    "explanation": "La surveillance des systèmes porte sur les hôtes et leur système d'exploitation : journaux d'événements, processus, ressources des serveurs et des postes. La surveillance des applications suit le comportement d'un logiciel : erreurs, temps de réponse, journaux applicatifs, transactions refusées. La surveillance de l'infrastructure couvre les équipements réseau et de sécurité qui relient les systèmes : commutateurs, routeurs, pare-feu. Couvrir les trois niveaux évite les angles morts : une attaque visible dans l'API peut ne laisser aucune trace dans le pare-feu, et inversement.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-siem-processing-pipeline-order-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un nouvel analyste d'un SOC mutualisé doit comprendre le parcours d'un événement dans le SIEM. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "triage",
+          "text": "L'analyste trie l'alerte et engage la réponse adaptée"
+        },
+        {
+          "id": "normalize",
+          "text": "Le SIEM agrège les événements et les normalise dans un format commun"
+        },
+        {
+          "id": "alert",
+          "text": "Une alerte est générée et attribuée à un analyste"
+        },
+        {
+          "id": "collect",
+          "text": "Les serveurs et les pare-feu émettent leurs journaux par agent ou par syslog"
+        },
+        {
+          "id": "correlate",
+          "text": "Les règles de corrélation analysent les événements normalisés"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "collect",
+        "normalize",
+        "correlate",
+        "alert",
+        "triage"
+      ]
+    },
+    "explanation": "Un événement doit d'abord être émis et collecté (agent, syslog, API). Le SIEM l'agrège avec ceux des autres sources et le normalise (champs communs, horodatage unifié), condition pour que les règles de corrélation puissent comparer des journaux hétérogènes. Quand une règle est satisfaite, une alerte est créée et attribuée. L'analyste la trie enfin (vrai ou faux positif, gravité) et lance la réponse : quarantaine, escalade ou ajustement de la règle.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-92 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-cis-benchmark-compliance-cycle-order-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un hébergeur de données de santé met en place un contrôle de conformité de ses serveurs fondé sur un benchmark CIS. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "remediate",
+          "text": "Appliquer les corrections de configuration retenues"
+        },
+        {
+          "id": "select",
+          "text": "Choisir le benchmark CIS du système d'exploitation et le niveau de profil"
+        },
+        {
+          "id": "rescan",
+          "text": "Relancer l'analyse pour confirmer la conformité"
+        },
+        {
+          "id": "scan",
+          "text": "Exécuter une analyse de conformité SCAP avec le contenu du benchmark"
+        },
+        {
+          "id": "review",
+          "text": "Examiner les écarts du rapport et valider les exceptions justifiées"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "select",
+        "scan",
+        "review",
+        "remediate",
+        "rescan"
+      ]
+    },
+    "explanation": "On commence par fixer la référence : le benchmark correspondant à l'OS et le profil visé (niveau 1 ou 2). L'analyse SCAP mesure ensuite l'écart entre cette référence et l'état réel. Les écarts sont examinés : certains sont corrigés, d'autres acceptés comme exceptions documentées pour raison métier. Les corrections sont appliquées, puis une nouvelle analyse valide le résultat ; répétée périodiquement, elle détecte les dérives de configuration.",
+    "distractorNotes": {},
+    "reference": "CIS Benchmarks ; NIST SP 800-126 Rev. 3 (SCAP 1.3) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-false-positive-backup-alert-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le SIEM d'un cabinet d'avocats lève une alerte « volume sortant anormal ». L'analyse montre qu'il s'agit de la sauvegarde hebdomadaire autorisée et documentée vers le fournisseur de stockage en ligne : aucune activité malveillante n'a eu lieu. Comment qualifie-t-on cette alerte ?",
+      "fields": [
+        {
+          "id": "f1",
+          "label": "Qualification de l'alerte (deux mots)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "f1": {
+          "accepted": [
+            "faux positif",
+            "faux-positif",
+            "un faux positif",
+            "un faux-positif",
+            "false positive",
+            "false-positive"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Un faux positif est une alerte déclenchée alors qu'aucune activité malveillante n'a eu lieu ; un faux négatif est une attaque réelle qui ne déclenche rien. Ici, la règle a bien vu un fort volume sortant, mais il correspond à un flux légitime et documenté. La suite logique est d'ajuster la règle, par exemple en excluant ce flux de sauvegarde identifié par sa source, sa destination et son créneau, afin que les analystes ne perdent pas de temps sur la même alerte chaque semaine.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-windows-1102-log-cleared-rule-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le SOC d'un laboratoire pharmaceutique crée une règle SIEM qui alerte dès qu'une personne efface le journal de sécurité d'un serveur Windows, geste typique d'un attaquant qui couvre ses traces. Sur quel identifiant d'événement la règle doit-elle se fonder ?",
+      "fields": [
+        {
+          "id": "f1",
+          "label": "Identifiant d'événement Windows (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "f1": {
+          "accepted": [
+            "1102"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Windows consigne l'événement 1102 (« The audit log was cleared ») dans le journal de sécurité chaque fois que celui-ci est effacé, avec le compte responsable. Une alerte sur cet événement est une règle de base : un effacement légitime est rare et doit être justifié. Comme les événements déjà transmis au SIEM restent disponibles, l'agrégation centralisée préserve la trace des actions antérieures à l'effacement.",
+    "distractorNotes": {},
+    "reference": "Microsoft Learn, Windows security audit events (1102) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  },
+  {
+    "slug": "security-plus-4.4-log-storage-capacity-calc-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Le SIEM d'une plateforme de commerce en ligne reçoit 60 Go de journaux bruts par jour. Ils restent 30 jours dans le SIEM, sans compression, puis sont déplacés (et non copiés) vers une archive où ils sont compressés avec un ratio de 10:1 et conservés 330 jours supplémentaires. Quelle capacité totale, SIEM et archive réunis, faut-il prévoir en régime établi ?",
+      "fields": [
+        {
+          "id": "f1",
+          "label": "Capacité en Go (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "f1": {
+          "accepted": [
+            "3780"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Dans le SIEM, 30 jours de données non compressées occupent 30 × 60 = 1 800 Go. Dans l'archive, chaque journée compressée à 10:1 pèse 60 / 10 = 6 Go, et 330 jours occupent 330 × 6 = 1 980 Go. Les journaux étant déplacés et non copiés, il n'y a pas de double stockage : la capacité totale est de 1 800 + 1 980 = 3 780 Go. Ce type de calcul conditionne le dimensionnement de l'archivage et le respect des durées de conservation imposées.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-92 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.4"
+  }
+]

@@ -1,0 +1,1867 @@
+[
+  {
+    "slug": "security-plus-4.6-termination-disable-first-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un mardi à 16 h, la DRH informe l'équipe IAM qu'un administrateur système est licencié pour faute, avec effet immédiat ; il est en train de quitter les locaux. Quelle action l'équipe doit-elle mener EN PREMIER ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Supprimer définitivement son compte de l'annuaire ainsi que ses données."
+        },
+        {
+          "id": "b",
+          "text": "Désactiver tous ses comptes, privilégiés compris, et révoquer ses sessions."
+        },
+        {
+          "id": "c",
+          "text": "Inscrire la revue de ses droits à la prochaine campagne trimestrielle."
+        },
+        {
+          "id": "d",
+          "text": "Récupérer son badge et son ordinateur lors de l'entretien de départ."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un départ contentieux d'un administrateur est le cas le plus risqué du déprovisionnement : il connaît les systèmes et peut s'y connecter à distance dès qu'il a quitté les lieux. L'action prioritaire est donc de couper tous ses accès logiques, comptes nominatifs et privilégiés, et de révoquer les sessions et jetons déjà ouverts, qui survivent à un simple changement de mot de passe. La suppression viendra plus tard, une fois la durée de conservation écoulée, et les secrets partagés qu'il connaissait devront aussi être changés.",
+    "distractorNotes": {
+      "a": "Supprimer tout de suite fait perdre la piste d'audit et les données dont l'entreprise peut avoir besoin : on désactive d'abord, on supprime après la durée de conservation.",
+      "c": "Attendre la prochaine campagne de revue laisse des accès actifs pendant des semaines à une personne licenciée pour faute.",
+      "d": "Récupérer le matériel est nécessaire, mais ne coupe pas l'accès à distance (VPN, messagerie, consoles cloud) : cela ne vient pas en premier."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, contrôle PS-4 (Personnel Termination) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-identity-proofing-contractor-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avant d'ouvrir un compte à un prestataire, le centre de services compare sa pièce d'identité officielle à la photo et aux informations transmises par son employeur. Comment s'appelle cette étape ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La fédération d'identités"
+        },
+        {
+          "id": "b",
+          "text": "L'autorisation"
+        },
+        {
+          "id": "c",
+          "text": "La vérification d'identité"
+        },
+        {
+          "id": "d",
+          "text": "La traçabilité (accounting)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La vérification d'identité (identity proofing) établit, avant toute création de compte, que la personne est bien celle qu'elle prétend être, à partir de preuves comme une pièce d'identité officielle confrontée à des sources fiables. Elle conditionne la confiance de tout le cycle de vie : un compte créé pour un imposteur sera ensuite authentifié sans difficulté. NIST SP 800-63A décrit cette étape et ses niveaux d'assurance (IAL).",
+    "distractorNotes": {
+      "a": "La fédération établit une relation de confiance entre domaines d'identité (IdP et fournisseurs de services) ; elle ne contrôle pas une pièce d'identité.",
+      "b": "L'autorisation détermine ce qu'un utilisateur déjà authentifié peut faire ; elle intervient bien après la création du compte.",
+      "d": "La traçabilité enregistre les actions des utilisateurs (journaux) ; elle ne valide pas l'identité réelle d'une personne."
+    },
+    "reference": "NIST SP 800-63A ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-privilege-creep-mover-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Lors d'un audit, ce compte est relevé : son titulaire peut à la fois créer des commandes et valider leur paiement. Trois autres comptes présentent le même profil après des mutations. Quelle mesure corrige LE MIEUX la cause de ces écarts ?",
+      "exhibit": "Compte       : jdupont (Jeanne Dupont)\nPoste actuel : Acheteuse, service Achats, depuis le 2026-03-01\nHistorique   : Comptabilité (2021-2023), Paie (2023-2026)\nGroupes AD   :\n  GRP-Achats-Commandes\n  GRP-Compta-Grand-Livre\n  GRP-Compta-Validation-Paiements\n  GRP-Paie-Lecture-Salaires",
+      "options": [
+        {
+          "id": "a",
+          "text": "Intégrer au processus de mutation le retrait des droits de l'ancien poste."
+        },
+        {
+          "id": "b",
+          "text": "Imposer l'authentification multifacteur à tous les comptes des Achats."
+        },
+        {
+          "id": "c",
+          "text": "Réduire la durée de validité des mots de passe des comptes concernés."
+        },
+        {
+          "id": "d",
+          "text": "Retirer manuellement les groupes superflus des quatre comptes relevés."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le compte a accumulé les droits de chaque poste occupé (accumulation de privilèges, ou privilege creep) : lors des mutations, on a ajouté les groupes du nouveau poste sans retirer ceux de l'ancien. Le résultat viole le moindre privilège et la séparation des tâches (création de commande et validation de paiement). Comme quatre comptes sont touchés, la cause est le processus de mutation (mover) lui-même : il doit retirer les droits de l'ancien rôle avant d'attribuer ceux du nouveau, complété par des revues périodiques des accès.",
+    "distractorNotes": {
+      "b": "L'authentification multifacteur renforce la preuve d'identité, mais ne retire aucun droit en trop : le problème est d'autorisation.",
+      "c": "La durée de validité des mots de passe concerne l'authentification ; les groupes accumulés restent attribués.",
+      "d": "Le nettoyage manuel corrige les quatre comptes, mais pas la cause : la prochaine mutation recréera le même écart."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, contrôles AC-2 (Account Management) et AC-5 (Separation of Duties) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-offboarding-tokens-secrets-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un développeur quitte l'entreprise. Son compte est désactivé dans le fournisseur d'identité, qui assure l'authentification unique vers les applications SaaS. Quelles deux actions complètent LE MIEUX le déprovisionnement ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Révoquer ses jetons d'actualisation et les sessions déjà ouvertes dans les applications SaaS."
+        },
+        {
+          "id": "b",
+          "text": "Supprimer immédiatement ses journaux d'activité pour protéger sa vie privée."
+        },
+        {
+          "id": "c",
+          "text": "Changer les secrets partagés qu'il connaissait, comme la clé API d'un compte de service."
+        },
+        {
+          "id": "d",
+          "text": "Réinitialiser les mots de passe de l'ensemble des salariés de son service."
+        },
+        {
+          "id": "e",
+          "text": "Laisser son compte actif 30 jours pour que l'équipe consulte ses courriels."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Désactiver le compte sur l'IdP empêche les nouvelles authentifications, mais pas l'usage de ce qui a déjà été délivré : les sessions ouvertes et les jetons d'actualisation OAuth restent valides jusqu'à leur expiration ou leur révocation. Il faut donc les révoquer dans chaque application. Ensuite, tout secret qu'il connaissait sans passer par son identité (clé API d'un compte de service, mot de passe partagé) reste utilisable par lui : il faut le changer. Ces deux actions ferment les accès qui contournent l'IdP.",
+    "distractorNotes": {
+      "b": "Les journaux sont une preuve et suivent la durée de conservation de la politique ; les supprimer au départ détruit la piste d'audit.",
+      "d": "Réinitialiser les mots de passe des collègues est disproportionné : il ne connaissait pas leurs mots de passe personnels.",
+      "e": "Le compte doit être désactivé ; l'accès aux courriels se règle par une délégation ou un transfert de la boîte à son responsable."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, contrôle AC-2 (Account Management) ; RFC 7009 (révocation de jetons OAuth 2.0)"
+  },
+  {
+    "slug": "security-plus-4.6-onboarding-practices-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une entreprise de 300 salariés refond son processus d'arrivée des nouveaux collaborateurs. Quelles deux pratiques de provisionnement doit-elle adopter ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Copier sur le nouveau compte les droits d'un collègue du même service."
+        },
+        {
+          "id": "b",
+          "text": "Attribuer les droits par des groupes qui correspondent aux rôles métier."
+        },
+        {
+          "id": "c",
+          "text": "Vérifier l'identité de la personne avant de lui remettre ses identifiants."
+        },
+        {
+          "id": "d",
+          "text": "Donner à tous le même mot de passe initial, sans changement imposé."
+        },
+        {
+          "id": "e",
+          "text": "Accorder des droits larges le premier mois, puis les réduire ensuite."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "Un provisionnement sain repose sur deux piliers. D'abord la vérification d'identité, qui garantit que les identifiants sont remis à la bonne personne et non à un imposteur. Ensuite l'attribution des droits par rôle : chaque poste a un ensemble de groupes défini et approuvé, ce qui applique le moindre privilège, facilite les revues et rend les mutations prévisibles. Les droits individuels ou copiés d'un collègue échappent à tout contrôle et accumulent des privilèges.",
+    "distractorNotes": {
+      "a": "Copier un collègue reproduit les droits qu'il a accumulés au fil de ses postes, y compris ceux dont le nouveau venu n'a pas besoin.",
+      "d": "Un mot de passe initial commun est connu de tous ; sans changement imposé à la première connexion, n'importe qui peut usurper le compte.",
+      "e": "Des droits larges, même provisoires, contredisent le moindre privilège ; la réduction promise est souvent oubliée."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, contrôles AC-2 (Account Management) et AC-6 (Least Privilege) ; NIST SP 800-63A"
+  },
+  {
+    "slug": "security-plus-4.6-account-lifecycle-events-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le service IAM d'un groupe industriel formalise le cycle de vie des comptes. Associez chaque événement à l'action de gestion des identités attendue.",
+      "left": [
+        {
+          "id": "e1",
+          "text": "Arrivée d'une nouvelle juriste dont l'identité a été vérifiée"
+        },
+        {
+          "id": "e2",
+          "text": "Passage d'un salarié du service Ventes au service Achats"
+        },
+        {
+          "id": "e3",
+          "text": "Départ d'un salarié au dernier jour de son préavis"
+        },
+        {
+          "id": "e4",
+          "text": "Fin de la durée de conservation fixée après un départ"
+        },
+        {
+          "id": "e5",
+          "text": "Mission d'un prestataire prévue du 1er au 30 juin"
+        }
+      ],
+      "right": [
+        {
+          "id": "create",
+          "text": "Créer le compte avec les droits définis pour son rôle"
+        },
+        {
+          "id": "move",
+          "text": "Retirer les droits de l'ancien poste et attribuer ceux du nouveau"
+        },
+        {
+          "id": "disable",
+          "text": "Désactiver le compte et révoquer ses sessions"
+        },
+        {
+          "id": "delete",
+          "text": "Supprimer le compte"
+        },
+        {
+          "id": "expire",
+          "text": "Fixer une date d'expiration automatique au compte"
+        },
+        {
+          "id": "admin",
+          "text": "Accorder des droits d'administrateur provisoires"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "e1": "create",
+        "e2": "move",
+        "e3": "disable",
+        "e4": "delete",
+        "e5": "expire"
+      }
+    },
+    "explanation": "Le cycle arrivée, mutation, départ (joiner, mover, leaver) structure le provisionnement. À l'arrivée, le compte est créé avec les droits du rôle, une fois l'identité vérifiée. À la mutation, on retire les droits de l'ancien poste avant d'ajouter ceux du nouveau, faute de quoi les privilèges s'accumulent. Au départ, on désactive et l'on révoque les sessions ; la suppression n'intervient qu'à l'issue de la durée de conservation. Pour un prestataire à durée connue, une date d'expiration ferme le compte même si personne ne pense à le faire.",
+    "distractorNotes": {
+      "admin": "Aucun de ces événements ne justifie des droits d'administrateur : ils ne s'accordent que sur besoin motivé, idéalement juste-à-temps."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, contrôle AC-2 (Account Management) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-saml-xml-assertions-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise veut que ses salariés, déjà authentifiés par son fournisseur d'identité, accèdent à une application RH en SaaS sans nouveau mot de passe. L'éditeur demande d'échanger des assertions signées au format XML. Quelle norme attend-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "OAuth 2.0"
+        },
+        {
+          "id": "b",
+          "text": "LDAP"
+        },
+        {
+          "id": "c",
+          "text": "Kerberos"
+        },
+        {
+          "id": "d",
+          "text": "SAML 2.0"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "SAML 2.0 (Security Assertion Markup Language) est la norme de fédération web fondée sur des assertions XML signées : le fournisseur d'identité (IdP) authentifie l'utilisateur et transmet au fournisseur de services (SP) une assertion qui atteste de son identité et de ses attributs. Le SP ne voit jamais le mot de passe. C'est le mécanisme d'authentification unique le plus courant entre un annuaire d'entreprise et des applications SaaS.",
+    "distractorNotes": {
+      "a": "OAuth 2.0 délègue une autorisation d'accès à une API par des jetons d'accès ; ce n'est pas un échange d'assertions XML d'authentification.",
+      "b": "LDAP sert à interroger un annuaire ; il ne transporte pas d'assertion signée entre deux organisations.",
+      "c": "Kerberos repose sur des tickets émis par un KDC, au sein d'un domaine ; il n'utilise pas d'assertions XML."
+    },
+    "reference": "OASIS Security Assertion Markup Language (SAML) V2.0 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-oauth-delegated-calendar-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une application de planification en ligne doit lire l'agenda de ses utilisateurs, hébergé chez un autre fournisseur, sans jamais recevoir leur mot de passe. Après consentement de l'utilisateur, elle obtient un jeton limité à la lecture de l'agenda. Quel protocole décrit ce mécanisme ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "SAML 2.0"
+        },
+        {
+          "id": "b",
+          "text": "OAuth 2.0"
+        },
+        {
+          "id": "c",
+          "text": "LDAP"
+        },
+        {
+          "id": "d",
+          "text": "RADIUS"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "OAuth 2.0 est un cadre de délégation d'autorisation : le propriétaire de la ressource (l'utilisateur) consent, auprès du serveur d'autorisation, à ce qu'une application cliente accède à une partie précise de ses données. L'application reçoit un jeton d'accès limité par des portées (scopes), ici la lecture de l'agenda, et ne connaît jamais le mot de passe. OAuth ne dit pas en soi qui est l'utilisateur : c'est OpenID Connect qui ajoute cette couche d'authentification.",
+    "distractorNotes": {
+      "a": "SAML 2.0 transmet une assertion d'authentification à un fournisseur de services ; il ne délivre pas de jeton d'accès à portée limitée pour une API.",
+      "c": "LDAP interroge un annuaire, généralement avec les identifiants de l'utilisateur : c'est l'inverse de l'exigence.",
+      "d": "RADIUS authentifie des accès réseau (VPN, Wi-Fi 802.1X) ; il ne délègue pas l'accès à des données d'un tiers."
+    },
+    "reference": "RFC 6749 (OAuth 2.0) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-oidc-id-token-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Les développeurs d'une application mobile utilisent déjà OAuth 2.0 pour appeler des API. Ils veulent maintenant connaître l'utilisateur connecté grâce à un jeton d'identité au format JWT, signé par le fournisseur. Quelle norme doivent-ils ajouter ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "OpenID Connect"
+        },
+        {
+          "id": "b",
+          "text": "SAML 2.0"
+        },
+        {
+          "id": "c",
+          "text": "LDAPS"
+        },
+        {
+          "id": "d",
+          "text": "TACACS+"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "OpenID Connect (OIDC) est une couche d'identité construite au-dessus d'OAuth 2.0. En plus du jeton d'accès, le fournisseur OpenID délivre un jeton d'identité (ID token) au format JWT signé, qui contient l'identifiant de l'utilisateur, l'émetteur, l'audience et l'heure d'authentification. OAuth seul autorise l'accès à une ressource sans définir comment prouver l'identité de l'utilisateur à l'application : OIDC comble ce manque et convient bien aux applications mobiles et web modernes.",
+    "distractorNotes": {
+      "b": "SAML 2.0 fournit des assertions XML destinées à un fournisseur de services web, pas le jeton d'identité JWT que les développeurs veulent obtenir dans leur flux OAuth.",
+      "c": "LDAPS est l'accès chiffré à un annuaire ; il ne délivre aucun jeton d'identité signé à une application mobile.",
+      "d": "TACACS+ authentifie et autorise surtout les administrateurs d'équipements réseau ; il n'a rien à voir avec les jetons JWT."
+    },
+    "reference": "OpenID Connect Core 1.0 ; RFC 6749 (OAuth 2.0)"
+  },
+  {
+    "slug": "security-plus-4.6-saml-audience-mismatch-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Depuis une modification de configuration sur le fournisseur d'identité (IdP), plus aucun salarié n'accède par SSO à l'application de paie, alors que le CRM fonctionne toujours. Quelle est la cause LA PLUS probable ?",
+      "exhibit": "2026-10-14T09:12:41Z saml-sp[2214]: Response from https://idp.example.com\n2026-10-14T09:12:41Z saml-sp[2214]: Signature valid (CN=idp.example.com)\n2026-10-14T09:12:41Z saml-sp[2214]: Assertion rejected: AudienceRestriction\n  expected=https://paie.example.com/saml/metadata\n  received=https://crm.example.com/saml/metadata",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le certificat de signature de l'IdP a expiré et la paie le rejette."
+        },
+        {
+          "id": "b",
+          "text": "Les horloges de l'IdP et de la paie sont trop désynchronisées."
+        },
+        {
+          "id": "c",
+          "text": "L'IdP émet pour la paie des assertions destinées à l'entité du CRM."
+        },
+        {
+          "id": "d",
+          "text": "Les salariés ont été retirés du groupe autorisé dans l'annuaire."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le journal du fournisseur de services montre que la signature est valide, puis que l'assertion est rejetée sur la condition AudienceRestriction : l'audience reçue est l'identifiant d'entité (entity ID) du CRM et non celui de la paie. L'IdP a donc été mal configuré pour la paie, probablement en reprenant les paramètres du CRM. Ce contrôle d'audience est une protection voulue : il empêche de rejouer auprès d'une application une assertion émise pour une autre. Il faut corriger l'entity ID de la paie sur l'IdP.",
+    "distractorNotes": {
+      "a": "La ligne « Signature valid » montre que le certificat de l'IdP est accepté ; un certificat expiré ferait échouer la vérification de signature.",
+      "b": "Un décalage d'horloge ferait échouer les conditions NotBefore ou NotOnOrAfter ; le motif journalisé est l'audience.",
+      "d": "Un problème de groupe se traduirait par un refus d'autorisation après acceptation de l'assertion ; ici l'assertion elle-même est rejetée."
+    },
+    "reference": "OASIS Security Assertion Markup Language (SAML) V2.0 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-ldap-simple-bind-cleartext-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le serveur intranet 10.20.0.15 vérifie les identifiants de ses utilisateurs auprès de l'annuaire 10.20.0.5. Quelle mesure corrige LE MIEUX le problème signalé, sans changer d'annuaire ?",
+      "exhibit": "Oct 14 10:02:17 ids01 alert: [LDAP cleartext bind]\n  src=10.20.0.15:51544 dst=10.20.0.5:389 proto=TCP\n  bindRequest name=\"cn=svc-intranet,ou=svc,dc=example,dc=com\"\n  authentication=simple tls=no",
+      "options": [
+        {
+          "id": "a",
+          "text": "Faire passer les requêtes LDAP de TCP 389 à UDP 389 sur le pare-feu."
+        },
+        {
+          "id": "b",
+          "text": "Remplacer le compte de service svc-intranet par un compte nominatif."
+        },
+        {
+          "id": "c",
+          "text": "Faire expirer le mot de passe du compte svc-intranet tous les 30 jours."
+        },
+        {
+          "id": "d",
+          "text": "Imposer le chiffrement TLS des connexions LDAP (LDAPS ou StartTLS)."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'alerte signale une liaison LDAP « simple » sur le port 389 sans chiffrement : dans ce mode, le nom distinctif et le mot de passe du compte de service transitent en clair et peuvent être capturés par quiconque observe le réseau. Le compte svc-intranet sert en outre à vérifier les identifiants des utilisateurs, dont les mots de passe passent aussi par ces liaisons. La correction est de protéger la session par TLS : LDAPS (TLS dès la connexion, port 636) ou l'opération StartTLS sur le port 389, et de refuser les liaisons simples non chiffrées côté annuaire.",
+    "distractorNotes": {
+      "a": "Changer de protocole de transport ne chiffre rien : le mot de passe resterait lisible.",
+      "b": "Un compte nominatif dont le mot de passe circule en clair serait tout aussi exposé, et lierait le service à une personne.",
+      "c": "Une expiration réduit la durée de validité d'un mot de passe volé, mais chaque nouveau mot de passe continuerait de circuler en clair."
+    },
+    "reference": "RFC 4513 (méthodes d'authentification LDAP et mécanismes de sécurité) ; RFC 4511 (LDAP)"
+  },
+  {
+    "slug": "security-plus-4.6-federation-benefits-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une université met en place une fédération d'identités : les étudiants s'authentifient auprès du fournisseur d'identité (IdP) de l'université pour accéder aux services de plusieurs partenaires. Quelles deux affirmations sont vraies ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les partenaires n'ont pas à stocker les mots de passe des étudiants."
+        },
+        {
+          "id": "b",
+          "text": "Une compromission de l'IdP reste sans effet sur les services partenaires."
+        },
+        {
+          "id": "c",
+          "text": "La fédération rend l'authentification multifacteur inutile."
+        },
+        {
+          "id": "d",
+          "text": "Désactiver un compte sur l'IdP bloque ses nouvelles connexions chez tous les partenaires."
+        },
+        {
+          "id": "e",
+          "text": "Chaque partenaire doit vérifier lui-même le mot de passe de chaque étudiant."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Dans une fédération, l'IdP authentifie l'utilisateur et transmet aux fournisseurs de services une assertion ou un jeton signé ; les partenaires font confiance à cette preuve sans jamais recevoir ni conserver le mot de passe. Le contrôle est centralisé : désactiver le compte sur l'IdP empêche toute nouvelle authentification chez l'ensemble des partenaires (les sessions déjà ouvertes durent jusqu'à leur expiration ou leur révocation). Contrepartie : l'IdP devient un point critique, à protéger en priorité, notamment par le MFA.",
+    "distractorNotes": {
+      "b": "C'est l'inverse : un IdP compromis permet d'émettre des assertions acceptées par tous les partenaires ; c'est le principal risque de la fédération.",
+      "c": "Le MFA reste nécessaire et se fait justement sur l'IdP : la fédération change le lieu de l'authentification, pas sa force.",
+      "e": "Les partenaires ne voient pas le mot de passe : ils s'appuient sur l'assertion signée de l'IdP."
+    },
+    "reference": "OASIS Security Assertion Markup Language (SAML) V2.0 ; NIST SP 800-63C"
+  },
+  {
+    "slug": "security-plus-4.6-sso-protocols-roles-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un architecte rédige une fiche pour l'équipe IAM d'un groupe hospitalier. Associez chaque protocole à son rôle principal.",
+      "left": [
+        {
+          "id": "p1",
+          "text": "LDAP"
+        },
+        {
+          "id": "p2",
+          "text": "SAML 2.0"
+        },
+        {
+          "id": "p3",
+          "text": "OAuth 2.0"
+        },
+        {
+          "id": "p4",
+          "text": "OpenID Connect"
+        },
+        {
+          "id": "p5",
+          "text": "Kerberos"
+        }
+      ],
+      "right": [
+        {
+          "id": "dir",
+          "text": "Interroger et modifier un annuaire hiérarchique"
+        },
+        {
+          "id": "assert",
+          "text": "Échanger des assertions XML signées entre IdP et fournisseur de services"
+        },
+        {
+          "id": "deleg",
+          "text": "Déléguer un accès limité à une API par un jeton d'accès"
+        },
+        {
+          "id": "idtok",
+          "text": "Ajouter une couche d'identité avec un jeton d'identité JWT"
+        },
+        {
+          "id": "ticket",
+          "text": "Authentifier par des tickets émis par un centre de distribution de clés"
+        },
+        {
+          "id": "mail",
+          "text": "Chiffrer les courriels de bout en bout avec des certificats"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "p1": "dir",
+        "p2": "assert",
+        "p3": "deleg",
+        "p4": "idtok",
+        "p5": "ticket"
+      }
+    },
+    "explanation": "LDAP est le protocole d'accès aux annuaires (lecture et modification d'entrées organisées en arbre). SAML 2.0 fédère des domaines par des assertions XML signées que l'IdP remet au fournisseur de services. OAuth 2.0 délègue une autorisation : l'application obtient un jeton d'accès limité par des portées. OpenID Connect s'appuie sur OAuth 2.0 pour authentifier l'utilisateur grâce à un jeton d'identité JWT. Kerberos assure l'authentification unique au sein d'un domaine grâce aux tickets du KDC (TGT puis tickets de service).",
+    "distractorNotes": {
+      "mail": "Le chiffrement de bout en bout des courriels relève de S/MIME ou d'OpenPGP, pas d'un protocole d'authentification unique."
+    },
+    "reference": "RFC 4511 (LDAP) ; OASIS SAML V2.0 ; RFC 6749 (OAuth 2.0) ; OpenID Connect Core 1.0 ; RFC 4120 (Kerberos V5)"
+  },
+  {
+    "slug": "security-plus-4.6-oauth-authorization-code-flow-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une application web utilise le flux « code d'autorisation » d'OAuth 2.0 pour lire les fichiers d'un utilisateur chez un fournisseur de stockage en ligne. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "token",
+          "text": "L'application échange le code contre un jeton d'accès auprès du point de terminaison de jeton"
+        },
+        {
+          "id": "consent",
+          "text": "L'utilisateur s'authentifie auprès du serveur d'autorisation et donne son consentement"
+        },
+        {
+          "id": "api",
+          "text": "L'application appelle l'API du serveur de ressources en présentant le jeton d'accès"
+        },
+        {
+          "id": "redirect",
+          "text": "L'application redirige le navigateur vers le serveur d'autorisation avec les portées demandées"
+        },
+        {
+          "id": "code",
+          "text": "Le serveur d'autorisation redirige le navigateur vers l'application avec un code d'autorisation"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "redirect",
+        "consent",
+        "code",
+        "token",
+        "api"
+      ]
+    },
+    "explanation": "Dans le flux code d'autorisation, l'application commence par rediriger l'utilisateur vers le serveur d'autorisation en précisant les portées voulues. L'utilisateur s'y authentifie et consent ; le serveur le renvoie alors vers l'URI de redirection de l'application avec un code d'autorisation à usage unique et de courte durée. L'application échange ce code, côté serveur, contre un jeton d'accès, puis présente ce jeton au serveur de ressources. Le mot de passe de l'utilisateur n'est jamais transmis à l'application.",
+    "distractorNotes": {},
+    "reference": "RFC 6749 (OAuth 2.0), section 4.1"
+  },
+  {
+    "slug": "security-plus-4.6-saml-sp-initiated-flow-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un salarié ouvre directement l'URL d'une application SaaS fédérée en SAML 2.0 (connexion initiée par le fournisseur de services, liaisons Redirect puis POST). Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "verify",
+          "text": "Le SP vérifie la signature de l'assertion et ses conditions (audience, validité)"
+        },
+        {
+          "id": "req",
+          "text": "L'utilisateur demande une page protégée de l'application (SP)"
+        },
+        {
+          "id": "authn",
+          "text": "L'IdP authentifie l'utilisateur, par exemple par mot de passe et MFA"
+        },
+        {
+          "id": "session",
+          "text": "Le SP ouvre une session et affiche la page demandée"
+        },
+        {
+          "id": "redir",
+          "text": "Le SP redirige le navigateur vers l'IdP avec une requête AuthnRequest"
+        },
+        {
+          "id": "resp",
+          "text": "Le navigateur transmet en POST à l'ACS du SP la réponse signée de l'IdP"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "req",
+        "redir",
+        "authn",
+        "resp",
+        "verify",
+        "session"
+      ]
+    },
+    "explanation": "Dans le profil Web Browser SSO initié par le SP, tout part d'une demande de ressource protégée sans session. Le SP fabrique une AuthnRequest et redirige le navigateur vers l'IdP. L'IdP authentifie l'utilisateur (ou réutilise sa session existante), puis renvoie une réponse contenant l'assertion signée, que le navigateur poste au service consommateur d'assertions (ACS) du SP. Le SP vérifie la signature avec le certificat de l'IdP et contrôle les conditions (audience, période de validité) avant d'ouvrir la session. Le navigateur sert d'intermédiaire : IdP et SP ne se parlent pas directement.",
+    "distractorNotes": {},
+    "reference": "OASIS SAML V2.0 Profiles (Web Browser SSO Profile)"
+  },
+  {
+    "slug": "security-plus-4.6-ldaps-port-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une PME migre l'authentification de son application métier vers LDAPS (LDAP protégé par TLS dès l'ouverture de la connexion). L'administrateur doit autoriser ce flux sur le pare-feu interne. Quel port TCP doit-il ouvrir vers le serveur d'annuaire ?",
+      "fields": [
+        {
+          "id": "port",
+          "label": "Numéro de port TCP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "port": {
+          "accepted": [
+            "636"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "LDAPS utilise le port TCP 636 : la session TLS est négociée avant tout échange LDAP, si bien que les liaisons et les requêtes sont chiffrées. Le port 389 est celui de LDAP sans chiffrement, qui peut toutefois passer en TLS par l'opération StartTLS. Sur un contrôleur de domaine Active Directory, le catalogue global utilise de même 3268 en clair et 3269 en TLS. Ouvrir 636 et fermer les liaisons simples en clair sur 389 évite que des identifiants circulent lisibles.",
+    "distractorNotes": {},
+    "reference": "IANA Service Name and Transport Protocol Port Number Registry (ldaps, 636/tcp) ; RFC 4513"
+  },
+  {
+    "slug": "security-plus-4.6-abac-treasury-portal-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque veut que l'accès au portail des virements ne soit accordé que si l'utilisateur appartient au service Trésorerie, se connecte depuis un poste géré par l'entreprise et se trouve en France, la décision étant recalculée à chaque requête. Quel modèle de contrôle d'accès répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le contrôle d'accès obligatoire (MAC)"
+        },
+        {
+          "id": "b",
+          "text": "Le contrôle d'accès à base d'attributs (ABAC)"
+        },
+        {
+          "id": "c",
+          "text": "Le contrôle d'accès discrétionnaire (DAC)"
+        },
+        {
+          "id": "d",
+          "text": "Le contrôle d'accès à base de rôles (RBAC)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'ABAC décide à partir d'attributs combinés par une politique : attributs du sujet (service), de l'environnement (pays, heure), de l'appareil (poste géré) et de la ressource. La décision est évaluée à chaque demande, ce qui permet d'intégrer des conditions dynamiques comme la localisation ou l'état du poste. C'est le modèle le plus expressif et celui qu'utilisent les architectures Zero Trust pour leurs politiques contextuelles.",
+    "distractorNotes": {
+      "a": "Le MAC compare des étiquettes de classification imposées par le système à des niveaux d'habilitation ; il ne tient pas compte du poste ni du pays.",
+      "c": "Le DAC laisse le propriétaire de la ressource choisir qui y accède ; il ne combine pas d'attributs de contexte.",
+      "d": "Le RBAC accorde les droits selon le rôle (Trésorerie), mais un rôle seul ne peut pas exprimer l'état du poste ni la localisation."
+    },
+    "reference": "NIST SP 800-162 (Guide to Attribute Based Access Control) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-time-of-day-call-center-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un centre d'appels, les téléconseillers ne doivent pouvoir ouvrir une session sur les postes qu'entre 8 h et 20 h, du lundi au samedi. Quel contrôle répond directement à cette exigence ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le verrouillage du compte après cinq échecs"
+        },
+        {
+          "id": "b",
+          "text": "L'expiration du mot de passe après 90 jours"
+        },
+        {
+          "id": "c",
+          "text": "La restriction horaire de connexion"
+        },
+        {
+          "id": "d",
+          "text": "Le contrôle d'accès discrétionnaire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Les restrictions horaires (time-of-day restrictions) limitent les plages pendant lesquelles un compte peut s'authentifier ou accéder à une ressource. Dans Active Directory, par exemple, l'attribut « heures d'ouverture de session » refuse toute connexion en dehors des créneaux définis. En dehors des heures de travail, un identifiant volé devient inutilisable, et une tentative hors plage constitue un signal à surveiller dans le SIEM.",
+    "distractorNotes": {
+      "a": "Le verrouillage après échecs limite les essais de mots de passe, quelle que soit l'heure ; il n'interdit pas une connexion réussie la nuit.",
+      "b": "L'expiration impose de changer de mot de passe ; elle n'a aucun lien avec les heures de connexion.",
+      "d": "Le DAC laisse le propriétaire d'une ressource en accorder l'accès ; il ne définit pas de plages horaires."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; NIST SP 800-53 Rev. 5, contrôle AC-2 (Account Management)"
+  },
+  {
+    "slug": "security-plus-4.6-least-privilege-driver-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un développeur demande à être ajouté au groupe Admins du domaine pour installer un pilote d'imprimante sur son propre poste. Quelle réponse applique le principe du moindre privilège ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lui permettre d'installer ce pilote sur son seul poste, sans autre droit."
+        },
+        {
+          "id": "b",
+          "text": "L'ajouter au groupe Admins du domaine pour une durée d'un mois."
+        },
+        {
+          "id": "c",
+          "text": "Lui communiquer le mot de passe de l'administrateur local partagé."
+        },
+        {
+          "id": "d",
+          "text": "L'ajouter au groupe Admins du domaine en journalisant ses actions."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le moindre privilège consiste à n'accorder que les droits strictement nécessaires à la tâche, sur le périmètre nécessaire et pour la durée nécessaire. Installer un pilote sur un poste ne demande aucun droit sur le domaine : le support peut l'installer, ou l'on accorde ce seul droit sur ce poste. Les Admins du domaine contrôlent tous les systèmes de l'annuaire ; un compte de développeur membre de ce groupe deviendrait une cible de choix.",
+    "distractorNotes": {
+      "b": "Limiter la durée ne change pas l'étendue : pendant un mois, le développeur contrôlerait tout le domaine pour installer un pilote.",
+      "c": "Un mot de passe partagé supprime l'imputabilité et donne bien plus que le droit nécessaire.",
+      "d": "La journalisation est un contrôle de détection : elle ne réduit pas les privilèges accordés."
+    },
+    "reference": "NIST SP 800-53 Rev. 5, contrôle AC-6 (Least Privilege) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-abac-policy-evaluation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Un hôpital applique cette politique d'accès aux dossiers patients. Quelles deux demandes sont autorisées ? (Choisissez-en deux.)",
+      "exhibit": "Politique « Dossiers patients » : règles évaluées dans l'ordre,\nla première règle applicable est retenue.\nR1  REFUSER   si appareil.géré = non\nR2  AUTORISER si rôle = médecin\n              et service.utilisateur = service.dossier\nR3  AUTORISER si rôle = infirmier\n              et service.utilisateur = service.dossier\n              et heure entre 07:00 et 21:00\nR4  REFUSER   (règle par défaut)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Médecin de cardiologie, poste géré, dossier de cardiologie, à 23 h 40."
+        },
+        {
+          "id": "b",
+          "text": "Infirmière de pédiatrie, poste géré, dossier de pédiatrie, à 22 h 15."
+        },
+        {
+          "id": "c",
+          "text": "Médecin de cardiologie, tablette non gérée, dossier de cardiologie, à 10 h."
+        },
+        {
+          "id": "d",
+          "text": "Infirmier d'oncologie, poste géré, dossier d'oncologie, à 8 h 30."
+        },
+        {
+          "id": "e",
+          "text": "Médecin d'oncologie, poste géré, dossier de cardiologie, à 14 h."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Les règles s'évaluent dans l'ordre et la première applicable l'emporte. Le médecin de cardiologie sur poste géré passe R1 (appareil géré) et satisfait R2 (rôle médecin, même service que le dossier) : R2 n'a pas de condition horaire, l'accès à 23 h 40 est autorisé. L'infirmier d'oncologie sur poste géré à 8 h 30 satisfait R3. L'infirmière de pédiatrie à 22 h 15 échoue sur la plage horaire de R3, la tablette non gérée est refusée dès R1, et le médecin d'oncologie ne relève pas du service du dossier : ces trois demandes tombent sur le refus par défaut ou sur R1.",
+    "distractorNotes": {
+      "b": "R3 n'autorise les infirmiers qu'entre 07:00 et 21:00 : à 22 h 15 aucune règle d'autorisation ne s'applique et R4 refuse.",
+      "c": "R1 refuse toute demande depuis un appareil non géré, avant même l'examen du rôle.",
+      "e": "R2 exige que le service de l'utilisateur soit celui du dossier : oncologie et cardiologie diffèrent, R4 refuse."
+    },
+    "reference": "NIST SP 800-162 (Guide to Attribute Based Access Control) ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-access-control-models-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Lors d'une formation interne, le RSSI présente plusieurs situations. Associez chaque situation au modèle de contrôle d'accès qu'elle illustre.",
+      "left": [
+        {
+          "id": "s1",
+          "text": "Un document classé « Secret » n'est lisible que par les titulaires d'une habilitation suffisante, et son auteur ne peut pas changer ce classement"
+        },
+        {
+          "id": "s2",
+          "text": "L'auteur d'un tableur partagé choisit lui-même les collègues autorisés à le modifier"
+        },
+        {
+          "id": "s3",
+          "text": "Tout nouveau comptable reçoit automatiquement les droits définis pour le poste « Comptable »"
+        },
+        {
+          "id": "s4",
+          "text": "Une liste de contrôle d'accès bloque le trafic sortant vers le port 25 pour tous les postes, quel que soit l'utilisateur"
+        },
+        {
+          "id": "s5",
+          "text": "L'accès dépend à la fois du service de l'utilisateur, de l'état de son appareil et de la sensibilité du document"
+        }
+      ],
+      "right": [
+        {
+          "id": "mac",
+          "text": "Contrôle d'accès obligatoire (MAC)"
+        },
+        {
+          "id": "dac",
+          "text": "Contrôle d'accès discrétionnaire (DAC)"
+        },
+        {
+          "id": "rbac",
+          "text": "Contrôle d'accès à base de rôles (RBAC)"
+        },
+        {
+          "id": "rule",
+          "text": "Contrôle d'accès à base de règles"
+        },
+        {
+          "id": "abac",
+          "text": "Contrôle d'accès à base d'attributs (ABAC)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "mac",
+        "s2": "dac",
+        "s3": "rbac",
+        "s4": "rule",
+        "s5": "abac"
+      }
+    },
+    "explanation": "Le MAC impose des étiquettes de classification et des habilitations fixées par le système ou l'administration : le propriétaire ne peut pas les modifier. Le DAC laisse au propriétaire de la ressource le choix de ses accès. Le RBAC attache les droits à des rôles métier, attribués ensuite aux personnes. Le contrôle à base de règles applique des règles globales définies par l'administrateur, valables pour tous, comme une ACL de pare-feu. L'ABAC combine des attributs du sujet, de l'objet et du contexte dans une politique évaluée à chaque demande.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; NIST SP 800-162"
+  },
+  {
+    "slug": "security-plus-4.6-mfa-same-factor-question-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Pour se connecter à son portail client, une banque demande le mot de passe puis la réponse à une question secrète (« nom de votre premier animal »). Un auditeur affirme qu'il ne s'agit pas d'une authentification multifacteur. Pourquoi ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La question secrète constitue un facteur biométrique trop faible."
+        },
+        {
+          "id": "b",
+          "text": "Le mot de passe et la réponse devraient être saisis sur deux appareils."
+        },
+        {
+          "id": "c",
+          "text": "La question secrète relève du facteur « lieu où l'on se trouve »."
+        },
+        {
+          "id": "d",
+          "text": "Les deux éléments relèvent du même facteur : ce que l'on sait."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'authentification multifacteur combine des éléments de catégories différentes : ce que l'on sait (mot de passe, PIN, réponse secrète), ce que l'on possède (jeton, carte, téléphone), ce que l'on est (biométrie) et l'endroit où l'on se trouve. Un mot de passe suivi d'une question secrète reste deux connaissances : un attaquant qui a hameçonné l'un peut obtenir l'autre par le même moyen ou par recherche en sources ouvertes. C'est une authentification à deux étapes, pas à deux facteurs.",
+    "distractorNotes": {
+      "a": "Une question secrète est une connaissance, pas une caractéristique physique : elle n'a rien de biométrique.",
+      "b": "Le MFA se définit par la nature des facteurs, pas par le nombre d'appareils ; deux saisies de connaissances restent un seul facteur.",
+      "c": "Le facteur de lieu repose sur une position (géolocalisation, réseau d'origine) ; une réponse mémorisée n'en fait pas partie."
+    },
+    "reference": "NIST SP 800-63B ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-mfa-valid-combinations-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une mutuelle compare cinq méthodes de connexion pour son extranet. Quelles deux combinaisons constituent une authentification multifacteur ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un mot de passe et la réponse à une question secrète"
+        },
+        {
+          "id": "b",
+          "text": "Un code PIN et une empreinte digitale"
+        },
+        {
+          "id": "c",
+          "text": "Une carte à puce et un badge de proximité"
+        },
+        {
+          "id": "d",
+          "text": "Un mot de passe et un code TOTP issu d'une application"
+        },
+        {
+          "id": "e",
+          "text": "Une reconnaissance faciale et une empreinte digitale"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Une combinaison est multifacteur si ses éléments relèvent de catégories différentes. Le code PIN (ce que l'on sait) associé à une empreinte digitale (ce que l'on est) en est un exemple, tout comme le mot de passe (ce que l'on sait) associé à un code TOTP, qui prouve la possession de l'appareil où réside le secret partagé (ce que l'on possède). Multiplier les éléments d'une même catégorie n'apporte pas l'indépendance recherchée : un même mode de compromission peut les obtenir tous.",
+    "distractorNotes": {
+      "a": "Le mot de passe et la question secrète relèvent tous deux de ce que l'on sait : un seul facteur.",
+      "c": "La carte à puce et le badge sont deux objets possédés : un seul facteur, que le vol d'un portefeuille peut compromettre en entier.",
+      "e": "Visage et empreinte sont deux caractéristiques biométriques : un seul facteur, ce que l'on est."
+    },
+    "reference": "NIST SP 800-63B ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-phishing-resistant-fido2-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après plusieurs hameçonnages par proxy inverse (adversary-in-the-middle) qui ont contourné les codes à usage unique, le RSSI veut un second facteur qui résiste LE MIEUX à ce type d'attaque. Que doit-il retenir ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Des codes à usage unique envoyés par SMS"
+        },
+        {
+          "id": "b",
+          "text": "Des notifications push à approuver"
+        },
+        {
+          "id": "c",
+          "text": "Des clés de sécurité FIDO2 (WebAuthn)"
+        },
+        {
+          "id": "d",
+          "text": "Des codes TOTP générés par une application"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un proxy inverse d'hameçonnage relaie en temps réel tout ce que la victime saisit ou approuve : un code SMS ou TOTP est transmis au vrai site avant d'expirer, et une notification push approuve la session ouverte par l'attaquant. Une clé FIDO2 signe un défi lié à l'origine (le nom de domaine) du site : sur le domaine du proxy, la signature ne correspond pas au site légitime et ne lui est d'aucune utilité. C'est pourquoi FIDO2/WebAuthn est qualifié de résistant à l'hameçonnage.",
+    "distractorNotes": {
+      "a": "Le code SMS est saisi par la victime sur la fausse page et relayé aussitôt ; le SMS est en outre exposé à l'échange de carte SIM.",
+      "b": "La victime croit se connecter et approuve la notification déclenchée par l'attaquant : le push ne vérifie pas le domaine visité.",
+      "d": "Le code TOTP reste valable pendant son pas de temps : le proxy le rejoue immédiatement sur le site légitime."
+    },
+    "reference": "W3C Web Authentication (WebAuthn) Level 2 ; NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-4.6-mfa-fatigue-log-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Mme Leroy travaille à Lyon de 9 h à 18 h et se connecte habituellement depuis 198.51.100.20. Le SIEM remonte ces événements du fournisseur d'identité, en heure locale. Quelle conclusion l'analyste doit-il tirer ?",
+      "exhibit": "Heure     Utilisateur Événement        Résultat  IP source\n01:52:08  m.leroy     Password check   Success   203.0.113.45\n01:52:09  m.leroy     MFA push         Denied    203.0.113.45\n01:58:31  m.leroy     Password check   Success   203.0.113.45\n01:58:32  m.leroy     MFA push         Denied    203.0.113.45\n02:06:10  m.leroy     Password check   Success   203.0.113.45\n02:06:11  m.leroy     MFA push         Denied    203.0.113.45\n02:14:46  m.leroy     Password check   Success   203.0.113.45\n02:14:47  m.leroy     MFA push         Approved  203.0.113.45\n02:14:49  m.leroy     Session created  Success   203.0.113.45",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une attaque par force brute sur son mot de passe a été bloquée par le MFA."
+        },
+        {
+          "id": "b",
+          "text": "Son mot de passe est compromis et elle a fini par approuver une demande."
+        },
+        {
+          "id": "c",
+          "text": "Un bourrage d'identifiants a été arrêté par le second facteur."
+        },
+        {
+          "id": "d",
+          "text": "Elle s'est connectée elle-même depuis un nouveau réseau Wi-Fi."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Chaque tentative commence par une vérification de mot de passe réussie : l'attaquant connaît donc le mot de passe. Il déclenche ensuite des notifications push en rafale, refusées plusieurs fois, jusqu'à ce que l'utilisatrice, réveillée en pleine nuit, en approuve une : c'est une attaque par fatigue MFA (MFA bombing), et une session est ouverte depuis une adresse inhabituelle. L'analyste doit traiter le compte comme compromis : révoquer les sessions, réinitialiser le mot de passe, puis durcir le push (correspondance de nombres, limitation des demandes) ou passer à FIDO2.",
+    "distractorNotes": {
+      "a": "Une force brute produirait des échecs de mot de passe ; ici le mot de passe est accepté à chaque fois et une session finit par être créée.",
+      "c": "Le second facteur n'a pas arrêté l'attaque : la dernière demande est approuvée et la session est créée.",
+      "d": "Des refus répétés à 2 h du matin, puis une approbation depuis une adresse inconnue, ne correspondent pas à une connexion légitime."
+    },
+    "reference": "MITRE ATT&CK T1621 (Multi-Factor Authentication Request Generation) ; NIST SP 800-61 Rev. 2"
+  },
+  {
+    "slug": "security-plus-4.6-hard-token-clean-room-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans la salle blanche d'un laboratoire, les téléphones sont interdits. Les chercheurs doivent pourtant présenter un code à usage unique en plus de leur mot de passe pour ouvrir une session. Quelle mise en œuvre convient ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un jeton matériel (porte-clés) qui affiche un code à usage unique"
+        },
+        {
+          "id": "b",
+          "text": "Une application d'authentification installée sur le smartphone"
+        },
+        {
+          "id": "c",
+          "text": "Un code à usage unique envoyé par SMS sur le téléphone"
+        },
+        {
+          "id": "d",
+          "text": "Une notification push sur l'application mobile de l'entreprise"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un jeton matériel (hard token) est un objet dédié, souvent un porte-clés à écran, qui calcule des codes à usage unique (TOTP ou HOTP) à partir d'un secret stocké dans l'appareil. Il ne dépend d'aucun téléphone et convient donc aux zones où les smartphones sont interdits. Les jetons logiciels (soft tokens), eux, sont des applications installées sur un téléphone ou un ordinateur : pratiques et peu coûteux, mais inutilisables ici.",
+    "distractorNotes": {
+      "b": "Une application d'authentification est un jeton logiciel qui suppose un smartphone, interdit dans la salle.",
+      "c": "Le SMS exige un téléphone ; c'est en outre la méthode la plus fragile (échange de carte SIM, interception).",
+      "d": "La notification push suppose elle aussi un téléphone avec l'application de l'entreprise."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; RFC 6238 (TOTP)"
+  },
+  {
+    "slug": "security-plus-4.6-authentication-factors-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'application mobile d'une banque peut vérifier plusieurs éléments lors d'une connexion. Associez chaque élément au facteur d'authentification qu'il représente.",
+      "left": [
+        {
+          "id": "f1",
+          "text": "Un code PIN de six chiffres"
+        },
+        {
+          "id": "f2",
+          "text": "Une carte à puce professionnelle"
+        },
+        {
+          "id": "f3",
+          "text": "La reconnaissance du réseau veineux de la paume"
+        },
+        {
+          "id": "f4",
+          "text": "La géolocalisation de l'appareil en France"
+        },
+        {
+          "id": "f5",
+          "text": "Un code TOTP généré par une application du smartphone"
+        }
+      ],
+      "right": [
+        {
+          "id": "know",
+          "text": "Ce que l'on sait"
+        },
+        {
+          "id": "have",
+          "text": "Ce que l'on possède"
+        },
+        {
+          "id": "are",
+          "text": "Ce que l'on est"
+        },
+        {
+          "id": "where",
+          "text": "L'endroit où l'on se trouve"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "f1": "know",
+        "f2": "have",
+        "f3": "are",
+        "f4": "where",
+        "f5": "have"
+      }
+    },
+    "explanation": "Le PIN est une connaissance mémorisée. La carte à puce et le code TOTP prouvent la possession d'un objet : la carte elle-même, ou le smartphone qui détient le secret partagé servant à calculer le code. Le réseau veineux de la paume est une caractéristique biométrique, donc ce que l'on est. La géolocalisation relève de l'endroit où l'on se trouve : elle sert surtout de signal de contexte, en complément d'autres facteurs, car une position se falsifie plus facilement qu'un secret.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-4.6-totp-time-step-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une PME déploie une application d'authentification qui génère des codes TOTP selon les paramètres par défaut de la RFC 6238. Combien de secondes dure le pas de temps pendant lequel un même code est calculé ?",
+      "fields": [
+        {
+          "id": "step",
+          "label": "Durée du pas de temps, en secondes (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "step": {
+          "accepted": [
+            "30"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le TOTP (Time-based One-Time Password) calcule un code HOTP à partir du secret partagé et d'un compteur égal au nombre de pas de temps écoulés depuis l'époque Unix. La RFC 6238 fixe ce pas à 30 secondes par défaut : un nouveau code apparaît toutes les 30 secondes. Les serveurs tolèrent souvent un pas de décalage pour absorber les écarts d'horloge, ce qui allonge un peu la fenêtre pendant laquelle un code intercepté reste utilisable.",
+    "distractorNotes": {},
+    "reference": "RFC 6238 (TOTP: Time-Based One-Time Password Algorithm)"
+  },
+  {
+    "slug": "security-plus-4.6-biometric-far-frr-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une entreprise évalue un lecteur d'empreintes digitales pour sa salle des serveurs. Sur 20 000 tentatives d'imposteurs, le lecteur en accepte 6 ; sur 4 000 tentatives d'utilisateurs légitimes, il en rejette 60. Calculez le taux de fausse acceptation (FAR) et le taux de faux rejet (FRR).",
+      "fields": [
+        {
+          "id": "far",
+          "label": "FAR, en pourcentage (nombre décimal, sans le signe %)"
+        },
+        {
+          "id": "frr",
+          "label": "FRR, en pourcentage (nombre décimal, sans le signe %)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "far": {
+          "accepted": [
+            "0.03",
+            "0,03"
+          ],
+          "normalize": "text"
+        },
+        "frr": {
+          "accepted": [
+            "1.5",
+            "1,5",
+            "1.50",
+            "1,50"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Le FAR rapporte les acceptations d'imposteurs au nombre de tentatives d'imposteurs : 6 / 20 000 = 0,0003, soit 0,03 %. Le FRR rapporte les rejets d'utilisateurs légitimes au nombre de tentatives légitimes : 60 / 4 000 = 0,015, soit 1,5 %. Le FAR mesure le risque de sécurité, le FRR la gêne pour les utilisateurs. Durcir le seuil de correspondance fait baisser le FAR et monter le FRR ; le point où les deux courbes se croisent est le taux d'erreur égal (CER ou EER), qui sert à comparer des lecteurs.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; ISO/IEC 19795-1 (évaluation des performances biométriques)"
+  },
+  {
+    "slug": "security-plus-4.6-nist-no-periodic-rotation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La politique d'une collectivité impose de changer de mot de passe tous les 60 jours. Les agents se contentent d'incrémenter un chiffre final (Ete2026!1, Ete2026!2…). Selon NIST SP 800-63B, quelle évolution est recommandée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Raccourcir la période de changement obligatoire à 30 jours."
+        },
+        {
+          "id": "b",
+          "text": "Exiger un caractère spécial supplémentaire à chaque changement."
+        },
+        {
+          "id": "c",
+          "text": "Interdire tout chiffre en dernière position du mot de passe."
+        },
+        {
+          "id": "d",
+          "text": "Supprimer le changement périodique, sauf indice de compromission."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "NIST SP 800-63B demande de ne pas imposer de changement périodique arbitraire des mots de passe mémorisés, et d'exiger en revanche un changement dès qu'une compromission est suspectée ou avérée. Les changements forcés produisent exactement le comportement observé : des variantes prévisibles d'un même mot de passe, faciles à deviner pour qui connaît l'ancien. Mieux vaut des mots de passe longs, comparés à des listes de mots de passe compromis, et protégés par le MFA.",
+    "distractorNotes": {
+      "a": "Des changements plus fréquents aggravent la fatigue et renforcent les incréments prévisibles.",
+      "b": "NIST SP 800-63B écarte les règles de composition (« SHOULD NOT » dans la Rev. 3, « SHALL NOT » dans la Rev. 4) : elles n'améliorent guère la robustesse réelle.",
+      "c": "Interdire le chiffre final déplacerait simplement l'incrément ailleurs ; le problème vient du changement forcé."
+    },
+    "reference": "NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-4.6-nist-password-practices-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le RSSI d'un hôpital révise la politique des mots de passe choisis par les utilisateurs pour l'aligner sur NIST SP 800-63B. Quelles deux mesures doit-il retenir ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Refuser les mots de passe qui figurent dans des listes de mots de passe compromis."
+        },
+        {
+          "id": "b",
+          "text": "Imposer au moins une majuscule, un chiffre et un caractère spécial."
+        },
+        {
+          "id": "c",
+          "text": "Forcer le changement de tous les mots de passe tous les 90 jours."
+        },
+        {
+          "id": "d",
+          "text": "Proposer un indice de mot de passe visible avant l'authentification."
+        },
+        {
+          "id": "e",
+          "text": "Accepter des mots de passe d'au moins 64 caractères, espaces compris."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "NIST SP 800-63B privilégie la longueur et le filtrage plutôt que la complexité imposée. Le vérificateur compare chaque nouveau mot de passe à une liste de valeurs interdites (mots de passe issus de fuites, mots du dictionnaire, termes propres au service) et autorise des mots de passe longs, jusqu'à 64 caractères au moins, avec espaces et caractères Unicode, pour permettre les phrases de passe. Il n'impose ni règles de composition ni changement périodique, et ne propose pas d'indice accessible à une personne non authentifiée.",
+    "distractorNotes": {
+      "b": "NIST SP 800-63B écarte les règles de composition (Rev. 3 comme Rev. 4) : elles mènent à des motifs prévisibles comme Motdepasse1!.",
+      "c": "NIST SP 800-63B écarte le changement périodique arbitraire (Rev. 3 comme Rev. 4) ; le changement est exigé seulement en cas de compromission.",
+      "d": "Un indice visible avant l'authentification aide surtout un attaquant ; NIST SP 800-63B l'interdit."
+    },
+    "reference": "NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-4.6-credential-stuffing-reuse-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une PME apprend que l'adresse et le mot de passe d'une salariée, qu'elle utilisait aussi sur un forum de loisirs piraté, circulent en ligne. Quelles deux mesures réduisent LE MIEUX le risque de bourrage d'identifiants sur les comptes de l'entreprise ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Verrouiller les comptes après trois échecs de connexion."
+        },
+        {
+          "id": "b",
+          "text": "Fournir un gestionnaire de mots de passe pour un mot de passe unique par site."
+        },
+        {
+          "id": "c",
+          "text": "Imposer un caractère spécial dans chaque mot de passe."
+        },
+        {
+          "id": "d",
+          "text": "Activer l'authentification multifacteur sur les services exposés."
+        },
+        {
+          "id": "e",
+          "text": "Afficher un indice de mot de passe sur la page de connexion."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le bourrage d'identifiants (credential stuffing) rejoue des couples identifiant et mot de passe issus de fuites d'autres sites, en pariant sur leur réutilisation. Un gestionnaire de mots de passe permet d'avoir un mot de passe long et différent pour chaque service, si bien qu'une fuite ailleurs ne donne rien ici. Le MFA rend en outre le mot de passe insuffisant à lui seul, même s'il a été réutilisé. Ces deux mesures s'attaquent directement à la cause et à l'impact de la réutilisation.",
+    "distractorNotes": {
+      "a": "Le bourrage tente le bon mot de passe dès le premier essai sur chaque compte : un seuil de trois échecs n'est jamais atteint.",
+      "c": "Un mot de passe complexe mais réutilisé fuit tel quel : la complexité ne protège pas contre la réutilisation.",
+      "e": "Un indice visible aide l'attaquant et ne change rien à un mot de passe déjà connu."
+    },
+    "reference": "NIST SP 800-63B ; MITRE ATT&CK T1110.004 (Credential Stuffing)"
+  },
+  {
+    "slug": "security-plus-4.6-passkey-public-key-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une enseigne de commerce en ligne propose à ses clients de se connecter par clé d'accès (passkey FIDO2) plutôt que par mot de passe. Quelle affirmation décrit correctement ce mode sans mot de passe ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le site conserve un gabarit de l'empreinte digitale du client pour la comparer."
+        },
+        {
+          "id": "b",
+          "text": "Le site ne garde qu'une clé publique ; la clé privée reste chez le client."
+        },
+        {
+          "id": "c",
+          "text": "Le site envoie à chaque connexion un code par courriel, qui remplace le mot de passe."
+        },
+        {
+          "id": "d",
+          "text": "Le site chiffre le mot de passe du client avec une clé propre à son appareil."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Une clé d'accès FIDO2 repose sur une paire de clés propre à chaque site. À l'enregistrement, l'authentificateur (téléphone, ordinateur, clé de sécurité) génère la paire et n'envoie au site que la clé publique. À chaque connexion, il signe un défi avec la clé privée, après un geste local (PIN, empreinte ou visage). Le site ne détient donc aucun secret réutilisable : une fuite de sa base ne donne rien à un attaquant, et la liaison au domaine rend la clé résistante à l'hameçonnage.",
+    "distractorNotes": {
+      "a": "La biométrie ne sert qu'à déverrouiller l'authentificateur, localement ; aucun gabarit n'est transmis au site.",
+      "c": "Un code par courriel est un autre mode sans mot de passe (lien ou code magique), sans cryptographie à clé publique côté client.",
+      "d": "Il n'y a plus de mot de passe du tout : le site vérifie une signature avec la clé publique enregistrée."
+    },
+    "reference": "W3C Web Authentication (WebAuthn) Level 2 ; FIDO Alliance, FIDO2 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6"
+  },
+  {
+    "slug": "security-plus-4.6-password-policy-settings-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un administrateur paramètre la stratégie de mots de passe d'un domaine Active Directory. Associez chaque paramètre à l'effet recherché.",
+      "left": [
+        {
+          "id": "k1",
+          "text": "Longueur minimale"
+        },
+        {
+          "id": "k2",
+          "text": "Historique des mots de passe"
+        },
+        {
+          "id": "k3",
+          "text": "Âge minimal du mot de passe"
+        },
+        {
+          "id": "k4",
+          "text": "Âge maximal du mot de passe"
+        },
+        {
+          "id": "k5",
+          "text": "Seuil de verrouillage du compte"
+        }
+      ],
+      "right": [
+        {
+          "id": "space",
+          "text": "Agrandir l'espace de recherche d'une attaque par force brute"
+        },
+        {
+          "id": "reuse",
+          "text": "Empêcher de reprendre l'un des derniers mots de passe utilisés"
+        },
+        {
+          "id": "cycle",
+          "text": "Empêcher d'enchaîner des changements pour revenir aussitôt à l'ancien mot de passe"
+        },
+        {
+          "id": "expire",
+          "text": "Imposer un changement au bout d'une durée donnée"
+        },
+        {
+          "id": "online",
+          "text": "Limiter le nombre d'essais en ligne sur un compte"
+        },
+        {
+          "id": "breach",
+          "text": "Garantir qu'un mot de passe n'a jamais figuré dans une fuite"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "k1": "space",
+        "k2": "reuse",
+        "k3": "cycle",
+        "k4": "expire",
+        "k5": "online"
+      }
+    },
+    "explanation": "Chaque caractère de longueur supplémentaire multiplie le nombre de combinaisons à essayer. L'historique mémorise les derniers mots de passe pour en interdire la reprise ; l'âge minimal le complète en empêchant de changer plusieurs fois de suite le même jour pour vider l'historique. L'âge maximal fixe l'expiration, que NIST SP 800-63B écarte en l'absence d'indice de compromission. Le seuil de verrouillage bloque le compte après un nombre d'échecs, ce qui freine la devinette en ligne mais pas le cassage hors ligne d'empreintes volées.",
+    "distractorNotes": {
+      "breach": "Aucun de ces paramètres ne compare le mot de passe à des fuites : il faut une liste de mots de passe interdits, filtre que NIST SP 800-63B recommande."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-4.6-password-length-keyspace-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une politique impose des mots de passe de 8 lettres minuscules (26 symboles possibles). Le RSSI propose de passer à 10 lettres minuscules. Par combien est multiplié le nombre de mots de passe possibles de longueur exacte ?",
+      "fields": [
+        {
+          "id": "factor",
+          "label": "Facteur multiplicatif (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "factor": {
+          "accepted": [
+            "676"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Avec un alphabet de 26 symboles, une longueur n donne 26ⁿ combinaisons. Passer de 8 à 10 caractères multiplie donc l'espace par 26¹⁰ / 26⁸ = 26² = 676. Deux caractères de plus suffisent à rendre une recherche exhaustive près de 700 fois plus longue, sans imposer de règle de composition difficile à retenir : c'est pourquoi NIST SP 800-63B et CompTIA mettent la longueur au premier rang des bonnes pratiques.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-4.6-jit-admin-rights-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une société de services, un administrateur n'obtient les droits d'administration d'un serveur qu'après approbation d'une demande motivée, pour deux heures, puis ces droits lui sont retirés automatiquement. Comment s'appelle cette pratique ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le coffre-fort de mots de passe"
+        },
+        {
+          "id": "b",
+          "text": "L'authentification unique (SSO)"
+        },
+        {
+          "id": "c",
+          "text": "L'accès juste-à-temps (JIT)"
+        },
+        {
+          "id": "d",
+          "text": "Le contrôle d'accès discrétionnaire"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'accès juste-à-temps (just-in-time) remplace les privilèges permanents par des privilèges accordés à la demande, pour une durée limitée et après approbation. En dehors de ces fenêtres, le compte ne détient aucun droit d'administration : un identifiant volé a beaucoup moins de valeur, et chaque élévation laisse une trace liée à une justification. Cette pratique applique le moindre privilège dans le temps, et pas seulement dans l'étendue.",
+    "distractorNotes": {
+      "a": "Le coffre-fort stocke les mots de passe des comptes privilégiés et les délivre ; l'octroi temporaire de droits à un compte est une autre fonction.",
+      "b": "Le SSO permet de s'authentifier une fois pour plusieurs applications ; il n'accorde ni ne retire de privilèges.",
+      "d": "Le DAC laisse le propriétaire d'une ressource décider de ses accès, sans notion de durée ni d'approbation."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; NIST SP 800-53 Rev. 5, contrôle AC-6 (Least Privilege)"
+  },
+  {
+    "slug": "security-plus-4.6-password-vault-shared-root-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Six administrateurs partagent le mot de passe du compte root de plusieurs serveurs Linux, noté dans un tableur. Le RSSI veut savoir qui l'utilise et quand, et qu'il change après chaque usage. Quel outil répond LE MIEUX à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le coffre-fort de mots de passe d'une solution PAM"
+        },
+        {
+          "id": "b",
+          "text": "Un gestionnaire de mots de passe personnel par administrateur"
+        },
+        {
+          "id": "c",
+          "text": "Une fédération d'identités SAML avec les serveurs"
+        },
+        {
+          "id": "d",
+          "text": "Un chiffrement du tableur par un mot de passe fort"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Un coffre-fort de mots de passe (password vaulting) d'une solution de gestion des accès privilégiés conserve les identifiants des comptes partagés. Chaque administrateur s'authentifie nominativement pour emprunter le mot de passe ou ouvrir une session par l'intermédiaire du coffre, qui journalise l'emprunt, peut enregistrer la session et fait tourner le mot de passe après restitution. On obtient l'imputabilité sur un compte partagé et un secret qui ne reste jamais valable longtemps.",
+    "distractorNotes": {
+      "b": "Chaque administrateur garderait sa propre copie du même mot de passe, sans traçabilité centrale ni rotation après usage.",
+      "c": "SAML fédère l'accès web à des applications ; il ne gère ni ne fait tourner le mot de passe root de serveurs Linux.",
+      "d": "Chiffrer le tableur protège le fichier, mais ne dit pas qui a utilisé le mot de passe et ne le change jamais."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; NIST SP 800-53 Rev. 5, contrôle AC-2 (Account Management)"
+  },
+  {
+    "slug": "security-plus-4.6-ephemeral-credentials-ci-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le pipeline CI/CD d'une start-up déploie sur son cloud avec une clé d'accès statique, valable sans limite de durée et stockée dans les variables du projet. Après une fuite de dépôt, l'équipe veut réduire la fenêtre d'exploitation d'une clé dérobée. Quelle mesure répond LE MIEUX à cet objectif ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chiffrer la clé statique dans les variables secrètes du projet CI/CD."
+        },
+        {
+          "id": "b",
+          "text": "Faire tourner la clé statique une fois par an, à date fixe."
+        },
+        {
+          "id": "c",
+          "text": "Limiter la clé statique aux adresses IP publiques du bureau."
+        },
+        {
+          "id": "d",
+          "text": "Émettre à chaque exécution des identifiants éphémères de quelques minutes."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Des identifiants éphémères sont générés à la demande pour une tâche et expirent d'eux-mêmes après quelques minutes ou à la fin du travail : le pipeline obtient, par exemple par fédération d'identité de charge de travail, un jeton temporaire pour chaque déploiement. Un jeton dérobé devient inutile presque aussitôt, et il n'existe plus de secret permanent à protéger dans le projet. C'est la réponse directe à l'objectif de réduire la fenêtre d'exploitation.",
+    "distractorNotes": {
+      "a": "Le chiffrement protège la clé au repos, mais une clé obtenue par la fuite resterait valable indéfiniment.",
+      "b": "Une rotation annuelle laisse jusqu'à un an d'exploitation possible à une clé volée.",
+      "c": "Un filtre d'adresses réduit les endroits d'où la clé fonctionne, pas sa durée de validité ; les exécuteurs CI n'utilisent d'ailleurs pas les adresses du bureau."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; NIST SP 800-207 (Zero Trust Architecture)"
+  },
+  {
+    "slug": "security-plus-4.6-pam-vault-checkout-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Dans une banque, l'accès au compte administrateur d'un serveur de bases de données passe par le coffre-fort de la solution PAM. Ordonnez les étapes d'un emprunt, de la première à la dernière.",
+      "items": [
+        {
+          "id": "rotate",
+          "text": "Le coffre change automatiquement le mot de passe du compte"
+        },
+        {
+          "id": "approve",
+          "text": "Un responsable approuve la demande"
+        },
+        {
+          "id": "end",
+          "text": "L'administrateur termine sa session et l'emprunt est clôturé"
+        },
+        {
+          "id": "request",
+          "text": "L'administrateur soumet une demande motivée avec un numéro de ticket"
+        },
+        {
+          "id": "session",
+          "text": "Le coffre ouvre une session enregistrée en injectant l'identifiant"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "request",
+        "approve",
+        "session",
+        "end",
+        "rotate"
+      ]
+    },
+    "explanation": "L'emprunt suit un circuit contrôlé : l'administrateur, authentifié nominativement sur la solution PAM, demande l'accès en le justifiant ; un responsable approuve ; le coffre ouvre alors la session sur la cible en injectant l'identifiant, sans que l'administrateur le voie, et l'enregistre. À la fin de la session, l'emprunt est clôturé et le coffre fait aussitôt tourner le mot de passe, si bien qu'un identifiant éventuellement observé ne vaut plus rien. Chaque étape laisse une trace auditable.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; NIST SP 800-53 Rev. 5, contrôle AC-6 (Least Privilege)"
+  },
+  {
+    "slug": "security-plus-4.6-pam-vault-log-findings-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.6",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le poste de travail attribué à a.martin a l'adresse 10.30.4.22. Quelles deux constatations l'analyste peut-il tirer de ce journal ? (Choisissez-en deux.)",
+      "exhibit": "Coffre PAM - journal du compte privilégié root@db01\n2026-10-20 09:02  checkout  user=a.martin ticket=CHG-4812 durée=2h\n2026-10-20 09:03  session   a.martin -> db01 (session enregistrée)\n2026-10-20 11:02  checkin   user=a.martin\n2026-10-20 11:02  rotation  ÉCHEC (db01 injoignable)\n2026-10-21 08:47  login     root@db01 depuis 10.30.4.22 (hors coffre)\n2026-10-21 08:47  session   non enregistrée",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le coffre a refusé la demande de a.martin faute de ticket de changement."
+        },
+        {
+          "id": "b",
+          "text": "Le mot de passe emprunté le 20 octobre est resté valable faute de rotation."
+        },
+        {
+          "id": "c",
+          "text": "La session du 20 octobre n'a pas été enregistrée par le coffre."
+        },
+        {
+          "id": "d",
+          "text": "Le 21 octobre, quelqu'un s'est connecté en root depuis le poste de a.martin, hors du coffre."
+        },
+        {
+          "id": "e",
+          "text": "La connexion du 21 octobre prouve un vol du mot de passe par un attaquant externe."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "La rotation qui devait suivre la restitution a échoué (db01 injoignable) : le mot de passe affiché ou utilisé pendant l'emprunt est donc resté valable. Le lendemain, une connexion root a lieu directement sur db01 depuis 10.30.4.22, le poste de a.martin, sans passer par le coffre et sans enregistrement. L'analyste ne peut pas affirmer qui était derrière le clavier, mais il doit traiter l'écart : forcer la rotation, interroger a.martin, et alerter sur tout échec de rotation et toute connexion privilégiée hors coffre.",
+    "distractorNotes": {
+      "a": "Le journal montre un checkout accordé avec le ticket CHG-4812 : la demande n'a pas été refusée.",
+      "c": "La ligne du 20 octobre indique « session enregistrée » ; seule celle du 21 octobre ne l'est pas.",
+      "e": "La connexion vient d'une adresse interne, celle du poste de a.martin : rien ne prouve un attaquant externe."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.6 ; NIST SP 800-92 (gestion des journaux)"
+  }
+]

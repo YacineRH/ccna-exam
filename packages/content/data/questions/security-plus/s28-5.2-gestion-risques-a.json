@@ -1,0 +1,829 @@
+[
+  {
+    "slug": "security-plus-5.2-cyber-insurance-transfer-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un cabinet comptable de 25 salariés souscrit une police de cyberassurance qui couvre les frais de notification, d'expertise et de restauration après une violation de données. Quelle stratégie de gestion du risque applique-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Accepter"
+        },
+        {
+          "id": "b",
+          "text": "Éviter"
+        },
+        {
+          "id": "c",
+          "text": "Atténuer"
+        },
+        {
+          "id": "d",
+          "text": "Transférer"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Transférer un risque consiste à en faire supporter tout ou partie des conséquences financières par un tiers : assureur, prestataire lié par contrat, clause d'indemnisation. La cyberassurance est l'exemple type cité par CompTIA. Le transfert ne diminue ni la probabilité ni l'impact opérationnel de la violation, et il ne transfère pas la responsabilité : le cabinet reste comptable envers ses clients et l'autorité de contrôle. Il reste donc à atténuer et à accepter le risque résiduel.",
+    "distractorNotes": {
+      "a": "Accepter, c'est assumer le risque sans action supplémentaire et en supporter soi-même le coût ; ici, le coût est reporté sur l'assureur.",
+      "b": "Éviter suppose de renoncer à l'activité qui crée le risque ; le cabinet continue de traiter les mêmes données.",
+      "c": "Atténuer réduit la probabilité ou l'impact par des contrôles (MFA, EDR, sauvegardes) ; une police d'assurance ne réduit ni l'une ni l'autre, elle indemnise."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-register-risk-owner-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le registre des risques d'un hôpital comporte, pour chaque risque, une colonne « propriétaire du risque ». Que désigne ce champ ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La personne qui a signalé le risque lors de l'atelier d'identification"
+        },
+        {
+          "id": "b",
+          "text": "La personne ou la fonction chargée de suivre le risque et de décider de son traitement"
+        },
+        {
+          "id": "c",
+          "text": "L'auditeur externe qui vérifie chaque année l'exactitude du registre"
+        },
+        {
+          "id": "d",
+          "text": "Le fournisseur de l'actif sur lequel porte le risque"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le propriétaire du risque est la personne, ou la fonction, à qui l'organisation confie la responsabilité d'un risque donné : il en suit l'évolution, notamment par ses indicateurs clés de risque (KRI), il décide du traitement dans le cadre fixé par la direction et il rend compte quand un seuil est franchi. Il s'agit souvent d'un responsable métier ou opérationnel proche de l'actif ou du processus concerné, pas nécessairement de l'équipe sécurité. Sans propriétaire désigné, un risque inscrit au registre n'est suivi par personne.",
+    "distractorNotes": {
+      "a": "Signaler un risque ne confère aucune responsabilité de traitement : n'importe quel participant peut identifier un risque.",
+      "c": "L'auditeur évalue le dispositif de façon indépendante ; il ne peut pas être propriétaire des risques qu'il contrôle.",
+      "d": "Le fournisseur est un tiers ; le risque reste porté par l'hôpital, qui en désigne le propriétaire en interne."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-abandon-payment-avoid-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une jeune pousse prévoyait de stocker elle-même les numéros de carte bancaire de ses clients dans son application. Après l'évaluation des risques, la direction abandonne purement et simplement la fonction de paiement dans l'application. Quelle stratégie de gestion du risque a-t-elle retenue ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Éviter"
+        },
+        {
+          "id": "b",
+          "text": "Transférer"
+        },
+        {
+          "id": "c",
+          "text": "Atténuer"
+        },
+        {
+          "id": "d",
+          "text": "Accepter"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Éviter un risque consiste à renoncer à l'activité, au projet ou à la technologie qui le fait naître. En abandonnant la fonction de paiement, la jeune pousse ne stocke plus aucune donnée de carte : le risque de fuite de ces données disparaît, de même que les obligations PCI DSS associées. L'évitement est radical mais a un coût d'opportunité, ici la perte d'une fonction commerciale ; c'est pourquoi il est réservé aux risques dont le traitement coûterait plus que l'activité ne rapporte.",
+    "distractorNotes": {
+      "b": "Transférer reviendrait par exemple à confier les paiements à un prestataire certifié ; ici, aucun paiement n'est plus traité du tout.",
+      "c": "Atténuer impliquerait de garder la fonction en ajoutant des contrôles (chiffrement, tokenisation) ; la fonction est supprimée.",
+      "d": "Accepter, ce serait lancer la fonction telle quelle en assumant le risque, l'inverse de la décision prise."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-rpo-backup-frequency-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La BIA du service de facturation d'une PME fixe un RPO de 1 heure pour la base de données des factures. Aujourd'hui, seule une sauvegarde complète est réalisée chaque nuit à 23 h. Quelle modification permet de respecter ce RPO ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Remplacer la sauvegarde complète nocturne par une complète le dimanche et une différentielle chaque nuit"
+        },
+        {
+          "id": "b",
+          "text": "Souscrire un contrat de maintenance garantissant le remplacement du serveur en moins de 2 heures"
+        },
+        {
+          "id": "c",
+          "text": "Ajouter, entre deux complètes nocturnes, une sauvegarde des journaux de transactions toutes les 30 minutes"
+        },
+        {
+          "id": "d",
+          "text": "Placer la sauvegarde nocturne sur des disques plus rapides afin d'accélérer la restauration"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le RPO fixe la quantité maximale de données que l'on accepte de perdre, exprimée en temps : avec 1 heure, aucune transaction de plus d'une heure ne doit être irrécupérable. Avec une seule sauvegarde à 23 h, une panne à 22 h ferait perdre près de 23 heures de factures. Seule une augmentation de la fréquence des copies réduit cette perte : sauvegarder les journaux de transactions toutes les 30 minutes limite la perte à une demi-heure environ, sous le RPO. Les autres mesures portent sur le temps de reprise (RTO, MTTR) ou ne changent pas la fréquence.",
+    "distractorNotes": {
+      "a": "Le rythme reste quotidien : une complète ou une différentielle par nuit laisse toujours jusqu'à 24 heures de données exposées.",
+      "b": "Un remplacement rapide du matériel réduit le MTTR et aide à tenir le RTO, mais ne récupère aucune donnée postérieure à la dernière sauvegarde.",
+      "d": "Une restauration plus rapide améliore le temps de reprise ; les données restaurées dateraient toujours de la veille à 23 h."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-mttr-exceeds-rto-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le responsable de la continuité d'une clinique compare les objectifs de la BIA aux mesures constatées sur le service de prise de rendez-vous en ligne. Quelle conclusion et quelle mesure sont les plus adaptées ?",
+      "exhibit": "Extrait de BIA - processus : prise de rendez-vous en ligne\n\nRTO : 4 h                RPO : 15 min\nArchitecture : serveur applicatif unique, sans redondance\nMTBF constaté : 4 380 h   MTTR constaté : 9 h\nProtection des données : journaux répliqués toutes les 10 min",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le RPO n'est pas respecté ; il faut répliquer les journaux toutes les 5 minutes"
+        },
+        {
+          "id": "b",
+          "text": "Le RTO n'est pas respecté ; il faut un serveur de secours prêt à prendre le relais"
+        },
+        {
+          "id": "c",
+          "text": "Le RTO n'est pas respecté ; il faut un serveur plus fiable pour augmenter le MTBF"
+        },
+        {
+          "id": "d",
+          "text": "Les deux objectifs sont respectés, car le MTBF dépasse largement le RTO"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le RTO de 4 heures fixe la durée d'interruption tolérée. Or le serveur est unique et une panne immobilise le service en moyenne 9 heures (MTTR) : à chaque panne, l'objectif est dépassé. Le RPO, lui, est tenu, puisque les journaux sont répliqués toutes les 10 minutes pour une perte tolérée de 15 minutes. Tant que la reprise dépend de la réparation du serveur, seul un moyen de basculer sur un équipement de secours prêt à l'emploi (redondance, serveur en attente) ramène l'interruption sous 4 heures.",
+    "distractorNotes": {
+      "a": "Une réplication toutes les 10 minutes limite la perte à 10 minutes, sous le RPO de 15 minutes : il n'y a rien à corriger de ce côté.",
+      "c": "Un MTBF plus élevé espace les pannes mais ne raccourcit pas chacune d'elles : une panne durerait toujours environ 9 heures, au-delà du RTO.",
+      "d": "Le MTBF mesure l'intervalle entre deux pannes, pas la durée de reprise ; c'est le MTTR qu'il faut comparer au RTO, et 9 h dépasse 4 h."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-kri-leading-indicator-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le registre des risques d'une mutuelle comporte le risque « compromission de comptes de messagerie par hameçonnage ». Le comité des risques demande un indicateur clé de risque (KRI) qui signale une hausse de l'exposition avant qu'un incident survienne. Quel indicateur convient LE MIEUX ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le nombre de sessions de sensibilisation organisées dans l'année"
+        },
+        {
+          "id": "b",
+          "text": "Le montant du budget de sécurité consacré à la messagerie"
+        },
+        {
+          "id": "c",
+          "text": "Le nombre de comptes compromis confirmés au dernier trimestre"
+        },
+        {
+          "id": "d",
+          "text": "Le pourcentage de comptes de messagerie sans authentification multifacteur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un KRI mesure le niveau d'exposition à un risque et alerte quand celui-ci augmente, idéalement avant la survenue du dommage (indicateur avancé). La part de comptes de messagerie sans MFA mesure directement la surface exploitable par un hameçonnage réussi : si elle grimpe, la probabilité d'une compromission augmente, ce qui permet au propriétaire d'agir avant l'incident. Un KRI est assorti d'un seuil inscrit au registre, au-delà duquel une escalade est déclenchée.",
+    "distractorNotes": {
+      "a": "Compter les sessions organisées mesure une activité de l'équipe (indicateur de performance), pas l'exposition : des sessions nombreuses peuvent coexister avec une forte exposition.",
+      "b": "Un budget est une ressource engagée ; il ne dit rien du niveau réel d'exposition des comptes.",
+      "c": "Les comptes compromis confirmés sont un indicateur a posteriori : il ne bouge qu'une fois les incidents survenus, ce que le comité veut justement anticiper."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-kri-threshold-breach-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Lors du suivi mensuel du registre des risques d'une banque régionale, l'analyste relève la valeur ci-dessous. Selon le fonctionnement attendu d'un registre des risques, que doit déclencher cette valeur EN PREMIER ?",
+      "exhibit": "ID              : R-014\nRisque          : exploitation d'une vulnérabilité connue sur les serveurs\n                  exposés à Internet\nPropriétaire    : directeur des opérations informatiques\nKRI             : % de correctifs critiques non appliqués après 15 jours\nSeuil           : 5 %\nValeur au 31/10 : 12 %\nTraitement      : atténuer (gestion des correctifs)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le relèvement du seuil à 15 %, pour qu'il reflète la situation réelle du parc"
+        },
+        {
+          "id": "b",
+          "text": "Le passage du traitement à « accepter » jusqu'à la prochaine revue annuelle"
+        },
+        {
+          "id": "c",
+          "text": "La remontée au propriétaire du risque, qui décide des actions pour revenir sous le seuil"
+        },
+        {
+          "id": "d",
+          "text": "Le remplacement du KRI par un indicateur moins sensible aux variations mensuelles"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le seuil associé à un KRI matérialise le niveau au-delà duquel le risque n'est plus jugé maîtrisé. Avec 12 % de correctifs critiques en retard pour un seuil de 5 %, il est franchi : le registre prévoit alors l'escalade vers le propriétaire du risque, ici le directeur des opérations informatiques, qui doit décider des actions correctives (rattrapage des correctifs, moyens supplémentaires) ou porter la question à la direction. Modifier le seuil, le traitement ou l'indicateur pour faire disparaître l'alerte reviendrait à masquer le risque.",
+    "distractorNotes": {
+      "a": "Relever le seuil après coup pour absorber le dépassement vide l'indicateur de son sens ; un seuil ne se révise qu'en revue formelle, pas pour faire taire une alerte.",
+      "b": "Passer en acceptation est une décision de la direction ou du propriétaire, prise en connaissance de cause, pas une conséquence automatique d'un dépassement.",
+      "d": "Changer d'indicateur parce qu'il signale un problème supprime la visibilité sur le risque au moment où elle est la plus utile."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-legacy-device-exception-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un hôpital exploite un appareil d'imagerie dont le fabricant interdit toute mise à jour du système d'exploitation, alors que la politique interne exige l'application des correctifs critiques sous 30 jours. Le RSSI fait approuver par la direction une dérogation écrite à cette politique, valable un an puis réexaminée, et isole l'appareil dans un VLAN dédié. Quelle stratégie de gestion du risque la dérogation elle-même formalise-t-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le transfert du risque"
+        },
+        {
+          "id": "b",
+          "text": "L'évitement du risque"
+        },
+        {
+          "id": "c",
+          "text": "L'acceptation du risque"
+        },
+        {
+          "id": "d",
+          "text": "L'atténuation du risque"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "CompTIA range l'exception et l'exemption parmi les formes d'acceptation du risque : l'organisation reconnaît qu'une exigence de sa politique ne peut pas être respectée et assume, par une décision documentée et approuvée, le risque qui en résulte. Une exception bien gérée est limitée dans le temps, réexaminée à échéance et souvent accompagnée de contrôles compensatoires. Ici, l'isolement dans un VLAN réduit le risque, mais la dérogation acte que le risque résiduel lié aux correctifs non appliqués est accepté par la direction.",
+    "distractorNotes": {
+      "a": "Rien n'est reporté sur un tiers : ni assurance ni clause contractuelle ne fait supporter les conséquences au fabricant.",
+      "b": "L'évitement supposerait de retirer l'appareil ou de renoncer à l'activité ; l'hôpital continue de l'exploiter.",
+      "d": "L'isolement dans un VLAN est bien une mesure d'atténuation, mais la question porte sur la dérogation, qui formalise l'acceptation du risque résiduel."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-register-strategy-mismatch-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Avant le comité des risques, l'auditeur interne d'un groupe de distribution vérifie que la stratégie inscrite pour chaque risque correspond à l'action retenue. Quelle ligne présente une incohérence ?",
+      "exhibit": "ID    Risque                             Stratégie   Action retenue\nR-01  Panne prolongée de l'hébergeur     Transférer  Assurance + pénalités SLA\nR-02  Rançongiciel sur les serveurs      Accepter    EDR + sauvegardes immuables\nR-03  Fuite via l'ancien portail client  Éviter      Fermeture définitive\nR-04  Vol d'ordinateurs portables        Atténuer    Chiffrement intégral",
+      "options": [
+        {
+          "id": "a",
+          "text": "R-01"
+        },
+        {
+          "id": "b",
+          "text": "R-02"
+        },
+        {
+          "id": "c",
+          "text": "R-03"
+        },
+        {
+          "id": "d",
+          "text": "R-04"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Chaque stratégie se reconnaît à la nature de l'action. Une assurance assortie de pénalités contractuelles reporte les conséquences financières sur des tiers : transfert (R-01). Le chiffrement du disque réduit l'impact d'un vol : atténuation (R-04). La fermeture définitive du portail supprime l'activité à l'origine du risque : évitement (R-03). En R-02, déployer un EDR et des sauvegardes immuables réduit la probabilité et l'impact d'un rançongiciel : c'est une atténuation, pas une acceptation, qui consisterait à assumer le risque sans mesure supplémentaire.",
+    "distractorNotes": {
+      "a": "Assurance et pénalités du contrat de service font supporter tout ou partie des pertes par l'assureur et l'hébergeur : la ligne « transférer » est cohérente.",
+      "c": "Fermer définitivement le portail supprime l'activité exposée : c'est bien un évitement.",
+      "d": "Le chiffrement intégral rend les données d'un portable volé illisibles et réduit l'impact : la ligne « atténuer » est cohérente."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-identification-output-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'un atelier d'identification des risques, l'équipe d'un éditeur de logiciels passe en revue ses actifs, les menaces qui pèsent sur eux et les vulnérabilités connues. Quel livrable est attendu à l'issue de cette étape, avant l'analyse des risques ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une liste des risques recensés, chacun décrit et inscrit au registre"
+        },
+        {
+          "id": "b",
+          "text": "Un classement des risques selon leur probabilité et leur impact estimés"
+        },
+        {
+          "id": "c",
+          "text": "La décision de transférer, d'accepter, d'éviter ou d'atténuer chaque risque"
+        },
+        {
+          "id": "d",
+          "text": "Un rapport attestant de l'efficacité des contrôles déjà en place"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'identification des risques recense ce qui peut mal tourner : pour chaque risque, quel actif est concerné, par quelle menace et en exploitant quelle vulnérabilité. Son résultat est une liste de risques décrits, inscrite au registre avec un propriétaire pressenti. Ce n'est qu'ensuite que l'analyse estime probabilité et impact pour les classer, puis que la réponse choisit une stratégie de traitement. Mélanger les étapes conduit à écarter des risques avant même de les avoir décrits.",
+    "distractorNotes": {
+      "b": "Estimer probabilité et impact puis classer les risques est le travail de l'analyse, l'étape qui suit l'identification.",
+      "c": "Le choix d'une stratégie de traitement intervient après l'analyse, une fois les risques priorisés.",
+      "d": "Attester l'efficacité des contrôles relève de l'audit ou de l'évaluation des contrôles, pas de l'identification des risques."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-register-entry-fields-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le RSSI d'une collectivité met en place le registre des risques de son système d'information. Quels trois éléments une entrée du registre doit-elle comporter ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le propriétaire du risque"
+        },
+        {
+          "id": "b",
+          "text": "Les journaux bruts du SIEM qui ont révélé le risque"
+        },
+        {
+          "id": "c",
+          "text": "Un indicateur clé de risque et son seuil"
+        },
+        {
+          "id": "d",
+          "text": "La stratégie de traitement retenue et son état d'avancement"
+        },
+        {
+          "id": "e",
+          "text": "La copie intégrale des règles du pare-feu concerné"
+        },
+        {
+          "id": "f",
+          "text": "Les identifiants des comptes administrateurs de l'actif"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "Une entrée du registre des risques décrit le risque et organise son suivi : description (actif, menace, vulnérabilité), évaluation (probabilité, impact, niveau), propriétaire responsable, indicateurs clés de risque (KRI) avec leurs seuils d'alerte, stratégie de traitement et avancement des actions. C'est un outil de pilotage partagé avec la direction et les métiers : il résume et renvoie aux éléments techniques, sans les contenir. Y placer des journaux, des configurations ou des secrets le rendrait illisible et dangereux.",
+    "distractorNotes": {
+      "b": "Les journaux bruts restent dans le SIEM ; le registre décrit le risque et peut renvoyer à l'incident ou à l'analyse, sans recopier les données.",
+      "e": "Les règles de pare-feu relèvent de la gestion de configuration ; le registre mentionne au plus le contrôle en place.",
+      "f": "Des identifiants n'ont rien à faire dans un document diffusé au comité des risques : ce serait créer un nouveau risque."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-ransomware-mitigation-measures-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un cabinet d'avocats traite le risque de chiffrement de ses données par un rançongiciel. Quelles deux mesures relèvent de l'atténuation ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Souscrire une cyberassurance couvrant la restauration et la perte d'exploitation"
+        },
+        {
+          "id": "b",
+          "text": "Déployer un EDR sur tous les postes et serveurs"
+        },
+        {
+          "id": "c",
+          "text": "Faire approuver une exception à la politique de sauvegarde pour le serveur d'archives"
+        },
+        {
+          "id": "d",
+          "text": "Mettre en place des sauvegardes hors ligne dont la restauration est testée chaque mois"
+        },
+        {
+          "id": "e",
+          "text": "Renoncer au projet d'accès à distance prévu pour les avocats en télétravail"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Atténuer, c'est réduire la probabilité qu'un risque se réalise ou l'impact s'il se réalise, au moyen de contrôles. L'EDR détecte et bloque les comportements de chiffrement : il réduit la probabilité et limite la propagation. Les sauvegardes hors ligne testées ne préviennent pas l'attaque mais réduisent fortement son impact, puisque les données peuvent être restaurées sans payer. Les autres mesures relèvent du transfert, de l'acceptation et de l'évitement.",
+    "distractorNotes": {
+      "a": "L'assurance indemnise les pertes sans réduire ni la probabilité ni l'impact opérationnel : c'est un transfert.",
+      "c": "Une exception approuvée reconnaît qu'une exigence n'est pas respectée et assume le risque : c'est une forme d'acceptation.",
+      "e": "Renoncer à une activité pour ne pas s'exposer au risque qu'elle crée est un évitement."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-bia-objectives-gap-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Le responsable de la continuité d'une société d'assurance confronte les objectifs de la BIA aux protections en place. Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "exhibit": "Extrait de BIA (objectifs validés par les métiers)\n\nProcessus          RTO    RPO     Protection en place\nPaiements clients  1 h    5 min   réplication synchrone vers le site B,\n                                  bascule testée en 3 h\nPaie               48 h   4 h     sauvegarde complète chaque nuit,\n                                  restauration testée en 6 h\nIntranet           72 h   7 j     sauvegarde complète chaque nuit,\n                                  restauration testée en 10 h",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Pour les paiements clients, le RPO est respecté mais le RTO ne l'est pas"
+        },
+        {
+          "id": "b",
+          "text": "Pour la paie, le RTO et le RPO sont tous deux respectés"
+        },
+        {
+          "id": "c",
+          "text": "Pour l'intranet, le RTO et le RPO sont tous deux respectés"
+        },
+        {
+          "id": "d",
+          "text": "Pour les paiements clients, la réplication synchrone suffit à respecter le RTO"
+        },
+        {
+          "id": "e",
+          "text": "Pour la paie, passer de la complète nocturne à une incrémentielle nocturne ferait respecter le RPO"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Le RPO se compare à l'intervalle entre deux copies, le RTO au délai de reprise testé. Paiements : la réplication synchrone ne perd quasiment aucune donnée (sous 5 min, RPO tenu), mais la bascule demande 3 h pour un RTO de 1 h (RTO non tenu). Paie : la restauration en 6 h tient le RTO de 48 h, mais une copie par nuit expose jusqu'à 24 h de données pour un RPO de 4 h. Intranet : une copie par nuit (24 h de perte au plus, pour 7 jours tolérés) et une restauration en 10 h (pour 72 h) tiennent les deux objectifs.",
+    "distractorNotes": {
+      "b": "Le RTO de la paie est tenu, mais avec une seule sauvegarde par nuit jusqu'à 24 heures de données peuvent être perdues, bien au-delà du RPO de 4 heures.",
+      "d": "La réplication synchrone protège les données (RPO) ; c'est la durée de bascule, 3 h, qui se compare au RTO de 1 h, et elle le dépasse.",
+      "e": "Le RPO dépend de la fréquence des copies, pas de leur type : une incrémentielle par nuit laisse toujours jusqu'à 24 heures de perte."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-34 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-kri-threshold-review-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. L'analyste chargé du registre des risques d'un opérateur de télécommunications prépare le comité trimestriel. Quels deux risques présentent un KRI hors de son seuil et doivent être remontés à leur propriétaire ? (Choisissez-en deux.)",
+      "exhibit": "Registre des risques - suivi des KRI au 30/09\n\nID    KRI                                         Seuil     Valeur\nR-03  Postes sans EDR actif                       <= 2 %    1,4 %\nR-07  Délai moyen de révocation des accès         <= 24 h   31 h\n      après un départ\nR-09  Taux de réussite des sauvegardes            >= 98 %   96,5 %\nR-12  Comptes à privilèges sans MFA               = 0       0\nR-15  Alertes critiques du SIEM non traitées      <= 10     8\n      sous 4 h",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "R-03"
+        },
+        {
+          "id": "b",
+          "text": "R-07"
+        },
+        {
+          "id": "c",
+          "text": "R-09"
+        },
+        {
+          "id": "d",
+          "text": "R-12"
+        },
+        {
+          "id": "e",
+          "text": "R-15"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "Chaque KRI se lit avec le sens de son seuil. R-07 : le délai moyen de révocation des accès, 31 h, dépasse la limite de 24 h au plus ; d'anciens salariés conservent leurs accès trop longtemps. R-09 : le taux de réussite des sauvegardes, 96,5 %, est inférieur au minimum de 98 % ; ici, c'est une valeur trop basse qui signale le risque. Les trois autres KRI restent dans leurs limites. Un seuil franchi déclenche l'escalade vers le propriétaire du risque, qui décide des actions.",
+    "distractorNotes": {
+      "a": "1,4 % de postes sans EDR reste sous le plafond de 2 % : le KRI est dans sa limite.",
+      "d": "Aucun compte à privilèges sans MFA : la valeur 0 correspond exactement à l'exigence.",
+      "e": "8 alertes critiques non traitées sous 4 h restent sous le plafond de 10."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-strategies-matching-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le comité des risques d'un industriel passe en revue les décisions de l'année. Associez chaque décision à la stratégie de gestion du risque qu'elle met en œuvre.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Le service juridique fait signer au prestataire d'infogérance une clause d'indemnisation en cas de fuite de données"
+        },
+        {
+          "id": "l2",
+          "text": "La direction approuve par écrit une exception temporaire à la politique de chiffrement pour un automate de production"
+        },
+        {
+          "id": "l3",
+          "text": "L'entreprise renonce à collecter les données de santé de ses clients, jugées non indispensables"
+        },
+        {
+          "id": "l4",
+          "text": "L'équipe réseau isole les caméras IP dans un segment dédié et bloque leur accès à Internet"
+        },
+        {
+          "id": "l5",
+          "text": "Le comité consigne qu'un risque faible sur l'intranet sera suivi sans action supplémentaire"
+        }
+      ],
+      "right": [
+        {
+          "id": "transfer",
+          "text": "Transférer"
+        },
+        {
+          "id": "accept",
+          "text": "Accepter"
+        },
+        {
+          "id": "avoid",
+          "text": "Éviter"
+        },
+        {
+          "id": "mitigate",
+          "text": "Atténuer"
+        },
+        {
+          "id": "ignore",
+          "text": "Ignorer"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "transfer",
+        "l2": "accept",
+        "l3": "avoid",
+        "l4": "mitigate",
+        "l5": "accept"
+      }
+    },
+    "explanation": "La clause d'indemnisation fait supporter les conséquences financières d'une fuite par le prestataire : transfert. L'exception approuvée assume le non-respect d'une exigence pour l'automate : acceptation. Renoncer à collecter des données supprime le risque à la source : évitement. La segmentation et le blocage d'Internet réduisent la probabilité et l'impact d'une compromission des caméras : atténuation. Le risque faible suivi sans action, par une décision consignée, est également accepté : l'acceptation peut être simple ou passer par une exception ou une exemption.",
+    "distractorNotes": {
+      "ignore": "Ignorer un risque, c'est ne prendre aucune décision et ne rien documenter ; ce n'est pas une stratégie de gestion. Le risque de l'intranet est au contraire évalué, consigné et suivi : il est accepté."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-assessment-frequency-matching-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un cabinet de conseil classe les évaluations des risques réalisées chez ses clients selon leur fréquence, dans la terminologie CompTIA. Associez chaque situation au type d'évaluation.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Un éditeur réévalue les risques de son SI chaque année à la même période, comme le prévoit son SMSI"
+        },
+        {
+          "id": "l2",
+          "text": "Après l'annonce d'une faille critique dans son VPN, une PME lance une évaluation non planifiée"
+        },
+        {
+          "id": "l3",
+          "text": "Avant le déménagement de son centre de données, un groupe mène une évaluation propre à ce projet"
+        },
+        {
+          "id": "l4",
+          "text": "Une plateforme GRC recalcule en permanence le niveau de risque à partir des scans et de la CMDB"
+        },
+        {
+          "id": "l5",
+          "text": "Un comité revoit tous les trimestres les risques liés aux fournisseurs critiques"
+        }
+      ],
+      "right": [
+        {
+          "id": "adhoc",
+          "text": "Ponctuelle (ad hoc)"
+        },
+        {
+          "id": "recurring",
+          "text": "Récurrente (recurring)"
+        },
+        {
+          "id": "onetime",
+          "text": "Unique (one-time)"
+        },
+        {
+          "id": "continuous",
+          "text": "Continue (continuous)"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "recurring",
+        "l2": "adhoc",
+        "l3": "onetime",
+        "l4": "continuous",
+        "l5": "recurring"
+      }
+    },
+    "explanation": "Une évaluation récurrente se répète à intervalle fixe (annuel, trimestriel), quel que soit le contexte. Une évaluation ponctuelle (ad hoc) est déclenchée à la demande par un événement imprévu, comme l'annonce d'une faille. Une évaluation unique (one-time) est conduite une seule fois pour un projet ou un changement précis, par exemple un déménagement ou une acquisition, et n'a pas vocation à se répéter. Une évaluation continue s'appuie sur une surveillance permanente et automatisée qui met le niveau de risque à jour au fil des données.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-nist-800-39-process-ordering-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Une agence publique structure sa gestion des risques selon NIST SP 800-39. Ordonnez les quatre composantes du processus, de la première à la dernière.",
+      "items": [
+        {
+          "id": "respond",
+          "text": "Répondre : choisir et mettre en œuvre le transfert, l'acceptation, l'évitement ou l'atténuation"
+        },
+        {
+          "id": "frame",
+          "text": "Cadrer : fixer les hypothèses, les contraintes, la tolérance au risque et les priorités"
+        },
+        {
+          "id": "monitor",
+          "text": "Surveiller : suivre les KRI, l'efficacité des mesures et les changements du contexte"
+        },
+        {
+          "id": "assess",
+          "text": "Évaluer : identifier menaces et vulnérabilités, estimer probabilité et impact"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "frame",
+        "assess",
+        "respond",
+        "monitor"
+      ]
+    },
+    "explanation": "NIST SP 800-39 décrit la gestion des risques en quatre composantes : cadrer (frame), évaluer (assess), répondre (respond) et surveiller (monitor). Le cadrage fixe d'abord le contexte et la tolérance au risque qui serviront de référence. L'évaluation identifie puis estime les risques. La réponse choisit et met en œuvre une stratégie pour chacun. La surveillance vérifie dans la durée l'efficacité des mesures et détecte les évolutions, ce qui réalimente le cadrage et les évaluations suivantes : le processus est cyclique.",
+    "distractorNotes": {},
+    "reference": "NIST SP 800-39 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-mttr-calculation-fill-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Pour sa BIA, un distributeur calcule le MTTR de son routeur de bordure sur les douze derniers mois, en retenant pour chaque panne la durée entre la détection et la remise en service. Quel est ce MTTR ?",
+      "exhibit": "Historique des pannes - routeur de bordure RTR-01 (12 derniers mois)\n\nPanne  Détection      Remise en service\nP1     14/01 08:10    14/01 10:40\nP2     03/04 22:00    04/04 01:30\nP3     19/07 13:15    19/07 14:45\nP4     30/10 06:00    30/10 08:30",
+      "fields": [
+        {
+          "id": "mttr",
+          "label": "MTTR en minutes (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "mttr": {
+          "accepted": [
+            "150"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Le MTTR (Mean Time To Repair) est la durée totale des réparations divisée par le nombre de pannes. P1 : 08:10 à 10:40, soit 150 min. P2 : 22:00 à 01:30 le lendemain, soit 210 min. P3 : 13:15 à 14:45, soit 90 min. P4 : 06:00 à 08:30, soit 150 min. Total : 600 minutes pour 4 pannes, donc un MTTR de 150 minutes (2 h 30). Comparé au RTO de la BIA, il indique si la simple réparation suffit ou s'il faut prévoir un équipement de secours.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-34 Rev. 1"
+  }
+]

@@ -1,0 +1,1354 @@
+[
+  {
+    "slug": "security-plus-5.4-payroll-saas-processor-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME confie le calcul de la paie de ses salariés à un éditeur SaaS. L'éditeur traite les données uniquement selon les instructions écrites de la PME, qui a choisi la finalité et les moyens du traitement. Quel rôle l'éditeur SaaS occupe-t-il au sens du RGPD ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Responsable du traitement"
+        },
+        {
+          "id": "b",
+          "text": "Personne concernée"
+        },
+        {
+          "id": "c",
+          "text": "Sous-traitant"
+        },
+        {
+          "id": "d",
+          "text": "Autorité de contrôle"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le RGPD distingue le responsable du traitement, qui détermine les finalités et les moyens du traitement, et le sous-traitant, qui traite les données pour le compte du responsable et sur ses instructions documentées. Ici la PME décide pourquoi et comment la paie est traitée : elle est responsable du traitement. L'éditeur SaaS exécute ce traitement pour elle : il est sous-traitant, et un contrat (article 28) doit encadrer ses obligations (instructions, confidentialité, sécurité, aide au responsable).",
+    "distractorNotes": {
+      "a": "Le responsable du traitement est la PME, qui fixe les finalités et les moyens ; l'éditeur ne fait qu'exécuter ses instructions.",
+      "b": "Les personnes concernées sont les salariés dont les données de paie sont traitées, pas l'éditeur.",
+      "d": "L'autorité de contrôle est l'autorité publique de protection des données (la CNIL en France), pas un prestataire privé."
+    },
+    "reference": "Règlement (UE) 2016/679 (RGPD), articles 4 et 28"
+  },
+  {
+    "slug": "security-plus-5.4-data-subject-definition-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une clinique vétérinaire enregistre dans son logiciel le nom, le téléphone et l'adresse de chaque propriétaire d'animal. Le délégué à la protection des données rappelle qui est la « personne concernée » (data subject) au sens du RGPD. De qui s'agit-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La clinique, qui décide de l'usage du fichier de clientèle"
+        },
+        {
+          "id": "b",
+          "text": "Le propriétaire de l'animal, identifié par ces informations"
+        },
+        {
+          "id": "c",
+          "text": "L'éditeur du logiciel, qui héberge le fichier de clientèle"
+        },
+        {
+          "id": "d",
+          "text": "Le vétérinaire salarié, qui consulte le fichier chaque jour"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La personne concernée est la personne physique identifiée ou identifiable à laquelle se rapportent les données personnelles. Ici, le nom, le téléphone et l'adresse identifient le propriétaire de l'animal : c'est lui qui bénéficie des droits du RGPD (accès, rectification, effacement, opposition…). L'animal n'est pas une personne, et la clinique comme l'éditeur sont des acteurs du traitement, pas son objet.",
+    "distractorNotes": {
+      "a": "La clinique fixe les finalités et les moyens du fichier : elle est responsable du traitement.",
+      "c": "L'éditeur qui héberge le fichier pour la clinique agit comme sous-traitant.",
+      "d": "Le vétérinaire salarié accède aux données sous l'autorité de la clinique ; ce ne sont pas ses données qui sont en cause ici."
+    },
+    "reference": "Règlement (UE) 2016/679 (RGPD), article 4"
+  },
+  {
+    "slug": "security-plus-5.4-iso-27001-certifiable-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un grand client exige qu'un hébergeur obtienne une certification délivrée par un organisme accrédité pour son système de management de la sécurité de l'information (SMSI). Sur quelle norme l'hébergeur doit-il se faire certifier ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "ISO/IEC 27002:2022"
+        },
+        {
+          "id": "b",
+          "text": "NIST Cybersecurity Framework 2.0"
+        },
+        {
+          "id": "c",
+          "text": "NIST SP 800-53 Rev. 5"
+        },
+        {
+          "id": "d",
+          "text": "ISO/IEC 27001:2022"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "ISO/IEC 27001 spécifie les exigences d'un SMSI : c'est la norme contre laquelle un organisme de certification accrédité audite et délivre un certificat. ISO/IEC 27002 en est le guide de mise en œuvre : elle détaille les 93 mesures de sécurité, regroupées en quatre thèmes, que l'annexe A de la 27001 reprend, mais elle ne se certifie pas. Les publications du NIST sont des cadres et des catalogues de contrôles, sans certification d'un SMSI par un tiers accrédité.",
+    "distractorNotes": {
+      "a": "ISO/IEC 27002 est un recueil de bonnes pratiques qui guide le choix des mesures ; on ne se certifie pas sur cette norme.",
+      "b": "Le NIST CSF 2.0 est un cadre volontaire d'organisation de la cybersécurité, sans certification par un organisme accrédité.",
+      "c": "Le SP 800-53 est un catalogue de contrôles utilisé notamment par les agences fédérales américaines ; ce n'est pas une norme de SMSI certifiable."
+    },
+    "reference": "ISO/IEC 27001:2022 ; ISO/IEC 27002:2022"
+  },
+  {
+    "slug": "security-plus-5.4-ccpa-regional-law-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une boutique en ligne française vend aussi à des clients résidant en Californie. Son juriste signale que la loi californienne CCPA s'applique à ces clients. À quel niveau de législation sur la vie privée cette loi appartient-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Local ou régional"
+        },
+        {
+          "id": "b",
+          "text": "National"
+        },
+        {
+          "id": "c",
+          "text": "Mondial"
+        },
+        {
+          "id": "d",
+          "text": "Contractuel"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le California Consumer Privacy Act est une loi de l'État de Californie : il s'agit d'une législation locale ou régionale (un État fédéré), et non d'une loi fédérale des États-Unis. La Security+ demande de distinguer ces niveaux, car une même organisation peut être soumise en même temps à des lois régionales, nationales et à des textes à portée extraterritoriale, et doit cartographier ces obligations selon les lieux où résident les personnes concernées.",
+    "distractorNotes": {
+      "b": "Une loi nationale s'appliquerait à l'échelle des États-Unis entiers (comme HIPAA, loi fédérale) ; la CCPA ne vaut que pour l'État de Californie.",
+      "c": "La CCPA ne s'applique pas dans le monde entier : elle protège les résidents californiens.",
+      "d": "Une obligation contractuelle naît d'un contrat ou d'une norme privée comme PCI DSS ; la CCPA est une loi votée par un État."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.4"
+  },
+  {
+    "slug": "security-plus-5.4-gdpr-extraterritorial-scope-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une société établie uniquement aux États-Unis, sans filiale ni serveur en Europe, vend en ligne des vêtements livrés en Allemagne et en Italie, avec un site traduit et des prix en euros. Son directeur juridique se demande si le RGPD s'applique aux données de ces clients. Quelle réponse est correcte ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Non, car le RGPD ne vise que les organismes établis dans l'Union européenne."
+        },
+        {
+          "id": "b",
+          "text": "Oui, car elle offre des biens à des personnes qui se trouvent dans l'Union."
+        },
+        {
+          "id": "c",
+          "text": "Non, sauf si les données sont stockées sur des serveurs situés dans l'Union."
+        },
+        {
+          "id": "d",
+          "text": "Oui, mais seulement pour les clients qui ont la nationalité d'un État membre."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le RGPD a une portée extraterritoriale : son article 3, paragraphe 2, l'applique au traitement des données de personnes qui se trouvent dans l'Union par un responsable non établi dans l'Union lorsque ce traitement est lié à l'offre de biens ou de services à ces personnes (ou au suivi de leur comportement dans l'Union). Un site traduit, des prix en euros et des livraisons en Allemagne et en Italie montrent que l'offre cible ces personnes. Le critère est la localisation de la personne, pas sa nationalité ni celle des serveurs.",
+    "distractorNotes": {
+      "a": "L'établissement dans l'Union n'est qu'un des deux critères ; l'offre de biens à des personnes dans l'Union suffit à rendre le RGPD applicable.",
+      "c": "L'emplacement des serveurs n'est pas le critère d'application ; il intervient pour les transferts, pas pour la portée territoriale.",
+      "d": "Le RGPD protège les personnes qui se trouvent dans l'Union, quelle que soit leur nationalité."
+    },
+    "reference": "Règlement (UE) 2016/679 (RGPD), article 3"
+  },
+  {
+    "slug": "security-plus-5.4-external-audit-independence-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque dispose d'une équipe d'audit interne qui vérifie chaque trimestre l'application de sa politique de sécurité. Son régulateur exige en plus un examen annuel de conformité réalisé par un cabinet extérieur. Quelle caractéristique justifie LE MIEUX cette exigence d'un examen externe ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le cabinet extérieur peut corriger lui-même les écarts constatés."
+        },
+        {
+          "id": "b",
+          "text": "Le cabinet extérieur remplace l'audit interne pendant l'année."
+        },
+        {
+          "id": "c",
+          "text": "Le cabinet extérieur est indépendant de l'organisation évaluée."
+        },
+        {
+          "id": "d",
+          "text": "Le cabinet extérieur rend son rapport au seul RSSI de la banque."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La surveillance de la conformité peut être interne (audit interne, autoévaluations) ou externe (auditeur, évaluateur ou régulateur extérieur). L'apport principal d'un examen externe est son indépendance : l'évaluateur n'a pas d'intérêt dans le résultat et n'évalue pas son propre travail, ce qui rend ses conclusions crédibles pour un régulateur, des clients ou des actionnaires. L'audit interne reste utile pour un suivi fréquent, mais il dépend de l'organisation qu'il contrôle.",
+    "distractorNotes": {
+      "a": "Un auditeur qui corrigerait lui-même les écarts évaluerait ensuite son propre travail et perdrait son indépendance ; la correction revient à l'organisation.",
+      "b": "L'examen externe annuel complète l'audit interne trimestriel ; il ne le remplace pas.",
+      "d": "Un rapport externe est destiné au régulateur et aux instances dirigeantes (comité d'audit, conseil), pas au seul RSSI."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.4"
+  },
+  {
+    "slug": "security-plus-5.4-pci-aoc-attestation-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un commerçant en ligne vient de terminer son évaluation PCI DSS annuelle avec un QSA. Sa banque acquéreuse lui demande le document officiel, signé, par lequel il déclare formellement son statut de conformité. Quel document doit-il transmettre ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'attestation de conformité (AOC)"
+        },
+        {
+          "id": "b",
+          "text": "Le rapport d'analyse trimestrielle de l'ASV"
+        },
+        {
+          "id": "c",
+          "text": "La politique de sécurité de l'information"
+        },
+        {
+          "id": "d",
+          "text": "Le registre des risques de l'entreprise"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'attestation de conformité (Attestation of Compliance, AOC) est la déclaration formelle et signée du statut de conformité PCI DSS, qui résume les résultats de l'évaluation documentés dans le ROC ou le questionnaire d'autoévaluation (SAQ). C'est l'exemple type de l'« attestation » des objectifs Security+ : une partie responsable affirme officiellement, par sa signature, que les exigences sont satisfaites, et engage ainsi sa responsabilité devant l'acquéreur.",
+    "distractorNotes": {
+      "b": "Le rapport de l'ASV ne porte que sur les analyses de vulnérabilités externes, un seul point de l'exigence 11 ; il ne déclare pas le statut de conformité global.",
+      "c": "La politique de sécurité est une pièce exigée par la norme, mais elle ne déclare aucun résultat d'évaluation.",
+      "d": "Le registre des risques est un outil interne de gestion des risques, pas une déclaration de conformité destinée à l'acquéreur."
+    },
+    "reference": "PCI DSS v4.0"
+  },
+  {
+    "slug": "security-plus-5.4-hipaa-business-associate-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un hôpital américain s'apprête à confier le stockage de ses dossiers médicaux électroniques (ePHI) à un fournisseur de cloud. L'équipe conformité doit choisir le document contractuel exigé par HIPAA avant la mise en production. Lequel ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un accord de niveau de service (SLA) sur la disponibilité"
+        },
+        {
+          "id": "b",
+          "text": "Un accord de confidentialité (NDA) signé par chaque technicien"
+        },
+        {
+          "id": "c",
+          "text": "Un protocole d'accord (MOU) sans valeur contraignante"
+        },
+        {
+          "id": "d",
+          "text": "Un accord de partenaire commercial (BAA) avec le fournisseur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Sous HIPAA, un prestataire qui crée, reçoit, conserve ou transmet des informations de santé protégées pour le compte d'une entité couverte (ici l'hôpital) est un business associate. Les règles de confidentialité et de sécurité imposent un business associate agreement (BAA) qui l'oblige à protéger les ePHI, à en limiter l'usage et à signaler les incidents. Sans BAA, l'hôpital est en défaut, même si le fournisseur est techniquement sûr.",
+    "distractorNotes": {
+      "a": "Un SLA fixe des niveaux de service (disponibilité, délais) ; il ne contient pas les obligations de protection des ePHI exigées par HIPAA.",
+      "b": "Un NDA individuel engage des personnes, pas le fournisseur, et ne remplace pas les clauses obligatoires du BAA.",
+      "c": "Un MOU exprime une intention commune sans force contraignante ; HIPAA exige un engagement contractuel."
+    },
+    "reference": "HIPAA Privacy and Security Rules (45 CFR Parts 160 et 164)"
+  },
+  {
+    "slug": "security-plus-5.4-sox-404-icfr-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une société cotée à la Bourse de New York prépare son rapport annuel. Le comité d'audit rappelle que la direction doit y évaluer l'efficacité du contrôle interne sur l'information financière, y compris les contrôles d'accès aux applications comptables. Quelle loi impose cette évaluation ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "HIPAA"
+        },
+        {
+          "id": "b",
+          "text": "Sarbanes-Oxley (SOX)"
+        },
+        {
+          "id": "c",
+          "text": "PCI DSS"
+        },
+        {
+          "id": "d",
+          "text": "Le RGPD"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La loi Sarbanes-Oxley de 2002 s'applique aux sociétés cotées aux États-Unis. Sa section 404 impose à la direction d'évaluer et de déclarer dans le rapport annuel l'efficacité du contrôle interne sur l'information financière, et, pour les grandes sociétés, une attestation de l'auditeur externe. Les contrôles informatiques généraux (gestion des accès, gestion des changements sur les applications financières) font partie de cette évaluation, d'où l'intérêt du sujet pour la sécurité.",
+    "distractorNotes": {
+      "a": "HIPAA protège les informations de santé aux États-Unis ; elle ne traite pas de l'information financière des sociétés cotées.",
+      "c": "PCI DSS est une norme contractuelle de l'industrie des cartes de paiement, pas une loi sur le reporting financier.",
+      "d": "Le RGPD protège les données personnelles ; il n'impose pas d'évaluation du contrôle interne sur l'information financière."
+    },
+    "reference": "Sarbanes-Oxley Act of 2002 (SOX), section 404"
+  },
+  {
+    "slug": "security-plus-5.4-data-owner-classification-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans une entreprise industrielle, un administrateur système demande qui doit fixer le niveau de classification et les règles d'accès du fichier des salaires, qu'il sauvegarde et administre au quotidien. Selon la répartition habituelle des rôles, qui doit prendre cette décision ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La directrice des ressources humaines, propriétaire des données"
+        },
+        {
+          "id": "b",
+          "text": "Le prestataire qui héberge le serveur de fichiers"
+        },
+        {
+          "id": "c",
+          "text": "L'administrateur système, gardien des données"
+        },
+        {
+          "id": "d",
+          "text": "Chaque salarié, pour la ligne qui le concerne"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le propriétaire des données (data owner) est le responsable métier qui rend compte d'un ensemble de données : il décide de sa classification, de qui peut y accéder et de sa durée de conservation. Pour le fichier des salaires, c'est la direction des ressources humaines. L'administrateur est le gardien (custodian) : il applique techniquement ces décisions (sauvegardes, droits, chiffrement) sans les prendre. Cette distinction évite qu'un technicien fixe seul les règles d'accès à des données sensibles.",
+    "distractorNotes": {
+      "c": "Le gardien met en œuvre les protections décidées par le propriétaire ; il ne fixe pas lui-même la classification.",
+      "b": "Un hébergeur exécute un service pour l'entreprise ; il ne décide pas de la classification de ses données.",
+      "d": "Les salariés sont les personnes concernées : ils ont des droits sur leurs données, mais ne fixent pas la classification du fichier."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.4"
+  },
+  {
+    "slug": "security-plus-5.4-data-inventory-first-step-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une société de services de 200 salariés lance son programme de conformité au RGPD. Elle ignore où se trouvent les données personnelles qu'elle traite : CRM, partages de fichiers, messagerie, sauvegardes, outils SaaS. Quelle action doit-elle mener EN PREMIER ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Fixer une durée unique de conservation et supprimer tout ce qui la dépasse"
+        },
+        {
+          "id": "b",
+          "text": "Inventorier les données personnelles et les traitements de l'entreprise"
+        },
+        {
+          "id": "c",
+          "text": "Déployer un outil de prévention des fuites (DLP) sur tous les postes"
+        },
+        {
+          "id": "d",
+          "text": "Chiffrer toutes les bases de données et tous les partages de fichiers"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "On ne protège ni ne conserve correctement ce que l'on ne connaît pas. L'inventaire des données (data inventory), formalisé par le registre des activités de traitement, recense quelles données personnelles sont traitées, pour quelles finalités, où, par qui et combien de temps. C'est la base de toutes les décisions suivantes : durées de conservation par finalité, mesures de sécurité adaptées, réponse aux demandes des personnes. Les autres actions viennent après, guidées par cet inventaire.",
+    "distractorNotes": {
+      "a": "Une durée unique, fixée sans connaître les finalités, peut supprimer des données à garder par obligation légale ou en garder d'autres trop longtemps ; la rétention se définit par traitement, après l'inventaire.",
+      "c": "Une DLP doit être réglée selon les types et les emplacements des données ; sans inventaire, ses règles seraient arbitraires.",
+      "d": "Le chiffrement est une mesure de sécurité utile, mais il ne dit pas quelles données existent ni combien de temps les garder ; il se décide après l'inventaire."
+    },
+    "reference": "Règlement (UE) 2016/679 (RGPD), article 30"
+  },
+  {
+    "slug": "security-plus-5.4-pci-cvv-storage-finding-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Lors d'une préévaluation PCI DSS v4.0, l'équipe conformité d'un site de commerce en ligne passe en revue l'inventaire des données de carte conservées après l'autorisation des paiements. Quel élément constitue une non-conformité ?",
+      "exhibit": "Inventaire des données de carte - base \"ventes\" (après autorisation)\nLigne  Donnée                     Stockage             Usage\n1      PAN complet                chiffré AES-256      remboursements\n2      Nom, date d'expiration     colonnes protégées   remboursements\n3      CVV2 (3 chiffres)          chiffré AES-256      paiement en 1 clic\n4      PAN 6 premiers/4 derniers  en clair             espace client",
+      "options": [
+        {
+          "id": "a",
+          "text": "La ligne 1 : le PAN chiffré conservé pour les remboursements"
+        },
+        {
+          "id": "b",
+          "text": "La ligne 2 : le nom et la date d'expiration conservés"
+        },
+        {
+          "id": "c",
+          "text": "La ligne 3 : le cryptogramme visuel chiffré et conservé"
+        },
+        {
+          "id": "d",
+          "text": "La ligne 4 : le PAN masqué affiché dans l'espace client"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "PCI DSS distingue les données du titulaire (PAN, nom, date d'expiration), dont la conservation est permise si elles sont protégées, et les données d'authentification sensibles (piste magnétique, cryptogramme visuel CVV2/CVC2, PIN), qui ne doivent jamais être conservées après l'autorisation, même chiffrées. La ligne 3 viole donc la norme : il faut cesser cette conservation et purger les valeurs existantes. Le chiffrement ne rend pas licite une donnée interdite de stockage.",
+    "distractorNotes": {
+      "a": "Le PAN peut être conservé si un besoin métier le justifie et s'il est rendu illisible, par exemple par un chiffrement fort avec une gestion des clés.",
+      "b": "Le nom du titulaire et la date d'expiration peuvent être conservés, avec les protections prévues par la norme.",
+      "d": "Afficher seulement les six premiers et les quatre derniers chiffres est un masquage conforme pour un usage courant."
+    },
+    "reference": "PCI DSS v4.0, exigence 3"
+  },
+  {
+    "slug": "security-plus-5.4-hipaa-encrypted-laptop-breach-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un ordinateur portable contenant des ePHI de 3 000 patients est volé dans la voiture d'un médecin d'une clinique américaine. Le disque était chiffré intégralement en AES-256, conformément aux recommandations du HHS, et la clé n'était ni stockée sur l'appareil ni compromise. Quelle conclusion le responsable de la conformité doit-il retenir au regard de la règle de notification des violations de HIPAA ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Il doit prévenir les 3 000 patients, car le seuil de 500 personnes est dépassé."
+        },
+        {
+          "id": "b",
+          "text": "Il doit alerter les médias locaux, car plus de 500 personnes sont touchées."
+        },
+        {
+          "id": "c",
+          "text": "Il doit prévenir le HHS dans les 72 heures, comme pour toute perte d'appareil."
+        },
+        {
+          "id": "d",
+          "text": "Il n'a pas de notification à faire, car les ePHI volées restent sécurisées."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La règle de notification des violations de HIPAA ne s'applique qu'aux informations de santé protégées « non sécurisées ». Des ePHI chiffrées conformément aux recommandations du HHS, avec une clé non compromise, sont considérées comme sécurisées : leur perte n'est pas une violation à notifier (exonération dite safe harbor). Le chiffrement intégral des appareils mobiles a donc une valeur de conformité directe. L'incident reste à documenter et à analyser, mais sans notification aux patients, aux médias ni au HHS.",
+    "distractorNotes": {
+      "a": "La notification aux patients ne concerne que les informations non sécurisées ; le chiffrement conforme avec une clé intacte écarte cette obligation.",
+      "b": "L'avis aux médias vise les violations d'informations non sécurisées touchant plus de 500 résidents d'un État ; il ne s'applique pas ici.",
+      "c": "Le délai de 72 heures est celui du RGPD pour l'autorité de contrôle ; HIPAA ne l'impose pas, et aucune notification n'est due pour des données sécurisées."
+    },
+    "reference": "HIPAA Breach Notification Rule (45 CFR Part 164, Subpart D)"
+  },
+  {
+    "slug": "security-plus-5.4-erasure-request-invoices-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une ancienne cliente d'une boutique en ligne française exerce son droit à l'effacement. La boutique détient son adresse électronique dans la liste de diffusion commerciale, son historique de navigation et les factures de ses achats, que la loi impose de conserver plusieurs années. Quelle réponse est LA PLUS conforme au RGPD ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Effacer toutes les données, factures comprises, pour satisfaire la demande."
+        },
+        {
+          "id": "b",
+          "text": "Refuser la demande, puisque la boutique doit conserver une partie des données."
+        },
+        {
+          "id": "c",
+          "text": "Effacer prospection et navigation, garder les factures, informer la cliente."
+        },
+        {
+          "id": "d",
+          "text": "Anonymiser les factures et garder l'adresse électronique pour d'éventuelles relances."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le droit à l'effacement (article 17 du RGPD) n'est pas absolu : il ne s'applique pas lorsque la conservation est nécessaire au respect d'une obligation légale, comme la conservation des factures imposée par la loi. La boutique doit donc effacer ce qui n'a plus de base légale (prospection, historique de navigation), conserver les factures en limitant leur accès à cette seule finalité légale, puis expliquer sa réponse à la cliente dans le délai prévu. Chaque donnée s'examine selon sa finalité.",
+    "distractorNotes": {
+      "a": "Supprimer les factures exposerait la boutique à un manquement à ses obligations légales ; l'article 17 prévoit précisément cette exception.",
+      "b": "L'exception ne couvre que les données soumises à l'obligation légale ; les données marketing et de navigation doivent être effacées.",
+      "d": "Des factures anonymisées ne rempliraient plus leur fonction légale, et garder l'adresse pour relancer la cliente contredit sa demande."
+    },
+    "reference": "Règlement (UE) 2016/679 (RGPD), article 17"
+  },
+  {
+    "slug": "security-plus-5.4-csf2-functions-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une collectivité structure son programme de cybersécurité selon le NIST Cybersecurity Framework 2.0 pour en rendre compte à ses élus. Quelles trois fonctions font partie du noyau de ce cadre ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Govern (gouverner)"
+        },
+        {
+          "id": "b",
+          "text": "Comply (se conformer)"
+        },
+        {
+          "id": "c",
+          "text": "Identify (identifier)"
+        },
+        {
+          "id": "d",
+          "text": "Audit (auditer)"
+        },
+        {
+          "id": "e",
+          "text": "Recover (rétablir)"
+        },
+        {
+          "id": "f",
+          "text": "Certify (certifier)"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Le noyau du NIST CSF 2.0 compte six fonctions : Govern, Identify, Protect, Detect, Respond et Recover. Govern, ajoutée dans la version 2.0, couvre la stratégie, les rôles, les politiques et la gestion des risques liés aux tiers ; elle encadre les cinq autres. Le CSF est un cadre volontaire : il aide à organiser et à communiquer la posture de sécurité, mais il ne prévoit ni certification ni fonction propre à la conformité ou à l'audit.",
+    "distractorNotes": {
+      "b": "La conformité est un résultat recherché, traité notamment dans Govern ; ce n'est pas une fonction du CSF.",
+      "d": "L'audit est une activité de vérification, pas l'une des six fonctions du cadre.",
+      "f": "Le CSF ne prévoit aucun mécanisme de certification ; ce n'est pas une de ses fonctions."
+    },
+    "reference": "NIST Cybersecurity Framework 2.0"
+  },
+  {
+    "slug": "security-plus-5.4-gdpr-data-subject-rights-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le service client d'un opérateur télécom reçoit plusieurs demandes de clients qui invoquent le RGPD. Quels deux droits ces clients tiennent-ils effectivement du RGPD ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Obtenir l'effacement de leurs données lorsqu'elles ne sont plus nécessaires"
+        },
+        {
+          "id": "b",
+          "text": "Imposer l'algorithme de chiffrement utilisé pour leurs données"
+        },
+        {
+          "id": "c",
+          "text": "Recevoir leurs données dans un format structuré et lisible par machine"
+        },
+        {
+          "id": "d",
+          "text": "Exiger un audit de sécurité de l'opérateur par le cabinet de leur choix"
+        },
+        {
+          "id": "e",
+          "text": "Obtenir une indemnité forfaitaire fixée par le RGPD pour chaque traitement"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "Le RGPD accorde aux personnes concernées, entre autres, le droit d'accès, de rectification, à l'effacement (« droit à l'oubli », article 17) lorsque les données ne sont plus nécessaires ou que le consentement est retiré, et le droit à la portabilité (article 20) : recevoir ses données dans un format structuré, couramment utilisé et lisible par machine, et les transmettre à un autre responsable. Les choix de sécurité et les audits relèvent en revanche du responsable du traitement et des autorités.",
+    "distractorNotes": {
+      "b": "Le responsable choisit les mesures de sécurité appropriées (article 32) ; la personne concernée ne peut pas imposer un algorithme.",
+      "d": "Le contrôle de l'opérateur relève de l'autorité de contrôle, que la personne peut saisir d'une réclamation ; elle ne peut pas imposer un audit.",
+      "e": "Le RGPD ouvre un droit à réparation du dommage subi, apprécié au cas par cas ; il ne prévoit aucune indemnité forfaitaire par traitement."
+    },
+    "reference": "Règlement (UE) 2016/679 (RGPD), articles 17 et 20"
+  },
+  {
+    "slug": "security-plus-5.4-processor-obligations-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un hébergeur de messagerie traite les courriels d'un cabinet d'avocats pour le compte de celui-ci, qui reste responsable du traitement. Le contrat de sous-traitance est en cours de rédaction. Quelles deux obligations incombent à l'hébergeur en tant que sous-traitant au sens du RGPD ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Fixer lui-même la durée de conservation des courriels du cabinet"
+        },
+        {
+          "id": "b",
+          "text": "Traiter les données uniquement sur instruction documentée du cabinet"
+        },
+        {
+          "id": "c",
+          "text": "Notifier lui-même l'autorité de contrôle de toute violation à la place du cabinet"
+        },
+        {
+          "id": "d",
+          "text": "Informer le cabinet dans les meilleurs délais d'une violation de données"
+        },
+        {
+          "id": "e",
+          "text": "Décider seul des nouvelles finalités pour lesquelles les courriels sont utilisés"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le sous-traitant agit pour le compte du responsable : l'article 28 lui impose de ne traiter les données que sur instruction documentée, d'assurer la confidentialité et la sécurité, de ne pas recruter un autre sous-traitant sans autorisation et d'aider le responsable. En cas de violation, l'article 33 l'oblige à en informer le responsable dans les meilleurs délais ; c'est ensuite le responsable qui notifie l'autorité de contrôle, en principe dans les 72 heures, et qui décide des finalités et des durées.",
+    "distractorNotes": {
+      "a": "La durée de conservation découle des finalités, qui sont fixées par le responsable du traitement, ici le cabinet.",
+      "c": "La notification à l'autorité de contrôle incombe au responsable du traitement ; le sous-traitant l'alerte, sans le remplacer.",
+      "e": "Un sous-traitant qui fixe lui-même les finalités devient responsable du traitement pour ce traitement et sort de son rôle."
+    },
+    "reference": "Règlement (UE) 2016/679 (RGPD), articles 28 et 33"
+  },
+  {
+    "slug": "security-plus-5.4-external-compliance-reports-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le responsable conformité d'un groupe de distribution coté classe les rapports produits au cours de l'année. Quels deux rapports sont des rapports de conformité externes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le tableau de bord mensuel des écarts présenté au comité de direction"
+        },
+        {
+          "id": "b",
+          "text": "Le ROC PCI DSS rédigé par le QSA et remis à la banque acquéreuse"
+        },
+        {
+          "id": "c",
+          "text": "Le rapport de l'audit interne sur les droits d'accès remis au RSSI"
+        },
+        {
+          "id": "d",
+          "text": "La synthèse des autoévaluations des filiales destinée au DSI du groupe"
+        },
+        {
+          "id": "e",
+          "text": "La notification d'une violation de données envoyée à l'autorité de contrôle"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Les rapports de conformité internes servent le pilotage : ils restent dans l'organisation (comité de direction, RSSI, DSI, comité d'audit). Les rapports externes sont destinés à des tiers qui contrôlent ou dépendent de l'organisation : régulateurs, autorités de contrôle, partenaires contractuels, auditeurs. Le ROC remis à l'acquéreur et la notification de violation à l'autorité sortent de l'entreprise et l'engagent vis-à-vis de l'extérieur.",
+    "distractorNotes": {
+      "a": "Ce tableau de bord sert au pilotage par la direction et ne quitte pas l'entreprise : c'est un rapport interne.",
+      "c": "Un audit interne remis au RSSI reste un document interne, même s'il est rigoureux.",
+      "d": "Cette synthèse est consolidée pour la DSI du groupe : elle reste interne."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.4"
+  },
+  {
+    "slug": "security-plus-5.4-compliance-automation-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une fintech veut réduire la charge de ses contrôles de conformité, aujourd'hui réalisés à la main chaque trimestre. Quelles deux mesures relèvent de l'automatisation de la surveillance de la conformité ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un outil qui compare chaque jour la configuration cloud aux règles CIS et ouvre un ticket par écart"
+        },
+        {
+          "id": "b",
+          "text": "Un entretien annuel du RSSI avec chaque responsable d'application"
+        },
+        {
+          "id": "c",
+          "text": "Une collecte programmée des preuves (journaux, droits d'accès) vers le référentiel d'audit"
+        },
+        {
+          "id": "d",
+          "text": "Une signature sur papier de la charte informatique par chaque nouvel arrivant"
+        },
+        {
+          "id": "e",
+          "text": "Une visite sur site de l'auditeur externe pour l'examen de certification"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "L'automatisation de la surveillance de la conformité remplace des vérifications ponctuelles et manuelles par des contrôles continus : outils de gestion de la posture cloud qui comparent la configuration à un référentiel (CIS Benchmarks, politique interne) et signalent les écarts, collecte programmée des preuves pour les audits, tableaux de bord alimentés automatiquement. Elle détecte plus vite les dérives et réduit les erreurs humaines, sans supprimer les audits ni les engagements signés.",
+    "distractorNotes": {
+      "b": "Un entretien annuel est une vérification manuelle et ponctuelle, pas une surveillance automatisée.",
+      "d": "La signature de la charte relève de la reconnaissance (acknowledgment) par l'utilisateur, faite ici à la main.",
+      "e": "La visite de l'auditeur est une surveillance externe réalisée par des personnes, pas un mécanisme automatisé."
+    },
+    "reference": "CIS Benchmarks ; CompTIA Security+ SY0-701 Exam Objectives, objectif 5.4"
+  },
+  {
+    "slug": "security-plus-5.4-processing-register-content-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le DPO d'une chaîne de salles de sport met à jour le registre des activités de traitement exigé par l'article 30 du RGPD pour le traitement « gestion des abonnés ». Quels deux éléments ce registre doit-il contenir ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "La liste nominative de tous les abonnés concernés"
+        },
+        {
+          "id": "b",
+          "text": "Les finalités du traitement"
+        },
+        {
+          "id": "c",
+          "text": "Le mot de passe d'administration de la base des abonnés"
+        },
+        {
+          "id": "d",
+          "text": "Les délais prévus pour l'effacement des données, si possible"
+        },
+        {
+          "id": "e",
+          "text": "Les résultats détaillés du dernier test d'intrusion"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Le registre de l'article 30 est l'inventaire formel des traitements du responsable. Il indique notamment le nom et les coordonnées du responsable et du DPO, les finalités, les catégories de personnes concernées et de données, les catégories de destinataires, les transferts hors de l'Union, et, dans la mesure du possible, les délais prévus pour l'effacement et une description générale des mesures de sécurité. Il décrit des catégories et des règles, jamais les données elles-mêmes.",
+    "distractorNotes": {
+      "a": "Le registre décrit les catégories de personnes concernées (abonnés, prospects), pas la liste nominative de chacune d'elles.",
+      "c": "Un secret d'authentification n'a rien à faire dans un registre consultable par l'autorité ; seule une description générale des mesures de sécurité y figure.",
+      "e": "Les résultats détaillés des tests sont des documents de sécurité distincts ; le registre ne demande qu'une description générale des mesures."
+    },
+    "reference": "Règlement (UE) 2016/679 (RGPD), article 30"
+  },
+  {
+    "slug": "security-plus-5.4-framework-scope-matching-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un consultant présente à une direction générale les principaux référentiels de conformité. Associez chaque référentiel à ce qu'il encadre.",
+      "left": [
+        {
+          "id": "pci",
+          "text": "PCI DSS"
+        },
+        {
+          "id": "hipaa",
+          "text": "HIPAA"
+        },
+        {
+          "id": "sox",
+          "text": "Sarbanes-Oxley (SOX)"
+        },
+        {
+          "id": "gdpr",
+          "text": "RGPD"
+        },
+        {
+          "id": "iso",
+          "text": "ISO/IEC 27001"
+        }
+      ],
+      "right": [
+        {
+          "id": "card",
+          "text": "Protection des données de cartes de paiement"
+        },
+        {
+          "id": "health",
+          "text": "Protection des informations de santé aux États-Unis"
+        },
+        {
+          "id": "fin",
+          "text": "Fiabilité de l'information financière des sociétés cotées aux États-Unis"
+        },
+        {
+          "id": "pii",
+          "text": "Protection des données personnelles des personnes dans l'Union européenne"
+        },
+        {
+          "id": "isms",
+          "text": "Exigences d'un système de management de la sécurité de l'information"
+        },
+        {
+          "id": "aes",
+          "text": "Spécification d'un algorithme de chiffrement symétrique"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "pci": "card",
+        "hipaa": "health",
+        "sox": "fin",
+        "gdpr": "pii",
+        "iso": "isms"
+      }
+    },
+    "explanation": "PCI DSS est une norme contractuelle de l'industrie des cartes de paiement, imposée aux commerçants et prestataires par les réseaux de cartes. HIPAA est une loi fédérale américaine sur les informations de santé protégées. SOX encadre l'information financière et le contrôle interne des sociétés cotées aux États-Unis. Le RGPD protège les données personnelles des personnes qui se trouvent dans l'Union. ISO/IEC 27001 définit les exigences certifiables d'un SMSI. Savoir quel texte s'applique est la première étape de tout programme de conformité.",
+    "distractorNotes": {
+      "aes": "La spécification de l'AES est la FIPS 197 du NIST, une norme technique de chiffrement, et non un référentiel de conformité de la liste."
+    },
+    "reference": "PCI DSS v4.0 ; HIPAA Security Rule ; Sarbanes-Oxley Act of 2002 ; Règlement (UE) 2016/679 (RGPD) ; ISO/IEC 27001:2022"
+  },
+  {
+    "slug": "security-plus-5.4-gdpr-roles-matching-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Une enseigne de jardinage gère son programme de fidélité avec un CRM en ligne. Associez chaque acteur du scénario à son rôle au sens du RGPD.",
+      "left": [
+        {
+          "id": "client",
+          "text": "Mme Martin, inscrite au programme de fidélité"
+        },
+        {
+          "id": "shop",
+          "text": "L'enseigne, qui décide de l'usage des données de fidélité"
+        },
+        {
+          "id": "crm",
+          "text": "L'éditeur du CRM, qui héberge les données sur instruction de l'enseigne"
+        },
+        {
+          "id": "dpo",
+          "text": "La juriste désignée pour conseiller l'enseigne et contrôler sa conformité"
+        },
+        {
+          "id": "cnil",
+          "text": "La CNIL, qui reçoit les réclamations et peut prononcer des sanctions"
+        }
+      ],
+      "right": [
+        {
+          "id": "subject",
+          "text": "Personne concernée"
+        },
+        {
+          "id": "controller",
+          "text": "Responsable du traitement"
+        },
+        {
+          "id": "processor",
+          "text": "Sous-traitant"
+        },
+        {
+          "id": "dpo_r",
+          "text": "Délégué à la protection des données"
+        },
+        {
+          "id": "authority",
+          "text": "Autorité de contrôle"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "client": "subject",
+        "shop": "controller",
+        "crm": "processor",
+        "dpo": "dpo_r",
+        "cnil": "authority"
+      }
+    },
+    "explanation": "Mme Martin est la personne physique identifiée par les données : personne concernée. L'enseigne détermine les finalités et les moyens du programme de fidélité : responsable du traitement. L'éditeur du CRM traite pour son compte et sur ses instructions : sous-traitant, lié par un contrat conforme à l'article 28. La juriste désignée informe, conseille et contrôle le respect du RGPD et sert de point de contact : DPO (articles 37 à 39). La CNIL est l'autorité de contrôle française, chargée des réclamations et des sanctions.",
+    "distractorNotes": {},
+    "reference": "Règlement (UE) 2016/679 (RGPD), articles 4, 28 et 37 à 39"
+  },
+  {
+    "slug": "security-plus-5.4-noncompliance-consequences-matching-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le comité des risques d'un groupe passe en revue des cas de non-conformité survenus dans son secteur. Associez chaque conséquence décrite à sa catégorie.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "L'autorité de protection des données inflige 2 millions d'euros à une enseigne pour défaut de sécurité"
+        },
+        {
+          "id": "l2",
+          "text": "Le régulateur bancaire retire son agrément à un établissement de paiement"
+        },
+        {
+          "id": "l3",
+          "text": "Après une fuite très médiatisée, 15 % des abonnés résilient leur contrat"
+        },
+        {
+          "id": "l4",
+          "text": "La banque acquéreuse applique les pénalités prévues au contrat de commerçant"
+        },
+        {
+          "id": "l5",
+          "text": "Le directeur financier qui a certifié des comptes qu'il savait inexacts est condamné pénalement"
+        }
+      ],
+      "right": [
+        {
+          "id": "fine",
+          "text": "Amende administrative"
+        },
+        {
+          "id": "license",
+          "text": "Perte de licence ou d'agrément"
+        },
+        {
+          "id": "reput",
+          "text": "Atteinte à la réputation"
+        },
+        {
+          "id": "contract",
+          "text": "Impact contractuel"
+        },
+        {
+          "id": "penal",
+          "text": "Sanction pénale individuelle"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "fine",
+        "l2": "license",
+        "l3": "reput",
+        "l4": "contract",
+        "l5": "penal"
+      }
+    },
+    "explanation": "La non-conformité a plusieurs conséquences. L'amende administrative est infligée par un régulateur à l'organisation. Le retrait d'un agrément lui interdit d'exercer l'activité réglementée : perte de licence. Le départ de clients après une fuite traduit une atteinte à la réputation, souvent plus coûteuse que l'amende. Les pénalités prévues au contrat de commerçant sont un impact contractuel, sans intervention d'un régulateur. Enfin, des textes comme SOX prévoient des sanctions pénales contre les dirigeants qui certifient sciemment des comptes inexacts.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.4 ; Sarbanes-Oxley Act of 2002"
+  },
+  {
+    "slug": "security-plus-5.4-compliance-monitoring-matching-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le service conformité d'un groupe industriel documente ses activités de surveillance de la conformité. Associez chaque activité au concept qu'elle illustre.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Avant de racheter une start-up, le groupe examine ses certifications, ses incidents passés et ses litiges"
+        },
+        {
+          "id": "l2",
+          "text": "Le groupe applique les correctifs, forme le personnel et revoit les droits d'accès comme sa politique l'exige"
+        },
+        {
+          "id": "l3",
+          "text": "Le directeur général signe une déclaration formelle au régulateur affirmant que les contrôles exigés sont en place"
+        },
+        {
+          "id": "l4",
+          "text": "Chaque salarié confirme avoir lu la charte informatique mise à jour avant de pouvoir se connecter"
+        },
+        {
+          "id": "l5",
+          "text": "Un outil vérifie chaque nuit la configuration des serveurs et alimente le tableau de bord de conformité"
+        }
+      ],
+      "right": [
+        {
+          "id": "dd",
+          "text": "Diligence raisonnable (due diligence)"
+        },
+        {
+          "id": "dc",
+          "text": "Prudence raisonnable (due care)"
+        },
+        {
+          "id": "att",
+          "text": "Attestation"
+        },
+        {
+          "id": "ack",
+          "text": "Reconnaissance (acknowledgment)"
+        },
+        {
+          "id": "auto",
+          "text": "Automatisation"
+        },
+        {
+          "id": "ext",
+          "text": "Audit externe indépendant"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "dd",
+        "l2": "dc",
+        "l3": "att",
+        "l4": "ack",
+        "l5": "auto"
+      }
+    },
+    "explanation": "La diligence raisonnable est l'investigation qui permet de connaître les risques avant d'agir, comme l'examen d'une cible avant son rachat. La prudence raisonnable est la conduite responsable et continue qui met en œuvre et maintient les protections attendues (correctifs, formation, revue des accès). L'attestation est une affirmation formelle et signée par une partie responsable, qui engage sa responsabilité. La reconnaissance est la confirmation par une personne qu'elle a pris connaissance d'une règle. L'automatisation remplace des vérifications manuelles par des contrôles programmés et continus.",
+    "distractorNotes": {
+      "ext": "Aucune activité ne fait intervenir un évaluateur tiers indépendant : la déclaration du directeur général est faite par l'organisation elle-même, ce qui en fait une attestation et non un audit externe."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.4"
+  },
+  {
+    "slug": "security-plus-5.4-iso27001-certification-cycle-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un éditeur de logiciels engage la certification ISO/IEC 27001 de son SMSI auprès d'un organisme de certification accrédité. Ordonnez les étapes du cycle de certification, de la première à la dernière.",
+      "items": [
+        {
+          "id": "c",
+          "text": "Décision de certification et délivrance du certificat"
+        },
+        {
+          "id": "a",
+          "text": "Audit d'étape 1 : revue de la documentation et de la préparation du SMSI"
+        },
+        {
+          "id": "e",
+          "text": "Audit de renouvellement avant l'échéance du certificat de trois ans"
+        },
+        {
+          "id": "b",
+          "text": "Audit d'étape 2 : évaluation de la mise en œuvre et de l'efficacité du SMSI"
+        },
+        {
+          "id": "d",
+          "text": "Audit de surveillance de la première année"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e"
+      ]
+    },
+    "explanation": "La certification initiale comporte deux étapes : l'étape 1 vérifie la documentation et la préparation de l'organisation (périmètre, analyse des risques, déclaration d'applicabilité) ; l'étape 2 évalue sur le terrain la mise en œuvre et l'efficacité du SMSI. Après traitement des éventuelles non-conformités, l'organisme décide de certifier et délivre un certificat valable trois ans, maintenu par des audits de surveillance annuels, puis renouvelé par un audit de recertification avant son échéance.",
+    "distractorNotes": {},
+    "reference": "ISO/IEC 17021-1:2015 ; ISO/IEC 27006"
+  },
+  {
+    "slug": "security-plus-5.4-pci-roc-aoc-sequence-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un commerçant de niveau 1 prépare son évaluation PCI DSS v4.0 annuelle avec un QSA. Ordonnez les étapes, de la première à la dernière.",
+      "items": [
+        {
+          "id": "d",
+          "text": "Le commerçant transmet l'attestation de conformité à sa banque acquéreuse"
+        },
+        {
+          "id": "b",
+          "text": "Le QSA évalue sur site chaque exigence applicable et collecte les preuves"
+        },
+        {
+          "id": "e",
+          "text": "Le commerçant et le QSA signent l'attestation de conformité (AOC)"
+        },
+        {
+          "id": "a",
+          "text": "Le commerçant confirme le périmètre de l'environnement des données de titulaires"
+        },
+        {
+          "id": "c",
+          "text": "Le QSA rédige le rapport de conformité (ROC)"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "a",
+        "b",
+        "c",
+        "e",
+        "d"
+      ]
+    },
+    "explanation": "Tout commence par la définition et la confirmation du périmètre (l'environnement des données de titulaires et les systèmes connectés), car il détermine ce qui sera évalué. Le QSA teste ensuite chaque exigence applicable et rassemble les preuves, puis consigne ses constats dans le ROC. L'AOC, qui résume les résultats du ROC, est signée par le commerçant et le QSA. Enfin, le commerçant remet l'AOC (et le ROC si demandé) à son acquéreur, qui en rend compte aux réseaux de cartes.",
+    "distractorNotes": {},
+    "reference": "PCI DSS v4.0"
+  },
+  {
+    "slug": "security-plus-5.4-gdpr-breach-72-hours-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un responsable du traitement établi en France découvre une violation de données personnelles qui présente un risque pour les personnes concernées. Dans quel délai maximal, à compter du moment où il en a pris connaissance, doit-il en principe la notifier à l'autorité de contrôle ?",
+      "fields": [
+        {
+          "id": "delay",
+          "label": "Délai (en heures, nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "delay": {
+          "accepted": [
+            "72"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "L'article 33 du RGPD impose au responsable du traitement de notifier une violation de données à l'autorité de contrôle compétente (la CNIL en France) dans les meilleurs délais et, si possible, 72 heures au plus tard après en avoir pris connaissance, sauf si la violation est peu susceptible d'engendrer un risque pour les personnes. Une notification tardive doit être motivée. Si le risque est élevé, les personnes concernées doivent aussi être informées (article 34).",
+    "distractorNotes": {},
+    "reference": "Règlement (UE) 2016/679 (RGPD), article 33"
+  },
+  {
+    "slug": "security-plus-5.4-pci-dss-requirements-count-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un petit commerçant qui commence à accepter les cartes bancaires découvre la norme PCI DSS v4.0 et ses grandes exigences (protéger les données de titulaires, gérer les vulnérabilités, contrôler les accès, surveiller les réseaux…). Combien d'exigences principales la norme compte-t-elle ?",
+      "fields": [
+        {
+          "id": "count",
+          "label": "Nombre d'exigences principales (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "count": {
+          "accepted": [
+            "12"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "PCI DSS est organisée en douze exigences principales, regroupées en six objectifs : construire et maintenir un réseau et des systèmes sécurisés, protéger les données de titulaires, maintenir un programme de gestion des vulnérabilités, mettre en œuvre des mesures de contrôle d'accès fortes, surveiller et tester régulièrement les réseaux, maintenir une politique de sécurité de l'information. La version 4.0 a conservé cette structure tout en ajoutant une approche personnalisée.",
+    "distractorNotes": {},
+    "reference": "PCI DSS v4.0"
+  },
+  {
+    "slug": "security-plus-5.4-gdpr-max-fine-calculation-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.4",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une entreprise dont le chiffre d'affaires annuel mondial de l'exercice précédent s'élève à 350 millions d'euros a violé les droits des personnes concernées, une infraction relevant du plafond le plus élevé des amendes administratives du RGPD. Quel est le montant maximal de l'amende encourue ?",
+      "fields": [
+        {
+          "id": "fine",
+          "label": "Montant maximal (en euros, nombre entier, sans séparateur ni symbole)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "fine": {
+          "accepted": [
+            "20000000"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Pour les violations les plus graves (principes de base du traitement, droits des personnes concernées, transferts), l'article 83, paragraphe 5, du RGPD fixe un plafond de 20 millions d'euros ou, pour une entreprise, 4 % du chiffre d'affaires annuel mondial de l'exercice précédent, le montant le plus élevé étant retenu. Ici, 4 % de 350 millions d'euros font 14 millions d'euros, moins que 20 millions : le plafond applicable est donc 20 000 000 euros. Il s'agit d'un maximum ; l'autorité fixe l'amende selon la gravité.",
+    "distractorNotes": {},
+    "reference": "Règlement (UE) 2016/679 (RGPD), article 83"
+  }
+]

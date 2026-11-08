@@ -1,0 +1,996 @@
+[
+  {
+    "slug": "security-plus-5.2-exposure-factor-fire-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Lors d'une analyse quantitative des risques, l'équipe sécurité d'une PME estime qu'un incendie du local technique détruirait 40 % de la valeur des équipements qu'il abrite. Quel paramètre ce pourcentage représente-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le taux annuel d'occurrence (ARO)"
+        },
+        {
+          "id": "b",
+          "text": "Le facteur d'exposition (EF)"
+        },
+        {
+          "id": "c",
+          "text": "L'espérance de perte unitaire (SLE)"
+        },
+        {
+          "id": "d",
+          "text": "La valeur de l'actif (AV)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le facteur d'exposition (EF, exposure factor) est la part de la valeur d'un actif perdue lors d'une seule occurrence de la menace, exprimée en pourcentage de 0 à 100 %. Ici, un incendie détruirait 40 % de la valeur des équipements : EF = 40 %. Il sert ensuite à calculer l'espérance de perte unitaire : SLE = AV × EF. L'EF ne dit rien de la fréquence de l'événement, qui relève de l'ARO.",
+    "distractorNotes": {
+      "a": "L'ARO est le nombre d'occurrences attendues par an (0,5 pour une fois tous les deux ans), pas une part de la valeur perdue.",
+      "c": "La SLE est un montant en euros (AV × EF) : elle se calcule à partir de ce pourcentage, elle n'est pas le pourcentage lui-même.",
+      "d": "L'AV est la valeur totale de l'actif, en euros ; les 40 % en expriment seulement la fraction perdue."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-qualitative-heat-map-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le comité des risques d'une collectivité classe chaque risque sur une matrice 5 × 5 croisant une probabilité (de « rare » à « quasi certaine ») et un impact (de « négligeable » à « critique »). Aucun montant financier n'est calculé. Quel type d'analyse des risques le comité mène-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une analyse quantitative"
+        },
+        {
+          "id": "b",
+          "text": "Une analyse d'écart"
+        },
+        {
+          "id": "c",
+          "text": "Une analyse qualitative"
+        },
+        {
+          "id": "d",
+          "text": "Une analyse des causes racines"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'analyse qualitative évalue les risques à l'aide d'échelles ordinales (faible, moyen, élevé ; rare à quasi certaine) fondées sur le jugement d'experts, et les représente souvent sur une matrice probabilité × impact (carte de chaleur). Elle est rapide et ne demande pas de données chiffrées, mais elle reste subjective. L'absence de tout montant financier exclut l'analyse quantitative, qui exprime le risque en valeurs monétaires (SLE, ALE).",
+    "distractorNotes": {
+      "a": "L'analyse quantitative attribue des valeurs numériques et monétaires (AV, SLE, ARO, ALE) ; ici, aucun montant n'est calculé.",
+      "b": "L'analyse d'écart compare l'état actuel des contrôles à un référentiel cible ; elle n'évalue pas probabilité et impact de chaque risque.",
+      "d": "L'analyse des causes racines s'applique après un incident pour en trouver l'origine ; elle ne classe pas les risques à venir."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-appetite-expansionary-fintech-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le fondateur d'une start-up de la fintech déclare au conseil : « Nous acceptons de lancer nos nouveaux services avant d'avoir traité tous les risques identifiés, car être les premiers sur le marché compte davantage. » Quelle appétence au risque cette déclaration traduit-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une appétence expansionniste"
+        },
+        {
+          "id": "b",
+          "text": "Une appétence conservatrice"
+        },
+        {
+          "id": "c",
+          "text": "Une appétence neutre"
+        },
+        {
+          "id": "d",
+          "text": "Une appétence nulle"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "CompTIA distingue trois postures d'appétence au risque. Une appétence expansionniste accepte un niveau de risque élevé en échange d'une croissance, d'une innovation ou d'un avantage concurrentiel : c'est le cas d'une start-up qui lance ses services avant d'avoir traité tous les risques pour arriver la première sur le marché. Une appétence conservatrice privilégie au contraire la stabilité et la réduction du risque, quitte à renoncer à des opportunités ; une appétence neutre cherche l'équilibre entre risque et bénéfice.",
+    "distractorNotes": {
+      "b": "Une appétence conservatrice retarderait le lancement jusqu'au traitement des risques ; la start-up fait l'inverse.",
+      "c": "Une appétence neutre pèse risque et bénéfice au cas par cas ; ici, le risque est délibérément accepté pour la croissance.",
+      "d": "L'appétence nulle n'est pas une catégorie CompTIA, et aucune organisation ne peut supprimer tout risque ; la déclaration accepte d'ailleurs des risques importants."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-39"
+  },
+  {
+    "slug": "security-plus-5.2-risk-report-board-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le conseil d'administration d'une entreprise de transport demande au RSSI une synthèse trimestrielle présentant les principales expositions cyber de l'entreprise, leur évolution depuis le trimestre précédent et l'avancement des mesures de traitement. Quel livrable répond à cette demande ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une analyse d'impact sur l'activité"
+        },
+        {
+          "id": "b",
+          "text": "Un rapport de test d'intrusion"
+        },
+        {
+          "id": "c",
+          "text": "Un rapport de risques"
+        },
+        {
+          "id": "d",
+          "text": "Une politique de sécurité de l'information"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le rapport de risques (risk reporting) communique la situation des risques aux décideurs : principaux risques, tendances, risques qui dépassent l'appétence ou la tolérance fixée, état des plans de traitement et décisions attendues. Il est rédigé pour son public (ici le conseil, donc en termes métier et synthétiques) et produit à intervalle régulier. Il s'appuie sur le registre des risques mais n'en reprend pas le détail technique.",
+    "distractorNotes": {
+      "a": "La BIA détermine la criticité des processus et leurs objectifs de reprise (RTO, RPO) ; elle ne suit pas l'évolution trimestrielle des risques.",
+      "b": "Un rapport de test d'intrusion décrit les vulnérabilités exploitées lors d'un test précis ; ce n'est pas une synthèse périodique de tous les risques.",
+      "d": "La politique fixe les règles et responsabilités de sécurité ; elle ne rend pas compte de l'évolution des risques ni de l'avancement des mesures."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-sle-calculation-san-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une baie de stockage valorisée à 320 000 € pourrait être endommagée par une surtension. L'équipe estime qu'un tel événement détruirait 35 % de sa valeur et qu'il se produit en moyenne une fois tous les deux ans (ARO = 0,5). Quelle est l'espérance de perte unitaire (SLE) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "56 000 €"
+        },
+        {
+          "id": "b",
+          "text": "112 000 €"
+        },
+        {
+          "id": "c",
+          "text": "160 000 €"
+        },
+        {
+          "id": "d",
+          "text": "208 000 €"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'espérance de perte unitaire (SLE, single loss expectancy) est la perte attendue pour une seule occurrence : SLE = AV × EF = 320 000 € × 0,35 = 112 000 €. L'ARO n'intervient pas dans ce calcul : il sert seulement à passer à la perte annuelle, ALE = SLE × ARO = 112 000 € × 0,5 = 56 000 €. Bien séparer les deux grandeurs évite de confondre la perte d'un événement et la perte moyenne par an.",
+    "distractorNotes": {
+      "a": "56 000 € est l'ALE (SLE × ARO) : la question porte sur la perte d'une seule occurrence.",
+      "c": "160 000 € multiplie la valeur de l'actif par l'ARO (320 000 × 0,5) au lieu de l'EF : ce produit n'a pas de sens.",
+      "d": "208 000 € est la valeur qui subsiste après l'événement (AV − SLE), pas la perte."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-control-cost-vs-ale-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'ALE d'un risque d'hameçonnage ciblé est estimée à 60 000 € par an. Une passerelle de messagerie avec bac à sable, au coût total de 20 000 € par an, ramènerait cette ALE à 15 000 €. Quelle conclusion l'analyste doit-il présenter ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "La passerelle n'est pas justifiée : son coût annuel dépasse l'ALE résiduelle de 15 000 €."
+        },
+        {
+          "id": "b",
+          "text": "La passerelle n'est pas justifiée : un contrôle doit ramener l'ALE à zéro pour être rentable."
+        },
+        {
+          "id": "c",
+          "text": "La passerelle est justifiée : la réduction d'ALE de 45 000 € dépasse son coût annuel."
+        },
+        {
+          "id": "d",
+          "text": "La passerelle est justifiée : son coût annuel est inférieur à l'ALE résiduelle."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Un contrôle est économiquement justifié lorsque la réduction d'ALE qu'il apporte dépasse son coût annuel. Ici, la réduction vaut 60 000 € − 15 000 € = 45 000 € par an, pour un coût de 20 000 € par an : le gain net est de 25 000 € par an. L'ALE résiduelle de 15 000 € correspond au risque résiduel, que l'organisation accepte ou traite par une autre mesure ; elle ne se compare pas au coût du contrôle.",
+    "distractorNotes": {
+      "a": "Le coût du contrôle se compare à la réduction d'ALE qu'il procure (45 000 €), pas à l'ALE qui subsiste.",
+      "b": "Un risque résiduel subsiste presque toujours ; un contrôle se justifie dès que la réduction d'ALE dépasse son coût.",
+      "d": "Faux sur les chiffres (20 000 € de coût contre 15 000 € d'ALE résiduelle), et faux sur le critère : le coût se compare à la réduction d'ALE (45 000 €), pas à l'ALE qui subsiste."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-compare-two-controls-net-value-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un risque de rançongiciel présente une ALE de 100 000 € par an. Deux contrôles sont proposés : A (EDR managé) coûte 30 000 € par an et ramène l'ALE à 40 000 € ; B (sauvegardes immuables seules) coûte 10 000 € par an et ramène l'ALE à 70 000 €. La direction retient le contrôle qui offre la plus forte valeur nette annuelle (réduction d'ALE moins coût annuel). Quel contrôle choisit-elle, et pour quelle valeur nette ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "A, pour une valeur nette de 60 000 € par an"
+        },
+        {
+          "id": "b",
+          "text": "B, pour une valeur nette de 30 000 € par an"
+        },
+        {
+          "id": "c",
+          "text": "B, pour une valeur nette de 20 000 € par an"
+        },
+        {
+          "id": "d",
+          "text": "A, pour une valeur nette de 30 000 € par an"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Pour chaque contrôle, valeur nette = (ALE avant − ALE après) − coût annuel. A : (100 000 − 40 000) − 30 000 = 30 000 € par an. B : (100 000 − 70 000) − 10 000 = 20 000 € par an. Selon le critère fixé, A l'emporte avec 30 000 €. B a un meilleur rapport réduction/coût (3 pour 1 contre 2 pour 1), mais la direction a choisi la valeur nette, d'où la nécessité de toujours expliciter le critère de comparaison.",
+    "distractorNotes": {
+      "a": "60 000 € est la réduction d'ALE de A ; le coût annuel de 30 000 € doit en être retranché.",
+      "b": "30 000 € est la réduction d'ALE de B avant déduction de son coût ; sa valeur nette n'est que de 20 000 €.",
+      "c": "La valeur nette de B est bien de 20 000 €, mais elle reste inférieure aux 30 000 € de A."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-risk-tolerance-threshold-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le comité des risques d'un e-commerçant déclare accepter un niveau de risque modéré pour soutenir sa croissance. Il précise ensuite, pour le site marchand, un écart maximal acceptable : pas plus de quatre heures d'indisponibilité cumulée par trimestre. Comment qualifie-t-on cette limite chiffrée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'appétence au risque"
+        },
+        {
+          "id": "b",
+          "text": "La tolérance au risque"
+        },
+        {
+          "id": "c",
+          "text": "Le risque inhérent"
+        },
+        {
+          "id": "d",
+          "text": "Le risque résiduel"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "L'appétence au risque est la quantité de risque, exprimée en termes généraux, qu'une organisation est prête à accepter pour atteindre ses objectifs (ici « un niveau modéré pour soutenir la croissance »). La tolérance au risque précise l'écart acceptable autour de cette appétence pour un objectif donné, souvent sous forme de seuil mesurable : quatre heures d'indisponibilité par trimestre. Au-delà du seuil, la situation doit remonter aux décideurs et déclencher un traitement.",
+    "distractorNotes": {
+      "a": "L'appétence est la déclaration générale (« risque modéré pour la croissance ») ; la limite chiffrée pour un objectif précis relève de la tolérance.",
+      "c": "Le risque inhérent est le niveau de risque avant tout contrôle ; ce n'est pas une limite fixée par le comité.",
+      "d": "Le risque résiduel est celui qui subsiste après les contrôles ; il se compare à la tolérance, il ne la définit pas."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-39"
+  },
+  {
+    "slug": "security-plus-5.2-conservative-appetite-decision-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le conseil d'une mutuelle de santé a formalisé une appétence au risque conservatrice. L'équipe produit veut ouvrir un portail adhérents dans trois semaines, alors que le test d'intrusion a relevé deux vulnérabilités de sévérité élevée non corrigées. Quelle décision est la plus cohérente avec l'appétence fixée ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ouvrir à la date prévue et corriger les vulnérabilités au fil de l'eau"
+        },
+        {
+          "id": "b",
+          "text": "Reporter l'ouverture le temps de souscrire une cyberassurance, sans corriger les vulnérabilités"
+        },
+        {
+          "id": "c",
+          "text": "Ouvrir à la date prévue avec une acceptation du risque signée par l'équipe produit"
+        },
+        {
+          "id": "d",
+          "text": "Reporter l'ouverture jusqu'à la correction et la vérification des vulnérabilités"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Une appétence conservatrice privilégie la réduction du risque et la stabilité, quitte à retarder un projet ou à renoncer à une opportunité. Exposer des données de santé avec deux vulnérabilités élevées connues dépasse clairement ce niveau : la décision cohérente est de reporter l'ouverture jusqu'à leur correction, vérifiée par un nouveau test. Les autres options acceptent ou déplacent le risque sans le réduire, ce qui correspond à une posture plus expansionniste.",
+    "distractorNotes": {
+      "a": "Ouvrir avec des failles connues et corriger ensuite revient à accepter un risque élevé pour tenir le calendrier : c'est une posture expansionniste.",
+      "b": "Reporter pour s'assurer ne réduit pas le risque : l'assurance transfère une partie de l'impact financier, mais les vulnérabilités restent exploitables et la mutuelle reste responsable envers ses adhérents.",
+      "c": "L'acceptation d'un risque qui dépasse l'appétence ne relève pas de l'équipe produit, et elle contredit la posture conservatrice du conseil."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-39"
+  },
+  {
+    "slug": "security-plus-5.2-laptop-fleet-ale-encryption-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une société équipe 500 commerciaux d'un ordinateur portable. La probabilité annuelle de vol est estimée à 2 % par poste, et chaque vol coûte 3 000 € (1 200 € de matériel et 1 800 € de gestion de la fuite de données). Le chiffrement intégral des disques coûterait 12 000 € par an et ramènerait le coût d'un vol au seul matériel. Quelle affirmation est exacte ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'ALE vaut 60 € par poste ; le chiffrement, à 12 000 € par an, coûte plus qu'il ne rapporte."
+        },
+        {
+          "id": "b",
+          "text": "L'ALE vaut 30 000 € ; le chiffrement la ramène à 12 000 € et rapporte 6 000 € nets par an."
+        },
+        {
+          "id": "c",
+          "text": "L'ALE vaut 30 000 € ; le chiffrement la ramène à 12 000 €, mais son coût égale l'ALE résiduelle : sans intérêt."
+        },
+        {
+          "id": "d",
+          "text": "L'ALE vaut 1 500 000 € ; le chiffrement la ramène à 600 000 € et se justifie largement."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Sur la flotte, l'ARO vaut 500 × 0,02 = 10 vols par an. Sans chiffrement, SLE = 3 000 € et ALE = 10 × 3 000 = 30 000 €. Avec chiffrement, les données volées sont illisibles : SLE = 1 200 € et ALE = 10 × 1 200 = 12 000 €. La réduction de 18 000 € par an dépasse le coût de 12 000 € : le gain net est de 6 000 € par an. Le raisonnement doit porter sur l'ensemble des postes exposés, pas sur un seul.",
+    "distractorNotes": {
+      "a": "60 € est l'ALE d'un seul poste ; rapporté à un contrôle qui couvre toute la flotte, il faut comparer 18 000 € de réduction à 12 000 € de coût.",
+      "c": "Le coût du contrôle se compare à la réduction d'ALE (18 000 €), pas à l'ALE résiduelle ; l'égalité des deux montants est fortuite.",
+      "d": "1 500 000 € serait la perte si les 500 postes étaient volés chaque année ; la probabilité de 2 % par poste ramène l'ARO à 10."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-quantitative-limitation-data-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME qui notait jusqu'ici ses risques en « faible, moyen, élevé » veut passer à une analyse quantitative pour justifier son budget de sécurité devant le directeur financier. Quelle difficulté principale doit-elle anticiper ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'analyse quantitative ne permet pas de comparer le coût d'un contrôle à la perte attendue."
+        },
+        {
+          "id": "b",
+          "text": "L'analyse quantitative ne produit que des niveaux ordinaux, peu parlants pour un financier."
+        },
+        {
+          "id": "c",
+          "text": "L'analyse quantitative exige de renoncer à toute échelle ordinale dans le registre des risques."
+        },
+        {
+          "id": "d",
+          "text": "L'analyse quantitative exige des données fiables sur la valeur des actifs et la fréquence des incidents."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "L'analyse quantitative exprime le risque en montants (AV, SLE, ALE) et en fréquences (ARO) : c'est ce qui permet de comparer le coût d'un contrôle à la réduction de perte attendue, argument recherché par un directeur financier. Sa limite principale est la qualité des données : valeur des actifs immatériels, part de valeur perdue et fréquence des incidents sont souvent mal connues, et une estimation fragile donne une ALE trompeusement précise. Elle demande aussi plus de temps qu'une analyse qualitative.",
+    "distractorNotes": {
+      "a": "C'est au contraire son principal atout : la comparaison entre coût du contrôle et réduction de l'ALE est la base de l'analyse coût-bénéfice.",
+      "b": "Les niveaux ordinaux (faible, moyen, élevé) caractérisent l'analyse qualitative, celle que la PME veut justement compléter.",
+      "c": "Rien n'impose d'abandonner les échelles qualitatives : beaucoup d'organisations combinent les deux approches et réservent la quantitative aux risques pour lesquels elles disposent de données."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-ale-inputs-sle-aro-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Pour un risque de panne de climatisation en salle serveurs, un analyste a rassemblé la valeur des équipements, le facteur d'exposition, l'espérance de perte unitaire, le taux annuel d'occurrence et le coût d'un contrôle envisagé. Quelles deux valeurs, multipliées entre elles, donnent directement l'ALE ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Le facteur d'exposition (EF)"
+        },
+        {
+          "id": "b",
+          "text": "L'espérance de perte unitaire (SLE)"
+        },
+        {
+          "id": "c",
+          "text": "Le coût annuel du contrôle envisagé"
+        },
+        {
+          "id": "d",
+          "text": "Le taux annuel d'occurrence (ARO)"
+        },
+        {
+          "id": "e",
+          "text": "L'objectif de délai de reprise (RTO)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "L'espérance de perte annuelle se calcule par ALE = SLE × ARO : la perte attendue pour un événement, multipliée par le nombre d'événements attendus par an. La SLE se calcule elle-même en amont (SLE = AV × EF). Le coût du contrôle n'entre pas dans l'ALE : il se compare ensuite à la réduction d'ALE que le contrôle procure.",
+    "distractorNotes": {
+      "a": "L'EF sert à calculer la SLE (AV × EF) ; multiplié par l'ARO seul, il donnerait un pourcentage, pas un montant annuel.",
+      "c": "Le coût du contrôle se compare à la réduction d'ALE dans l'analyse coût-bénéfice ; il ne fait pas partie du calcul de l'ALE.",
+      "e": "Le RTO est un objectif de reprise issu de la BIA (durée d'interruption tolérée), pas un terme du calcul de l'ALE."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-qualitative-characteristics-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une association de 25 salariés, sans historique d'incidents chiffré, doit évaluer ses risques en une demi-journée d'atelier avec ses responsables. Le consultant recommande une analyse qualitative. Quelles deux caractéristiques de cette méthode justifient ce choix ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle exprime chaque risque par une espérance de perte annuelle en euros."
+        },
+        {
+          "id": "b",
+          "text": "Elle classe les risques sur des échelles ordinales comme faible, moyen et élevé."
+        },
+        {
+          "id": "c",
+          "text": "Elle exige la valeur monétaire exacte de chaque actif évalué."
+        },
+        {
+          "id": "d",
+          "text": "Elle supprime toute part de subjectivité dans la notation des risques."
+        },
+        {
+          "id": "e",
+          "text": "Elle s'appuie sur le jugement des participants plutôt que sur des statistiques."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "L'analyse qualitative note la probabilité et l'impact sur des échelles ordinales (faible, moyen, élevé, ou de 1 à 5) à partir de l'expérience et du jugement des participants. Elle se mène vite et sans données historiques chiffrées, ce qui convient à une petite structure en atelier. Sa contrepartie est la subjectivité des notes, et l'absence de montants qui permettraient une analyse coût-bénéfice fine.",
+    "distractorNotes": {
+      "a": "L'ALE en euros est le résultat d'une analyse quantitative, que l'association n'a pas les données pour mener.",
+      "c": "La valeur monétaire des actifs (AV) est une donnée d'entrée de l'analyse quantitative, pas de l'analyse qualitative.",
+      "d": "L'analyse qualitative repose sur le jugement humain : la subjectivité est justement sa principale faiblesse."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-risk-report-content-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le RSSI d'un groupe hospitalier prépare le rapport de risques semestriel destiné au comité de direction. Quelles trois informations ce rapport doit-il contenir ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Les principaux risques et l'évolution de leur niveau depuis le rapport précédent"
+        },
+        {
+          "id": "b",
+          "text": "L'export intégral des journaux bruts du SIEM sur le semestre"
+        },
+        {
+          "id": "c",
+          "text": "Les risques dont le niveau dépasse l'appétence fixée par la direction"
+        },
+        {
+          "id": "d",
+          "text": "Les règles détaillées de chaque pare-feu du périmètre"
+        },
+        {
+          "id": "e",
+          "text": "L'avancement des plans de traitement et leurs responsables"
+        },
+        {
+          "id": "f",
+          "text": "Le score CVSS de chaque vulnérabilité relevée par le scanner"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Un rapport de risques sert à éclairer les décisions de son public. Pour un comité de direction, il présente de façon synthétique les principaux risques et leurs tendances, signale ceux qui sortent de l'appétence ou de la tolérance définies (et qui appellent une décision : budget, acceptation formelle, arrêt d'une activité), et rend compte de l'avancement des plans de traitement et de leurs responsables. Les données techniques détaillées restent dans les outils et le registre des risques.",
+    "distractorNotes": {
+      "b": "Les journaux bruts sont des données d'exploitation pour le SOC ; un comité de direction ne peut pas en tirer de décision.",
+      "d": "Le détail des règles de pare-feu relève de la documentation technique ; le rapport en retient au plus l'effet sur le niveau de risque.",
+      "f": "La liste exhaustive des scores CVSS est une donnée opérationnelle ; le rapport agrège ces résultats en risques métier et en tendances."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2"
+  },
+  {
+    "slug": "security-plus-5.2-fire-sprinkler-cost-benefit-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un centre logistique vaut 800 000 €. Un incendie en détruirait 25 % et l'on en attend un tous les cinq ans (ARO = 0,2). Un système d'extinction automatique coûterait 25 000 € par an et ramènerait le facteur d'exposition à 5 %, sans changer l'ARO. Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "La SLE actuelle vaut 200 000 €."
+        },
+        {
+          "id": "b",
+          "text": "L'ALE actuelle vaut 160 000 €."
+        },
+        {
+          "id": "c",
+          "text": "Avec le système, l'ALE tombe à 10 000 €."
+        },
+        {
+          "id": "d",
+          "text": "Le système se justifie : il réduit l'ALE de 32 000 € pour un coût de 25 000 €."
+        },
+        {
+          "id": "e",
+          "text": "Le système ne se justifie pas : son coût dépasse l'ALE résiduelle."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Sans le système : SLE = 800 000 × 0,25 = 200 000 € et ALE = 200 000 × 0,2 = 40 000 € par an. Avec le système : SLE = 800 000 × 0,05 = 40 000 € et ALE = 40 000 × 0,2 = 8 000 € par an. La réduction d'ALE vaut donc 40 000 − 8 000 = 32 000 € par an, supérieure au coût de 25 000 € : le système dégage 7 000 € de valeur nette par an et se justifie.",
+    "distractorNotes": {
+      "b": "160 000 € multiplie la valeur de l'actif par l'ARO (800 000 × 0,2) en oubliant l'EF ; l'ALE vaut 40 000 €.",
+      "c": "10 000 € applique le nouvel EF à l'ancienne SLE (200 000 × 0,05) ; il faut repartir de l'AV : 800 000 × 0,05 × 0,2 = 8 000 €.",
+      "e": "Le coût se compare à la réduction d'ALE (32 000 €), pas à l'ALE résiduelle de 8 000 €."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-quantitative-terms-matching-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Un analyste junior prépare sa première analyse quantitative des risques. Associez chaque terme à sa définition.",
+      "left": [
+        {
+          "id": "av",
+          "text": "AV (Asset Value)"
+        },
+        {
+          "id": "ef",
+          "text": "EF (Exposure Factor)"
+        },
+        {
+          "id": "sle",
+          "text": "SLE (Single Loss Expectancy)"
+        },
+        {
+          "id": "aro",
+          "text": "ARO (Annualized Rate of Occurrence)"
+        },
+        {
+          "id": "ale",
+          "text": "ALE (Annualized Loss Expectancy)"
+        }
+      ],
+      "right": [
+        {
+          "id": "d1",
+          "text": "Nombre d'occurrences attendues de la menace sur un an"
+        },
+        {
+          "id": "d2",
+          "text": "Valeur de l'actif pour l'organisation, en euros"
+        },
+        {
+          "id": "d3",
+          "text": "Perte moyenne attendue sur un an pour ce risque"
+        },
+        {
+          "id": "d4",
+          "text": "Part de la valeur de l'actif perdue lors d'une occurrence"
+        },
+        {
+          "id": "d5",
+          "text": "Perte attendue pour une seule occurrence de la menace"
+        },
+        {
+          "id": "d6",
+          "text": "Durée maximale d'interruption tolérée pour un processus"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "av": "d2",
+        "ef": "d4",
+        "sle": "d5",
+        "aro": "d1",
+        "ale": "d3"
+      }
+    },
+    "explanation": "L'analyse quantitative enchaîne ces grandeurs : l'AV est la valeur de l'actif ; l'EF, la fraction de cette valeur perdue lors d'un événement (0 à 100 %) ; la SLE = AV × EF, la perte d'un événement ; l'ARO, le nombre d'événements attendus par an (0,1 pour un tous les dix ans) ; l'ALE = SLE × ARO, la perte moyenne annuelle. L'ALE sert ensuite de plafond économique : un contrôle dont le coût annuel dépasse la réduction d'ALE qu'il apporte n'est pas rentable.",
+    "distractorNotes": {
+      "d6": "Cette définition est celle du RTO (Recovery Time Objective), issu de l'analyse d'impact sur l'activité, et non d'un terme du calcul de l'ALE."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-risk-appetite-matching-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Lors d'un séminaire sur la gouvernance des risques, quatre dirigeants décrivent la posture de leur organisation. Associez chaque déclaration à l'appétence au risque qu'elle traduit.",
+      "left": [
+        {
+          "id": "s1",
+          "text": "« Nous ouvrons trois nouveaux marchés cette année et acceptons un niveau de risque plus élevé pour y parvenir. »"
+        },
+        {
+          "id": "s2",
+          "text": "« Nous ne déployons rien qui ne soit entièrement validé, même si un concurrent nous devance. »"
+        },
+        {
+          "id": "s3",
+          "text": "« Nous acceptons un risque modéré lorsque le bénéfice attendu le compense, sans le rechercher ni le fuir. »"
+        },
+        {
+          "id": "s4",
+          "text": "« Nous réduisons notre exposition et différons les projets innovants tant que nos contrôles ne sont pas éprouvés. »"
+        }
+      ],
+      "right": [
+        {
+          "id": "exp",
+          "text": "Expansionniste"
+        },
+        {
+          "id": "cons",
+          "text": "Conservatrice"
+        },
+        {
+          "id": "neu",
+          "text": "Neutre"
+        },
+        {
+          "id": "avoid",
+          "text": "Évitement"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "exp",
+        "s2": "cons",
+        "s3": "neu",
+        "s4": "cons"
+      }
+    },
+    "explanation": "CompTIA retient trois appétences au risque. Expansionniste : l'organisation accepte davantage de risque pour croître ou innover (ouvrir de nouveaux marchés en acceptant plus de risque). Conservatrice : elle privilégie la stabilité et la réduction du risque, quitte à perdre des opportunités (ne rien déployer sans validation complète, différer l'innovation). Neutre : elle cherche l'équilibre et accepte un risque modéré quand le bénéfice le justifie. Deux déclarations peuvent relever de la même posture.",
+    "distractorNotes": {
+      "avoid": "L'évitement est une stratégie de traitement d'un risque précis (renoncer à l'activité qui le crée), pas une posture d'appétence au risque."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-39"
+  },
+  {
+    "slug": "security-plus-5.2-quantitative-steps-order-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Pour un risque d'incendie sur un entrepôt, l'équipe a déjà estimé le facteur d'exposition et le taux annuel d'occurrence, avec et sans le système d'extinction proposé. Ordonnez les étapes de l'analyse coût-bénéfice, de la première à la dernière.",
+      "items": [
+        {
+          "id": "ale",
+          "text": "Calculer l'ALE avec et sans le système, en multipliant la SLE par l'ARO"
+        },
+        {
+          "id": "dec",
+          "text": "Comparer cette réduction au coût annuel du système pour décider"
+        },
+        {
+          "id": "av",
+          "text": "Déterminer la valeur de l'entrepôt et de son contenu (AV)"
+        },
+        {
+          "id": "red",
+          "text": "Calculer la réduction d'ALE apportée par le système"
+        },
+        {
+          "id": "sle",
+          "text": "Calculer la SLE avec et sans le système, en multipliant l'AV par l'EF"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "av",
+        "sle",
+        "ale",
+        "red",
+        "dec"
+      ]
+    },
+    "explanation": "Chaque étape utilise le résultat de la précédente. On fixe d'abord la valeur de l'actif (AV), puis on en déduit la perte d'un événement, SLE = AV × EF, dans les deux situations. On obtient ensuite la perte annuelle, ALE = SLE × ARO, avec et sans le système, puis la réduction d'ALE (ALE sans − ALE avec). Ce n'est qu'à la fin que cette réduction se compare au coût annuel du système : le contrôle se justifie si elle le dépasse.",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-rank-risks-by-ale-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Reportez-vous à l'exhibit. Le RSSI doit présenter au comité les risques classés par espérance de perte annuelle. Ordonnez les quatre risques, de l'ALE la plus élevée à la plus faible.",
+      "exhibit": "Registre des risques (extrait) - valeurs en euros\nRisque              AV          EF     SLE        ARO\nR1 Rançongiciel     -           -      120 000    0,5\nR2 Vol de portable  -           -        2 500    12\nR3 Inondation       2 000 000   40 %   -          0,02\nR4 DDoS site web    -           -       15 000    3",
+      "items": [
+        {
+          "id": "r1",
+          "text": "R1 Rançongiciel"
+        },
+        {
+          "id": "r2",
+          "text": "R2 Vol de portable"
+        },
+        {
+          "id": "r3",
+          "text": "R3 Inondation"
+        },
+        {
+          "id": "r4",
+          "text": "R4 DDoS site web"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "r1",
+        "r4",
+        "r2",
+        "r3"
+      ]
+    },
+    "explanation": "ALE = SLE × ARO. R1 : 120 000 × 0,5 = 60 000 €. R4 : 15 000 × 3 = 45 000 €. R2 : 2 500 × 12 = 30 000 €. R3 : la SLE vaut d'abord 2 000 000 × 0,40 = 800 000 €, puis ALE = 800 000 × 0,02 = 16 000 €. L'inondation a de loin la perte unitaire la plus forte mais l'ALE la plus faible : un classement par ALE ne dit rien de l'impact d'un seul événement, que le comité doit aussi regarder pour les risques rares et graves.",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-aro-once-every-four-years-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Pour son analyse quantitative, une PME retient qu'une panne majeure de son fournisseur d'hébergement survient en moyenne une fois tous les quatre ans. Quel taux annuel d'occurrence (ARO) doit-elle inscrire ?",
+      "fields": [
+        {
+          "id": "aro",
+          "label": "ARO (nombre décimal)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "aro": {
+          "accepted": [
+            "0.25",
+            "0,25",
+            ".25",
+            ",25",
+            "1/4"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "L'ARO est le nombre d'occurrences attendues par an. Un événement qui survient une fois tous les quatre ans a un ARO de 1 / 4 = 0,25. Un ARO peut donc être inférieur à 1 (événement rare) ou supérieur à 1 (plusieurs fois par an, comme 12 pour un incident mensuel). Multiplié par la SLE, il donne l'ALE : avec une SLE de 80 000 €, l'ALE serait de 20 000 € par an.",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-sle-ale-customer-database-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Une base clients est valorisée à 500 000 €. Une fuite en ferait perdre 10 % de la valeur (amendes, notifications, perte de clientèle), et l'équipe estime ce scénario à 0,3 occurrence par an. Calculez l'espérance de perte unitaire puis l'espérance de perte annuelle.",
+      "fields": [
+        {
+          "id": "sle",
+          "label": "SLE en euros (nombre entier, sans séparateur ni symbole)"
+        },
+        {
+          "id": "ale",
+          "label": "ALE en euros (nombre entier, sans séparateur ni symbole)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "sle": {
+          "accepted": [
+            "50000"
+          ],
+          "normalize": "int"
+        },
+        "ale": {
+          "accepted": [
+            "15000"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "SLE = AV × EF = 500 000 € × 0,10 = 50 000 € : c'est la perte attendue pour une fuite. ALE = SLE × ARO = 50 000 € × 0,3 = 15 000 € : c'est la perte moyenne par an. Cette ALE fixe le plafond économique d'un contrôle : une mesure qui coûte 20 000 € par an pour réduire cette ALE ne peut pas être rentable, quelle que soit son efficacité.",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  },
+  {
+    "slug": "security-plus-5.2-exposure-factor-flood-warehouse-001",
+    "certification": "security-plus",
+    "domain": "5.0",
+    "subtopic": "5.2",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Un entrepôt et son stock valent 240 000 €. L'assureur estime qu'une inondation causerait 36 000 € de pertes, et la zone en subit une tous les dix ans en moyenne. Calculez le facteur d'exposition et l'espérance de perte annuelle.",
+      "fields": [
+        {
+          "id": "ef",
+          "label": "EF en pourcentage (nombre entier, sans le symbole %)"
+        },
+        {
+          "id": "ale",
+          "label": "ALE en euros (nombre entier, sans séparateur ni symbole)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "ef": {
+          "accepted": [
+            "15"
+          ],
+          "normalize": "int"
+        },
+        "ale": {
+          "accepted": [
+            "3600"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Les 36 000 € de pertes d'une inondation sont la SLE. Comme SLE = AV × EF, EF = SLE / AV = 36 000 / 240 000 = 0,15, soit 15 %. Un événement tous les dix ans donne un ARO de 0,1, d'où ALE = 36 000 € × 0,1 = 3 600 € par an. L'EF exprime toujours une fraction de la valeur de l'actif : il se lit en pourcentage, alors que la SLE et l'ALE sont des montants.",
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 5.2 ; NIST SP 800-30 Rev. 1"
+  }
+]

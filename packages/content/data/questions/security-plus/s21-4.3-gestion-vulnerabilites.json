@@ -1,0 +1,1359 @@
+[
+  {
+    "slug": "security-plus-4.3-backport-false-positive-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le scanner de vulnérabilités signale sur srv-web02 une faille d'Apache httpd en se fondant sur le numéro de version annoncé par le service. L'administrateur montre que la distribution a rétroporté le correctif dans ce paquet, et une vérification authentifiée confirme que le serveur n'est pas vulnérable. Comment qualifier le résultat initial du scanner ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vrai positif"
+        },
+        {
+          "id": "b",
+          "text": "Faux positif"
+        },
+        {
+          "id": "c",
+          "text": "Faux négatif"
+        },
+        {
+          "id": "d",
+          "text": "Vrai négatif"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Un faux positif est une alerte qui signale une vulnérabilité absente en réalité. Ici, le scanner a déduit la faille du seul numéro de version, alors que la distribution a intégré le correctif sans changer ce numéro (rétroportage) : la vérification authentifiée prouve que le système n'est pas exposé. C'est un cas classique qui justifie l'étape de confirmation avant de créer un ticket de remédiation, et l'intérêt des analyses authentifiées qui lisent la version réelle des paquets.",
+    "distractorNotes": {
+      "a": "Un vrai positif serait une vulnérabilité signalée et réellement présente ; la vérification montre le contraire.",
+      "c": "Un faux négatif est une vulnérabilité présente que l'outil ne signale pas ; ici l'outil signale une faille absente.",
+      "d": "Un vrai négatif correspond à l'absence d'alerte pour une faille effectivement absente ; or le scanner a émis une alerte."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-bug-bounty-program-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un éditeur SaaS veut inciter des chercheurs externes à lui signaler les failles de sa plateforme en les récompensant financièrement selon la gravité, dans un périmètre et des règles qu'il publie. Quel dispositif met-il en place ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un test d'intrusion en boîte noire"
+        },
+        {
+          "id": "b",
+          "text": "Un flux de renseignement propriétaire"
+        },
+        {
+          "id": "c",
+          "text": "Un audit de processus"
+        },
+        {
+          "id": "d",
+          "text": "Un programme de bug bounty"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un programme de bug bounty invite des chercheurs indépendants à rechercher des vulnérabilités dans un périmètre défini, selon des règles d'engagement publiées, et récompense chaque signalement valide, généralement en fonction de sa gravité. Il complète les analyses internes et les tests d'intrusion en mobilisant un grand nombre de testeurs, et s'inscrit dans une démarche de divulgation responsable : la faille est signalée à l'éditeur avant toute publication.",
+    "distractorNotes": {
+      "a": "Un test d'intrusion est confié à une équipe mandatée par contrat, pour une période donnée ; il n'est pas ouvert à tous les chercheurs avec une récompense par faille.",
+      "b": "Un flux de renseignement propriétaire est un service commercial d'indicateurs de menace, pas un appel aux chercheurs pour tester la plateforme.",
+      "c": "Un audit de processus vérifie que les procédures internes sont appliquées ; il ne rémunère pas la découverte de failles."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-sast-commit-scan-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'équipe de développement d'une mutuelle veut que chaque commit soit examiné automatiquement à la recherche de requêtes SQL construites par concaténation dans le code source, sans exécuter l'application. Quelle méthode répond à ce besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'analyse statique"
+        },
+        {
+          "id": "b",
+          "text": "L'analyse dynamique"
+        },
+        {
+          "id": "c",
+          "text": "Le test d'intrusion"
+        },
+        {
+          "id": "d",
+          "text": "Le bug bounty"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "L'analyse statique (SAST) examine le code source, le bytecode ou le binaire sans exécuter le programme. Elle repère des motifs dangereux, comme une requête SQL construite par concaténation d'entrées utilisateur, ce qui la rend adaptée à une intégration continue : chaque commit est analysé avant même tout déploiement. Elle produit en revanche des faux positifs qu'il faut confirmer, et ne voit pas les défauts propres à l'environnement d'exécution.",
+    "distractorNotes": {
+      "b": "L'analyse dynamique (DAST) teste l'application en cours d'exécution ; l'énoncé exclut justement l'exécution.",
+      "c": "Un test d'intrusion se déroule ponctuellement sur un système déployé ; il n'est pas lancé à chaque commit sur le code source.",
+      "d": "Un bug bounty s'appuie sur des chercheurs externes qui testent généralement l'application en production ; ce n'est pas un contrôle automatique des commits."
+    },
+    "reference": "OWASP Web Security Testing Guide ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-osint-recon-sources-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avant un exercice, l'équipe sécurité d'une mutuelle recense ce qu'un attaquant peut apprendre sur elle : offres d'emploi citant les technologies utilisées, enregistrements DNS publics, profils des salariés sur les réseaux professionnels. De quel type de renseignement s'agit-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le renseignement propriétaire"
+        },
+        {
+          "id": "b",
+          "text": "Le renseignement issu du dark web"
+        },
+        {
+          "id": "c",
+          "text": "Le renseignement de sources ouvertes (OSINT)"
+        },
+        {
+          "id": "d",
+          "text": "Le renseignement d'une organisation de partage"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Le renseignement de sources ouvertes (OSINT) regroupe les informations accessibles publiquement et légalement : sites web, offres d'emploi, DNS, registres, réseaux sociaux, avis publics. Pour un défenseur, il sert à mesurer la surface d'attaque visible de l'extérieur : les technologies citées dans une offre d'emploi orientent un attaquant vers des vulnérabilités précises, et les profils des salariés alimentent l'hameçonnage ciblé.",
+    "distractorNotes": {
+      "a": "Le renseignement propriétaire est vendu par un fournisseur sur abonnement ; les sources citées sont gratuites et publiques.",
+      "b": "Le dark web désigne des places de marché et forums accessibles par des réseaux comme Tor ; les offres d'emploi et le DNS sont publics.",
+      "d": "Une organisation de partage (ISAC, CERT sectoriel) diffuse des indicateurs entre membres ; elle n'est pas la source de ces données publiques."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-cyber-insurance-transfer-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le comité des risques d'un site de commerce en ligne décide de souscrire une cyberassurance qui couvrirait les frais de notification et de reprise si une vulnérabilité non corrigée était exploitée. Quelle stratégie de traitement du risque applique-t-il ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'évitement"
+        },
+        {
+          "id": "b",
+          "text": "Le transfert"
+        },
+        {
+          "id": "c",
+          "text": "L'acceptation"
+        },
+        {
+          "id": "d",
+          "text": "L'atténuation"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Souscrire une assurance transfère à un tiers tout ou partie de l'impact financier d'un incident : c'est la stratégie de transfert. L'assurance ne réduit ni la probabilité d'exploitation ni la vulnérabilité elle-même ; elle limite la perte financière. CompTIA la cite parmi les réponses possibles en gestion des vulnérabilités, à côté du correctif, de la segmentation, des contrôles compensatoires et des exceptions.",
+    "distractorNotes": {
+      "a": "L'évitement consiste à abandonner l'activité ou le système à l'origine du risque, ce que le comité ne fait pas.",
+      "c": "L'acceptation consiste à assumer le risque sans mesure supplémentaire ; souscrire une police est une mesure.",
+      "d": "L'atténuation réduit la probabilité ou l'impact par des contrôles, comme un correctif ; l'assurance ne change pas le risque technique."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-cve-identifier-purpose-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Le bulletin mensuel d'un éditeur associe chaque faille corrigée à un identifiant de la forme CVE-AAAA-NNNN. Qu'apporte cet identifiant à l'équipe qui gère les vulnérabilités ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un score de gravité de 0 à 10 attribué à la faille"
+        },
+        {
+          "id": "b",
+          "text": "La catégorie générique de faiblesse logicielle en cause"
+        },
+        {
+          "id": "c",
+          "text": "Le lien de téléchargement du correctif de l'éditeur"
+        },
+        {
+          "id": "d",
+          "text": "Un nom unique et public pour une vulnérabilité connue"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Le programme CVE (Common Vulnerabilities and Exposures), géré par MITRE, attribue à chaque vulnérabilité divulguée publiquement un identifiant unique. Cet identifiant permet de rapprocher sans ambiguïté le bulletin de l'éditeur, les résultats du scanner, les flux de renseignement et les tickets de remédiation. La gravité est exprimée séparément par un score CVSS, et le type de faiblesse par une entrée CWE.",
+    "distractorNotes": {
+      "a": "Le score de 0 à 10 provient du CVSS ; l'identifiant CVE ne contient aucune note de gravité.",
+      "b": "La catégorie générique de faiblesse (injection, dépassement de tampon…) relève du référentiel CWE, pas du CVE.",
+      "c": "L'identifiant CVE ne pointe pas vers un correctif ; c'est le bulletin de l'éditeur qui le fournit."
+    },
+    "reference": "MITRE CVE ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-dast-vendor-app-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une banque achète une application web à un éditeur qui ne fournit pas le code source. Avant la mise en production, l'équipe sécurité veut tester l'application déployée en préproduction en lui envoyant des entrées malformées et en observant ses réponses. Quelle méthode convient le mieux ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'analyse statique du code"
+        },
+        {
+          "id": "b",
+          "text": "La revue manuelle du code"
+        },
+        {
+          "id": "c",
+          "text": "L'analyse dynamique"
+        },
+        {
+          "id": "d",
+          "text": "L'analyse des dépendances du dépôt"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'analyse dynamique (DAST) teste une application en cours d'exécution, de l'extérieur, sans accès au code : elle envoie des requêtes, des entrées malformées (fuzzing) ou des charges de test, et observe les réponses pour repérer injections, erreurs de gestion de session ou défauts de configuration. C'est la seule des méthodes proposées qui teste l'application en cours d'exécution, sans accès au code, et l'environnement de préproduction permet de tester sans perturber la production.",
+    "distractorNotes": {
+      "a": "L'analyse statique examine le code (source ou binaire) sans exécuter l'application ; elle n'envoie aucune entrée et n'observe aucune réponse, ce que demande l'énoncé.",
+      "b": "Une revue manuelle du code suppose d'en disposer ; l'éditeur ne le fournit pas.",
+      "d": "L'analyse des dépendances exige l'accès au dépôt ou au manifeste de l'application, que la banque n'a pas, et n'envoie aucune entrée à l'application."
+    },
+    "reference": "OWASP Web Security Testing Guide ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-credentialed-scan-accuracy-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "L'analyse mensuelle des serveurs Windows d'un cabinet comptable, lancée sans identifiants, ne remonte que des ports ouverts et quelques bannières de services, alors que l'inventaire montre de nombreux correctifs du système et des applications manquants. Quelle modification améliore LE MIEUX la précision de l'analyse ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lancer une analyse authentifiée avec un compte de service dédié"
+        },
+        {
+          "id": "b",
+          "text": "Passer à une analyse hebdomadaire avec le même profil"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer l'analyse par un test d'intrusion annuel"
+        },
+        {
+          "id": "d",
+          "text": "Lancer l'analyse depuis Internet plutôt que depuis le LAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Une analyse non authentifiée ne voit que ce qu'expose le réseau : ports, bannières, réponses des services. Une analyse authentifiée (credentialed) ouvre une session sur l'hôte avec un compte dédié, lit le registre, les versions des fichiers et des paquets, et détecte ainsi les correctifs manquants et les défauts de configuration locale. Elle réduit à la fois les faux négatifs et les faux positifs fondés sur les bannières. Le compte de service doit être dédié, protégé et journalisé.",
+    "distractorNotes": {
+      "b": "Analyser plus souvent avec le même profil non authentifié répète les mêmes angles morts : les correctifs locaux restent invisibles.",
+      "c": "Un test d'intrusion annuel est ponctuel et ne remplace pas une analyse régulière et exhaustive des correctifs.",
+      "d": "Depuis Internet, l'analyse verrait encore moins de services, sans accès aux informations locales des serveurs."
+    },
+    "reference": "NIST SP 800-115 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-payroll-patch-exception-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un correctif de gravité élevée ne peut pas être appliqué au serveur de paie pendant 60 jours, car l'éditeur du logiciel de paie n'a pas encore certifié la mise à jour. Le responsable métier demande de différer le correctif. Quelle démarche est la plus conforme à une bonne gestion des vulnérabilités ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Marquer la vulnérabilité comme faux positif dans le scanner"
+        },
+        {
+          "id": "b",
+          "text": "Appliquer le correctif sans attendre, quitte à perdre le support"
+        },
+        {
+          "id": "c",
+          "text": "Ouvrir une exception datée avec contrôles compensatoires"
+        },
+        {
+          "id": "d",
+          "text": "Exclure le serveur des analyses jusqu'à la certification"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Une exception est la réponse prévue quand une vulnérabilité réelle ne peut pas être corrigée dans le délai fixé : elle est documentée, limitée dans le temps (ici 60 jours), approuvée par le propriétaire du risque et assortie de contrôles compensatoires (filtrage, surveillance). Elle garde la vulnérabilité visible dans les rapports et impose une revue à l'échéance. Le risque est ainsi accepté consciemment et temporairement, au lieu d'être ignoré ou masqué.",
+    "distractorNotes": {
+      "a": "La faille est réelle : la déclarer faux positif fausse les rapports et la fait disparaître du suivi.",
+      "b": "Appliquer un correctif non certifié peut casser la paie et faire perdre le support de l'éditeur ; la décision revient au propriétaire du risque dans un processus d'exception.",
+      "d": "Exclure le serveur des analyses supprime la visibilité sans traiter le risque ni l'approuver formellement."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3 ; NIST SP 800-40 Rev. 4"
+  },
+  {
+    "slug": "security-plus-4.3-patch-rescan-validation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Après le déploiement d'un correctif sur 40 serveurs, l'équipe sécurité doit valider la remédiation avant de clore les tickets. Quelle action fournit la validation la plus directe ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Relancer l'analyse des 40 serveurs avec le même profil d'analyse"
+        },
+        {
+          "id": "b",
+          "text": "Clore les tickets sur la confirmation écrite des administrateurs"
+        },
+        {
+          "id": "c",
+          "text": "Attendre l'analyse trimestrielle planifiée pour vérifier les serveurs"
+        },
+        {
+          "id": "d",
+          "text": "Vérifier que le correctif figure dans le catalogue de déploiement"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La validation de la remédiation se fait d'abord par une nouvelle analyse (rescan) : en relançant le même contrôle, avec le même profil, sur les mêmes hôtes, on prouve techniquement que la vulnérabilité n'est plus détectée. Les serveurs où le correctif a échoué (redémarrage manquant, installation interrompue) apparaissent immédiatement. L'audit et la vérification manuelle complètent ce contrôle, puis le résultat alimente le rapport de suivi.",
+    "distractorNotes": {
+      "b": "Une déclaration des administrateurs n'est pas une preuve technique : un redémarrage oublié ou un échec silencieux passerait inaperçu.",
+      "c": "Attendre l'analyse trimestrielle laisse des tickets ouverts ou clos sans preuve pendant des semaines.",
+      "d": "La présence du correctif dans le catalogue ne prouve pas qu'il est installé et actif sur chaque serveur."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3 ; NIST SP 800-40 Rev. 4"
+  },
+  {
+    "slug": "security-plus-4.3-pentest-chained-exploitation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "La direction d'un hôpital reçoit chaque mois les rapports d'analyse de vulnérabilités, mais veut savoir si un attaquant pourrait réellement enchaîner ces failles pour atteindre le dossier patient informatisé. Quelle méthode répond le mieux à cette question ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une analyse non authentifiée supplémentaire"
+        },
+        {
+          "id": "b",
+          "text": "Un abonnement à un flux de renseignement"
+        },
+        {
+          "id": "c",
+          "text": "Une analyse statique du code source"
+        },
+        {
+          "id": "d",
+          "text": "Un test d'intrusion"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Un scanner liste des vulnérabilités supposées sans les exploiter. Un test d'intrusion, mené par des testeurs autorisés selon des règles d'engagement, tente d'exploiter les failles, de les combiner et de progresser latéralement vers un objectif défini (ici le dossier patient). Il démontre l'impact réel, valide les résultats des analyses et révèle des chemins d'attaque qu'aucun score isolé ne montre.",
+    "distractorNotes": {
+      "a": "Une analyse supplémentaire, de surcroît non authentifiée, ne fait que détecter des failles ; elle ne prouve pas qu'elles s'enchaînent.",
+      "b": "Un flux de renseignement informe sur les menaces externes, pas sur l'exploitabilité réelle du système d'information de l'hôpital.",
+      "c": "L'analyse statique examine le code d'une application ; elle ne teste pas un enchaînement d'attaques sur l'infrastructure."
+    },
+    "reference": "NIST SP 800-115 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-package-monitoring-library-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un avis critique est publié sur une bibliothèque de journalisation open source. Le RSSI d'un éditeur de logiciels veut savoir en quelques minutes lesquelles de ses 120 applications l'embarquent, directement ou par une dépendance transitive. Quel dispositif aurait dû être en place ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un test d'intrusion annuel de chaque application"
+        },
+        {
+          "id": "b",
+          "text": "La surveillance des paquets et de leurs dépendances"
+        },
+        {
+          "id": "c",
+          "text": "Une analyse dynamique de chaque application"
+        },
+        {
+          "id": "d",
+          "text": "Une analyse réseau non authentifiée du parc"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La surveillance des paquets (package monitoring), souvent outillée par l'analyse de composition logicielle et un inventaire des composants (SBOM), recense les bibliothèques tierces de chaque application, y compris les dépendances transitives, et alerte dès qu'une version utilisée reçoit un CVE. Elle permet de répondre immédiatement à la question « qui utilise ce composant ? », ce qu'aucun test ponctuel ne fait.",
+    "distractorNotes": {
+      "a": "Un test d'intrusion annuel est ponctuel et ne tient pas d'inventaire des composants embarqués.",
+      "c": "L'analyse dynamique teste le comportement à l'exécution ; elle ne dresse pas la liste des bibliothèques incluses, surtout transitives.",
+      "d": "Une analyse réseau non authentifiée voit des ports et des bannières, pas les bibliothèques internes des applications."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-exposure-kev-prioritization-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'équipe de gestion des vulnérabilités d'une société de services ne peut traiter qu'une vulnérabilité dans la nuit. Laquelle doit-elle corriger EN PREMIER ?",
+      "exhibit": "ID    Actif        Exposition           CVSS  Remarque\nV-01  lab-test07   isolé, sans réseau   9.8   aucun exploit connu\nV-02  vpn-edge01   Internet             8.8   exploitation active (KEV)\nV-03  prn-srv02    LAN interne          5.3   -\nV-04  dev-ws14     LAN interne          7.5   preuve de concept publique",
+      "options": [
+        {
+          "id": "a",
+          "text": "V-01"
+        },
+        {
+          "id": "b",
+          "text": "V-04"
+        },
+        {
+          "id": "c",
+          "text": "V-02"
+        },
+        {
+          "id": "d",
+          "text": "V-03"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "La priorisation ne se limite pas au score de base CVSS : elle combine la gravité, l'exposition de l'actif et la probabilité d'exploitation. V-02 cumule une gravité élevée (8,8), une exposition directe à Internet sur un équipement de périmètre et une exploitation active attestée par le catalogue KEV de la CISA : c'est le risque le plus immédiat. V-01 a le score le plus haut, mais l'actif est isolé et aucun exploit n'est connu ; V-04 et V-03 sont internes.",
+    "distractorNotes": {
+      "a": "V-01 a le meilleur score de base, mais un serveur de test sans connexion réseau n'est pas atteignable par un attaquant distant et aucun exploit n'est connu.",
+      "b": "V-04 dispose d'une preuve de concept publique, mais le poste est interne et la faille n'est pas exploitée activement ; elle passe après V-02.",
+      "d": "V-03 est de gravité moyenne sur un serveur interne : c'est la moins urgente des quatre."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3 ; FIRST CVSS v3.1 Specification ; CISA Known Exploited Vulnerabilities Catalog"
+  },
+  {
+    "slug": "security-plus-4.3-outdated-feed-false-negative-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le 15 septembre 2026, l'éditeur d'un serveur d'applications publie une vulnérabilité critique qui touche la version installée sur srv-app03, ce que l'administrateur a vérifié sur l'hôte. L'analyse du 20 octobre ne signale pourtant rien. Quelle explication est LA PLUS probable ?",
+      "exhibit": "Rapport d'analyse - srv-app03 (10.20.5.14)\nDate de l'analyse : 2026-10-20 02:00\nProfil            : authentifié (compte svc-scan), session ouverte\nFlux de signatures: 2026-08-02 (dernière mise à jour)\nRésultat          : 0 critique, 0 élevée, 2 moyennes, 5 faibles",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un faux négatif : le flux de signatures est antérieur à la publication de la faille"
+        },
+        {
+          "id": "b",
+          "text": "Un faux positif : l'avis de l'éditeur surestime l'impact de la faille sur ce serveur"
+        },
+        {
+          "id": "c",
+          "text": "Un vrai négatif : une analyse authentifiée ne peut pas manquer une version vulnérable"
+        },
+        {
+          "id": "d",
+          "text": "Un faux négatif : l'analyse n'a pas pu ouvrir de session faute d'identifiants"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "La faille est présente (version vérifiée sur l'hôte) et l'outil ne la signale pas : c'est un faux négatif. L'exhibit en donne la cause : les signatures datent du 2 août 2026, soit avant la publication du 15 septembre, donc le scanner ne possède aucun test pour cette vulnérabilité. L'analyse étant authentifiée, le défaut d'identifiants est exclu. Il faut mettre à jour le flux avant chaque analyse et surveiller sa date dans les rapports.",
+    "distractorNotes": {
+      "b": "Un faux positif est une alerte sur une faille absente ; ici il n'y a aucune alerte et la faille est réelle.",
+      "c": "La vulnérabilité est présente : l'absence d'alerte n'est donc pas un vrai négatif, et une analyse authentifiée manque toute faille dont elle n'a pas la signature.",
+      "d": "L'exhibit indique une analyse authentifiée avec le compte svc-scan et un résultat produit : le problème ne vient pas des identifiants."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-cvss-local-vector-reading-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Le RSSI demande à l'analyste de résumer la gravité et les conditions d'exploitation de cette faille d'élévation de privilèges sur les serveurs Linux. Quel résumé est exact ?",
+      "exhibit": "Avis éditeur - utilitaire système (paquet sysutil 2.4)\nCVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+      "options": [
+        {
+          "id": "a",
+          "text": "Critique ; exploitable à distance sans aucune authentification"
+        },
+        {
+          "id": "b",
+          "text": "Élevée ; exploitable à distance par un utilisateur authentifié"
+        },
+        {
+          "id": "c",
+          "text": "Moyenne ; exige un accès local et l'action d'un utilisateur"
+        },
+        {
+          "id": "d",
+          "text": "Élevée ; exige un accès local avec un compte à faibles privilèges"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "AV:L signifie que l'attaquant doit agir localement (session sur l'hôte, y compris à distance via SSH sur ce compte) ; PR:L qu'il lui faut un compte à faibles privilèges ; UI:N qu'aucune autre personne n'a à intervenir. L'impact est élevé sur C, I et A, portée inchangée. Le score de base vaut 7,8, dans la plage élevée (7,0 à 8,9). C'est le profil classique d'une élévation locale de privilèges : à corriger vite, mais derrière une faille équivalente exploitable par le réseau.",
+    "distractorNotes": {
+      "a": "AV:L et PR:L excluent l'exploitation à distance sans authentification, et 7,8 n'atteint pas la plage critique (9,0 à 10,0).",
+      "b": "La gravité est bien élevée, mais le vecteur d'attaque est local (AV:L) et non réseau (AV:N).",
+      "c": "UI:N indique qu'aucune interaction d'un utilisateur n'est requise, et 7,8 dépasse la plage moyenne (4,0 à 6,9)."
+    },
+    "reference": "FIRST CVSS v3.1 Specification"
+  },
+  {
+    "slug": "security-plus-4.3-responsible-disclosure-elements-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une collectivité veut permettre aux chercheurs en sécurité de lui signaler les failles de ses sites web dans le cadre d'une divulgation responsable. Quels deux éléments relèvent de cette démarche ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Publier un contact dédié, par exemple dans un fichier security.txt"
+        },
+        {
+          "id": "b",
+          "text": "Exiger que le chercheur publie la faille dès sa découverte"
+        },
+        {
+          "id": "c",
+          "text": "Convenir d'un délai de correction avant toute publication des détails"
+        },
+        {
+          "id": "d",
+          "text": "Refuser tout signalement venant de personnes extérieures"
+        },
+        {
+          "id": "e",
+          "text": "Poursuivre en justice chaque chercheur qui signale une faille"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "La divulgation responsable (ou coordonnée) organise le signalement privé d'une faille à son propriétaire, qui dispose d'un délai convenu pour la corriger avant que les détails ne soient rendus publics. L'organisation facilite le signalement par un point de contact clair, par exemple un fichier security.txt (RFC 9116) publié sur ses sites, et s'engage souvent à ne pas poursuivre les chercheurs de bonne foi. Un programme de bug bounty peut s'y ajouter avec des récompenses.",
+    "distractorNotes": {
+      "b": "Publier dès la découverte, sans laisser de délai de correction, c'est la divulgation complète immédiate, l'inverse d'une divulgation responsable.",
+      "d": "Refuser les signalements extérieurs prive l'organisation d'informations utiles ; la démarche vise justement à les recevoir.",
+      "e": "Poursuivre systématiquement les chercheurs décourage les signalements ; une politique de divulgation offre au contraire un cadre protecteur aux chercheurs de bonne foi."
+    },
+    "reference": "RFC 9116 ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-banner-finding-confirmation-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le scanner signale une vulnérabilité d'OpenSSH sur un serveur Linux en se fondant uniquement sur la bannière du service. Avant d'ouvrir un ticket, l'analyste veut confirmer qu'il ne s'agit pas d'un faux positif. Quelles deux actions conviennent ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Relever d'office la priorité du résultat à « critique » par prudence"
+        },
+        {
+          "id": "b",
+          "text": "Lire la version réelle du paquet installé par une analyse authentifiée"
+        },
+        {
+          "id": "c",
+          "text": "Clore le résultat, puisque le serveur n'est accessible qu'en interne"
+        },
+        {
+          "id": "d",
+          "text": "Comparer cette version avec l'avis de la distribution sur les rétroportages"
+        },
+        {
+          "id": "e",
+          "text": "Exclure ce serveur des prochaines analyses pour éviter le bruit"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "Confirmer un résultat consiste à vérifier qu'il correspond à la réalité de l'hôte. Une bannière n'indique que la version amont ; les distributions rétroportent souvent les correctifs sans changer ce numéro. L'analyste lit donc la version exacte du paquet installé (analyse authentifiée ou connexion à l'hôte), puis la compare avec l'avis de sécurité de la distribution, qui indique dans quelle révision du paquet la faille est corrigée. Il sait alors s'il s'agit d'un vrai ou d'un faux positif.",
+    "distractorNotes": {
+      "a": "Changer la priorité ne confirme rien ; la priorisation vient après la confirmation, sur la base d'un résultat vérifié.",
+      "c": "L'exposition interne joue sur la priorité, pas sur la réalité de la faille ; clore sans vérifier peut masquer un vrai positif.",
+      "e": "Exclure le serveur supprime la visibilité sans établir si la faille est réelle."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-environmental-prioritization-factors-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Deux vulnérabilités ont le même score de base CVSS v3.1 de 8,8. Le responsable de la gestion des vulnérabilités doit décider laquelle traiter d'abord. Quels deux facteurs propres à l'organisation justifient de les départager ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'exposition de chaque actif concerné à Internet"
+        },
+        {
+          "id": "b",
+          "text": "Le vecteur d'attaque indiqué dans le score de base"
+        },
+        {
+          "id": "c",
+          "text": "La complexité d'attaque indiquée dans le score de base"
+        },
+        {
+          "id": "d",
+          "text": "La criticité métier et la sensibilité des données de l'actif"
+        },
+        {
+          "id": "e",
+          "text": "L'année figurant dans chacun des deux identifiants CVE"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "Le score de base décrit la vulnérabilité de façon intrinsèque, identique pour toutes les organisations. La priorisation intègre ensuite le contexte : l'exposition de l'actif (accessible depuis Internet ou isolé) et sa valeur pour l'activité (criticité métier, données personnelles ou financières). Ces éléments correspondent à l'idée des métriques environnementales de CVSS et à la tolérance au risque de l'organisation. Ils peuvent faire passer en tête une faille au même score de base.",
+    "distractorNotes": {
+      "b": "Le vecteur d'attaque est une métrique de base, déjà prise en compte dans le 8,8 commun ; il n'est pas propre à l'organisation.",
+      "c": "La complexité d'attaque est aussi une métrique de base, intrinsèque à la faille, et déjà intégrée au score.",
+      "e": "L'année d'un identifiant CVE renvoie à son attribution ou à la divulgation de la faille ; elle ne dit rien de l'exposition ni de l'impact pour l'organisation."
+    },
+    "reference": "FIRST CVSS v3.1 Specification ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-legacy-app-compensating-controls-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une application web interne d'un assureur présente une injection SQL confirmée. L'éditeur a cessé son activité et aucun correctif n'existe ; le remplacement est prévu dans un an. Quelles trois mesures constituent des contrôles compensatoires appropriés ? (Choisissez-en trois.)",
+      "selectCount": 3,
+      "options": [
+        {
+          "id": "a",
+          "text": "Une règle de pare-feu applicatif (WAF) qui bloque les motifs d'injection"
+        },
+        {
+          "id": "b",
+          "text": "Une cyberassurance couvrant les frais d'une éventuelle fuite de données"
+        },
+        {
+          "id": "c",
+          "text": "Un filtrage réseau qui limite l'accès à l'application aux seuls services utilisateurs"
+        },
+        {
+          "id": "d",
+          "text": "Le classement du résultat en faux positif dans l'outil d'analyse"
+        },
+        {
+          "id": "e",
+          "text": "Une surveillance renforcée des journaux de l'application et de la base"
+        },
+        {
+          "id": "f",
+          "text": "L'exclusion de l'application du périmètre des analyses mensuelles"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    "explanation": "Un contrôle compensatoire remplace un contrôle principal impossible à mettre en œuvre, ici le correctif. Le WAF applique un « correctif virtuel » en bloquant les requêtes d'injection, le filtrage réseau réduit le nombre d'utilisateurs capables d'atteindre l'application, et la surveillance renforcée des journaux permet de détecter rapidement une tentative ou un abus. Ensemble, ils réduisent le risque jusqu'au remplacement, idéalement dans le cadre d'une exception formalisée.",
+    "distractorNotes": {
+      "b": "L'assurance transfère une partie du coût financier, mais ne réduit ni la probabilité ni la détection d'une exploitation : ce n'est pas un contrôle compensatoire.",
+      "d": "L'injection est confirmée : la déclarer faux positif est inexact et retire la faille du suivi.",
+      "f": "Ne plus analyser l'application supprime la visibilité sans aucune protection supplémentaire."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-sast-dast-statements-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Lors d'une revue du cycle de développement sécurisé, le RSSI d'une fintech compare l'analyse statique (SAST) et l'analyse dynamique (DAST). Quelles deux affirmations sont exactes ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "L'analyse statique peut s'exécuter dès l'écriture du code, avant tout déploiement"
+        },
+        {
+          "id": "b",
+          "text": "L'analyse dynamique exige l'accès au code source de l'application testée"
+        },
+        {
+          "id": "c",
+          "text": "L'analyse statique teste l'application en lui envoyant des requêtes HTTP"
+        },
+        {
+          "id": "d",
+          "text": "L'analyse statique ne produit jamais de faux positif sur le code examiné"
+        },
+        {
+          "id": "e",
+          "text": "L'analyse dynamique révèle des défauts visibles à l'exécution, comme un en-tête absent"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "e"
+      ]
+    },
+    "explanation": "L'analyse statique examine le code sans l'exécuter : elle s'intègre tôt dans le cycle de développement, dès le commit, et pointe la ligne en cause, au prix de faux positifs à confirmer. L'analyse dynamique teste l'application déployée de l'extérieur, sans code source : elle voit les défauts qui n'existent qu'à l'exécution ou dans la configuration, comme un en-tête de sécurité HTTP manquant ou un cookie sans attribut Secure. Les deux méthodes se complètent.",
+    "distractorNotes": {
+      "b": "L'analyse dynamique fonctionne en boîte noire, sur l'application en cours d'exécution ; elle n'a pas besoin du code source.",
+      "c": "Envoyer des requêtes à l'application en cours d'exécution, c'est le principe de l'analyse dynamique, pas de l'analyse statique.",
+      "d": "L'analyse statique produit au contraire de nombreux faux positifs, car elle raisonne sur le code sans le contexte d'exécution."
+    },
+    "reference": "OWASP Web Security Testing Guide ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-risk-tolerance-sla-scope-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Quels deux actifs relèvent du délai de correction de 7 jours fixé par la politique ?",
+      "exhibit": "Politique de remédiation (tolérance au risque validée par la direction)\nToute vulnérabilité de gravité élevée ou critique (CVSS v3.1) sur un\nactif exposé à Internet est corrigée sous 7 jours. Les autres suivent\nle cycle mensuel.\n\nActif     Exposition   Score de base\nwww-01    Internet     9.1\ndb-02     interne      9.8\nvpn-01    Internet     7.0\nmail-01   Internet     6.9\nfile-03   interne      7.5",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "www-01"
+        },
+        {
+          "id": "b",
+          "text": "db-02"
+        },
+        {
+          "id": "c",
+          "text": "vpn-01"
+        },
+        {
+          "id": "d",
+          "text": "mail-01"
+        },
+        {
+          "id": "e",
+          "text": "file-03"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "La politique combine deux conditions : gravité élevée ou critique (score de 7,0 ou plus en CVSS v3.1) et exposition à Internet. www-01 (9,1, critique) et vpn-01 (7,0, élevée, borne basse de la plage) remplissent les deux. mail-01 est exposé, mais 6,9 reste dans la plage moyenne (4,0 à 6,9). db-02 et file-03 ont des scores critique et élevé, mais sont internes : ils suivent le cycle mensuel, conformément à la tolérance au risque définie par la direction.",
+    "distractorNotes": {
+      "b": "db-02 est critique (9,8), mais interne : la politique le laisse dans le cycle mensuel.",
+      "d": "mail-01 est exposé à Internet, mais 6,9 relève de la gravité moyenne, sous le seuil de 7,0.",
+      "e": "file-03 est de gravité élevée (7,5), mais interne : la condition d'exposition n'est pas remplie."
+    },
+    "reference": "FIRST CVSS v3.1 Specification ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-dark-web-credentials-response-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Le fournisseur de renseignement d'une PME signale que les identifiants de six salariés sont proposés à la vente sur un forum du dark web. Quelles deux mesures l'équipe sécurité doit-elle prendre en priorité ?",
+      "selectCount": 2,
+      "options": [
+        {
+          "id": "a",
+          "text": "Acheter le lot d'identifiants au vendeur pour éviter sa revente"
+        },
+        {
+          "id": "b",
+          "text": "Réinitialiser les mots de passe des six comptes et révoquer leurs sessions"
+        },
+        {
+          "id": "c",
+          "text": "Publier sur l'intranet la liste des six comptes compromis"
+        },
+        {
+          "id": "d",
+          "text": "Supprimer définitivement les comptes des six salariés concernés"
+        },
+        {
+          "id": "e",
+          "text": "Rechercher dans les journaux des connexions anormales de ces comptes"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "e"
+      ]
+    },
+    "explanation": "Des identifiants en vente doivent être considérés comme compromis. L'équipe les rend inutilisables en réinitialisant les mots de passe et en révoquant les sessions et jetons actifs, puis vérifie dans les journaux d'authentification si ces comptes ont déjà été utilisés par un tiers (connexions depuis des adresses ou à des heures inhabituelles). La vérification de l'authentification multifacteur sur ces comptes complète utilement ces mesures.",
+    "distractorNotes": {
+      "a": "Payer le vendeur finance la criminalité sans garantie que les données ne seront pas revendues ; les identifiants restent compromis.",
+      "c": "Publier la liste expose davantage les salariés et n'apporte aucune protection.",
+      "d": "Supprimer les comptes est disproportionné et empêche les salariés de travailler ; une réinitialisation suffit à neutraliser les identifiants."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3 ; NIST SP 800-63B"
+  },
+  {
+    "slug": "security-plus-4.3-threat-intel-sources-matching-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le SOC d'un hôpital fait l'inventaire de ses sources de renseignement sur les vulnérabilités et les menaces. Associez chaque source à sa catégorie.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Indicateurs diffusés aux membres par l'ISAC du secteur de la santé"
+        },
+        {
+          "id": "l2",
+          "text": "Flux d'indicateurs fourni sur abonnement payant par un éditeur de sécurité"
+        },
+        {
+          "id": "l3",
+          "text": "Billets de blog et publications publiques de chercheurs sur les réseaux sociaux"
+        },
+        {
+          "id": "l4",
+          "text": "Veille sur des places de marché clandestines accessibles uniquement par Tor"
+        },
+        {
+          "id": "l5",
+          "text": "Registre CVE et base NVD consultés librement chaque matin"
+        }
+      ],
+      "right": [
+        {
+          "id": "osint",
+          "text": "Renseignement de sources ouvertes (OSINT)"
+        },
+        {
+          "id": "prop",
+          "text": "Renseignement propriétaire"
+        },
+        {
+          "id": "share",
+          "text": "Organisation de partage d'informations"
+        },
+        {
+          "id": "dark",
+          "text": "Dark web"
+        },
+        {
+          "id": "bounty",
+          "text": "Programme de bug bounty"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "share",
+        "l2": "prop",
+        "l3": "osint",
+        "l4": "dark",
+        "l5": "osint"
+      }
+    },
+    "explanation": "Un ISAC (Information Sharing and Analysis Center) est une organisation de partage d'informations entre membres d'un même secteur. Le flux vendu sur abonnement est du renseignement propriétaire. Les billets et publications publiques de chercheurs, le registre CVE et la NVD sont accessibles librement : c'est de l'OSINT. Les places de marché clandestines accessibles par Tor relèvent du dark web, où se vendent identifiants, accès et exploits.",
+    "distractorNotes": {
+      "bounty": "Un bug bounty est une méthode d'identification de vulnérabilités par des chercheurs récompensés, pas une source de renseignement sur les menaces de la liste."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-identification-methods-matching-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "L'éditeur d'un logiciel de facturation décrit les activités de son programme de sécurité. Associez chaque activité à la méthode d'identification correspondante.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Un outil examine le code source à chaque commit, sans exécuter le programme"
+        },
+        {
+          "id": "l2",
+          "text": "Un outil envoie des requêtes malformées à l'application déployée en préproduction"
+        },
+        {
+          "id": "l3",
+          "text": "Un outil inventorie les bibliothèques tierces et alerte quand l'une reçoit un CVE"
+        },
+        {
+          "id": "l4",
+          "text": "Des chercheurs externes sont récompensés pour chaque faille valide signalée"
+        },
+        {
+          "id": "l5",
+          "text": "Un auditeur vérifie sur échantillon que chaque correctif déployé a été approuvé"
+        }
+      ],
+      "right": [
+        {
+          "id": "sast",
+          "text": "Analyse statique"
+        },
+        {
+          "id": "dast",
+          "text": "Analyse dynamique"
+        },
+        {
+          "id": "pkg",
+          "text": "Surveillance des paquets"
+        },
+        {
+          "id": "bb",
+          "text": "Bug bounty"
+        },
+        {
+          "id": "audit",
+          "text": "Audit de processus"
+        },
+        {
+          "id": "dark",
+          "text": "Veille sur le dark web"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "sast",
+        "l2": "dast",
+        "l3": "pkg",
+        "l4": "bb",
+        "l5": "audit"
+      }
+    },
+    "explanation": "Examiner le code sans l'exécuter, c'est l'analyse statique ; tester l'application en cours d'exécution avec des entrées malformées, l'analyse dynamique. L'inventaire des bibliothèques tierces avec alerte sur CVE relève de la surveillance des paquets. Récompenser des chercheurs externes définit un bug bounty. Vérifier que les correctifs ont suivi la procédure d'approbation est un audit de processus : il identifie des faiblesses dans la façon de travailler plutôt que dans le code.",
+    "distractorNotes": {
+      "dark": "La veille sur le dark web cherche des données ou accès en vente concernant l'organisation ; aucune des activités décrites ne la met en œuvre."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-remediation-responses-matching-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Le comité de remédiation d'un groupe industriel passe en revue les décisions du mois. Associez chaque décision au type de réponse correspondant.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Installer la mise à jour de sécurité de l'éditeur sur tous les postes concernés"
+        },
+        {
+          "id": "l2",
+          "text": "Souscrire une police qui couvre les frais de notification après une violation"
+        },
+        {
+          "id": "l3",
+          "text": "Placer les automates dans un VLAN dédié, séparé du réseau bureautique"
+        },
+        {
+          "id": "l4",
+          "text": "Ajouter une règle de WAF et une alerte SIEM en attendant un correctif inexistant"
+        },
+        {
+          "id": "l5",
+          "text": "Autoriser formellement pendant 60 jours un serveur non corrigé, sur signature du propriétaire du risque"
+        }
+      ],
+      "right": [
+        {
+          "id": "patch",
+          "text": "Correctif"
+        },
+        {
+          "id": "ins",
+          "text": "Assurance"
+        },
+        {
+          "id": "seg",
+          "text": "Segmentation"
+        },
+        {
+          "id": "comp",
+          "text": "Contrôle compensatoire"
+        },
+        {
+          "id": "exc",
+          "text": "Exception"
+        },
+        {
+          "id": "rescan",
+          "text": "Nouvelle analyse de validation"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "patch",
+        "l2": "ins",
+        "l3": "seg",
+        "l4": "comp",
+        "l5": "exc"
+      }
+    },
+    "explanation": "La mise à jour de l'éditeur corrige la faille à la source : c'est le correctif. La police transfère l'impact financier : c'est l'assurance. Séparer les automates dans un VLAN dédié est une segmentation, qui limite les chemins d'accès. La règle de WAF et l'alerte SIEM remplacent temporairement un correctif indisponible : ce sont des contrôles compensatoires. L'autorisation datée et signée par le propriétaire du risque est une exception, qui garde la faille sous suivi jusqu'à son échéance.",
+    "distractorNotes": {
+      "rescan": "La nouvelle analyse sert à valider une remédiation déjà faite ; aucune des décisions décrites n'est une vérification après correction."
+    },
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-scan-result-classification-matching-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Après un trimestre d'analyses, l'équipe de gestion des vulnérabilités d'une université confronte les résultats du scanner aux vérifications manuelles. Associez chaque cas à sa classification.",
+      "left": [
+        {
+          "id": "l1",
+          "text": "Faille signalée dans un module Apache que la configuration ne charge pas ; le test manuel confirme l'absence de risque"
+        },
+        {
+          "id": "l2",
+          "text": "Aucune alerte sur un serveur, puis le test d'intrusion exploite une faille de la version installée"
+        },
+        {
+          "id": "l3",
+          "text": "SMBv1 signalé comme activé sur un serveur de fichiers ; l'administrateur constate qu'il l'est"
+        },
+        {
+          "id": "l4",
+          "text": "Aucune alerte Log4j sur un serveur ; l'inventaire confirme que la bibliothèque n'y est pas installée"
+        },
+        {
+          "id": "l5",
+          "text": "Faille PHP signalée sur un serveur IIS d'après une bannière ; PHP n'y est pas installé"
+        }
+      ],
+      "right": [
+        {
+          "id": "tp",
+          "text": "Vrai positif"
+        },
+        {
+          "id": "fp",
+          "text": "Faux positif"
+        },
+        {
+          "id": "tn",
+          "text": "Vrai négatif"
+        },
+        {
+          "id": "fn",
+          "text": "Faux négatif"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "l1": "fp",
+        "l2": "fn",
+        "l3": "tp",
+        "l4": "tn",
+        "l5": "fp"
+      }
+    },
+    "explanation": "Positif ou négatif décrit la sortie de l'outil (alerte ou non), vrai ou faux sa conformité à la réalité. Le module non chargé et la faille PHP sur un serveur sans PHP sont des alertes infondées : faux positifs. La faille exploitée par le test d'intrusion sans alerte préalable est un faux négatif, le cas le plus dangereux car il donne une fausse assurance. SMBv1 réellement activé et signalé est un vrai positif ; l'absence d'alerte sur une bibliothèque absente est un vrai négatif.",
+    "distractorNotes": {},
+    "reference": "CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  },
+  {
+    "slug": "security-plus-4.3-cvss-xss-vector-rating-fill-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Le scanner applicatif d'une agence de voyages signale une faille de script intersite (XSS) réfléchie sur le moteur de recherche du site. Quelle est la gravité qualitative CVSS v3.1 de ce résultat ?",
+      "exhibit": "Résultat DAST - https://www.example.com/recherche?q=\nType    : Cross-site scripting (réfléchi)\nVecteur : CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+      "fields": [
+        {
+          "id": "v",
+          "label": "Gravité qualitative (un mot)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "v": {
+          "accepted": [
+            "moyenne",
+            "moyen",
+            "medium",
+            "gravité moyenne",
+            "gravite moyenne"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "Le score de base de ce vecteur vaut 6,1 : exploitable par le réseau, sans privilège, mais exigeant qu'une victime clique sur un lien piégé (UI:R) ; la portée change (S:C) car le script s'exécute dans le navigateur de la victime ; impacts faibles en confidentialité et en intégrité, aucun en disponibilité. 6,1 se situe dans la plage moyenne (4,0 à 6,9) de CVSS v3.1. C'est la note typique d'un XSS réfléchi.",
+    "distractorNotes": {},
+    "reference": "FIRST CVSS v3.1 Specification ; OWASP Top 10 (2021)"
+  },
+  {
+    "slug": "security-plus-4.3-cvss-base-score-compute-fill-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Un analyste recalcule le score de base CVSS v3.1 d'une faille d'un serveur web, portée inchangée, à partir des pondérations de la spécification. Quel score de base obtient-il ?",
+      "exhibit": "Vecteur : CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H\nPondérations : AV:N=0.85  AC:L=0.77  PR:L=0.62  UI:N=0.85  C/I/A:H=0.56\nISS            = 1 - (1-C) x (1-I) x (1-A)\nImpact         = 6.42 x ISS\nExploitabilité = 8.22 x AV x AC x PR x UI\nBase = arrondi supérieur à 0,1 de min(Impact + Exploitabilité, 10)",
+      "fields": [
+        {
+          "id": "v",
+          "label": "Score de base (nombre à une décimale)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "v": {
+          "accepted": [
+            "8.8",
+            "8,8"
+          ],
+          "normalize": "text"
+        }
+      }
+    },
+    "explanation": "ISS = 1 − (1 − 0,56)³ = 1 − 0,085184 = 0,914816. Impact = 6,42 × 0,914816 ≈ 5,873. Exploitabilité = 8,22 × 0,85 × 0,77 × 0,62 × 0,85 ≈ 2,835. Somme ≈ 8,708, arrondie à la décimale supérieure : 8,8, soit une gravité élevée (7,0 à 8,9). Le seul écart avec le célèbre 9,8 est PR:L : un compte à faibles privilèges est requis, ce qui fait perdre un point.",
+    "distractorNotes": {},
+    "reference": "FIRST CVSS v3.1 Specification"
+  },
+  {
+    "slug": "security-plus-4.3-sla-from-cvss-vector-fill-001",
+    "certification": "security-plus",
+    "domain": "4.0",
+    "subtopic": "4.3",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Une faille vient d'être confirmée sur le serveur de réservation d'une compagnie de ferries. Le score de base est l'arrondi à la décimale supérieure de min(impact + exploitabilité, 10). En appliquant la politique, quel est le délai maximal de remédiation ?",
+      "exhibit": "Politique de remédiation (gravité qualitative CVSS v3.1)\n  critique : 7 jours    élevée : 30 jours\n  moyenne  : 90 jours   faible : 180 jours\n\nFaille confirmée : CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H\nSous-scores (portée inchangée) : impact 5.87, exploitabilité 2.22",
+      "fields": [
+        {
+          "id": "v",
+          "label": "Délai en jours (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "v": {
+          "accepted": [
+            "30"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Portée inchangée : 5,87 + 2,22 = 8,09, arrondi à la décimale supérieure : 8,1. Le vecteur ne diffère du cas le plus grave (9,8) que par AC:H : l'exploitation exige des conditions que l'attaquant ne contrôle pas entièrement, ce qui abaisse l'exploitabilité de 3,89 à 2,22. 8,1 se situe dans la plage élevée de CVSS v3.1 (7,0 à 8,9), et non critique (9,0 et plus) : la politique fixe 30 jours. Lire précisément le vecteur évite de classer d'office en critique une faille exploitable à distance sans authentification.",
+    "distractorNotes": {},
+    "reference": "FIRST CVSS v3.1 Specification ; CompTIA Security+ SY0-701 Exam Objectives, objectif 4.3"
+  }
+]
