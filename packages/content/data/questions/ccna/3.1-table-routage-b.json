@@ -1,0 +1,1240 @@
+[
+  {
+    "slug": "ccna-3.1-ibgp-entry-ad-200-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Que peut-on déduire de la distance administrative de cette entrée, sachant que R1 utilise les distances par défaut ?",
+      "exhibit": "R1# show ip route | include 172.31.0.0\nB     172.31.0.0/16 [200/0] via 10.255.0.3, 00:41:07",
+      "options": [
+        {
+          "id": "a",
+          "text": "R1 a appris ce préfixe d'un voisin BGP d'un autre système autonome."
+        },
+        {
+          "id": "b",
+          "text": "R1 a appris ce préfixe d'un voisin BGP de son propre système autonome."
+        },
+        {
+          "id": "c",
+          "text": "R1 a appris ce préfixe par BGP, avec une métrique de 200."
+        },
+        {
+          "id": "d",
+          "text": "R1 a appris ce préfixe par BGP, mais le garde en secours sans l'utiliser."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "Le premier nombre entre crochets est la distance administrative. BGP en utilise deux par défaut : 20 pour une route apprise d'un voisin eBGP (autre système autonome) et 200 pour une route apprise d'un voisin iBGP (même système autonome). [200/0] désigne donc une route iBGP ; le 0 est sa métrique (le MED). Comme toute route BGP, l'entrée n'affiche pas d'interface de sortie : R1 résout le next hop 10.255.0.3 par une autre route de sa table, souvent apprise par l'IGP pour un voisin iBGP.",
+    "distractorNotes": {
+      "a": "Une route apprise d'un voisin d'un autre système autonome (eBGP) a une distance de 20, pas 200.",
+      "c": "Dans les crochets, la distance administrative vient en premier ; la métrique de cette route est 0.",
+      "d": "Une route présente dans la table de routage sert au transfert ; les routes de secours restent hors de la table."
+    },
+    "reference": "Cisco, « What Is Administrative Distance? » (note technique) ; RFC 4271"
+  },
+  {
+    "slug": "ccna-3.1-rip-metric-hops-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Que représente la valeur 2 dans cette entrée ?",
+      "exhibit": "R1# show ip route | include 192.168.5.0\nR     192.168.5.0/24 [120/2] via 10.0.0.2, 00:00:17, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le coût cumulé du chemin, calculé d'après la bande passante"
+        },
+        {
+          "id": "b",
+          "text": "Le nombre de chemins de même coût vers ce réseau"
+        },
+        {
+          "id": "c",
+          "text": "Le nombre de mises à jour RIP reçues pour ce réseau"
+        },
+        {
+          "id": "d",
+          "text": "Le nombre de routeurs à traverser pour atteindre ce réseau"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Entre crochets, IOS affiche la distance administrative (120 pour RIP) puis la métrique. La métrique de RIP est un simple nombre de sauts : un réseau connecté au voisin est à 1 saut, et 192.168.5.0/24 est ici à 2 sauts, c'est-à-dire deux routeurs à traverser, le next hop 10.0.0.2 compris. RIP ne tient compte ni de la bande passante ni du délai des liens. La plus grande métrique valide est 15 ; 16 signifie « inaccessible », ce qui limite la taille d'un réseau RIP.",
+    "distractorNotes": {
+      "a": "C'est la métrique d'OSPF ; RIP ignore la bande passante et ne compte que les sauts.",
+      "b": "Le nombre de chemins de même coût se lit au nombre de lignes « via » de l'entrée, pas dans les crochets.",
+      "c": "La table de routage n'affiche aucun compteur de mises à jour ; le temps 00:00:17 est l'âge de la route."
+    },
+    "reference": "RFC 2453 ; Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.1-ipv6-connected-brackets-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans la sortie de « show ipv6 route », quelles valeurs entre crochets IOS affiche-t-il pour une route connectée (code C) ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "[1/0]"
+        },
+        {
+          "id": "b",
+          "text": "[0/1]"
+        },
+        {
+          "id": "c",
+          "text": "[0/0]"
+        },
+        {
+          "id": "d",
+          "text": "[110/1]"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Contrairement à « show ip route », qui n'affiche pas de crochets pour une route connectée IPv4, « show ipv6 route » affiche la distance administrative et la métrique de chaque entrée, y compris pour les routes C et L : [0/0]. Une route connectée a la distance 0, la meilleure possible, et une métrique nulle. Une route statique IPv6 affiche [1/0], et une route OSPFv3 [110/coût]. La ligne suivante de l'entrée indique « via <interface>, directly connected ».",
+    "distractorNotes": {
+      "a": "[1/0] est l'affichage d'une route statique IPv6 : distance 1, métrique 0.",
+      "b": "La métrique d'une route connectée est nulle ; [0/1] n'existe pas pour une route C.",
+      "d": "[110/1] correspond à une route OSPFv3 de coût 1, pas à un réseau connecté."
+    },
+    "reference": "Cisco IOS IPv6 Command Reference (show ipv6 route)"
+  },
+  {
+    "slug": "ccna-3.1-ospfv3-link-local-next-hop-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R2, voisin OSPFv3 de R1 sur GigabitEthernet0/0, a l'adresse globale 2001:DB8:0:A::2 et l'adresse lien local FE80::2 sur ce lien. Pourquoi la route OSPF de R1 indique-t-elle FE80::2 comme next hop ?",
+      "exhibit": "R1# show ipv6 route\nIPv6 Routing Table - default - 6 entries\nCodes: C - Connected, L - Local, S - Static, U - Per-user Static route\n       [...]\n       O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2\n       [...]\nC   2001:DB8:0:A::/64 [0/0]\n     via GigabitEthernet0/0, directly connected\nL   2001:DB8:0:A::1/128 [0/0]\n     via GigabitEthernet0/0, receive\nC   2001:DB8:CAFE:1::/64 [0/0]\n     via GigabitEthernet0/1, directly connected\nL   2001:DB8:CAFE:1::1/128 [0/0]\n     via GigabitEthernet0/1, receive\nO   2001:DB8:CAFE:2::/64 [110/2]\n     via FE80::2, GigabitEthernet0/0\nL   FF00::/8 [0/0]\n     via Null0, receive",
+      "options": [
+        {
+          "id": "a",
+          "text": "R2 annonce le préfixe sans adresse globale, ce qui impose l'adresse lien local."
+        },
+        {
+          "id": "b",
+          "text": "OSPFv3 retient comme next hop l'adresse lien local d'où le voisin émet ses paquets."
+        },
+        {
+          "id": "c",
+          "text": "R1 a résumé la route, et un résumé OSPFv3 pointe vers une adresse lien local."
+        },
+        {
+          "id": "d",
+          "text": "R1 a appris cette route par les annonces RA de R2, qui partent du lien local."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "OSPFv3 envoie ses paquets (Hello, LSU…) depuis l'adresse lien local de l'interface. Le next hop d'une route OSPFv3 est donc l'adresse lien local du voisin, accompagnée de l'interface de sortie, seule façon de lever l'ambiguïté puisque les adresses FE80:: n'ont de sens que sur un lien. C'est normal et n'empêche rien : R1 résout l'adresse MAC de FE80::2 par Neighbor Discovery. Les routes C et L de R1, elles, n'utilisent que les préfixes globaux configurés.",
+    "distractorNotes": {
+      "a": "L'énoncé précise que R2 a une adresse globale sur ce lien ; OSPFv3 utilise le lien local quel que soit l'adressage global.",
+      "c": "L'entrée est une route O vers un /64 précis, pas un résumé ; et un résumé ne change pas la nature du next hop.",
+      "d": "Une route par défaut apprise des annonces RA porte le code ND (préfixe ::/0) ; une route de code O vient d'OSPFv3, pas des RA."
+    },
+    "reference": "RFC 5340 ; Cisco IOS IPv6 Command Reference (show ipv6 route)"
+  },
+  {
+    "slug": "ccna-3.1-ospf-cost-path-sum-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les trois routeurs utilisent OSPF avec la bande passante de référence par défaut (100 Mbit/s), sans commande « ip ospf cost ». Quelle métrique R1 affiche-t-il pour 10.3.3.0/24 ?",
+      "exhibit": "R1 G0/0 ---- G0/0 R2 G0/1 ---- G0/1 R3 G0/2 ---- LAN 10.3.3.0/24\n    1 Gbit/s            10 Mbit/s            100 Mbit/s\n\nBande passante des interfaces :\n  R1 G0/0 et R2 G0/0 : 1 000 000 kbit/s\n  R2 G0/1 et R3 G0/1 :    10 000 kbit/s\n  R3 G0/2            :   100 000 kbit/s",
+      "options": [
+        {
+          "id": "a",
+          "text": "12"
+        },
+        {
+          "id": "b",
+          "text": "11"
+        },
+        {
+          "id": "c",
+          "text": "23"
+        },
+        {
+          "id": "d",
+          "text": "3"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Le coût OSPF d'une interface vaut la bande passante de référence divisée par la sienne, avec un minimum de 1 : 1 pour 1 Gbit/s ou 100 Mbit/s, 10 pour 10 Mbit/s. La métrique d'une route est la somme des coûts des interfaces de sortie, de R1 jusqu'au réseau de destination : G0/0 de R1 (1), G0/1 de R2 vers R3 (10), puis G0/2 de R3, l'interface du LAN 10.3.3.0/24 (1). R1 affiche donc [110/12]. Les interfaces d'entrée ne comptent pas.",
+    "distractorNotes": {
+      "c": "23 additionne aussi les interfaces d'entrée (G0/0 de R2 et G0/1 de R3) ; seules les interfaces de sortie comptent.",
+      "d": "3 compte une unité par interface, comme un nombre de sauts ; OSPF tient compte de la bande passante, et le lien à 10 Mbit/s coûte 10.",
+      "b": "11 oublie le coût de l'interface de R3 sur le LAN de destination, qui entre dans la métrique de la route."
+    },
+    "reference": "RFC 2328 ; Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.1-variably-subnetted-local-route-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R2 n'a qu'une interface dans 192.168.50.0/24, configurée en /24, et n'exécute aucun protocole de routage. Pourquoi ce réseau est-il signalé comme « variably subnetted, 2 subnets, 2 masks » ?",
+      "exhibit": "R2# show ip route | begin Gateway\nGateway of last resort is not set\n\n      192.168.50.0/24 is variably subnetted, 2 subnets, 2 masks\nC        192.168.50.0/24 is directly connected, GigabitEthernet0/1\nL        192.168.50.1/32 is directly connected, GigabitEthernet0/1",
+      "options": [
+        {
+          "id": "a",
+          "text": "La route locale 192.168.50.1/32 compte comme un second sous-réseau, de masque /32."
+        },
+        {
+          "id": "b",
+          "text": "Le masque /24 de l'interface diffère du masque de classe du réseau 192.168.50.0."
+        },
+        {
+          "id": "c",
+          "text": "Deux interfaces de R2 ont une adresse dans 192.168.50.0/24, avec deux masques."
+        },
+        {
+          "id": "d",
+          "text": "R2 garde en mémoire un sous-réseau de 192.168.50.0/24 qu'il n'affiche pas ici."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "IOS regroupe les routes sous la ligne de leur réseau de classe, ici 192.168.50.0/24 (classe C). Depuis IOS 15, chaque adresse d'interface ajoute une route locale en /32 à côté de la route connectée. Le réseau contient donc deux entrées, 192.168.50.0/24 et 192.168.50.1/32, de deux longueurs différentes : IOS le signale « variably subnetted, 2 subnets, 2 masks », même si un seul préfixe est configuré. La ligne « is subnetted » sans « variably » n'apparaît que si toutes les routes du réseau ont le même masque.",
+    "distractorNotes": {
+      "b": "192.168.50.0 est un réseau de classe C, dont le masque de classe est justement /24.",
+      "d": "La ligne d'en-tête compte les entrées réellement présentes dans la table, et toutes sont affichées par « show ip route ».",
+      "c": "Deux interfaces dans le même réseau produiraient deux routes C ; l'exhibit ne montre qu'une interface, G0/1."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.1-recursive-route-definition-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Qu'appelle-t-on une route récursive dans la table de routage d'un routeur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Une route dont le next hop n'est pas sur un réseau connecté, à rechercher à son tour"
+        },
+        {
+          "id": "b",
+          "text": "Une route qui renvoie le paquet vers l'interface par laquelle il est arrivé"
+        },
+        {
+          "id": "c",
+          "text": "Une route statique configurée avec une interface de sortie, sans next hop"
+        },
+        {
+          "id": "d",
+          "text": "Une route apprise deux fois, par deux protocoles de routage différents"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "Une route récursive indique un next hop qui n'appartient à aucun réseau directement connecté, par exemple « S 10.70.0.0/16 [1/0] via 10.0.24.4 » alors que 10.0.24.4 est sur un réseau distant. Pour savoir par où sortir, le routeur cherche ce next hop dans sa table : il trouve une autre route (connectée, statique ou dynamique) qui donne l'interface et le voisin direct. Les routes iBGP en sont un cas courant. Si plus aucune route ne permet de joindre le next hop, la route récursive est retirée de la table.",
+    "distractorNotes": {
+      "c": "Une route avec seulement une interface de sortie est au contraire directement connectée : aucune recherche supplémentaire n'est nécessaire.",
+      "d": "Pour un même préfixe, une seule source est installée, celle de plus faible distance administrative ; cela n'a rien de récursif.",
+      "b": "Renvoyer un paquet par son interface d'arrivée n'a rien de récursif : ce mot désigne la recherche répétée du next hop dans la table."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.1-rip-age-reset-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. Les deux commandes ont été saisies à 10 secondes d'intervalle, sans changement dans le réseau. Pourquoi l'âge de la route a-t-il diminué ?",
+      "exhibit": "R1# show ip route | include 192.168.5.0\nR     192.168.5.0/24 [120/2] via 10.0.0.2, 00:00:24, GigabitEthernet0/0\nR1# show ip route | include 192.168.5.0\nR     192.168.5.0/24 [120/2] via 10.0.0.2, 00:00:06, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "La route a expiré, puis R1 l'a réapprise de 10.0.0.2."
+        },
+        {
+          "id": "b",
+          "text": "L'âge est un compte à rebours avant le retrait de la route."
+        },
+        {
+          "id": "c",
+          "text": "R1 a reçu entre-temps la mise à jour périodique de 10.0.0.2."
+        },
+        {
+          "id": "d",
+          "text": "R1 a recalculé sa table après un changement de métrique."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Pour une route RIP, le compteur affiché indique le temps écoulé depuis la dernière mise à jour reçue pour ce réseau. RIP envoie sa table toutes les 30 secondes : à chaque mise à jour de 10.0.0.2, le compteur repart de zéro, si bien qu'il reste normalement sous 30 secondes. Ici, la mise à jour est arrivée environ 4 secondes après la première commande. Si les mises à jour cessaient, la route serait déclarée invalide au bout de 180 secondes. OSPF, sans mises à jour périodiques, affiche au contraire des âges de plusieurs heures ou jours.",
+    "distractorNotes": {
+      "a": "Une route RIP n'expire qu'après 180 secondes sans mise à jour (timer invalid) ; elle n'avait que 24 secondes.",
+      "b": "Un compte à rebours aurait perdu 10 secondes, pour afficher 00:00:14 ; le passage à 00:00:06 montre une remise à zéro.",
+      "d": "La métrique est restée [120/2] et rien n'a changé dans le réseau ; seul l'âge a été remis à zéro."
+    },
+    "reference": "RFC 2453 ; Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.1-ospf-age-topology-change-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R2 (10.0.12.2) et R3 (10.0.13.3) sont les voisins OSPF de R1. Quel événement est cohérent avec les âges affichés ?",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is not set\n\n      10.0.0.0/8 is variably subnetted, 7 subnets, 3 masks\nC        10.0.12.0/30 is directly connected, GigabitEthernet0/0\nL        10.0.12.1/32 is directly connected, GigabitEthernet0/0\nC        10.0.13.0/30 is directly connected, GigabitEthernet0/1\nL        10.0.13.1/32 is directly connected, GigabitEthernet0/1\nO        10.20.0.0/16 [110/2] via 10.0.12.2, 3d05h, GigabitEthernet0/0\nO        10.30.0.0/16 [110/4] via 10.0.12.2, 00:01:12, GigabitEthernet0/0\nO        10.40.0.0/16 [110/2] via 10.0.13.3, 3d05h, GigabitEthernet0/1",
+      "options": [
+        {
+          "id": "a",
+          "text": "L'adjacence entre R1 et R2 est tombée puis remontée il y a environ 1 minute."
+        },
+        {
+          "id": "b",
+          "text": "R1 a redémarré son processus OSPF il y a environ 1 minute."
+        },
+        {
+          "id": "c",
+          "text": "Le chemin vers 10.30.0.0/16 a changé il y a environ 1 minute."
+        },
+        {
+          "id": "d",
+          "text": "R2 a rafraîchi ses annonces il y a 1 minute, comme toutes les 72 secondes."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "L'âge d'une route OSPF indique depuis combien de temps elle est installée sans changement : OSPF n'envoie pas de mises à jour périodiques qui le remettraient à zéro. Deux routes affichent 3d05h, une seule 00:01:12 : seule la route vers 10.30.0.0/16 a été réinstallée ou modifiée il y a environ 1 minute, par exemple parce qu'une panne l'a fait passer par R2. Un événement touchant l'adjacence avec R2 ou tout le processus OSPF aurait aussi remis à zéro l'âge de 10.20.0.0/16, voire de toutes les routes O.",
+    "distractorNotes": {
+      "a": "La perte de l'adjacence avec R2 aurait retiré puis réinstallé aussi 10.20.0.0/16, apprise via 10.0.12.2 ; or elle a 3d05h.",
+      "b": "Un redémarrage du processus OSPF aurait réinstallé toutes les routes O ; deux d'entre elles ont plus de 3 jours.",
+      "d": "OSPF ne rafraîchit pas ses routes à intervalle court (les LSA sont renouvelés toutes les 30 minutes) et un rafraîchissement sans changement ne remet pas l'âge à zéro."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route) ; RFC 2328"
+  },
+  {
+    "slug": "ccna-3.1-recursive-static-reresolved-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'adjacence OSPF entre R1 et R2 (10.0.12.2) tombe et 10.0.24.0/24 disparaît de la table ; les interfaces de R1 restent up/up. Que devient la route vers 10.70.0.0/16 ?",
+      "exhibit": "R1# show running-config | include ip route\nip route 10.0.0.0 255.0.0.0 10.0.13.3\nip route 10.70.0.0 255.255.0.0 10.0.24.4\n\nR1# show ip route | begin Gateway\nGateway of last resort is not set\n\n      10.0.0.0/8 is variably subnetted, 7 subnets, 5 masks\nS        10.0.0.0/8 [1/0] via 10.0.13.3\nC        10.0.12.0/30 is directly connected, GigabitEthernet0/0\nL        10.0.12.1/32 is directly connected, GigabitEthernet0/0\nC        10.0.13.0/30 is directly connected, GigabitEthernet0/1\nL        10.0.13.1/32 is directly connected, GigabitEthernet0/1\nO        10.0.24.0/24 [110/2] via 10.0.12.2, 00:20:11, GigabitEthernet0/0\nS        10.70.0.0/16 [1/0] via 10.0.24.4",
+      "options": [
+        {
+          "id": "a",
+          "text": "Elle disparaît, car son next hop n'est plus joignable par une route OSPF."
+        },
+        {
+          "id": "b",
+          "text": "Elle reste, et R1 continue d'envoyer ce trafic à 10.0.12.2 par G0/0."
+        },
+        {
+          "id": "c",
+          "text": "Elle disparaît, car une route statique ne se résout pas par une autre statique."
+        },
+        {
+          "id": "d",
+          "text": "Elle reste, car son next hop 10.0.24.4 se résout par 10.0.0.0/8, via 10.0.13.3."
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La route 10.70.0.0/16 est récursive : son next hop 10.0.24.4 n'est pas sur un réseau connecté. IOS la garde dans la table tant qu'une route permet de joindre ce next hop, quelle qu'en soit la source. Tant que 10.0.24.0/24 existe, c'est elle qui l'emporte (/24 plus long que /8) et le trafic part vers 10.0.12.2. Une fois la route OSPF retirée, 10.0.24.4 correspond encore à la statique 10.0.0.0/8 via 10.0.13.3, sur le réseau connecté de G0/1 : la route reste installée, et le trafic vers 10.70.0.0/16 passe désormais par R3.",
+    "distractorNotes": {
+      "a": "Le next hop peut être résolu par n'importe quelle route de la table ; la route 10.0.0.0/8 contient encore 10.0.24.4.",
+      "b": "La résolution suit la table : sans 10.0.24.0/24, la seule route qui contient 10.0.24.4 mène à 10.0.13.3 par G0/1.",
+      "c": "Une route statique peut être résolue par une autre route statique, comme par toute autre route de la table."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Configuration Guide — IP Static Routes"
+  },
+  {
+    "slug": "ccna-3.1-eigrp-metric-path-choice-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "R1 apprend 10.8.0.0/16 par EIGRP (métriques classiques, valeurs K par défaut, variance 1) auprès de deux voisins. Via R2 (10.0.12.2, G0/0) : bande passante minimale 100 000 kbit/s, délai cumulé 110 µs. Via R3 (10.0.13.3, G0/1) : bande passante minimale 1 000 000 kbit/s, délai cumulé 1 210 µs. Quelle entrée la table de routage de R1 contient-elle ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "D 10.8.0.0/16 [90/33536] via 10.0.13.3, GigabitEthernet0/1"
+        },
+        {
+          "id": "b",
+          "text": "D 10.8.0.0/16 [90/111] via 10.0.12.2, GigabitEthernet0/0"
+        },
+        {
+          "id": "c",
+          "text": "D 10.8.0.0/16 [170/28416] via 10.0.12.2, GigabitEthernet0/0"
+        },
+        {
+          "id": "d",
+          "text": "D 10.8.0.0/16 [90/28416] via 10.0.12.2, GigabitEthernet0/0"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "Avec les valeurs K par défaut, la métrique EIGRP classique vaut 256 × (10^7 / bande passante minimale en kbit/s + délai cumulé en dizaines de µs). Via R2 : 256 × (10^7 / 100 000 + 110 / 10) = 256 × (100 + 11) = 28 416. Via R3 : 256 × (10 + 121) = 33 536. La plus faible métrique l'emporte et, avec la variance 1, seul ce chemin est installé : R1 passe par R2 malgré sa bande passante plus faible, car le délai du chemin par R3 est beaucoup plus élevé. La route est interne, d'où la distance 90.",
+    "distractorNotes": {
+      "a": "33 536 est la métrique via R3 : la meilleure bande passante ne suffit pas, son délai cumulé de 1 210 µs la pénalise.",
+      "b": "111 est la somme avant multiplication ; la métrique EIGRP classique est multipliée par 256.",
+      "c": "Une route EIGRP interne a la distance 90 ; 170 est réservée aux routes externes, redistribuées dans EIGRP."
+    },
+    "reference": "RFC 7868 ; Cisco IOS IP Routing: EIGRP Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.1-ipv6-recursive-static-nd-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. R1 transmet un paquet destiné à 2001:DB8:9::10. Pour quelle adresse IPv6 R1 cherche-t-il l'adresse MAC de destination de la trame (cache de voisins ou Neighbor Solicitation) ?",
+      "exhibit": "R1# show ipv6 route\nIPv6 Routing Table - default - 8 entries\nCodes: C - Connected, L - Local, S - Static, U - Per-user Static route\n       [...]\n       O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2\n       [...]\nC   2001:DB8:0:12::/64 [0/0]\n     via GigabitEthernet0/0, directly connected\nL   2001:DB8:0:12::1/128 [0/0]\n     via GigabitEthernet0/0, receive\nC   2001:DB8:0:13::/64 [0/0]\n     via GigabitEthernet0/1, directly connected\nL   2001:DB8:0:13::1/128 [0/0]\n     via GigabitEthernet0/1, receive\nO   2001:DB8:0:23::/64 [110/2]\n     via FE80::2, GigabitEthernet0/0\nO   2001:DB8:0:34::/64 [110/2]\n     via FE80::3, GigabitEthernet0/1\nS   2001:DB8:9::/64 [1/0]\n     via 2001:DB8:0:23::3\nL   FF00::/8 [0/0]\n     via Null0, receive",
+      "options": [
+        {
+          "id": "a",
+          "text": "2001:DB8:0:23::3"
+        },
+        {
+          "id": "b",
+          "text": "FF02::2"
+        },
+        {
+          "id": "c",
+          "text": "2001:DB8:9::10"
+        },
+        {
+          "id": "d",
+          "text": "FE80::2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La route statique vers 2001:DB8:9::/64 indique seulement le next hop 2001:DB8:0:23::3, qui n'est sur aucun réseau connecté de R1 : la route est récursive. R1 cherche donc 2001:DB8:0:23::3 dans sa table et trouve la route OSPF 2001:DB8:0:23::/64, dont le next hop est FE80::2 sur GigabitEthernet0/0. Le paquet sort par G0/0, dans une trame adressée à la MAC de FE80::2, que R1 obtient par Neighbor Discovery (son cache de voisins ou un Neighbor Solicitation). Les adresses 2001:DB8:0:23::3 et 2001:DB8:9::10 restent des destinations de couche 3.",
+    "distractorNotes": {
+      "a": "2001:DB8:0:23::3 n'est pas sur un lien de R1 : R1 ne peut pas joindre directement ce routeur, il passe par le voisin FE80::2.",
+      "c": "La destination finale est sur un réseau distant ; seule l'adresse du voisin direct est résolue par Neighbor Discovery.",
+      "b": "FF02::2 est le groupe multicast de tous les routeurs, utilisé par exemple pour les RS ; une adresse multicast ne se résout pas par Neighbor Solicitation."
+    },
+    "reference": "RFC 4861 ; Cisco IOS IPv6 Command Reference (show ipv6 route)"
+  },
+  {
+    "slug": "ccna-3.1-entries-without-age-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quels deux types d'entrées de « show ip route » n'affichent jamais d'âge (compteur du type 00:12:40) ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les routes apprises par OSPF (code O)"
+        },
+        {
+          "id": "b",
+          "text": "Les routes connectées (code C)"
+        },
+        {
+          "id": "c",
+          "text": "Les routes apprises par RIP (code R)"
+        },
+        {
+          "id": "d",
+          "text": "Les routes statiques (code S)"
+        },
+        {
+          "id": "e",
+          "text": "Les routes apprises par EIGRP (code D)"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d"
+      ]
+    },
+    "explanation": "L'âge, affiché après le next hop, indique depuis combien de temps une route apprise par un protocole de routage est installée sans changement (ou, pour RIP, depuis la dernière mise à jour reçue). Les routes connectées (C), locales (L) et statiques (S) ne viennent d'aucun voisin : IOS n'affiche pas d'âge pour elles, par exemple « S 10.50.0.0/16 [1/0] via 10.0.12.2 » ou « C 10.0.12.0/30 is directly connected, GigabitEthernet0/0 ». Pour savoir depuis quand une route connectée existe, il faut regarder l'état de l'interface.",
+    "distractorNotes": {
+      "a": "Une route OSPF affiche son âge, par exemple « via 10.0.12.2, 00:14:52, GigabitEthernet0/0 ».",
+      "c": "Une route RIP affiche le temps écoulé depuis la dernière mise à jour, remis à zéro toutes les 30 secondes environ.",
+      "e": "Une route EIGRP affiche son âge comme une route OSPF, entre le next hop et l'interface de sortie."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.1-eigrp-metric-components-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Avec les valeurs K par défaut, quelles deux grandeurs entrent dans le calcul de la métrique EIGRP classique d'une route ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "La plus faible bande passante des interfaces de sortie du chemin"
+        },
+        {
+          "id": "b",
+          "text": "La charge (load) la plus élevée des interfaces du chemin"
+        },
+        {
+          "id": "c",
+          "text": "La somme des délais des interfaces de sortie du chemin"
+        },
+        {
+          "id": "d",
+          "text": "La fiabilité (reliability) la plus faible des interfaces du chemin"
+        },
+        {
+          "id": "e",
+          "text": "Le nombre de routeurs traversés jusqu'au réseau de destination"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "c"
+      ]
+    },
+    "explanation": "La métrique composite d'EIGRP peut combiner bande passante, charge, délai et fiabilité, selon les coefficients K. Par défaut, K1 = K3 = 1 et K2 = K4 = K5 = 0 : seules la bande passante minimale du chemin et la somme des délais comptent, selon 256 × (10^7 / bande passante minimale en kbit/s + délai cumulé en dizaines de µs). Deux liens Gigabit Ethernet donnent ainsi 256 × (10 + 2) = 3 072, la valeur que l'on voit souvent dans [90/3072]. Charge et fiabilité, trop variables, sont écartées pour éviter des changements de route permanents.",
+    "distractorNotes": {
+      "b": "La charge est mesurée (coefficient K2), mais K2 vaut 0 par défaut : elle n'entre pas dans le calcul.",
+      "d": "La fiabilité dépend de K5, nul par défaut : elle n'entre pas dans la métrique.",
+      "e": "EIGRP transporte un compteur de sauts (limite de 100 par défaut), mais il ne fait pas partie de la métrique."
+    },
+    "reference": "RFC 7868 ; Cisco IOS IP Routing: EIGRP Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.1-ipv6-table-analysis-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Quelles trois affirmations sur la table de routage IPv6 de R1 sont exactes ? (Choisissez-en trois.)",
+      "exhibit": "R1# show ipv6 route\nIPv6 Routing Table - default - 8 entries\nCodes: C - Connected, L - Local, S - Static, U - Per-user Static route\n       [...]\n       O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2\n       [...]\nS   ::/0 [1/0]\n     via 2001:DB8:0:13::3\nC   2001:DB8:0:12::/64 [0/0]\n     via GigabitEthernet0/0, directly connected\nL   2001:DB8:0:12::1/128 [0/0]\n     via GigabitEthernet0/0, receive\nC   2001:DB8:0:13::/64 [0/0]\n     via GigabitEthernet0/1, directly connected\nL   2001:DB8:0:13::1/128 [0/0]\n     via GigabitEthernet0/1, receive\nO   2001:DB8:A:1::/64 [110/2]\n     via FE80::2, GigabitEthernet0/0\nOI  2001:DB8:B::/48 [110/66]\n     via FE80::2, GigabitEthernet0/0\nL   FF00::/8 [0/0]\n     via Null0, receive",
+      "options": [
+        {
+          "id": "a",
+          "text": "La table compte trois routes locales créées pour des adresses d'interface de R1."
+        },
+        {
+          "id": "b",
+          "text": "R1 a deux interfaces actives dotées d'une adresse IPv6 globale."
+        },
+        {
+          "id": "c",
+          "text": "La métrique 66 de 2001:DB8:B::/48 est un nombre de sauts OSPFv3."
+        },
+        {
+          "id": "d",
+          "text": "Le préfixe 2001:DB8:B::/48 a été annoncé par un ABR, depuis une autre area."
+        },
+        {
+          "id": "e",
+          "text": "R1 joint 2001:DB8:A:1::/64 par l'interface GigabitEthernet0/1."
+        },
+        {
+          "id": "f",
+          "text": "La route par défaut, de distance 1, passe par un voisin du réseau de G0/1."
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "b",
+        "d",
+        "f"
+      ]
+    },
+    "explanation": "Les deux paires C/L (2001:DB8:0:12::/64 sur G0/0 et 2001:DB8:0:13::/64 sur G0/1) montrent deux interfaces actives avec une adresse globale. Le code OI désigne une route OSPF inter-area : le préfixe vient d'une autre area et a été annoncé dans celle de R1 par un ABR. La route statique ::/0 [1/0] a pour next hop 2001:DB8:0:13::3, qui appartient au réseau connecté de G0/1. Enfin, la table contient bien trois entrées L, mais FF00::/8 est la route locale du multicast, créée automatiquement : seules deux correspondent à des adresses d'interface.",
+    "distractorNotes": {
+      "a": "Il y a trois entrées L, mais FF00::/8 via Null0 couvre le multicast ; seules deux routes /128 correspondent à des adresses de R1.",
+      "c": "OSPFv3 utilise un coût dérivé de la bande passante, comme OSPFv2 ; 66 n'est pas un nombre de sauts.",
+      "e": "Les deux routes OSPF passent par FE80::2 sur GigabitEthernet0/0, pas par G0/1."
+    },
+    "reference": "RFC 5340 ; Cisco IOS IPv6 Command Reference (show ipv6 route)"
+  },
+  {
+    "slug": "ccna-3.1-variably-subnetted-analysis-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Reportez-vous à l'exhibit. Quelles deux affirmations sur la table de routage de R1 sont exactes ? (Choisissez-en deux.)",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is not set\n\n      172.16.0.0/16 is variably subnetted, 7 subnets, 4 masks\nC        172.16.0.0/30 is directly connected, GigabitEthernet0/0\nL        172.16.0.1/32 is directly connected, GigabitEthernet0/0\nD        172.16.8.0/22 [90/3072] via 172.16.0.2, 01:12:40, GigabitEthernet0/0\nD        172.16.12.0/24 [90/28416] via 172.16.0.2, 01:12:40, GigabitEthernet0/0\nC        172.16.20.0/24 is directly connected, GigabitEthernet0/1\nL        172.16.20.1/32 is directly connected, GigabitEthernet0/1\nD EX     172.16.40.0/24 [170/3328] via 172.16.0.2, 00:03:05, GigabitEthernet0/0",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les quatre masques du réseau 172.16.0.0/16 sont /30, /22, /24 et /16."
+        },
+        {
+          "id": "b",
+          "text": "Un paquet destiné à 172.16.11.200 est transmis par la route 172.16.12.0/24."
+        },
+        {
+          "id": "c",
+          "text": "La table contient sept routes dans 172.16.0.0/16, de quatre longueurs de préfixe."
+        },
+        {
+          "id": "d",
+          "text": "172.16.40.0/24 est une route EIGRP externe, inchangée depuis environ 3 minutes."
+        },
+        {
+          "id": "e",
+          "text": "La route vers 172.16.40.0/24 a une distance administrative plus faible que les routes D internes."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "c",
+        "d"
+      ]
+    },
+    "explanation": "La ligne d'en-tête compte toutes les entrées du réseau de classe 172.16.0.0/16, routes C et L comprises : sept routes, avec quatre masques différents, /30, /32, /22 et /24. D EX désigne une route EIGRP externe, c'est-à-dire redistribuée dans EIGRP sur un autre routeur ; sa distance par défaut est 170, contre 90 pour une route interne, et son âge de 00:03:05 indique qu'elle est installée sans changement depuis un peu plus de 3 minutes. Enfin, 172.16.8.0/22 couvre 172.16.8.0 à 172.16.11.255 : c'est elle qui transmet un paquet vers 172.16.11.200.",
+    "distractorNotes": {
+      "a": "/16 est le masque de classe de l'en-tête, pas celui d'une route ; le quatrième masque est le /32 des routes locales.",
+      "b": "172.16.12.0/24 ne couvre que 172.16.12.x ; 172.16.11.200 appartient à 172.16.8.0/22 (172.16.8.0 à 172.16.11.255).",
+      "e": "Une route EIGRP externe a une distance de 170, plus élevée (moins bonne) que les 90 d'une route interne."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route) ; Cisco, « What Is Administrative Distance? » (note technique)"
+  },
+  {
+    "slug": "ccna-3.1-variably-subnetted-meaning-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Dans « show ip route », un réseau de classe est précédé de la ligne « 10.0.0.0/8 is variably subnetted, 6 subnets, 3 masks ». Quelles deux affirmations sont exactes ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Les routes de 10.0.0.0/8 n'ont pas toutes la même longueur de préfixe."
+        },
+        {
+          "id": "b",
+          "text": "Le routeur ne peut pas transférer de trafic vers ces sous-réseaux sans résumé."
+        },
+        {
+          "id": "c",
+          "text": "Les sous-réseaux de 10.0.0.0/8 sont forcément discontinus dans le réseau."
+        },
+        {
+          "id": "d",
+          "text": "Chaque entrée qui suit affiche sa propre longueur de préfixe."
+        },
+        {
+          "id": "e",
+          "text": "Chacun des six sous-réseaux a un masque différent des autres."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "d"
+      ]
+    },
+    "explanation": "IOS regroupe les routes sous la ligne de leur réseau de classe (ici 10.0.0.0/8, classe A). « variably subnetted » signifie que ces routes utilisent plusieurs longueurs de masque (VLSM), ici six routes et trois masques. Comme le masque varie, chaque entrée affiche sa longueur, par exemple 10.0.12.0/30 ou 10.0.12.1/32. Si toutes les routes avaient le même masque, IOS écrirait « 10.0.0.0/24 is subnetted, 6 subnets » et omettrait la longueur dans les entrées. Cette présentation n'a aucune incidence sur le transfert.",
+    "distractorNotes": {
+      "b": "L'en-tête n'est qu'une présentation de la table ; chaque route sert au transfert telle quelle, sans résumé.",
+      "c": "Le VLSM n'implique rien sur la contiguïté des sous-réseaux : la ligne ne dit rien de la topologie.",
+      "e": "Six sous-réseaux pour trois masques : plusieurs routes partagent forcément la même longueur de préfixe."
+    },
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.1-rip-metric-limits-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Répondez sur la métrique de RIP.",
+      "fields": [
+        {
+          "id": "max",
+          "label": "Plus grande métrique d'une route RIP valide (nombre entier)"
+        },
+        {
+          "id": "unreach",
+          "label": "Métrique qui signifie que le réseau est inaccessible (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "max": {
+          "accepted": [
+            "15"
+          ],
+          "normalize": "int"
+        },
+        "unreach": {
+          "accepted": [
+            "16"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "RIP mesure la distance en nombre de sauts : un réseau directement relié au voisin est annoncé avec la métrique 1, et chaque routeur traversé ajoute 1. La plus grande métrique valide est 15 ; la valeur 16 représente l'infini, c'est-à-dire un réseau inaccessible. C'est elle qu'un routeur annonce pour retirer une route (route poisoning). Cette limite empêche le comptage à l'infini de durer indéfiniment, mais restreint RIP à des réseaux d'au plus 15 sauts de diamètre.",
+    "distractorNotes": {},
+    "reference": "RFC 2453"
+  },
+  {
+    "slug": "ccna-3.1-eigrp-metric-calc-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. R1 apprend 10.30.0.0/24 par EIGRP (métriques classiques, valeurs K par défaut). Calculez la métrique de cette route sur R1.",
+      "exhibit": "R1 G0/0 ---- R2 G0/1 ---- R3 G0/2 ---- LAN 10.30.0.0/24\n\nInterfaces de sortie, de R1 vers le LAN :\n  R1 G0/0 : BW 1 000 000 kbit/s, DLY 10 usec\n  R2 G0/1 : BW   100 000 kbit/s, DLY 100 usec\n  R3 G0/2 : BW 1 000 000 kbit/s, DLY 10 usec",
+      "fields": [
+        {
+          "id": "bw",
+          "label": "Bande passante minimale retenue pour le calcul, en kbit/s (nombre entier)"
+        },
+        {
+          "id": "metric",
+          "label": "Métrique EIGRP affichée par R1 entre crochets (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "bw": {
+          "accepted": [
+            "100000",
+            "100 000"
+          ],
+          "normalize": "int"
+        },
+        "metric": {
+          "accepted": [
+            "28672",
+            "28 672"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Avec les valeurs K par défaut, la métrique EIGRP classique vaut 256 × (10^7 / BWmin + somme des délais / 10), la bande passante en kbit/s et le délai en µs, en ne comptant que les interfaces de sortie de R1 vers le LAN. La bande passante minimale est celle du lien R2–R3 : 100 000 kbit/s, d'où 10^7 / 100 000 = 100. Les délais s'additionnent : 10 + 100 + 10 = 120 µs, soit 12 dizaines de µs. Métrique : 256 × (100 + 12) = 28 672 ; R1 affiche [90/28672].",
+    "distractorNotes": {},
+    "reference": "RFC 7868 ; Cisco IOS IP Routing: EIGRP Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.1-variably-subnetted-counts-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Les deux nombres de la ligne d'en-tête du réseau 10.0.0.0/8 ont été masqués par « ?? ». Retrouvez-les.",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is 10.0.0.1 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 10.0.0.1\n      10.0.0.0/8 is variably subnetted, ?? subnets, ?? masks\nC        10.0.0.0/29 is directly connected, GigabitEthernet0/0\nL        10.0.0.4/32 is directly connected, GigabitEthernet0/0\nO        10.1.0.0/16 [110/2] via 10.0.0.2, 00:16:20, GigabitEthernet0/0\nO        10.1.4.0/22 [110/3] via 10.0.0.2, 00:16:20, GigabitEthernet0/0\nC        10.2.2.0/24 is directly connected, GigabitEthernet0/1\nL        10.2.2.1/32 is directly connected, GigabitEthernet0/1\nS        10.9.0.0/16 [1/0] via 10.0.0.3\n      192.168.7.0/24 is variably subnetted, 2 subnets, 2 masks\nC        192.168.7.0/25 is directly connected, GigabitEthernet0/2\nL        192.168.7.1/32 is directly connected, GigabitEthernet0/2",
+      "fields": [
+        {
+          "id": "subnets",
+          "label": "Nombre de sous-réseaux (subnets) annoncé (nombre entier)"
+        },
+        {
+          "id": "masks",
+          "label": "Nombre de masques (masks) annoncé (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "subnets": {
+          "accepted": [
+            "7"
+          ],
+          "normalize": "int"
+        },
+        "masks": {
+          "accepted": [
+            "5"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La ligne d'en-tête compte toutes les entrées rangées sous le réseau de classe 10.0.0.0/8, routes C et L comprises : 10.0.0.0/29, 10.0.0.4/32, 10.1.0.0/16, 10.1.4.0/22, 10.2.2.0/24, 10.2.2.1/32 et 10.9.0.0/16, soit 7 sous-réseaux. Les longueurs différentes sont /29, /32, /16, /22 et /24 : 5 masques. La route par défaut 0.0.0.0/0 n'appartient pas à 10.0.0.0/8 et n'est pas comptée, pas plus que les entrées de 192.168.7.0/24, qui ont leur propre en-tête.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  },
+  {
+    "slug": "ccna-3.1-ipv6-table-local-count-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Chaque interface de R1 n'a qu'une adresse IPv6 globale. Répondez par des nombres entiers.",
+      "exhibit": "R1# show ipv6 route\nIPv6 Routing Table - default - 9 entries\nCodes: C - Connected, L - Local, S - Static, U - Per-user Static route\n       [...]\n       O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2\n       [...]\nS   ::/0 [1/0]\n     via 2001:DB8:0:1::1\nC   2001:DB8:0:1::/64 [0/0]\n     via GigabitEthernet0/0, directly connected\nL   2001:DB8:0:1::2/128 [0/0]\n     via GigabitEthernet0/0, receive\nC   2001:DB8:0:2::/64 [0/0]\n     via GigabitEthernet0/1, directly connected\nL   2001:DB8:0:2::1/128 [0/0]\n     via GigabitEthernet0/1, receive\nO   2001:DB8:0:3::/64 [110/2]\n     via FE80::2, GigabitEthernet0/1\nC   2001:DB8:0:4::/64 [0/0]\n     via GigabitEthernet0/2, directly connected\nL   2001:DB8:0:4::1/128 [0/0]\n     via GigabitEthernet0/2, receive\nL   FF00::/8 [0/0]\n     via Null0, receive",
+      "fields": [
+        {
+          "id": "l",
+          "label": "Nombre d'entrées de code L dans la table (nombre entier)"
+        },
+        {
+          "id": "ifaces",
+          "label": "Nombre d'interfaces actives de R1 dotées d'une adresse IPv6 globale (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "l": {
+          "accepted": [
+            "4"
+          ],
+          "normalize": "int"
+        },
+        "ifaces": {
+          "accepted": [
+            "3"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "La table compte quatre entrées L : trois routes /128, une par adresse globale configurée sur une interface active (G0/0, G0/1 et G0/2), et l'entrée FF00::/8 via Null0, qu'IOS crée d'office pour le multicast et qui ne correspond à aucune interface. Chacune des trois interfaces a aussi sa route connectée C vers son /64. Les routes S et O viennent d'ailleurs : la statique ::/0 et la route OSPF apprise de FE80::2 ne révèlent aucune adresse de R1.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IPv6 Command Reference (show ipv6 route)"
+  },
+  {
+    "slug": "ccna-3.1-modified-ad-entries-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Reportez-vous à l'exhibit. Comptez les entrées dont la distance administrative n'est pas la valeur par défaut de leur source, puis donnez la distance administrative par défaut d'une route RIP.",
+      "exhibit": "R1# show ip route | begin Gateway\nGateway of last resort is not set\n\n      10.0.0.0/8 is variably subnetted, 10 subnets, 3 masks\nC        10.0.12.0/30 is directly connected, GigabitEthernet0/0\nL        10.0.12.1/32 is directly connected, GigabitEthernet0/0\nC        10.0.13.0/30 is directly connected, GigabitEthernet0/1\nL        10.0.13.1/32 is directly connected, GigabitEthernet0/1\nD        10.1.0.0/16 [90/3072] via 10.0.12.2, 00:31:02, GigabitEthernet0/0\nS        10.2.0.0/16 [5/0] via 10.0.13.3\nR        10.3.0.0/16 [100/1] via 10.0.13.3, 00:00:21, GigabitEthernet0/1\nO E2     10.4.0.0/16 [110/20] via 10.0.12.2, 00:30:55, GigabitEthernet0/0\ni L2     10.5.0.0/16 [115/20] via 10.0.13.3, 00:29:40, GigabitEthernet0/1\nD EX     10.6.0.0/16 [170/3328] via 10.0.12.2, 00:31:02, GigabitEthernet0/0",
+      "fields": [
+        {
+          "id": "count",
+          "label": "Nombre d'entrées dont la distance a été modifiée (nombre entier)"
+        },
+        {
+          "id": "rip",
+          "label": "Distance administrative par défaut de RIP (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "count": {
+          "accepted": [
+            "2"
+          ],
+          "normalize": "int"
+        },
+        "rip": {
+          "accepted": [
+            "120"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Distances par défaut : statique 1, EIGRP interne 90, OSPF 110, IS-IS 115, RIP 120, EIGRP externe 170. Les entrées D [90/3072], O E2 [110/20], i L2 [115/20] et D EX [170/3328] ont la valeur de leur source. En revanche, la route statique affiche 5 au lieu de 1 (distance ajoutée à la fin de la commande « ip route ») et la route RIP affiche 100 au lieu de 120 (commande « distance 100 » sous « router rip »). Cela fait deux entrées modifiées.",
+    "distractorNotes": {},
+    "reference": "Cisco, « What Is Administrative Distance? » (note technique)"
+  },
+  {
+    "slug": "ccna-3.1-show-ipv6-route-filters-cli-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "cli",
+      "stem": "Depuis le mode d'exécution privilégié de R1, affichez d'abord uniquement les routes OSPF de la table de routage IPv6, puis uniquement ses routes statiques IPv6.",
+      "prompt": "R1#",
+      "lines": 2
+    },
+    "key": {
+      "type": "cli",
+      "ordered": true,
+      "commands": [
+        [
+          "show ipv6 route ospf"
+        ],
+        [
+          "show ipv6 route static"
+        ]
+      ]
+    },
+    "explanation": "« show ipv6 route » accepte, comme « show ip route », un mot-clé de source qui filtre l'affichage : « ospf » pour les routes OSPFv3 (codes O, OI, OE1, OE2…), « static » pour les routes statiques (code S), « connected » pour les réseaux connectés. L'en-tête et la légende des codes restent affichés, suivis des seules entrées demandées. C'est plus fiable qu'un filtre « | include », qui ne garderait que la première des deux lignes de chaque entrée IPv6.",
+    "distractorNotes": {},
+    "reference": "Cisco IOS IPv6 Command Reference (show ipv6 route)"
+  },
+  {
+    "slug": "ccna-3.1-ad-defaults-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Classez ces sources de routes selon leur distance administrative par défaut sur un routeur Cisco, de la plus faible (la plus crédible) à la plus élevée.",
+      "items": [
+        {
+          "id": "ospf",
+          "text": "OSPF"
+        },
+        {
+          "id": "static",
+          "text": "Route statique"
+        },
+        {
+          "id": "eigrpext",
+          "text": "EIGRP externe"
+        },
+        {
+          "id": "ebgp",
+          "text": "eBGP"
+        },
+        {
+          "id": "conn",
+          "text": "Réseau directement connecté"
+        },
+        {
+          "id": "eigrp",
+          "text": "EIGRP interne"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "conn",
+        "static",
+        "ebgp",
+        "eigrp",
+        "ospf",
+        "eigrpext"
+      ]
+    },
+    "explanation": "Les distances par défaut sont : réseau connecté 0, route statique 1, eBGP 20, EIGRP interne 90, OSPF 110 et EIGRP externe 170 (IS-IS 115, RIP 120 et iBGP 200 viendraient s'intercaler, et 255 signifie « jamais installée »). Quand plusieurs sources fournissent exactement le même préfixe, le routeur installe celle de plus faible distance. Une route EIGRP externe, redistribuée depuis une autre source, est jugée moins fiable qu'une route interne ; elle passe même derrière OSPF.",
+    "distractorNotes": {},
+    "reference": "Cisco, « What Is Administrative Distance? » (note technique)"
+  },
+  {
+    "slug": "ccna-3.1-ospf-path-cost-order-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Avec la bande passante de référence OSPF par défaut (100 Mbit/s) et sans « ip ospf cost », classez ces chemins selon leur coût OSPF total (somme des coûts des interfaces de sortie), du plus faible au plus élevé.",
+      "items": [
+        {
+          "id": "t1",
+          "text": "Une interface série à 1 544 kbit/s"
+        },
+        {
+          "id": "gig3",
+          "text": "Deux interfaces à 1 Gbit/s et une à 100 Mbit/s"
+        },
+        {
+          "id": "ten",
+          "text": "Une interface à 10 Mbit/s"
+        },
+        {
+          "id": "tengig5",
+          "text": "Cinq interfaces à 10 Gbit/s"
+        },
+        {
+          "id": "mix",
+          "text": "Une interface à 10 Mbit/s et une à 1 Gbit/s"
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "gig3",
+        "tengig5",
+        "ten",
+        "mix",
+        "t1"
+      ]
+    },
+    "explanation": "Coût d'une interface = 100 000 kbit/s / bande passante, arrondi à l'entier inférieur, avec un minimum de 1. Avec la référence par défaut, 10 Gbit/s, 1 Gbit/s et 100 Mbit/s coûtent tous 1 ; 10 Mbit/s coûte 10 et 1 544 kbit/s coûte 64. D'où : deux 1 Gbit/s et une 100 Mbit/s = 3 ; cinq 10 Gbit/s = 5 ; une 10 Mbit/s = 10 ; une 10 Mbit/s et une 1 Gbit/s = 11 ; la série = 64. Le chemin à 10 Gbit/s paraît le meilleur mais coûte plus que le premier : c'est pourquoi on relève la bande passante de référence (« auto-cost reference-bandwidth ») dans les réseaux rapides.",
+    "distractorNotes": {},
+    "reference": "RFC 2328 ; Cisco IOS IP Routing: OSPF Configuration Guide"
+  },
+  {
+    "slug": "ccna-3.1-ipv6-route-codes-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque code de « show ipv6 route » à l'origine de l'entrée.",
+      "left": [
+        {
+          "id": "c",
+          "text": "C"
+        },
+        {
+          "id": "l",
+          "text": "L"
+        },
+        {
+          "id": "s",
+          "text": "S"
+        },
+        {
+          "id": "oi",
+          "text": "OI"
+        },
+        {
+          "id": "nd",
+          "text": "ND"
+        }
+      ],
+      "right": [
+        {
+          "id": "r_c",
+          "text": "Préfixe d'un réseau directement connecté"
+        },
+        {
+          "id": "r_l",
+          "text": "Adresse du routeur en /128, ou FF00::/8 via Null0"
+        },
+        {
+          "id": "r_s",
+          "text": "Route configurée par « ipv6 route »"
+        },
+        {
+          "id": "r_oi",
+          "text": "Préfixe OSPFv3 d'une autre area, annoncé par un ABR"
+        },
+        {
+          "id": "r_nd",
+          "text": "Route par défaut apprise des annonces RA d'un routeur"
+        },
+        {
+          "id": "r_oe2",
+          "text": "Route OSPFv3 externe de type 2, redistribuée"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "c": "r_c",
+        "l": "r_l",
+        "s": "r_s",
+        "oi": "r_oi",
+        "nd": "r_nd"
+      }
+    },
+    "explanation": "C désigne le préfixe d'une interface active, L l'adresse du routeur lui-même (route hôte /128), ainsi que l'entrée FF00::/8 qu'IOS crée pour le multicast. S marque une route statique (« ipv6 route »). Pour OSPFv3, O désigne une route intra-area, OI une route inter-area annoncée par un ABR, OE1 et OE2 des routes externes. ND (ND Default) est une route par défaut ::/0 apprise par Neighbor Discovery, à partir des Router Advertisement d'un routeur voisin, quand l'interface est configurée en client, par exemple avec « ipv6 address autoconfig default ».",
+    "distractorNotes": {
+      "r_oe2": "Une route OSPFv3 externe de type 2 porte le code OE2 ; aucun des codes proposés ne la désigne."
+    },
+    "reference": "RFC 4861 ; RFC 5340 ; Cisco IOS IPv6 Command Reference (show ipv6 route)"
+  },
+  {
+    "slug": "ccna-3.1-metric-by-protocol-001",
+    "certification": "ccna",
+    "domain": "3.0",
+    "subtopic": "3.1",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque source de routes à la métrique qu'elle affiche dans « show ip route ».",
+      "left": [
+        {
+          "id": "rip",
+          "text": "RIP"
+        },
+        {
+          "id": "ospf",
+          "text": "OSPF"
+        },
+        {
+          "id": "eigrp",
+          "text": "EIGRP"
+        },
+        {
+          "id": "static",
+          "text": "Route statique vers un next hop"
+        }
+      ],
+      "right": [
+        {
+          "id": "hops",
+          "text": "Nombre de sauts jusqu'au réseau, au plus 15"
+        },
+        {
+          "id": "cost",
+          "text": "Somme des coûts des interfaces de sortie, dérivés de la bande passante"
+        },
+        {
+          "id": "composite",
+          "text": "Valeur composite tirée de la bande passante minimale et du délai cumulé"
+        },
+        {
+          "id": "zero",
+          "text": "Valeur 0, affichée après la distance 1 : [1/0]"
+        },
+        {
+          "id": "as",
+          "text": "Nombre de systèmes autonomes traversés jusqu'au réseau"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "rip": "hops",
+        "ospf": "cost",
+        "eigrp": "composite",
+        "static": "zero"
+      }
+    },
+    "explanation": "Chaque protocole a sa propre métrique, ce qui explique qu'on ne puisse pas comparer les métriques de deux sources : c'est la distance administrative qui les départage. RIP compte les sauts (16 = inaccessible) ; OSPF additionne les coûts des interfaces de sortie, égaux par défaut à 100 Mbit/s divisés par leur bande passante ; EIGRP calcule une métrique composite à partir de la bande passante minimale et du délai cumulé. Une route statique n'a pas de métrique calculée : IOS affiche 0, comme dans [1/0].",
+    "distractorNotes": {
+      "as": "Le nombre de systèmes autonomes traversés est la longueur de l'attribut AS_PATH de BGP ; ce n'est la métrique d'aucune des sources proposées."
+    },
+    "reference": "RFC 2453 ; RFC 2328 ; RFC 7868 ; Cisco IOS IP Routing: Protocol-Independent Command Reference (show ip route)"
+  }
+]
