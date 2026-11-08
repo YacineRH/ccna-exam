@@ -1089,7 +1089,7 @@
         "auth": "dot1x"
       }
     },
-    "explanation": "DHCP snooping rejette les messages de serveur DHCP sur les ports untrusted. DAI rejette les ARP dont le couple IP/MAC n'est pas dans la table de liaisons. Port security limite le nombre d'adresses MAC apprises par port. 802.1X n'ouvre le port qu'après authentification du poste auprès d'un serveur RADIUS ; d'ici là, seul le trafic EAPoL passe.",
+    "explanation": "DHCP snooping rejette les messages de serveur DHCP sur les ports untrusted. DAI rejette les ARP dont le couple IP/MAC n'est pas dans la table de liaisons. Port security limite le nombre d'adresses MAC apprises par port. 802.1X n'ouvre le port qu'après authentification du poste auprès d'un serveur RADIUS ; d'ici là, seul le trafic EAPoL passe (ainsi que CDP et STP).",
     "distractorNotes": {
       "rootg": "Root Guard empêche un port de devenir root port quand il reçoit une BPDU supérieure ; il protège la topologie STP, pas contre ces menaces."
     },

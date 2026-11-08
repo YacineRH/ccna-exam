@@ -1232,37 +1232,6 @@
     "reference": "Cisco IOS XE Security Configuration Guide — Configuring Authentication"
   },
   {
-    "slug": "ccna-5.8-tacacs-privilege-level-001",
-    "certification": "ccna",
-    "domain": "5.0",
-    "subtopic": "5.8",
-    "difficulty": "medium",
-    "source": "ai",
-    "body": {
-      "type": "fill_blank",
-      "stem": "Sur R1, « aaa authorization exec default group tacacs+ local » est configurée, et le serveur TACACS+ renvoie un niveau de privilège pour chaque administrateur. Quel niveau doit-il renvoyer pour qu'un administrateur arrive directement à l'invite R1#, avec accès à toutes les commandes ?",
-      "fields": [
-        {
-          "id": "priv",
-          "label": "Niveau de privilège (nombre entier)"
-        }
-      ]
-    },
-    "key": {
-      "type": "fill_blank",
-      "fields": {
-        "priv": {
-          "accepted": [
-            "15"
-          ],
-          "normalize": "int"
-        }
-      }
-    },
-    "explanation": "IOS compte 16 niveaux de privilège, de 0 à 15. Le niveau 1 correspond au mode EXEC utilisateur (invite R1>) et le niveau 15 au mode EXEC privilégié complet (invite R1#), qui donne accès à toutes les commandes, dont « configure terminal ». Avec l'autorisation EXEC, c'est le serveur qui fixe ce niveau (attribut priv-lvl=15 en TACACS+) : l'administrateur n'a alors pas besoin de taper « enable ».",
-    "reference": "Cisco IOS XE Security Configuration Guide — Configuring Authorization"
-  },
-  {
     "slug": "ccna-5.8-radius-login-list-cli-001",
     "certification": "ccna",
     "domain": "5.0",

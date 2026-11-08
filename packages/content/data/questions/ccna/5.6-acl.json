@@ -479,7 +479,7 @@
         },
         {
           "id": "d",
-          "text": "Appliquée en entrée sur G0/1, l'ACL examine les réponses du serveur, qu'aucune entrée n'autorise."
+          "text": "L'ACL en entrée sur G0/1 bloque les réponses du serveur."
         }
       ],
       "exhibit": "R1# show running-config\n<...>\ninterface GigabitEthernet0/0\n description LAN postes 192.168.1.0/24\n ip address 192.168.1.1 255.255.255.0\n!\ninterface GigabitEthernet0/1\n description LAN serveurs 10.2.2.0/24\n ip address 10.2.2.1 255.255.255.0\n ip access-group 101 in\n!\naccess-list 101 permit tcp 192.168.1.0 0.0.0.255 host 10.2.2.10 eq www"
