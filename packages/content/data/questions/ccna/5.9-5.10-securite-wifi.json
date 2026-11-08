@@ -1,0 +1,1161 @@
+[
+  {
+    "slug": "ccna-5.9-wep-rc4-cipher-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur quel algorithme de chiffrement repose WEP, le premier protocole de sécurité des réseaux 802.11 ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "AES en mode CCM"
+        },
+        {
+          "id": "b",
+          "text": "RC4"
+        },
+        {
+          "id": "c",
+          "text": "3DES"
+        },
+        {
+          "id": "d",
+          "text": "AES en mode GCM"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "WEP (Wired Equivalent Privacy) chiffre les trames avec l'algorithme de flux RC4, en concaténant une clé statique de 40 ou 104 bits à un vecteur d'initialisation (IV) de 24 bits seulement. La réutilisation rapide des IV et la faiblesse de l'ordonnancement de clé de RC4 permettent de retrouver la clé en quelques minutes : WEP est obsolète et ne doit plus être utilisé.",
+    "distractorNotes": {
+      "a": "AES-CCM (CCMP) est le chiffrement de WPA2, introduit par 802.11i pour remplacer WEP.",
+      "c": "3DES n'a jamais été utilisé pour chiffrer les trames 802.11.",
+      "d": "AES-GCM (GCMP) est utilisé par WPA3, notamment GCMP-256 en mode 192 bits."
+    },
+    "reference": "IEEE 802.11-2020"
+  },
+  {
+    "slug": "ccna-5.9-wpa-tkip-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quel protocole de chiffrement WPA (première version) a-t-il introduit pour corriger WEP tout en restant compatible avec le matériel existant ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "CCMP"
+        },
+        {
+          "id": "b",
+          "text": "GCMP"
+        },
+        {
+          "id": "c",
+          "text": "TKIP"
+        },
+        {
+          "id": "d",
+          "text": "SAE"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "WPA, publié par la Wi-Fi Alliance comme solution transitoire avant 802.11i, utilise TKIP (Temporal Key Integrity Protocol). TKIP conserve RC4, ce qui permettait une simple mise à jour logicielle des cartes WEP, mais ajoute une clé différente par paquet, un compteur de séquence contre le rejeu et un contrôle d'intégrité (Michael). TKIP est aujourd'hui déprécié.",
+    "distractorNotes": {
+      "a": "CCMP, fondé sur AES, est le chiffrement obligatoire de WPA2 et demandait du matériel plus récent.",
+      "b": "GCMP est un chiffrement AES utilisé par WPA3, bien plus tardif.",
+      "d": "SAE est une méthode d'authentification de WPA3-Personal, pas un protocole de chiffrement."
+    },
+    "reference": "IEEE 802.11-2020"
+  },
+  {
+    "slug": "ccna-5.9-wpa2-ccmp-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un WLAN est configuré en WPA2 avec le chiffrement recommandé. Quel protocole protège alors la confidentialité et l'intégrité des trames de données ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "CCMP, fondé sur AES en mode compteur avec CBC-MAC"
+        },
+        {
+          "id": "b",
+          "text": "TKIP, fondé sur RC4 avec une clé par paquet"
+        },
+        {
+          "id": "c",
+          "text": "GCMP-256, fondé sur AES en mode Galois/Counter"
+        },
+        {
+          "id": "d",
+          "text": "WEP, fondé sur RC4 avec un IV de 24 bits"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "WPA2 met en œuvre la norme 802.11i (intégrée à 802.11) et impose CCMP : AES en mode CCM, c'est-à-dire chiffrement en mode compteur (CTR) et intégrité par CBC-MAC avec une clé de 128 bits. Dans la GUI d'un WLC, c'est l'option « AES » de la politique WPA2. TKIP reste possible pour la compatibilité, mais il est déprécié.",
+    "distractorNotes": {
+      "b": "TKIP est le chiffrement de WPA ; WPA2 peut encore l'accepter pour des clients anciens, mais ce n'est pas le chiffrement recommandé.",
+      "c": "GCMP-256 est exigé par WPA3-Enterprise en mode 192 bits, pas par WPA2.",
+      "d": "WEP est le protocole obsolète que WPA puis WPA2 ont remplacé."
+    },
+    "reference": "IEEE 802.11-2020"
+  },
+  {
+    "slug": "ccna-5.9-owe-enhanced-open-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un café veut offrir un Wi-Fi sans mot de passe ni portail, mais dont le trafic de chaque client soit chiffré par rapport aux autres clients. Quelle fonction faut-il activer ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "WPA3-Personal avec SAE"
+        },
+        {
+          "id": "b",
+          "text": "WPA2-Personal avec une PSK affichée au comptoir"
+        },
+        {
+          "id": "c",
+          "text": "Wi-Fi Enhanced Open (OWE)"
+        },
+        {
+          "id": "d",
+          "text": "Un réseau ouvert avec authentification web"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Wi-Fi Enhanced Open repose sur OWE (Opportunistic Wireless Encryption, RFC 8110) : lors de l'association, le client et l'AP font un échange Diffie-Hellman qui fournit une clé unique par client, sans aucun secret à saisir. Le trafic est donc chiffré et un voisin ne peut pas le déchiffrer, même s'il n'y a pas d'authentification de l'AP. C'est le remplaçant des réseaux ouverts dans la famille WPA3.",
+    "distractorNotes": {
+      "a": "SAE exige un mot de passe connu des clients, ce que le café veut éviter.",
+      "b": "Une PSK est un mot de passe ; de plus, quiconque la connaît et capture le handshake peut déchiffrer le trafic d'un autre client.",
+      "d": "Un portail web ajoute une authentification, mais le lien radio reste ouvert et non chiffré."
+    },
+    "reference": "RFC 8110 ; Wi-Fi Alliance, Wi-Fi Enhanced Open"
+  },
+  {
+    "slug": "ccna-5.9-eap-tls-certificates-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une entreprise déploie WPA2-Enterprise. Quelle méthode EAP impose un certificat à la fois sur le serveur d'authentification et sur chaque client ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "PEAP"
+        },
+        {
+          "id": "b",
+          "text": "EAP-FAST"
+        },
+        {
+          "id": "c",
+          "text": "EAP-TLS"
+        },
+        {
+          "id": "d",
+          "text": "EAP-MD5"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "EAP-TLS (RFC 5216) effectue une authentification TLS mutuelle : le serveur RADIUS présente son certificat et chaque client présente le sien, émis par une PKI. Aucun mot de passe n'est échangé, ce qui en fait l'une des méthodes les plus sûres, au prix de la gestion d'un certificat par poste ou par utilisateur.",
+    "distractorNotes": {
+      "a": "PEAP n'exige un certificat que côté serveur ; le client s'authentifie ensuite, dans le tunnel TLS, généralement par identifiant et mot de passe (MSCHAPv2).",
+      "b": "EAP-FAST, conçu par Cisco, construit son tunnel à partir d'une PAC ; les certificats y sont facultatifs.",
+      "d": "EAP-MD5 n'utilise aucun certificat et ne fournit pas de clés de chiffrement pour le Wi-Fi."
+    },
+    "reference": "RFC 5216 (EAP-TLS)"
+  },
+  {
+    "slug": "ccna-5.9-peap-server-cert-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Avec PEAP, comment le client sans fil s'authentifie-t-il en général auprès du serveur RADIUS ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Par son propre certificat, présenté pendant l'établissement du tunnel TLS"
+        },
+        {
+          "id": "b",
+          "text": "Par une PAC (Protected Access Credential) fournie au préalable"
+        },
+        {
+          "id": "c",
+          "text": "Par la PSK du WLAN, vérifiée pendant le 4-way handshake"
+        },
+        {
+          "id": "d",
+          "text": "Par identifiant et mot de passe, dans un tunnel TLS établi par le serveur"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "PEAP (Protected EAP) se déroule en deux phases : le serveur présente son certificat, le client le vérifie et un tunnel TLS est établi ; ensuite, dans ce tunnel, le client s'authentifie par une méthode interne, le plus souvent MSCHAPv2 avec l'identifiant et le mot de passe de l'annuaire. Seul le serveur a donc besoin d'un certificat, ce qui simplifie le déploiement par rapport à EAP-TLS.",
+    "distractorNotes": {
+      "a": "Un certificat client est l'exigence d'EAP-TLS ; PEAP n'en demande pas.",
+      "b": "La PAC est propre à EAP-FAST.",
+      "c": "La PSK appartient au mode Personnel ; en mode Entreprise, l'authentification passe par 802.1X et RADIUS."
+    },
+    "reference": "Cisco, PEAP under Unified Wireless Networks with ISE — Configuration Example"
+  },
+  {
+    "slug": "ccna-5.9-eap-fast-pac-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Quelle méthode EAP, développée par Cisco, établit son tunnel sécurisé grâce à une PAC (Protected Access Credential) plutôt qu'à des certificats obligatoires ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "EAP-FAST"
+        },
+        {
+          "id": "b",
+          "text": "EAP-TLS"
+        },
+        {
+          "id": "c",
+          "text": "PEAP"
+        },
+        {
+          "id": "d",
+          "text": "EAP-TTLS"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "EAP-FAST (Flexible Authentication via Secure Tunneling, RFC 4851) a été conçu par Cisco pour offrir un tunnel protégé sans PKI. Le serveur fournit au client une PAC, un secret partagé propre à l'utilisateur, soit à l'avance, soit automatiquement lors d'une phase de provisionnement. Le tunnel TLS est construit à partir de la PAC, puis l'utilisateur s'authentifie à l'intérieur.",
+    "distractorNotes": {
+      "b": "EAP-TLS repose sur des certificats serveur et client.",
+      "c": "PEAP repose sur le certificat du serveur pour établir son tunnel.",
+      "d": "EAP-TTLS, comme PEAP, établit son tunnel avec le certificat du serveur et n'est pas une méthode Cisco."
+    },
+    "reference": "RFC 4851 (EAP-FAST)"
+  },
+  {
+    "slug": "ccna-5.9-8021x-roles-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Dans un WLAN WPA2-Enterprise, quels trois rôles définis par 802.1X interviennent dans l'authentification d'un client ? (Choisissez-en trois.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le supplicant, logiciel du client qui fournit ses identifiants"
+        },
+        {
+          "id": "b",
+          "text": "L'authentificateur, AP ou WLC qui relaie l'EAP sans le traiter"
+        },
+        {
+          "id": "c",
+          "text": "Le serveur d'authentification, généralement un serveur RADIUS"
+        },
+        {
+          "id": "d",
+          "text": "Le serveur DHCP, qui valide l'adresse du client"
+        },
+        {
+          "id": "e",
+          "text": "Le serveur NTP, qui horodate les échanges EAP"
+        },
+        {
+          "id": "f",
+          "text": "Le serveur TFTP, qui distribue les clés aux AP"
+        }
+      ],
+      "selectCount": 3
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "802.1X définit trois rôles. Le supplicant (le client) envoie ses identifiants en EAP sur le lien radio (EAPOL). L'authentificateur, l'AP ou le WLC dans une architecture centralisée, bloque le trafic du client et relaie l'EAP vers le serveur dans des messages RADIUS. Le serveur d'authentification (RADIUS, par exemple ISE) vérifie les identifiants et renvoie Access-Accept ou Access-Reject ; en cas de succès, il fournit le matériel de clé à partir duquel est dérivée la PMK.",
+    "distractorNotes": {
+      "d": "DHCP intervient après l'authentification, une fois le port autorisé ; il ne joue aucun rôle 802.1X.",
+      "e": "NTP est utile pour la validité des certificats, mais ce n'est pas un rôle 802.1X.",
+      "f": "Les clés ne sont pas distribuées par TFTP : elles sont dérivées lors de l'authentification puis du 4-way handshake."
+    },
+    "reference": "IEEE 802.1X-2020"
+  },
+  {
+    "slug": "ccna-5.9-wep-weaknesses-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Quelles deux faiblesses de conception rendent WEP inutilisable aujourd'hui ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Son vecteur d'initialisation de 24 bits se répète rapidement sur un réseau chargé."
+        },
+        {
+          "id": "b",
+          "text": "Sa clé est statique et partagée par tous les clients, sans dérivation de clé par session."
+        },
+        {
+          "id": "c",
+          "text": "Il impose un serveur RADIUS, absent des petits réseaux."
+        },
+        {
+          "id": "d",
+          "text": "Il chiffre les trames avec AES, trop lent pour les AP de l'époque."
+        },
+        {
+          "id": "e",
+          "text": "Il ne fonctionne qu'en bande 5 GHz."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b"
+      ]
+    },
+    "explanation": "WEP chiffre chaque trame avec RC4 à partir de la clé statique précédée d'un IV de 24 bits transmis en clair. Avec seulement environ 16 millions d'IV possibles, ils se répètent vite, et les attaques statistiques sur RC4 retrouvent la clé à partir des trames capturées. Comme la clé est la même pour tous et ne change jamais sans intervention manuelle, sa découverte compromet tout le réseau. WPA (TKIP) puis WPA2 (CCMP) ont corrigé ces défauts.",
+    "distractorNotes": {
+      "c": "WEP n'utilise pas RADIUS : sa clé est configurée manuellement.",
+      "d": "WEP utilise RC4, pas AES.",
+      "e": "WEP est apparu avec le 802.11 d'origine en 2,4 GHz et n'est lié à aucune bande."
+    },
+    "reference": "IEEE 802.11-2020"
+  },
+  {
+    "slug": "ccna-5.9-protocol-cipher-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque protocole de sécurité sans fil au chiffrement qu'il utilise.",
+      "left": [
+        {
+          "id": "wep",
+          "text": "WEP"
+        },
+        {
+          "id": "wpa",
+          "text": "WPA"
+        },
+        {
+          "id": "wpa2",
+          "text": "WPA2"
+        },
+        {
+          "id": "wpa3e",
+          "text": "WPA3-Enterprise, mode 192 bits"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "TKIP (RC4 avec clé par paquet)"
+        },
+        {
+          "id": "r2",
+          "text": "GCMP-256"
+        },
+        {
+          "id": "r3",
+          "text": "RC4 avec clé statique"
+        },
+        {
+          "id": "r4",
+          "text": "CCMP (AES-128)"
+        },
+        {
+          "id": "r5",
+          "text": "3DES"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "wep": "r3",
+        "wpa": "r1",
+        "wpa2": "r4",
+        "wpa3e": "r2"
+      }
+    },
+    "explanation": "Chaque génération a renforcé le chiffrement : WEP utilise RC4 avec une clé statique et un IV de 24 bits ; WPA garde RC4 mais l'enveloppe dans TKIP, avec une clé par paquet ; WPA2 impose CCMP, fondé sur AES-128 ; WPA3-Enterprise en mode 192 bits exige GCMP-256, AES en mode Galois/Counter avec une clé de 256 bits. WPA3-Personal, lui, continue d'utiliser CCMP-128.",
+    "distractorNotes": {
+      "r5": "3DES n'a jamais été un chiffrement des protocoles Wi-Fi."
+    },
+    "reference": "IEEE 802.11-2020 ; Wi-Fi Alliance, WPA3 Specification"
+  },
+  {
+    "slug": "ccna-5.9-8021x-eap-flow-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un client rejoint un WLAN WPA2-Enterprise (802.1X avec PEAP) géré par un WLC. Remettez les étapes dans l'ordre.",
+      "items": [
+        {
+          "id": "hs",
+          "text": "Le WLC (ou l'AP) et le client mènent le 4-way handshake pour dériver les clés de chiffrement."
+        },
+        {
+          "id": "assoc",
+          "text": "Le client s'associe au SSID par l'authentification ouverte 802.11."
+        },
+        {
+          "id": "accept",
+          "text": "Le serveur RADIUS renvoie Access-Accept avec le matériel de clé dont est issue la PMK."
+        },
+        {
+          "id": "eap",
+          "text": "Le client et le serveur RADIUS échangent les messages PEAP, relayés par le WLC."
+        },
+        {
+          "id": "id",
+          "text": "Le WLC demande l'identité du client (EAP-Request/Identity)."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "assoc",
+        "id",
+        "eap",
+        "accept",
+        "hs"
+      ]
+    },
+    "explanation": "Le client s'associe d'abord (authentification ouverte 802.11, sans valeur de sécurité). L'authentificateur bloque alors tout trafic autre qu'EAPOL et demande l'identité du client. Les messages de la méthode EAP (ici PEAP : tunnel TLS puis MSCHAPv2) circulent entre le client et le serveur, encapsulés dans RADIUS côté réseau. En cas de succès, le serveur envoie Access-Accept avec la clé dont est issue la PMK ; le 4-way handshake en dérive ensuite les clés de session et le trafic est autorisé.",
+    "reference": "IEEE 802.1X-2020 ; IEEE 802.11-2020"
+  },
+  {
+    "slug": "ccna-5.10-enterprise-user-revocation-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Une PME utilise un WLAN WPA2-Personal. À chaque départ d'un salarié, l'administrateur doit changer la phrase secrète puis la ressaisir sur les 80 postes restants. Il veut pouvoir retirer l'accès d'une seule personne sans toucher aux autres. Quelle solution répond au besoin ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Passer en WPA2-Enterprise avec 802.1X et RADIUS"
+        },
+        {
+          "id": "b",
+          "text": "Saisir la PSK au format HEX plutôt qu'en ASCII"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer le chiffrement TKIP du WLAN par AES"
+        },
+        {
+          "id": "d",
+          "text": "Masquer le SSID en décochant Broadcast SSID"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "a"
+    },
+    "explanation": "En mode Personnel, tous les clients partagent la même PSK : la seule façon d'exclure quelqu'un est de changer la clé, donc de reconfigurer tout le monde. En mode Entreprise, chaque utilisateur s'authentifie avec ses propres identifiants (ou son certificat) par 802.1X/EAP auprès d'un serveur RADIUS. Désactiver le compte d'un salarié dans l'annuaire suffit alors à lui retirer l'accès, et chaque session reçoit de plus sa propre PMK.",
+    "distractorNotes": {
+      "b": "Le format HEX change seulement l'écriture de la clé, qui reste unique et partagée.",
+      "c": "AES renforce le chiffrement mais ne change rien au partage de la clé.",
+      "d": "Masquer le SSID ne protège pas : il reste visible dans les trames des clients, et la clé reste partagée."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — WLANs (802.1X)"
+  },
+  {
+    "slug": "ccna-5.9-sae-dictionary-resistance-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Une phrase secrète de qualité moyenne protège un WLAN. Quels deux avantages apporte le passage de WPA2-Personal (PSK) à WPA3-Personal (SAE) ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un attaquant qui capture l'échange d'authentification ne peut plus tester des mots de passe hors ligne."
+        },
+        {
+          "id": "b",
+          "text": "La compromission ultérieure de la phrase secrète ne permet pas de déchiffrer le trafic capturé auparavant."
+        },
+        {
+          "id": "c",
+          "text": "Les clients n'ont plus besoin de connaître de phrase secrète."
+        },
+        {
+          "id": "d",
+          "text": "Chaque utilisateur est authentifié par un serveur RADIUS."
+        },
+        {
+          "id": "e",
+          "text": "Le chiffrement des trames passe de AES à TKIP, plus rapide."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b"
+      ]
+    },
+    "explanation": "Avec WPA2-PSK, la capture du 4-way handshake suffit à tester hors ligne des millions de phrases secrètes. SAE (Simultaneous Authentication of Equals, échange « Dragonfly ») est un échange à preuve de mot de passe : chaque essai exige une interaction avec l'AP, ce qui bloque l'attaque par dictionnaire hors ligne. Comme SAE produit une PMK nouvelle à chaque session, il assure aussi la confidentialité persistante (forward secrecy).",
+    "distractorNotes": {
+      "c": "SAE repose toujours sur un mot de passe partagé ; c'est OWE qui chiffre sans mot de passe.",
+      "d": "RADIUS appartient au mode Entreprise, pas à WPA3-Personal.",
+      "e": "WPA3 interdit TKIP ; WPA3-Personal utilise CCMP (AES)."
+    },
+    "reference": "IEEE 802.11-2020 (SAE) ; Wi-Fi Alliance, WPA3 Specification"
+  },
+  {
+    "slug": "ccna-5.9-wpa3-features-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.9",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Associez chaque mécanisme de la famille WPA3 à son rôle.",
+      "left": [
+        {
+          "id": "sae",
+          "text": "SAE"
+        },
+        {
+          "id": "pmf",
+          "text": "PMF (802.11w)"
+        },
+        {
+          "id": "owe",
+          "text": "OWE"
+        },
+        {
+          "id": "gcmp",
+          "text": "GCMP-256"
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "Protège les trames de gestion, comme les désauthentifications, contre la falsification"
+        },
+        {
+          "id": "r2",
+          "text": "Chiffre les réseaux ouverts sans mot de passe"
+        },
+        {
+          "id": "r3",
+          "text": "Authentifie par mot de passe en résistant aux attaques par dictionnaire hors ligne"
+        },
+        {
+          "id": "r4",
+          "text": "Chiffre les données en mode WPA3-Enterprise 192 bits"
+        },
+        {
+          "id": "r5",
+          "text": "Chiffre les données avec RC4 et une clé par paquet"
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "sae": "r3",
+        "pmf": "r1",
+        "owe": "r2",
+        "gcmp": "r4"
+      }
+    },
+    "explanation": "WPA3 remplace la PSK par SAE en mode Personnel ; rend obligatoire PMF (Protected Management Frames, 802.11w), qui empêche par exemple les fausses trames de désauthentification ; apporte avec Wi-Fi Enhanced Open le chiffrement OWE des réseaux sans mot de passe ; et, en mode Enterprise 192 bits, impose GCMP-256 pour le chiffrement des données.",
+    "distractorNotes": {
+      "r5": "RC4 avec une clé par paquet décrit TKIP, le chiffrement de WPA, interdit par WPA3."
+    },
+    "reference": "Wi-Fi Alliance, WPA3 Specification ; RFC 8110"
+  },
+  {
+    "slug": "ccna-5.10-psk-hex-length-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "fill_blank",
+      "stem": "Sur un WLC, vous configurez un WLAN WPA2-Personal et choisissez le format de PSK « HEX » au lieu d'« ASCII ». Combien de chiffres hexadécimaux devez-vous saisir ?",
+      "fields": [
+        {
+          "id": "n",
+          "label": "Nombre de chiffres hexadécimaux (nombre entier)"
+        }
+      ]
+    },
+    "key": {
+      "type": "fill_blank",
+      "fields": {
+        "n": {
+          "accepted": [
+            "64"
+          ],
+          "normalize": "int"
+        }
+      }
+    },
+    "explanation": "Au format HEX, on saisit directement la PSK de 256 bits, sans dérivation : 256 bits divisés par 4 bits par chiffre hexadécimal donnent exactement 64 chiffres. Au format ASCII, au contraire, on saisit une phrase secrète de 8 à 63 caractères, à partir de laquelle le client et le WLC calculent la même clé de 256 bits par PBKDF2, avec le SSID comme sel.",
+    "reference": "IEEE 802.11-2020, annexe J"
+  },
+  {
+    "slug": "ccna-5.10-psk-shared-key-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Dans un WLAN WPA2-Personal, quel élément de sécurité tous les clients du WLAN ont-ils en commun ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Un certificat émis par la PKI de l'entreprise"
+        },
+        {
+          "id": "b",
+          "text": "La même clé pré-partagée (PSK)"
+        },
+        {
+          "id": "c",
+          "text": "Un compte personnel dans le serveur RADIUS"
+        },
+        {
+          "id": "d",
+          "text": "La même clé de session (PTK)"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "En mode Personnel, l'authentification repose sur une seule PSK, configurée sur le WLAN et saisie sur chaque client ; la PMK qui en est dérivée est donc identique pour tous. Le 4-way handshake mélange ensuite cette PMK avec des nonces et les adresses MAC pour produire une PTK propre à chaque client et à chaque session.",
+    "distractorNotes": {
+      "a": "Les certificats servent en mode Entreprise, par exemple avec EAP-TLS.",
+      "c": "Les comptes RADIUS personnels appartiennent au mode Entreprise (802.1X).",
+      "d": "La PTK est différente pour chaque client et chaque session, car elle intègre des nonces aléatoires et les adresses MAC."
+    },
+    "reference": "IEEE 802.11-2020"
+  },
+  {
+    "slug": "ccna-5.10-wrong-psk-handshake-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Un utilisateur se trompe d'un caractère en saisissant la phrase secrète d'un WLAN WPA2-Personal. À quel moment l'échec est-il détecté ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lors de l'association 802.11, refusée aussitôt par l'AP"
+        },
+        {
+          "id": "b",
+          "text": "Lors de la requête DHCP, qui reste alors sans réponse"
+        },
+        {
+          "id": "c",
+          "text": "Lors de l'échange EAP mené avec le serveur RADIUS"
+        },
+        {
+          "id": "d",
+          "text": "Pendant le 4-way handshake, au contrôle du MIC du message 2"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "d"
+    },
+    "explanation": "La PSK n'est jamais transmise. Avec une phrase erronée, le client calcule une PMK différente, donc une PTK différente. Il envoie dans le message 2 du 4-way handshake son SNonce protégé par un MIC calculé avec sa clé : l'AP ou le WLC, qui calcule le MIC avec la bonne clé, constate l'écart, n'envoie pas le message 3 et l'échange échoue. Le client ne reçoit donc jamais de clé et ne peut pas émettre de données.",
+    "distractorNotes": {
+      "a": "L'authentification 802.11 et l'association sont ouvertes et réussissent ; la clé n'y intervient pas.",
+      "b": "Le client n'arrive jamais jusqu'à DHCP : sans handshake réussi, son trafic de données est bloqué.",
+      "c": "Il n'y a pas de serveur RADIUS ni d'EAP en mode Personnel."
+    },
+    "reference": "IEEE 802.11-2020 (4-way handshake)"
+  },
+  {
+    "slug": "ccna-5.10-wlan-status-disabled-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Reportez-vous à l'exhibit. L'administrateur vient de configurer le WLAN LABO en WPA2-PSK. Les AP joints au WLC sont opérationnels, mais aucun client ne voit le SSID LABO dans sa liste de réseaux. Quelle action corrige le problème ?",
+      "exhibit": "(Cisco Controller) >show wlan 2\n\nWLAN Identifier.................................. 2\nProfile Name..................................... LABO\nNetwork Name (SSID).............................. LABO\nStatus........................................... Disabled\nMAC Filtering.................................... Disabled\nBroadcast SSID................................... Enabled\n...\nInterface........................................ labo-vlan40\n...\nSecurity\n   802.11 Authentication:........................ Open System\n   Wi-Fi Protected Access (WPA/WPA2)............. Enabled\n      WPA (SSN IE)............................... Disabled\n      WPA2 (RSN IE).............................. Enabled\n         TKIP Cipher............................. Disabled\n         AES Cipher.............................. Enabled\n      Auth Key Management\n         802.1x.................................. Disabled\n         PSK..................................... Enabled",
+      "options": [
+        {
+          "id": "a",
+          "text": "Activer le chiffrement TKIP en plus d'AES"
+        },
+        {
+          "id": "b",
+          "text": "Cocher « Status Enabled » dans l'onglet General du WLAN"
+        },
+        {
+          "id": "c",
+          "text": "Remplacer la gestion de clés PSK par 802.1X"
+        },
+        {
+          "id": "d",
+          "text": "Cocher Broadcast SSID dans l'onglet General"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "b"
+    },
+    "explanation": "La sécurité est cohérente pour du WPA2-Personal : WPA2 seul, AES activé, gestion de clés PSK. Broadcast SSID est déjà activé. En revanche, le WLAN est à l'état Disabled : tant qu'il n'est pas activé (case « Status Enabled » de l'onglet General, puis Apply), aucun AP ne l'annonce ni n'accepte d'association. Un WLAN créé sur un WLC AireOS reste désactivé tant qu'on ne l'active pas explicitement.",
+    "distractorNotes": {
+      "a": "TKIP est déprécié et ne change rien à la diffusion du SSID ; les clients actuels gèrent AES.",
+      "c": "802.1X demanderait un serveur RADIUS et ne rendrait pas le WLAN actif.",
+      "d": "L'exhibit montre Broadcast SSID déjà à Enabled ; c'est l'état du WLAN qui bloque."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — WLAN Security (WPA/WPA2)"
+  },
+  {
+    "slug": "ccna-5.10-save-configuration-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_single",
+      "stem": "Sur la GUI d'un WLC AireOS, vous avez configuré un WLAN WPA2-PSK et cliqué « Apply ». Que faut-il faire pour que la configuration survive à un redémarrage du contrôleur ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Rien : « Apply » écrit directement en mémoire non volatile"
+        },
+        {
+          "id": "b",
+          "text": "Redémarrer immédiatement le WLC pour valider la configuration"
+        },
+        {
+          "id": "c",
+          "text": "Cliquer « Save Configuration » en haut de la page"
+        },
+        {
+          "id": "d",
+          "text": "Désactiver puis réactiver le WLAN"
+        }
+      ]
+    },
+    "key": {
+      "type": "mcq_single",
+      "correct": "c"
+    },
+    "explanation": "Sur un WLC AireOS, « Apply » applique la modification à la configuration en cours d'exécution. Pour l'enregistrer en mémoire non volatile, il faut cliquer le lien « Save Configuration » en haut de l'interface (équivalent de la commande CLI save config). Sans cela, un redémarrage fait perdre les modifications, et la GUI propose d'ailleurs de sauvegarder avant un reboot.",
+    "distractorNotes": {
+      "a": "Apply ne modifie que la configuration en cours ; elle n'est pas sauvegardée.",
+      "b": "Redémarrer sans sauvegarder ferait perdre la configuration.",
+      "d": "Désactiver puis réactiver le WLAN déconnecte les clients sans rien sauvegarder."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — Saving Configurations"
+  },
+  {
+    "slug": "ccna-5.10-pmk-derivation-inputs-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "En WPA2-Personal avec une PSK au format ASCII, quelles deux données le client et le WLC utilisent-ils pour calculer la PMK ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "La phrase secrète saisie"
+        },
+        {
+          "id": "b",
+          "text": "Le SSID du WLAN"
+        },
+        {
+          "id": "c",
+          "text": "L'adresse MAC du client"
+        },
+        {
+          "id": "d",
+          "text": "Le nonce aléatoire de l'AP (ANonce)"
+        },
+        {
+          "id": "e",
+          "text": "L'adresse IP de l'interface de gestion du WLC"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b"
+      ]
+    },
+    "explanation": "La PMK de 256 bits est calculée par PBKDF2-HMAC-SHA1 à partir de la phrase secrète, avec le SSID comme sel et 4 096 itérations. Elle est donc la même pour tous les clients d'un WLAN donné, et changer le SSID change la PMK. Les adresses MAC et les nonces (ANonce, SNonce) n'interviennent qu'ensuite, dans le calcul de la PTK pendant le 4-way handshake.",
+    "distractorNotes": {
+      "c": "Les adresses MAC entrent dans le calcul de la PTK, pas dans celui de la PMK.",
+      "d": "L'ANonce sert au calcul de la PTK, pendant le 4-way handshake.",
+      "e": "L'adresse IP du WLC n'intervient dans aucun calcul de clé 802.11."
+    },
+    "reference": "IEEE 802.11-2020, annexe J"
+  },
+  {
+    "slug": "ccna-5.10-client-cannot-join-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "hard",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Sur un WLC, le WLAN BUREAU est configuré en WPA2 seul, chiffrement AES, gestion de clés PSK. Un portable voit le SSID BUREAU, mais échoue à chaque tentative de connexion, avant même d'obtenir une adresse IP. Les autres clients se connectent normalement. Quelles deux causes sont plausibles ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "La phrase secrète saisie sur le portable diffère de celle du WLAN, par exemple par la casse."
+        },
+        {
+          "id": "b",
+          "text": "La carte Wi-Fi du portable, ancienne, ne gère que WPA avec TKIP."
+        },
+        {
+          "id": "c",
+          "text": "Le WLAN BUREAU est à l'état Disabled."
+        },
+        {
+          "id": "d",
+          "text": "L'étendue DHCP du VLAN du WLAN est épuisée."
+        },
+        {
+          "id": "e",
+          "text": "Le profil QoS du WLAN est Silver."
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b"
+      ]
+    },
+    "explanation": "L'échec survient avant DHCP, donc lors de l'association ou du 4-way handshake. Une phrase secrète différente (la casse compte en ASCII) produit une autre PMK : le MIC du message 2 est rejeté. Un client qui ne connaît que WPA/TKIP ne trouve pas de suite de sécurité commune avec un WLAN WPA2/AES seul et ne peut pas s'y connecter. Les autres clients fonctionnant, la configuration du WLAN elle-même n'est pas en cause.",
+    "distractorNotes": {
+      "c": "Un WLAN désactivé n'est pas annoncé, or le portable voit le SSID et les autres clients se connectent.",
+      "d": "Une étendue DHCP épuisée empêcherait l'obtention d'une adresse, mais après une connexion réussie, et toucherait les nouveaux clients en général.",
+      "e": "Silver est le profil QoS par défaut ; il n'empêche aucune connexion."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — WLAN Security (WPA/WPA2)"
+  },
+  {
+    "slug": "ccna-5.10-psk-info-to-users-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "easy",
+    "source": "ai",
+    "body": {
+      "type": "mcq_multi",
+      "stem": "Un WLAN WPA2-Personal vient d'être mis en service. Quelles deux informations les utilisateurs doivent-ils connaître pour s'y connecter ? (Choisissez-en deux.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Le nom du réseau (SSID)"
+        },
+        {
+          "id": "b",
+          "text": "La phrase secrète (PSK)"
+        },
+        {
+          "id": "c",
+          "text": "L'adresse du serveur RADIUS"
+        },
+        {
+          "id": "d",
+          "text": "Le numéro du VLAN associé au WLAN"
+        },
+        {
+          "id": "e",
+          "text": "Le nom du profil (Profile Name) du WLAN"
+        }
+      ],
+      "selectCount": 2
+    },
+    "key": {
+      "type": "mcq_multi",
+      "correct": [
+        "a",
+        "b"
+      ]
+    },
+    "explanation": "En mode Personnel, le client n'a besoin que du SSID, pour choisir le réseau, et de la phrase secrète, à partir de laquelle il calcule la PMK. La méthode de sécurité (WPA2, AES) est annoncée par l'AP dans ses beacons et ses probe responses, et le placement dans un VLAN est décidé par le WLC selon l'interface du WLAN, sans action du client.",
+    "distractorNotes": {
+      "c": "Il n'y a pas de serveur RADIUS en mode Personnel, et même en mode Entreprise, le client ne le contacte jamais directement.",
+      "d": "Le VLAN est imposé par le WLC via l'interface du WLAN ; le client ne le connaît pas.",
+      "e": "Le Profile Name est un nom interne au WLC ; les clients ne voient que le SSID."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — WLAN Security (WPA/WPA2)"
+  },
+  {
+    "slug": "ccna-5.10-wlc-psk-steps-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Sur un WLC AireOS, vous créez le WLAN BUREAU en WPA2-PSK. Remettez les étapes dans l'ordre.",
+      "items": [
+        {
+          "id": "apply",
+          "text": "Cliquer « Apply » sur la page d'édition du WLAN."
+        },
+        {
+          "id": "create",
+          "text": "Dans le menu WLANs, choisir « Create New » puis cliquer « Go »."
+        },
+        {
+          "id": "l2",
+          "text": "Dans l'onglet Security > Layer 2, choisir WPA+WPA2 dans Layer 2 Security pour afficher les options WPA."
+        },
+        {
+          "id": "names",
+          "text": "Saisir Profile Name, SSID et ID, puis cliquer « Apply »."
+        },
+        {
+          "id": "save",
+          "text": "Cliquer « Save Configuration »."
+        },
+        {
+          "id": "psk",
+          "text": "Cocher WPA2 Policy avec AES et PSK, puis saisir la phrase secrète au format ASCII."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "create",
+        "names",
+        "l2",
+        "psk",
+        "apply",
+        "save"
+      ]
+    },
+    "explanation": "Le WLAN se crée depuis WLANs > Create New > Go ; la page suivante demande Profile Name, SSID et ID, et « Apply » ouvre la page d'édition. Les cases WPA2 Policy, AES et PSK n'apparaissent qu'une fois WPA+WPA2 choisi dans Layer 2 Security. On saisit ensuite la phrase secrète (8 à 63 caractères ASCII), on applique, puis « Save Configuration » enregistre la configuration en mémoire non volatile. Il faudra aussi que le WLAN soit activé dans l'onglet General.",
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — WLAN Security (WPA/WPA2)"
+  },
+  {
+    "slug": "ccna-5.10-four-way-handshake-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "ordering",
+      "stem": "Un client rejoint un WLAN WPA2-Personal dont il connaît la phrase secrète ; le client et l'AP disposent déjà de la PMK. Remettez dans l'ordre les étapes du 4-way handshake.",
+      "items": [
+        {
+          "id": "m3",
+          "text": "L'AP vérifie le MIC, puis envoie le message 3, qui contient la GTK chiffrée."
+        },
+        {
+          "id": "m4",
+          "text": "Le client envoie le message 4 pour confirmer l'installation des clés."
+        },
+        {
+          "id": "m1",
+          "text": "L'AP envoie le message 1, qui contient son nonce (ANonce)."
+        },
+        {
+          "id": "m2",
+          "text": "Le client calcule la PTK et envoie le message 2 avec son SNonce et un MIC."
+        }
+      ]
+    },
+    "key": {
+      "type": "ordering",
+      "order": [
+        "m1",
+        "m2",
+        "m3",
+        "m4"
+      ]
+    },
+    "explanation": "En mode Personnel, la PMK est calculée localement des deux côtés à partir de la phrase secrète et du SSID, sans échange. Le 4-way handshake commence par l'ANonce de l'AP (message 1) ; le client, qui dispose alors des deux nonces et des deux adresses MAC, calcule la PTK et répond avec son SNonce protégé par un MIC (message 2). L'AP calcule à son tour la PTK, vérifie le MIC (ce qui prouve que le client connaît la clé), puis transmet la GTK chiffrée, clé de groupe pour le broadcast et le multicast (message 3). Le message 4 confirme l'installation des clés.",
+    "reference": "IEEE 802.11-2020 (4-way handshake)"
+  },
+  {
+    "slug": "ccna-5.10-symptom-cause-matching-001",
+    "certification": "ccna",
+    "domain": "5.0",
+    "subtopic": "5.10",
+    "difficulty": "medium",
+    "source": "ai",
+    "body": {
+      "type": "matching",
+      "stem": "Pour un WLAN WPA2-PSK d'un WLC AireOS, associez chaque symptôme à sa cause la plus probable.",
+      "left": [
+        {
+          "id": "s1",
+          "text": "« show wlan summary » affiche le WLAN à l'état Disabled et aucun AP ne l'annonce."
+        },
+        {
+          "id": "s2",
+          "text": "Le client voit le SSID mais l'échec survient pendant le 4-way handshake."
+        },
+        {
+          "id": "s3",
+          "text": "Le WLC refuse la phrase secrète saisie au format ASCII."
+        },
+        {
+          "id": "s4",
+          "text": "Le client se connecte mais n'obtient pas d'adresse IP."
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "text": "La case Status Enabled n'a pas été cochée."
+        },
+        {
+          "id": "r2",
+          "text": "La phrase secrète du client diffère de celle du WLAN."
+        },
+        {
+          "id": "r3",
+          "text": "La phrase compte moins de 8 ou plus de 63 caractères."
+        },
+        {
+          "id": "r4",
+          "text": "Aucun serveur DHCP n'est joignable dans le VLAN de l'interface du WLAN."
+        },
+        {
+          "id": "r5",
+          "text": "Le profil QoS du WLAN est Bronze."
+        }
+      ]
+    },
+    "key": {
+      "type": "matching",
+      "pairs": {
+        "s1": "r1",
+        "s2": "r2",
+        "s3": "r3",
+        "s4": "r4"
+      }
+    },
+    "explanation": "Un WLAN à l'état Disabled n'est diffusé par aucun AP : il faut cocher Status Enabled. Une phrase secrète différente donne une PMK différente, et le MIC du message 2 du 4-way handshake est rejeté. Le WLC n'accepte au format ASCII qu'une phrase de 8 à 63 caractères. Enfin, une connexion réussie sans adresse IP pointe vers l'adressage : interface du WLAN dans le mauvais VLAN, ou serveur DHCP absent ou injoignable.",
+    "distractorNotes": {
+      "r5": "Le profil Bronze limite la priorité du trafic, mais n'empêche ni la diffusion, ni l'authentification, ni l'obtention d'une adresse."
+    },
+    "reference": "Cisco Wireless Controller Configuration Guide, Release 8.10 — WLAN Security (WPA/WPA2)"
+  }
+]
