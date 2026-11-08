@@ -93,7 +93,7 @@ Chaque domaine reçoit une part de la banque égale à sa part des places, pour 
 | 6.0 Automation and Programmability | 10 % | 10 | 150 | 9,8 % | 6,67 |
 | **Total** | | **102** | **1 530** | | |
 
-Le minimum demandé (1 500) laisse 30 questions de marge pour les rejets de la relecture. **Sous-thèmes** : au moins 15 questions chacun (test), réparties selon le poids du sous-thème dans le programme :
+Le minimum demandé (1 500) laisse 30 questions de marge pour les rejets de la relecture. Banque publiée à la fin du bloc 6 : **1 523 questions** (bilan des relectures dans `docs/generation/journal-bloc-6.md`). **Sous-thèmes** : au moins 15 questions chacun (test), réparties selon le poids du sous-thème dans le programme :
 
 | Domaine | Cibles par sous-thème |
 | --- | --- |
@@ -172,6 +172,8 @@ Les migrations SQL sont générées par Drizzle dans `apps/api/drizzle/` et appl
 - Le niveau de préparation est la moyenne des 5 derniers examens blancs, les plus récents pesant davantage.
 
 ## Labs CLI
+
+La banque CCNA compte 24 labs et 17 challenges (11 de dépannage). Chaque sous-thème que le programme fait configurer ou vérifier en CLI IOS a au moins un lab (test `labs ccna : couverture`) : 1.3, 1.8, 2.1 à 2.5, 2.8, 3.3 à 3.5, 4.1 à 4.6, 4.8, 5.3, 5.4, 5.6 à 5.8 ; l'adressage IPv4 (1.6) est exercé par le lab 1.3. Les autres sous-thèmes portent sur des concepts, le sans-fil (interface graphique du WLC) ou l'automatisation.
 
 ### Simulateur de terminal (`packages/core/src/terminal/`)
 

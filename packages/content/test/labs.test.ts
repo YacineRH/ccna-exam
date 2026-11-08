@@ -94,3 +94,22 @@ describe.each(listLabCertificationCodes())('labs %s', (code) => {
     });
   });
 });
+
+/*
+ * Sous-thèmes CCNA dont le programme demande de configurer ou vérifier quelque chose en CLI IOS.
+ * 1.6 (adressage IPv4) est exercé par le lab 1.3 ; les autres sous-thèmes portent sur des concepts,
+ * le sans-fil (interface graphique du WLC) ou l'automatisation, et ne se tapent pas dans IOS.
+ */
+const CCNA_CLI_SUBTOPICS = [
+  '1.3', '1.8', '2.1', '2.2', '2.3', '2.4', '2.5', '2.8', '3.3', '3.4', '3.5',
+  '4.1', '4.2', '4.3', '4.4', '4.5', '4.6', '4.8', '5.3', '5.4', '5.6', '5.7', '5.8',
+];
+
+describe('labs ccna : couverture', () => {
+  const { labs } = loadLabs('ccna');
+
+  it('un lab au moins par sous-thème configurable en CLI', () => {
+    const covered = new Set(labs.filter((l) => l.kind !== 'challenge').map((l) => l.subtopic));
+    expect(CCNA_CLI_SUBTOPICS.filter((s) => !covered.has(s))).toEqual([]);
+  });
+});
