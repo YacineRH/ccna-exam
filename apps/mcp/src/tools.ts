@@ -505,6 +505,7 @@ export function createExamForgeServer(api: ApiClient): McpServer {
           .object({
             code: z.string(),
             name: z.string(),
+            shortName: z.string().optional().describe('Nom court du sélecteur d’en-tête ; par défaut le code en capitales'),
             vendor: z.string(),
             examCode: z.string(),
             domains: z.array(
@@ -522,6 +523,10 @@ export function createExamForgeServer(api: ApiClient): McpServer {
               .array(z.enum(MODULES))
               .optional()
               .describe('Modules proposés (exam, practice, flashcards, subnet, cli, challenges) ; par défaut exam, practice, flashcards'),
+            moduleSubtopics: z
+              .record(z.enum(MODULES), z.array(z.string()))
+              .optional()
+              .describe('Sous-thèmes qu\'un module exerce directement (ex. { "subnet": ["1.6"] }) : la carte « À revoir » y propose un lien vers le module'),
           })
           .describe('Configuration complète de la certification, au format de packages/content/data/certifications/<code>.json'),
       },
